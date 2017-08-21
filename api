@@ -1,0 +1,292 @@
+API RRM
+-------
+This document is constructed as follows:
+
+URL
+---
+HTTP METHOD - RETURN TYPE (minimum required role)
+Information 
+
+base URL
+--------
+Everything in this document is appended to a base URL.
+In this case:
+    baseUrl = http://localhost:8080/rwebapp
+    
+/ or /index
+-----------
+GET - HTML (anonymous)
+Redirect to /login if not a valid user
+Redirect to /manager if a valid user
+
+/login
+------
+GET - HTML (anonymous)
+Used to retrieve the login page 
+
+/loginfailed
+------------
+GET - HTML (anonymous)
+Used to display a failed login attempt
+
+/manager/users
+--------------
+GET - HTML (admin)
+Used to display the users page
+
+/manager/users/list
+-------------------
+GET - JSON (admin)
+Used to retrieve the users in JSON format
+
+/manager/users/deleted
+----------------------
+GET - JSON (admin)
+Used to retrieve the deleted users in JSON format
+
+/manager/users/{id}/edit
+------------------------
+GET - HTML (user)
+Used to display the edit page of your own account
+POST - HTML (user)
+Used to update your own account
+
+/manager/users/{username}
+-------------------------
+GET - HTML (user)
+Used to display your own user page
+
+/manager/users/{id}/activate
+----------------------------
+PUT - JSON (admin)
+Used to activate a user account
+
+/manager/users/{id}/deactivate
+------------------------------
+PUT - JSON (admin)
+Used to deactivate a user account
+
+/manager/users/{id}/delete
+--------------------------
+DELETE - JSON (admin)
+Used to delete a user
+
+/manager/users/{id}/sdelete
+---------------------------
+DELETE - JSON (admin)
+Used to remove a user from the database
+
+/manager
+--------
+GET - HTML (user)
+Used to display the landing page of the web app
+
+/manager/settings
+-----------------
+GET - HTML (user)
+Used to display the settings page for your account (cookies)
+
+/manager/packages/submit
+------------------------
+POST - HTML (user)
+Used to submit a package
+
+/manager/submissions/list
+-------------------------
+GET - JSON (user)
+Used to get a list of your submissions in JSON format
+
+/manager/submissions/deleted
+----------------------------
+GET - JSON (admin)
+Used to get a list of the cancelled submissions in JSON format
+
+/manager/submissions
+--------------------
+GET - HTML (user)
+Used to display your submissions
+
+/manager/submissions/all
+------------------------
+GET - HTML (user)
+Used to display all of the submissions you're allowed to see
+
+/manager/submissions/{id}/cancel
+--------------------------------
+GET - HTML (package maintainer)
+Used to cancel a submission (from within an email)
+DELETE - JSON (user)
+Used to cancel a submission
+
+/manager/submissions/{id}
+-------------------------
+GET - HTML (user)
+Used to display a certain submission
+
+/manager/submissions/{id}/accept
+--------------------------------
+GET - HTML (package maintainer)
+Used to accept a certain submission (from within an email)
+PUT - JSON (user)
+Used to accept a submission
+
+/manager/submissions/{id}/sdelete
+---------------------------------
+DELETE - JSON (admin)
+Used to remove a submission from the database
+
+/manager/repositories/maintainers
+---------------------------------
+GET - HTML (admin)
+Used to display all of the repository maintainers
+
+/manager/repositories/maintainers/create
+----------------------------------------
+GET - HTML (admin)
+Used to display the "create a repository maintainer" page
+POST - HTML (admin)
+Used to create a repository maintainer
+
+/manager/repositories/maintainers/{id}/edit
+-------------------------------------------
+GET - HTML (admin)
+Used to display the "edit a repository maintainer" page
+POST - HTML (admin)
+Used to edit a repository maintainer
+
+/manager/repositories/maintainers/list
+--------------------------------------
+GET - JSON (admin)
+Used to get all of the repository maintainers in JSON format
+
+/manager/repositories/maintainers/{id}/delete
+---------------------------------------------
+DELETE - JSON (admin)
+Used to delete a repository maintainer
+
+/manager/repositories/maintainers/{id}/sdelete
+----------------------------------------------
+DELETE - JSON (admin)
+Used to remove a repository maintainer from the database
+
+/manager/packages/maintainers
+-----------------------------
+GET - HTML (repository maintainer)
+Used to display all of the package maintainers you're allowed to see
+
+/manager/packages/maintainers/create
+------------------------------------
+GET - HTML (repository maintainer)
+Used to get the "create a package maintainer" page for repositories you're allowed to manage
+POST - HTML (repository maintainer)
+Used to create a package maintainer
+
+/manager/packages/maintainers/{id}/edit
+---------------------------------------
+GET - HTML (repository maintainer)
+POST - HTML (repository maintainer)
+
+/manager/packages/maintainers/deleted
+-------------------------------------
+GET - JSON (admin)
+
+/manager/packages/maintainers/list
+----------------------------------
+GET - JSON (repository maintainer)
+
+/manager/packages/maintainers/{id}/delete
+-----------------------------------------
+DELETE - JSON (repository maintainer)
+
+/manager/packages/maintainers/{id}/sdelete
+------------------------------------------
+DELETE - JSON (admin)
+
+/manager/repositories
+---------------------
+GET - HTML (repository maintainer)
+
+/manager/repositories/create
+----------------------------
+GET - HTML (admin)
+POST - HTML (admin)
+
+/manager/repositories/{id}/edit
+-------------------------------
+GET - HTML (repository maintainer)
+POST - HTML (repository maintainer)
+
+/manager/repositories/{id}
+--------------------------
+GET - HTML (repository maintainer)
+
+/manager/repositories/list
+--------------------------
+GET - JSON (repository maintainer)
+
+/manager/repositories/deleted
+-----------------------------
+GET - JSON (admin)
+
+/manager/repositories/{id}/published
+------------------------------------
+GET - HTML (anonymous)
+
+/manager/repositories/{id}/delete
+---------------------------------
+DELETE - JSON (admin)
+
+/manager/repositories/{id}/sdelete
+----------------------------------
+DELETE - JSON (admin)
+
+/manager/packages
+-----------------
+GET - HTML (user)
+
+/manager/packages/{id}/edit
+---------------------------
+GET - HTML (package maintainer)
+POST - HTML (package maintainer)
+
+/manager/packages/{id}
+----------------------
+GET - HTML (package maintainer)
+
+/manager/packages/list
+----------------------
+GET - JSON (user)
+
+/manager/packages/deleted
+-------------------------
+GET - JSON (admin)
+
+/manager/packages/{id}/published
+--------------------------------
+GET - HTML (anonymous)
+
+/manager/packages/{id}/download
+-------------------------------
+GET - GZIP (anonymous)
+
+/manager/packages/{id}/manual
+-----------------------------
+GET - PDF (anonymous)
+
+/manager/packages/{id}/activate
+-------------------------------
+PUT - JSON (package maintainer)
+
+/manager/packages/{id}/deactivate
+---------------------------------
+PUT - JSON (package maintainer)
+
+/manager/packages/{id}/delete
+-----------------------------
+DELETE - JSON (package maintainer)
+
+/manager/packages/{id}/sdelete
+------------------------------
+DELETE - JSON (admin)
+
+

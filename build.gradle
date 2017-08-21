@@ -1,0 +1,88 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.bmuschko:gradle-cargo-plugin:+'
+    }
+}
+
+plugins {
+    id "com.github.hierynomus.license" version "0.14.0"
+}
+
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'com.bmuschko.cargo'
+
+group = 'eu.openanalytics'
+version = '0.0.1-SNAPSHOT'
+
+description = """rdepot"""
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+
+     mavenCentral()
+     jcenter()
+}
+
+war {
+	archiveName 'rdepot.war'
+}
+
+dependencies {
+    compile group: 'javax.validation', name: 'validation-api', version:'+'
+    compile group: 'org.eclipse.persistence', name: 'javax.persistence', version: '+'
+    compile group: 'org.hibernate', name: 'hibernate-core', version: '+'
+    compile group: 'org.hibernate', name: 'hibernate-validator', version: '+'
+    compile group: 'postgresql', name: 'postgresql', version:'+'
+    compile group: 'org.springframework', name: 'spring-webmvc', version:'+'
+    compile(group: 'org.springframework.data', name: 'spring-data-jpa', version:'+') {
+			exclude(module: 'spring-asm')
+    }
+    compile group: 'org.springframework.security', name: 'spring-security-core', version:'+'
+    compile group: 'org.springframework.security', name: 'spring-security-web', version:'+'
+    compile group: 'org.springframework.security', name: 'spring-security-config', version:'+'
+    compile group: 'org.springframework.security', name: 'spring-security-ldap', version:'+'
+    compile group: 'jstl', name: 'jstl', version:'+'
+    compile group: 'cglib', name: 'cglib', version:'+'
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-hibernate5', version:'+'
+    compile group: 'commons-fileupload', name: 'commons-fileupload', version:'+'
+    compile group: 'javax.mail', name: 'mail', version:'+'
+    compile group: 'com.google.code.gson', name: 'gson', version:'+'
+    compile group: 'javax.el', name: 'javax.el-api', version: '+'
+    compile group: 'commons-codec', name: 'commons-codec', version:'+'
+    providedCompile group: 'javax.servlet', name: 'javax.servlet-api', version:'+'
+    providedCompile group: 'javax.servlet', name: 'jsp-api', version:'+'
+}
+
+cargo {
+    containerId = 'tomcat8x'
+    port = 7070
+
+    deployable {
+        context = 'rdepot'
+    }
+
+    remote {
+    	hostname = 'localhost'
+        username = 'admin'
+        password = 'admin'
+    }
+}
+
+task redeploy(dependsOn: [build, war, cargoRedeployRemote]) << {
+    println 'REDEPLOYED!'
+}
+
+license {
+    header rootProject.file('LICENSE_HEADER')
+    strictCheck true
+    ext.year = Calendar.getInstance().get(Calendar.YEAR)
+    ext.company = 'Open Analytics NV'
+    excludes(['**/*.ttf', '**/*.svg', '**/*.eot', '**/*.woff', '**/*bootstrap*.css', '**/*bootstrap*.js', '**/*.properties'])
+}

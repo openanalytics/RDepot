@@ -1,0 +1,27 @@
+version: '2'
+services:
+  db:
+    image: oa/rdepot/db
+    hostname: oa-rdepot-db
+    container_name: oa-rdepot-db
+    networks:
+      - oa-rdepot
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+    ports:
+      - "5432:5432"
+  app:
+    image: oa/rdepot/app
+    hostname: oa-rdepot-app
+    container_name: oa-rdepot-app
+    networks:
+      - oa-rdepot
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+      
+networks:
+  oa-rdepot:
+    driver: bridge
+  

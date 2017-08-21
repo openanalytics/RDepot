@@ -1,0 +1,938 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+         Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="0.7.0-alpha">
+<role name="jvanmalder"
+      superuser="true"
+      password="********">
+</role>
+
+<schema name="public" protected="true" rect-visible="true" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<database name="rwebapp" encoding="UTF8" lc-collate="en_US" lc-ctype="en_US">
+	<role name="jvanmalder"/>
+	<tablespace name="pg_default"/>
+</database>
+
+<sequence name="Package_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="jvanmalder"/>
+</sequence>
+
+<table name="package">
+	<schema name="public"/>
+	<role name="jvanmalder"/>
+	<position x="37.7381" y="158.155"/>
+	<column name="id" not-null="true" default-value="nextval('&quot;Package_id_seq&quot;'::regclass)">
+		<type name="integer"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="version" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="description" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="author" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="maintainer_id" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="repository_id" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="depends">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="imports">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="suggests">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="system_requirements">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="license" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="url">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="source" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="title" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="active" not-null="true" default-value="false">
+		<type name="boolean"/>
+	</column>
+	<column name="deleted" not-null="true" default-value="false">
+		<type name="boolean"/>
+	</column>
+	<constraint name="Package_pkey" type="pk-constr" factor="100" table="public.package">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="Repository_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="jvanmalder"/>
+</sequence>
+
+<table name="repository">
+	<schema name="public"/>
+	<role name="jvanmalder"/>
+	<position x="495.375" y="10"/>
+	<column name="version" not-null="true" default-value="0">
+		<type name="integer"/>
+	</column>
+	<column name="id" not-null="true" default-value="nextval('&quot;Repository_id_seq&quot;'::regclass)">
+		<type name="integer"/>
+	</column>
+	<column name="publication_uri" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="server_address" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="published" not-null="true" default-value="false">
+		<type name="boolean"/>
+	</column>
+	<column name="deleted" not-null="true" default-value="false">
+		<type name="boolean"/>
+	</column>
+	<constraint name="Repository_pkey" type="pk-constr" factor="100" table="public.repository">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="Repository_name_key" type="uq-constr" factor="100" table="public.repository">
+		<columns names="name" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="Repository_publication_uri_key" type="uq-constr" factor="100" table="public.repository">
+		<columns names="publication_uri" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="User_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="jvanmalder"/>
+</sequence>
+
+<table name="user">
+	<schema name="public"/>
+	<role name="jvanmalder"/>
+	<position x="931.359" y="7.5"/>
+	<column name="id" not-null="true" default-value="nextval('&quot;User_id_seq&quot;'::regclass)">
+		<type name="integer"/>
+	</column>
+	<column name="role_id" not-null="true" default-value="4">
+		<type name="integer"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="email" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="login" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="active" not-null="true">
+		<type name="boolean"/>
+	</column>
+	<column name="last_logged_in_on">
+		<type name="date"/>
+	</column>
+	<column name="deleted" not-null="true" default-value="false">
+		<type name="boolean"/>
+	</column>
+	<constraint name="User_pkey" type="pk-constr" factor="100" table="public.user">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="User_email_key" type="uq-constr" factor="100" table="public.user">
+		<columns names="email" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="User_login_key" type="uq-constr" factor="100" table="public.user">
+		<columns names="login" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="Submission_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="jvanmalder"/>
+</sequence>
+
+<table name="submission">
+	<schema name="public"/>
+	<role name="jvanmalder"/>
+	<position x="1200.17" y="290.774"/>
+	<column name="id" not-null="true" default-value="nextval('&quot;Submission_id_seq&quot;'::regclass)">
+		<type name="integer"/>
+	</column>
+	<column name="submitter_id" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="package_id" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="changes">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="accepted" not-null="true" default-value="false">
+		<type name="boolean"/>
+	</column>
+	<column name="deleted" not-null="true" default-value="false">
+		<type name="boolean"/>
+	</column>
+	<constraint name="Submission_pkey" type="pk-constr" factor="100" table="public.submission">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="PackageMaintainer_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="jvanmalder"/>
+</sequence>
+
+<table name="package_maintainer">
+	<schema name="public"/>
+	<role name="jvanmalder"/>
+	<position x="1881.93" y="275.476"/>
+	<column name="id" not-null="true" default-value="nextval('&quot;PackageMaintainer_id_seq&quot;'::regclass)">
+		<type name="integer"/>
+	</column>
+	<column name="user_id" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="package" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="repository_id" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="deleted" not-null="true" default-value="false">
+		<type name="boolean"/>
+	</column>
+	<constraint name="PackageMaintainer_pkey" type="pk-constr" factor="100" table="public.package_maintainer">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="RepositoryMaintainer_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="jvanmalder"/>
+</sequence>
+
+<table name="repository_maintainer">
+	<schema name="public"/>
+	<role name="jvanmalder"/>
+	<position x="844.107" y="255.769"/>
+	<column name="id" not-null="true" default-value="nextval('&quot;RepositoryMaintainer_id_seq&quot;'::regclass)">
+		<type name="integer"/>
+	</column>
+	<column name="user_id" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="repository_id" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="deleted" not-null="true" default-value="false">
+		<type name="boolean"/>
+	</column>
+	<constraint name="RepositoryMaintainer_pkey" type="pk-constr" factor="100" table="public.repository_maintainer">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="Role_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="jvanmalder"/>
+</sequence>
+
+<table name="role">
+	<schema name="public"/>
+	<role name="jvanmalder"/>
+	<position x="1458.4" y="32.3166"/>
+	<column name="id" not-null="true" default-value="nextval('&quot;Role_id_seq&quot;'::regclass)">
+		<type name="integer"/>
+	</column>
+	<column name="value" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="description" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<constraint name="Role_pkey" type="pk-constr" factor="100" table="public.role">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="Role_value_key" type="uq-constr" factor="100" table="public.role">
+		<columns names="value" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="Role_name_key" type="uq-constr" factor="100" table="public.role">
+		<columns names="name" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="Role_description_key" type="uq-constr" factor="100" table="public.role">
+		<columns names="description" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="PackageEvent_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="jvanmalder"/>
+</sequence>
+
+<sequence name="RepositoryEvent_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="jvanmalder"/>
+</sequence>
+
+<sequence name="PackageMaintainerEvent_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="jvanmalder"/>
+</sequence>
+
+<sequence name="RepositoryMaintainerEvent_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="jvanmalder"/>
+</sequence>
+
+<sequence name="SubmissionEvent_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="jvanmalder"/>
+</sequence>
+
+<sequence name="UserEvent_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="jvanmalder"/>
+</sequence>
+
+<sequence name="Event_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="jvanmalder"/>
+</sequence>
+
+<table name="package_event">
+	<schema name="public"/>
+	<role name="jvanmalder"/>
+	<position x="15" y="571.9"/>
+	<column name="id" not-null="true" default-value="nextval('&quot;PackageEvent_id_seq&quot;'::regclass)">
+		<type name="integer"/>
+	</column>
+	<column name="date" not-null="true" default-value="('now'::text)::date">
+		<type name="date"/>
+	</column>
+	<column name="package_id" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="event_id" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="changed_variable" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="value_before" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="value_after" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="changed_by" not-null="true">
+		<type name="integer"/>
+	</column>
+	<constraint name="PackageEvent_pkey" type="pk-constr" factor="100" table="public.package_event">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="event">
+	<schema name="public"/>
+	<role name="jvanmalder"/>
+	<position x="854.818" y="915.511"/>
+	<column name="id" not-null="true" default-value="nextval('&quot;Event_id_seq&quot;'::regclass)">
+		<type name="integer"/>
+	</column>
+	<column name="value" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<constraint name="Event_pkey" type="pk-constr" factor="100" table="public.event">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="Event_value_key" type="uq-constr" factor="100" table="public.event">
+		<columns names="value" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="package_maintainer_event">
+	<schema name="public"/>
+	<role name="jvanmalder"/>
+	<position x="1845.99" y="575.372"/>
+	<column name="id" not-null="true" default-value="nextval('&quot;PackageMaintainerEvent_id_seq&quot;'::regclass)">
+		<type name="integer"/>
+	</column>
+	<column name="date" not-null="true" default-value="('now'::text)::date">
+		<type name="date"/>
+	</column>
+	<column name="package_maintainer_id" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="event_id" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="changed_variable" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="value_before" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="value_after" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="changed_by" not-null="true">
+		<type name="integer"/>
+	</column>
+	<constraint name="PackageMaintainerEvent_pkey" type="pk-constr" factor="100" table="public.package_maintainer_event">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="repository_event">
+	<schema name="public"/>
+	<role name="jvanmalder"/>
+	<position x="370.833" y="571.439"/>
+	<column name="id" not-null="true" default-value="nextval('&quot;RepositoryEvent_id_seq&quot;'::regclass)">
+		<type name="integer"/>
+	</column>
+	<column name="date" not-null="true" default-value="('now'::text)::date">
+		<type name="date"/>
+	</column>
+	<column name="repository_id" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="event_id" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="changed_variable" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="value_before" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="value_after" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="changed_by" not-null="true">
+		<type name="integer"/>
+	</column>
+	<constraint name="RepositoryEvent_pkey" type="pk-constr" factor="100" table="public.repository_event">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="repository_maintainer_event">
+	<schema name="public"/>
+	<role name="jvanmalder"/>
+	<position x="728.983" y="572.55"/>
+	<column name="id" not-null="true" default-value="nextval('&quot;RepositoryMaintainerEvent_id_seq&quot;'::regclass)">
+		<type name="integer"/>
+	</column>
+	<column name="date" not-null="true" default-value="('now'::text)::date">
+		<type name="date"/>
+	</column>
+	<column name="repository_maintainer_id" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="event_id" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="changed_variable" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="value_before" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="value_after" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="changed_by" not-null="true">
+		<type name="integer"/>
+	</column>
+	<constraint name="RepositoryMaintainerEvent_pkey" type="pk-constr" factor="100" table="public.repository_maintainer_event">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="submission_event">
+	<schema name="public"/>
+	<role name="jvanmalder"/>
+	<position x="1126.06" y="573.8"/>
+	<column name="id" not-null="true" default-value="nextval('&quot;SubmissionEvent_id_seq&quot;'::regclass)">
+		<type name="integer"/>
+	</column>
+	<column name="date" not-null="true" default-value="('now'::text)::date">
+		<type name="date"/>
+	</column>
+	<column name="submission_id" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="event_id" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="changed_variable" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="value_before" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="value_after" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="changed_by" not-null="true">
+		<type name="integer"/>
+	</column>
+	<constraint name="SubmissionEvent_pkey" type="pk-constr" factor="100" table="public.submission_event">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="user_event">
+	<schema name="public"/>
+	<role name="jvanmalder"/>
+	<position x="1483.57" y="576.935"/>
+	<column name="id" not-null="true" default-value="nextval('&quot;UserEvent_id_seq&quot;'::regclass)">
+		<type name="integer"/>
+	</column>
+	<column name="date" not-null="true" default-value="('now'::text)::date">
+		<type name="date"/>
+	</column>
+	<column name="user_id" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="event_id" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="changed_variable" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="value_before" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="value_after" not-null="true">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="changed_by" not-null="true">
+		<type name="integer"/>
+	</column>
+	<constraint name="UserEvent_pkey" type="pk-constr" factor="100" table="public.user_event">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<constraint name="for_repository" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.repository" table="public.package">
+	<columns names="repository_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+<constraint name="is_maintainer_of" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.user" table="public.package">
+	<columns names="maintainer_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+<constraint name="has_role" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.role" table="public.user">
+	<columns names="role_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+<constraint name="for_package" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.package" table="public.submission">
+	<columns names="package_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+<constraint name="from_user" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.user" table="public.submission">
+	<columns names="submitter_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+<constraint name="is_package_maintainer" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.user" table="public.package_maintainer">
+	<columns names="user_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+<constraint name="is_package_maintainer_of" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.repository" table="public.package_maintainer">
+	<columns names="repository_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+<constraint name="is_repository_maintainer" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.user" table="public.repository_maintainer">
+	<columns names="user_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+<constraint name="of_repository" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.repository" table="public.repository_maintainer">
+	<columns names="repository_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+<constraint name="of_package" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.package" table="public.package_event">
+	<columns names="package_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+<constraint name="by_user" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.user" table="public.package_event">
+	<columns names="changed_by" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+<constraint name="doing_event" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.event" table="public.package_event">
+	<columns names="event_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+<constraint name="by_user" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.user" table="public.package_maintainer_event">
+	<columns names="changed_by" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+<constraint name="doing_event" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.event" table="public.package_maintainer_event">
+	<columns names="event_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+<constraint name="of_package_maintainer" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.package_maintainer" table="public.package_maintainer_event">
+	<columns names="package_maintainer_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+<constraint name="by_user" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.user" table="public.repository_event">
+	<columns names="changed_by" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+<constraint name="doing_event" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.event" table="public.repository_event">
+	<columns names="event_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+<constraint name="of_repository" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.repository" table="public.repository_event">
+	<columns names="repository_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+<constraint name="by_user" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.user" table="public.repository_maintainer_event">
+	<columns names="changed_by" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+<constraint name="doing_event" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.event" table="public.repository_maintainer_event">
+	<columns names="event_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+<constraint name="of_repository_maintainer" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.repository_maintainer" table="public.repository_maintainer_event">
+	<columns names="repository_maintainer_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+<constraint name="by_user" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.user" table="public.submission_event">
+	<columns names="changed_by" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+<constraint name="doing_event" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.event" table="public.submission_event">
+	<columns names="event_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+<constraint name="of_submission" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.submission" table="public.submission_event">
+	<columns names="submission_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+<constraint name="by_user" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.user" table="public.user_event">
+	<columns names="changed_by" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+<constraint name="doing_event" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.event" table="public.user_event">
+	<columns names="event_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+<constraint name="of_user" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.user" table="public.user_event">
+	<columns names="user_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+<relationship name="rel_package_repository" type="relfk"
+	 src-table="public.package"
+	 dst-table="public.repository"
+	 src-required="true" dst-required="true">
+	<label ref-type="name-label">
+		<position x="-35.9474" y="-81.5902"/>
+	</label>
+</relationship>
+
+<relationship name="rel_package_user" type="relfk"
+	 src-table="public.package"
+	 dst-table="public.user"
+	 src-required="true" dst-required="true">
+	<label ref-type="name-label">
+		<position x="64.0526" y="-34.6259"/>
+	</label>
+</relationship>
+
+<relationship name="rel_user_role" type="relfk"
+	 src-table="public.user"
+	 dst-table="public.role"
+	 src-required="true" dst-required="true">
+	<label ref-type="name-label">
+		<position x="5.63716" y="-56.7068"/>
+	</label>
+</relationship>
+
+<relationship name="rel_submission_package" type="relfk"
+	 src-table="public.submission"
+	 dst-table="public.package"
+	 src-required="true" dst-required="true">
+	<label ref-type="name-label">
+		<position x="-265.421" y="-37.5128"/>
+	</label>
+</relationship>
+
+<relationship name="rel_submission_user" type="relfk"
+	 src-table="public.submission"
+	 dst-table="public.user"
+	 src-required="true" dst-required="true">
+	<label ref-type="name-label">
+		<position x="20.2958" y="8.88601"/>
+	</label>
+</relationship>
+
+<relationship name="rel_package_maintainer_user" type="relfk"
+	 src-table="public.package_maintainer"
+	 dst-table="public.user"
+	 src-required="true" dst-required="true">
+	<label ref-type="name-label">
+		<position x="11.2442" y="-54.7152"/>
+	</label>
+</relationship>
+
+<relationship name="rel_package_maintainer_repository" type="relfk"
+	 src-table="public.package_maintainer"
+	 dst-table="public.repository"
+	 src-required="true" dst-required="true">
+	<label ref-type="name-label">
+		<position x="299.78" y="38.4991"/>
+	</label>
+</relationship>
+
+<relationship name="rel_repository_maintainer_user" type="relfk"
+	 src-table="public.repository_maintainer"
+	 dst-table="public.user"
+	 src-required="true" dst-required="true">
+	<label ref-type="name-label">
+		<position x="-4.89308" y="-1.82588"/>
+	</label>
+</relationship>
+
+<relationship name="rel_repository_maintainer_repository" type="relfk"
+	 src-table="public.repository_maintainer"
+	 dst-table="public.repository"
+	 src-required="true" dst-required="true">
+	<label ref-type="name-label">
+		<position x="-1.35739" y="4.95983"/>
+	</label>
+</relationship>
+
+<relationship name="rel_package_event_package" type="relfk"
+	 src-table="public.package_event"
+	 dst-table="public.package"
+	 src-required="true" dst-required="true"/>
+
+<relationship name="rel_package_event_user" type="relfk"
+	 src-table="public.package_event"
+	 dst-table="public.user"
+	 src-required="true" dst-required="true">
+	<label ref-type="name-label">
+		<position x="-32.8563" y="5.10865"/>
+	</label>
+</relationship>
+
+<relationship name="rel_package_event_event" type="relfk"
+	 src-table="public.package_event"
+	 dst-table="public.event"
+	 src-required="true" dst-required="true"/>
+
+<relationship name="rel_package_maintainer_event_user" type="relfk"
+	 src-table="public.package_maintainer_event"
+	 dst-table="public.user"
+	 src-required="true" dst-required="true">
+	<label ref-type="name-label">
+		<position x="78.9224" y="10.5154"/>
+	</label>
+</relationship>
+
+<relationship name="rel_package_maintainer_event_event" type="relfk"
+	 src-table="public.package_maintainer_event"
+	 dst-table="public.event"
+	 src-required="true" dst-required="true">
+	<label ref-type="name-label">
+		<position x="138.342" y="-52.2401"/>
+	</label>
+</relationship>
+
+<relationship name="rel_package_maintainer_event_package_maintainer" type="relfk"
+	 src-table="public.package_maintainer_event"
+	 dst-table="public.package_maintainer"
+	 src-required="true" dst-required="true">
+	<label ref-type="name-label">
+		<position x="12.5045" y="-65.7942"/>
+	</label>
+</relationship>
+
+<relationship name="rel_repository_event_user" type="relfk"
+	 src-table="public.repository_event"
+	 dst-table="public.user"
+	 src-required="true" dst-required="true">
+	<label ref-type="name-label">
+		<position x="-44.3444" y="42.4821"/>
+	</label>
+</relationship>
+
+<relationship name="rel_repository_event_event" type="relfk"
+	 src-table="public.repository_event"
+	 dst-table="public.event"
+	 src-required="true" dst-required="true">
+	<label ref-type="name-label">
+		<position x="-31.3537" y="-57.7735"/>
+	</label>
+</relationship>
+
+<relationship name="rel_repository_event_repository" type="relfk"
+	 src-table="public.repository_event"
+	 dst-table="public.repository"
+	 src-required="true" dst-required="true">
+	<label ref-type="name-label">
+		<position x="-18.4514" y="100.696"/>
+	</label>
+</relationship>
+
+<relationship name="rel_repository_maintainer_event_user" type="relfk"
+	 src-table="public.repository_maintainer_event"
+	 dst-table="public.user"
+	 src-required="true" dst-required="true">
+	<label ref-type="name-label">
+		<position x="59.9142" y="37.6408"/>
+	</label>
+</relationship>
+
+<relationship name="rel_repository_maintainer_event_event" type="relfk"
+	 src-table="public.repository_maintainer_event"
+	 dst-table="public.event"
+	 src-required="true" dst-required="true">
+	<label ref-type="name-label">
+		<position x="3.08342" y="-55.829"/>
+	</label>
+</relationship>
+
+<relationship name="rel_repository_maintainer_event_repository_maintainer" type="relfk"
+	 src-table="public.repository_maintainer_event"
+	 dst-table="public.repository_maintainer"
+	 src-required="true" dst-required="true"/>
+
+<relationship name="rel_submission_event_user" type="relfk"
+	 src-table="public.submission_event"
+	 dst-table="public.user"
+	 src-required="true" dst-required="true">
+	<label ref-type="name-label">
+		<position x="24.6151" y="73.8015"/>
+	</label>
+</relationship>
+
+<relationship name="rel_submission_event_event" type="relfk"
+	 src-table="public.submission_event"
+	 dst-table="public.event"
+	 src-required="true" dst-required="true">
+	<label ref-type="name-label">
+		<position x="-28.4656" y="12.296"/>
+	</label>
+</relationship>
+
+<relationship name="rel_submission_event_submission" type="relfk"
+	 src-table="public.submission_event"
+	 dst-table="public.submission"
+	 src-required="true" dst-required="true"/>
+
+<relationship name="rel_user_event_user" type="relfk"
+	 src-table="public.user_event"
+	 dst-table="public.user"
+	 src-required="true" dst-required="true">
+	<label ref-type="name-label">
+		<position x="150.358" y="115.448"/>
+	</label>
+</relationship>
+
+<relationship name="rel_user_event_event" type="relfk"
+	 src-table="public.user_event"
+	 dst-table="public.event"
+	 src-required="true" dst-required="true">
+	<label ref-type="name-label">
+		<position x="63.3487" y="-47.8429"/>
+	</label>
+</relationship>
+
+</dbmodel>

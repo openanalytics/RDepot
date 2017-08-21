@@ -1,0 +1,1108 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 9.1.12
+-- Dumped by pg_dump version 9.1.13
+-- Started on 2014-04-07 23:50:06 CEST
+
+SET statement_timeout = 0;
+SET client_encoding = 'SQL_ASCII';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+--
+-- TOC entry 189 (class 3079 OID 11677)
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 2081 (class 0 OID 0)
+-- Dependencies: 189
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+SET search_path = public, pg_catalog;
+
+--
+-- TOC entry 181 (class 1259 OID 16650)
+-- Dependencies: 5
+-- Name: Event_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE "Event_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 175 (class 1259 OID 16638)
+-- Dependencies: 5
+-- Name: PackageEvent_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE "PackageEvent_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 177 (class 1259 OID 16642)
+-- Dependencies: 5
+-- Name: PackageMaintainerEvent_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE "PackageMaintainerEvent_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- TOC entry 170 (class 1259 OID 16435)
+-- Dependencies: 1885 5
+-- Name: package_maintainer; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE package_maintainer (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    package character varying(255) NOT NULL,
+    repository_id integer NOT NULL,
+    deleted boolean DEFAULT false NOT NULL
+);
+
+
+--
+-- TOC entry 169 (class 1259 OID 16433)
+-- Dependencies: 170 5
+-- Name: PackageMaintainer_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE "PackageMaintainer_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 2082 (class 0 OID 0)
+-- Dependencies: 169
+-- Name: PackageMaintainer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE "PackageMaintainer_id_seq" OWNED BY package_maintainer.id;
+
+
+--
+-- TOC entry 162 (class 1259 OID 16390)
+-- Dependencies: 1872 1873 5
+-- Name: package; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE package (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    version character varying(255) NOT NULL,
+    description character varying(255) NOT NULL,
+    author character varying(255) NOT NULL,
+    maintainer_id integer NOT NULL,
+    repository_id integer NOT NULL,
+    depends character varying(255),
+    imports character varying(255),
+    suggests character varying(255),
+    system_requirements character varying(255),
+    license character varying(255) NOT NULL,
+    url character varying(255),
+    source character varying(255) NOT NULL,
+    title character varying(255) NOT NULL,
+    active boolean DEFAULT false NOT NULL,
+    deleted boolean DEFAULT false NOT NULL
+);
+
+
+--
+-- TOC entry 161 (class 1259 OID 16388)
+-- Dependencies: 162 5
+-- Name: Package_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE "Package_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 2083 (class 0 OID 0)
+-- Dependencies: 161
+-- Name: Package_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE "Package_id_seq" OWNED BY package.id;
+
+
+--
+-- TOC entry 176 (class 1259 OID 16640)
+-- Dependencies: 5
+-- Name: RepositoryEvent_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE "RepositoryEvent_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 178 (class 1259 OID 16644)
+-- Dependencies: 5
+-- Name: RepositoryMaintainerEvent_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE "RepositoryMaintainerEvent_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 172 (class 1259 OID 16443)
+-- Dependencies: 1887 5
+-- Name: repository_maintainer; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE repository_maintainer (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    repository_id integer NOT NULL,
+    deleted boolean DEFAULT false NOT NULL
+);
+
+
+--
+-- TOC entry 171 (class 1259 OID 16441)
+-- Dependencies: 5 172
+-- Name: RepositoryMaintainer_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE "RepositoryMaintainer_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 2084 (class 0 OID 0)
+-- Dependencies: 171
+-- Name: RepositoryMaintainer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE "RepositoryMaintainer_id_seq" OWNED BY repository_maintainer.id;
+
+
+--
+-- TOC entry 164 (class 1259 OID 16401)
+-- Dependencies: 1875 1876 1877 5
+-- Name: repository; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE repository (
+    version integer DEFAULT 0 NOT NULL,
+    id integer NOT NULL,
+    publication_uri character varying(255) NOT NULL,
+    name character varying(255) NOT NULL,
+    server_address character varying(255) NOT NULL,
+    published boolean DEFAULT false NOT NULL,
+    deleted boolean DEFAULT false NOT NULL
+);
+
+
+--
+-- TOC entry 163 (class 1259 OID 16399)
+-- Dependencies: 5 164
+-- Name: Repository_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE "Repository_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 2085 (class 0 OID 0)
+-- Dependencies: 163
+-- Name: Repository_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE "Repository_id_seq" OWNED BY repository.id;
+
+
+--
+-- TOC entry 174 (class 1259 OID 16451)
+-- Dependencies: 5
+-- Name: role; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE role (
+    id integer NOT NULL,
+    value integer NOT NULL,
+    name character varying(255) NOT NULL,
+    description character varying(255) NOT NULL
+);
+
+
+--
+-- TOC entry 173 (class 1259 OID 16449)
+-- Dependencies: 174 5
+-- Name: Role_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE "Role_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 2086 (class 0 OID 0)
+-- Dependencies: 173
+-- Name: Role_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE "Role_id_seq" OWNED BY role.id;
+
+
+--
+-- TOC entry 179 (class 1259 OID 16646)
+-- Dependencies: 5
+-- Name: SubmissionEvent_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE "SubmissionEvent_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 168 (class 1259 OID 16427)
+-- Dependencies: 1882 1883 5
+-- Name: submission; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE submission (
+    id integer NOT NULL,
+    submitter_id integer NOT NULL,
+    package_id integer NOT NULL,
+    changes character varying(255),
+    accepted boolean DEFAULT false NOT NULL,
+    deleted boolean DEFAULT false NOT NULL
+);
+
+
+--
+-- TOC entry 167 (class 1259 OID 16425)
+-- Dependencies: 168 5
+-- Name: Submission_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE "Submission_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 2087 (class 0 OID 0)
+-- Dependencies: 167
+-- Name: Submission_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE "Submission_id_seq" OWNED BY submission.id;
+
+
+--
+-- TOC entry 180 (class 1259 OID 16648)
+-- Dependencies: 5
+-- Name: UserEvent_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE "UserEvent_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 166 (class 1259 OID 16412)
+-- Dependencies: 1879 1880 5
+-- Name: user; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE "user" (
+    id integer NOT NULL,
+    role_id integer DEFAULT 4 NOT NULL,
+    name character varying(255) NOT NULL,
+    email character varying(255) NOT NULL,
+    login character varying(255) NOT NULL,
+    active boolean NOT NULL,
+    last_logged_in_on date,
+    deleted boolean DEFAULT false NOT NULL
+);
+
+
+--
+-- TOC entry 165 (class 1259 OID 16410)
+-- Dependencies: 5 166
+-- Name: User_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE "User_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 2088 (class 0 OID 0)
+-- Dependencies: 165
+-- Name: User_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE "User_id_seq" OWNED BY "user".id;
+
+
+--
+-- TOC entry 183 (class 1259 OID 16672)
+-- Dependencies: 1891 5
+-- Name: event; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE event (
+    id integer DEFAULT nextval('"Event_id_seq"'::regclass) NOT NULL,
+    value character varying(255) NOT NULL
+);
+
+
+--
+-- TOC entry 182 (class 1259 OID 16652)
+-- Dependencies: 1889 1890 5
+-- Name: package_event; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE package_event (
+    id integer DEFAULT nextval('"PackageEvent_id_seq"'::regclass) NOT NULL,
+    date date DEFAULT ('now'::text)::date NOT NULL,
+    package_id integer NOT NULL,
+    event_id integer NOT NULL,
+    changed_variable character varying(255) NOT NULL,
+    value_before character varying(255) NOT NULL,
+    value_after character varying(255) NOT NULL,
+    changed_by integer NOT NULL
+);
+
+
+--
+-- TOC entry 184 (class 1259 OID 16684)
+-- Dependencies: 1892 1893 5
+-- Name: package_maintainer_event; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE package_maintainer_event (
+    id integer DEFAULT nextval('"PackageMaintainerEvent_id_seq"'::regclass) NOT NULL,
+    date date DEFAULT ('now'::text)::date NOT NULL,
+    package_maintainer_id integer NOT NULL,
+    event_id integer NOT NULL,
+    changed_variable character varying(255) NOT NULL,
+    value_before character varying(255) NOT NULL,
+    value_after character varying(255) NOT NULL,
+    changed_by integer NOT NULL
+);
+
+
+--
+-- TOC entry 185 (class 1259 OID 16711)
+-- Dependencies: 1894 1895 5
+-- Name: repository_event; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE repository_event (
+    id integer DEFAULT nextval('"RepositoryEvent_id_seq"'::regclass) NOT NULL,
+    date date DEFAULT ('now'::text)::date NOT NULL,
+    repository_id integer NOT NULL,
+    event_id integer NOT NULL,
+    changed_variable character varying(255) NOT NULL,
+    value_before character varying(255) NOT NULL,
+    value_after character varying(255) NOT NULL,
+    changed_by integer NOT NULL
+);
+
+
+--
+-- TOC entry 186 (class 1259 OID 16736)
+-- Dependencies: 1896 1897 5
+-- Name: repository_maintainer_event; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE repository_maintainer_event (
+    id integer DEFAULT nextval('"RepositoryMaintainerEvent_id_seq"'::regclass) NOT NULL,
+    date date DEFAULT ('now'::text)::date NOT NULL,
+    repository_maintainer_id integer NOT NULL,
+    event_id integer NOT NULL,
+    changed_variable character varying(255) NOT NULL,
+    value_before character varying(255) NOT NULL,
+    value_after character varying(255) NOT NULL,
+    changed_by integer NOT NULL
+);
+
+
+--
+-- TOC entry 187 (class 1259 OID 16761)
+-- Dependencies: 1898 1899 5
+-- Name: submission_event; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE submission_event (
+    id integer DEFAULT nextval('"SubmissionEvent_id_seq"'::regclass) NOT NULL,
+    date date DEFAULT ('now'::text)::date NOT NULL,
+    submission_id integer NOT NULL,
+    event_id integer NOT NULL,
+    changed_variable character varying(255) NOT NULL,
+    value_before character varying(255) NOT NULL,
+    value_after character varying(255) NOT NULL,
+    changed_by integer NOT NULL
+);
+
+
+--
+-- TOC entry 188 (class 1259 OID 16786)
+-- Dependencies: 1900 1901 5
+-- Name: user_event; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE user_event (
+    id integer DEFAULT nextval('"UserEvent_id_seq"'::regclass) NOT NULL,
+    date date DEFAULT ('now'::text)::date NOT NULL,
+    user_id integer NOT NULL,
+    event_id integer NOT NULL,
+    changed_variable character varying(255) NOT NULL,
+    value_before character varying(255) NOT NULL,
+    value_after character varying(255) NOT NULL,
+    changed_by integer NOT NULL
+);
+
+
+--
+-- TOC entry 1871 (class 2604 OID 16393)
+-- Dependencies: 162 161 162
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY package ALTER COLUMN id SET DEFAULT nextval('"Package_id_seq"'::regclass);
+
+
+--
+-- TOC entry 1884 (class 2604 OID 16438)
+-- Dependencies: 169 170 170
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY package_maintainer ALTER COLUMN id SET DEFAULT nextval('"PackageMaintainer_id_seq"'::regclass);
+
+
+--
+-- TOC entry 1874 (class 2604 OID 16404)
+-- Dependencies: 163 164 164
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY repository ALTER COLUMN id SET DEFAULT nextval('"Repository_id_seq"'::regclass);
+
+
+--
+-- TOC entry 1886 (class 2604 OID 16446)
+-- Dependencies: 171 172 172
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY repository_maintainer ALTER COLUMN id SET DEFAULT nextval('"RepositoryMaintainer_id_seq"'::regclass);
+
+
+--
+-- TOC entry 1888 (class 2604 OID 16454)
+-- Dependencies: 174 173 174
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY role ALTER COLUMN id SET DEFAULT nextval('"Role_id_seq"'::regclass);
+
+
+--
+-- TOC entry 1881 (class 2604 OID 16430)
+-- Dependencies: 168 167 168
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY submission ALTER COLUMN id SET DEFAULT nextval('"Submission_id_seq"'::regclass);
+
+
+--
+-- TOC entry 1878 (class 2604 OID 16415)
+-- Dependencies: 165 166 166
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY "user" ALTER COLUMN id SET DEFAULT nextval('"User_id_seq"'::regclass);
+
+
+--
+-- TOC entry 1933 (class 2606 OID 16677)
+-- Dependencies: 183 183 2075
+-- Name: Event_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY event
+    ADD CONSTRAINT "Event_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1935 (class 2606 OID 16710)
+-- Dependencies: 183 183 2075
+-- Name: Event_value_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY event
+    ADD CONSTRAINT "Event_value_key" UNIQUE (value);
+
+
+--
+-- TOC entry 1931 (class 2606 OID 16661)
+-- Dependencies: 182 182 2075
+-- Name: PackageEvent_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY package_event
+    ADD CONSTRAINT "PackageEvent_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1937 (class 2606 OID 16693)
+-- Dependencies: 184 184 2075
+-- Name: PackageMaintainerEvent_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY package_maintainer_event
+    ADD CONSTRAINT "PackageMaintainerEvent_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1919 (class 2606 OID 16440)
+-- Dependencies: 170 170 2075
+-- Name: PackageMaintainer_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY package_maintainer
+    ADD CONSTRAINT "PackageMaintainer_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1903 (class 2606 OID 16398)
+-- Dependencies: 162 162 2075
+-- Name: Package_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY package
+    ADD CONSTRAINT "Package_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1939 (class 2606 OID 16720)
+-- Dependencies: 185 185 2075
+-- Name: RepositoryEvent_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY repository_event
+    ADD CONSTRAINT "RepositoryEvent_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1941 (class 2606 OID 16745)
+-- Dependencies: 186 186 2075
+-- Name: RepositoryMaintainerEvent_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY repository_maintainer_event
+    ADD CONSTRAINT "RepositoryMaintainerEvent_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1921 (class 2606 OID 16448)
+-- Dependencies: 172 172 2075
+-- Name: RepositoryMaintainer_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY repository_maintainer
+    ADD CONSTRAINT "RepositoryMaintainer_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1905 (class 2606 OID 16575)
+-- Dependencies: 164 164 2075
+-- Name: Repository_name_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY repository
+    ADD CONSTRAINT "Repository_name_key" UNIQUE (name);
+
+
+--
+-- TOC entry 1907 (class 2606 OID 16409)
+-- Dependencies: 164 164 2075
+-- Name: Repository_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY repository
+    ADD CONSTRAINT "Repository_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1909 (class 2606 OID 16577)
+-- Dependencies: 164 164 2075
+-- Name: Repository_publication_uri_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY repository
+    ADD CONSTRAINT "Repository_publication_uri_key" UNIQUE (publication_uri);
+
+
+--
+-- TOC entry 1923 (class 2606 OID 16579)
+-- Dependencies: 174 174 2075
+-- Name: Role_description_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY role
+    ADD CONSTRAINT "Role_description_key" UNIQUE (description);
+
+
+--
+-- TOC entry 1925 (class 2606 OID 16563)
+-- Dependencies: 174 174 2075
+-- Name: Role_name_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY role
+    ADD CONSTRAINT "Role_name_key" UNIQUE (name);
+
+
+--
+-- TOC entry 1927 (class 2606 OID 16459)
+-- Dependencies: 174 174 2075
+-- Name: Role_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY role
+    ADD CONSTRAINT "Role_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1929 (class 2606 OID 16561)
+-- Dependencies: 174 174 2075
+-- Name: Role_value_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY role
+    ADD CONSTRAINT "Role_value_key" UNIQUE (value);
+
+
+--
+-- TOC entry 1943 (class 2606 OID 16770)
+-- Dependencies: 187 187 2075
+-- Name: SubmissionEvent_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY submission_event
+    ADD CONSTRAINT "SubmissionEvent_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1917 (class 2606 OID 16432)
+-- Dependencies: 168 168 2075
+-- Name: Submission_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY submission
+    ADD CONSTRAINT "Submission_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1945 (class 2606 OID 16795)
+-- Dependencies: 188 188 2075
+-- Name: UserEvent_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY user_event
+    ADD CONSTRAINT "UserEvent_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1911 (class 2606 OID 16422)
+-- Dependencies: 166 166 2075
+-- Name: User_email_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY "user"
+    ADD CONSTRAINT "User_email_key" UNIQUE (email);
+
+
+--
+-- TOC entry 1913 (class 2606 OID 16424)
+-- Dependencies: 166 166 2075
+-- Name: User_login_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY "user"
+    ADD CONSTRAINT "User_login_key" UNIQUE (login);
+
+
+--
+-- TOC entry 1915 (class 2606 OID 16420)
+-- Dependencies: 166 166 2075
+-- Name: User_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY "user"
+    ADD CONSTRAINT "User_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1956 (class 2606 OID 16667)
+-- Dependencies: 182 166 1914 2075
+-- Name: by_user; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY package_event
+    ADD CONSTRAINT by_user FOREIGN KEY (changed_by) REFERENCES "user"(id);
+
+
+--
+-- TOC entry 1958 (class 2606 OID 16694)
+-- Dependencies: 184 166 1914 2075
+-- Name: by_user; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY package_maintainer_event
+    ADD CONSTRAINT by_user FOREIGN KEY (changed_by) REFERENCES "user"(id);
+
+
+--
+-- TOC entry 1961 (class 2606 OID 16721)
+-- Dependencies: 185 166 1914 2075
+-- Name: by_user; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY repository_event
+    ADD CONSTRAINT by_user FOREIGN KEY (changed_by) REFERENCES "user"(id);
+
+
+--
+-- TOC entry 1964 (class 2606 OID 16746)
+-- Dependencies: 186 166 1914 2075
+-- Name: by_user; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY repository_maintainer_event
+    ADD CONSTRAINT by_user FOREIGN KEY (changed_by) REFERENCES "user"(id);
+
+
+--
+-- TOC entry 1967 (class 2606 OID 16771)
+-- Dependencies: 1914 187 166 2075
+-- Name: by_user; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY submission_event
+    ADD CONSTRAINT by_user FOREIGN KEY (changed_by) REFERENCES "user"(id);
+
+
+--
+-- TOC entry 1970 (class 2606 OID 16796)
+-- Dependencies: 188 1914 166 2075
+-- Name: by_user; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY user_event
+    ADD CONSTRAINT by_user FOREIGN KEY (changed_by) REFERENCES "user"(id);
+
+
+--
+-- TOC entry 1957 (class 2606 OID 16678)
+-- Dependencies: 182 183 1932 2075
+-- Name: doing_event; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY package_event
+    ADD CONSTRAINT doing_event FOREIGN KEY (event_id) REFERENCES event(id);
+
+
+--
+-- TOC entry 1959 (class 2606 OID 16699)
+-- Dependencies: 184 183 1932 2075
+-- Name: doing_event; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY package_maintainer_event
+    ADD CONSTRAINT doing_event FOREIGN KEY (event_id) REFERENCES event(id);
+
+
+--
+-- TOC entry 1962 (class 2606 OID 16726)
+-- Dependencies: 185 183 1932 2075
+-- Name: doing_event; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY repository_event
+    ADD CONSTRAINT doing_event FOREIGN KEY (event_id) REFERENCES event(id);
+
+
+--
+-- TOC entry 1965 (class 2606 OID 16751)
+-- Dependencies: 183 186 1932 2075
+-- Name: doing_event; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY repository_maintainer_event
+    ADD CONSTRAINT doing_event FOREIGN KEY (event_id) REFERENCES event(id);
+
+
+--
+-- TOC entry 1968 (class 2606 OID 16776)
+-- Dependencies: 187 1932 183 2075
+-- Name: doing_event; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY submission_event
+    ADD CONSTRAINT doing_event FOREIGN KEY (event_id) REFERENCES event(id);
+
+
+--
+-- TOC entry 1971 (class 2606 OID 16801)
+-- Dependencies: 183 188 1932 2075
+-- Name: doing_event; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY user_event
+    ADD CONSTRAINT doing_event FOREIGN KEY (event_id) REFERENCES event(id);
+
+
+--
+-- TOC entry 1949 (class 2606 OID 16540)
+-- Dependencies: 168 162 1902 2075
+-- Name: for_package; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY submission
+    ADD CONSTRAINT for_package FOREIGN KEY (package_id) REFERENCES package(id);
+
+
+--
+-- TOC entry 1946 (class 2606 OID 16505)
+-- Dependencies: 164 1906 162 2075
+-- Name: for_repository; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY package
+    ADD CONSTRAINT for_repository FOREIGN KEY (repository_id) REFERENCES repository(id);
+
+
+--
+-- TOC entry 1950 (class 2606 OID 16545)
+-- Dependencies: 168 166 1914 2075
+-- Name: from_user; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY submission
+    ADD CONSTRAINT from_user FOREIGN KEY (submitter_id) REFERENCES "user"(id);
+
+
+--
+-- TOC entry 1948 (class 2606 OID 16535)
+-- Dependencies: 166 174 1926 2075
+-- Name: has_role; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY "user"
+    ADD CONSTRAINT has_role FOREIGN KEY (role_id) REFERENCES role(id);
+
+
+--
+-- TOC entry 1947 (class 2606 OID 16510)
+-- Dependencies: 162 166 1914 2075
+-- Name: is_maintainer_of; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY package
+    ADD CONSTRAINT is_maintainer_of FOREIGN KEY (maintainer_id) REFERENCES "user"(id);
+
+
+--
+-- TOC entry 1951 (class 2606 OID 16525)
+-- Dependencies: 170 166 1914 2075
+-- Name: is_package_maintainer; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY package_maintainer
+    ADD CONSTRAINT is_package_maintainer FOREIGN KEY (user_id) REFERENCES "user"(id);
+
+
+--
+-- TOC entry 1952 (class 2606 OID 16530)
+-- Dependencies: 170 164 1906 2075
+-- Name: is_package_maintainer_of; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY package_maintainer
+    ADD CONSTRAINT is_package_maintainer_of FOREIGN KEY (repository_id) REFERENCES repository(id);
+
+
+--
+-- TOC entry 1953 (class 2606 OID 16550)
+-- Dependencies: 172 166 1914 2075
+-- Name: is_repository_maintainer; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY repository_maintainer
+    ADD CONSTRAINT is_repository_maintainer FOREIGN KEY (user_id) REFERENCES "user"(id);
+
+
+--
+-- TOC entry 1955 (class 2606 OID 16662)
+-- Dependencies: 182 162 1902 2075
+-- Name: of_package; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY package_event
+    ADD CONSTRAINT of_package FOREIGN KEY (package_id) REFERENCES package(id);
+
+
+--
+-- TOC entry 1960 (class 2606 OID 16704)
+-- Dependencies: 184 170 1918 2075
+-- Name: of_package_maintainer; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY package_maintainer_event
+    ADD CONSTRAINT of_package_maintainer FOREIGN KEY (package_maintainer_id) REFERENCES package_maintainer(id);
+
+
+--
+-- TOC entry 1954 (class 2606 OID 16555)
+-- Dependencies: 172 164 1906 2075
+-- Name: of_repository; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY repository_maintainer
+    ADD CONSTRAINT of_repository FOREIGN KEY (repository_id) REFERENCES repository(id);
+
+
+--
+-- TOC entry 1963 (class 2606 OID 16731)
+-- Dependencies: 164 185 1906 2075
+-- Name: of_repository; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY repository_event
+    ADD CONSTRAINT of_repository FOREIGN KEY (repository_id) REFERENCES repository(id);
+
+
+--
+-- TOC entry 1966 (class 2606 OID 16756)
+-- Dependencies: 1920 186 172 2075
+-- Name: of_repository_maintainer; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY repository_maintainer_event
+    ADD CONSTRAINT of_repository_maintainer FOREIGN KEY (repository_maintainer_id) REFERENCES repository_maintainer(id);
+
+
+--
+-- TOC entry 1969 (class 2606 OID 16781)
+-- Dependencies: 1916 168 187 2075
+-- Name: of_submission; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY submission_event
+    ADD CONSTRAINT of_submission FOREIGN KEY (submission_id) REFERENCES submission(id);
+
+
+--
+-- TOC entry 1972 (class 2606 OID 16806)
+-- Dependencies: 188 1914 166 2075
+-- Name: of_user; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY user_event
+    ADD CONSTRAINT of_user FOREIGN KEY (user_id) REFERENCES "user"(id);
+
+
+--
+-- TOC entry 2080 (class 0 OID 0)
+-- Dependencies: 5
+-- Name: public; Type: ACL; Schema: -; Owner: -
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+-- Completed on 2014-04-07 23:50:12 CEST
+
+--
+-- PostgreSQL database dump complete
+--
+
