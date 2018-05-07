@@ -7,3 +7,4 @@
 *.war
 /build/
 /docker/proxy/logs
+/repo/build/
