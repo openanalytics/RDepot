@@ -8,3 +8,4 @@
 /build/
 /docker/proxy/logs
 /repo/build/
+/repo/bin/

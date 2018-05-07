@@ -35,6 +35,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 
+import eu.openanalytics.rdepot.config.SecurityConfig;
 import eu.openanalytics.rdepot.exception.UserEditException;
 import eu.openanalytics.rdepot.model.Role;
 import eu.openanalytics.rdepot.model.User;
@@ -78,24 +79,26 @@ public class CustomBindAuthenticator extends BindAuthenticator
 		super(contextSource);
 	}
 	
-	private void validateConfiguration(String value, String name)
-	{
-		if (value == null || value.trim().isEmpty())
-			throw new IllegalArgumentException("Configuration value '" + name + "' is either null or empty");
-	}
-	
 	@Override
 	public DirContextOperations authenticate(Authentication authentication)
 	{
 		
-		validateConfiguration(ldapLoginField, "ldap.loginfield");
-		validateConfiguration(ldapNameField, "ldap.namefield");
-		validateConfiguration(ldapEmailField, "ldap.emailfield");
+		SecurityConfig.validateConfiguration(ldapLoginField, "ldap.loginfield");
+		SecurityConfig.validateConfiguration(ldapNameField, "ldap.namefield");
+		SecurityConfig.validateConfiguration(ldapEmailField, "ldap.emailfield");
 		
 		DirContextOperations userData = super.authenticate(authentication);
 		
 		String login = userData.getStringAttribute(ldapLoginField);
-		String name = userData.getStringAttribute(ldapNameField);
+		
+		String[] nameFields = ldapNameField.trim().split("\\s*,\\s*");
+		String name = "";
+		for(String nameField : nameFields)
+		{
+			name += userData.getStringAttribute(nameField) + ", ";
+		}
+		
+		name = name.substring(0, name.length() - 2);
 		String email = userData.getStringAttribute(ldapEmailField);
 		User user = userService.findByLoginEvenDeleted(login);
 		

@@ -25,6 +25,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -56,12 +57,25 @@ public class SecurityConfig
     @Resource
 	private Environment env;
     
-	private static final String PROPERTY_NAME_LDAP_URL = "ldap.url";
-	private static final String PROPERTY_NAME_LDAP_BASEDN = "ldap.basedn";
-	private static final String PROPERTY_NAME_LDAP_USEROU = "ldap.userou";
-	private static final String PROPERTY_NAME_LDAP_LOGINFIELD = "ldap.loginfield";
+    @Value("${ldap.url}")
+	private String ldapUrl;
+    
+    @Value("${ldap.basedn}")
+	private String ldapBasedn;
+    
+    @Value("${ldap.userou}")
+	private String ldapUserou;
+    
+    @Value("${ldap.loginfield}")
+	private String ldapLoginfield;
 	
 
+	public static void validateConfiguration(String value, String name)
+	{
+		if (value == null || value.trim().isEmpty())
+			throw new IllegalArgumentException("Configuration value '" + name + "' is either null or empty");
+	}
+    
 	@Configuration
 	@Order(1)
 	public class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter 
@@ -152,8 +166,11 @@ public class SecurityConfig
     @Bean
     public AbstractLdapAuthenticator LDAPAuthenticator() 
     {
+    	validateConfiguration(ldapLoginfield, "ldap.loginfield");
     	CustomBindAuthenticator bind = new CustomBindAuthenticator(LDAPContextSource());
-    	String userDnPattern = env.getRequiredProperty(PROPERTY_NAME_LDAP_LOGINFIELD) + "={0},ou=" + env.getRequiredProperty(PROPERTY_NAME_LDAP_USEROU);
+    	String userDnPattern = ldapLoginfield + "={0}";
+    	if (ldapUserou != null && !ldapUserou.trim().isEmpty())
+    		userDnPattern += ",ou=" + ldapUserou;
     	bind.setUserDnPatterns(new String[]{userDnPattern});
     	bind.setUserSearch(userSearch());
     	return bind;
@@ -162,7 +179,9 @@ public class SecurityConfig
     @Bean
     public DefaultSpringSecurityContextSource LDAPContextSource() 
     {
-    	String url = env.getRequiredProperty(PROPERTY_NAME_LDAP_URL) + "/" + env.getRequiredProperty(PROPERTY_NAME_LDAP_BASEDN);
+    	validateConfiguration(ldapUrl, "ldap.url");
+    	validateConfiguration(ldapBasedn, "ldap.basedn");
+    	String url = ldapUrl + "/" + ldapBasedn;
     	DefaultSpringSecurityContextSource ctxsrc = new DefaultSpringSecurityContextSource(url);
     	return ctxsrc;
     }
@@ -170,7 +189,8 @@ public class SecurityConfig
     @Bean
     public FilterBasedLdapUserSearch userSearch()
     {
-    	String filter = "(" + env.getRequiredProperty(PROPERTY_NAME_LDAP_LOGINFIELD) + "={0})";
+    	validateConfiguration(ldapLoginfield, "ldap.loginfield");
+    	String filter = "(" + ldapLoginfield + "={0})";
     	FilterBasedLdapUserSearch uSearch = new FilterBasedLdapUserSearch("", filter, LDAPContextSource());
     	return uSearch;
     }
