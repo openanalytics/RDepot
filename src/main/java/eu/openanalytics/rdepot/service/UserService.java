@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -264,12 +264,12 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 
 	public List<User> findAll() 
 	{
-		return userRepository.findByDeleted(false, new Sort(new Order(Direction.ASC, "name")));
+		return userRepository.findByDeleted(false, Sort.by(new Order(Direction.ASC, "name")));
 	}
 	
 	public List<User> findByDeleted(boolean deleted) 
 	{
-		return userRepository.findByDeleted(deleted, new Sort(new Order(Direction.ASC, "name")));
+		return userRepository.findByDeleted(deleted, Sort.by(new Order(Direction.ASC, "name")));
 	}
 
 	@Transactional(readOnly = false, rollbackFor={UserEditException.class})

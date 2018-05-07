@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -146,13 +146,13 @@ public class Repository implements java.io.Serializable
 	@JsonBackReference
 	public Set<Package> getPackages()
 	{
-		//Set<Package> packages = new HashSet<Package>();
-		//for(Package p : this.packages)
-		//{
-		//	if(!p.isDeleted())
-		//		packages.add(p);
-		//}
-		return this.packages;
+		Set<Package> packages = new HashSet<Package>();
+		for(Package p : this.packages)
+		{
+			if(!p.isDeleted())
+				packages.add(p);
+		}
+		return packages;
 	}
 	
 	public void setPackages(Set<Package> packages)

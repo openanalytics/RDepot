@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -22,6 +22,7 @@ package eu.openanalytics.rdepot.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.security.Principal;
 import java.util.Comparator;
 import java.util.Date;
@@ -35,7 +36,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
@@ -380,7 +380,7 @@ public class PackageController
 		    	//headers.set("Content-Encoding", "gzip");
 		    	//headers.set("Content-Encoding", "x-gzip");
 		    	response.setHeader("Content-Disposition", "attachment; filename= \""+packageBag.getName()+"_"+packageBag.getVersion()+".tar.gz\"");
-				bytes = IOUtils.toByteArray(file.getInputStream());
+		    	bytes = Files.readAllBytes(file.getFile().toPath());
 				response.getOutputStream().write(bytes);
 			    response.flushBuffer();
 				// httpStatus = HttpStatus.OK;
@@ -412,7 +412,7 @@ public class PackageController
 					FileSystemResource file = new FileSystemResource(manualFile);
 			    	headers.set("Content-Type", "application/pdf");
 			    	headers.set("Content-Disposition", "attachment; filename= \""+packageBag.getName()+".pdf\"");
-					bytes = IOUtils.toByteArray(file.getInputStream());
+			    	bytes = Files.readAllBytes(file.getFile().toPath());
 					httpStatus = HttpStatus.OK;
 				}
 			}
@@ -445,6 +445,7 @@ public class PackageController
 				packageBag.setActive(true);
 				packageService.update(packageBag, requester);
 				repositoryService.publishRepository(packageBag.getRepository(), requester);
+				repositoryService.boostRepositoryVersion(packageBag.getRepository(), requester);
 				result.put("success", MessageCodes.SUCCESS_PACKAGE_ACTIVATED);
 			}
 			return result;
@@ -477,6 +478,7 @@ public class PackageController
 				packageBag.setActive(false);
 				packageService.update(packageBag, requester);
 				repositoryService.publishRepository(packageBag.getRepository(), requester);
+				repositoryService.boostRepositoryVersion(packageBag.getRepository(), requester);
 				result.put("success", MessageCodes.SUCCESS_PACKAGE_DEACTIVATED);
 			}
 			return result;
@@ -507,6 +509,7 @@ public class PackageController
 			{
 				packageService.delete(id, requester);
 				repositoryService.publishRepository(packageBag.getRepository(), requester);
+				repositoryService.boostRepositoryVersion(packageBag.getRepository(), requester);
 				result.put("success", MessageCodes.SUCCESS_PACKAGE_DELETED);
 			}
 			return result;

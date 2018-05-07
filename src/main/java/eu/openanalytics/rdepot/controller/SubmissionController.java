@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -82,13 +83,11 @@ public class SubmissionController
 	private UploadRequestService uploadRequestService;
 	
 	@PreAuthorize("hasAuthority('user')")
-	@RequestMapping(value="/manager/packages/submit", method=RequestMethod.POST)
-	public String createSubmissions(@ModelAttribute(value="multiUploads") MultiUploadRequest multiUploads,
-			BindingResult result, Principal principal, RedirectAttributes redirectAttributes) 
-	{		
-		HashMap<String, String> error = new HashMap<String, String>();
-		HashMap<String, String> warning = new HashMap<String, String>();
-		HashMap<String, String> success = new HashMap<String, String>();
+	@RequestMapping(value="/api/manager/packages", method=RequestMethod.POST, produces="application/json")
+	public @ResponseBody HashMap<String, Pair<String, String>> createSubmissions(
+			@ModelAttribute(value="multiUploads") MultiUploadRequest multiUploads, Principal principal)
+	{
+		HashMap<String, Pair<String, String>> result = new HashMap<>();
 		
 		// Can't fail, because the user is already logged in
 		// except when someone changes his login name during his session?
@@ -96,7 +95,7 @@ public class SubmissionController
 		
 		// Check anyways
 		if(uploader == null)
-			error.put(principal.getName(), MessageCodes.ERROR_USER_NOT_FOUND);
+			result.put("error", Pair.of(principal.getName(), MessageCodes.ERROR_USER_NOT_FOUND));
 		else
 		{
 			for(int i = 0, l = multiUploads.getUploadRequests().length; i < l; i++)
@@ -141,15 +140,15 @@ public class SubmissionController
 								throw new UploadRequestValidationWarning(e.getMessage());
 							}
 						}
-						success.put(file.getOriginalFilename(), "submission.create.success");	
+						result.put("success", Pair.of(file.getOriginalFilename(), "submission.create.success"));	
 					}
 					catch(UploadRequestValidationException e)
 					{
-						error.put(file.getOriginalFilename(), e.getMessage());
+						result.put("error", Pair.of(file.getOriginalFilename(), e.getMessage()));
 					}
 					catch(UploadRequestValidationWarning w)
 					{
-						warning.put(file.getOriginalFilename(), w.getMessage());
+						result.put("warning", Pair.of(file.getOriginalFilename(), w.getMessage()));
 					}
 				}
 				if(repository != null && !repository.isDeleted() && repository.isPublished())
@@ -160,17 +159,26 @@ public class SubmissionController
 					} 
 					catch (RepositoryEditException e) 
 					{
-						error.put(repository.getName(), e.getMessage());
+						result.put("error", Pair.of(repository.getName(), e.getMessage()));
 					}
 				}
 			}
 		}
-		if(!error.isEmpty())
-			redirectAttributes.addFlashAttribute("error", error);
-		if(!warning.isEmpty())
-			redirectAttributes.addFlashAttribute("warning", warning);
-		if(!success.isEmpty())
-			redirectAttributes.addFlashAttribute("success", success);	
+		return result;
+	}
+	
+	@PreAuthorize("hasAuthority('user')")
+	@RequestMapping(value="/manager/packages/submit", method=RequestMethod.POST)
+	public String createSubmissions(@ModelAttribute(value="multiUploads") MultiUploadRequest multiUploads,
+			BindingResult result, Principal principal, RedirectAttributes redirectAttributes) 
+	{		
+		HashMap<String, Pair<String, String>> report = createSubmissions(multiUploads, principal);
+		if(report.containsKey("error"))
+			redirectAttributes.addFlashAttribute("error", report.get("error"));
+		if(report.containsKey("warning"))
+			redirectAttributes.addFlashAttribute("warning", report.get("warning"));
+		if(report.containsKey("success"))
+			redirectAttributes.addFlashAttribute("success", report.get("success"));
 		return "redirect:/manager";		
 	}
 	

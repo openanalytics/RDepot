@@ -1,0 +1,9 @@
+/bin/
+.gradle
+.settings
+.project
+.classpath
+*.jar
+*.war
+/build/
+/docker/proxy/logs

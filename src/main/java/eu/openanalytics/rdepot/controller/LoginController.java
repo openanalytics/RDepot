@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -21,27 +21,25 @@
 package eu.openanalytics.rdepot.controller;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class LoginController 
 {
 
 	@RequestMapping(value={"/login"}, method=RequestMethod.GET)
-	public ModelAndView login()
+	public String login()
 	{
-		return new ModelAndView("login");
+		return "login";
 	}
 	
 	@RequestMapping(value={"/loginfailed"}, method=RequestMethod.GET)
-	public ModelAndView loginfailed(ModelMap model) 
+	public String loginfailed(Model model) 
 	{
 		model.addAttribute("error", "true");
-		ModelAndView mav = new ModelAndView("login", model);
-		return mav;
+		return login();
 	}
 	
 }

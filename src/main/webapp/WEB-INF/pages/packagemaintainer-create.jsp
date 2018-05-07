@@ -17,7 +17,7 @@
 	    </div>
     </c:if>
     <c:url value="/manager/packages/maintainers/create" var="createPackageMaintainer" />
-	<form:form method="POST" commandName="packagemaintainer" modelAttribute="packagemaintainer" action="${createPackageMaintainer}" >
+	<form:form method="POST" modelAttribute="packagemaintainer" action="${createPackageMaintainer}" >
       <table>
         <tr>
           <td><spring:message code="form.label.user"/></td>

@@ -1,5 +1,6 @@
 package hello.storage;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,7 +28,11 @@ public class FileSystemStorageService implements StorageService {
     	saveLocation = saveLocation.resolve("src").resolve("contrib");
     	System.out.println("Saving to location " + saveLocation.toString());
 		try {
-			Files.createDirectories(saveLocation);
+			final Path contrib = Files.createDirectories(saveLocation);
+			Files.walk(contrib)
+				 .filter(i -> !contrib.equals(i))
+			     .map(Path::toFile)
+			     .forEach(File::delete);
 		}
 		catch (IOException e) {
             throw new StorageException("Failed to create directory " + saveLocation.getFileName(), e);
@@ -36,10 +41,6 @@ public class FileSystemStorageService implements StorageService {
     	{
 	        try 
 	        {
-	            if (file.isEmpty()) 
-	            {
-	                throw new StorageException("Failed to store empty file " + file.getOriginalFilename());
-	            }
 	            Files.copy(file.getInputStream(), saveLocation.resolve(file.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
 	        } catch (IOException e) {
 	            throw new StorageException("Failed to store file " + file.getOriginalFilename(), e);

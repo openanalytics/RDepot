@@ -56,7 +56,7 @@
                 <td>${packageBag.repository.name}</td>
                 <td>${packageBag.source}</td>
                 <td><input id="act${packageBag.id}" type="checkbox" onchange="changeActive(${packageBag.id})" <c:choose><c:when test='${packageBag.active}'>checked="checked"</c:when><c:otherwise></c:otherwise></c:choose> ></td>
-                <td><a href="<c:url value='/manager/packages' />/${packageBag.id}/edit"><img data-placement="bottom" data-toggle="tooltip" data-original-title="<spring:message code='table.actions.edit'/>" src="${staticUrl}/img/edit.png"></a> <a id="del${packageBag.id}" onclick="deletePackage(${packageBag.id}, '${packageBag.repository.id}${packageBag.name}')" href="#"><img data-placement="bottom" data-toggle="tooltip" data-original-title="<spring:message code='table.actions.delete'/>" src="${staticUrl}/img/delete.png"></a></td>
+                <td><!--<a href="<c:url value='/manager/packages' />/${packageBag.id}/edit"><img data-placement="bottom" data-toggle="tooltip" data-original-title="<spring:message code='table.actions.edit'/>" src="${staticUrl}/img/edit.png"></a>--><a id="del${packageBag.id}" onclick="deletePackage(${packageBag.id}, '${packageBag.repository.id}${packageBag.name}')" href="#"><img data-placement="bottom" data-toggle="tooltip" data-original-title="<spring:message code='table.actions.delete'/>" src="${staticUrl}/img/delete.png"></a></td>
             </tr>
         </c:forEach>
     </table>

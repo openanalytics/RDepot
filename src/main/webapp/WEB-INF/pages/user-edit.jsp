@@ -19,7 +19,7 @@
     </c:if>
 
     <c:url value="/manager/users/${user.id}/edit" var="editUser" />
-	<form:form method="POST" commandName="user" modelAttribute="user" action="${editUser}">
+	<form:form method="POST" modelAttribute="user" action="${editUser}">
     <form:errors path="*" cssStyle="color: red;" />
      <table>
         <tr>

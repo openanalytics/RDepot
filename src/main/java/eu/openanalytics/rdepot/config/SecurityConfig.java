@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -28,14 +28,15 @@ import javax.annotation.Resource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
 import org.springframework.security.ldap.authentication.AbstractLdapAuthenticationProvider;
 import org.springframework.security.ldap.authentication.AbstractLdapAuthenticator;
@@ -47,11 +48,9 @@ import eu.openanalytics.rdepot.authenticator.CustomBindAuthenticator;
 import eu.openanalytics.rdepot.service.UserService;
 
 
-@Configuration
-@ComponentScan("eu.openanalytics.rdepot")
-@EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled=true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter
+@ComponentScan("eu.openanalytics.rdepot")
+public class SecurityConfig
 {	
     
     @Resource
@@ -61,32 +60,80 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 	private static final String PROPERTY_NAME_LDAP_BASEDN = "ldap.basedn";
 	private static final String PROPERTY_NAME_LDAP_USEROU = "ldap.userou";
 	private static final String PROPERTY_NAME_LDAP_LOGINFIELD = "ldap.loginfield";
+	
 
-    @Override
-    public void configure(WebSecurity web) throws Exception 
-    {
-        web
-            .ignoring()
-                .antMatchers("/static/**");
-    }
+	@Configuration
+	@Order(1)
+	public class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter 
+	{
+	    @Override
+	    protected void configure(HttpSecurity http) throws Exception 
+	    {
+	        http
+	        	.antMatcher("/api/**")
+	        	.csrf().disable()
+				.authorizeRequests()
+					.anyRequest().hasAuthority("user")
+					.and()
+				.httpBasic()
+				.and()
+				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+	    }
+	    
+	    @Override
+	    @Bean
+	    public ProviderManager authenticationManager()
+	    {
+	    	return ldapAuthenticationManager();
+	    }
+	}
+	
+	@Configuration
+	public class FormLoginWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter 
+	{
+		@Override
+	    public void configure(WebSecurity web) throws Exception 
+	    {
+	        web
+	        	.ignoring()
+	            .antMatchers("/static/**");
+	    }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception 
+	    @Override
+	    protected void configure(HttpSecurity http) throws Exception 
+	    {
+	        http
+	            .authorizeRequests()
+	                .antMatchers("/manager**").hasAuthority("user")
+	                .antMatchers("/static/**").permitAll()
+	                //.anyRequest().hasAuthority("user")
+	                .and()
+	            .formLogin()
+	                .loginPage("/login")
+	                .defaultSuccessUrl("/manager")
+	                .failureUrl("/loginfailed")
+	                .permitAll().and()
+	            .logout()
+	            	//.logoutSuccessUrl("/login?success")
+	            	.invalidateHttpSession(true);
+	    }
+	    
+	    @Override
+	    @Bean
+	    public ProviderManager authenticationManager()
+	    {
+	    	return ldapAuthenticationManager();
+	    }
+	}
+	
+	@Bean
+    public ProviderManager ldapAuthenticationManager()
     {
-        http
-            .authorizeRequests()
-                .antMatchers("/manager**").hasAuthority("user")
-                .antMatchers("/static/**").permitAll()
-                //.anyRequest().hasAuthority("user")
-                .and()
-            .formLogin()
-                .loginPage("/login")
-                .defaultSuccessUrl("/manager")
-                .failureUrl("/loginfailed")
-                .permitAll().and()
-            .logout()
-            	//.logoutSuccessUrl("/login?success")
-            	.invalidateHttpSession(true);
+    	List<AuthenticationProvider> authenticationProviders = new ArrayList<AuthenticationProvider>();
+    	
+    	authenticationProviders.add(LDAPAuthenticationProvider());
+    	
+    	return new ProviderManager(authenticationProviders);
     }
     
     @Bean
@@ -94,29 +141,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
     {
         return new UserService();
     }
-
-    @Override
-    @Bean(name = "authenticationManager")
-    public ProviderManager authenticationManager()
-    {
-    	List<AuthenticationProvider> authenticationProviders = new ArrayList<AuthenticationProvider>();
-    	
-    	//authenticationProviders.add(JDBCAuthenticationProvider());
-    	authenticationProviders.add(LDAPAuthenticationProvider());
-    	
-    	return new ProviderManager(authenticationProviders);
-    }
-    
-//    @Bean
-//    public AbstractUserDetailsAuthenticationProvider JDBCAuthenticationProvider() 
-//    {
-//   
-//    	DaoAuthenticationProvider daoAuthProvider = new DaoAuthenticationProvider();
-//    	daoAuthProvider.setPasswordEncoder(passwordEncoder());
-//    	daoAuthProvider.setUserDetailsService(userService());
-//    	daoAuthProvider.setHideUserNotFoundExceptions(false);
-//    	return daoAuthProvider;
-//    }
     
     @Bean
     public AbstractLdapAuthenticationProvider LDAPAuthenticationProvider() 
@@ -150,13 +174,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
     	FilterBasedLdapUserSearch uSearch = new FilterBasedLdapUserSearch("", filter, LDAPContextSource());
     	return uSearch;
     }
-    
-//    @Bean
-//    @Override
-//    public AuthenticationManager authenticationManager() throws Exception 
-//    {    	
-//    	return new AuthenticationManagerBuilder()
-//    	.authenticationProvider(authenticationProvider())
-//        .build();
-//    }
 }

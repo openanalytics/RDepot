@@ -28,7 +28,7 @@
     <br>
     <h2><spring:message code="manager.title"/></h2>
     <c:url value="/manager/packages/submit" var="submitPackages" />
-    <form:form enctype="multipart/form-data" commandName="multiUploads" modelAttribute="multiUploads" method="POST" action="${submitPackages}?${_csrf.parameterName}=${_csrf.token}">
+    <form:form enctype="multipart/form-data" modelAttribute="multiUploads" method="POST" action="${submitPackages}?${_csrf.parameterName}=${_csrf.token}">
 	    <table class="submitpackages" >
 	    <tr>
 	        <th><spring:message code="table.header.file"/></th>

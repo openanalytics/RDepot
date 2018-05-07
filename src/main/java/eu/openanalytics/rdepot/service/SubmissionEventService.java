@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -103,7 +103,7 @@ public class SubmissionEventService
 	
 	public SubmissionEvent findById(int id) 
 	{
-		return submissionEventRepository.findOne(id);
+		return submissionEventRepository.getOne(id);
 	}
 	
 	public List<SubmissionEvent> findAll() 
@@ -129,7 +129,7 @@ public class SubmissionEventService
 	@Transactional(readOnly = false)
 	public void delete(int id)
 	{
-		SubmissionEvent event = submissionEventRepository.findOne(id);
+		SubmissionEvent event = submissionEventRepository.getOne(id);
 		if(event != null)
 			submissionEventRepository.delete(event);
 	}

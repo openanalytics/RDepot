@@ -17,7 +17,7 @@
 	    </div>
     </c:if>
     <c:url value="/manager/packages/maintainers/${packagemaintainer.id}/edit" var="editPackageMaintainer" />
-	<form:form method="POST" commandName="packagemaintainer" modelAttribute="packagemaintainer" action="${editPackageMaintainer}" >
+	<form:form method="POST" modelAttribute="packagemaintainer" action="${editPackageMaintainer}" >
 	<form:hidden path="user" value="${packagemaintainer.user.id}" />
       <table>
         <tr>

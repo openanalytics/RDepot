@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -112,12 +112,12 @@ public class PackageService
 	
 	public Package findByIdEvenDeleted(int id) 
 	{
-		return packageRepository.findOne(id);
+		return packageRepository.getOne(id);
 	}
 	
 	public List<Package> findByDeleted(boolean deleted) 
 	{
-		return packageRepository.findByDeleted(deleted, new Sort(new Order(Direction.ASC, "name")));
+		return packageRepository.findByDeleted(deleted, Sort.by(new Order(Direction.ASC, "name")));
 	}
 	
 	public Package findByIdAndDeleted(int id, boolean deleted) 
@@ -195,7 +195,7 @@ public class PackageService
 	
 	public List<Package> findAll() 
 	{
-		return packageRepository.findByDeleted(false, new Sort(new Order(Direction.ASC, "name")));
+		return packageRepository.findByDeleted(false, Sort.by(new Order(Direction.ASC, "name")));
 	}
 	
 	@Transactional(readOnly = false)

@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -110,7 +110,7 @@ public class RepositoryService
 	{
 		Repository createdRepository = repository;
 		createdRepository = repositoryRepository.save(createdRepository);
-		Event createEvent = eventService.findByValue("create");
+		Event createEvent = eventService.getCreateEvent();
 		repositoryEventService.create(createEvent, creator, createdRepository);
 		return createdRepository;
 	}
@@ -129,7 +129,7 @@ public class RepositoryService
 	public Repository delete(int id, User deleter) throws RepositoryDeleteException 
 	{
 		Repository deletedRepository = repositoryRepository.findByIdAndDeleted(id, false);
-		Event deleteEvent = eventService.findByValue("delete");
+		Event deleteEvent = eventService.getDeleteEvent();
 		try
 		{
 			if (deletedRepository == null)
@@ -155,15 +155,16 @@ public class RepositoryService
 	@Transactional(readOnly = false)
 	public void unpublishRepository(Repository repository, User updater) throws RepositoryEditException
 	{
-		File parent = new File(repositoryGenerationDirectory + separator + repository.getId());
-		File current = new File(repositoryGenerationDirectory + separator + repository.getId() + separator + "current");
+		File parent = new File(repositoryGenerationDirectory, Integer.toString(repository.getId()));
+		File current = new File(parent, "current");
 		try 
 		{
-			if(FileUtils.directoryContains(parent, current))
+			if(current.exists())
 			{
 				FileUtils.forceDelete(new File(repositoryGenerationDirectory + separator + repository.getId() + separator + "current"));
 				repository.setPublished(false);
 				update(repository, updater);
+				boostRepositoryVersion(repository, updater);
 			}
 		} 
 		catch (IOException e) 
@@ -188,8 +189,8 @@ public class RepositoryService
 			for(RepositoryEvent event : deletedRepository.getRepositoryEvents())
 				repositoryEventService.delete(event.getId());
 			repositoryRepository.delete(deletedRepository);
-			FileUtils.forceDelete(new File(packageUploadDirectory + separator + "repositories" + separator + id));
-			FileUtils.forceDelete(new File(repositoryGenerationDirectory + separator + id));
+			FileUtils.forceDelete(new File(packageUploadDirectory, "repositories" + separator + id));
+			FileUtils.forceDelete(new File(repositoryGenerationDirectory, Integer.toString(id)));
 			return deletedRepository;
 		}
 		catch(PackageDeleteException | RepositoryNotFound | PackageMaintainerDeleteException | RepositoryMaintainerNotFound | IOException e)
@@ -200,12 +201,12 @@ public class RepositoryService
 
 	public List<Repository> findAll() 
 	{
-		return repositoryRepository.findByDeleted(false, new Sort(new Order(Direction.ASC, "name")));
+		return repositoryRepository.findByDeleted(false, Sort.by(new Order(Direction.ASC, "name")));
 	}
 	
 	public List<Repository> findByDeleted(boolean deleted) 
 	{
-		return repositoryRepository.findByDeleted(deleted, new Sort(new Order(Direction.ASC, "name")));
+		return repositoryRepository.findByDeleted(deleted, Sort.by(new Order(Direction.ASC, "name")));
 	}
 	
 	public List<Repository> findMaintainedBy(User user) 
@@ -359,17 +360,17 @@ public class RepositoryService
 	
 	private void createFolderStructureForGeneration(Repository repository, String dateStamp) throws RepositoryEditException
 	{
-		File dateStampFolder = new File(repositoryGenerationDirectory.getAbsolutePath() + separator + repository.getId() + separator + dateStamp);
+		File dateStampFolder = new File(repositoryGenerationDirectory, repository.getId() + separator + dateStamp);
 		try 
 		{
 			if(!dateStampFolder.exists())
-				FileUtils.forceMkdir(dateStampFolder);
+				Files.createDirectories(dateStampFolder.toPath());
 			else 
 			{	
 				FileUtils.cleanDirectory(dateStampFolder);
 			} 
 			File contrib = new File(dateStampFolder.getAbsolutePath() + separator + "src" + separator + "contrib");
-			FileUtils.forceMkdir(contrib);
+			Files.createDirectories(contrib.toPath());
 		}
 		catch (IOException e) 
 		{
@@ -381,8 +382,8 @@ public class RepositoryService
 	{
 		try 
 		{
-			File target = new File(repositoryGenerationDirectory.getAbsolutePath() + separator + repository.getId() + separator + dateStamp);
-			File link = new File(repositoryGenerationDirectory.getAbsolutePath() + separator + repository.getId() + separator + "current");
+			File target = new File(repositoryGenerationDirectory, repository.getId() + separator + dateStamp);
+			File link = new File(repositoryGenerationDirectory, repository.getId() + separator + "current");
 			fileService.linkFileTo(target, link);
 			return target;
 		}
@@ -415,15 +416,16 @@ public class RepositoryService
             	.forEach(path -> map.add("files", new FileSystemResource(path.toFile())));
 			ResponseEntity<String> response = rest.postForEntity(repository.getServerAddress(), map, String.class);
 			if(!response.getStatusCode().is2xxSuccessful() || !Objects.equals(response.getBody(), "OK"))
-				throw new RepositoryEditException("repository.publish.remote.failed");
+				throw new RepositoryEditException("repository.publish.remote.failed: " + response.getStatusCodeValue() + "; " + response.getBody());
 		}
 		catch(Exception e)
 		{
-			throw new RepositoryEditException("repository.publish.remote.failed");
+			throw new RepositoryEditException("repository.publish.remote.failed: " + e.getMessage());
 		}
 		
 		repository.setPublished(true);
 		update(repository, uploader);
+		boostRepositoryVersion(repository, uploader);
 		
 		// TODO:
 		// 4. Generate the HTML pages? -> use template inside the resources folder?
@@ -439,10 +441,10 @@ public class RepositoryService
 			if(p.isActive())
 			{
 				File targetFile = new File(p.getSource());
-				File destFile = new File(folder.getAbsolutePath() + separator + p.getName() + "_" + p.getVersion() + ".tar.gz");
+				File destFile = new File(folder, p.getName() + "_" + p.getVersion() + ".tar.gz");
 				try 
 				{
-					FileUtils.copyFile(targetFile, destFile);
+					Files.copy(targetFile.toPath(), destFile.toPath());
 					packageString += "Package: " + p.getName() + System.getProperty("line.separator");
 					packageString += "Version: " + p.getVersion() + System.getProperty("line.separator");
 					if(p.getDepends() != null && !p.getDepends().trim().isEmpty())

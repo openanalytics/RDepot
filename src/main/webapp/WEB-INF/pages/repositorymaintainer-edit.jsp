@@ -17,7 +17,7 @@
 	    </div>
     </c:if>
     <c:url value="/manager/repositories/maintainers/${repositorymaintainer.id}/edit" var="editRepositoryMaintainer" />
-	<form:form method="POST" commandName="repositorymaintainer" modelAttribute="repositorymaintainer" action="${editRepositoryMaintainer}" >
+	<form:form method="POST" modelAttribute="repositorymaintainer" action="${editRepositoryMaintainer}" >
     <form:hidden path="user" value="${repositorymaintainer.user.id}" />
       <table>
         <tr>

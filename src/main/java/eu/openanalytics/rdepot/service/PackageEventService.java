@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -133,7 +133,7 @@ public class PackageEventService
 	
 	public PackageEvent findById(int id) 
 	{
-		return packageEventRepository.findOne(id);
+		return packageEventRepository.getOne(id);
 	}
 	
 	public List<PackageEvent> findAll() 
@@ -193,7 +193,7 @@ public class PackageEventService
 	@Transactional(readOnly = false)
 	public void delete(int id)
 	{
-		PackageEvent deletedPackageEvent = packageEventRepository.findOne(id);
+		PackageEvent deletedPackageEvent = packageEventRepository.getOne(id);
 
 		if (deletedPackageEvent != null)	
 			packageEventRepository.delete(deletedPackageEvent);	

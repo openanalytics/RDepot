@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,11 +20,14 @@
  */
 package eu.openanalytics.rdepot.authenticator;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.support.BaseLdapPathContextSource;
@@ -33,6 +36,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 
 import eu.openanalytics.rdepot.exception.UserEditException;
+import eu.openanalytics.rdepot.model.Role;
 import eu.openanalytics.rdepot.model.User;
 import eu.openanalytics.rdepot.service.EventService;
 import eu.openanalytics.rdepot.service.RoleService;
@@ -57,24 +61,49 @@ public class CustomBindAuthenticator extends BindAuthenticator
 	@Resource
 	private Environment env;
 	
-	private static final String PROPERTY_NAME_LDAP_LOGINFIELD = "ldap.loginfield";
-	private static final String PROPERTY_NAME_LDAP_NAMEFIELD = "ldap.namefield";
-	private static final String PROPERTY_NAME_LDAP_EMAILFIELD = "ldap.emailfield";
+	@Value("${ldap.loginfield}")
+	private String ldapLoginField;
 	
+	@Value("${ldap.namefield}")
+	private String ldapNameField;
+	
+	@Value("${ldap.emailfield}")
+	private String ldapEmailField;
+	
+	@Value("${ldap.default.admins}")
+	private String ldapDefaultAdmins;
+		
 	public CustomBindAuthenticator(BaseLdapPathContextSource contextSource) 
 	{
 		super(contextSource);
 	}
 	
+	private void validateConfiguration(String value, String name)
+	{
+		if (value == null || value.trim().isEmpty())
+			throw new IllegalArgumentException("Configuration value '" + name + "' is either null or empty");
+	}
+	
 	@Override
 	public DirContextOperations authenticate(Authentication authentication)
 	{
+		
+		validateConfiguration(ldapLoginField, "ldap.loginfield");
+		validateConfiguration(ldapNameField, "ldap.namefield");
+		validateConfiguration(ldapEmailField, "ldap.emailfield");
+		
 		DirContextOperations userData = super.authenticate(authentication);
 		
-		String login = userData.getStringAttribute(env.getRequiredProperty(PROPERTY_NAME_LDAP_LOGINFIELD));
-		String name = userData.getStringAttribute(env.getRequiredProperty(PROPERTY_NAME_LDAP_NAMEFIELD));
-		String email = userData.getStringAttribute(env.getRequiredProperty(PROPERTY_NAME_LDAP_EMAILFIELD));
+		String login = userData.getStringAttribute(ldapLoginField);
+		String name = userData.getStringAttribute(ldapNameField);
+		String email = userData.getStringAttribute(ldapEmailField);
 		User user = userService.findByLoginEvenDeleted(login);
+		
+		if (ldapDefaultAdmins == null || ldapDefaultAdmins.trim().isEmpty())
+			ldapDefaultAdmins = "admin";
+		
+		List<String> defaultAdmins = Arrays.asList(ldapDefaultAdmins.trim().split("\\s*,\\s*"));
+		Role adminRole = roleService.getAdminRole();
 		
 		if (user == null)
 		{
@@ -83,7 +112,10 @@ public class CustomBindAuthenticator extends BindAuthenticator
 			{
 				user = new User();
 				user.setLogin(login);
-				user.setRole(roleService.findByName("user"));
+				if (defaultAdmins.contains(login))
+					user.setRole(adminRole);
+				else
+					user.setRole(roleService.getUserRole());
 				user.setName(name);
 				user.setEmail(email);
 				user.setActive(true);
@@ -121,7 +153,9 @@ public class CustomBindAuthenticator extends BindAuthenticator
 			if(!Objects.equals(name, user.getName()))
 				user.setName(name);
 			if(!Objects.equals(email, user.getEmail()))
-				user.setEmail(email);		
+				user.setEmail(email);
+			if (defaultAdmins.contains(login) && !user.getRole().equals(adminRole))
+				user.setRole(adminRole);
 		}
 	
 		user.setLastLoggedInOn(new Date());

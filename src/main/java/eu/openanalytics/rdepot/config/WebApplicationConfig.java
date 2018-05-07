@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -29,10 +29,10 @@ import java.util.Properties;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -46,21 +46,14 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
-import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import org.springframework.web.servlet.view.JstlView;
 
 import com.google.gson.Gson;
 
@@ -77,28 +70,38 @@ import eu.openanalytics.rdepot.validation.PackageValidator;
 import eu.openanalytics.rdepot.validation.RepositoryMaintainerValidator;
 import eu.openanalytics.rdepot.validation.RepositoryValidator;
 import eu.openanalytics.rdepot.validation.UserValidator;
-import eu.openanalytics.rdepot.view.JsonViewResolver;
 
 @Configuration
-@EnableWebMvc
-@EnableTransactionManagement
 @ComponentScan("eu.openanalytics.rdepot")
-@PropertySource("classpath:application.properties")
 @EnableJpaRepositories("eu.openanalytics.rdepot.repository")
-public class WebApplicationConfig extends WebMvcConfigurerAdapter
+public class WebApplicationConfig implements WebMvcConfigurer
 {
 
-	private static final String PROPERTY_NAME_DATABASE_DRIVER = "db.driver";
-	private static final String PROPERTY_NAME_DATABASE_PASSWORD = "db.password";
-	private static final String PROPERTY_NAME_DATABASE_URL = "db.url";
-	private static final String PROPERTY_NAME_DATABASE_USERNAME = "db.username";
-
-	private static final String PROPERTY_NAME_HIBERNATE_DIALECT = "hibernate.dialect";
-	private static final String PROPERTY_NAME_HIBERNATE_SHOW_SQL = "hibernate.show_sql";
-	private static final String PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN = "entitymanager.packages.to.scan";
+	@Value("${db.driver}")
+	private String databaseDriver;
 	
-	private static final String PROPERTY_NAME_PACKAGE_UPLOAD_DIRECTORY = "package.upload.dir";
-	private static final String PROPERTY_NAME_REPOSITORY_GENERATION_DIRECTORY = "repository.generation.dir";
+	@Value("${db.password}")
+	private String databasePassword;
+	
+	@Value("${db.url}")
+	private String databaseUrl;
+	
+	@Value("${db.username}")
+	private String databaseUsername;
+	
+	@Value("${hibernate.dialect}")
+	private String hibernateDialect;
+	
+	@Value("${hibernate.show_sql}")
+	private String hibernateShowSql;
+
+	@Value("${package.upload.dir}")
+	private String packageUploadDir;
+	
+	@Value("${repository.generation.dir}")
+	private String repositoryGenerationDir;
+	
+	private static final String PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN = "entitymanager.packages.to.scan";
 
 	@Resource
 	private Environment env;
@@ -108,10 +111,10 @@ public class WebApplicationConfig extends WebMvcConfigurerAdapter
 	{
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 
-		dataSource.setDriverClassName(env.getRequiredProperty(PROPERTY_NAME_DATABASE_DRIVER));
-		dataSource.setUrl(env.getRequiredProperty(PROPERTY_NAME_DATABASE_URL));
-		dataSource.setUsername(env.getRequiredProperty(PROPERTY_NAME_DATABASE_USERNAME));
-		dataSource.setPassword(env.getRequiredProperty(PROPERTY_NAME_DATABASE_PASSWORD));
+		dataSource.setDriverClassName(databaseDriver);
+		dataSource.setUrl(databaseUrl);
+		dataSource.setUsername(databaseUsername);
+		dataSource.setPassword(databasePassword);
 
 		return dataSource;
 	}
@@ -133,8 +136,8 @@ public class WebApplicationConfig extends WebMvcConfigurerAdapter
 	private Properties hibProperties() 
 	{
 		Properties properties = new Properties();
-		properties.put(PROPERTY_NAME_HIBERNATE_DIALECT,	env.getRequiredProperty(PROPERTY_NAME_HIBERNATE_DIALECT));
-		properties.put(PROPERTY_NAME_HIBERNATE_SHOW_SQL, env.getRequiredProperty(PROPERTY_NAME_HIBERNATE_SHOW_SQL));
+		properties.put("hibernate.dialect",	hibernateDialect);
+		properties.put("hibernate.show_sql", hibernateShowSql);
 		return properties;
 	}
 
@@ -154,15 +157,15 @@ public class WebApplicationConfig extends WebMvcConfigurerAdapter
         registry.addFormatter(userFormatter());
     }
 
-	@Bean
-	public ViewResolver jspViewResolver() 
-	{
-		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-		resolver.setPrefix("/WEB-INF/pages/");
-		resolver.setSuffix(".jsp");
-		resolver.setViewClass(JstlView.class);
-		return resolver;
-	}
+//	@Bean
+//	public ViewResolver jspViewResolver() 
+//	{
+//		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+//		resolver.setPrefix("/pages/");
+//		resolver.setSuffix(".jsp");
+//		resolver.setViewClass(JstlView.class);
+//		return resolver;
+//	}
 	
 	@Bean
 	public ResourceBundleMessageSource messageSource() 
@@ -208,11 +211,11 @@ public class WebApplicationConfig extends WebMvcConfigurerAdapter
 	    registry.addInterceptor(localeChangeInterceptor());
 	}
 	
-	@Bean
-	public ViewResolver jsonViewResolver()
-	{
-		return new JsonViewResolver();
-	}
+//	@Bean
+//	public ViewResolver jsonViewResolver()
+//	{
+//		return new JsonViewResolver();
+//	}
 	
 	@Bean
 	public Gson jsonParser()
@@ -224,23 +227,23 @@ public class WebApplicationConfig extends WebMvcConfigurerAdapter
 	public void configureContentNegotiation(ContentNegotiationConfigurer configurer) 
 	{
 	      configurer.ignoreAcceptHeader(false)
-	                      .defaultContentType(MediaType.TEXT_HTML);
+	                .defaultContentType(MediaType.TEXT_HTML);
 	}
 	 
-	@Bean
-	public ViewResolver contentNegotiatingViewResolver(ContentNegotiationManager manager)
-	{	 
-	    List<ViewResolver> resolvers = new ArrayList<ViewResolver>();
-
-	    resolvers.add(jspViewResolver());
-	    resolvers.add(jsonViewResolver());
-	 
-	    // Create the CNVR plugging in the resolvers and the content-negotiation manager
-	    ContentNegotiatingViewResolver resolver = new ContentNegotiatingViewResolver();
-	    resolver.setViewResolvers(resolvers);
-	    resolver.setContentNegotiationManager(manager);
-	    return resolver;
-	 }
+//	@Bean
+//	public ViewResolver contentNegotiatingViewResolver(ContentNegotiationManager manager)
+//	{	 
+//	    List<ViewResolver> resolvers = new ArrayList<ViewResolver>();
+//
+//	    resolvers.add(jspViewResolver());
+//	    resolvers.add(jsonViewResolver());
+//	 
+//	    // Create the CNVR plugging in the resolvers and the content-negotiation manager
+//	    ContentNegotiatingViewResolver resolver = new ContentNegotiatingViewResolver();
+//	    resolver.setViewResolvers(resolvers);
+//	    resolver.setContentNegotiationManager(manager);
+//	    return resolver;
+//	 }
 	
     @Bean
     public MappingJackson2HttpMessageConverter jsonConverter()
@@ -327,7 +330,7 @@ public class WebApplicationConfig extends WebMvcConfigurerAdapter
 		File location;
 		try 
 		{
-			location = new File(env.getRequiredProperty(PROPERTY_NAME_PACKAGE_UPLOAD_DIRECTORY));
+			location = new File(packageUploadDir);
 			if(!location.exists() || !location.canRead() || !location.canWrite())
 			{
 				location = new File("");
@@ -346,7 +349,7 @@ public class WebApplicationConfig extends WebMvcConfigurerAdapter
 		File location;
 		try 
 		{
-			location = new File(env.getRequiredProperty(PROPERTY_NAME_REPOSITORY_GENERATION_DIRECTORY));
+			location = new File(repositoryGenerationDir);
 			if(!location.exists() || !location.canRead() || !location.canWrite())
 			{
 				location = new File("");
