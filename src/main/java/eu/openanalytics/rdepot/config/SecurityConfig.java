@@ -70,6 +70,9 @@ public class SecurityConfig
     
     @Value("${ldap.loginfield}")
 	private String ldapLoginfield;
+    
+    @Value("${ldap.searchbase}")
+	private String ldapSearchbase;
 	
     private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 
@@ -197,7 +200,10 @@ public class SecurityConfig
     {
     	validateConfiguration(ldapLoginfield, "ldap.loginfield");
     	String filter = "(" + ldapLoginfield + "={0})";
-    	FilterBasedLdapUserSearch uSearch = new FilterBasedLdapUserSearch("", filter, LDAPContextSource());
+    	String searchBase = "";
+    	if (ldapSearchbase != null && !ldapSearchbase.trim().isEmpty())
+    		searchBase = ldapSearchbase;
+    	FilterBasedLdapUserSearch uSearch = new FilterBasedLdapUserSearch(searchBase, filter, LDAPContextSource());
     	return uSearch;
     }
 }
