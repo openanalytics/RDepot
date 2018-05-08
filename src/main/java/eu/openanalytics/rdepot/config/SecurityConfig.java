@@ -65,19 +65,19 @@ public class SecurityConfig
     @Value("${ldap.basedn}")
 	private String ldapBasedn;
     
-    @Value("${ldap.userou}")
+    @Value("${ldap.userou:}")
 	private String ldapUserou;
     
     @Value("${ldap.loginfield}")
 	private String ldapLoginfield;
     
-    @Value("${ldap.searchbase}")
+    @Value("${ldap.searchbase:}")
 	private String ldapSearchbase;
     
-    @Value("${ldap.manager.dn}")
+    @Value("${ldap.manager.dn:}")
 	private String ldapManagerDn;
     
-    @Value("${ldap.manager.password}")
+    @Value("${ldap.manager.password:}")
 	private String ldapManagerPassword;
 	
     private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
@@ -199,7 +199,10 @@ public class SecurityConfig
     	String url = ldapUrl + "/" + ldapBasedn;
     	DefaultSpringSecurityContextSource ctxsrc = new DefaultSpringSecurityContextSource(url);
     	if (ldapManagerDn != null && !ldapManagerDn.trim().isEmpty())
+    	{
+    		log.info("Using value " + ldapManagerDn + " as Manager Dn");
     		ctxsrc.setUserDn(ldapManagerDn);
+    	}
     	if (ldapManagerPassword != null && !ldapManagerPassword.trim().isEmpty())
     		ctxsrc.setPassword(ldapManagerPassword);
     	return ctxsrc;

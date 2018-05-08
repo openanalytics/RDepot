@@ -42,7 +42,7 @@ public class CommonsMultipartFileValidator
 	private void validateContentType(CommonsMultipartFile target) throws CommonsMultipartFileValidationException
 	{
 		if(!Objects.equals(target.getContentType(), "application/gzip"))
-			throw new CommonsMultipartFileValidationException(MessageCodes.ERROR_FORM_INVALID_CONTENTTYPE);
+			throw new CommonsMultipartFileValidationException(MessageCodes.ERROR_FORM_INVALID_CONTENTTYPE + ": " + target.getContentType());
 	}
 	
 	private void validateSize(CommonsMultipartFile target) throws CommonsMultipartFileValidationException
