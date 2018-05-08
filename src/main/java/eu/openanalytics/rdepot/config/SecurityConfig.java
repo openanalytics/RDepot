@@ -25,6 +25,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -69,11 +71,13 @@ public class SecurityConfig
     @Value("${ldap.loginfield}")
 	private String ldapLoginfield;
 	
+    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 
 	public static void validateConfiguration(String value, String name)
 	{
 		if (value == null || value.trim().isEmpty())
 			throw new IllegalArgumentException("Configuration value '" + name + "' is either null or empty");
+		log.info("Using value '" + value + "' for property " + name);
 	}
     
 	@Configuration
@@ -171,6 +175,8 @@ public class SecurityConfig
     	String userDnPattern = ldapLoginfield + "={0}";
     	if (ldapUserou != null && !ldapUserou.trim().isEmpty())
     		userDnPattern += ",ou=" + ldapUserou;
+		log.info("Using value '" + ldapUserou + "' for property ldap.userou");
+		log.info("Using value '" + userDnPattern + "' as the User Dn Pattern");
     	bind.setUserDnPatterns(new String[]{userDnPattern});
     	bind.setUserSearch(userSearch());
     	return bind;
