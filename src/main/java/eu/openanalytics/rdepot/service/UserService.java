@@ -32,9 +32,11 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -46,8 +48,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.context.annotation.ScopedProxyMode; 
-import org.springframework.core.env.Environment;
 
 import eu.openanalytics.rdepot.comparator.UserComparator;
 import eu.openanalytics.rdepot.exception.AdminNotFound;
@@ -123,10 +123,8 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 	@Resource
 	private RepositoryMaintainerService repositoryMaintainerService;
 	
-	@Resource
-	private Environment env;
-   
-	private static final String PROPERTY_NAME_LDAP_LOGINFIELD = "ldap.loginfield";
+	@Value("${ldap.loginfield}")
+	private String ldapLoginfield;
 
 	@Transactional(readOnly = false)
 	public User create(User user) 
@@ -569,7 +567,7 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 	@Override
 	public Collection<? extends GrantedAuthority> getGrantedAuthorities(DirContextOperations userData, String username) 
 	{
-		String login = userData.getStringAttribute(env.getRequiredProperty(PROPERTY_NAME_LDAP_LOGINFIELD));
+		String login = userData.getStringAttribute(ldapLoginfield);
 		User user = userRepository.findByLogin(login);	
 		Collection<SimpleGrantedAuthority> authorities = new HashSet<SimpleGrantedAuthority>(0);
 		

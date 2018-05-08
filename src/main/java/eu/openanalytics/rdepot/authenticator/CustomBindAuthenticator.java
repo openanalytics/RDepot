@@ -27,6 +27,8 @@ import java.util.Objects;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.ldap.core.DirContextOperations;
@@ -73,6 +75,8 @@ public class CustomBindAuthenticator extends BindAuthenticator
 	
 	@Value("${ldap.default.admins}")
 	private String ldapDefaultAdmins;
+	
+    private static final Logger log = LoggerFactory.getLogger(CustomBindAuthenticator.class);
 		
 	public CustomBindAuthenticator(BaseLdapPathContextSource contextSource) 
 	{
@@ -87,7 +91,17 @@ public class CustomBindAuthenticator extends BindAuthenticator
 		SecurityConfig.validateConfiguration(ldapNameField, "ldap.namefield");
 		SecurityConfig.validateConfiguration(ldapEmailField, "ldap.emailfield");
 		
-		DirContextOperations userData = super.authenticate(authentication);
+		DirContextOperations userData;
+		
+		try
+		{
+			userData = super.authenticate(authentication);
+		} 
+		catch (Exception e)
+		{
+			log.info("Got exception: " + e.toString());
+			throw e;
+		}
 		
 		String login = userData.getStringAttribute(ldapLoginField);
 		
