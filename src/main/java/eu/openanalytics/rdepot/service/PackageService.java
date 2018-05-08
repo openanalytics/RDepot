@@ -105,6 +105,20 @@ public class PackageService
 		return createdPackage;
 	}
 	
+	@Transactional(readOnly = false)
+	public Package create(Package packageBag, User creator, boolean replace) throws PackageDeleteException, RepositoryEditException 
+	{
+		if (replace)
+		{
+			Package checkSameVersion = findByNameAndVersionAndRepository(packageBag.getName(), packageBag.getVersion(), packageBag.getRepository());
+			if (checkSameVersion != null)
+			{
+				delete(checkSameVersion.getId(), creator);
+			}
+		}
+		return create(packageBag, creator);
+	}
+	
 	public Package findById(int id) 
 	{
 		return packageRepository.findByIdAndDeleted(id, false);

@@ -40,9 +40,11 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import eu.openanalytics.rdepot.exception.CommonsMultipartFileValidationException;
 import eu.openanalytics.rdepot.exception.ManualCreateException;
+import eu.openanalytics.rdepot.exception.PackageDeleteException;
 import eu.openanalytics.rdepot.exception.PackageEditException;
 import eu.openanalytics.rdepot.exception.PackageValidationException;
 import eu.openanalytics.rdepot.exception.PackageValidationWarning;
+import eu.openanalytics.rdepot.exception.RepositoryEditException;
 import eu.openanalytics.rdepot.exception.SourceFileDeleteException;
 import eu.openanalytics.rdepot.exception.UploadRequestValidationException;
 import eu.openanalytics.rdepot.messaging.MessageCodes;
@@ -140,13 +142,18 @@ public class UploadRequestService
 			packageBag.setActive(active);
 			
 			packageService.chooseBestMaintainer(packageBag);
-			packageValidator.validate(packageBag);
-			packageBag = packageService.create(packageBag, uploader);
+			packageValidator.validate(packageBag, uploadRequest.getReplace());
+			packageBag = packageService.create(packageBag, uploader, uploadRequest.getReplace());
 			packageService.createManuals(packageBag);
 			return packageBag;
 			
 		} 
-		catch (CommonsMultipartFileValidationException | PackageEditException | ManualCreateException | IOException e) 
+		catch (CommonsMultipartFileValidationException | 
+			   PackageEditException | 
+			   ManualCreateException | 
+			   IOException | 
+			   RepositoryEditException | 
+			   PackageDeleteException e) 
 		{
 			throw new UploadRequestValidationException(e.getMessage());
 		}

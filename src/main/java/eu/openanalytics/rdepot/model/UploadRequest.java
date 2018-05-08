@@ -29,6 +29,7 @@ public class UploadRequest
 	private CommonsMultipartFile[] fileData;
 	private Repository repository;
 	private String[] changes;
+	private Boolean replace = false;
 	
 	public UploadRequest()
 	{
@@ -42,11 +43,26 @@ public class UploadRequest
 		this.repository = repository;
 	}
 	
+	public UploadRequest(CommonsMultipartFile[] fileData, Repository repository, Boolean replace)
+	{
+		this.fileData = fileData;
+		this.repository = repository;
+		this.setReplace(replace);
+	}
+	
 	public UploadRequest(CommonsMultipartFile[] fileData, Repository repository, String[] changes)
 	{
 		this.fileData = fileData;
 		this.repository = repository;
 		this.changes = changes;
+	}
+	
+	public UploadRequest(CommonsMultipartFile[] fileData, Repository repository, String[] changes, Boolean replace)
+	{
+		this.fileData = fileData;
+		this.repository = repository;
+		this.changes = changes;
+		this.setReplace(replace);
 	}
 
 	public CommonsMultipartFile[] getFileData() {
@@ -71,6 +87,20 @@ public class UploadRequest
 
 	public void setChanges(String[] changes) {
 		this.changes = changes;
+	}
+
+	/**
+	 * @return the replace
+	 */
+	public Boolean getReplace() {
+		return new Boolean(replace);
+	}
+
+	/**
+	 * @param replace the replace to set
+	 */
+	public void setReplace(Boolean replace) {
+		this.replace = new Boolean(replace);
 	}
 	
 }

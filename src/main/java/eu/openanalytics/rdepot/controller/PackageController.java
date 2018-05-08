@@ -347,7 +347,7 @@ public class PackageController
 				redirectAttributes.addFlashAttribute("error", MessageCodes.ERROR_USER_NOT_AUTHORIZED);
 			else
 			{
-				packageValidator.validate(packageBag);
+				packageValidator.validate(packageBag, false);
 				packageService.update(packageBag, requester);
 				redirectAttributes.addFlashAttribute("success", MessageCodes.SUCCESS_PACKAGE_UPDATED);
 			}
