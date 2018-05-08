@@ -73,6 +73,12 @@ public class SecurityConfig
     
     @Value("${ldap.searchbase}")
 	private String ldapSearchbase;
+    
+    @Value("${ldap.manager.dn}")
+	private String ldapManagerDn;
+    
+    @Value("${ldap.manager.password}")
+	private String ldapManagerPassword;
 	
     private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 
@@ -192,6 +198,10 @@ public class SecurityConfig
     	validateConfiguration(ldapBasedn, "ldap.basedn");
     	String url = ldapUrl + "/" + ldapBasedn;
     	DefaultSpringSecurityContextSource ctxsrc = new DefaultSpringSecurityContextSource(url);
+    	if (ldapManagerDn != null && !ldapManagerDn.trim().isEmpty())
+    		ctxsrc.setUserDn(ldapManagerDn);
+    	if (ldapManagerPassword != null && !ldapManagerPassword.trim().isEmpty())
+    		ctxsrc.setPassword(ldapManagerPassword);
     	return ctxsrc;
     }
     
