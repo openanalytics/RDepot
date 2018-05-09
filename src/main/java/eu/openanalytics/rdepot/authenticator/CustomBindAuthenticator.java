@@ -114,6 +114,12 @@ public class CustomBindAuthenticator extends BindAuthenticator
 		
 		name = name.substring(0, name.length() - 2);
 		String email = userData.getStringAttribute(ldapEmailField);
+		
+		if (email == null) 
+		{
+			email = login + "@localhost";
+		}
+		
 		User user = userService.findByLoginEvenDeleted(login);
 		
 		if (ldapDefaultAdmins == null || ldapDefaultAdmins.trim().isEmpty())
