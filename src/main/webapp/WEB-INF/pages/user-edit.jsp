@@ -25,21 +25,21 @@
         <tr>
           <td><spring:message code="form.label.name"/></td>
           <td>
-            <form:input disabled="true" path="name" size="40" required="true" class="form-control" />
+            <form:input readOnly="true" path="name" size="40" required="true" class="form-control" />
             <form:errors path="name" cssStyle="color: red;" />
           </td>
         </tr>
         <tr>
           <td><spring:message code="form.label.email"/></td>
           <td>
-            <form:input disabled="true" path="email" type="email" size="40" required="true" class="form-control" />
+            <form:input readOnly="true" path="email" type="email" size="40" required="true" class="form-control" />
             <form:errors path="email" cssStyle="color: red;" />
           </td>
         </tr>
         <tr>
           <td><spring:message code="form.label.login"/></td>
           <td>
-            <form:input disabled="true" path="login" size="40" required="true" class="form-control" />
+            <form:input readOnly="true" path="login" size="40" required="true" class="form-control" />
             <form:errors path="login" cssStyle="color: red;" />
           </td>
         </tr>

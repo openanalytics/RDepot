@@ -23,7 +23,7 @@
         <tr>
           <td><spring:message code="form.label.user"/></td>
           <td>
-            <input class="form-control" value="${packagemaintainer.user.name}" size="40" disabled >
+            <input class="form-control" value="${packagemaintainer.user.name}" size="40" readonly="readonly" >
             <form:errors path="user" cssStyle="color: red;" />
           </td>
         </tr>
