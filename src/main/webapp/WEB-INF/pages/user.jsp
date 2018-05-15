@@ -43,7 +43,7 @@
                </tr>
                <tr>
                    <td><spring:message code="table.header.role"/></td>
-                   <td>${user.role.name}</td>
+                   <td>${user.role.description}</td>
                </tr>
                <tr>
                    <td><spring:message code="table.header.active"/></td>

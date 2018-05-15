@@ -21,7 +21,6 @@
 package eu.openanalytics.rdepot.service;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -54,6 +53,7 @@ import eu.openanalytics.rdepot.model.Repository;
 import eu.openanalytics.rdepot.model.RepositoryMaintainer;
 import eu.openanalytics.rdepot.model.UploadRequest;
 import eu.openanalytics.rdepot.model.User;
+import eu.openanalytics.rdepot.r.RDescription;
 import eu.openanalytics.rdepot.validation.CommonsMultipartFileValidator;
 import eu.openanalytics.rdepot.validation.PackageValidator;
 import eu.openanalytics.rdepot.warning.UploadRequestValidationWarning;
@@ -306,10 +306,9 @@ public class UploadRequestService
 	
 	public Properties readDescription(File file) throws UploadRequestValidationException
 	{
-		Properties prop = new Properties();
 		try 
 		{
-			prop.load(new FileInputStream(file));
+			return new RDescription(file);
 		} 
 		catch (FileNotFoundException e) 
 		{
@@ -321,7 +320,6 @@ public class UploadRequestService
 			deleteUpload(file.getParentFile());
 			throw new UploadRequestValidationException("file.description.io");
 		}
-		return prop;
 	}
 	
 }
