@@ -37,7 +37,7 @@
         <div class="InstallInstruct">
             <h3><spring:message code="package.title.install"/></h3>
             <p class="install"><spring:message code="package.info.install"/></p>
-            <pre>install.packages(&quot;${packageBag.name}&quot;, repos = &quot;${packageBag.repository.publicationUri}&quot;, type = &quot;source&quot;)</pre>
+            <pre>install.packages(&quot;${packageBag.name}&quot;, repos = c(rdepot = &quot;${packageBag.repository.publicationUri}&quot;, getOption(&quot;repos&quot;)))</pre>
         </div>
         <h3><spring:message code="package.title.documentation"/></h3>
         <table class="vignette">
