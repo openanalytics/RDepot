@@ -39,12 +39,14 @@
     <table id="packages"> 
         <tr>
             <th><spring:message code="table.header.package"/></th>
+            <th><spring:message code="table.header.version"/></th>
             <th><spring:message code="table.header.maintainer"/></th>
             <th><spring:message code="table.header.title"/></th>
         </tr>
         <c:forEach items="${packages}" var="packageBag" >
             <tr>
                 <td><a href="<c:url value='/manager/packages' />/${packageBag.id}/published">${packageBag.name}</a></td>
+                <td>${packageBag.version}</td>
                 <td>${packageBag.user.name}</td>
                 <td>${packageBag.title}</td>
             </tr>
