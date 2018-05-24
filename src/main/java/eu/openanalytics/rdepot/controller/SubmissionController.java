@@ -116,6 +116,7 @@ public class SubmissionController
 								submission.getPackage().getName(), submission.getPackage().getRepository(),
 								uploader));
 						submission = submissionService.create(submission, uploader);
+						// TODO: check if submission really just is submission and doesn't alter anything in the db
 						if(!submission.isAccepted())
 						{	try 
 							{

@@ -144,7 +144,24 @@ public class UploadRequestService
 			packageService.chooseBestMaintainer(packageBag);
 			packageValidator.validate(packageBag, uploadRequest.getReplace());
 			packageBag = packageService.create(packageBag, uploader, uploadRequest.getReplace());
+			
+			// TODO: where to do this? if submission not accepted, wait until accepted...
+			// also check if submission really just is submission and doesn't alter anything in the db
+//			if (active) 
+//			{
+//				for(Package p : packageBag.getRepository().getPackages())
+//				{
+//					if (p.getName().equals(name) && p.getId() != packageBag.getId())
+//					{
+//						packageService.deactivatePackage(p, uploader);
+//					}
+//				}
+//			}
+			
 			packageService.createManuals(packageBag);
+			
+			
+			
 			return packageBag;
 			
 		} 

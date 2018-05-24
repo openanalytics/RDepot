@@ -52,6 +52,7 @@ dependencies {
     compile group: 'org.postgresql', name: 'postgresql', version:'+'
     compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-jasper', version: '+'
 	compile group: 'jstl', name: 'jstl', version:'+'
+	compile group: 'org.jsoup', name: 'jsoup', version: '1.11.3'
 	testCompile("junit:junit")
 }
 

@@ -222,6 +222,17 @@ public class PackageService
 		}
 	}
 	
+	public byte[] readVignette(int id, String fileName)
+	{
+		Package packageBag = findById(id);
+		byte[] bytes = null;
+		if(packageBag != null)
+		{
+			bytes = packageBag.readVignette(fileName);
+		}
+		return bytes;
+	}
+	
 	@Transactional(readOnly = false)
 	public void shiftDeleteSubmissions(Package packageBag) throws SubmissionDeleteException
 	{
@@ -532,8 +543,7 @@ public class PackageService
 		if(targzfile != null && targzfile.exists() && targzfile.getParentFile() != null && targzfile.getParentFile().exists())
 		{
 			String name = packageBag.getName();
-			String manualPdfPath = targzfile.getParent() + "/" + name + "/" + name + ".pdf";
-			File manualPdf = new File(manualPdfPath);
+			File manualPdf = new File(targzfile.getParent(), name + "/" + name + ".pdf");
 			if(manualPdf != null && manualPdf.getParentFile() != null && manualPdf.getParentFile().exists() && !manualPdf.exists())
 			{
 				Process p;

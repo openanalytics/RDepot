@@ -20,10 +20,19 @@
  */
 package eu.openanalytics.rdepot.model;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Collections;
+
 // Generated Jun 24, 2013 12:33:03 PM by Hibernate Tools 4.0.0
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -34,6 +43,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.apache.commons.io.FilenameUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.springframework.core.io.FileSystemResource;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -71,6 +86,9 @@ public class Package implements java.io.Serializable
 	private boolean deleted = false;
 	private Set<Submission> submissions = new HashSet<Submission>(0);
 	private Set<PackageEvent> packageEvents = new HashSet<PackageEvent>(0);
+	
+	@Transient
+	private List<Vignette> vignettes;
 
 	public Package()
 	{
@@ -348,9 +366,81 @@ public class Package implements java.io.Serializable
 		this.packageEvents = packageEvents;
 	}
 	
+	@Override
 	public String toString()
 	{
 		return this.name + " " + this.version;
  	}
-
+	
+	@Transient
+	public List<Vignette> getVignettes()
+	{
+		if (this.vignettes == null)
+		{
+			File targzfile = new File(this.getSource());
+			List<Vignette> vignettes = new ArrayList<>();
+			if(targzfile != null && 
+			   targzfile.exists() && 
+			   targzfile.getParentFile() != null && 
+			   targzfile.getParentFile().exists())
+			{
+				File vignettesFolder = new File(targzfile.getParent(), name + "/inst/doc");
+				if(vignettesFolder != null && vignettesFolder.exists() && vignettesFolder.isDirectory())
+				{
+					File[] vignetteFiles = vignettesFolder.listFiles(new FilenameFilter() 
+					{
+						@Override
+						public boolean accept(File dir, String name) 
+						{
+							return (name != null &&
+									(name.toLowerCase().endsWith(".pdf") ||
+									 name.toLowerCase().endsWith(".html")));
+						}
+					});
+					for(File vignette : vignetteFiles)
+					{
+						switch(FilenameUtils.getExtension(vignette.getName().toLowerCase()))
+						{
+							case "html":
+								try 
+								{
+									Document htmlDoc = Jsoup.parse(vignette, "UTF-8");
+									vignettes.add(
+										new Vignette(
+											htmlDoc.title(), vignette.getName()));
+									break;
+								} 
+								catch (IOException e) {}
+							default:
+								vignettes.add(
+									new Vignette(
+										FilenameUtils.getBaseName(vignette.getName()), vignette.getName()));
+						}
+					}
+				}
+			}
+			this.vignettes = Collections.unmodifiableList(vignettes);
+			return this.vignettes;
+		}
+		else
+		{
+			return this.vignettes;
+		}
+	}
+	
+	public byte[] readVignette(String fileName)
+	{
+		byte[] bytes = null;
+		File vignette = new File(new File(this.getSource()).getParent(), this.getName() + "/inst/doc/" + fileName);
+		if(vignette != null && vignette.exists())
+		{
+			FileSystemResource file = new FileSystemResource(vignette);
+	    	try 
+	    	{
+				bytes = Files.readAllBytes(file.getFile().toPath());
+			} 
+	    	catch (IOException e) {}
+		}
+		return bytes;
+	}
 }

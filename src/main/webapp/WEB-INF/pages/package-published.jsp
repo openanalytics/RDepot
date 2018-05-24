@@ -41,10 +41,21 @@
         </div>
         <h3><spring:message code="package.title.documentation"/></h3>
         <table class="vignette">
+        	<c:choose>
+        		<c:when test="${not empty packageBag.vignettes}">
+		        	<c:forEach items="${packageBag.vignettes}" var="vignette" >
+			            <tr>
+			                <td><a href="<c:url value='/manager/packages' />/${packageBag.id}/vignettes/${vignette.fileName}">${vignette.title}</a></td>
+			            </tr>
+			        </c:forEach>
+	        	</c:when>
+	        	<c:otherwise>
+	        		<tr>
+		                <td><spring:message code="package.vignettes.none"/></td>
+		            </tr>
+	        	</c:otherwise>
+	        </c:choose>
             <tr class="row_odd">
-                <td><spring:message code="package.vignettes.none"/></td>
-            </tr>
-            <tr class="row_even">
                 <td><a href="<c:url value='/manager/packages' />/${packageBag.id}/download/${packageBag.name}.pdf"><spring:message code="package.info.referencemanual"/></a></td>
             </tr>
         </table>

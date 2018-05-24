@@ -423,6 +423,35 @@ public class PackageController
 			return new ResponseEntity<byte[]>(bytes,headers,httpStatus);
 		}
 	}
+		
+	@RequestMapping(value="/{id}/vignettes/{name}.pdf", method=RequestMethod.GET, produces="application/pdf")
+	public @ResponseBody ResponseEntity<byte[]> downloadVignettePdf(@PathVariable Integer id, @PathVariable String name)
+	{
+		HttpHeaders headers = new HttpHeaders();
+		HttpStatus httpStatus = HttpStatus.NOT_FOUND;
+		byte[] bytes = packageService.readVignette(id, name + ".pdf");
+    	if (bytes != null)
+		{
+    		httpStatus = HttpStatus.OK;
+    		headers.set("Content-Type", "application/pdf");
+	    	headers.set("Content-Disposition", "attachment; filename= \""+name+".pdf\"");
+		}
+		return new ResponseEntity<byte[]>(bytes,headers,httpStatus);
+	}
+	
+	@RequestMapping(value="/{id}/vignettes/{name}.html", method=RequestMethod.GET, produces="text/html")
+	public @ResponseBody ResponseEntity<byte[]> getVignetteHtml(@PathVariable Integer id, @PathVariable String name)
+	{
+		HttpHeaders headers = new HttpHeaders();
+		HttpStatus httpStatus = HttpStatus.NOT_FOUND;
+		byte[] bytes = packageService.readVignette(id, name + ".html");
+    	if (bytes != null)
+		{
+    		httpStatus = HttpStatus.OK;
+    		headers.set("Content-Type", "text/html");
+		}
+		return new ResponseEntity<byte[]>(bytes,headers,httpStatus);
+	}
 	
 	@PreAuthorize("hasAuthority('packagemaintainer')")
 	@RequestMapping(value="/{id}/activate", method=RequestMethod.PUT, produces="application/json")
