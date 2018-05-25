@@ -58,7 +58,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
  */
 @Entity
 @Table(name = "package", schema = "public")
-public class Package implements java.io.Serializable
+public class Package implements java.io.Serializable, Comparable<Package>
 {
 
 	/**
@@ -442,5 +442,59 @@ public class Package implements java.io.Serializable
 	    	catch (IOException e) {}
 		}
 		return bytes;
+	}
+
+	@Override
+	public int compareTo(Package that) 
+	{	
+		if (!this.name.equals(that.name))
+		{
+			throw new IllegalArgumentException(
+					"Trying to compare package " + that.name + 
+					" with package " + this.name + 
+					" is like comparing apples with oranges.");
+		}
+		
+		String[] theseSplittedDots = this.version.split("\\.");
+		int thisFirstNumber = Integer.parseInt(theseSplittedDots[0]);
+		int thisSecondNumber = 0;
+		if (theseSplittedDots.length >= 2)
+		{
+			thisSecondNumber = Integer.parseInt(theseSplittedDots[1]);
+		}
+		int thisThirdNumber = 0;
+		if (theseSplittedDots.length >= 3)
+		{
+			thisThirdNumber = Integer.parseInt(theseSplittedDots[2]);
+		}
+		
+		String[] thoseSplittedDots = that.version.split("\\.");
+		int thatFirstNumber = Integer.parseInt(thoseSplittedDots[0]);
+		int thatSecondNumber = 0;
+		if (thoseSplittedDots.length >= 2)
+		{
+			thatSecondNumber = Integer.parseInt(thoseSplittedDots[1]);
+		}
+		int thatThirdNumber = 0;
+		if (thoseSplittedDots.length >= 3)
+		{
+			thatThirdNumber = Integer.parseInt(thoseSplittedDots[2]);
+		}
+		
+		if(thisFirstNumber == thatFirstNumber)
+		{
+			if(thisSecondNumber == thatSecondNumber)
+			{
+				return thisThirdNumber - thatThirdNumber;
+			}
+			else
+			{
+				return (thisSecondNumber - thatSecondNumber) * 10;
+			}
+		}
+		else
+		{
+			return (thisFirstNumber - thatFirstNumber) * 100;
+		}
 	}
 }

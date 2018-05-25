@@ -460,35 +460,14 @@ public class PackageService
 	{
 		String name = packageBag.getName();
 		Repository repository = packageBag.getRepository();
-		String version = packageBag.getVersion();
 		List<Package> packages = findByNameAndRepository(name, repository);
 		if(packages.size() > 1)
 		{
-			int beforeDot = Integer.parseInt(version.split("\\.")[0]);
-			int afterDot = Integer.parseInt(version.split("\\-")[0].split("\\.")[1]);
-			int afterHyphen = Integer.parseInt(version.split("\\-")[1]);
 			for(Package p : packages)
 			{	
-				int beforeDot2 = Integer.parseInt(p.getVersion().split("\\.")[0]);
-				int afterDot2 = Integer.parseInt(p.getVersion().split("\\-")[0].split("\\.")[1]);
-				int afterHyphen2 = Integer.parseInt(p.getVersion().split("\\-")[1]);
-				if(beforeDot < beforeDot2)
+				if (packageBag.compareTo(p) < 0)
 				{
 					return false;
-				}
-				else if(beforeDot == beforeDot2)
-				{
-					if(afterDot < afterDot2)
-					{
-						return false;
-					}
-					else if(afterDot == afterDot2)
-					{
-						if(afterHyphen < afterHyphen2)
-						{
-							return false;
-						}
-					}
 				}
 			}
 		}
