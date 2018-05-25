@@ -19,7 +19,7 @@
         <div class="PackageDetail">
             <h2>${packageBag.title}</h2>
             <div class="breadcrumb">
-                <a href="<c:url value='/manager/repositories' />/${packageBag.repository.id}/published">${packageBag.repository.name}</a> 
+                <a href="<c:url value='/manager/repositories' />/${packageBag.repository.name}">${packageBag.repository.name}</a> 
                 &gt; ${packageBag.title} &gt; 
            </div>
            <p class="description">${packageBag.description}</p>

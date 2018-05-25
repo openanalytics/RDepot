@@ -183,7 +183,7 @@ public class RepositoryController
 	}
 	
 	@PreAuthorize("hasAuthority('repositorymaintainer')")
-	@RequestMapping(value="/{id}", method=RequestMethod.GET)
+	@RequestMapping(value="/{id}/feed", method=RequestMethod.GET)
 	public String repositoryPage(@PathVariable Integer id, Principal principal, 
 			Model model, RedirectAttributes redirectAttributes)
 	{
@@ -314,11 +314,9 @@ public class RepositoryController
 		return repositoryService.findByDeleted(true);
 	}
 	
-	@RequestMapping(value="/{id}/published", method=RequestMethod.GET)
-	public String publishedPage(@PathVariable Integer id, RedirectAttributes redirectAttributes, Model model, Principal principal) 
+	private String getPublishedPage(Repository repository, RedirectAttributes redirectAttributes, Model model, Principal principal)
 	{
-		Repository repository = repositoryService.findById(id);
-		String address = "redirect:/manager";
+		String address = "error";
 		if(principal != null && !(principal.getName().isEmpty() || principal.getName().equals("") || principal.getName().trim().isEmpty()))
 		{
 			User requester = userService.findByLogin(principal.getName());
@@ -331,7 +329,12 @@ public class RepositoryController
 			
 		}
 		if(repository == null)
-			redirectAttributes.addFlashAttribute("error", MessageCodes.ERROR_REPOSITORY_NOT_FOUND);
+		{
+			if (address.equals("error"))
+				model.addAttribute("error", MessageCodes.ERROR_REPOSITORY_NOT_FOUND);
+			else
+				redirectAttributes.addFlashAttribute("error", MessageCodes.ERROR_REPOSITORY_NOT_FOUND);
+		}
 		else
 		{
 			model.addAttribute("repository", repository);
@@ -341,6 +344,20 @@ public class RepositoryController
 			address = "repository-published";
 		}
 		return address;
+	}
+	
+	@RequestMapping(value="/{name}", method=RequestMethod.GET)
+	public String publishedPage(@PathVariable String name, RedirectAttributes redirectAttributes, Model model, Principal principal) 
+	{
+		Repository repository = repositoryService.findByName(name);
+		return getPublishedPage(repository, redirectAttributes, model, principal);
+	}
+	
+	@RequestMapping(value="/{id}/published", method=RequestMethod.GET)
+	public String publishedPage(@PathVariable Integer id, RedirectAttributes redirectAttributes, Model model, Principal principal) 
+	{
+		Repository repository = repositoryService.findById(id);
+		return getPublishedPage(repository, redirectAttributes, model, principal);
 	}
 	
 	@PreAuthorize("hasAuthority('repositorymaintainer')")
@@ -447,5 +464,73 @@ public class RepositoryController
 			result.put("error", e.getMessage());
 			return result;
 		}
+	}
+	
+	@RequestMapping(value="/{name}/packages/{packageName}/latest", method=RequestMethod.GET)
+	public String publishedPackagePageLatest(
+		@PathVariable String name, 
+		@PathVariable String packageName, 
+		RedirectAttributes redirectAttributes, 
+		Model model, 
+		Principal principal) 
+	{
+		return publishedPackagePage(name, packageName, redirectAttributes, model, principal);
+	}
+	
+	@RequestMapping(value="/{name}/packages/{packageName}/{version}", method=RequestMethod.GET)
+	public String publishedPackagePage(
+		@PathVariable String name, 
+		@PathVariable String packageName, 
+		@PathVariable String version, 
+		RedirectAttributes redirectAttributes, 
+		Model model, 
+		Principal principal) 
+	{
+		Repository repository = repositoryService.findByName(name);
+		if (repository == null)
+		{
+			model.addAttribute("error", MessageCodes.ERROR_REPOSITORY_NOT_FOUND);
+			return "error";
+		}
+		Package packageBag = packageService.findByNameAndVersionAndRepository(packageName, version, repository);
+		if(packageBag == null)
+		{
+			redirectAttributes.addFlashAttribute("error", MessageCodes.ERROR_PACKAGE_NOT_FOUND);
+			return "redirect:/manager/repositories/" + repository.getName();
+		}
+		model.addAttribute("packageBag", packageBag);
+		return "package-published";
+	}
+	
+	@RequestMapping(value="/{name}/packages/{packageName}", method=RequestMethod.GET)
+	public String publishedPackagePage(
+		@PathVariable String name, 
+		@PathVariable String packageName, 
+		RedirectAttributes redirectAttributes, 
+		Model model, 
+		Principal principal) 
+	{
+		Repository repository = repositoryService.findByName(name);
+		if (repository == null)
+		{
+			model.addAttribute("error", MessageCodes.ERROR_REPOSITORY_NOT_FOUND);
+			return "error";
+		}
+		List<Package> packages = packageService.findByNameAndRepository(packageName, repository);
+		if(packages == null || packages.isEmpty())
+		{
+			redirectAttributes.addFlashAttribute("error", MessageCodes.ERROR_PACKAGE_NOT_FOUND);
+			return "redirect:/manager/repositories/" + repository.getName();
+		}
+		Package latest = packages.get(0);
+		int size = packages.size();
+		for (int i = 1; i < size; i++)
+		{
+			Package maybeLatest = packages.get(i);
+			if (latest.compareTo(maybeLatest) < 0)
+				latest = packages.get(i);
+		}
+		model.addAttribute("packageBag", latest);
+		return "package-published";
 	}
 }

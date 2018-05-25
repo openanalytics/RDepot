@@ -45,7 +45,7 @@
         </tr>
         <c:forEach items="${packages}" var="packageBag" >
             <tr>
-                <td><a href="<c:url value='/manager/packages' />/${packageBag.id}/published">${packageBag.name}</a></td>
+                <td><a href="<c:url value='/manager/repositories' />/${repository.name}/packages/${packageBag.name}/${packageBag.version}">${packageBag.name}</a></td>
                 <td>${packageBag.version}</td>
                 <td>${packageBag.user.name}</td>
                 <td>${packageBag.title}</td>

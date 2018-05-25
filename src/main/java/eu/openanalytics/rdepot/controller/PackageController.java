@@ -126,13 +126,30 @@ public class PackageController
 	}
 	
 	@RequestMapping(value="/{id}/published", method=RequestMethod.GET)
-	public String publishedPage(@PathVariable Integer id, Model model, RedirectAttributes redirectAttributes) 
+	public String publishedPage(
+		@PathVariable Integer id, 
+		Model model, 
+		RedirectAttributes redirectAttributes, 
+		Principal principal) 
 	{
 		Package packageBag = packageService.findById(id);
+		String address = "redirect:/manager";
+		if(principal != null && 
+		   !(principal.getName().isEmpty() || principal.getName().trim().isEmpty()))
+		{
+			User requester = userService.findByLogin(principal.getName());
+			if(requester != null)
+			{
+				model.addAttribute("role", requester.getRole().getValue());
+				if(requester.getRole().getValue() > 0)
+					address = "redirect:/manager/packages";
+			}
+			
+		}
 		if(packageBag == null)
 		{
 			redirectAttributes.addFlashAttribute("error", MessageCodes.ERROR_PACKAGE_NOT_FOUND);
-			return "redirect:/manager/packages";
+			return address;
 		}
 		model.addAttribute("packageBag", packageBag);
 		return "package-published";
@@ -225,7 +242,7 @@ public class PackageController
 	}
 	
 	@PreAuthorize("hasAuthority('packagemaintainer')")
-	@RequestMapping(value="/{id}", method=RequestMethod.GET)
+	@RequestMapping(value="/{id}/feed", method=RequestMethod.GET)
 	public String packagePage(@PathVariable Integer id, Model model, 
 			RedirectAttributes redirectAttributes, Principal principal) 
 	{

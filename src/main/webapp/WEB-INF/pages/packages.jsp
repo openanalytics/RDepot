@@ -49,14 +49,19 @@
         </tr>
         <c:forEach items="${packages}" var="packageBag" >
             <tr id="tr${packageBag.repository.id}${packageBag.name}${packageBag.id}">
-                <td><a href="<c:url value='/manager/packages' />/${packageBag.id}">${packageBag.name}</a></td>
+                <td><a href="<c:url value='/manager/repositories' />/${packageBag.repository.name}/packages/${packageBag.name}/${packageBag.version}">${packageBag.name}</a></td>
                 <td>${packageBag.version}</td>
                 <td>${packageBag.description}</td>
                 <td>${packageBag.user.name}</td>
                 <td>${packageBag.repository.name}</td>
                 <td>${packageBag.source}</td>
                 <td><input id="act${packageBag.id}" type="checkbox" onchange="changeActive(${packageBag.id})" <c:choose><c:when test='${packageBag.active}'>checked="checked"</c:when><c:otherwise></c:otherwise></c:choose> ></td>
-                <td><!--<a href="<c:url value='/manager/packages' />/${packageBag.id}/edit"><img data-placement="bottom" data-toggle="tooltip" data-original-title="<spring:message code='table.actions.edit'/>" src="${staticUrl}/img/edit.png"></a>--><a id="del${packageBag.id}" onclick="deletePackage(${packageBag.id}, '${packageBag.repository.id}${packageBag.name}')" href="#"><img data-placement="bottom" data-toggle="tooltip" data-original-title="<spring:message code='table.actions.delete'/>" src="${staticUrl}/img/delete.png"></a></td>
+                <td>
+                  <a data-placement="bottom" data-toggle="tooltip" data-original-title="<spring:message code='table.actions.feed'/>" class="btn btn-lg" href="<c:url value='/manager/packages' />/${packageBag.id}/feed">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                  </a> 
+                  <!--<a href="<c:url value='/manager/packages' />/${packageBag.id}/edit"><img data-placement="bottom" data-toggle="tooltip" data-original-title="<spring:message code='table.actions.edit'/>" src="${staticUrl}/img/edit.png"></a>-->
+                  <a id="del${packageBag.id}" onclick="deletePackage(${packageBag.id}, '${packageBag.repository.id}${packageBag.name}')" href="#"><img data-placement="bottom" data-toggle="tooltip" data-original-title="<spring:message code='table.actions.delete'/>" src="${staticUrl}/img/delete.png"></a></td>
             </tr>
         </c:forEach>
     </table>

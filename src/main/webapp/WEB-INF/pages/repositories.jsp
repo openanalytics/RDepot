@@ -51,8 +51,8 @@
         <tbody>
             <c:forEach items="${repositories}" var="repository" >
                 <tr id="tr${repository.id}">
-                    <td><a href="<c:url value='/manager/repositories' />/${repository.id}">${repository.name}</a></td>
-                    <td><a href="<c:url value='/manager/repositories' />/${repository.id}/published">${repository.publicationUri}</a></td>
+                    <td><a href="<c:url value='/manager/repositories' />/${repository.name}">${repository.name}</a></td>
+                    <td><a href="${repository.publicationUri}">${repository.publicationUri}</a></td>
                     <td>${repository.serverAddress}</td>
                     <td>${repository.version}</td>
                     <td><a href="<c:url value='/manager/repositories' />/${repository.id}/packages">${repository.packages.size()}</a></td>
@@ -67,6 +67,9 @@
                        </c:choose>
                     </td>
                     <td>
+                    	<a data-placement="bottom" data-toggle="tooltip" data-original-title="<spring:message code='table.actions.feed'/>" class="btn btn-info" href="<c:url value='/manager/repositories' />/${repository.id}/feed">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </a> 
                         <a data-placement="bottom" data-toggle="tooltip" data-original-title="<spring:message code='table.actions.edit'/>" class="btn btn-info" href="<c:url value='/manager/repositories' />/${repository.id}/edit">
                             <span class="glyphicon glyphicon-edit"></span>
                         </a> 
