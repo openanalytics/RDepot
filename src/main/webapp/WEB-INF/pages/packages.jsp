@@ -43,7 +43,6 @@
             <th><spring:message code="table.header.description"/></th>
             <th><spring:message code="table.header.maintainer"/></th>
             <th><spring:message code="table.header.repository"/></th>
-            <th><spring:message code="table.header.source"/></th>
             <th><spring:message code="table.header.active"/></th>
             <th><spring:message code="table.header.actions"/></th>
         </tr>
@@ -53,8 +52,7 @@
                 <td>${packageBag.version}</td>
                 <td>${packageBag.description}</td>
                 <td>${packageBag.user.name}</td>
-                <td>${packageBag.repository.name}</td>
-                <td>${packageBag.source}</td>
+                <td><a href="<c:url value='/manager/repositories' />/${packageBag.repository.name}">${packageBag.repository.name}</a></td>
                 <td><input id="act${packageBag.id}" type="checkbox" onchange="changeActive(${packageBag.id})" <c:choose><c:when test='${packageBag.active}'>checked="checked"</c:when><c:otherwise></c:otherwise></c:choose> ></td>
                 <td>
                   <a data-placement="bottom" data-toggle="tooltip" data-original-title="<spring:message code='table.actions.feed'/>" class="btn btn-lg" href="<c:url value='/manager/packages' />/${packageBag.id}/feed">
