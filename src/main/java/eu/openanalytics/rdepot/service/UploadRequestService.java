@@ -260,9 +260,9 @@ public class UploadRequestService
 		File randomDir = new File(packageUploadDirectory.getAbsolutePath() + separator + "repositories" + separator + repository.getId() + separator + (new Random()).nextInt(1000000));
 		try 
 		{
-			File file = new File(randomDir.getAbsolutePath() + separator + multipartFile.getOriginalFilename()); 
 			while(randomDir.exists())
 				randomDir = new File(randomDir.getParent() + separator + (new Random()).nextInt(1000000));
+			File file = new File(randomDir.getAbsolutePath() + separator + multipartFile.getOriginalFilename()); 
 			FileUtils.forceMkdir(randomDir);
 			multipartFile.transferTo(file);
 			return file;				

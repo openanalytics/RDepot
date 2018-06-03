@@ -50,7 +50,7 @@ public class UserValidator implements Validator
 		ValidationUtils.rejectIfEmpty(errors, "name", MessageCodes.ERROR_FORM_EMPTY_NAME);
 		ValidationUtils.rejectIfEmpty(errors, "login", MessageCodes.ERROR_FORM_EMPTY_LOGIN);
 		ValidationUtils.rejectIfEmpty(errors, "email", MessageCodes.ERROR_FORM_EMPTY_EMAIL);
-		Pattern emailPattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"+"[A-Za-z0-9-]+$");
+		Pattern emailPattern = Pattern.compile("^.+@.+$");
 		if(!emailPattern.matcher(user.getEmail()).matches())
 			errors.rejectValue("email", MessageCodes.ERROR_FORM_INVALID_EMAIL);
 		

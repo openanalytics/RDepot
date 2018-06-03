@@ -21,6 +21,7 @@
 package eu.openanalytics.rdepot.controller;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -92,13 +93,16 @@ public class RepositoryController
 	
 	private int placeholder = 9;
 	
-	@PreAuthorize("hasAuthority('repositorymaintainer')")
+	@PreAuthorize("hasAuthority('user')")
 	@RequestMapping(method=RequestMethod.GET)
 	public String repositoriesPage(Model model, Principal principal) 
 	{
-		User requester = userService.findByLoginWithRepositoryMaintainers(principal.getName());
+		User requester = userService.findByLogin(principal.getName());
 		model.addAttribute("role", requester.getRole().getValue());
-		model.addAttribute("repositories", repositoryService.findMaintainedBy(requester));
+		List<Integer> maintained = new ArrayList<>();
+		repositoryService.findMaintainedBy(requester).forEach(r -> maintained.add(r.getId()));
+		model.addAttribute("maintained", maintained);
+		model.addAttribute("repositories", repositoryService.findAll());
 		return "repositories";
 	}
 	
@@ -160,7 +164,7 @@ public class RepositoryController
 		return address;
 	}
 	
-	@PreAuthorize("hasAuthority('repositorymaintainer')")
+	@PreAuthorize("hasAuthority('user')")
 	@RequestMapping(value="/{id}/packages", method=RequestMethod.GET)
 	public String packagesOfRepositoryPage(@PathVariable Integer id, Principal principal, 
 			Model model, RedirectAttributes redirectAttributes)
@@ -297,7 +301,7 @@ public class RepositoryController
 		}
 	}
 	
-	@PreAuthorize("hasAuthority('repositorymaintainer')")
+	@PreAuthorize("hasAuthority('user')")
 	@RequestMapping(value="/list", method=RequestMethod.GET, produces="application/json")
 	@ResponseStatus(HttpStatus.OK)
 	public @ResponseBody List<Repository> repositories(Principal principal) 

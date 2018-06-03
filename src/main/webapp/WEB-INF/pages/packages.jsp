@@ -44,22 +44,41 @@
             <th><spring:message code="table.header.maintainer"/></th>
             <th><spring:message code="table.header.repository"/></th>
             <th><spring:message code="table.header.active"/></th>
-            <th><spring:message code="table.header.actions"/></th>
+            <c:if test="${role > 0}">
+            	<th><spring:message code="table.header.actions"/></th>
+            </c:if>
         </tr>
         <c:forEach items="${packages}" var="packageBag" >
             <tr id="tr${packageBag.repository.id}${packageBag.name}${packageBag.id}">
-                <td><a href="<c:url value='/manager/repositories' />/${packageBag.repository.name}/packages/${packageBag.name}/${packageBag.version}">${packageBag.name}</a></td>
-                <td>${packageBag.version}</td>
-                <td>${packageBag.description}</td>
-                <td>${packageBag.user.name}</td>
-                <td><a href="<c:url value='/manager/repositories' />/${packageBag.repository.name}">${packageBag.repository.name}</a></td>
-                <td><input id="act${packageBag.id}" type="checkbox" onchange="changeActive(${packageBag.id})" <c:choose><c:when test='${packageBag.active}'>checked="checked"</c:when><c:otherwise></c:otherwise></c:choose> ></td>
-                <td>
+              <td><a href="<c:url value='/manager/repositories' />/${packageBag.repository.name}/packages/${packageBag.name}/${packageBag.version}">${packageBag.name}</a></td>
+              <td>${packageBag.version}</td>
+              <td>${packageBag.description}</td>
+              <td>${packageBag.user.name}</td>
+              <td><a href="<c:url value='/manager/repositories' />/${packageBag.repository.name}">${packageBag.repository.name}</a></td>
+              <c:choose>
+                <c:when test="${role > 0 && maintained.contains(packageBag.id)}">
+                  <td><input id="act${packageBag.id}" type="checkbox" onchange="changeActive(${packageBag.id})" <c:choose><c:when test='${packageBag.active}'>checked="checked"</c:when><c:otherwise></c:otherwise></c:choose> ></td>
+	              </c:when>
+	              <c:otherwise>
+	                <c:choose>
+                    <c:when test="${packageBag.isActive()}">
+                      <td><i id="published-icon-${packageBag.id}" class="glyphicon glyphicon-check"></i></td>
+                    </c:when>
+                    <c:otherwise>
+                      <td><i id="published-icon-${packageBag.id}" class="glyphicon glyphicon-unchecked"></i></td>
+                    </c:otherwise>
+                  </c:choose>
+	              </c:otherwise>
+	            </c:choose>
+	            <td>
+  	            <c:if test="${role > 0 && maintained.contains(packageBag.id)}">
                   <a data-placement="bottom" data-toggle="tooltip" data-original-title="<spring:message code='table.actions.feed'/>" class="btn btn-lg" href="<c:url value='/manager/packages' />/${packageBag.id}/feed">
                     <span class="glyphicon glyphicon-calendar"></span>
                   </a> 
                   <!--<a href="<c:url value='/manager/packages' />/${packageBag.id}/edit"><img data-placement="bottom" data-toggle="tooltip" data-original-title="<spring:message code='table.actions.edit'/>" src="${staticUrl}/img/edit.png"></a>-->
-                  <a id="del${packageBag.id}" onclick="deletePackage(${packageBag.id}, '${packageBag.repository.id}${packageBag.name}')" href="#"><img data-placement="bottom" data-toggle="tooltip" data-original-title="<spring:message code='table.actions.delete'/>" src="${staticUrl}/img/delete.png"></a></td>
+                  <a id="del${packageBag.id}" onclick="deletePackage(${packageBag.id}, '${packageBag.repository.id}${packageBag.name}')" href="#"><img data-placement="bottom" data-toggle="tooltip" data-original-title="<spring:message code='table.actions.delete'/>" src="${staticUrl}/img/delete.png"></a>
+  	            </c:if>
+              </td>
             </tr>
         </c:forEach>
     </table>

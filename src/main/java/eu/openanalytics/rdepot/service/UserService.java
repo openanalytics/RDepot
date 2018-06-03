@@ -152,19 +152,19 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 
 	public User findByLogin(String login) 
 	{
-		return userRepository.findByLoginAndDeleted(login, false);
+		return userRepository.findByLoginIgnoreCaseAndDeleted(login, false);
 	}
 	
 	public User findByLoginWithRepositoryMaintainers(String login) 
 	{
-		User user = userRepository.findByLoginAndDeleted(login, false);
+		User user = userRepository.findByLoginIgnoreCaseAndDeleted(login, false);
 		Hibernate.initialize(user.getRepositoryMaintainers());
 		return user;
 	}
 	
 	public User findByLoginWithMaintainers(String login) 
 	{
-		User user = userRepository.findByLoginAndDeleted(login, false);
+		User user = userRepository.findByLoginIgnoreCaseAndDeleted(login, false);
 		Hibernate.initialize(user.getRepositoryMaintainers());
 		Hibernate.initialize(user.getPackageMaintainers());
 		return user;
@@ -172,7 +172,7 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 	
 	public User findByLoginEvenDeleted(String login) 
 	{
-		return userRepository.findByLogin(login);
+		return userRepository.findByLoginIgnoreCase(login);
 	}
 
 	public User findByEmail(String email) 
@@ -274,7 +274,7 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 	public User update(User user, User admin) throws UserEditException
 	{
 		User updatedUser = userRepository.findByIdAndDeleted(user.getId(), false);
-		Event updateEvent = eventService.findByValue("update");
+		Event updateEvent = eventService.getUpdateEvent();
 		
 		if(admin == null)
 		{
@@ -568,7 +568,7 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 	public Collection<? extends GrantedAuthority> getGrantedAuthorities(DirContextOperations userData, String username) 
 	{
 		String login = userData.getStringAttribute(ldapLoginfield);
-		User user = userRepository.findByLogin(login);	
+		User user = userRepository.findByLoginIgnoreCase(login);	
 		Collection<SimpleGrantedAuthority> authorities = new HashSet<SimpleGrantedAuthority>(0);
 		
 		for(int i = 0, v = user.getRole().getValue(); i <= v; i++)

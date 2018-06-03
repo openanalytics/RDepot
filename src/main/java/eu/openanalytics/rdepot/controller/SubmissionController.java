@@ -346,13 +346,10 @@ public class SubmissionController
 					submission.getPackage().setActive(true);
 					packageService.update(submission.getPackage(), requester);
 				}
-				else
-				{
-					submission.setAccepted(true);
-					submissionService.update(submission, requester);
-					repositoryService.boostRepositoryVersion(submission.getPackage().getRepository(), requester);
-					repositoryService.publishRepository(submission.getPackage().getRepository(), requester);
-				}	
+				submission.setAccepted(true);
+				submissionService.update(submission, requester);
+				repositoryService.boostRepositoryVersion(submission.getPackage().getRepository(), requester);
+				repositoryService.publishRepository(submission.getPackage().getRepository(), requester);
 			}
 			return "redirect:/manager/submissions";
 		}

@@ -34,13 +34,13 @@ import eu.openanalytics.rdepot.model.User;
 @Transactional(readOnly = true)
 public interface UserRepository extends JpaRepository<User, Integer> 
 {
-	public User findByLogin(String login);
+	public User findByLoginIgnoreCase(String login);
 	public User findByEmail(String email);
 	public List<User> findByRole(Role role);
 	public List<User> findByRole(Role role, Sort sort);
 	public List<User> findByDeleted(boolean deleted, Sort sort);
 	public User findByIdAndDeleted(int id, boolean deleted);
-	public User findByLoginAndDeleted(String login, boolean deleted);
+	public User findByLoginIgnoreCaseAndDeleted(String login, boolean deleted);
 	public User findByEmailAndDeleted(String email, boolean deleted);
 	public List<User> findByRoleAndDeleted(Role role, boolean deleted);
 }

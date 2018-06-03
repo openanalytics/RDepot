@@ -1,20 +1,20 @@
-<pre>
+```
  _____   ____              _
 | __  | |    \ ___ ___ ___| |_
 |    -| |  |  | -_| . | . |  _|
 |__|__| |____/|___|  _|___|_|
                   |_|
 
-</pre>
+```
 
 
 # R Depot User Guide
 
 Currently, R Depot consists of three core components:
 
-- the RDepot R repository management application (rdepot-app-X.X.X.war)
+- the RDepot R repository management application (rdepot.war)
 - a database component, preferably Postgres
-- one or more R repositories (instances of rdepot-repo-X.X.X.jar)
+- one or more R repositories (instances of oa-rdepot-repo.jar)
 
 The quickest way to set up a working environment, is by using Docker (preferably on Linux).
 The following prerequisites are needed:
@@ -25,8 +25,8 @@ The following prerequisites are needed:
 
 Please make sure the following files are available:
 
-- ./docker/app/webapps/rdepot.war: downloaded and renamed from https://www.rdepot.io/downloads/rdepot-app-0.9.0.war
-- ./docker/repo/oa-rdepot-repo.jar: downloaded and renamed from https://www.rdepot.io/downloads/rdepot-repo-1.0.0.jar
+- ./docker/app/rdepot.war: downloaded from https://s3-eu-west-1.amazonaws.com/oa-rdepot-build-artifacts/rdepot.war (latest development build)
+- ./docker/repo/oa-rdepot-repo.jar: downloaded from https://s3-eu-west-1.amazonaws.com/oa-rdepot-build-artifacts/oa-rdepot-repo.jar (latest development build)
 
 The final step is to launch the Docker containers using docker-compose:
 
@@ -45,11 +45,11 @@ To complete a complete flow: R package to R Depot to Repository Server to R clie
 
 - create a repository with (or edit)
     * a repository's publication URI: http://localhost/repo/repositoryName and
-    * a server address: http://localhost/repo-api/repositoryName
+    * a server address: http://oa-rdepot-repo:8080/repositoryName
 - submit one or more packages to that repository via the R Depot web interface
 - publish the repository using the green button in the repositories view (if needed)
 - go to the published package page (repositories view, click publication URI, click package name)
-- use the install URL shown on the published package page to install the package in R (install.packages("somePackage", repos = c("http://localhost/repo/repositoryName", getOption()), type = "source"))
+- use the install URL shown on the published package page to install the package in R (install.packages("somePackage", repos = c("http://localhost/repo/repositoryName", getOption())))
 
 To (re)start with fresh database:
 

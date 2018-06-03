@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -103,7 +104,10 @@ public class PackageController
 	public String packagesPage(Model model, Principal principal) 
 	{
 		User requester = userService.findByLogin(principal.getName());
-		model.addAttribute("packages", packageService.findMaintainedBy(requester));
+		List<Integer> maintained = new ArrayList<>();
+		packageService.findMaintainedBy(requester).forEach(p -> maintained.add(p.getId()));
+		model.addAttribute("maintained", maintained);
+		model.addAttribute("packages", packageService.findAll());
 		model.addAttribute("role", requester.getRole().getValue());
 		return "packages";
 	}

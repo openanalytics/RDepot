@@ -45,7 +45,9 @@
                 <th><spring:message code="table.header.version"/></th>
                 <th><spring:message code="table.header.numberofpackages"/></th>
                 <th><spring:message code="table.header.published"/></th>
-                <th><spring:message code="table.header.actions"/></th>
+                <c:if test="${role > 1}">
+                	<th><spring:message code="table.header.actions"/></th>
+                </c:if>
             </tr>
         </thead>
         <tbody>
@@ -66,25 +68,27 @@
                            </c:otherwise>
                        </c:choose>
                     </td>
-                    <td>
-                    	<a data-placement="bottom" data-toggle="tooltip" data-original-title="<spring:message code='table.actions.feed'/>" class="btn btn-info" href="<c:url value='/manager/repositories' />/${repository.id}/feed">
-                            <span class="glyphicon glyphicon-calendar"></span>
-                        </a> 
-                        <a data-placement="bottom" data-toggle="tooltip" data-original-title="<spring:message code='table.actions.edit'/>" class="btn btn-info" href="<c:url value='/manager/repositories' />/${repository.id}/edit">
-                            <span class="glyphicon glyphicon-edit"></span>
-                        </a> 
-                        <button id="publish-${repository.id}" data-placement="bottom" data-toggle="tooltip" data-original-title="<spring:message code='table.actions.publish'/>" type="button" class="btn btn-success" onclick="publishRepository(${repository.id})">
-                            <span class="glyphicon glyphicon-globe"></span>
-                        </button> 
-                    
-	                    <button <c:if test="${!repository.isPublished()}">style="display: none"</c:if> id="unpublish-${repository.id}" data-placement="bottom" data-toggle="tooltip" data-original-title="<spring:message code='table.actions.unpublish'/>" type="button" class="btn btn-warning" onclick="unpublishRepository(${repository.id})" >
-	                        <span class="glyphicon glyphicon-off"></span>
-                        </button> 
+                    <c:if test="${role > 1 && maintained.contains(repository.id)}">
+                    	<td>
+	                    	<a data-placement="bottom" data-toggle="tooltip" data-original-title="<spring:message code='table.actions.feed'/>" class="btn btn-info" href="<c:url value='/manager/repositories' />/${repository.id}/feed">
+	                            <span class="glyphicon glyphicon-calendar"></span>
+	                        </a> 
+	                        <a data-placement="bottom" data-toggle="tooltip" data-original-title="<spring:message code='table.actions.edit'/>" class="btn btn-info" href="<c:url value='/manager/repositories' />/${repository.id}/edit">
+	                            <span class="glyphicon glyphicon-edit"></span>
+	                        </a> 
+	                        <button id="publish-${repository.id}" data-placement="bottom" data-toggle="tooltip" data-original-title="<spring:message code='table.actions.publish'/>" type="button" class="btn btn-success" onclick="publishRepository(${repository.id})">
+	                            <span class="glyphicon glyphicon-globe"></span>
+	                        </button> 
 	                    
-	                    <button data-placement="bottom" data-toggle="tooltip" data-original-title="<spring:message code='table.actions.delete'/>" class="btn btn-danger" type="button" id="del${repository.id}" onclick="deleteRepository(${repository.id})" >
-	                        <span class="glyphicon glyphicon-remove"></span>
-                        </button>
-                    </td>
+		                    <button <c:if test="${!repository.isPublished()}">style="display: none"</c:if> id="unpublish-${repository.id}" data-placement="bottom" data-toggle="tooltip" data-original-title="<spring:message code='table.actions.unpublish'/>" type="button" class="btn btn-warning" onclick="unpublishRepository(${repository.id})" >
+		                        <span class="glyphicon glyphicon-off"></span>
+	                        </button> 
+		                    
+		                    <button data-placement="bottom" data-toggle="tooltip" data-original-title="<spring:message code='table.actions.delete'/>" class="btn btn-danger" type="button" id="del${repository.id}" onclick="deleteRepository(${repository.id})" >
+		                        <span class="glyphicon glyphicon-remove"></span>
+	                        </button>
+	                    </td>
+	                </c:if>
                 </tr>
             </c:forEach>
         </tbody>
