@@ -1,0 +1,45 @@
+server {
+  listen                80;
+  server_name           _;
+  rewrite     ^(.*)     https://$host$1 permanent;
+}
+
+server {
+  listen                443;
+  server_name           _;
+
+  ssl on;
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+  ssl_certificate       /etc/pki/tls/certs/rdepot.pem;
+  ssl_certificate_key   /etc/pki/tls/private/rdepot.key;
+
+  location /repo/ {
+    root /opt/rdepot;
+    access_log          /var/log/nginx/repo.access.log;
+    error_log           /var/log/nginx/repo.error.log;
+    autoindex on;
+  }
+
+  location / {
+    access_log          /var/log/nginx/rdepot.access.log;
+    error_log           /var/log/nginx/rdepot.error.log;
+    proxy_pass        http://oa-rdepot-app:8080;
+    proxy_redirect    off;
+    proxy_set_header  Host             $http_host;
+    proxy_set_header  X-Real-IP        $remote_addr;
+    proxy_set_header  X-Forwarded-For  $proxy_add_x_forwarded_for;
+    proxy_set_header  X-Forwarded-Protocol $scheme;
+  }
+
+  location /repo-api {
+    access_log          /var/log/nginx/repo-api.access.log;
+    error_log           /var/log/nginx/repo-api.error.log;
+    proxy_pass        http://oa-rdepot-repo:8080;
+    proxy_redirect    off;
+    proxy_set_header  Host             $http_host;
+    proxy_set_header  X-Real-IP        $remote_addr;
+    proxy_set_header  X-Forwarded-For  $proxy_add_x_forwarded_for;
+    proxy_set_header  X-Forwarded-Protocol $scheme;
+  }
+
+}

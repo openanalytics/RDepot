@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -165,18 +165,18 @@ public class PackageMaintainerService
 
 	public List<PackageMaintainer> findAll() 
 	{
-		return packageMaintainerRepository.findByDeleted(false, new Sort(new Order(Direction.ASC, "user.name")));
+		return packageMaintainerRepository.findByDeleted(false, Sort.by(new Order(Direction.ASC, "user.name")));
 	}
 	
 	public List<PackageMaintainer> findByDeleted(boolean deleted) 
 	{
-		return packageMaintainerRepository.findByDeleted(deleted, new Sort(new Order(Direction.ASC, "user.name")));
+		return packageMaintainerRepository.findByDeleted(deleted, Sort.by(new Order(Direction.ASC, "user.name")));
 	}
 
 	@Transactional(readOnly=false, rollbackFor={PackageMaintainerEditException.class})
 	public PackageMaintainer update(PackageMaintainer packageMaintainer, User updater) throws PackageMaintainerEditException 
 	{
-		PackageMaintainer updatedPackageMaintainer = packageMaintainerRepository.findOne(packageMaintainer.getId());
+		PackageMaintainer updatedPackageMaintainer = packageMaintainerRepository.getOne(packageMaintainer.getId());
 		Event updateEvent = eventService.findByValue("update");
 		try
 		{

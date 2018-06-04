@@ -1,10 +1,10 @@
 buildscript {
     repositories {
-        jcenter()
+        mavenCentral()
     }
 
     dependencies {
-        classpath 'com.bmuschko:gradle-cargo-plugin:+'
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.1.RELEASE")
     }
 }
 
@@ -13,11 +13,15 @@ plugins {
 }
 
 apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
 apply plugin: 'war'
-apply plugin: 'com.bmuschko.cargo'
+
 
 group = 'eu.openanalytics'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.0-SNAPSHOT'
 
 description = """rdepot"""
 
@@ -27,7 +31,6 @@ targetCompatibility = 1.8
 repositories {
 
      mavenCentral()
-     jcenter()
 }
 
 war {
@@ -35,48 +38,22 @@ war {
 }
 
 dependencies {
-    compile group: 'javax.validation', name: 'validation-api', version:'+'
-    compile group: 'org.eclipse.persistence', name: 'javax.persistence', version: '+'
-    compile group: 'org.hibernate', name: 'hibernate-core', version: '+'
-    compile group: 'org.hibernate', name: 'hibernate-validator', version: '+'
-    compile group: 'postgresql', name: 'postgresql', version:'+'
-    compile group: 'org.springframework', name: 'spring-webmvc', version:'+'
-    compile(group: 'org.springframework.data', name: 'spring-data-jpa', version:'+') {
-			exclude(module: 'spring-asm')
-    }
-    compile group: 'org.springframework.security', name: 'spring-security-core', version:'+'
-    compile group: 'org.springframework.security', name: 'spring-security-web', version:'+'
-    compile group: 'org.springframework.security', name: 'spring-security-config', version:'+'
-    compile group: 'org.springframework.security', name: 'spring-security-ldap', version:'+'
-    compile group: 'jstl', name: 'jstl', version:'+'
-    compile group: 'cglib', name: 'cglib', version:'+'
-    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-hibernate5', version:'+'
-    compile group: 'commons-fileupload', name: 'commons-fileupload', version:'+'
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.boot:spring-boot-devtools")
+    compile("org.springframework.boot:spring-boot-starter-security")
+    compile('org.springframework.security:spring-security-ldap')
+    compile('org.springframework.data:spring-data-jpa')
+    compile('com.google.code.gson:gson')
+    compile('com.fasterxml.jackson.datatype:jackson-datatype-hibernate5')
+    compile group: 'javax.persistence', name: 'javax.persistence-api', version: '+'
+    compile('org.hibernate:hibernate-core')
     compile group: 'javax.mail', name: 'mail', version:'+'
-    compile group: 'com.google.code.gson', name: 'gson', version:'+'
-    compile group: 'javax.el', name: 'javax.el-api', version: '+'
-    compile group: 'commons-codec', name: 'commons-codec', version:'+'
-    providedCompile group: 'javax.servlet', name: 'javax.servlet-api', version:'+'
-    providedCompile group: 'javax.servlet', name: 'jsp-api', version:'+'
-}
-
-cargo {
-    containerId = 'tomcat8x'
-    port = 7070
-
-    deployable {
-        context = 'rdepot'
-    }
-
-    remote {
-    	hostname = 'localhost'
-        username = 'admin'
-        password = 'admin'
-    }
-}
-
-task redeploy(dependsOn: [build, war, cargoRedeployRemote]) << {
-    println 'REDEPLOYED!'
+    compile group: 'commons-fileupload', name: 'commons-fileupload', version:'+'
+    compile group: 'org.postgresql', name: 'postgresql', version:'+'
+    compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-jasper', version: '+'
+	compile group: 'jstl', name: 'jstl', version:'+'
+	compile group: 'org.jsoup', name: 'jsoup', version: '1.11.3'
+	testCompile("junit:junit")
 }
 
 license {
@@ -84,5 +61,5 @@ license {
     strictCheck true
     ext.year = Calendar.getInstance().get(Calendar.YEAR)
     ext.company = 'Open Analytics NV'
-    excludes(['**/*.ttf', '**/*.svg', '**/*.eot', '**/*.woff', '**/*bootstrap*.css', '**/*bootstrap*.js', '**/*.properties'])
+    excludes(['**/*.ico', '**/*.map', '**/*.zip', '**/*.png', '**/*.tld', '**/*.jsp', '**/*.ttf', '**/*.svg', '**/*.eot', '**/*.woff', '**/*.css', '**/*.js', '**/*.properties'])
 }

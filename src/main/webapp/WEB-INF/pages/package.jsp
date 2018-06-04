@@ -43,7 +43,7 @@
                </tr>
                               <tr>
                    <td><spring:message code="table.header.repository"/></td>
-                   <td><a href="<c:url value='/manager/repositories' />/${packageBag.repository.id}">${packageBag.repository.name}</a></td>
+                   <td><a href="<c:url value='/manager/repositories' />/${packageBag.repository.name}">${packageBag.repository.name}</a></td>
                </tr>
                               <tr>
                    <td><spring:message code="table.header.source"/></td>

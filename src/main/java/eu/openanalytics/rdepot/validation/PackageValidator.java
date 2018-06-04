@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -39,12 +39,12 @@ public class PackageValidator
 	//TODO: implement this using Spring validator?
 	// There's no need for "rejectValue", can use "reject" and check for error code, then throw error or warning?
 	
-	public void validate(Package target) throws PackageValidationException, PackageValidationWarning
+	public void validate(Package target, boolean replace) throws PackageValidationException, PackageValidationWarning
 	{
 		//validateRepository!!
 		//validateSource!!
 		validateName(target);
-		validateVersion(target);
+		validateVersion(target, replace);
 		validateDescription(target);
 		validateAuthor(target);
 		validateLicense(target);
@@ -66,7 +66,7 @@ public class PackageValidator
 			throw new PackageValidationException(MessageCodes.ERROR_PACKAGE_EMPTY_NAME, target);
 	}
 	
-	private void validateVersion(Package target) throws PackageValidationException, PackageValidationWarning
+	private void validateVersion(Package target, boolean replace) throws PackageValidationException, PackageValidationWarning
 	{
 		String version = target.getVersion();
 		String name = target.getName();
@@ -89,7 +89,7 @@ public class PackageValidator
 //		{
 //			throw new PackageValidationException(MessageCodes.ERROR_PACKAGE_INVALID_VERSION, target);
 //		}		
-		if(target.getId() <= 0)
+		if(target.getId() <= 0 && !replace)
 		{
 			Package checkSameVersion = packageService.findByNameAndVersionAndRepository(name, version, repository);
 			if(checkSameVersion != null)

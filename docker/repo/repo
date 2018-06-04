@@ -1,7 +1,0 @@
-server {
-  listen                80;
-  root /opt/rdepot;
-  location / {
-    autoindex on;
-  }
-}

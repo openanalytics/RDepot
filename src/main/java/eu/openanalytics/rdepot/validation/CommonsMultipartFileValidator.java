@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -41,8 +41,10 @@ public class CommonsMultipartFileValidator
 	
 	private void validateContentType(CommonsMultipartFile target) throws CommonsMultipartFileValidationException
 	{
-		if(!Objects.equals(target.getContentType(), "application/gzip"))
-			throw new CommonsMultipartFileValidationException(MessageCodes.ERROR_FORM_INVALID_CONTENTTYPE);
+		if(
+			!(Objects.equals(target.getContentType(), "application/gzip") || 
+			  Objects.equals(target.getContentType(), "application/x-gzip")))
+			throw new CommonsMultipartFileValidationException(MessageCodes.ERROR_FORM_INVALID_CONTENTTYPE + ": " + target.getContentType());
 	}
 	
 	private void validateSize(CommonsMultipartFile target) throws CommonsMultipartFileValidationException

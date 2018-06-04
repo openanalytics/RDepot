@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -42,12 +42,22 @@ public class RoleService
 	
 	public Role findById(int id) 
 	{
-		return roleRepository.findOne(id);
+		return roleRepository.getOne(id);
 	}
 	
 	public Role findByValue(int value) 
 	{
 		return roleRepository.findByValue(value);
+	}
+	
+	public Role getUserRole()
+	{
+		return findByName("user");
+	}
+	
+	public Role getAdminRole()
+	{
+		return findByName("admin");
 	}
 	
 	public Role findByName(String name) 

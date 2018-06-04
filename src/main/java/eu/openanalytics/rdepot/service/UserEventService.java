@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -58,7 +58,7 @@ public class UserEventService
 	@Transactional(readOnly = false)
 	public void delete(int id)
 	{
-		UserEvent event = userEventRepository.findOne(id);
+		UserEvent event = userEventRepository.getOne(id);
 		if(event != null)
 			userEventRepository.delete(event);
 	}
@@ -101,7 +101,7 @@ public class UserEventService
 	
 	public UserEvent findById(int id) 
 	{
-		return userEventRepository.findOne(id);
+		return userEventRepository.getOne(id);
 	}
 	
 	public List<UserEvent> findAll() 

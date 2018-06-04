@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -47,7 +47,7 @@ public class ManagerController
 	private UserService userService;
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public String manager(ModelMap model, Principal principal)
+	public String manager(Model model, Principal principal)
 	{		
 		User user = userService.findByLogin(principal.getName());
 		model.addAttribute("role", user.getRole().getValue());
@@ -57,7 +57,7 @@ public class ManagerController
 	}
 	
 	@RequestMapping(value="/settings", method = RequestMethod.GET)
-	public String settings(ModelMap model, Principal principal)
+	public String settings(Model model, Principal principal)
 	{		
 		User user = userService.findByLogin(principal.getName());
 		model.addAttribute("role", user.getRole().getValue());

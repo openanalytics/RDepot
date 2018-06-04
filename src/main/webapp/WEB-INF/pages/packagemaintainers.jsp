@@ -87,26 +87,27 @@
     function deletePackagemaintainer(id)
     {
         var postUrl = "<c:url value="/manager/packages/maintainers" />" + "/" + String(id) + "/delete";
-	    $dialog.dialog( "option", "buttons", { "<spring:message code="dialog.no"/>": function() { $(this).dialog("close"); }, "<spring:message code="dialog.yes"/>": function() {
-	        $(this).dialog("close");
-	        $.ajax({
-                type: "DELETE",
-                dataType: 'json',
-                url: postUrl,
-                success: function(data)
+	    /* $dialog.dialog( "option", "buttons", { "<spring:message code="dialog.no"/>": function() { $(this).dialog("close"); }, "<spring:message code="dialog.yes"/>": function() {
+	        $(this).dialog("close"); */
+        $.ajax({
+            type: "DELETE",
+            dataType: 'json',
+            url: postUrl,
+            success: function(data)
+            {
+                if(data.success != null)
                 {
-                    if(data.success != null)
-                    {
-                        alert(data.success);
-                        $("#tr"+String(id)).remove();
-                    }
-                    else
-                    {
-                        alert(data.error);
-                    }
-                }});	    
-	       }});
-	    $dialog.dialog("open");
+                    alert(data.success);
+                    $("#tr"+String(id)).remove();
+                }
+                else
+                {
+                    alert(data.error);
+                }
+            }
+         });	    
+	     /*  }});
+	     $dialog.dialog("open"); */
     }
     
 </script>

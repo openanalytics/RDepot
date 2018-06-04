@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -42,12 +42,27 @@ public class EventService
 	
 	public Event findById(int id) 
 	{
-		return eventRepository.findOne(id);
+		return eventRepository.getOne(id);
 	}
 	
 	public Event findByValue(String value) 
 	{
 		return eventRepository.findByValue(value);
+	}
+	
+	public Event getDeleteEvent()
+	{
+		return findByValue("delete");
+	}
+	
+	public Event getCreateEvent()
+	{
+		return findByValue("create");
+	}
+	
+	public Event getUpdateEvent()
+	{
+		return findByValue("update");
 	}
 
 	public List<Event> findAll() 

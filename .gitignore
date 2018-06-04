@@ -1,1 +1,12 @@
+/bin/
+.gradle
+.settings
+.project
+.classpath
+*.jar
 *.war
+/build/
+/docker/proxy/logs
+/repo/build/
+/repo/bin/
+/docker/app/repository

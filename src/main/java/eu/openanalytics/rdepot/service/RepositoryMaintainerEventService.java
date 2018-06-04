@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -87,7 +87,7 @@ public class RepositoryMaintainerEventService
 	
 	public RepositoryMaintainerEvent findById(int id) 
 	{
-		return repositoryMaintainerEventRepository.findOne(id);
+		return repositoryMaintainerEventRepository.getOne(id);
 	}
 	
 	public List<RepositoryMaintainerEvent> findAll() 
@@ -113,7 +113,7 @@ public class RepositoryMaintainerEventService
 	@Transactional(readOnly = false)
 	public void delete(int id)
 	{
-		RepositoryMaintainerEvent event = repositoryMaintainerEventRepository.findOne(id);
+		RepositoryMaintainerEvent event = repositoryMaintainerEventRepository.getOne(id);
 		if(event != null)
 			repositoryMaintainerEventRepository.delete(event);
 	}

@@ -17,13 +17,13 @@
 	    </div>
     </c:if>
     <c:url value="/manager/packages/maintainers/${packagemaintainer.id}/edit" var="editPackageMaintainer" />
-	<form:form method="POST" commandName="packagemaintainer" modelAttribute="packagemaintainer" action="${editPackageMaintainer}" >
+	<form:form method="POST" modelAttribute="packagemaintainer" action="${editPackageMaintainer}" >
 	<form:hidden path="user" value="${packagemaintainer.user.id}" />
       <table>
         <tr>
           <td><spring:message code="form.label.user"/></td>
           <td>
-            <input class="form-control" value="${packagemaintainer.user.name}" size="40" disabled >
+            <input class="form-control" value="${packagemaintainer.user.name}" size="40" readonly="readonly" >
             <form:errors path="user" cssStyle="color: red;" />
           </td>
         </tr>

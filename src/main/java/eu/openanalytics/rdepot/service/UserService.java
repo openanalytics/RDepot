@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -32,9 +32,11 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -46,8 +48,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.context.annotation.ScopedProxyMode; 
-import org.springframework.core.env.Environment;
 
 import eu.openanalytics.rdepot.comparator.UserComparator;
 import eu.openanalytics.rdepot.exception.AdminNotFound;
@@ -123,10 +123,8 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 	@Resource
 	private RepositoryMaintainerService repositoryMaintainerService;
 	
-	@Resource
-	private Environment env;
-   
-	private static final String PROPERTY_NAME_LDAP_LOGINFIELD = "ldap.loginfield";
+	@Value("${ldap.loginfield}")
+	private String ldapLoginfield;
 
 	@Transactional(readOnly = false)
 	public User create(User user) 
@@ -154,19 +152,19 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 
 	public User findByLogin(String login) 
 	{
-		return userRepository.findByLoginAndDeleted(login, false);
+		return userRepository.findByLoginIgnoreCaseAndDeleted(login, false);
 	}
 	
 	public User findByLoginWithRepositoryMaintainers(String login) 
 	{
-		User user = userRepository.findByLoginAndDeleted(login, false);
+		User user = userRepository.findByLoginIgnoreCaseAndDeleted(login, false);
 		Hibernate.initialize(user.getRepositoryMaintainers());
 		return user;
 	}
 	
 	public User findByLoginWithMaintainers(String login) 
 	{
-		User user = userRepository.findByLoginAndDeleted(login, false);
+		User user = userRepository.findByLoginIgnoreCaseAndDeleted(login, false);
 		Hibernate.initialize(user.getRepositoryMaintainers());
 		Hibernate.initialize(user.getPackageMaintainers());
 		return user;
@@ -174,7 +172,7 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 	
 	public User findByLoginEvenDeleted(String login) 
 	{
-		return userRepository.findByLogin(login);
+		return userRepository.findByLoginIgnoreCase(login);
 	}
 
 	public User findByEmail(String email) 
@@ -264,19 +262,19 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 
 	public List<User> findAll() 
 	{
-		return userRepository.findByDeleted(false, new Sort(new Order(Direction.ASC, "name")));
+		return userRepository.findByDeleted(false, Sort.by(new Order(Direction.ASC, "name")));
 	}
 	
 	public List<User> findByDeleted(boolean deleted) 
 	{
-		return userRepository.findByDeleted(deleted, new Sort(new Order(Direction.ASC, "name")));
+		return userRepository.findByDeleted(deleted, Sort.by(new Order(Direction.ASC, "name")));
 	}
 
 	@Transactional(readOnly = false, rollbackFor={UserEditException.class})
 	public User update(User user, User admin) throws UserEditException
 	{
 		User updatedUser = userRepository.findByIdAndDeleted(user.getId(), false);
-		Event updateEvent = eventService.findByValue("update");
+		Event updateEvent = eventService.getUpdateEvent();
 		
 		if(admin == null)
 		{
@@ -569,8 +567,8 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 	@Override
 	public Collection<? extends GrantedAuthority> getGrantedAuthorities(DirContextOperations userData, String username) 
 	{
-		String login = userData.getStringAttribute(env.getRequiredProperty(PROPERTY_NAME_LDAP_LOGINFIELD));
-		User user = userRepository.findByLogin(login);	
+		String login = userData.getStringAttribute(ldapLoginfield);
+		User user = userRepository.findByLoginIgnoreCase(login);	
 		Collection<SimpleGrantedAuthority> authorities = new HashSet<SimpleGrantedAuthority>(0);
 		
 		for(int i = 0, v = user.getRole().getValue(); i <= v; i++)

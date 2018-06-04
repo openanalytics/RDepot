@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -48,7 +48,7 @@ public interface PackageRepository extends JpaRepository<Package, Integer>
 	public Package findByIdAndDeleted(int id, boolean deleted);
 
 	public List<Package> findByDeleted(boolean deleted, Sort sort);
-
+	
 	public List<Package> findByRepositoryAndDeleted(Repository repository, boolean deleted);
 
 	public List<Package> findByRepositoryAndUserAndDeleted(Repository repository, User maintainer, boolean deleted);

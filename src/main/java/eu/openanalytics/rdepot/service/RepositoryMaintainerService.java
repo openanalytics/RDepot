@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -141,12 +141,12 @@ public class RepositoryMaintainerService
 
 	public List<RepositoryMaintainer> findAll() 
 	{
-		return repositoryMaintainerRepository.findByDeleted(false, new Sort(new Order(Direction.ASC, "user.name")));
+		return repositoryMaintainerRepository.findByDeleted(false, Sort.by(new Order(Direction.ASC, "user.name")));
 	}
 	
 	public List<RepositoryMaintainer> findByDeleted(boolean deleted) 
 	{
-		return repositoryMaintainerRepository.findByDeleted(deleted, new Sort(new Order(Direction.ASC, "user.name")));
+		return repositoryMaintainerRepository.findByDeleted(deleted, Sort.by(new Order(Direction.ASC, "user.name")));
 	}
 
 	@Transactional(readOnly=false, rollbackFor={RepositoryMaintainerEditException.class})

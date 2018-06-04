@@ -17,7 +17,7 @@
 	    </div>
     </c:if>
     <c:url value="/manager/repositories" var="editRepository" />
-	<form:form method="POST" commandName="repository" modelAttribute="repository" action="${editRepository}/${repository.id}/edit" >
+	<form:form method="POST" modelAttribute="repository" action="${editRepository}/${repository.id}/edit" >
 	  <form:errors path="id" cssStyle="color: red;" />
 	  <form:hidden path="version" value="${repository.version}" />
       <table>

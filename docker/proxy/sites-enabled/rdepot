@@ -1,0 +1,34 @@
+server {
+  listen                80;
+  server_name           _;
+
+  location /repo/ {
+    root /opt/rdepot;
+    access_log          /var/log/nginx/repo.access.log;
+    error_log           /var/log/nginx/repo.error.log;
+    autoindex on;
+  }
+
+  location / {
+    access_log          /var/log/nginx/rdepot.access.log;
+    error_log           /var/log/nginx/rdepot.error.log;
+    proxy_pass        http://oa-rdepot-app:8080;
+    proxy_redirect    off;
+    proxy_set_header  Host             $http_host;
+    proxy_set_header  X-Real-IP        $remote_addr;
+    proxy_set_header  X-Forwarded-For  $proxy_add_x_forwarded_for;
+    proxy_set_header  X-Forwarded-Protocol $scheme;
+  }
+
+  location /repo-api {
+    access_log          /var/log/nginx/repo-api.access.log;
+    error_log           /var/log/nginx/repo-api.error.log;
+    proxy_pass        http://oa-rdepot-repo:8080;
+    proxy_redirect    off;
+    proxy_set_header  Host             $http_host;
+    proxy_set_header  X-Real-IP        $remote_addr;
+    proxy_set_header  X-Forwarded-For  $proxy_add_x_forwarded_for;
+    proxy_set_header  X-Forwarded-Protocol $scheme;
+  }
+
+}

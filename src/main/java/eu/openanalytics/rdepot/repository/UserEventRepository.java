@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -43,8 +43,23 @@ public interface UserEventRepository extends JpaRepository<UserEvent, Integer>
 	public List<UserEvent> findByDate(Date date);
 	public UserEvent findByUserAndEvent_Value(User user, String string);
 	public List<UserEvent> findByDateAndUser(Date date, User user);
-	@Query("SELECT u FROM UserEvent u WHERE u.user = (:user) AND u.date = (:date) AND u.changedVariable <> 'last logged in'")
-	public List<UserEvent> findByDateAndUserNoLogs(@Param("date") Date date, @Param("user") User user);
+	public default List<UserEvent> findByDateAndUserNoLogs(Date date, User user)
+	{
+		List<UserEvent> events = findByDateAndUserOnlyRoles(date, user);
+		events.addAll(findByDateAndUserNoLogsNoRoles(date, user));
+		return events;
+	}
+	@Query(
+		"SELECT new UserEvent(u1.id, u1.date, u1.changedBy, u1.user, u1.event, u1.changedVariable, r1.description, r2.description, u1.time) "
+		+ "FROM UserEvent u1 "
+		+ "JOIN Role r1 ON r1.value = CAST(u1.valueBefore AS java.lang.Integer) "
+		+ "JOIN Role r2 ON r2.value = CAST(u1.valueAfter AS java.lang.Integer) "
+		+ "WHERE u1.user = (:user) AND u1.date = (:date) AND u1.changedVariable = 'role'")
+	public List<UserEvent> findByDateAndUserOnlyRoles(@Param("date") Date date, @Param("user") User user);
+	@Query(
+		"SELECT u2 FROM UserEvent u2 "
+		+ "WHERE u2.user = (:user) AND u2.date = (:date) AND u2.changedVariable <> 'last logged in' AND u2.changedVariable <> 'role'")
+	public List<UserEvent> findByDateAndUserNoLogsNoRoles(@Param("date") Date date, @Param("user") User user);
 	@Query("SELECT u FROM UserEvent u WHERE u.id = (SELECT MAX(id) FROM UserEvent e WHERE e.user = (:user) AND e.changedVariable = (:changedVariable))")
 	public UserEvent findLastByUserAndChangedVariable(@Param("user") User user, @Param("changedVariable") String changedVariable);
 }

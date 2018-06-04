@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -22,7 +22,9 @@ package eu.openanalytics.rdepot.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,7 +37,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
@@ -103,7 +104,10 @@ public class PackageController
 	public String packagesPage(Model model, Principal principal) 
 	{
 		User requester = userService.findByLogin(principal.getName());
-		model.addAttribute("packages", packageService.findMaintainedBy(requester));
+		List<Integer> maintained = new ArrayList<>();
+		packageService.findMaintainedBy(requester).forEach(p -> maintained.add(p.getId()));
+		model.addAttribute("maintained", maintained);
+		model.addAttribute("packages", packageService.findAll());
 		model.addAttribute("role", requester.getRole().getValue());
 		return "packages";
 	}
@@ -126,13 +130,30 @@ public class PackageController
 	}
 	
 	@RequestMapping(value="/{id}/published", method=RequestMethod.GET)
-	public String publishedPage(@PathVariable Integer id, Model model, RedirectAttributes redirectAttributes) 
+	public String publishedPage(
+		@PathVariable Integer id, 
+		Model model, 
+		RedirectAttributes redirectAttributes, 
+		Principal principal) 
 	{
 		Package packageBag = packageService.findById(id);
+		String address = "redirect:/manager";
+		if(principal != null && 
+		   !(principal.getName().isEmpty() || principal.getName().trim().isEmpty()))
+		{
+			User requester = userService.findByLogin(principal.getName());
+			if(requester != null)
+			{
+				model.addAttribute("role", requester.getRole().getValue());
+				if(requester.getRole().getValue() > 0)
+					address = "redirect:/manager/packages";
+			}
+			
+		}
 		if(packageBag == null)
 		{
 			redirectAttributes.addFlashAttribute("error", MessageCodes.ERROR_PACKAGE_NOT_FOUND);
-			return "redirect:/manager/packages";
+			return address;
 		}
 		model.addAttribute("packageBag", packageBag);
 		return "package-published";
@@ -225,7 +246,7 @@ public class PackageController
 	}
 	
 	@PreAuthorize("hasAuthority('packagemaintainer')")
-	@RequestMapping(value="/{id}", method=RequestMethod.GET)
+	@RequestMapping(value="/{id}/feed", method=RequestMethod.GET)
 	public String packagePage(@PathVariable Integer id, Model model, 
 			RedirectAttributes redirectAttributes, Principal principal) 
 	{
@@ -347,7 +368,7 @@ public class PackageController
 				redirectAttributes.addFlashAttribute("error", MessageCodes.ERROR_USER_NOT_AUTHORIZED);
 			else
 			{
-				packageValidator.validate(packageBag);
+				packageValidator.validate(packageBag, false);
 				packageService.update(packageBag, requester);
 				redirectAttributes.addFlashAttribute("success", MessageCodes.SUCCESS_PACKAGE_UPDATED);
 			}
@@ -380,7 +401,7 @@ public class PackageController
 		    	//headers.set("Content-Encoding", "gzip");
 		    	//headers.set("Content-Encoding", "x-gzip");
 		    	response.setHeader("Content-Disposition", "attachment; filename= \""+packageBag.getName()+"_"+packageBag.getVersion()+".tar.gz\"");
-				bytes = IOUtils.toByteArray(file.getInputStream());
+		    	bytes = Files.readAllBytes(file.getFile().toPath());
 				response.getOutputStream().write(bytes);
 			    response.flushBuffer();
 				// httpStatus = HttpStatus.OK;
@@ -412,7 +433,7 @@ public class PackageController
 					FileSystemResource file = new FileSystemResource(manualFile);
 			    	headers.set("Content-Type", "application/pdf");
 			    	headers.set("Content-Disposition", "attachment; filename= \""+packageBag.getName()+".pdf\"");
-					bytes = IOUtils.toByteArray(file.getInputStream());
+			    	bytes = Files.readAllBytes(file.getFile().toPath());
 					httpStatus = HttpStatus.OK;
 				}
 			}
@@ -422,6 +443,35 @@ public class PackageController
 		{
 			return new ResponseEntity<byte[]>(bytes,headers,httpStatus);
 		}
+	}
+		
+	@RequestMapping(value="/{id}/vignettes/{name}.pdf", method=RequestMethod.GET, produces="application/pdf")
+	public @ResponseBody ResponseEntity<byte[]> downloadVignettePdf(@PathVariable Integer id, @PathVariable String name)
+	{
+		HttpHeaders headers = new HttpHeaders();
+		HttpStatus httpStatus = HttpStatus.NOT_FOUND;
+		byte[] bytes = packageService.readVignette(id, name + ".pdf");
+    	if (bytes != null)
+		{
+    		httpStatus = HttpStatus.OK;
+    		headers.set("Content-Type", "application/pdf");
+	    	headers.set("Content-Disposition", "attachment; filename= \""+name+".pdf\"");
+		}
+		return new ResponseEntity<byte[]>(bytes,headers,httpStatus);
+	}
+	
+	@RequestMapping(value="/{id}/vignettes/{name}.html", method=RequestMethod.GET, produces="text/html")
+	public @ResponseBody ResponseEntity<byte[]> getVignetteHtml(@PathVariable Integer id, @PathVariable String name)
+	{
+		HttpHeaders headers = new HttpHeaders();
+		HttpStatus httpStatus = HttpStatus.NOT_FOUND;
+		byte[] bytes = packageService.readVignette(id, name + ".html");
+    	if (bytes != null)
+		{
+    		httpStatus = HttpStatus.OK;
+    		headers.set("Content-Type", "text/html");
+		}
+		return new ResponseEntity<byte[]>(bytes,headers,httpStatus);
 	}
 	
 	@PreAuthorize("hasAuthority('packagemaintainer')")
@@ -445,6 +495,7 @@ public class PackageController
 				packageBag.setActive(true);
 				packageService.update(packageBag, requester);
 				repositoryService.publishRepository(packageBag.getRepository(), requester);
+				repositoryService.boostRepositoryVersion(packageBag.getRepository(), requester);
 				result.put("success", MessageCodes.SUCCESS_PACKAGE_ACTIVATED);
 			}
 			return result;
@@ -477,6 +528,7 @@ public class PackageController
 				packageBag.setActive(false);
 				packageService.update(packageBag, requester);
 				repositoryService.publishRepository(packageBag.getRepository(), requester);
+				repositoryService.boostRepositoryVersion(packageBag.getRepository(), requester);
 				result.put("success", MessageCodes.SUCCESS_PACKAGE_DEACTIVATED);
 			}
 			return result;
@@ -507,6 +559,7 @@ public class PackageController
 			{
 				packageService.delete(id, requester);
 				repositoryService.publishRepository(packageBag.getRepository(), requester);
+				repositoryService.boostRepositoryVersion(packageBag.getRepository(), requester);
 				result.put("success", MessageCodes.SUCCESS_PACKAGE_DELETED);
 			}
 			return result;

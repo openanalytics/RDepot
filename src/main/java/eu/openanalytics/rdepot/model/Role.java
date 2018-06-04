@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -119,6 +119,11 @@ public class Role implements java.io.Serializable
 	public void setUsers(Set<User> users)
 	{
 		this.users = users;
+	}
+	
+	public boolean equals(Role that)
+	{
+		return this.name.equals(that.name);
 	}
 
 }

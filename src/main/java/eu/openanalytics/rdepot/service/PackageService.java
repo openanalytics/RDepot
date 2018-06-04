@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -105,6 +105,20 @@ public class PackageService
 		return createdPackage;
 	}
 	
+	@Transactional(readOnly = false)
+	public Package create(Package packageBag, User creator, boolean replace) throws PackageDeleteException, RepositoryEditException 
+	{
+		if (replace)
+		{
+			Package checkSameVersion = findByNameAndVersionAndRepository(packageBag.getName(), packageBag.getVersion(), packageBag.getRepository());
+			if (checkSameVersion != null)
+			{
+				delete(checkSameVersion.getId(), creator);
+			}
+		}
+		return create(packageBag, creator);
+	}
+	
 	public Package findById(int id) 
 	{
 		return packageRepository.findByIdAndDeleted(id, false);
@@ -112,12 +126,12 @@ public class PackageService
 	
 	public Package findByIdEvenDeleted(int id) 
 	{
-		return packageRepository.findOne(id);
+		return packageRepository.getOne(id);
 	}
 	
 	public List<Package> findByDeleted(boolean deleted) 
 	{
-		return packageRepository.findByDeleted(deleted, new Sort(new Order(Direction.ASC, "name")));
+		return packageRepository.findByDeleted(deleted, Sort.by(new Order(Direction.ASC, "name")));
 	}
 	
 	public Package findByIdAndDeleted(int id, boolean deleted) 
@@ -195,7 +209,7 @@ public class PackageService
 	
 	public List<Package> findAll() 
 	{
-		return packageRepository.findByDeleted(false, new Sort(new Order(Direction.ASC, "name")));
+		return packageRepository.findByDeleted(false, Sort.by(new Order(Direction.ASC, "name")));
 	}
 	
 	@Transactional(readOnly = false)
@@ -206,6 +220,17 @@ public class PackageService
 			if(submission != null && !submission.isDeleted())
 					submissionService.delete(submission.getId(), deleter);
 		}
+	}
+	
+	public byte[] readVignette(int id, String fileName)
+	{
+		Package packageBag = findById(id);
+		byte[] bytes = null;
+		if(packageBag != null)
+		{
+			bytes = packageBag.readVignette(fileName);
+		}
+		return bytes;
 	}
 	
 	@Transactional(readOnly = false)
@@ -435,35 +460,14 @@ public class PackageService
 	{
 		String name = packageBag.getName();
 		Repository repository = packageBag.getRepository();
-		String version = packageBag.getVersion();
 		List<Package> packages = findByNameAndRepository(name, repository);
 		if(packages.size() > 1)
 		{
-			int beforeDot = Integer.parseInt(version.split("\\.")[0]);
-			int afterDot = Integer.parseInt(version.split("\\-")[0].split("\\.")[1]);
-			int afterHyphen = Integer.parseInt(version.split("\\-")[1]);
 			for(Package p : packages)
 			{	
-				int beforeDot2 = Integer.parseInt(p.getVersion().split("\\.")[0]);
-				int afterDot2 = Integer.parseInt(p.getVersion().split("\\-")[0].split("\\.")[1]);
-				int afterHyphen2 = Integer.parseInt(p.getVersion().split("\\-")[1]);
-				if(beforeDot < beforeDot2)
+				if (packageBag.compareTo(p) < 0)
 				{
 					return false;
-				}
-				else if(beforeDot == beforeDot2)
-				{
-					if(afterDot < afterDot2)
-					{
-						return false;
-					}
-					else if(afterDot == afterDot2)
-					{
-						if(afterHyphen < afterHyphen2)
-						{
-							return false;
-						}
-					}
 				}
 			}
 		}
@@ -518,8 +522,7 @@ public class PackageService
 		if(targzfile != null && targzfile.exists() && targzfile.getParentFile() != null && targzfile.getParentFile().exists())
 		{
 			String name = packageBag.getName();
-			String manualPdfPath = targzfile.getParent() + "/" + name + "/" + name + ".pdf";
-			File manualPdf = new File(manualPdfPath);
+			File manualPdf = new File(targzfile.getParent(), name + "/" + name + ".pdf");
 			if(manualPdf != null && manualPdf.getParentFile() != null && manualPdf.getParentFile().exists() && !manualPdf.exists())
 			{
 				Process p;

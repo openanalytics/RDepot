@@ -59,35 +59,31 @@
             <c:if test="${role > 2}">
                 <li><a href="<c:url value='/manager/users' />"><spring:message code="menu.users"/></a></li>                        
             </c:if>
-            <c:if test="${role > 1}">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" ><spring:message code="menu.repositories"/> <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="<c:url value='/manager/repositories' />"><spring:message code="menu.general.overview"/></a></li>
-                        <c:if test="${role > 2}">
-                        	<li><a href="<c:url value='/manager/repositories/create' />"><spring:message code="menu.general.create"/></a></li>
-		                      <li class="divider"></li>
-		                      <li class="dropdown-header"><spring:message code="menu.general.maintainers"/></li>
-		                      <li><a href="<c:url value='/manager/repositories/maintainers' />"><spring:message code="menu.general.overview"/></a></li>
-		                      <li><a href="<c:url value='/manager/repositories/maintainers/create' />"><spring:message code="menu.general.create"/></a></li>
-		                    </c:if>
-                    </ul>        
-                </li>
-            </c:if>
-            <c:if test="${role > 0}">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" ><spring:message code="menu.packages"/> <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="<c:url value='/manager/packages' />"><spring:message code="menu.general.overview"/></a></li>
-                        <c:if test="${role > 1}">
-                            <li class="divider"></li>
-                            <li class="dropdown-header"><spring:message code="menu.general.maintainers"/></li>
-                            <li><a href="<c:url value='/manager/packages/maintainers' />"><spring:message code="menu.general.overview"/></a></li>
-                            <li><a href="<c:url value='/manager/packages/maintainers/create' />"><spring:message code="menu.general.create"/></a></li>    
-                        </c:if>          
-                    </ul>        
-                </li>
-            </c:if>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" ><spring:message code="menu.repositories"/> <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li><a href="<c:url value='/manager/repositories' />"><spring:message code="menu.general.overview"/></a></li>
+                    <c:if test="${role > 2}">
+                    	<li><a href="<c:url value='/manager/repositories/create' />"><spring:message code="menu.general.create"/></a></li>
+	                      <li class="divider"></li>
+	                      <li class="dropdown-header"><spring:message code="menu.general.maintainers"/></li>
+	                      <li><a href="<c:url value='/manager/repositories/maintainers' />"><spring:message code="menu.general.overview"/></a></li>
+	                      <li><a href="<c:url value='/manager/repositories/maintainers/create' />"><spring:message code="menu.general.create"/></a></li>
+	                    </c:if>
+                </ul>        
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" ><spring:message code="menu.packages"/> <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li><a href="<c:url value='/manager/packages' />"><spring:message code="menu.general.overview"/></a></li>
+                    <c:if test="${role > 1}">
+                        <li class="divider"></li>
+                        <li class="dropdown-header"><spring:message code="menu.general.maintainers"/></li>
+                        <li><a href="<c:url value='/manager/packages/maintainers' />"><spring:message code="menu.general.overview"/></a></li>
+                        <li><a href="<c:url value='/manager/packages/maintainers/create' />"><spring:message code="menu.general.create"/></a></li>    
+                    </c:if>          
+                </ul>        
+            </li>
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" ><spring:message code="menu.submissions"/> <b class="caret"></b></a>
                 <ul class="dropdown-menu">

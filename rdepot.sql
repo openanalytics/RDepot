@@ -738,10 +738,10 @@ INSERT INTO event VALUES (3, 'update');
 -- Data for Name: role; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO role VALUES (2, 1, 'packagemaintainer', 'A package maintainer.');
-INSERT INTO role VALUES (3, 2, 'repositorymaintainer', 'A repository maintainer.');
+INSERT INTO role VALUES (2, 1, 'packagemaintainer', 'Package Maintainer');
+INSERT INTO role VALUES (3, 2, 'repositorymaintainer', 'Repository Maintainer');
 INSERT INTO role VALUES (4, 3, 'admin', 'Administrator');
-INSERT INTO role VALUES (1, 0, 'user', 'Repository Maintainer');
+INSERT INTO role VALUES (1, 0, 'user', 'User');
 
 
 --

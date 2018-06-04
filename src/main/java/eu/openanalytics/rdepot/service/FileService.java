@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -21,10 +21,9 @@
 package eu.openanalytics.rdepot.service;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 
-import org.apache.commons.io.IOUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
@@ -50,8 +49,7 @@ public class FileService
 	
 	public String calculateMd5Sum(File file) throws IOException
 	{
-		FileInputStream fip = new FileInputStream(file);
-		byte[] bytes = IOUtils.toByteArray(fip);
+		byte[] bytes = Files.readAllBytes(file.toPath());
 		return DigestUtils.md5DigestAsHex(bytes);
 	}
 

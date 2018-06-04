@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -99,7 +99,7 @@ public class SubmissionService
 	
 	public Submission findByIdEvenDeleted(int id) 
 	{
-		return submissionRepository.findOne(id);
+		return submissionRepository.getOne(id);
 	}
 	
 	public Submission findByIdAndDeleted(int id, boolean deleted) 
@@ -149,12 +149,12 @@ public class SubmissionService
 
 	public List<Submission> findAll() 
 	{
-		return submissionRepository.findByDeleted(false, new Sort(new Order(Direction.DESC, "id")));
+		return submissionRepository.findByDeleted(false, Sort.by(new Order(Direction.DESC, "id")));
 	}
 	
 	public List<Submission> findByDeleted(boolean deleted) 
 	{
-		return submissionRepository.findByDeleted(deleted, new Sort(new Order(Direction.DESC, "id")));
+		return submissionRepository.findByDeleted(deleted, Sort.by(new Order(Direction.DESC, "id")));
 	}
 
 	@Transactional(readOnly=false, rollbackFor=SubmissionNotFound.class)
@@ -272,7 +272,7 @@ public class SubmissionService
 	
 	public List<Submission> findBySubmitter(User submitter)
 	{
-		return submissionRepository.findByUserAndDeleted(submitter, false, new Sort(new Order(Direction.DESC, "id")));
+		return submissionRepository.findByUserAndDeleted(submitter, false, Sort.by(new Order(Direction.DESC, "id")));
 	}
 
 	public List<Submission> findByRepository(Repository repository) 

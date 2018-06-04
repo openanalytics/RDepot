@@ -17,7 +17,7 @@
 	    </div>
     </c:if>
     <c:url value="/manager/repositories/create" var="createRepository" />
-	<form:form method="POST" commandName="repository" modelAttribute="repository" action="${createRepository}" >
+	<form:form method="POST" modelAttribute="repository" action="${createRepository}" >
       <table>
         <tr>
           <td><spring:message code="form.label.name"/></td>

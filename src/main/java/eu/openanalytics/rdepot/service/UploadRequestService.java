@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -21,7 +21,6 @@
 package eu.openanalytics.rdepot.service;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -40,9 +39,11 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import eu.openanalytics.rdepot.exception.CommonsMultipartFileValidationException;
 import eu.openanalytics.rdepot.exception.ManualCreateException;
+import eu.openanalytics.rdepot.exception.PackageDeleteException;
 import eu.openanalytics.rdepot.exception.PackageEditException;
 import eu.openanalytics.rdepot.exception.PackageValidationException;
 import eu.openanalytics.rdepot.exception.PackageValidationWarning;
+import eu.openanalytics.rdepot.exception.RepositoryEditException;
 import eu.openanalytics.rdepot.exception.SourceFileDeleteException;
 import eu.openanalytics.rdepot.exception.UploadRequestValidationException;
 import eu.openanalytics.rdepot.messaging.MessageCodes;
@@ -52,6 +53,7 @@ import eu.openanalytics.rdepot.model.Repository;
 import eu.openanalytics.rdepot.model.RepositoryMaintainer;
 import eu.openanalytics.rdepot.model.UploadRequest;
 import eu.openanalytics.rdepot.model.User;
+import eu.openanalytics.rdepot.r.RDescription;
 import eu.openanalytics.rdepot.validation.CommonsMultipartFileValidator;
 import eu.openanalytics.rdepot.validation.PackageValidator;
 import eu.openanalytics.rdepot.warning.UploadRequestValidationWarning;
@@ -140,13 +142,35 @@ public class UploadRequestService
 			packageBag.setActive(active);
 			
 			packageService.chooseBestMaintainer(packageBag);
-			packageValidator.validate(packageBag);
-			packageBag = packageService.create(packageBag, uploader);
+			packageValidator.validate(packageBag, uploadRequest.getReplace());
+			packageBag = packageService.create(packageBag, uploader, uploadRequest.getReplace());
+			
+			// TODO: where to do this? if submission not accepted, wait until accepted...
+			// also check if submission really just is submission and doesn't alter anything in the db
+//			if (active) 
+//			{
+//				for(Package p : packageBag.getRepository().getPackages())
+//				{
+//					if (p.getName().equals(name) && p.getId() != packageBag.getId())
+//					{
+//						packageService.deactivatePackage(p, uploader);
+//					}
+//				}
+//			}
+			
 			packageService.createManuals(packageBag);
+			
+			
+			
 			return packageBag;
 			
 		} 
-		catch (CommonsMultipartFileValidationException | PackageEditException | ManualCreateException | IOException e) 
+		catch (CommonsMultipartFileValidationException | 
+			   PackageEditException | 
+			   ManualCreateException | 
+			   IOException | 
+			   RepositoryEditException | 
+			   PackageDeleteException e) 
 		{
 			throw new UploadRequestValidationException(e.getMessage());
 		}
@@ -236,9 +260,9 @@ public class UploadRequestService
 		File randomDir = new File(packageUploadDirectory.getAbsolutePath() + separator + "repositories" + separator + repository.getId() + separator + (new Random()).nextInt(1000000));
 		try 
 		{
-			File file = new File(randomDir.getAbsolutePath() + separator + multipartFile.getOriginalFilename()); 
 			while(randomDir.exists())
 				randomDir = new File(randomDir.getParent() + separator + (new Random()).nextInt(1000000));
+			File file = new File(randomDir.getAbsolutePath() + separator + multipartFile.getOriginalFilename()); 
 			FileUtils.forceMkdir(randomDir);
 			multipartFile.transferTo(file);
 			return file;				
@@ -299,10 +323,9 @@ public class UploadRequestService
 	
 	public Properties readDescription(File file) throws UploadRequestValidationException
 	{
-		Properties prop = new Properties();
 		try 
 		{
-			prop.load(new FileInputStream(file));
+			return new RDescription(file);
 		} 
 		catch (FileNotFoundException e) 
 		{
@@ -314,7 +337,6 @@ public class UploadRequestService
 			deleteUpload(file.getParentFile());
 			throw new UploadRequestValidationException("file.description.io");
 		}
-		return prop;
 	}
 	
 }

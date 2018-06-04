@@ -19,7 +19,7 @@
         <div class="PackageDetail">
             <h2>${packageBag.title}</h2>
             <div class="breadcrumb">
-                <a href="<c:url value='/manager/repositories' />/${packageBag.repository.id}/published">${packageBag.repository.name}</a> 
+                <a href="<c:url value='/manager/repositories' />/${packageBag.repository.name}">${packageBag.repository.name}</a> 
                 &gt; ${packageBag.title} &gt; 
            </div>
            <p class="description">${packageBag.description}</p>
@@ -37,14 +37,25 @@
         <div class="InstallInstruct">
             <h3><spring:message code="package.title.install"/></h3>
             <p class="install"><spring:message code="package.info.install"/></p>
-            <pre>install.packages(&quot;${packageBag.name}&quot;, repos = &quot;${packageBag.repository.publicationUri}&quot;, type = &quot;source&quot;)</pre>
+            <pre>install.packages(&quot;${packageBag.name}&quot;, repos = c(rdepot = &quot;${packageBag.repository.publicationUri}&quot;, getOption(&quot;repos&quot;)))</pre>
         </div>
         <h3><spring:message code="package.title.documentation"/></h3>
         <table class="vignette">
+        	<c:choose>
+        		<c:when test="${not empty packageBag.vignettes}">
+		        	<c:forEach items="${packageBag.vignettes}" var="vignette" >
+			            <tr>
+			                <td><a href="<c:url value='/manager/packages' />/${packageBag.id}/vignettes/${vignette.fileName}">${vignette.title}</a></td>
+			            </tr>
+			        </c:forEach>
+	        	</c:when>
+	        	<c:otherwise>
+	        		<tr>
+		                <td><spring:message code="package.vignettes.none"/></td>
+		            </tr>
+	        	</c:otherwise>
+	        </c:choose>
             <tr class="row_odd">
-                <td><spring:message code="package.vignettes.none"/></td>
-            </tr>
-            <tr class="row_even">
                 <td><a href="<c:url value='/manager/packages' />/${packageBag.id}/download/${packageBag.name}.pdf"><spring:message code="package.info.referencemanual"/></a></td>
             </tr>
         </table>

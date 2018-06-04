@@ -19,7 +19,7 @@
     </c:if>
 
     <c:url value="/manager/packages/${packageBag.id}/edit" var="editPackage" />
-	<form:form method="POST" commandName="packageBag" modelAttribute="packageBag" action="${editPackage}">
+	<form:form method="POST" modelAttribute="packageBag" action="${editPackage}">
     <form:errors path="*" cssStyle="color: red;" />
      <table>
         <tr>

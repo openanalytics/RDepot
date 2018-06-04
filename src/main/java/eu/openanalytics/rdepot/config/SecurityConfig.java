@@ -1,7 +1,7 @@
 /**
- * RDepot
+ * R Depot
  *
- * Copyright (C) 2012-2017 Open Analytics NV
+ * Copyright (C) 2012-2018 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -25,17 +25,21 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
 import org.springframework.security.ldap.authentication.AbstractLdapAuthenticationProvider;
 import org.springframework.security.ldap.authentication.AbstractLdapAuthenticator;
@@ -47,46 +51,116 @@ import eu.openanalytics.rdepot.authenticator.CustomBindAuthenticator;
 import eu.openanalytics.rdepot.service.UserService;
 
 
-@Configuration
-@ComponentScan("eu.openanalytics.rdepot")
-@EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled=true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter
+@ComponentScan("eu.openanalytics.rdepot")
+public class SecurityConfig
 {	
     
     @Resource
 	private Environment env;
     
-	private static final String PROPERTY_NAME_LDAP_URL = "ldap.url";
-	private static final String PROPERTY_NAME_LDAP_BASEDN = "ldap.basedn";
-	private static final String PROPERTY_NAME_LDAP_USEROU = "ldap.userou";
-	private static final String PROPERTY_NAME_LDAP_LOGINFIELD = "ldap.loginfield";
+    @Value("${ldap.url}")
+	private String ldapUrl;
+    
+    @Value("${ldap.basedn}")
+	private String ldapBasedn;
+    
+    @Value("${ldap.userou:}")
+	private String ldapUserou;
+    
+    @Value("${ldap.loginfield}")
+	private String ldapLoginfield;
+    
+    @Value("${ldap.searchbase:}")
+	private String ldapSearchbase;
+    
+    @Value("${ldap.manager.dn:}")
+	private String ldapManagerDn;
+    
+    @Value("${ldap.manager.password:}")
+	private String ldapManagerPassword;
+	
+    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 
-    @Override
-    public void configure(WebSecurity web) throws Exception 
-    {
-        web
-            .ignoring()
-                .antMatchers("/static/**");
-    }
+	public static void validateConfiguration(String value, String name)
+	{
+		if (value == null || value.trim().isEmpty())
+			throw new IllegalArgumentException("Configuration value '" + name + "' is either null or empty");
+		log.info("Using value '" + value + "' for property " + name);
+	}
+    
+	@Configuration
+	@Order(1)
+	public class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter 
+	{
+	    @Override
+	    protected void configure(HttpSecurity http) throws Exception 
+	    {
+	        http
+	        	.antMatcher("/api/**")
+	        	.csrf().disable()
+				.authorizeRequests()
+					.anyRequest().hasAuthority("user")
+					.and()
+				.httpBasic()
+				.and()
+				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+	    }
+	    
+	    @Override
+	    @Bean
+	    public ProviderManager authenticationManager()
+	    {
+	    	return ldapAuthenticationManager();
+	    }
+	}
+	
+	@Configuration
+	public class FormLoginWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter 
+	{
+		@Override
+	    public void configure(WebSecurity web) throws Exception 
+	    {
+	        web
+	        	.ignoring()
+	            .antMatchers("/static/**");
+	    }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception 
+	    @Override
+	    protected void configure(HttpSecurity http) throws Exception 
+	    {
+	        http
+	            .authorizeRequests()
+	                .antMatchers("/manager**").hasAuthority("user")
+	                .antMatchers("/static/**").permitAll()
+	                //.anyRequest().hasAuthority("user")
+	                .and()
+	            .formLogin()
+	                .loginPage("/login")
+	                .defaultSuccessUrl("/manager")
+	                .failureUrl("/loginfailed")
+	                .permitAll().and()
+	            .logout()
+	            	//.logoutSuccessUrl("/login?success")
+	            	.invalidateHttpSession(true);
+	    }
+	    
+	    @Override
+	    @Bean
+	    public ProviderManager authenticationManager()
+	    {
+	    	return ldapAuthenticationManager();
+	    }
+	}
+	
+	@Bean
+    public ProviderManager ldapAuthenticationManager()
     {
-        http
-            .authorizeRequests()
-                .antMatchers("/manager**").hasAuthority("user")
-                .antMatchers("/static/**").permitAll()
-                //.anyRequest().hasAuthority("user")
-                .and()
-            .formLogin()
-                .loginPage("/login")
-                .defaultSuccessUrl("/manager")
-                .failureUrl("/loginfailed")
-                .permitAll().and()
-            .logout()
-            	//.logoutSuccessUrl("/login?success")
-            	.invalidateHttpSession(true);
+    	List<AuthenticationProvider> authenticationProviders = new ArrayList<AuthenticationProvider>();
+    	
+    	authenticationProviders.add(LDAPAuthenticationProvider());
+    	
+    	return new ProviderManager(authenticationProviders);
     }
     
     @Bean
@@ -94,29 +168,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
     {
         return new UserService();
     }
-
-    @Override
-    @Bean(name = "authenticationManager")
-    public ProviderManager authenticationManager()
-    {
-    	List<AuthenticationProvider> authenticationProviders = new ArrayList<AuthenticationProvider>();
-    	
-    	//authenticationProviders.add(JDBCAuthenticationProvider());
-    	authenticationProviders.add(LDAPAuthenticationProvider());
-    	
-    	return new ProviderManager(authenticationProviders);
-    }
-    
-//    @Bean
-//    public AbstractUserDetailsAuthenticationProvider JDBCAuthenticationProvider() 
-//    {
-//   
-//    	DaoAuthenticationProvider daoAuthProvider = new DaoAuthenticationProvider();
-//    	daoAuthProvider.setPasswordEncoder(passwordEncoder());
-//    	daoAuthProvider.setUserDetailsService(userService());
-//    	daoAuthProvider.setHideUserNotFoundExceptions(false);
-//    	return daoAuthProvider;
-//    }
     
     @Bean
     public AbstractLdapAuthenticationProvider LDAPAuthenticationProvider() 
@@ -128,8 +179,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
     @Bean
     public AbstractLdapAuthenticator LDAPAuthenticator() 
     {
+    	validateConfiguration(ldapLoginfield, "ldap.loginfield");
     	CustomBindAuthenticator bind = new CustomBindAuthenticator(LDAPContextSource());
-    	String userDnPattern = env.getRequiredProperty(PROPERTY_NAME_LDAP_LOGINFIELD) + "={0},ou=" + env.getRequiredProperty(PROPERTY_NAME_LDAP_USEROU);
+    	String userDnPattern = ldapLoginfield + "={0}";
+    	if (ldapUserou != null && !ldapUserou.trim().isEmpty())
+    		userDnPattern += ",ou=" + ldapUserou;
+		log.info("Using value '" + ldapUserou + "' for property ldap.userou");
+		log.info("Using value '" + userDnPattern + "' as the User Dn Pattern");
     	bind.setUserDnPatterns(new String[]{userDnPattern});
     	bind.setUserSearch(userSearch());
     	return bind;
@@ -138,25 +194,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
     @Bean
     public DefaultSpringSecurityContextSource LDAPContextSource() 
     {
-    	String url = env.getRequiredProperty(PROPERTY_NAME_LDAP_URL) + "/" + env.getRequiredProperty(PROPERTY_NAME_LDAP_BASEDN);
+    	validateConfiguration(ldapUrl, "ldap.url");
+    	validateConfiguration(ldapBasedn, "ldap.basedn");
+    	String url = ldapUrl + "/" + ldapBasedn;
     	DefaultSpringSecurityContextSource ctxsrc = new DefaultSpringSecurityContextSource(url);
+    	if (ldapManagerDn != null && !ldapManagerDn.trim().isEmpty())
+    	{
+    		log.info("Using value " + ldapManagerDn + " as Manager Dn");
+    		ctxsrc.setUserDn(ldapManagerDn);
+    	}
+    	if (ldapManagerPassword != null && !ldapManagerPassword.trim().isEmpty())
+    		ctxsrc.setPassword(ldapManagerPassword);
     	return ctxsrc;
     }
     
     @Bean
     public FilterBasedLdapUserSearch userSearch()
     {
-    	String filter = "(" + env.getRequiredProperty(PROPERTY_NAME_LDAP_LOGINFIELD) + "={0})";
-    	FilterBasedLdapUserSearch uSearch = new FilterBasedLdapUserSearch("", filter, LDAPContextSource());
+    	validateConfiguration(ldapLoginfield, "ldap.loginfield");
+    	String filter = "(" + ldapLoginfield + "={0})";
+    	String searchBase = "";
+    	if (ldapSearchbase != null && !ldapSearchbase.trim().isEmpty())
+    		searchBase = ldapSearchbase;
+    	FilterBasedLdapUserSearch uSearch = new FilterBasedLdapUserSearch(searchBase, filter, LDAPContextSource());
     	return uSearch;
     }
-    
-//    @Bean
-//    @Override
-//    public AuthenticationManager authenticationManager() throws Exception 
-//    {    	
-//    	return new AuthenticationManagerBuilder()
-//    	.authenticationProvider(authenticationProvider())
-//        .build();
-//    }
 }
