@@ -10,3 +10,4 @@
 /repo/build/
 /repo/bin/
 /docker/app/repository
+.vscode/
