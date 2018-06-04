@@ -56,4 +56,6 @@ To (re)start with fresh database:
 - remove the containers via "docker-compose down -v"
 - start up again using "docker-compose up -d"
 
+Browse the [RDepot Documentation](https://www.rdepot.io/).
+
 #### Copyright (c) Copyright of Open Analytics NV, 2010-2018 - Apache 2.0 License
