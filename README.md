@@ -41,14 +41,14 @@ Regarding users and passwords: all passwords are "password" (without ""), becaus
 - user "galieleo" is a package maintainer (but not linked to a package, a repository maintainer or administrator has to do that manually)
 - user "newton" is a regular user
 
-To complete a complete flow: R package to R Depot to Repository Server to R client, the following steps are needed:
+To complete an end-to-end flow: R package to R Depot to Repository Server to R client, the following steps are needed:
 
 - create a repository with (or edit)
     * a repository's publication URI: http://localhost/repo/repositoryName and
     * a server address: http://oa-rdepot-repo:8080/repositoryName
 - submit one or more packages to that repository via the R Depot web interface
 - publish the repository using the green button in the repositories view (if needed)
-- go to the published package page (repositories view, click publication URI, click package name)
+- go to the published package page (repositories view, click repository name, click package name)
 - use the install URL shown on the published package page to install the package in R (install.packages("somePackage", repos = c("http://localhost/repo/repositoryName", getOption())))
 
 To (re)start with fresh database:
