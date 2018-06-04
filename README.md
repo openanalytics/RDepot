@@ -10,6 +10,6 @@
 
 # RDepot
 
-Browse the [RDepot Documentation](http://rdepot.doc.openanalytics.eu/).
+Browse the [RDepot Documentation](https://www.rdepot.io/).
 
-#### Copyright (c) Copyright of Open Analytics NV, 2010-2014 - GNU AFFERO GENERAL PUBLIC LICENSE
+#### Copyright (c) Copyright of Open Analytics NV, 2012-2018 - Apache 2.0 License
