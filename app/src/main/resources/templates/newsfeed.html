@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head th:replace="fragments/header :: head (module='newsfeed')"></head>
+    <body>
+        <div class="mdl-layout mdl-js-layout">
+            <header th:replace="fragments/header :: topbar (module='newsfeed')"></header>
+            <div th:replace="fragments/header :: drawer (module='newsfeed')"></div>
+            <main class="mdl-layout__content">           
+                <div class="timeline">
+                    <dl></dl>
+                </div>
+            </main>
+        </div>
+    </body>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+            var events = /*[[${events}]]*/ {};
+        /*]]>*/
+    </script>
+
+</html>

@@ -3,28 +3,81 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.2.RELEASE")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.3.1.RELEASE")
+        classpath("io.spring.gradle:dependency-management-plugin:1.0.9.RELEASE")
     }
 }
 
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'org.springframework.boot'
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'idea'
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
+    id 'maven'
+    id 'maven-publish'
+}
+
+def globalConf = rootProject.ext
+
+bootJar {
+    archiveClassifier = 'application'
+    archiveVersion = rootProject.version
+    manifest {
+        attributes( 'Implementation-Title': 'RDepot', 
+                    'Implementation-Version': rootProject.version)
+    }
+}
 
 jar {
-    baseName = 'oa-rdepot-repo'
-    version =  '1.0.0'
+    enabled = true
+    archiveVersion = rootProject.version
+    manifest {
+        attributes( 'Implementation-Title': 'RDepot', 
+                    'Implementation-Version': rootProject.version)
+    }
 }
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-thymeleaf")
-    testCompile("org.springframework.boot:spring-boot-starter-test")
+	Map<String, String> dependencies = globalConf.commonDependencies
+	
+	implementation dependencies.sbStarterWeb
+	implementation dependencies.springDocOpenApiUi
+	testImplementation dependencies.sbStarterTest
 }
 
+publishing {
+    publications {
+        jarFile(MavenPublication) {
+            artifact bootJar
+            groupId rootProject.group + '.rdepot'
+            artifactId 'rdepot-repo'
+            version baseVersion
+        }
+        jarFile(MavenPublication) {
+            artifact jar
+            groupId rootProject.group + '.rdepot'
+            artifactId 'rdepot-repo'
+            version baseVersion
+        }
+    }
+    repositories {
+		maven {
+			def releasesRepoUrl = "https://nexus.openanalytics.eu/repository/releases"
+			def snapshotsRepoUrl = "https://nexus.openanalytics.eu/repository/snapshots"
+			url = baseVersion.contains('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+			credentials {
+				username = System.getenv("OA_NEXUS_USER")
+				password = System.getenv("OA_NEXUS_PWD")
+			}
+		}
+	}
+}

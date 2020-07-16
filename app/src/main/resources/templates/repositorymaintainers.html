@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head th:replace="fragments/header :: head (module='repositories')">
+    </head>
+    <body>
+        <div class="mdl-layout mdl-js-layout">
+            <header th:replace="fragments/header :: topbar (module='repositories')"></header>
+            <div th:replace="fragments/header :: drawer (module='repositories')"></div>
+            <main class="mdl-layout__content">
+                <button th:if="${role > 2}" type="button" class="add-maintainer-fab mdl-button mdl-button--fab mdl-button--primary" onclick="openAddMaintainerDialog()"><i class="material-icons">add</i></button>       
+                
+                <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp full-width">
+                    <thead>
+                        <tr>
+                            <th class="mdl-data-table__cell--non-numeric">Name</th>
+                            <th class="mdl-data-table__cell--non-numeric full-width">Repository</th>
+                            <th class="mdl-data-table__cell--non-numeric">Actions</th>
+                        </tr>                
+                    </thead>
+                    <tbody>
+                        <tr th:each="repositorymaintainer : ${repositorymaintainers}" >
+                            <input type="hidden" th:id="'repositorymaintainer-' + ${repositorymaintainer.id}"/>
+                            <td class="mdl-data-table__cell--non-numeric repositorymaintainer-name" th:text="${repositorymaintainer.user.name}"></td>
+                            <td class="mdl-data-table__cell--non-numeric repositorymaintainer-repository" th:text="${repositorymaintainer.repository.name}"></td>
+                            <td class="mdl-data-table__cell--non-numeric">
+                                <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" th:onclick="'openDeleteRepositoryMaintainerDialog('+ ${repositorymaintainer.id} + ')'">
+                                    <i class="material-icons">delete_forever</i>
+                                </button>
+                                <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" style="color:rgb(50, 166, 211);" th:data1="${repositorymaintainer.id}" th:data2="${repositorymaintainer.user.name}" th:onclick="openEditMaintainerDialog(this.getAttribute('data1'),this.getAttribute('data2'))">
+                                    <i class="material-icons">edit</i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </main>
+         </div>
+        <dialog class="mdl-dialog"></dialog> 
+    </body>
+</html>

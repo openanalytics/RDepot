@@ -1,0 +1,4 @@
+repositories:
+  - name: myrepo
+    uri: myuri
+    server-address: myserveraddress 

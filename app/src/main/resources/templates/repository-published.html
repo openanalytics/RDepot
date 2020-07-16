@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head th:replace="fragments/header :: head (module='repositories')">
+    </head>
+    <body>
+        <div class="mdl-layout mdl-js-layout">
+            <header th:replace="fragments/header :: topbar (module='repositories')"></header>
+            <div th:replace="fragments/header :: drawer (module='repositories')"></div>
+            <main class="mdl-layout__content">
+                <h3 style="margin:10px;" th:text="${repository.getName()}"></h3>    
+                <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp full-width">
+                    <thead>
+                        <tr>
+                            <th class="mdl-data-table__cell--non-numeric full-width">Package</th>
+                            <th class="mdl-data-table__cell--non-numeric">Version</th>
+                            <th class="mdl-data-table__cell--non-numeric">Maintainer</th>
+                            <th class="mdl-data-table__cell--non-numeric">Title</th>
+                        </tr>                
+                    </thead>
+                    <tbody>
+                        <tr th:each="package : ${packages}">
+                            <input type="hidden" th:id="'package-' + ${package.id}"/>
+                            <td class="mdl-data-table__cell--non-numeric package-name" th:text="${package.name}" th:data1="${repository.name}" th:data2="${package.name}" th:data3="${package.version}" th:onclick="openPackagePage(this.getAttribute('data1'),this.getAttribute('data2'),this.getAttribute('data3'))"></td>
+                            <td class="mdl-data-table__cell--non-numeric package-version" th:text="${package.version}" th:data1="${repository.name}" th:data2="${package.name}" th:data3="${package.version}" th:onclick="openPackagePage(this.getAttribute('data1'),this.getAttribute('data2'),this.getAttribute('data3'))"></td>
+                            <td class="mdl-data-table__cell--non-numeric package-maintainer" th:text="${package.user.name}" th:data1="${repository.name}" th:data2="${package.name}" th:data3="${package.version}" th:onclick="openPackagePage(this.getAttribute('data1'),this.getAttribute('data2'),this.getAttribute('data3'))"></td>
+                            <td class="mdl-data-table__cell--non-numeric package-title" th:text="${package.title}" th:data1="${repository.name}" th:data2="${package.name}" th:data3="${package.version}" th:onclick="openPackagePage(this.getAttribute('data1'),this.getAttribute('data2'),this.getAttribute('data3'))"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </main>
+        </div>
+        
+    </body>
+</html>

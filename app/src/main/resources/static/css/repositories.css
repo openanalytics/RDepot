@@ -1,0 +1,40 @@
+.mdl-button--primary.mdl-button--primary.mdl-button--raised, .mdl-button--primary.mdl-button--primary.mdl-button--fab {
+    background-color: rgb(50, 166, 211);
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 2;
+}
+.package-container {
+    margin: 10px;
+}
+
+.package-container table {
+    text-align: left;
+    margin: 0;
+}
+
+.package-container th {
+    background-color: rgb(230, 230, 230);
+    padding-right: 10px;
+    color: rgb(51, 51, 51);
+    font-weight: normal;
+}
+
+.package-container td {
+    color: rgb(85, 85, 85);
+    font-weight: normal;
+}
+
+.mdl-checkbox.is-disabled .mdl-checkbox__box-outline{
+    border-color: #bdbdbd;
+}
+
+.install {
+    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+    background-color: rgb(245, 245, 245);
+    color: rgb(0, 0, 0);
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid rgb(204, 204, 204);
+}

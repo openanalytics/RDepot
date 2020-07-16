@@ -1,0 +1,7 @@
+<h1>Create a repo</h1>
+<form method="POST" modelAttribute="repository" action="/manager/repositories/create">
+    <input type="text" name="name" required/>
+    <input type="text" name="publicationuri" required/>
+    <input type="text" name="serveraddress" required/>
+    <input type="submit" value="create"/>
+</form>

@@ -1,1 +1,5 @@
 rootProject.name = 'rdepot'
+include ':rdepot-app'
+include ':rdepot-repo'
+project(':rdepot-app').projectDir = new File('./app')
+project(':rdepot-repo').projectDir = new File('./repo')

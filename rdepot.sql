@@ -144,18 +144,18 @@ CREATE TABLE package (
     id integer NOT NULL,
     name character varying(255) NOT NULL,
     version character varying(255) NOT NULL,
-    description character varying(255) NOT NULL,
+    description text NOT NULL,
     author character varying(255) NOT NULL,
     maintainer_id integer NOT NULL,
     repository_id integer NOT NULL,
-    depends character varying(255),
-    imports character varying(255),
-    suggests character varying(255),
-    system_requirements character varying(255),
-    license character varying(255) NOT NULL,
+    depends character varying(2000),
+    imports character varying(2000),
+    suggests character varying(2000),
+    system_requirements character varying(2000),
+    license character varying(2000) NOT NULL,
     url character varying(255),
     source character varying(255) NOT NULL,
-    title character varying(255) NOT NULL,
+    title character varying(2000) NOT NULL,
     active boolean DEFAULT false NOT NULL,
     deleted boolean DEFAULT false NOT NULL,
     md5sum character varying(32)
@@ -220,6 +220,8 @@ CREATE TABLE repository_maintainer (
     user_id integer NOT NULL,
     repository_id integer NOT NULL,
     deleted boolean DEFAULT false NOT NULL
+--    repository_name character varying(255) NOT NULL,
+--    user_name character varying(255) NOT NULL
 );
 
 
@@ -292,7 +294,7 @@ CREATE TABLE role (
     id integer NOT NULL,
     value integer NOT NULL,
     name character varying(255) NOT NULL,
-    description character varying(255) NOT NULL
+    description character varying(2000) NOT NULL
 );
 
 
@@ -340,7 +342,7 @@ CREATE TABLE submission (
     id integer NOT NULL,
     submitter_id integer NOT NULL,
     package_id integer NOT NULL,
-    changes character varying(255),
+    changes character varying(2000),
     accepted boolean DEFAULT false NOT NULL,
     deleted boolean DEFAULT false NOT NULL
 );
@@ -718,7 +720,7 @@ SELECT pg_catalog.setval('"UserEvent_id_seq"', 8, true);
 -- Name: User_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('"User_id_seq"', 4, true);
+SELECT pg_catalog.setval('"User_id_seq"', 8, true);
 
 
 --
@@ -1184,10 +1186,25 @@ ALTER TABLE ONLY submission_event
 ALTER TABLE ONLY user_event
     ADD CONSTRAINT of_user FOREIGN KEY (user_id) REFERENCES "user"(id);
 
+-- einstein = admin
+-- tesla = repository maintainer (but not linked to a repository -> admin has to do that manually)
+-- galieleo = package maintainer (but not linked to a package -> repository maintainer or admin has to do that manually)
+-- newton = normal user
+
+INSERT INTO "user" VALUES (4, 4, 'Albert Einstein', 'einstein@ldap.forumsys.com', 'einstein', true, NULL, false);
+INSERT INTO "user" VALUES (5, 3, 'Nikola Tesla', 'tesla@ldap.forumsys.com', 'tesla', true, NULL, false);
+INSERT INTO "user" VALUES (6, 2, 'Galileo Galilei', 'galieleo@ldap.forumsys.com', 'galieleo', true, NULL, false);
+INSERT INTO "user" VALUES (7, 1, 'Isaac Newton', 'newton@ldap.forumsys.com', 'newton', true, NULL, false);
+INSERT INTO "user" VALUES (8, 4, 'Local Admin User', 'admin@localhost', 'admin', true, NULL, false);
+
+INSERT INTO user_event VALUES (1, now(), 4, 1, 'created', '', '', 4, now());
+INSERT INTO user_event VALUES (2, now(), 5, 1, 'created', '', '', 5, now());
+INSERT INTO user_event VALUES (3, now(), 6, 1, 'created', '', '', 6, now());
+INSERT INTO user_event VALUES (4, now(), 7, 1, 'created', '', '', 7, now());
+INSERT INTO user_event VALUES (5, now(), 8, 1, 'created', '', '', 8, now());
 
 -- Completed on 2017-04-19 13:06:33 CEST
 
 --
 -- PostgreSQL database dump complete
 --
-

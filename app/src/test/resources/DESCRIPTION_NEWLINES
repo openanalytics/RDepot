@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head data-suburl="">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<title>git/RDepot - src/test/resources/DESCRIPTION_NEWLINES at master -  RDepot - OA SCM</title>
+	<link rel="manifest" href="/manifest.json" crossorigin="use-credentials">
+	
+	<script>
+		if ('serviceWorker' in navigator) {
+			navigator.serviceWorker.register('/serviceworker.js').then(function(registration) {
+				
+				console.info('ServiceWorker registration successful with scope: ', registration.scope);
+			}, function(err) {
+				
+				console.info('ServiceWorker registration failed: ', err);
+			});
+		}
+	</script>
+	
+	<meta name="theme-color" content="#6cc644">
+	<meta name="author" content="git" />
+	<meta name="description" content="RDepot" />
+	<meta name="keywords" content="go,git,self-hosted,gitea">
+	<meta name="referrer" content="no-referrer" />
+	<meta name="_csrf" content="uCwWzJvgbjpXVAs31jet-kssafE6MTU5NDAyMjIwMDg2ODY5NTc4Nw" />
+	<meta name="_suburl" content="" />
+	
+		<meta name="_uid" content="26" />
+	
+	
+	
+
+
+	<script>
+	/*
+	@licstart  The following is the entire license notice for the
+        JavaScript code in this page.
+
+	Copyright (c) 2016 The Gitea Authors
+	Copyright (c) 2015 The Gogs Authors
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in
+	all copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+	THE SOFTWARE.
+	---
+	Licensing information for additional javascript libraries can be found at:
+	  {{StaticUrlPrefix}}/vendor/librejs.html
+
+	@licend  The above is the entire license notice
+        for the JavaScript code in this page.
+	*/
+	</script>
+
+	<link rel="shortcut icon" href="/img/favicon.png" />
+	<link rel="mask-icon" href="/img/gitea-safari.svg" color="#609926">
+	<link rel="preload" href="/vendor/assets/font-awesome/css/font-awesome.min.css" as="style" onload="this.rel='stylesheet'">
+	<noscript><link rel="stylesheet" href="/vendor/assets/font-awesome/css/font-awesome.min.css"></noscript>
+	<link rel="stylesheet" href="/vendor/assets/octicons/octicons.min.css">
+
+
+
+
+
+	
+	<link rel="stylesheet" href="/vendor/plugins/fomantic/semantic.min.css?v=2150802f140babb659fb7f59b121e3e9">
+	<link rel="stylesheet" href="/css/index.css?v=2150802f140babb659fb7f59b121e3e9">
+	<noscript>
+		<style>
+			.dropdown:hover > .menu { display: block; }
+			.ui.secondary.menu .dropdown.item > .menu { margin-top: 0; }
+		</style>
+	</noscript>
+
+
+	<link rel="stylesheet" href="/vendor/plugins/highlight/github.css">
+
+
+
+
+
+	<style class="list-search-style"></style>
+
+	<script src="/vendor/plugins/promise-polyfill/polyfill.min.js"></script>
+	<script src="/vendor/plugins/cssrelpreload/loadCSS.min.js"></script>
+	<script src="/vendor/plugins/cssrelpreload/cssrelpreload.min.js"></script>
+
+	
+		<meta property="og:title" content="RDepot" />
+		<meta property="og:url" content="https://scm.openanalytics.eu/git/RDepot" />
+		
+	
+	<meta property="og:type" content="object" />
+	<meta property="og:image" content="https://scm.openanalytics.eu/user/avatar/git/-1" />
+
+<meta property="og:site_name" content="OA SCM" />
+
+	
+
+
+</head>
+<body>
+	
+
+	<div class="full height">
+		<noscript>This website works better with JavaScript.</noscript>
+
+		
+
+		
+			<div class="ui top secondary stackable main menu following bar light">
+				<div class="ui container" id="navbar">
+	<div class="item brand" style="justify-content: space-between;">
+		<a href="/">
+			<img class="ui mini image" src="/img/gitea-sm.png">
+		</a>
+		<div class="ui basic icon button mobile-only" id="navbar-expand-toggle">
+			<i class="sidebar icon"></i>
+		</div>
+	</div>
+
+	
+		<a class="item " href="/">Dashboard</a>
+		<a class="item " href="/issues">Issues</a>
+		<a class="item " href="/pulls">Pull Requests</a>
+		<a class="item " href="/milestones">Milestones</a>
+		<a class="item " href="/explore/repos">Explore</a>
+	
+
+	
+
+	
+
+	
+		<div class="right stackable menu">
+			<a href="/notifications" class="item poping up" data-content='Notifications' data-variation="tiny inverted">
+				<span class="text">
+					<i class="fitted octicon octicon-bell"></i>
+					<span class="sr-mobile-only">Notifications</span>
+
+					
+						<span class="ui red label">
+							1
+						</span>
+					
+				</span>
+			</a>
+
+			<div class="ui dropdown jump item poping up" data-content="Create…" data-variation="tiny inverted">
+				<span class="text">
+					<i class="fitted octicon octicon-plus"></i>
+					<span class="sr-mobile-only">Create…</span>
+					<i class="fitted octicon octicon-triangle-down not-mobile"></i>
+				</span>
+				<div class="menu">
+					<a class="item" href="/repo/create">
+						<i class="octicon octicon-plus"></i> New Repository
+					</a>
+					<a class="item" href="/repo/migrate">
+						<i class="octicon octicon-repo-clone"></i> New Migration
+					</a>
+					
+				</div>
+			</div>
+
+			<div class="ui dropdown jump item poping up" tabindex="-1" data-content="Profile and Settings…" data-variation="tiny inverted">
+				<span class="text">
+					<img class="ui tiny avatar image" src="/user/avatar/wgorczak/-1">
+					<span class="sr-only">Profile and Settings…</span>
+					<span class="mobile-only">wgorczak</span>
+					<i class="fitted octicon octicon-triangle-down not-mobile" tabindex="-1"></i>
+				</span>
+				<div class="menu user-menu" tabindex="-1">
+					<div class="ui header">
+						Signed in as <strong>wgorczak</strong>
+					</div>
+
+					<div class="divider"></div>
+					<a class="item" href="/wgorczak">
+						<i class="octicon octicon-person"></i>
+						Profile
+					</a>
+					<a class="item" href="/wgorczak?tab=stars">
+						<i class="octicon octicon-star"></i>
+						Starred
+					</a>
+					<a class=" item" href="/user/settings">
+						<i class="octicon octicon-settings"></i>
+						Settings
+					</a>
+					<a class="item" target="_blank" rel="noopener noreferrer" href="https://docs.gitea.io">
+						<i class="octicon octicon-question"></i>
+						Help
+					</a>
+					
+
+					<div class="divider"></div>
+					<a class="item link-action" href data-url="/user/logout" data-redirect="/">
+						<i class="octicon octicon-sign-out"></i>
+						Sign Out
+					</a>
+				</div>
+			</div>
+		</div>
+
+	
+</div>
+
+			</div>
+		
+
+
+<div class="repository file list">
+	<div class="header-wrapper">
+
+	<div class="ui container">
+		<div class="repo-header">
+			<div class="ui huge breadcrumb repo-title">
+				
+				<i class="mega-octicon octicon-lock"></i>
+				
+				<a href="/git">git</a>
+				<div class="divider"> / </div>
+				<a href="/git/RDepot">RDepot</a>
+				
+				
+				
+				
+				
+				
+			</div>
+			
+				<div class="repo-buttons">
+					<form method="post" action="/git/RDepot/action/unwatch?redirect_to=%2fgit%2fRDepot%2fsrc%2fbranch%2fmaster%2fsrc%2ftest%2fresources%2fDESCRIPTION_NEWLINES">
+						<input type="hidden" name="_csrf" value="uCwWzJvgbjpXVAs31jet-kssafE6MTU5NDAyMjIwMDg2ODY5NTc4Nw">
+						<div class="ui labeled button" tabindex="0">
+							<button type="submit" class="ui compact basic button">
+								<i class="icon fa-eye"></i>Unwatch
+							</button>
+							<a class="ui basic label" href="/git/RDepot/watchers">
+								8
+							</a>
+						</div>
+					</form>
+					<form method="post" action="/git/RDepot/action/star?redirect_to=%2fgit%2fRDepot%2fsrc%2fbranch%2fmaster%2fsrc%2ftest%2fresources%2fDESCRIPTION_NEWLINES">
+						<input type="hidden" name="_csrf" value="uCwWzJvgbjpXVAs31jet-kssafE6MTU5NDAyMjIwMDg2ODY5NTc4Nw">
+						<div class="ui labeled button" tabindex="0">
+							<button type="submit" class="ui compact basic button">
+								<i class="icon star outline"></i>Star
+							</button>
+							<a class="ui basic label" href="/git/RDepot/stars">
+								0
+							</a>
+						</div>
+					</form>
+					
+						<div class="ui labeled button " tabindex="0">
+							<a class="ui compact basic button " href="/repo/fork/40" data-position="top center" data-variation="tiny">
+								<i class="octicon octicon-repo-forked"></i>Fork
+							</a>
+							<a class="ui basic label" href="/git/RDepot/forks">
+								0
+							</a>
+						</div>
+					
+				</div>
+			
+		</div>
+	</div>
+
+	<div class="ui tabs container">
+		
+			<div class="ui tabular stackable menu navbar">
+				
+				<a class="active item" href="/git/RDepot">
+					<i class="octicon octicon-code"></i> Code
+				</a>
+				
+
+				
+
+				
+
+				
+					<a class=" item" href="/git/RDepot/pulls">
+						<i class="octicon octicon-git-pull-request"></i> Pull Requests <span class="ui gray small label">0</span>
+					</a>
+				
+
+				
+				<a class=" item" href="/git/RDepot/releases">
+					<i class="octicon octicon-tag"></i> Releases <span class="ui gray small label">0</span>
+				</a>
+				
+
+				
+
+				
+					<a class=" item" href="/git/RDepot/activity">
+						<i class="octicon octicon-pulse"></i> Activity
+					</a>
+				
+
+				
+
+				
+			</div>
+		
+	</div>
+	<div class="ui tabs divider"></div>
+</div>
+
+	<div class="ui container">
+		
+
+
+
+		<div class="ui repo-description">
+			<div id="repo-desc">
+				
+				<a class="link" href=""></a>
+			</div>
+			
+				<div class="ui repo-search">
+					<form class="ui form ignore-dirty" action="/git/RDepot/search" method="get">
+						<div class="field">
+							<div class="ui action input">
+								<input name="q" value="" placeholder="Search repository">
+								<button class="ui icon button" type="submit">
+									<i class="search icon"></i>
+								</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			
+		</div>
+		<div class="ui" id="repo-topics">
+		
+		
+		</div>
+		
+		<div class="hide" id="validate_prompt">
+			<span id="count_prompt">You can not select more than 25 topics</span>
+			<span id="format_prompt">Topics must start with a letter or number, can include dashes (&#39;-&#39;) and can be up to 35 characters long.</span>
+		</div>
+		
+		<div class="ui segment sub-menu">
+	<div class="ui two horizontal center link list">
+		
+			<div class="item">
+				<a class="ui" href="/git/RDepot/commits/branch/master"><i class="octicon octicon-history"></i> <b>43</b> Commits</a>
+			</div>
+		
+		
+			<div class="item">
+				<a class="ui" href="/git/RDepot/branches/"><i class="octicon octicon-git-branch"></i> <b>4</b> Branches</a>
+			</div>
+			<div class="item">
+				<a class="ui" href="#"><i class="octicon octicon-database"></i> <b>255MB</b></a>
+			</div>
+		
+	</div>
+</div>
+
+		<div class="ui stackable secondary menu mobile--margin-between-items mobile--no-negative-margins">
+			<div class="fitted item choose reference">
+	<div class="ui floating filter dropdown custom" data-can-create-branch="true" data-no-results="No results found.">
+		<div class="ui basic small compact button" @click="menuVisible = !menuVisible" @keyup.enter="menuVisible = !menuVisible">
+			<span class="text">
+				<i class="octicon octicon-git-branch"></i>
+				Branch:
+				<strong>master</strong>
+			</span>
+			<i class="dropdown icon"></i>
+		</div>
+		<div class="data" style="display: none" data-mode="branches">
+			
+				<div class="item branch " data-url="/git/RDepot/src/branch/develop/src/test/resources/DESCRIPTION_NEWLINES">develop</div>
+			
+				<div class="item branch " data-url="/git/RDepot/src/branch/gradle/src/test/resources/DESCRIPTION_NEWLINES">gradle</div>
+			
+				<div class="item branch selected" data-url="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION_NEWLINES">master</div>
+			
+				<div class="item branch " data-url="/git/RDepot/src/branch/refactoring/src/test/resources/DESCRIPTION_NEWLINES">refactoring</div>
+			
+			
+		</div>
+		<div class="menu transition" :class="{visible: menuVisible}" v-if="menuVisible" v-cloak>
+			<div class="ui icon search input">
+				<i class="filter icon"></i>
+				<input name="search" ref="searchField" v-model="searchTerm" @keydown="keydown($event)" placeholder="Filter branch or tag...">
+			</div>
+			<div class="header branch-tag-choice">
+				<div class="ui grid">
+					<div class="two column row">
+						<a class="reference column" href="#" @click="mode = 'branches'; focusSearchField()">
+							<span class="text" :class="{black: mode == 'branches'}">
+								<i class="octicon octicon-git-branch"></i> Branches
+							</span>
+						</a>
+						<a class="reference column" href="#" @click="mode = 'tags'; focusSearchField()">
+							<span class="text" :class="{black: mode == 'tags'}">
+								<i class="reference tags icon"></i> Tags
+							</span>
+						</a>
+					</div>
+				</div>
+			</div>
+			<div class="scrolling menu" ref="scrollContainer">
+				<div v-for="(item, index) in filteredItems" :key="item.name" class="item" :class="{selected: item.selected, active: active == index}" @click="selectItem(item)" :ref="'listItem' + index">${ item.name }</div>
+				<div class="item" v-if="showCreateNewBranch" :class="{active: active == filteredItems.length}" :ref="'listItem' + filteredItems.length">
+					<a href="#" @click="createNewBranch()">
+						<div>
+							<i class="octicon octicon-git-branch"></i>
+							Create branch <strong>${ searchTerm }</strong>
+						</div>
+						<div class="text small">
+							
+								from &#39;master&#39;
+							
+						</div>
+					</a>
+					<form ref="newBranchForm" action="/git/RDepot/branches/_new/branch/master" method="post">
+						<input type="hidden" name="_csrf" value="uCwWzJvgbjpXVAs31jet-kssafE6MTU5NDAyMjIwMDg2ODY5NTc4Nw">
+						<input type="hidden" name="new_branch_name" v-model="searchTerm">
+					</form>
+				</div>
+			</div>
+			<div class="message" v-if="showNoResults">${ noResults }</div>
+		</div>
+	</div>
+</div>
+
+			
+			
+			
+			
+				<div class="fitted item"><span class="ui breadcrumb repo-path"><a class="section" href="/git/RDepot/src/branch/master" title="RDepot">RDepot</a><span class="divider">/</span><span class="section"><a href="/git/RDepot/src/branch/master/src" title="src">src</a></span><span class="divider">/</span><span class="section"><a href="/git/RDepot/src/branch/master/src/test" title="test">test</a></span><span class="divider">/</span><span class="section"><a href="/git/RDepot/src/branch/master/src/test/resources" title="resources">resources</a></span><span class="divider">/</span><span class="active section" title="DESCRIPTION_NEWLINES">DESCRIPTION_NEWLINES</span></span></div>
+			
+			<div class="right fitted item" id="file-buttons">
+				<div class="ui tiny blue buttons">
+					
+						
+						
+					
+					
+				</div>
+
+			</div>
+			<div class="fitted item">
+				
+			</div>
+			<div class="fitted item">
+
+				
+				
+			</div>
+		</div>
+		
+			<div class="tab-size-8 non-diff-file-content">
+	<h4 class="file-header ui top attached header">
+		<div class="file-header-left">
+			
+				<div class="file-info text grey normal mono">
+					
+						<div class="file-info-entry">
+							35 lines
+						</div>
+					
+					
+						<div class="file-info-entry">
+							690B
+						</div>
+					
+					
+				</div>
+			
+		</div>
+		
+		<div class="file-header-right">
+			<div class="ui right file-actions">
+				<div class="ui buttons">
+					<a class="ui button" href="/git/RDepot/raw/branch/master/src/test/resources/DESCRIPTION_NEWLINES">Raw</a>
+					
+						<a class="ui button" href="/git/RDepot/src/commit/de462ebe7fa6a5780ae21eacd638992299051cd5/src/test/resources/DESCRIPTION_NEWLINES">Permalink</a>
+					
+					
+						<a class="ui button" href="/git/RDepot/blame/branch/master/src/test/resources/DESCRIPTION_NEWLINES">Blame</a>
+					
+					<a class="ui button" href="/git/RDepot/commits/branch/master/src/test/resources/DESCRIPTION_NEWLINES">History</a>
+				</div>
+				
+					
+						<a href="/git/RDepot/_edit/master/src/test/resources/DESCRIPTION_NEWLINES"><i class="octicon octicon-pencil btn-octicon poping up"  data-content="Edit File" data-position="bottom center" data-variation="tiny inverted"></i></a>
+					
+					
+						<a href="/git/RDepot/_delete/master/src/test/resources/DESCRIPTION_NEWLINES"><i class="octicon octicon-trashcan btn-octicon btn-octicon-danger poping up"  data-content="Delete File" data-position="bottom center" data-variation="tiny inverted"></i></a>
+					
+				
+			</div>
+		</div>
+		
+	</h4>
+	<div class="ui attached table unstackable segment">
+		<div class="file-view code-view has-emoji">
+			
+				<table>
+					<tbody>
+						<tr>
+						
+							<td class="lines-num"><span id="L1" data-line-number="1"></span><span id="L2" data-line-number="2"></span><span id="L3" data-line-number="3"></span><span id="L4" data-line-number="4"></span><span id="L5" data-line-number="5"></span><span id="L6" data-line-number="6"></span><span id="L7" data-line-number="7"></span><span id="L8" data-line-number="8"></span><span id="L9" data-line-number="9"></span><span id="L10" data-line-number="10"></span><span id="L11" data-line-number="11"></span><span id="L12" data-line-number="12"></span><span id="L13" data-line-number="13"></span><span id="L14" data-line-number="14"></span><span id="L15" data-line-number="15"></span><span id="L16" data-line-number="16"></span><span id="L17" data-line-number="17"></span><span id="L18" data-line-number="18"></span><span id="L19" data-line-number="19"></span><span id="L20" data-line-number="20"></span><span id="L21" data-line-number="21"></span><span id="L22" data-line-number="22"></span><span id="L23" data-line-number="23"></span><span id="L24" data-line-number="24"></span><span id="L25" data-line-number="25"></span><span id="L26" data-line-number="26"></span><span id="L27" data-line-number="27"></span><span id="L28" data-line-number="28"></span><span id="L29" data-line-number="29"></span><span id="L30" data-line-number="30"></span><span id="L31" data-line-number="31"></span><span id="L32" data-line-number="32"></span><span id="L33" data-line-number="33"></span><span id="L34" data-line-number="34"></span></td>
+							<td class="lines-code"><pre><code class=""><ol class="linenums"><li class="L1" rel="L1">Package: riPodMT
+</li><li class="L2" rel="L2">Type: Package
+</li><li class="L3" rel="L3">Title: R package to use the BioSphere Data Manager REST API
+</li><li class="L4" rel="L4">Version: 1.5.10
+</li><li class="L5" rel="L5">Date: 2018-04-24
+</li><li class="L6" rel="L6">Author: Tobias Verbeke, Jonas Van Malder, Laure Cougnaud
+</li><li class="L7" rel="L7">Maintainer: Tobias Verbeke &lt;tobias.verbeke@openanalytics.eu&gt;
+</li><li class="L8" rel="L8">Description: This package provides an R client for BioSphere Data Manager REST
+</li><li class="L9" rel="L9">    API v2.4.0-RELEASE.
+</li><li class="L10" rel="L10">License: file LICENSE
+</li><li class="L11" rel="L11">Imports:
+</li><li class="L12" rel="L12">    utils,
+</li><li class="L13" rel="L13">    tcltk,
+</li><li class="L14" rel="L14">    plyr,
+</li><li class="L15" rel="L15">    httr,
+</li><li class="L16" rel="L16">    RJSONIO,
+</li><li class="L17" rel="L17">    jnjCertificates,
+</li><li class="L18" rel="L18">    sdtm,
+</li><li class="L19" rel="L19">    methods,
+</li><li class="L20" rel="L20">    haven,
+</li><li class="L21" rel="L21">    tools,
+</li><li class="L22" rel="L22">    aws.signature,
+</li><li class="L23" rel="L23">    aws.s3
+</li><li class="L24" rel="L24">Suggests:
+</li><li class="L25" rel="L25">    testthat,
+</li><li class="L26" rel="L26">    openCyto,
+</li><li class="L27" rel="L27">    CytoML,
+</li><li class="L28" rel="L28">    readat,
+</li><li class="L29" rel="L29">    Biobase,
+</li><li class="L30" rel="L30">    knitr
+</li><li class="L31" rel="L31">RoxygenNote: 6.0.1
+</li><li class="L32" rel="L32">VignetteBuilder: knitr
+</li><li class="L33" rel="L33">NeedsCompilation: no
+</li><li class="L34" rel="L34">LazyData: true</li></ol></code></pre></td>
+						
+						</tr>
+					</tbody>
+				</table>
+			
+		</div>
+	</div>
+</div>
+
+<script>
+function submitDeleteForm() {
+    var message = prompt("delete_confirm_message\n\ndelete_commit_summary", "Delete ''");
+    if (message != null) {
+        $("#delete-message").val(message);
+        $("#delete-file-form").submit()
+    }
+}
+</script>
+
+		
+	</div>
+</div>
+
+
+	
+
+	</div>
+
+	
+
+	<footer>
+	<div class="ui container">
+		<div class="ui left">
+			Powered by Gitea  
+		</div>
+		<div class="ui right links">
+			
+			<div class="ui language bottom floating slide up dropdown link item">
+				<i class="world icon"></i>
+				<div class="text">English</div>
+				<div class="menu">
+					
+						<a lang="en-US" class="item active selected" href="#">English</a>
+					
+						<a lang="zh-CN" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION_NEWLINES?lang=zh-CN">简体中文</a>
+					
+						<a lang="zh-HK" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION_NEWLINES?lang=zh-HK">繁體中文（香港）</a>
+					
+						<a lang="zh-TW" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION_NEWLINES?lang=zh-TW">繁體中文（台灣）</a>
+					
+						<a lang="de-DE" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION_NEWLINES?lang=de-DE">Deutsch</a>
+					
+						<a lang="fr-FR" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION_NEWLINES?lang=fr-FR">français</a>
+					
+						<a lang="nl-NL" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION_NEWLINES?lang=nl-NL">Nederlands</a>
+					
+						<a lang="lv-LV" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION_NEWLINES?lang=lv-LV">latviešu</a>
+					
+						<a lang="ru-RU" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION_NEWLINES?lang=ru-RU">русский</a>
+					
+						<a lang="uk-UA" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION_NEWLINES?lang=uk-UA">Українська</a>
+					
+						<a lang="ja-JP" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION_NEWLINES?lang=ja-JP">日本語</a>
+					
+						<a lang="es-ES" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION_NEWLINES?lang=es-ES">español</a>
+					
+						<a lang="pt-BR" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION_NEWLINES?lang=pt-BR">português do Brasil</a>
+					
+						<a lang="pl-PL" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION_NEWLINES?lang=pl-PL">polski</a>
+					
+						<a lang="bg-BG" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION_NEWLINES?lang=bg-BG">български</a>
+					
+						<a lang="it-IT" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION_NEWLINES?lang=it-IT">italiano</a>
+					
+						<a lang="fi-FI" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION_NEWLINES?lang=fi-FI">suomi</a>
+					
+						<a lang="tr-TR" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION_NEWLINES?lang=tr-TR">Türkçe</a>
+					
+						<a lang="cs-CZ" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION_NEWLINES?lang=cs-CZ">čeština</a>
+					
+						<a lang="sr-SP" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION_NEWLINES?lang=sr-SP">српски</a>
+					
+						<a lang="sv-SE" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION_NEWLINES?lang=sv-SE">svenska</a>
+					
+						<a lang="ko-KR" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION_NEWLINES?lang=ko-KR">한국어</a>
+					
+				</div>
+			</div>
+			<a href="/vendor/librejs.html" data-jslicense="1">JavaScript licenses</a>
+			<a href="/api/swagger">API</a>
+			<a target="_blank" rel="noopener noreferrer" href="https://gitea.io">Website</a>
+			
+			
+		</div>
+	</div>
+</footer>
+
+
+	<script src="/vendor/plugins/jquery/jquery.min.js?v=3.4.1"></script>
+	<script src="/vendor/plugins/jquery-migrate/jquery-migrate.min.js?v=3.0.1"></script>
+	<script src="/vendor/plugins/jquery.areyousure/jquery.are-you-sure.js"></script>
+
+
+
+
+	<script src="/vendor/plugins/highlight/highlight.pack.js"></script>
+
+
+
+
+
+
+
+	<script src="/vendor/plugins/emojify/emojify.custom.js"></script>
+	<script src="/vendor/plugins/clipboard/clipboard.min.js"></script>
+	<script src="/vendor/plugins/vue/vue.min.js"></script>
+
+	
+	<script src="/vendor/plugins/fomantic/semantic.min.js?v=2150802f140babb659fb7f59b121e3e9"></script>
+	<script src="/js/index.js?v=2150802f140babb659fb7f59b121e3e9"></script>
+
+
+</body>
+</html>
+

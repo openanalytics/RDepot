@@ -1,0 +1,37 @@
+task restore {
+    doLast{
+        exec {
+            executable "docker"
+            args "exec", "oa-rdepot-app", "/bin/bash", "-c", "mkdir -p /opt/rdepot/repositories; mkdir -p /opt/rdepot/new; mkdir -p /opt/rdepot/generated; cp -fr /opt/testSourceFiles/info/* /opt/rdepot/repositories; cp -fr /opt/testGenerated/repository/* /opt/rdepot/generated; cp -fr /opt/newFiles/new/* /opt/rdepot/new"
+        }
+
+        exec {
+            executable "docker"
+            args "exec", "oa-rdepot-db", "su", "-", "postgres", "-c", "dropdb postgres; createdb postgres; psql < /opt/database.sql"
+        }
+
+        exec {
+            executable "docker"
+            args "exec", "oa-rdepot-repo", "/bin/sh", "-c", "rm -r /opt/rdepot/*; cp -rf /opt/testServer/* /opt/rdepot"
+        }
+
+        println "Files restored"
+    }
+}
+
+task wait {
+    doLast{ task -> sleep(10 * 1000) }
+}
+
+task removeSources(type: Delete) {
+    delete 'itestGenerated', 'itestNewFiles', 'itestPackages', 'itestServer', 'itestSourceFiles', 'itestPdf'
+}
+
+task checkServer {
+	doLast{
+        exec {
+            executable "docker"
+            args "exec", "oa-rdepot-repo", "/bin/sh", "-c", "cd /opt/rdepot/testrepo2/src/contrib/Archive/accrued/"
+        }
+    }
+}

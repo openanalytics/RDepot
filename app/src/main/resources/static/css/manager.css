@@ -1,0 +1,139 @@
+.package-card-square {
+    height: 288px;
+}
+
+.package-card-square > .mdl-card__title{
+    background: url('../img/file.png') bottom right 15% no-repeat rgb(50, 166, 211);
+}
+
+.package-version {
+    font-size: 18px;
+}
+
+.remove-package-button {
+    color: rgb(229, 35, 35);
+}
+
+.package-cell {
+    width: 330px;
+}
+
+.mdl-button--primary.mdl-button--primary.mdl-button--raised, .mdl-button--primary.mdl-button--primary.mdl-button--fab {
+    background-color: rgb(50, 166, 211);
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 2;
+}
+
+/* .repository-fab {
+    background-color: rgb(50, 166, 211) !important;
+    position: fixed;
+    bottom: 7rem;
+    right: 1rem;
+} */
+
+.changes-textfield {
+    margin-left: 15px;
+}
+
+.mdl-textfield__label::after {
+    background-color: rgb(50, 166, 211);
+}
+
+.mdl-textfield--floating-label.is-focused .mdl-textfield__label {
+    color: rgb(50, 166, 211);
+}
+
+.repos-cell {
+    width: 100%;
+    margin:0;
+}
+
+.repos-item-cell {
+    width: auto;
+    float:left;
+    padding: 1em;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+}
+
+
+.repos-label-cell {
+    padding-left: 10px;
+    margin-bottom: 0px;
+}
+
+.repos-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.mdl-progress {
+    margin: 14px 10px 10px 10px;
+    width: 272px;
+    float:left;
+}
+
+.mdl-progress > .progressbar {
+    background-color: rgb(50, 166, 211);
+}
+
+.progress-text {
+    margin-right: 10px;
+    margin-left: 10px;
+    color: rgba(0,0,0, 0.54);
+    font-size: 1rem;
+}
+
+.mdl-checkbox.is-checked .mdl-checkbox__tick-outline {
+    background-color: rgb(50, 166, 211);
+}
+
+.mdl-checkbox.is-checked .mdl-checkbox__box-outline {
+    border-color: rgb(50, 166, 211);
+}
+
+.mdl-snackbar__action {
+    margin: 20px;
+    padding: 14px 32px 14px 12px;
+}
+
+.mdl-snackbar__text {
+    padding-right: 24px;
+    padding-left: 24px;
+    align-self: center;
+}
+
+.upload-message {
+    padding: 10px;
+}
+
+.upload-message.success {
+    border-left: 6px solid green;
+    background-color: rgb(160, 255, 160);
+}
+
+.upload-message.failure {
+    border-left: 6px solid red;
+    background-color: rgb(252, 160, 160);
+}
+
+.mdl-dialog .mdl-button {
+    background-color: rgb(229, 35, 35) !important;
+}
+
+.progress-container i {
+    color: rgb(229, 35, 35);
+}
+
+@media(max-width: 1024px) {
+    main {
+        margin-left: 0px;
+    }
+   .add-package-fab {
+        position: fixed;
+        bottom: 1.5rem;
+        right: 1.5rem;
+    }
+}

@@ -2,64 +2,251 @@ buildscript {
     repositories {
         mavenCentral()
     }
-
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.1.RELEASE")
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:2.3.1.RELEASE"
+        classpath("io.spring.gradle:dependency-management-plugin:1.0.9.RELEASE")
+        
     }
 }
 
 plugins {
-    id "com.github.hierynomus.license" version "0.14.0"
+    id "com.github.hierynomus.license" version "0.15.0"
+    id 'java'
+    id 'eclipse'
+    id 'idea'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'com.avast.gradle.docker-compose' version '0.7.1'
+    id 'org.springframework.boot' version '2.3.1.RELEASE'
 }
 
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
-apply plugin: 'war'
+jar {
+	enabled = true
+}
 
+bootJar {
+    enabled = false
+}
+
+apply from: 'dependencies.gradle'
+def globalConf = rootProject.ext
+
+import java.text.SimpleDateFormat
+import java.util.Date
+
+ext.buildTime = {
+	def Date today = new Date ()
+	  	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd.hhmmss")
+	  	return sdf.format(today)
+}
 
 group = 'eu.openanalytics'
-version = '1.0.0-SNAPSHOT'
-
+ext.versionNumber = '1.3.0'
+ext.baseVersion = versionNumber
+version = versionNumber
 description = """rdepot"""
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-repositories {
-
-     mavenCentral()
+task printVersion {
+    doLast {
+        println project.version
+    }
 }
 
-war {
-	archiveName 'rdepot.war'
+repositories {
+    mavenCentral()
+    jcenter()
 }
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web")
-    compile("org.springframework.boot:spring-boot-devtools")
-    compile("org.springframework.boot:spring-boot-starter-security")
-    compile('org.springframework.security:spring-security-ldap')
-    compile('org.springframework.data:spring-data-jpa')
-    compile('com.google.code.gson:gson')
-    compile('com.fasterxml.jackson.datatype:jackson-datatype-hibernate5')
-    compile group: 'javax.persistence', name: 'javax.persistence-api', version: '+'
-    compile('org.hibernate:hibernate-core')
-    compile group: 'javax.mail', name: 'mail', version:'+'
-    compile group: 'commons-fileupload', name: 'commons-fileupload', version:'+'
-    compile group: 'org.postgresql', name: 'postgresql', version:'+'
-    compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-jasper', version: '+'
-	compile group: 'jstl', name: 'jstl', version:'+'
-	compile group: 'org.jsoup', name: 'jsoup', version: '1.11.3'
-	testCompile("junit:junit")
+	Map<String, String> dependencies = globalConf.commonDependencies
+	
+	testCompile project('rdepot-app')
+	testImplementation dependencies.sbStarterTest
+	testImplementation dependencies.restAssured
+	testImplementation dependencies.restAssuredJsonPath
+	testImplementation dependencies.restAssuredXmlPath
+	testImplementation dependencies.jsonSimple
+	testImplementation dependencies.gson
+	testImplementation dependencies.pdfbox
+}
+
+sourceSets {
+	integrationTest {
+		resources {
+			exclude '**/itest*/**'
+		}
+		java {
+			srcDir file('src/integration-test/java')
+			
+			compileClasspath += main.output + test.output
+			runtimeClasspath += main.output + test.output
+		}
+		resources.srcDir file('src/integration-test/resources')
+	}	
+}
+
+
+
+configurations {
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
+    integrationTestImplementation.extendsFrom testImplementation
 }
 
 license {
-    header rootProject.file('LICENSE_HEADER')
+    header rootProject.file('./LICENSE_HEADER')
     strictCheck true
     ext.year = Calendar.getInstance().get(Calendar.YEAR)
     ext.company = 'Open Analytics NV'
-    excludes(['**/*.ico', '**/*.map', '**/*.zip', '**/*.png', '**/*.tld', '**/*.jsp', '**/*.ttf', '**/*.svg', '**/*.eot', '**/*.woff', '**/*.css', '**/*.js', '**/*.properties'])
+    excludes(['**/*.html', '**/*.Rmd', '**/*.tar.gz', '**/DESCRIPTION', '**/DESCRIPTION_NEWLINES', '**/*.properties', '**/*.ttf', '**/*.eot', '**/*.woff', '**/*.css', '**/*.js', '**/*.svg', '**/*.png', '**/*.ico', '**/*.old', '**/*.sql', '**/*.yaml', '**/*.xml', '**/*.json', 
+    			'**/*.yml', '**/NEWS', '**/LICENSE', '**/*.txt' , '**/NAMESPACE', '**/*.Rd', '**/*.pdf', '**/*.R', '**/*.c', '**/*.cpp', '**/*.h', '**/*.tex', '**/*.sh', '**/*.rda', '**/*.ldif', '**/*.gz', '**/*.bk*', '**/*.gradle' ])
+    			//the above exclusions are for integration testing purposes
+}
+
+task setHttpProxyFromEnv {
+    def map = ['HTTP_PROXY': 'http', 'HTTPS_PROXY': 'https']
+    for (e in System.getenv()) {
+        def key = e.key.toUpperCase()
+        if (key in map) {
+            def base = map[key]
+            def url = e.value.toURL()
+            println " - systemProp.${base}.proxy=${url.host}:${url.port}"
+            System.setProperty("${base}.proxyHost", url.host.toString())
+            System.setProperty("${base}.proxyPort", url.port.toString())
+        } else if (key.equals('NO_PROXY')) {
+            def nonProxyHosts = String.valueOf(e.value).replace(",", "|")
+            if (nonProxyHosts.contains("openanalytics.eu")) {
+                nonProxyHosts += "|*.openanalytics.eu"
+            }
+            println " - systemProp.http.nonProxyHosts=${nonProxyHosts}"
+            println " - systemProp.https.nonProxyHosts=${nonProxyHosts}"
+            System.setProperty("http.nonProxyHosts", nonProxyHosts)
+            System.setProperty("https.nonProxyHosts", nonProxyHosts)
+        }
+    }
+}
+
+task download(type: MyDownload) {
+    sourceUrl = 'https://cloud.openanalytics.eu/s/js7oDsPnFiWs2jM/download'
+    target = new File('src/integration-test/resources/itestSource.tar.gz')
+    doLast { task -> println "downloaded" }
+}
+
+tasks.withType(Test) {
+	maxParallelForks = 1
+}
+
+task untar(type: Copy) {
+    // dependsOn download
+    from tarTree('src/integration-test/resources/itestSource.tar.gz')
+    into 'src/integration-test/resources'
+    doLast {task -> println "untarred" }
+}
+
+task buildApp(type: War) {
+    dependsOn(':rdepot-app:build')
+    doLast { task -> println "app binary built" }
+}
+
+task buildRepo(type: Jar) {
+    dependsOn(':rdepot-repo:build')
+    doLast { task -> println "repo binary built" }
+}
+
+task publishApp {
+    dependsOn(':rdepot-app:publish')
+    doLast { task -> println "app published" }
+}
+
+task publishRepo {
+    dependsOn(':rdepot-repo:publish')
+    doLast { task -> println "repo published" }
+}
+
+task copyRepoBinaries(type: Copy) {
+    dependsOn tasks.findByName('buildRepo')
+    from "repo/build/libs"
+    include "rdepot-repo*application.jar"
+    into "src/integration-test/resources/docker/repo"
+    rename '(.+).jar', 'rdepot-repo.jar'
+    doLast { task -> println "repo binary copied" }
+}
+
+task copyAppBinaries(type: Copy) {
+    dependsOn tasks.findByName('buildApp')
+    from "app/build/libs"
+    include "rdepot-app*application.war"
+    into "src/integration-test/resources/docker/app"
+    rename '(.+).war', 'rdepot.war'
+    doLast { task -> println "app binary copied" }
+}
+
+task removeSources(type: GradleBuild) {
+    buildFile = './src/integration-test/resources/build.gradle'
+	tasks = ['removeSources']
+}
+
+
+dockerCompose {    
+    useComposeFiles = ['src/integration-test/resources/docker-compose.yaml']
+    captureContainersOutput = true
+}
+
+tasks.findByName('test').dependsOn gradle.includedBuilds*.task(':test')
+tasks.clean.dependsOn(tasks.removeSources)
+tasks.clean.dependsOn(tasks.composeDown)
+
+task integrationTest (type:Test) {
+	dependsOn untar
+	dependsOn composeUp
+	dependsOn copyAppBinaries
+	dependsOn copyRepoBinaries
+	composeUp.mustRunAfter untar
+	composeUp.mustRunAfter copyAppBinaries
+	composeUp.mustRunAfter copyRepoBinaries
+	testClassesDirs = sourceSets.integrationTest.output.classesDirs
+	classpath = sourceSets.integrationTest.runtimeClasspath
+    finalizedBy composeDown
+    finalizedBy removeSources
+}
+
+tasks.findByName('integrationTest').mustRunAfter buildApp
+tasks.findByName('integrationTest').mustRunAfter buildRepo
+tasks.findByName('test').mustRunAfter buildApp
+tasks.findByName('test').mustRunAfter buildRepo
+
+tasks.findByName('build').dependsOn integrationTest
+tasks.findByName('build').dependsOn buildApp
+tasks.findByName('build').dependsOn buildRepo
+
+build.dependsOn setHttpProxyFromEnv
+
+task publish {
+    dependsOn setHttpProxyFromEnv
+    dependsOn publishApp
+    dependsOn publishRepo
+    publishApp.mustRunAfter setHttpProxyFromEnv
+    publishRepo.mustRunAfter setHttpProxyFromEnv
+}
+
+class MyDownload extends DefaultTask {
+    @Input
+    String sourceUrl
+
+    @OutputFile
+    File target
+
+    @TaskAction
+    void download() {
+       ant.get(src: sourceUrl, dest: target)
+    }
+}
+
+ext.maven = {
+    def releasesRepoUrl = "https://nexus.openanalytics.eu/repository/releases"
+    def snapshotsRepoUrl = "https://nexus.openanalytics.eu/repository/snapshots"
+    url = baseVersion.contains('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+    credentials {
+        username = System.getenv("OA_NEXUS_USER")
+        password = System.getenv("OA_NEXUS_PWD")
+    }
 }

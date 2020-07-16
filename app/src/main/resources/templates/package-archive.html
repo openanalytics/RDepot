@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head th:replace="fragments/header :: head (module='repositories')">
+    </head>
+	<body>
+		<div class="mdl-layout mdl-js-layout">
+            <header th:replace="fragments/header :: topbar (module='repositories')"></header>
+            <div th:replace="fragments/header :: drawer (module='repositories')"></div>
+            <main class="mdl-layout__content">
+                    
+                <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp full-width">
+                    <thead>
+                        <tr>
+                            <th class="mdl-data-table__cell--non-numeric full-width">Name</th>
+                            <th class="mdl-data-table__cell--non-numeric">Version</th>
+                            <th class="mdl-data-table__cell--non-numeric">Download</th>
+                        </tr>                
+                    </thead>
+                    <tbody>
+                        <tr th:each="package : ${packages}" >
+                            <input type="hidden" th:id="'package-' + ${package.id}"/>
+                            <div th:id="'description-' + ${package.id}" th:text="${package.description}" style="display:none;"></div>
+                            <td class="mdl-data-table__cell--non-numeric package-name" th:text="${package.name}" th:onclick="'openPackagePageWithVersion(&quot;' + ${repository.name} + '&quot;,&quot;' + ${package.name} + '&quot;,&quot;' + ${package.version} + '&quot;)'"></td>
+                            <td class="mdl-data-table__cell--non-numeric package-version" th:text="${package.version}" th:onclick="'openPackagePageWithVersion(&quot;' + ${repository.name} + '&quot;,&quot;' + ${package.name} + '&quot;,&quot;' + ${package.version} + '&quot;)'"></td>
+                            <td class="mdl-data-table__cell--non-numeric">
+                                <div>
+                                    <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" style="color:rgb(50, 166, 211);" th:onclick="'downloadPackage(&quot;' + ${package.id} + '&quot;,&quot;' + ${package.name} + '&quot;,&quot;' + ${package.version} + '&quot;)'">
+                                    	<i class="material-icons">cloud_download</i>
+                                     </button>
+                                </div>
+                                
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </main>
+        </div>
+        
+        <dialog class="mdl-dialog"></dialog> 
+	</body>
+</html>

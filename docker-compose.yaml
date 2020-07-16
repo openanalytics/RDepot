@@ -3,9 +3,8 @@ services:
   proxy:
     image: library/nginx:alpine
     container_name: oa-rdepot-proxy
-    restart: always
+    restart: unless-stopped
     volumes:
-      - /etc/localtime:/etc/localtime:ro
       - ./docker/proxy/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./docker/proxy/sites-enabled/:/etc/nginx/sites-enabled/:ro
       - ./docker/proxy/logs/:/var/log/nginx/
@@ -17,28 +16,43 @@ services:
       - repo
     networks:
       - oa-rdepot
+  ldap:
+    build: ./docker/build/ldap
+    restart: unless-stopped
+    hostname: oa-rdepot-ldap
+    container_name: oa-rdepot-ldap
+    networks:
+      - oa-rdepot
+    ports:
+      - 8080:8080
+      - 389:389
+      - 636:636
+    environment:
+      - LDAP_TLS=false
+      - LDAP_ORGANISATION=Test Company
+      - LDAP_DOMAIN=example.org
+      - LDAP_ADMIN_PASSWORD=testpassword
   db:
     image: library/postgres:alpine
-    restart: always
+    restart: unless-stopped
     hostname: oa-rdepot-db
     container_name: oa-rdepot-db
     volumes:
-      - /etc/localtime:/etc/localtime:ro
       - ./docker/db/rdepot.sql:/docker-entrypoint-initdb.d/rdepot.sql:ro
+      - ./docker/db/rdepot_insert.sql:/docker-entrypoint-initdb.d/rdepot_insert.sql:ro
     networks:
       - oa-rdepot
     environment:
       - POSTGRES_PASSWORD=mysecretpassword
   app:
     build: ./docker/build/app
-    restart: always
+    restart: unless-stopped
     hostname: oa-rdepot-app
     container_name: oa-rdepot-app
     volumes:
-      - /etc/localtime:/etc/localtime:ro
       - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
       - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
-      - ./docker/app/repository/:/opt/rdepot/generated/
+      - ./src/main/resources/yaml:/opt/rdepot/yaml
     ports:
       - 8001:8001
     networks:
@@ -48,16 +62,23 @@ services:
     environment:
       - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/postgres
       - DB_USERNAME=postgres
-      - JAVA_OPTS
+      - LDAP_URL=ldap://oa-rdepot-ldap:389
+      - LDAP_BASEDN=dc=example,dc=org
+      - LDAP_USEROU=
+      - LDAP_LOGINFIELD=cn
+      - LDAP_NAMEFIELD=description
+      - LDAP_DEFAULT_ADMINS=admin
+      - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8001
+
   repo:
     build: ./docker/build/repo
-    restart: always
+    restart: unless-stopped
     hostname: oa-rdepot-repo
     container_name: oa-rdepot-repo
     volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ./docker/repo/oa-rdepot-repo.jar:/opt/repo/oa-rdepot-repo.jar:ro
+      - ./docker/repo/rdepot-repo.jar:/opt/repo/rdepot-repo.jar:ro
       - repository:/opt/rdepot/
+      - ./docker/repo/server/:/opt/rdepot/server/
     networks:
       - oa-rdepot
 networks:

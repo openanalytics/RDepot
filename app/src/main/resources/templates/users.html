@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head th:replace="fragments/header :: head (module='users')">
+    </head>
+    <body>
+        <div class="mdl-layout mdl-js-layout">
+            <header th:replace="fragments/header :: topbar (module='users')"></header>
+            <div th:replace="fragments/header :: drawer (module='users')"></div>
+            <main class="mdl-layout__content">
+                <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp full-width">
+                    <thead>
+                        <tr>
+                            <th class="mdl-data-table__cell--non-numeric full-width">Name</th>
+                            <th class="mdl-data-table__cell--non-numeric">E-mail</th>
+                            <th class="mdl-data-table__cell--non-numeric">User name</th>
+                            <th class="mdl-data-table__cell--non-numeric">Role</th>
+                            <th class="mdl-data-table__cell--non-numeric">Active</th>
+                            <th class="mdl-data-table__cell--non-numeric">Actions</th>
+                        </tr>                
+                    </thead>
+                    <tbody>
+                        <tr th:each="user : ${users}" >
+                            <td class="mdl-data-table__cell--non-numeric user-name" th:text="${user.name}" th:onclick="'showUserDialog(&quot;' + ${user.login} + '&quot;)'"></td>
+                            <td class="mdl-data-table__cell--non-numeric user-email" th:text="${user.email}" th:onclick="'showUserDialog(&quot;' + ${user.login} + '&quot;)'"></td>
+                            <td class="mdl-data-table__cell--non-numeric user-username" th:text="${user.login}" th:onclick="'showUserDialog(&quot;' + ${user.login} + '&quot;)'"></td>
+                            <td class="mdl-data-table__cell--non-numeric user-role" th:text="${user.role.description}" th:onclick="'showUserDialog(&quot;' + ${user.login} + '&quot;)'"></td>
+                            <td class="mdl-data-table__cell--non-numeric">
+                                <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" th:for="'checkbox-' + ${user.id}" th:onclick="'changeActive('+ ${user.id} + ')'">
+                                    <input type="checkbox" th:id="'checkbox-' + ${user.id}" class="mdl-checkbox__input" th:checked="${user.active}"/>
+                                </label>
+                            </td>
+                            <td class="mdl-data-table__cell--non-numeric">
+                                <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" style="color:rgb(50, 166, 211);" th:onclick="'openEditUserDialog('+ ${user.id} + ', &quot;' + ${user.login} + '&quot;, &quot;' + ${user.role.description} + '&quot;, &quot;' + ${user.name} + '&quot;, &quot;' + ${user.email} + '&quot;, ' + ${user.active} + ')'">
+                                    <i class="material-icons">edit</i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </main>
+        </div>
+        <dialog class="mdl-dialog"></dialog>
+    </body>
+</html>

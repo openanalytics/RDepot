@@ -1,0 +1,310 @@
+/**
+* timeline
+* --------------------------------------------------
+rgb(230, 230, 230)
+*/
+
+h1, h2, h3, h4 {
+	color: rgb(51, 51, 51);	
+}
+
+.timeline dl {
+    position: relative;
+    top: 0;
+    padding: 20px 0;
+    margin: 0;
+}
+.timeline dl:before {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    z-index: 100;
+    width: 2px;
+    margin-left: -1px;
+    content: '';
+    background-color: rgb(221, 221, 221);
+}
+.timeline dl dt {
+    position: relative;
+    top: 30px;
+    z-index: 200;
+    width: 120px;
+    padding: 3px 5px;
+    margin: 0 auto 30px;
+    font-weight: normal;
+    color: white;
+    text-align: center;
+    background-color: rgb(153, 153, 153);
+        border-radius: 4px;
+
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+}
+.timeline dl dd {
+    cursor: default;
+    position: relative;
+    z-index: 200;
+}
+.timeline dl dd .circ {
+    text-align: center;
+    position: absolute;
+    top: 40px;
+    left: calc(50% - 36px);
+    z-index: 200;
+    width: 24px;
+    height: 24px;
+    margin-left: 0;
+    background-color: #f5f7fa;
+    border: 4px solid #f5f7fa;
+        border-radius: 50%;
+
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+}
+.timeline dl dd .time {
+    position: absolute;
+    top: 36px;
+    left: 49%;
+    display: inline-block;
+    width: 100px;
+    padding: 10px 20px;
+    color: rgb(50, 166, 211);
+}
+.timeline dl dd .events {
+    position: relative;
+    width: 40%;
+    padding: 10px 10px 0;
+    margin-top: 31px;
+    background-color: rgb(230, 230, 230);
+        border-radius: 4px;
+
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+}
+
+
+.timeline dl dd .events:before {
+    position: absolute;
+    top: 12px;
+    width: 0;
+    height: 0;
+    content: '';
+    border-style: solid;
+    border-width: 6px;
+}
+.timeline dl dd .events .events-object {
+    margin-right: 10px;
+}
+.timeline dl dd .events .events-body {
+    overflow: hidden;
+    zoom: 1;
+}
+.timeline dl dd .events .events-body .events-heading {
+    margin: 0 0 10px;
+    font-size: 14px;
+}
+.timeline dl dd.pos-right .time {
+    margin-left: -165px;
+    text-align: right;
+}
+.timeline dl dd.pos-right .events {
+    float: right;
+    margin-right: 40px;
+}
+.timeline dl dd.pos-right .events:before {
+    left: -12px;
+    border-color: transparent white transparent transparent;
+}
+.timeline dl dd.pos-left .time {
+    margin-left: 0;
+    text-align: left;
+}
+.timeline dl dd.pos-left .events {
+    float: left;
+}
+.timeline dl dd.pos-left .events:before {
+    right: -12px;
+    border-color: transparent transparent transparent white;
+}
+
+@media screen and (max-width: 767px) {
+    .timeline dl:before {
+        left: 60px;
+    }
+    .timeline dl dt {
+        margin: 0 0 30px;
+    }
+    .timeline dl dd .circ {
+        left: 4px;
+    }
+    .timeline dl dd .time {
+        left: -36px;
+    }
+    .timeline dl dd.pos-left .time {
+        padding: 10px 0;
+        margin-left: 0;
+        text-align: left;
+    }
+    .timeline dl dd.pos-left .events {
+        float: right;
+        width: 84%;
+        margin-right: 10px;
+    }
+    .timeline dl dd.pos-left .events:before {
+        left: -12px;
+        border-color: transparent white transparent transparent;
+    }
+    .timeline dl dd.pos-right .time {
+        padding: 10px 0;
+        margin-left: 0;
+        text-align: left;
+        margin-right: 10px;
+    }
+    .timeline dl dd.pos-right .events {
+        float: right;
+        width: 84%;
+    }
+}
+.alert {
+    cursor: default;
+}
+dt span {
+    display: block;
+    cursor: pointer;
+}
+@media (max-width: 400px)
+{
+.timeline dl dd.pos-right .events {
+    margin-right: 10px;
+    width: 68%;
+}
+.timeline dl dd.pos-left .events {
+    width: 68%;
+    margin-right: 10px;
+}
+}
+@media (min-width: 401px) and (max-width: 555px)
+{
+    .timeline dl dd.pos-right .events {
+        width: 76%;
+        margin-right: 10px;
+    }
+    .timeline dl dd.pos-left .events {
+        width: 76%;
+        margin-right: 10px;
+    }
+}
+.events-body h4 {
+    margin: 0;
+}
+.events-body p {
+    margin-top: 10px;
+}
+.events-body div:last-child {
+    margin-bottom: 10px;
+}
+.events-body div {
+    font-weight:300;
+    color:rgb(85, 85, 85);
+    font-size:10px;
+}
+.timeline dl dt.day {
+    width: 74px;
+    background-color: rgb(50, 166, 211);
+}
+.timeline dl dt:hover {
+    /*background-color: #A4A3A3;*/
+    background-color: rgb(153, 153, 153);
+}
+.timeline dl dt.day:hover {
+    width: 74px;
+    background-color: rgb(50, 166, 211);
+}
+
+.timeline dl dt.day:focus {
+    width: 74px;
+    background-color: rgb(50, 166, 211);
+}
+
+@media (max-width: 767px) {
+    .timeline dl dt.day {
+        margin-left: 30px;
+    }
+    .timeline dl dd.pos-right .events {
+        margin-right: 10px;
+    }
+    .timeline dl dd.pos-left .events {
+        margin-right: 10px;
+    }
+}
+#select_repository_chosen .chosen-choices li.search-field input[type=text] {
+    font-family: "Oswald","Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+    height: 25px;
+}
+
+.chosen-container .chosen-drop {
+    border-radius: 0 0 4px 4px;
+    background-clip: padding-box;
+}
+
+.chosen-container-single .chosen-single {
+    height: 39px;
+    line-height: 20px;
+    background-image: none;
+    background-color:#EBEBEB;
+    border-color:#bab9b8;
+    -webkit-box-shadow:inset 0 2px 2px 0 #fff,0px 1px 3px 0 rgba(0,0,0,0.1);
+    box-shadow:inset 0 2px 2px 0 #fff,0px 1px 3px 0 rgba(0,0,0,0.1);
+    text-shadow:1px 1px 1px #fff;
+    border-bottom:1px solid #a1a09e
+}
+.chosen-container-active.chosen-with-drop .chosen-single {
+    background-image: none;
+    background-color:#D8D8D8;
+}
+.chosen-container .chosen-results li.highlighted {
+    background-color: #00AAE3;
+    background-image: none;
+}
+.chosen-container .chosen-drop {
+    background-color:#D8D8D8;
+}
+.chosen-container-single .chosen-single:hover {
+    background-color:#D8D8D8;
+    border-color:#9c9a99
+}
+.chosen-container-single .chosen-single span {
+    line-height:32px
+}
+.chosen-container-single .chosen-single div b {
+    background-position: 0 6px;
+}
+.chosen-container-multi .chosen-choices {
+    padding:0;
+}
+.chosen-container-multi .chosen-choices li.search-field input[type="text"] {
+    padding:5px;
+    height:15px;
+    color:#666;
+}
+.chosen-container-multi .chosen-choices li.search-field .default {
+    color:#999
+}
+.chosen-container-multi .chosen-choices li.search-choice {
+    margin:3px 0 3px 5px;
+    background-color:#e4e4e4;
+}
+.chosen-container-active.chosen-with-drop .chosen-single div b {
+    background-position:-18px 6px
+}
+.chosen-container-active .chosen-choices li.search-field input[type="text"] {
+    color:#111!important
+}
+#select_repository_chosen {
+    float: right;
+    font-size: 16px;
+    margin-top: -5px;
+    min-width: 205px;
+}
+
