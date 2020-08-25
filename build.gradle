@@ -40,7 +40,7 @@ ext.buildTime = {
 }
 
 group = 'eu.openanalytics'
-ext.versionNumber = '1.3.0'
+ext.versionNumber = '1.3.1'
 ext.baseVersion = versionNumber
 version = versionNumber
 description = """rdepot"""
