@@ -67,7 +67,7 @@
 
                         <label class="mdl-button mdl-js-button mdl-button--icon" style="display: none;"><i class="material-icons">refresh</i></label>
                         <!--<a class="mdl-navigation__link" href="#">Settings</a>-->
-                        <a th:if="${role >= 0}" class="mdl-navigation__link" href="#" onclick="logout()">Log out</a>
+                        <a name="logout" th:if="${role >= 0}" class="mdl-navigation__link" href="#" onclick="logout()">Log out</a>
                     </nav>
                 </div>
             </header>
@@ -77,7 +77,7 @@
                     	<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> 
                     </form>
                     <span class="mdl-layout-title"><img th:src="@{/img/logo.png}"/><span class="title">RDepot</span></span>
-                    <nav th:fragment="drawer" class="mdl-navigation">
+                    <nav id=navbar th:fragment="drawer" class="mdl-navigation">
                         <a th:if="${role > 1}" th:classappend="${module == 'newsfeed' ? 'active' : ''}" class="mdl-navigation__link" th:href="@{/manager/newsfeed}">
                             <i class="material-icons">list_alt</i>
                             <span class="drawer-entry">News feed</span>

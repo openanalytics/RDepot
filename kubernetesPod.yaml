@@ -7,6 +7,11 @@ spec:
   containers:
     - name: rdepot-build
       image: 196229073436.dkr.ecr.eu-west-1.amazonaws.com/openanalytics/rdepot-build:latest
+      resources:
+        limits:
+          memory: "8Gi"
+        requests:
+          memory: "4Gi"
       tty: true
       securityContext:
         privileged: true

@@ -20,7 +20,13 @@
  */
 package eu.openanalytics.rdepot.repo;
 
+import java.util.Objects;
+import java.util.concurrent.BlockingQueue;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,49 +36,84 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import eu.openanalytics.rdepot.repo.storage.StorageFileNotFoundException;
+import eu.openanalytics.rdepot.repo.collection.QueueMap;
+import eu.openanalytics.rdepot.repo.exception.InitTransactionException;
+import eu.openanalytics.rdepot.repo.exception.InvalidRequestPageNumberException;
+import eu.openanalytics.rdepot.repo.exception.NoSuchTransactionException;
+import eu.openanalytics.rdepot.repo.exception.StorageFileNotFoundException;
+import eu.openanalytics.rdepot.repo.messaging.SharedMessageCodes;
+import eu.openanalytics.rdepot.repo.model.SynchronizeRepositoryRequestBody;
+import eu.openanalytics.rdepot.repo.model.SynchronizeRepositoryResponseBody;
 import eu.openanalytics.rdepot.repo.storage.StorageService;
 
 @Controller
 public class FileUploadController {
 
+	Logger logger = LoggerFactory.getLogger(FileUploadController.class);
+	
     private final StorageService storageService;
 
+    @Autowired
+    BlockingQueue<SynchronizeRepositoryRequestBody> requestQueue;
+    
+    @Autowired
+    QueueMap<String, SynchronizeRepositoryResponseBody> responseMap;
+    
     @Autowired
     public FileUploadController(StorageService storageService) {
         this.storageService = storageService;
     }
     
-    @PostMapping("/archive")
-    @ResponseBody
-    public ResponseEntity<String> handleArchiveFileUpload(@RequestParam("files") MultipartFile[] files) {
-    	return handleArchiveFileUpload("", files);
-    }
-    
-    @PostMapping("/{repository:.+}/archive")
-    @ResponseBody
-    public ResponseEntity<String> handleArchiveFileUpload(@PathVariable String repository, @RequestParam("files") MultipartFile[] files) {
-    	storageService.storeInArchive(files, repository);
-    	return ResponseEntity
-    			.ok()
-    			.body("OK");
-    }
-    
-    @PostMapping("/")
-    @ResponseBody
-    public ResponseEntity<String> handleFileUpload(@RequestParam("files") MultipartFile[] files) 
-    {
-        return handleFileUpload("", files);
-    }
-
     @PostMapping("/{repository:.+}")
     @ResponseBody
-    public ResponseEntity<String> handleFileUpload(@PathVariable String repository, @RequestParam("files") MultipartFile[] files)
-    {
-        storageService.store(files, repository);
-        return ResponseEntity
-                .ok()
-                .body("OK");
+    public ResponseEntity<SynchronizeRepositoryResponseBody> handleSynchronizeRequest(
+    		@PathVariable String repository,
+    		@RequestParam(value = "files", required = false) MultipartFile[] filesToUpload, 
+    		@RequestParam(value = "to_delete", required = false) String[] filesToDelete,
+    		@RequestParam(value = "files_archive", required = false) MultipartFile[] filesToUploadToArchive,
+    		@RequestParam(value = "to_delete_archive", required = false) String[] filesToDeleteFromArchive,
+    		@RequestParam("version_before") String versionBefore,
+    		@RequestParam("version_after") String versionAfter,
+    		@RequestParam("page") String page,
+    		@RequestParam("id") String id) {
+    	
+    	try {
+    		logger.info("Received request.");
+
+    		SynchronizeRepositoryRequestBody requestBody = new SynchronizeRepositoryRequestBody(id,
+    				filesToUpload, filesToUploadToArchive, filesToDelete, 
+    				filesToDeleteFromArchive, versionBefore, versionAfter, page, 
+    				repository);
+    		
+    	
+			if(requestBody.isFirstChunk()) {
+    			String generatedId = storageService.initTransaction(repository, versionBefore);
+    			requestBody.setId(generatedId);
+    		} else {
+    			if(!responseMap.containsKey(id))
+    				throw new NoSuchTransactionException(repository, id);
+    		}
+    		
+    		requestQueue.add(requestBody);
+    		
+    		SynchronizeRepositoryResponseBody response = responseMap.getLastItem(requestBody.getId());
+    		if(Objects.equals(response.getMessage(), SharedMessageCodes.RESPONSE_OK)) {
+    			return ResponseEntity.ok(response);
+    		} else {
+    			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    		}
+    		
+    	} catch(InvalidRequestPageNumberException | InterruptedException | 
+    			InitTransactionException | NoSuchTransactionException e) {
+    		logger.error(e.getClass().getCanonicalName() + ": " + e.getMessage());
+    		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+    				new SynchronizeRepositoryResponseBody(id, SharedMessageCodes.RESPONSE_ERROR));
+    	} finally {
+    		if(id != null) {
+    			if(!Objects.equals(id, "") && responseMap.containsKey(id))
+    				responseMap.remove(id);
+    		}
+    	}
     }
 
     @ExceptionHandler(StorageFileNotFoundException.class)

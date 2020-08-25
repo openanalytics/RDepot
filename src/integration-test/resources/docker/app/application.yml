@@ -1,0 +1,100 @@
+repositories:
+  - name: A
+    publication-uri: http://localhost/repo/A
+    server-address: http://oa-rdepot-repo:8080/A
+  - name: B
+    publication-uri: http://localhost/repo/B
+    server-address: http://oa-rdepot-repo:8080/B
+  - name: C
+    publication-uri: http://localhost/repo/C
+    server-address: http://oa-rdepot-repo:8080/C
+
+message:
+  source:
+    basename: i18n/messages
+
+# Database related properties
+db:
+  driver: org.postgresql.Driver
+  url: jdbc:postgresql://oa-rdepot-db:5432/rdepot
+  username: rdepot
+  password: mysecretpassword
+
+# Hibernate related properties
+hibernate:
+  dialect: org.hibernate.dialect.PostgreSQLDialect
+  show_sql: false
+
+entitymanager:
+  packages:
+    to:
+      scan: eu.openanalytics.rdepot.model
+
+# Email related properties
+email:
+  password:
+  username:
+  from:
+  smtp:
+    host:
+    port:
+    auth:
+    starttls:
+
+# Package upload related properties
+package:
+  upload:
+    dir: /opt/rdepot
+
+# Repository generation related properties
+repository:
+  generation:
+    dir: /opt/rdepot/generated
+
+#spring.mvc.view.prefix=/WEB-INF/pages/
+#spring.mvc.view.suffix=.jsp
+spring:
+  mvc:
+    view:
+      suffix: .html
+  main:
+    allow-bean-definition-overriding: true
+    log-startup-info: false  
+
+  output:
+    ansi:
+      enabled: always    
+#spring.devtools.remote.secret=thisismysecret
+server:
+  error:
+    include-stacktrace: always
+    path: /error
+    
+management:
+  metrics:
+    web:
+      server:
+        auto-time-requests: false
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui/api-docs.html
+
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          filter:
+            CommonsRequestLoggingFilter: INFO   
+
+#storage related properties
+localStorage:
+  maxRequestSize: 10
+
+storage:
+  implementation: local
+
+requestTimeout: 10            
+#repo:            
+      

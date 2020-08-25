@@ -193,4 +193,13 @@ public final class MessageCodes
 	public static final String ERROR_PACKAGEMAINTAINER_CREATE = "error.package.maintainer.create";
 	public static final String ERROR_PACKAGEMAINTAINER_DELETE = "error.package.maintainer.delete";
 	public static final String ERROR_PACKAGEMAINTAINER_EDIT = "error.package.maintainer.edit";
+
+	public static final String ERROR_AUTHENTICATION_INACTIVE_USER = "error.authentication.inactive.user";
+	public static final String ERROR_AUTHENTICATION_DELETED_USER = "error.authentication.deleted.user";
+	public static final String ERROR_AUTHENTICATION_USER_CREATION = "error.authentication.user.creation";
+	public static final String ERROR_AUTHENTICATION_USER_EDITION = "error.authentication.user.edition";
+
+	public static final String ERROR_DELETE_FROM_REMOTE_SERVER = "error.delete.from.remote.server";
+	public static final String ERROR_SYNCHRONIZE_REPOSITORY_WITH_REMOTE_SERVER = "error.synchronize.repository.with.remote.server";
+	public static final String ERROR_INVALID_SERVER_ADDRESS = "error.invalid.server.address";
 }

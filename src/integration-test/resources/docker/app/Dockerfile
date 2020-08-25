@@ -7,4 +7,4 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN echo 'Acquire::ForceIPv4 "true";' | tee /etc/apt/apt.conf.d/99force-ipv4
 RUN apt-get update -y && apt-get install -y r-base texlive texinfo texlive-fonts-extra mc net-tools
 
-ENTRYPOINT exec java $JAVA_OPTS -jar /opt/rdepot/rdepot.war
+ENTRYPOINT exec java $JAVA_OPTS -jar /opt/rdepot/rdepot.war --spring.config.location=file:/opt/rdepot/application.yml,/opt/rdepot/authentication.yml

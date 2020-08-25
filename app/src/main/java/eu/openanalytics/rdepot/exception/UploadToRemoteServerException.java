@@ -52,5 +52,5 @@ public class UploadToRemoteServerException extends RepositoryStorageException {
 		super(MessageCodes.ERROR_UPLOAD_TO_REMOTE_SERVER, messageSource, locale, 
 				"Server address: " + serverAddress + "\nUpload path: " + uploadPath
 				+ "\nResponse: " + response.getStatusCodeValue() + "; " + response.getBody());
-	}
+	} 
 }

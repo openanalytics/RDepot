@@ -42,8 +42,8 @@ import eu.openanalytics.rdepot.repository.UserEventRepository;
 import eu.openanalytics.rdepot.repository.UserRepository;
 import eu.openanalytics.rdepot.service.EmailService;
 import eu.openanalytics.rdepot.storage.BaseStorage;
-import eu.openanalytics.rdepot.storage.PackageStorage;
-import eu.openanalytics.rdepot.storage.RepositoryStorage;
+import eu.openanalytics.rdepot.storage.PackageStorageLocalImpl;
+import eu.openanalytics.rdepot.storage.RepositoryStorageLocalImpl;
 
 @Configuration
 public class MockRepositoryBeansConfig {
@@ -124,13 +124,13 @@ public class MockRepositoryBeansConfig {
 	}
 	
 	@Bean
-	public RepositoryStorage repositoryStorage() {
-		return mock(RepositoryStorage.class);
+	public RepositoryStorageLocalImpl repositoryStorage() {
+		return mock(RepositoryStorageLocalImpl.class);
 	}
 
 	@Bean
-	public PackageStorage packageStorage() {
-		return mock(PackageStorage.class);
+	public PackageStorageLocalImpl packageStorage() {
+		return mock(PackageStorageLocalImpl.class);
 	}
 	
 	@Bean

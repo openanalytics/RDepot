@@ -85,7 +85,7 @@ import eu.openanalytics.rdepot.service.SubmissionEventService;
 import eu.openanalytics.rdepot.service.SubmissionService;
 import eu.openanalytics.rdepot.service.UploadRequestService;
 import eu.openanalytics.rdepot.service.UserService;
-import eu.openanalytics.rdepot.storage.PackageStorage;
+import eu.openanalytics.rdepot.storage.PackageStorageLocalImpl;
 import eu.openanalytics.rdepot.test.fixture.EventTestFixture;
 import eu.openanalytics.rdepot.test.fixture.PackageTestFixture;
 import eu.openanalytics.rdepot.test.fixture.RepositoryTestFixture;
@@ -133,7 +133,7 @@ public class SubmissionServiceTest {
 	private RepositoryService repositoryService;
 	
 	@Mock
-	private PackageStorage packageStorage;
+	private PackageStorageLocalImpl packageStorage;
 	
 	@Mock
 	private UploadRequestService uploadRequestService;

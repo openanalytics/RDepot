@@ -1,0 +1,149 @@
+html,body {
+	font-family: "Roboto", "Helvetica","Arial",sans-serif;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 20px;
+	color: #555555;
+	color: rgb(85, 85, 85);
+}
+
+body {
+	margin: 0;
+	background-color: #e6e6e6;
+	background-color: rgb(230, 230, 230);
+	min-height: 0;
+}
+
+a { text-decoration: none; 
+	font-weight: 100;
+	color: #333333;
+	color: rgb(51,51,51); 
+}
+
+#container {
+	min-height: 100%;
+	width: 100%;
+}
+
+form {
+	width: 400px;
+	margin: 4em auto 4em auto;
+	padding: 2em 2em 2em 2em;
+	background: #ffffff;
+	background: rgb(255, 255, 255);
+	/*border: 1px solid #ebebeb;
+	box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;*/
+	border: 1px solid rgb(206, 206, 206);
+	box-shadow: 2px 2px #cecece;
+	box-shadow: 2px 2px rgb(206, 206, 206);
+	box-shadow: 2px 2px rgba(27, 27, 27, .1);
+}
+
+form button { width: 400px; }
+
+hgroup { 
+	text-align:center;
+	margin-top: 10em;
+}
+
+h1 {
+	font-weight: 300;
+	color: #333333;
+	color: rgb(51,51,51);
+	margin-top: 1em;
+	text-align:center;
+}
+
+
+h2 {
+	font-size: 140%;
+	font-weight: 165;
+	color: #333333;
+	color: rgb(51,51,51);
+	margin-top: 1em;
+	text-align:center;
+}
+
+footer {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	padding: 1rem;
+	background-color: #555555;
+	background-color: rgb(85, 85, 85);
+	text-align: left;
+	margin-bottom: 0;
+}
+
+footer img {
+	max-width: 30px;
+	background: white;
+	transition: all .2s ease;
+	vertical-align: sub;
+}
+
+footer a:hover img { opacity: 0.5; }
+
+footer p {
+	clear: both;
+	padding-top: 7px;
+	margin-bottom: 0px;
+}
+
+footer div {
+	display: inline;
+}
+
+#text-oa-link {
+	margin-left : 7px;
+}
+
+footer a {
+	color: #999999;
+	color: rgb(153, 153, 153);
+}
+
+#blue-link:hover {
+	color: #32a6d3;
+	color: rgb(50, 166, 211);
+}
+
+.mdl-button--accent.mdl-button--accent.mdl-button--raised, .mdl-button--accent.mdl-button--accent.mdl-button--fab {
+    color: #ffffff;
+    color: rgb(255,255,255);
+    background-color: #32a6d3;
+    background-color: rgb(50, 166, 211)
+}
+
+@media only screen and (min-width: 150px) and (max-width: 360px)
+{
+	form {
+		width: auto;
+		/*margin: 4em auto;*/
+		padding: 2em 2em 2em 2em;
+		background: #e6e6e6;
+		background: rgb(230, 230, 230);
+		border: none;
+		box-shadow: none;
+	}
+
+	h1 { font-size: 36px; }
+
+	h3 { font-size: 24px; }
+
+	form button { width: 100%; }
+}
+
+/*** overrides material.css ***/
+
+.mdl-button--raised {
+	box-shadow: none;
+	margin: 16px 0;
+	padding: 0;
+	height: 40px;
+}
+
+.mdl-button {
+	border-radius: 0;
+}

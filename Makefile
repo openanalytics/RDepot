@@ -1,5 +1,7 @@
 app:
-	rm -rf ./build
+	rm -rf ./build/
+	rm -rf ./app/build/
+	rm -rf ./repo/build/
 	./gradlew build -x test -x integrationTest testClasses #temporary change
 	cp -f ./app/build/libs/rdepot-app*application.war ./docker/app/rdepot.war
 	cp -f ./app/build/libs/rdepot-app*application.war ./src/integration-test/resources/docker/app/rdepot.war

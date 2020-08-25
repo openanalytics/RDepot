@@ -48,10 +48,15 @@ targetCompatibility = 1.8
 
 dependencies {
 	Map<String, String> dependencies = globalConf.commonDependencies
-	
+		
+	implementation dependencies.httpComponents
 	implementation dependencies.sbStarterWeb
 	implementation dependencies.springDocOpenApiUi
+	implementation dependencies.gson
+    testImplementation dependencies.commonsIO
 	testImplementation dependencies.sbStarterTest
+	testImplementation dependencies.jerseyHk2
+	testImplementation dependencies.mockito
 }
 
 publishing {

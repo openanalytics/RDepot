@@ -92,7 +92,7 @@ import eu.openanalytics.rdepot.service.PackageService;
 import eu.openanalytics.rdepot.service.RepositoryEventService;
 import eu.openanalytics.rdepot.service.RepositoryMaintainerService;
 import eu.openanalytics.rdepot.service.RepositoryService;
-import eu.openanalytics.rdepot.storage.RepositoryStorage;
+import eu.openanalytics.rdepot.storage.RepositoryStorageLocalImpl;
 import eu.openanalytics.rdepot.test.fixture.EventTestFixture;
 import eu.openanalytics.rdepot.test.fixture.PackageMaintainerTestFixture;
 import eu.openanalytics.rdepot.test.fixture.PackageTestFixture;
@@ -137,7 +137,7 @@ public class RepositoryServiceTest {
 	private MessageSource messageSource;
 	
 	@Mock
-	private RepositoryStorage repositoryStorage;
+	private RepositoryStorageLocalImpl repositoryStorage;
 	
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();

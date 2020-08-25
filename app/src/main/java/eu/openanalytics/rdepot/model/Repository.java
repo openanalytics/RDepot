@@ -254,4 +254,8 @@ public class Repository implements java.io.Serializable
 		this.published = published;
 	}
 	
+	@Override
+	public String toString() {
+		return "Name: " + this.name + ", publication URI: " + this.publicationUri + ", server address: " + this.serverAddress;		
+	}
 }

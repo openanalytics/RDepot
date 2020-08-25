@@ -290,6 +290,13 @@ public class Package implements java.io.Serializable, Comparable<Package>
 	{
 		this.suggests = suggests;
 	}
+	
+	@Transient
+	public String getFileName() {
+		int pathLength = this.source.split("/").length;
+		String filename = this.source.split("/")[pathLength - 1];
+		return filename;
+	}
 
 	@Column(name = "system_requirements")
 	public String getSystemRequirements()

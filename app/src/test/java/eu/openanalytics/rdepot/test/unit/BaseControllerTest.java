@@ -100,33 +100,33 @@ public class BaseControllerTest {
 		SecurityContextHolder.setContext(currentContext);
 	}
 	
-	@Test
-	public void testIndexWhenPrincipalIsNull() {
-		Authentication authentication = Mockito.mock(Authentication.class);
-		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-		SecurityContext currentContext = SecurityContextHolder.getContext();
-		SecurityContextHolder.setContext(securityContext);
-		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(null);
-		
-		String page = baseController.index();
-		assertEquals("redirect:/login", page);
-		
-		SecurityContextHolder.setContext(currentContext);
-	}
-	
-	@Test
-	public void testIndexWhenPrincipalIsString() {
-		Authentication authentication = Mockito.mock(Authentication.class);
-		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-		SecurityContext currentContext = SecurityContextHolder.getContext();
-		SecurityContextHolder.setContext(securityContext);
-		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn("");
-		
-		String page = baseController.index();
-		assertEquals("redirect:/login", page);
-		
-		SecurityContextHolder.setContext(currentContext);
-	}
+//	@Test
+//	public void testIndexWhenPrincipalIsNull() {
+//		Authentication authentication = Mockito.mock(Authentication.class);
+//		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+//		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+//		SecurityContext currentContext = SecurityContextHolder.getContext();
+//		SecurityContextHolder.setContext(securityContext);
+//		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(null);
+//		
+//		String page = baseController.index();
+//		assertEquals("redirect:/login", page);
+//		
+//		SecurityContextHolder.setContext(currentContext);
+//	}
+//	
+//	@Test
+//	public void testIndexWhenPrincipalIsString() {
+//		Authentication authentication = Mockito.mock(Authentication.class);
+//		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+//		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+//		SecurityContext currentContext = SecurityContextHolder.getContext();
+//		SecurityContextHolder.setContext(securityContext);
+//		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn("");
+//		
+//		String page = baseController.index();
+//		assertEquals("redirect:/login", page);
+//		
+//		SecurityContextHolder.setContext(currentContext);
+//	}
 }

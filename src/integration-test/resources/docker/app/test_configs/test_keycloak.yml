@@ -1,0 +1,13 @@
+app:
+  authentication: keycloak      
+  keycloak:
+    baseUrl: http://oa-rdepot-app-keycloak:8080
+    auth-server-url: http://oa-rdepot-keycloak:8080/auth
+    realm: RDepot  
+    resource: oa-rdepot-app-keycloak
+    ssl-required: external
+    credentials-secret: 68951b41-39bd-4f1f-b7e8-d17228c8132c
+    principal-attribute: preferred_username
+    default:
+      admins: 
+        - einstein

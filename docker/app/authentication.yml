@@ -1,0 +1,66 @@
+app:
+  authentication: simple
+
+# LDAP related properties 
+  ldap:
+    url: ldap://oa-rdepot-ldap:389
+    basedn: dc=example,dc=org
+    userou: 
+    loginfield: cn
+    namefield: cn
+    emailfield: mail
+    default:
+      admins: einstein
+
+# Keycloak related properties
+  keycloak:
+    baseUrl: http://localhost:8017
+    auth-server-url: http://192.168.49.17:8080/auth
+    realm: RDepot  
+    resource: oa-rdepot-app
+    ssl-required: external
+    credentials-secret: 68951b41-39bd-4f1f-b7e8-d17228c8132c
+    principal-attribute: preferred_username
+    default:
+      admins: 
+        - einstein
+
+# OpenID Connect related properties
+  openid:
+    auth-url: http://localhost:9000/auth
+    token-url: http://oa-rdepot-openid:9000/token
+    jwks-url: http://oa-rdepot-openid:9000/certs
+    client-id: rdepot
+    client-secret: mysecret123
+    username-attribute: nickname
+    baseUrl: http://localhost:8017
+    registrationId: rdepot
+    logout-url: http://localhost:9000/session/end
+    default:
+      admins: 
+        - einstein    
+    delete_cookies:
+      - name: _session
+      - name: _state.rdepot
+    
+# Simple authentication related properties
+  simple:
+    users:
+      - login: einstein
+        password: testpassword
+      - login: tesla
+        password: testpassword
+      - login: galieleo
+        password: testpassword
+      - login: newton
+        password: testpassword
+      - login: newbie
+        password: testpassword
+        name: New User  
+      - login: doe
+        password: testpassword
+        name: John Doe  
+    default:
+      admins: 
+        - einstein              
+

@@ -1,0 +1,6 @@
+Package: Benchmarking
+Version: 0.10
+Depends: lpSolveAPI, ucminf
+License: GPL (>= 2)
+MD5Sum: 9a99c2ebefa6d49422ca7893c1f4ead8
+NeedsCompilation: no

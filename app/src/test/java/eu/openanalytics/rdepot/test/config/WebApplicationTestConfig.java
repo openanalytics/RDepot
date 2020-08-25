@@ -92,7 +92,7 @@ import eu.openanalytics.rdepot.repository.UserEventRepository;
 import eu.openanalytics.rdepot.repository.UserRepository;
 import eu.openanalytics.rdepot.service.EventService;
 import eu.openanalytics.rdepot.storage.BaseStorage;
-import eu.openanalytics.rdepot.storage.PackageStorage;
+import eu.openanalytics.rdepot.storage.PackageStorageLocalImpl;
 import eu.openanalytics.rdepot.validation.CommonsMultipartFileValidator;
 import eu.openanalytics.rdepot.validation.PackageMaintainerValidator;
 import eu.openanalytics.rdepot.validation.PackageValidator;

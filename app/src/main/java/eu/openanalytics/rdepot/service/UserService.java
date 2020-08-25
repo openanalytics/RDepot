@@ -35,19 +35,17 @@ import javax.annotation.Resource;
 import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.context.support.MessageSourceAccessor;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.SpringSecurityMessageSource;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
 import org.springframework.stereotype.Service;
@@ -139,9 +137,9 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 	@Resource
 	private RepositoryMaintainerService repositoryMaintainerService;
 	
-	@Value("${ldap.loginfield}")
-	private String ldapLoginfield;
-
+	@Resource 
+	private Environment environment;
+	
 	@Transactional(readOnly = false)
 	public User create(User user) throws UserCreateException {
 		User createdUser = user;
@@ -567,10 +565,25 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 	@Transactional
 	@Override
 	public Collection<? extends GrantedAuthority> getGrantedAuthorities(DirContextOperations userData, String username) {
-		String login = userData.getStringAttribute(ldapLoginfield);
+		String login = userData.getStringAttribute(environment.getProperty("app.ldap.loginfield"));
 		User user = userRepository.findByLoginIgnoreCase(login);	
 		Collection<SimpleGrantedAuthority> authorities = new HashSet<SimpleGrantedAuthority>(0);
 		
+		for(int i = 0, v = user.getRole().getValue(); i <= v; i++) {
+			authorities.add(new SimpleGrantedAuthority(roleService.findByValue(i).getName()));
+		}		
+		return authorities;
+	}
+	
+	@Transactional
+	public Collection<? extends GrantedAuthority> getGrantedAuthorities(String username) {
+		User user = userRepository.findByLoginIgnoreCase(username);	
+		Collection<SimpleGrantedAuthority> authorities;
+		if(environment.getProperty("app.authentication").equals("simple")) {
+			authorities = new ArrayList<SimpleGrantedAuthority>(0);
+		} else { 
+			authorities = new HashSet<SimpleGrantedAuthority>(0);
+		}
 		for(int i = 0, v = user.getRole().getValue(); i <= v; i++) {
 			authorities.add(new SimpleGrantedAuthority(roleService.findByValue(i).getName()));
 		}		

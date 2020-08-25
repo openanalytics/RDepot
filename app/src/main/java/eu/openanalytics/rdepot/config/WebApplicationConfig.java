@@ -24,15 +24,18 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.concurrent.BlockingQueue;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -49,6 +52,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
@@ -67,7 +71,12 @@ import eu.openanalytics.rdepot.formatter.UserFormatter;
 import eu.openanalytics.rdepot.mapper.HibernateAwareObjectMapper;
 import eu.openanalytics.rdepot.model.Repository;
 import eu.openanalytics.rdepot.model.Role;
+import eu.openanalytics.rdepot.model.SynchronizeRepositoryResponseBody;
 import eu.openanalytics.rdepot.model.User;
+import eu.openanalytics.rdepot.storage.PackageStorage;
+import eu.openanalytics.rdepot.storage.PackageStorageLocalImpl;
+import eu.openanalytics.rdepot.storage.RepositoryStorage;
+import eu.openanalytics.rdepot.storage.RepositoryStorageLocalImpl;
 import eu.openanalytics.rdepot.validation.CommonsMultipartFileValidator;
 import eu.openanalytics.rdepot.validation.PackageMaintainerValidator;
 import eu.openanalytics.rdepot.validation.PackageValidator;
@@ -373,15 +382,42 @@ public class WebApplicationConfig implements WebMvcConfigurer
     	multipartResolver.setMaxUploadSize(100000000);
     	return multipartResolver;
     }
+        
+    @Bean
+    public ServletListenerRegistrationBean<HttpSessionEventPublisher> httpSessionEventPublisher() {
+        return new ServletListenerRegistrationBean<HttpSessionEventPublisher>(new HttpSessionEventPublisher());
+    } 
+
+    @Bean
+    public PackageStorage packageStorage() {
+    	String implementation = env.getRequiredProperty("storage.implementation");
+    	
+    	if(implementation.equals("local")) {
+    		return new PackageStorageLocalImpl();
+    	} else {
+    		throw new BeanCreationException("Unknown storage type");
+    	}
+    }
     
-//    @Bean
-//    public CommonsRequestLoggingFilter requestLoggingFilter()
-//    {
-//    	CommonsRequestLoggingFilter loggingFilter = new CommonsRequestLoggingFilter();
-//    	loggingFilter.setIncludeClientInfo(true);
-//    	loggingFilter.setIncludeQueryString(true);
-//    	loggingFilter.setIncludePayload(true);
-//    	loggingFilter.setIncludeHeaders(true);
-//    	return loggingFilter;
-//    }
+    @Bean
+    public RepositoryStorage repositoryStorage() {
+    	String implementation = env.getRequiredProperty("storage.implementation");
+    	
+    	if(implementation.equals("local")) {
+    		return new RepositoryStorageLocalImpl();
+    	} else {
+    		throw new BeanCreationException("Unknown storage type");
+    	}
+    }
+    
+    @Bean
+    public CommonsRequestLoggingFilter requestLoggingFilter()
+    {
+    	CommonsRequestLoggingFilter loggingFilter = new CommonsRequestLoggingFilter();
+    	loggingFilter.setIncludeClientInfo(true);
+    	loggingFilter.setIncludeQueryString(true);
+    	loggingFilter.setIncludePayload(true);
+    	loggingFilter.setIncludeHeaders(true);
+    	return loggingFilter;
+    }
 }

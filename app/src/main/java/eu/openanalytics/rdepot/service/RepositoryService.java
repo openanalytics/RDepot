@@ -29,6 +29,8 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -39,7 +41,10 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindException;
+import org.springframework.validation.ObjectError;
 
+import eu.openanalytics.rdepot.exception.AdminNotFound;
 import eu.openanalytics.rdepot.exception.CreateFolderStructureException;
 import eu.openanalytics.rdepot.exception.DeleteFileException;
 import eu.openanalytics.rdepot.exception.EventNotFound;
@@ -57,6 +62,7 @@ import eu.openanalytics.rdepot.exception.RepositoryMaintainerNotFound;
 import eu.openanalytics.rdepot.exception.RepositoryNotFound;
 import eu.openanalytics.rdepot.exception.RepositoryPublishException;
 import eu.openanalytics.rdepot.exception.UploadToRemoteServerException;
+import eu.openanalytics.rdepot.messaging.MessageCodes;
 import eu.openanalytics.rdepot.model.Event;
 import eu.openanalytics.rdepot.model.Package;
 import eu.openanalytics.rdepot.model.PackageMaintainer;
@@ -68,6 +74,7 @@ import eu.openanalytics.rdepot.repository.RepositoryRepository;
 import eu.openanalytics.rdepot.repository.RoleRepository;
 import eu.openanalytics.rdepot.storage.RepositoryStorage;
 import eu.openanalytics.rdepot.time.DateProvider;
+import eu.openanalytics.rdepot.validation.RepositoryValidator;
 import eu.openanalytics.rdepot.warning.PackageAlreadyDeletedWarning;
 import eu.openanalytics.rdepot.warning.RepositoryAlreadyUnpublishedWarning;
 
@@ -105,6 +112,15 @@ public class RepositoryService
 	
 	@Resource
 	private EventService eventService;
+	
+	@Resource
+	private UserService userService;
+	
+	@Autowired
+	private RepositoryValidator repositoryValidator;
+	
+	@Value("${app.authentication}")
+	private String mode;
 
 	@Transactional(readOnly = false, rollbackFor = RepositoryCreateException.class)
 	public Repository create(Repository repository, User creator)  throws RepositoryCreateException {
@@ -409,7 +425,7 @@ public class RepositoryService
 	}
 
 	@Transactional(readOnly = false, rollbackFor=RepositoryPublishException.class)
-	public void publishRepository(Repository repository, User uploader)
+	public synchronized void publishRepository(Repository repository, User uploader)
 			throws RepositoryPublishException {
 		String dateStamp = (new SimpleDateFormat("yyyyMMdd")).format(DateProvider.now());
 		List<Package> packages = packageService.findByRepositoryAndActive(repository, true);
@@ -452,7 +468,7 @@ public class RepositoryService
 				repositoryStorage.deleteGenerationDirectory(repository, dateStamp);
 			} catch (DeleteFileException dfe) {
 				logger.error("Cannot remove generation directory after publication failure!\n" 
-							+ dfe.getMessage());
+							+ dfe.getMessage(), dfe);
 			}
 			
 			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
@@ -461,5 +477,44 @@ public class RepositoryService
 		}
 		// TODO:
 		// 4. Generate the HTML pages? -> use template inside the resources folder?
+	}
+	
+	@Transactional(readOnly = false, rollbackFor = RepositoryCreateException.class)
+	public void createRepositoriesFromConfig(Repository repository) {		
+		User requester;
+		try {
+			requester = userService.findFirstAdmin();
+			Repository existingRepository = findByName(repository.getName());
+			if(existingRepository != null) {
+				logger.warn("We tried to create one of the preconfigured repositories but "
+						+ "there already is such a repository with the following properties: " 
+						+ existingRepository.toString());
+			} else {				
+				BindException bindException = new BindException(repository, repository.getName());
+				
+				repositoryValidator.validate(repository, bindException);
+				
+				if (bindException.hasErrors()) {		
+					String errorMessage = "Creating a preconfigured repository failed: ";
+					for(ObjectError error : bindException.getAllErrors()) {
+						errorMessage += messageSource.getMessage(error.getCode(), null, locale);
+					}
+					logger.error(errorMessage);
+				}
+				else {	
+					try {
+						this.create(repository, requester);
+					} 
+					catch(RepositoryCreateException e) {
+						String errorMessage = "Creating a preconfigured repository failed: " + e.getMessage();
+						logger.error(errorMessage);
+					}
+				}
+			}
+		} catch (AdminNotFound e1) {
+//			logger.error(e1.getMessage());
+			logger.error("When trying to create a preconfigured repository, we couldn't find any valid administrator");
+		}
+					
 	}
 }

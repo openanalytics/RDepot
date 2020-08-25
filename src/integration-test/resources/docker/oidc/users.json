@@ -1,0 +1,50 @@
+[
+    {
+        "id" : "SIMPLE_OIDC_USER_EINSTEIN",
+        "email" : "einstein@localhost",
+        "email_verified" : true,
+        "name" : "Albert Einstein",
+        "nickname" : "einstein",
+        "password" : "testpassword"
+    },
+    {
+        "id" : "SIMPLE_OIDC_USER_TESLA",
+        "email" : "tesla@localhost",
+        "email_verified" : true,
+        "name" : "Nicolas Tesla",
+        "nickname" : "tesla",
+        "password" : "testpassword"
+    },
+    {
+        "id" : "SIMPLE_OIDC_USER_GALIELEO",
+        "email" : "galieleo@localhost",
+        "email_verified" : true,
+        "name" : "Galileo Galilei",
+        "nickname" : "galieleo",
+        "password" : "testpassword"
+    },
+    {
+        "id" : "SIMPLE_OIDC_USER_NEWTON",
+        "email" : "newton@localhost",
+        "email_verified" : true,
+        "name" : "Isaac Newton",
+        "nickname" : "newton",
+        "password" : "testpassword"
+    },
+    {
+        "id" : "SIMPLE_OIDC_USER_NEWBIE",
+        "email" : "newbie@localhost",
+        "email_verified" : true,
+        "name" : "New User",
+        "nickname" : "newbie",
+        "password" : "testpassword"
+    },
+    {
+        "id" : "SIMPLE_OIDC_USER_DOE",
+        "email" : "doe@localhost",
+        "email_verified" : true,
+        "name" : "John Doe",
+        "nickname" : "doe",
+        "password" : "testpassword"
+    }
+]

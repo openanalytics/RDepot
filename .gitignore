@@ -26,3 +26,4 @@ src/integration-test/resources/itestPackages
 src/integration-test/resources/itestServer
 src/integration-test/resources/itestSourceFiles
 src/integration-test/resources/itestPdf
+/build/

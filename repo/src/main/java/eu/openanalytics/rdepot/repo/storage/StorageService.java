@@ -20,13 +20,30 @@
  */
 package eu.openanalytics.rdepot.repo.storage;
 
-import org.springframework.web.multipart.MultipartFile;
+import java.io.File;
+import java.util.List;
+import java.util.Map;
+
+import eu.openanalytics.rdepot.repo.exception.GetRepositoryVersionException;
+import eu.openanalytics.rdepot.repo.exception.InitTransactionException;
+import eu.openanalytics.rdepot.repo.exception.ProcessRequestException;
+import eu.openanalytics.rdepot.repo.model.SynchronizeRepositoryRequestBody;
 
 public interface StorageService {
 
     void init();
 
-    void store(MultipartFile[] files, String repository);
-
-    void storeInArchive(MultipartFile[] files, String repository);
+    List<File> getRecentPackagesFromRepository(String repository);
+    
+    Map<String, List<File>> getArchiveFromRepository(String repository);
+    
+    public void processRequest(SynchronizeRepositoryRequestBody requestBody) throws ProcessRequestException;
+    
+    public Map<String, File> getPackagesFiles(String repository, boolean archive);
+    
+    public String getRepositoryVersion(String repository) throws GetRepositoryVersionException;
+    
+	public String initTransaction(String repository, String repositoryVersion) throws InitTransactionException;
+	
+	public void processLastRequest() throws ProcessRequestException;
 }

@@ -49,7 +49,6 @@ repositories {
 
 dependencies {
 	Map<String, String> dependencies = globalConf.commonDependencies
-	
 	implementation dependencies.jsonSimple
 	implementation dependencies.sbStarterWeb
 	implementation dependencies.sbDevTools
@@ -77,9 +76,19 @@ dependencies {
 	implementation dependencies.testContainers
 	implementation dependencies.pdfbox
 	implementation dependencies.springDocOpenApiUi
+	implementation dependencies.oAuth2Core
+	implementation dependencies.oAuth2Client
+	implementation dependencies.undertow
+	implementation dependencies.oAuth2Jose
+    implementation dependencies.keycloakStarter
+    
+    implementation dependencies.commonsCollections4	
+
 	testImplementation dependencies.sbStarterTest
 	testImplementation dependencies.secTest
 	testImplementation dependencies.jerseyHk2
+	testImplementation dependencies.httpComponents
+	testImplementation dependencies.httpComponentsTest
 }
 
 sourceSets {

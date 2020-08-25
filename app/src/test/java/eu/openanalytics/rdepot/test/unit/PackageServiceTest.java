@@ -89,7 +89,7 @@ import eu.openanalytics.rdepot.service.RepositoryService;
 import eu.openanalytics.rdepot.service.RoleService;
 import eu.openanalytics.rdepot.service.SubmissionService;
 import eu.openanalytics.rdepot.service.UserService;
-import eu.openanalytics.rdepot.storage.PackageStorage;
+import eu.openanalytics.rdepot.storage.PackageStorageLocalImpl;
 import eu.openanalytics.rdepot.test.fixture.EventTestFixture;
 import eu.openanalytics.rdepot.test.fixture.PackageEventTestFixture;
 import eu.openanalytics.rdepot.test.fixture.PackageMaintainerTestFixture;
@@ -136,7 +136,7 @@ public class PackageServiceTest {
 	private EventService eventService;
 	
 	@Mock
-	private PackageStorage packageStorage;
+	private PackageStorageLocalImpl packageStorage;
 	
 	@InjectMocks
 	private PackageService packageService;

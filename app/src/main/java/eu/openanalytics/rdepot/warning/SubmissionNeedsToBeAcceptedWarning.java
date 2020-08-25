@@ -29,6 +29,11 @@ import eu.openanalytics.rdepot.model.Submission;
 
 public class SubmissionNeedsToBeAcceptedWarning extends SubmissionWarning {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1809717090615009894L;
+
 	public SubmissionNeedsToBeAcceptedWarning(MessageSource messageSource, Locale locale,
 			Submission submission) {
 		super(MessageCodes.WARNING_SUBMISSION_NEEDS_TO_BE_ACCEPTED, messageSource, locale, submission);

@@ -1,0 +1,123 @@
+/**
+ * R Depot
+ *
+ * Copyright (C) 2012-2020 Open Analytics NV
+ *
+ * ===========================================================================
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the Apache License as published by
+ * The Apache Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * Apache License for more details.
+ *
+ * You should have received a copy of the Apache License
+ * along with this program.  If not, see <http://www.apache.org/licenses/>
+ */
+package eu.openanalytics.rdepot.controller;
+
+import java.io.IOException;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+
+import javax.annotation.Resource;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.http.HttpEntity;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.oidc.OidcIdToken;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.ModelAndView;
+
+@Controller
+public class ErrorController extends SimpleUrlAuthenticationFailureHandler {
+	
+	@Resource
+	private Environment environment;
+	
+	Locale locale = LocaleContextHolder.getLocale();
+	
+	@Resource
+	MessageSource messageSource;
+	
+	@RequestMapping(value = "/authfailed", method=RequestMethod.GET)
+	public String authFailed(HttpServletRequest request, Model model, @RequestParam String error) {
+		if(environment.getProperty("app.authentication").equals("openid")) {
+			model.addAttribute("link", environment.getProperty("app.openid.baseUrl"));
+		} else {
+			model.addAttribute("link", environment.getProperty("app.keycloak.baseUrl") + "/manager");
+		}
+		
+		model.addAttribute("error", messageSource.getMessage(error, null, error, locale));
+		
+		
+		return "error_auth";
+	}
+
+	@Override
+	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
+			AuthenticationException exception) throws IOException, ServletException {		
+		
+		if(environment.getProperty("app.authentication").equals("openid")) {
+			List<String> cookies = new ArrayList<>();
+			
+			for(int i=0;;i++) {
+				String cookie = environment.getProperty(String.format("app.openid.delete_cookies[%d].name", i));
+				if (cookie == null) break;
+				else cookies.add(cookie);
+			}
+			
+			deleteCookies(request, response, cookies);
+		}
+		
+		request.logout();
+		response.sendRedirect("/authfailed?error=" + exception.getMessage());
+	}
+		
+	private void deleteCookies(HttpServletRequest request, HttpServletResponse response, List<String> names) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null && cookies.length > 0) {
+            for (Cookie cookie: cookies) {
+                if (names.contains(cookie.getName())) {
+                    cookie.setValue("");
+                    cookie.setPath("/");
+                    cookie.setMaxAge(0);
+                    response.addCookie(cookie);
+                }
+            }
+        }
+    }
+
+}

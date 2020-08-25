@@ -69,6 +69,7 @@ import eu.openanalytics.rdepot.model.SubmissionEvent;
 import eu.openanalytics.rdepot.model.User;
 import eu.openanalytics.rdepot.repository.SubmissionRepository;
 import eu.openanalytics.rdepot.storage.PackageStorage;
+import eu.openanalytics.rdepot.storage.RepositoryStorage;
 import eu.openanalytics.rdepot.time.DateProvider;
 import eu.openanalytics.rdepot.warning.PackageAlreadyActivatedWarning;
 import eu.openanalytics.rdepot.warning.SubmissionAlreadyAcceptedWarning;
@@ -121,6 +122,9 @@ public class SubmissionService
 	
 	@Resource
 	private PackageStorage packageStorage;
+	
+	@Resource
+	private RepositoryStorage repositoryStorage;
 	
 	@Resource
 	private RepositoryMaintainerService repositoryMaintainerService;

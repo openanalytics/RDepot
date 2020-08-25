@@ -22,10 +22,10 @@ package eu.openanalytics.rdepot.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
@@ -39,6 +39,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import eu.openanalytics.rdepot.comparator.PackageMaintainerComparator;
 import eu.openanalytics.rdepot.exception.EventNotFound;
 import eu.openanalytics.rdepot.exception.PackageEditException;

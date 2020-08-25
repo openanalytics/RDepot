@@ -32,6 +32,19 @@ ext {
         restAssured: 'io.rest-assured:rest-assured:4.2.0',
         restAssuredJsonPath: 'io.rest-assured:json-path:4.2.0',
         restAssuredXmlPath: 'io.rest-assured:xml-path:4.2.0',
-        pdfbox: 'org.apache.pdfbox:pdfbox:2.0.20'
+        pdfbox: 'org.apache.pdfbox:pdfbox:2.0.20',
+        oAuth2Core: 'org.springframework.security:spring-security-oauth2-core:5.3.3.RELEASE',
+        oAuth2Client: 'org.springframework.security:spring-security-oauth2-client:5.3.3.RELEASE',
+        undertow: 'org.springframework.boot:spring-boot-starter-undertow:2.3.1.RELEASE',
+        oAuth2Jose: 'org.springframework.security:spring-security-oauth2-jose:5.3.3.RELEASE',            
+        keycloakStarter: 'org.keycloak:keycloak-spring-boot-2-starter:4.0.0.Final',
+        testcontainers: 'org.testcontainers:selenium:1.14.3',
+        selenium: 'org.seleniumhq.selenium:selenium-remote-driver:3.141.59',
+        chromeDriver: 'org.seleniumhq.selenium:selenium-chrome-driver:3.141.59',
+        commonsCollections4: 'org.apache.commons:commons-collections4:4.4',
+        httpComponentsTest: 'org.apache.httpcomponents:httpclient:4.5.12:tests',
+        httpComponents: 'org.apache.httpcomponents:httpclient:4.5.12',
+        mockito: 'org.mockito:mockito-core:3.5.0',
+        commonsIO: 'commons-io:commons-io:2.7'
     ]
 }

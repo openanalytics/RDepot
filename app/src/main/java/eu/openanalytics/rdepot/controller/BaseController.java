@@ -20,12 +20,17 @@
  */
 package eu.openanalytics.rdepot.controller;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.keycloak.KeycloakPrincipal;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,8 +41,10 @@ import org.springframework.web.context.request.WebRequest;
 import eu.openanalytics.rdepot.utils.AjaxUtils;
 
 @Controller
-public class BaseController 
-{
+public class BaseController {
+	
+	@Value("${app.authentication}")
+	private String mode;
 	
     @ExceptionHandler(Exception.class)
     public @ResponseBody String handleUncaughtException(Exception ex, WebRequest request, HttpServletResponse response) throws IOException 
@@ -56,13 +63,17 @@ public class BaseController
 	public String index() {
 		
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-	    if (principal == null)
-	        return "redirect:/login";
-	    if (principal instanceof String)
-	        return "redirect:/login";
-	    if (principal instanceof UserDetails)
+	    if (principal == null || principal instanceof String)
+	        if(mode.equals("keycloak")) {
+	        	return "redirect:/manager";
+	        } else if(mode.equals("ldap")) {
+	        	return "redirect:/login";
+	        }
+	    if (principal instanceof UserDetails || 
+	    		principal instanceof KeycloakPrincipal || 
+	    		principal instanceof DefaultOidcUser
+	    	)
 	        return "redirect:/manager";
 	    return "redirect:/login";
 	}
-	
 }

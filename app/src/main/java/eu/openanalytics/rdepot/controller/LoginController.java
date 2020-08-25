@@ -20,6 +20,10 @@
  */
 package eu.openanalytics.rdepot.controller;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +32,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class LoginController 
 {
-
+	@Value("${app.authentication}")
+	private String mode;
+	
 	@RequestMapping(value={"/login"}, method=RequestMethod.GET)
 	public String login()
 	{
@@ -42,4 +48,13 @@ public class LoginController
 		return login();
 	}
 	
+	@RequestMapping(value = {"/logout"}, method=RequestMethod.POST)
+	public String logout(HttpServletRequest request) throws ServletException {
+		request.logout();	
+		if(mode.equals("keycloak")) {
+			return "redirect:/manager";
+		} else {
+			return "redirect:/login";
+		}
+	}
 }

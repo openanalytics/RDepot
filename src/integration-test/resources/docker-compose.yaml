@@ -1,5 +1,17 @@
 version: '3'
 services:
+  phpldapadmin:
+    image: osixia/phpldapadmin:0.9.0
+    restart: unless-stopped
+    container_name: oa-rdepot-phpldapadmin
+    networks:
+      - oa-rdepot
+    depends_on:
+      - ldap
+    ports:
+      - 6443:443
+    environment:
+      - PHPLDAPADMIN_LDAP_HOSTS=oa-rdepot-ldap
   proxy:
     image: library/nginx:alpine
     container_name: oa-rdepot-proxy
@@ -15,51 +27,33 @@ services:
       - repo
     networks:
       - oa-rdepot
-  ldap:
-    image: 196229073436.dkr.ecr.eu-west-1.amazonaws.com/openanalytics/rdepot-ldap-it:develop
-    restart: unless-stopped
-    hostname: oa-rdepot-ldap
-    container_name: oa-rdepot-ldap
-    networks:
-      - oa-rdepot
-    ports:
-      - 389:389
-      - 636:636
-    environment:
-      - LDAP_TLS=false
-      - LDAP_ORGANISATION=Test Company
-      - LDAP_DOMAIN=example.org
-      - LDAP_ADMIN_PASSWORD=testpassword
-  db:
-    image: library/postgres:alpine
-    restart: always
-    hostname: oa-rdepot-db
-    container_name: oa-rdepot-db
-    volumes:
-      - ./docker/db/rdepot.sql:/docker-entrypoint-initdb.d/rdepot.sql:ro
-      - ./docker/db/database.sql:/opt/database.sql
-      - ./docker/db/dump:/opt/rdepot/
-    networks:
-      - oa-rdepot
-    environment:
-      - POSTGRES_PASSWORD=mysecretpassword
+      
   app:
+#    build: ./docker/app
     image: 196229073436.dkr.ecr.eu-west-1.amazonaws.com/openanalytics/rdepot-app-it:develop
     restart: always
     hostname: oa-rdepot-app
     container_name: oa-rdepot-app
     volumes:
+#----------------------------------------------------------------
+#     Always choose proper auth config file
+#      - ./docker/app/authentication.yml:/opt/rdepot/authentication.yml
+      - ./docker/app/test_configs/test_ldap.yml:/opt/rdepot/authentication.yml
+#----------------------------------------------------------------      
+      - ./docker/app/application.yml:/opt/rdepot/application.yml
       - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
       - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
       - ./itestSourceFiles:/opt/testSourceFiles:ro
       - ./itestGenerated:/opt/testGenerated:ro
-      - ./itestNewFiles:/opt/newFiles:ro
+      - ./itestNewFiles:/opt/newFiles:ro    
     ports:
       - 8001:8001
-    networks:
-      - oa-rdepot
+      - 8018:8080
+      - 8019:8001
     depends_on:
       - db
+#      - keycloak
+#      - openid
     environment:
       - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/postgres
       - DB_USERNAME=postgres
@@ -74,8 +68,12 @@ services:
       test: ["CMD-SHELL", "if [ \"$$(curl -I localhost:8080 2>/dev/null | grep HTTP/1.1 | cut -d\" \" -f2)\" != \"302\" ]; then exit 1; else exit 0; fi;"]
       interval: 10s
       timeout: 10s
-      retries: 10
+      retries: 50 
+    networks:
+      - oa-rdepot  
+      
   repo:
+#    build: ./docker/repo
     image: 196229073436.dkr.ecr.eu-west-1.amazonaws.com/openanalytics/rdepot-repo-it:develop
     restart: always
     hostname: oa-rdepot-repo
@@ -85,7 +83,226 @@ services:
       - repository:/opt/rdepot/
       - ./itestServer:/opt/testServer
     networks:
+      - oa-rdepot 
+        
+  db:
+    image: library/postgres:alpine
+    restart: always
+    hostname: oa-rdepot-db
+    container_name: oa-rdepot-db
+    volumes:
+      - ./docker/db/rdepot.sql:/docker-entrypoint-initdb.d/rdepot.sql:ro
+      - ./docker/db/rdepot.sql:/opt/database.sql:ro
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+    networks:
       - oa-rdepot
+                      
+  openid:
+    image: qlik/simple-oidc-provider
+    restart: unless-stopped
+    hostname: oa-rdepot-openid
+    container_name: oa-rdepot-openid
+    environment:
+      - CONFIG_FILE=/opt/rdepot/config.json
+      - USERS_FILE=/opt/rdepot/users.json
+    volumes:
+#      - ./docker/oidc/config.json:/opt/rdepot/config.json
+      - ./docker/oidc/test-config.json:/opt/rdepot/config.json
+      - ./docker/oidc/users.json:/opt/rdepot/users.json  
+    ports:
+      - 9000:9000
+    networks:
+      - oa-rdepot
+  
+  keycloak:
+    image: quay.io/keycloak/keycloak:10.0.2
+    restart: unless-stopped
+    hostname: oa-rdepot-keycloak
+    container_name: oa-rdepot-keycloak
+    ports:
+      - 8080:8080
+    environment:
+      - DB_VENDOR=h2
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=testpassword
+      - KEYCLOAK_IMPORT=/opt/rdepot/realm-rdepot.json
+      - PROXY_ADDRESS_FORWARDING=true
+    volumes:
+#     - ./docker/keycloak/realm-rdepot.json:/opt/rdepot/realm-rdepot.json
+     - ./docker/keycloak/test-realm-rdepot.json:/opt/rdepot/realm-rdepot.json
+    networks:
+      oa-rdepot:
+        ipv4_address: 192.168.49.17
+ 
+  ldap:
+#    build: ./docker/ldap
+    image: 196229073436.dkr.ecr.eu-west-1.amazonaws.com/openanalytics/rdepot-ldap-it:develop
+    restart: unless-stopped
+    hostname: oa-rdepot-ldap
+    container_name: oa-rdepot-ldap
+    environment:
+      - LDAP_TLS=false
+      - LDAP_ORGANISATION=Test Company
+      - LDAP_DOMAIN=example.org
+      - LDAP_ADMIN_PASSWORD=testpassword
+#    volumes:
+#      - ./docker/ldap/import/config:/etc/ldap/slapd.d/
+#      - ./docker/ldap/import/db:/var/lib/ldap/  
+    networks:
+      - oa-rdepot
+                  
+#-----------------------------------------------------------------------------------------------------------------
+# Tests related containers      
+  app-openid:
+#    build: ./docker/app
+    image: 196229073436.dkr.ecr.eu-west-1.amazonaws.com/openanalytics/rdepot-app-it:develop
+    restart: always
+    hostname: oa-rdepot-app-openid
+    container_name: oa-rdepot-app-openid
+    volumes:
+      - ./docker/app/test_configs/test_openid.yml:/opt/rdepot/authentication.yml   
+      - ./docker/app/application.yml:/opt/rdepot/application.yml
+      - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
+      - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
+      - ./itestSourceFiles:/opt/testSourceFiles:ro
+      - ./itestGenerated:/opt/testGenerated:ro
+      - ./itestNewFiles:/opt/newFiles:ro
+    networks:
+      - oa-rdepot
+    depends_on:
+      - db
+      - openid
+    environment:
+      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/postgres
+      - DB_USERNAME=postgres
+      - LDAP_URL=ldap://oa-rdepot-ldap:389
+      - LDAP_BASEDN=dc=example,dc=org
+      - LDAP_USEROU=
+      - LDAP_LOGINFIELD=cn
+      - LDAP_NAMEFIELD=description
+      - LDAP_DEFAULT_ADMINS=admin
+    healthcheck:
+      test: ["CMD-SHELL", "if [ \"$$(curl -I localhost:8080 2>/dev/null | grep HTTP/1.1 | cut -d\" \" -f2)\" != \"302\" ]; then exit 1; else exit 0; fi;"]
+      interval: 10s
+      timeout: 10s
+      retries: 50 
+  
+  app-keycloak:
+#    build: ./docker/app
+    image: 196229073436.dkr.ecr.eu-west-1.amazonaws.com/openanalytics/rdepot-app-it:develop
+    restart: always
+    hostname: oa-rdepot-app-keycloak
+    container_name: oa-rdepot-app-keycloak
+    volumes:
+      - ./docker/app/test_configs/test_keycloak.yml:/opt/rdepot/authentication.yml
+      - ./docker/app/application.yml:/opt/rdepot/application.yml
+      - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
+      - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
+      - ./itestSourceFiles:/opt/testSourceFiles:ro
+      - ./itestGenerated:/opt/testGenerated:ro
+      - ./itestNewFiles:/opt/newFiles:ro
+    networks:
+      - oa-rdepot        
+    depends_on:
+      - db
+      - keycloak
+    environment:
+      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/postgres
+      - DB_USERNAME=postgres
+      - LDAP_URL=ldap://oa-rdepot-ldap:389
+      - LDAP_BASEDN=dc=example,dc=org
+      - LDAP_USEROU=
+      - LDAP_LOGINFIELD=cn
+      - LDAP_NAMEFIELD=description
+      - LDAP_DEFAULT_ADMINS=admin
+    healthcheck:
+      test: ["CMD-SHELL", "if [ \"$$(curl -I localhost:8080 2>/dev/null | grep HTTP/1.1 | cut -d\" \" -f2)\" != \"302\" ]; then exit 1; else exit 0; fi;"]
+      interval: 10s
+      timeout: 10s
+      retries: 50 
+      
+  app-simple:
+#    build: ./docker/app
+    image: 196229073436.dkr.ecr.eu-west-1.amazonaws.com/openanalytics/rdepot-app-it:develop
+    restart: always
+    hostname: oa-rdepot-app-simple
+    container_name: oa-rdepot-app-simple
+    volumes:
+      - ./docker/app/test_configs/test_simple.yml:/opt/rdepot/authentication.yml
+      - ./docker/app/test_configs/application_simple.yml:/opt/rdepot/application.yml
+      - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
+      - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
+      - ./itestSourceFiles:/opt/testSourceFiles:ro
+      - ./itestGenerated:/opt/testGenerated:ro
+      - ./itestNewFiles:/opt/newFiles:ro
+    networks:
+      - oa-rdepot        
+    depends_on:
+      - db-simple
+    environment:
+      - DB_URL=jdbc:postgresql://oa-rdepot-db-simple:5432/postgres
+      - DB_USERNAME=postgres
+      - LDAP_URL=ldap://oa-rdepot-ldap:389
+      - LDAP_BASEDN=dc=example,dc=org
+      - LDAP_USEROU=
+      - LDAP_LOGINFIELD=cn
+      - LDAP_NAMEFIELD=description
+      - LDAP_DEFAULT_ADMINS=admin
+    healthcheck:
+      test: ["CMD-SHELL", "if [ \"$$(curl -I localhost:8080 2>/dev/null | grep HTTP/1.1 | cut -d\" \" -f2)\" != \"302\" ]; then exit 1; else exit 0; fi;"]
+      interval: 10s
+      timeout: 10s
+      retries: 50       
+
+  db-simple:
+    image: library/postgres:alpine
+    restart: always
+    hostname: oa-rdepot-db-simple
+    container_name: oa-rdepot-db-simple
+    volumes:
+      - ./docker/db/rdepot.sql:/docker-entrypoint-initdb.d/rdepot.sql:ro
+      - ./docker/db/rdepot.sql:/opt/database.sql:ro
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+    networks:
+      - oa-rdepot
+  
+  selenium-hub:
+    image: selenium/hub:3.141.59-bismuth
+    container_name: oa-rdepot-selenium-hub
+    hostname: oa-rdepot-selenium-hub
+    ports:
+      - 4444:4444
+    networks:
+      - oa-rdepot  
+  chrome:
+    image: selenium/node-chrome:3.141.59-bismuth
+    container_name: oa-rdepot-chrome
+    hostname: oa-rdepot-chrome
+    depends_on:
+      - selenium-hub
+    environment:
+      - HUB_HOST=selenium-hub
+      - HUB_PORT=4444
+    networks:
+      - oa-rdepot  
+#------------------------------------------------------------------------------------------------------------------  
+# Extras sometimes useful
+#
+#  phpldapadmin:
+#    image: osixia/phpldapadmin:0.9.0
+#    restart: unless-stopped
+#    container_name: oa-rdepot-phpldapadmin
+#    networks:
+#      - oa-rdepot
+#    depends_on:
+#      - ldap
+#    ports:
+#      - 6443:443
+#    environment:
+#      - PHPLDAPADMIN_LDAP_HOSTS=oa-rdepot-ldap   
+ 
 networks:
   oa-rdepot:
     ipam:

@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 12.2
--- Dumped by pg_dump version 12.2
+-- Dumped from database version 12.4
+-- Dumped by pg_dump version 12.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -1083,9 +1083,10 @@ COPY public.submission_event (id, date, submission_id, event_id, changed_variabl
 COPY public."user" (id, role_id, name, email, login, active, last_logged_in_on, deleted) FROM stdin;
 8	4	Local Admin User	admin@localhost	admin	f	\N	f
 7	1	Isaac Newton	newton@ldap.forumsys.com	newton	t	2020-03-28	f
-4	4	Albert Einstein	einstein@ldap.forumsys.com	einstein	t	2020-03-28	f
 6	2	Galileo Galilei	galieleo@ldap.forumsys.com	galieleo	t	2020-03-28	f
 5	3	Nikola Tesla	tesla@ldap.forumsys.com	tesla	t	2020-03-29	f
+4	4	Albert Einstein	einstein@ldap.forumsys.com	einstein	t	2020-08-20	f
+9	1	John Doe	doe@localhost	doe	f	2020-08-20	f
 \.
 
 
@@ -1109,6 +1110,10 @@ COPY public.user_event (id, date, user_id, event_id, changed_variable, value_bef
 16	2020-03-28	4	3	last logged in	2020-03-28 00:00:00.0	Sat Mar 28 20:12:06 UTC 2020	8	20:12:06.32+00
 17	2020-03-28	6	3	last logged in	2020-03-28 00:00:00.0	Sat Mar 28 20:14:30 UTC 2020	8	20:14:30.998+00
 18	2020-03-29	5	3	last logged in	2020-03-28 00:00:00.0	Sun Mar 29 10:42:45 UTC 2020	8	10:42:45.4+00
+19	2020-08-20	9	1	created			8	09:58:51.784+00
+20	2020-08-20	9	3	last logged in	null	Thu Aug 20 09:58:52 GMT 2020	8	09:58:52.09+00
+21	2020-08-20	4	3	last logged in	2020-03-28 00:00:00.0	Thu Aug 20 09:59:08 GMT 2020	8	09:59:08.9+00
+22	2020-08-20	9	3	active	true	false	4	09:59:21.132+00
 \.
 
 
@@ -1200,14 +1205,14 @@ SELECT pg_catalog.setval('public."Submission_id_seq"', 31, true);
 -- Name: UserEvent_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."UserEvent_id_seq"', 18, true);
+SELECT pg_catalog.setval('public."UserEvent_id_seq"', 22, true);
 
 
 --
 -- Name: User_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."User_id_seq"', 8, true);
+SELECT pg_catalog.setval('public."User_id_seq"', 9, true);
 
 
 --
@@ -1605,3 +1610,4 @@ ALTER TABLE ONLY public.user_event
 --
 -- PostgreSQL database dump complete
 --
+

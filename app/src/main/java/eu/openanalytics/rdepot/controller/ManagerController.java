@@ -23,6 +23,7 @@ package eu.openanalytics.rdepot.controller;
 import java.security.Principal;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,6 +40,7 @@ import eu.openanalytics.rdepot.service.UserService;
 @RequestMapping(value = {"/manager", "/api/manager"})
 public class ManagerController
 {
+	
 	@Autowired
 	private RepositoryService repositoryService;
 	
@@ -47,8 +49,9 @@ public class ManagerController
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String manager(Model model, Principal principal)
-	{		
+	{	
 		User user = userService.findByLogin(principal.getName());
+		
 		model.addAttribute("role", user.getRole().getValue());
 		model.addAttribute("repositories", repositoryService.findAll());
 		model.addAttribute("multiUploads", new MultiUploadRequest());
