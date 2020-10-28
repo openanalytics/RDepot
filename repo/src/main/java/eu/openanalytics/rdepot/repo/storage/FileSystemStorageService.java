@@ -25,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -143,8 +144,13 @@ public class FileSystemStorageService implements StorageService {
     	
     	File trashDirectory = null;
     	try {
+    		
+    		Path repositoryPublicationDirectory = this.rootLocation.resolve(repository);
+        	if(Files.notExists(repositoryPublicationDirectory))
+        		Files.createDirectory(repositoryPublicationDirectory).toFile();
+        	
         	trashDirectory = initTrashDirectory(id);
-    	} catch(InitTrashDirectoryException e) {
+    	} catch(InitTrashDirectoryException | IOException e) {
     		throw new InitTransactionException(id);
     	}
     	
@@ -286,15 +292,18 @@ public class FileSystemStorageService implements StorageService {
     }
     
     public List<File> getRecentPackagesFromRepository(String repository) {
+    	ArrayList<File> files = new ArrayList<>();
     	Path location = ((repository != null) && (!repository.trim().isEmpty())) ? this.rootLocation.resolve(repository) : this.rootLocation;
     	location = location.resolve("src").resolve("contrib");
     	
-    	ArrayList<File> files = new ArrayList<>();
-		for(File file : location.toFile().listFiles()) {
-			if(!file.isDirectory() && !excludedFiles.contains(file.getName())) {
-				files.add(file);    				
-			}
-		}
+    	if(location.toFile().exists()) {
+    		for(File file : location.toFile().listFiles()) {
+    			if(!file.isDirectory() && !excludedFiles.contains(file.getName())) {
+    				files.add(file);    				
+    			}
+    		}
+    	}
+		
     	
     	return files;
     }
@@ -306,21 +315,26 @@ public class FileSystemStorageService implements StorageService {
     	List<Path> directories = new ArrayList<>();
     	Map<String, List<File>> archive = new HashMap<>();
 
-		for(File file : location.toFile().listFiles()) {
-			if(!excludedFiles.contains(file.getName())) {
-				directories.add(file.toPath());
-			}
-		}
+    	if(location.toFile().exists()) {
+    		for(File file : location.toFile().listFiles()) {
+    			if(!excludedFiles.contains(file.getName())) {
+    				directories.add(file.toPath());
+    			}
+    		}
+    	}
+		
 		
 		for(Path directory : directories) {
 			List<File> files = new ArrayList<>();
 			
-			for(File file : directory.toFile().listFiles()) {
-				if(!file.isDirectory() && !excludedFiles.contains(file.getName())) {
-					files.add(file);
+			if(directory.toFile().exists()) {
+				for(File file : directory.toFile().listFiles()) {
+					if(!file.isDirectory() && !excludedFiles.contains(file.getName())) {
+						files.add(file);
+					}
 				}
+				archive.put(directory.getFileName().toString(), files);
 			}
-			archive.put(directory.getFileName().toString(), files);
 		}
 		
     	return archive;
@@ -567,12 +581,18 @@ public class FileSystemStorageService implements StorageService {
     
     @Override
     public String getRepositoryVersion(String repository) throws GetRepositoryVersionException {
-    	Path versionPath = this.rootLocation.resolve(repository).resolve("VERSION");
+    	Path repositoryDirectory = this.rootLocation.resolve(repository);
+    	
+    	Path versionPath = repositoryDirectory.resolve("VERSION");
     	String versionStr = "";
     	Scanner scanner = null;
     	try {
+    		if(Files.notExists(repositoryDirectory))
+    			Files.createDirectory(repositoryDirectory);
+    		
     		if(Files.notExists(versionPath)) {
     			versionStr = "1";
+    			
         		Files.createFile(versionPath);
         		
         		FileWriter writer = new FileWriter(versionPath.toFile());

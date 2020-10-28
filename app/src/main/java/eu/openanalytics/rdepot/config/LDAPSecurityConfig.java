@@ -51,11 +51,12 @@ import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
 import eu.openanalytics.rdepot.authenticator.LDAPCustomBindAuthenticator;
 import eu.openanalytics.rdepot.service.UserService;
 
-
+@Configuration
 @EnableGlobalMethodSecurity(prePostEnabled=true)
 @ComponentScan("eu.openanalytics.rdepot")
 @ConditionalOnProperty(value = "app.authentication", havingValue = "ldap")
-public class LDAPSecurityConfig {	
+@Order(2)
+public class LDAPSecurityConfig extends WebSecurityConfigurerAdapter {	
     
     @Resource
 	private Environment env;
@@ -89,72 +90,43 @@ public class LDAPSecurityConfig {
 			throw new IllegalArgumentException("Configuration value '" + name + "' is either null or empty");
 		log.info("Using value '" + value + "' for property " + name);
 	}
-    
-	@Configuration
-	@Order(1)
-	public class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter 
-	{
-	    @Override
-	    protected void configure(HttpSecurity http) throws Exception 
-	    {
-	        http
-	        	.antMatcher("/api/**")
-	        	.csrf().disable()
-				.authorizeRequests()
-					.anyRequest().hasAuthority("user")
-					.and()
-				.httpBasic()
-				.and()
-				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-	    }
-	    
-	    @Override
-	    @Bean
-	    public ProviderManager authenticationManager()
-	    {
-	    	return ldapAuthenticationManager();
-	    }
-	}
 	
-	@Configuration
-	public class FormLoginWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter 
+	public static void validateConfiguration(List<String> values, String name)
 	{
-		@Override
-	    public void configure(WebSecurity web) throws Exception 
-	    {
-	        web
-	        	.ignoring()
-	            .antMatchers("/static/**");
-	    }
+		if (values == null || values.isEmpty())
+			throw new IllegalArgumentException("Configuration value '" + name + "' is either null or empty");
+		for(String value : values)
+			log.info("Using value '" + value + "' for property " + name);
+	}
+    	
+	@Override
+    public void configure(WebSecurity web) throws Exception {
+		web
+	      	.ignoring()
+	        .antMatchers("/static/**");
+	}
 
-	    @Override
-	    protected void configure(HttpSecurity http) throws Exception 
-	    {
-	        http		//.csrf().disable()
-	            .authorizeRequests()
-	                .antMatchers("/manager/**").hasAuthority("user")
-	                .antMatchers("/static/**").permitAll()
-	                //.anyRequest().hasAuthority("user")
-	                .and()
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+    	http		//.csrf().disable()
+    		.authorizeRequests()
+	        	.antMatchers("/manager/**").hasAuthority("user")
+	            .antMatchers("/static/**").permitAll()
+//	            .anyRequest().hasAuthority("user")
+	        .and()
 	            .formLogin()
 	                .loginPage("/login")
 	                .defaultSuccessUrl("/manager")
 	                .failureUrl("/loginfailed")
-	                .permitAll().and()
+	                .permitAll()
+	        .and()
 	            .logout()
-	            	//.logoutSuccessUrl("/login?success")
+//	            	.logoutSuccessUrl("/login?success")
 	            	.invalidateHttpSession(true);
-	            	//.and()
-	            //.csrf().disable();
+//	            	.and()
+//	            .csrf().disable();
 	    }
 	    
-	    @Override
-	    @Bean
-	    public ProviderManager authenticationManager()
-	    {
-	    	return ldapAuthenticationManager();
-	    }
-	}
 	
 	@Bean
     public ProviderManager ldapAuthenticationManager()

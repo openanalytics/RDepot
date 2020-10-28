@@ -441,6 +441,27 @@ CREATE SEQUENCE "User_id_seq"
 
 ALTER SEQUENCE "User_id_seq" OWNED BY "user".id;
 
+---------------------------------------------------------------
+    
+CREATE TABLE api_token (
+	id integer NOT NULL,
+	token character varying(255) NOT NULL,
+	user_login character varying(255) NOT NULL
+);
+
+ALTER TABLE api_token OWNER TO postgres;
+
+CREATE SEQUENCE "Api_token_id_seq"
+	START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;   
+    
+ALTER SEQUENCE "Api_token_id_seq" OWNED BY api_token.id;  
+ 
+--------------------------------------------------------------- 
+
 
 --
 -- TOC entry 206 (class 1259 OID 24789)
@@ -618,6 +639,13 @@ ALTER TABLE ONLY "user" ALTER COLUMN id SET DEFAULT nextval('"User_id_seq"'::reg
 
 
 --
+-- TOC entry 214* (class 2604 OID 24847)
+-- Name: api_token id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY api_token ALTER COLUMN id SET DEFAULT nextval('"Api_token_id_seq"'::regclass);
+
+--
 -- TOC entry 2398 (class 0 OID 0)
 -- Dependencies: 185
 -- Name: Event_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
@@ -742,6 +770,12 @@ SELECT pg_catalog.setval('"UserEvent_id_seq"', 8, true);
 
 SELECT pg_catalog.setval('"User_id_seq"', 8, true);
 
+
+--
+-- Name: Api_token_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"Api_token_id_seq"', 2, true);
 
 --
 -- TOC entry 2377 (class 0 OID 24789)
@@ -962,6 +996,17 @@ ALTER TABLE ONLY "user"
 
 ALTER TABLE ONLY "user"
     ADD CONSTRAINT "User_pkey" PRIMARY KEY (id);
+
+
+ALTER TABLE ONLY api_token
+    ADD CONSTRAINT "Api_token_token_key" UNIQUE (token);
+
+ALTER TABLE ONLY api_token
+    ADD CONSTRAINT "Api_token_user_login_key" UNIQUE (user_login);
+
+ALTER TABLE ONLY api_token
+    ADD CONSTRAINT "Api_token_pkey" PRIMARY KEY (id);  
+
 
 
 --

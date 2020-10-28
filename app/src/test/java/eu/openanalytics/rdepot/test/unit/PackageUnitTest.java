@@ -29,7 +29,7 @@ public class PackageUnitTest
 	private final ClassLoader classLoader = getClass().getClassLoader();
 
 	@Test
-	public void testCompareTo()
+	public void testCompareToDots()
 	{
 		Package testv1_2_3 = new Package();
 		testv1_2_3.setName("test");
@@ -47,16 +47,46 @@ public class PackageUnitTest
 		testv1_2_4.setName("test");
 		testv1_2_4.setVersion("1.2.4");
 		
-		assertEquals(100, testv1_2_3.compareTo(testv0_2_3));
-		assertEquals(-100, testv0_2_3.compareTo(testv1_2_3));
+		assertEquals(1, testv1_2_3.compareTo(testv0_2_3));
+		assertEquals(-1, testv0_2_3.compareTo(testv1_2_3));
 		
-		assertEquals(-10, testv1_2_3.compareTo(testv1_3_3));
-		assertEquals(10, testv1_3_3.compareTo(testv1_2_3));
+		assertEquals(-1, testv1_2_3.compareTo(testv1_3_3));
+		assertEquals(1, testv1_3_3.compareTo(testv1_2_3));
 		
 		assertEquals(-1, testv1_2_3.compareTo(testv1_2_4));
 		assertEquals(1, testv1_2_4.compareTo(testv1_2_3));
 		
 		assertEquals(0, testv1_2_4.compareTo(testv1_2_4));
+	}
+	
+	@Test
+	public void testCompareToDotsAndHyphens() {
+		String name = "name";
+		
+		Package package1 = new Package();
+		package1.setName(name);
+		package1.setVersion("2.0.5-1.2");
+		
+		Package package2 = new Package();
+		package2.setName(name);
+		package2.setVersion("2.0.5-1.1.1");
+		
+		Package package3 = new Package();
+		package3.setName(name);
+		package3.setVersion("1.0");
+		
+		Package package4 = new Package();
+		package4.setName(name);
+		package4.setVersion("3.1");
+		
+		Package package5 = new Package();
+		package5.setName(name);
+		package5.setVersion("3.1.2");
+		
+		assertEquals(1, package1.compareTo(package2));
+		assertEquals(-1, package3.compareTo(package2));
+		assertEquals(1, package4.compareTo(package1));
+		assertEquals(-1, package4.compareTo(package5));		
 	}
 	
 	@Test(expected = IllegalArgumentException.class)

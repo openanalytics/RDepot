@@ -26,75 +26,46 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 import java.util.Set;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import io.restassured.RestAssured;
+import eu.openanalytics.rdepot.integrationtest.IntegrationTest;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.http.ContentType;
-import io.restassured.internal.http.Status;
 
 
-public class SubmissionIntegrationTest {
-	private static final String JSON_PATH = "src/integration-test/resources/JSONs";
+public class SubmissionIntegrationTest extends IntegrationTest{	
+	private final String API_PACKAGES_PATH = "/api/manager/packages";
+	private final String API_SUBMISSIONS_PATH = "/api/manager/submissions";
+	private final String API_REPOSITORIES_PATH = "/api/manager/repositories";
 	
-	private static final String API_PACKAGES_PATH = "/api/manager/packages";
-	private static final String API_SUBMISSIONS_PATH = "/api/manager/submissions";
-	private static final String API_REPOSITORIES_PATH = "/api/manager/repositories";
-	
-	private static final String PUBLICATION_URI_PATH = "/repo";
-	
-	private static final String ADMIN_LOGIN = "einstein";
-	private static final String REPOSITORYMAINTAINER_LOGIN = "tesla";
-	private static final String PACKAGEMAINTAINER_LOGIN = "galieleo";
-	private static final String USER_LOGIN = "newton";
-	private static final String PASSWORD = "testpassword";
-	
-	private static final String SUBMISSION_ID_TO_ACCEPT = "30";
-	private static final String SUBMISSION_ID_TO_REJECT = "31";
-	
-	@Before
-	public void setUp() throws IOException, InterruptedException {
-		String[] cmd = new String[] {"gradle", "restore", "-b","src/integration-test/resources/build.gradle"};
-		Process process = Runtime.getRuntime().exec(cmd);
-		process.waitFor();
-		process.destroy();
-	}
-	
-	@BeforeClass
-	public static void configureRestAssured() {
-		RestAssured.port = 8017;
-		RestAssured.urlEncodingEnabled = false;
-	}
-	
+	private final String SUBMISSION_ID_TO_ACCEPT = "30";
+	private final String SUBMISSION_ID_TO_REJECT = "31";
+		
 	@Test
 	public void shouldNotPublishPackageWhenRepositoryIsUnpublished() throws IOException {
 		File packageBag = new File("src/integration-test/resources/itestPackages/visdat_0.1.0.tar.gz");
 
 		given()
-			.auth()
-			.preemptive()
-			.basic(ADMIN_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept("application/json")
 			.contentType("multipart/form-data")
 			.multiPart("repository", "testrepo3")
@@ -104,7 +75,7 @@ public class SubmissionIntegrationTest {
 					.controlName("file")
 					.build())
 		.when()
-			.post("/api/manager/packages/submit")
+			.post(API_PACKAGES_PATH + "/submit")
 		.then()
 			.statusCode(200)
 			.extract();
@@ -123,9 +94,7 @@ public class SubmissionIntegrationTest {
 		File packageBag = new File("src/integration-test/resources/itestPackages/visdat_0.1.0.tar.gz");
 		
 		given()
-			.auth()
-			.preemptive()
-			.basic(ADMIN_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept("application/json")
 			.contentType("multipart/form-data")
 			.multiPart("repository", "testrepo1")
@@ -135,7 +104,7 @@ public class SubmissionIntegrationTest {
 					.controlName("file")
 					.build())
 		.when()
-			.post("/api/manager/packages/submit")
+			.post(API_PACKAGES_PATH + "/submit")
 		.then()
 			.statusCode(200)
 			.extract();
@@ -155,9 +124,7 @@ public class SubmissionIntegrationTest {
 		File packageBag = new File ("src/integration-test/resources/itestPackages/A3_0.9.1.tar.gz");
 		
 		given()
-			.auth()
-			.preemptive()
-			.basic(ADMIN_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept("application/json")
 			.contentType("multipart/form-data")
 			.multiPart("repository", "testrepo1")
@@ -167,7 +134,7 @@ public class SubmissionIntegrationTest {
 					.controlName("file")
 					.build())
 		.when()
-			.post("/api/manager/packages/submit")
+			.post(API_PACKAGES_PATH + "/submit")
 		.then()
 			.statusCode(200)
 			.extract();
@@ -188,9 +155,7 @@ public class SubmissionIntegrationTest {
 		File packageBag = new File ("src/integration-test/resources/itestPackages/A3_0.9.1.tar.gz");
 				
 		given()
-			.auth()
-			.preemptive()
-			.basic(ADMIN_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept("application/json")
 			.contentType("multipart/form-data")
 			.multiPart("repository", "testrepo1")
@@ -200,21 +165,18 @@ public class SubmissionIntegrationTest {
 					.controlName("file")
 					.build())
 		.when()
-			.post("/api/manager/packages/submit")
+			.post(API_PACKAGES_PATH + "/submit")
 		.then()
 			.statusCode(200)
 			.extract();
-
-		JsonParser jsonParser = new JsonParser();
 		
 		FileReader reader = new FileReader(JSON_PATH + "/submission/repositories_after_uploading_package.json");
-		JsonArray expectedJSON = (JsonArray) jsonParser.parse(reader);
+		JsonArray expectedJSON = (JsonArray) JsonParser.parseReader(reader);
 		
 		List<Set> expectedPackages = convertNewPackagesFromRepo(expectedJSON);
 		
 		String data = given()
-			.auth()
-			.basic(USER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + USER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_REPOSITORIES_PATH + "/list")
@@ -223,7 +185,7 @@ public class SubmissionIntegrationTest {
 			.extract()
 			.asString();
 		
-		JsonArray actualJSON = (JsonArray) jsonParser.parse(data);
+		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 		
 		List<Set> actualPackages = convertNewPackagesFromRepo(actualJSON);
 
@@ -231,17 +193,14 @@ public class SubmissionIntegrationTest {
 		assertTrue(compare(expectedJSON, actualJSON));
 	}
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes" })
 	@Test
 	public void shouldAddPackageToWaitingSubmissions() throws ParseException, IOException {
-		JsonParser jsonParser = new JsonParser();
 		File packageBag = new File ("src/integration-test/resources/itestPackages/A3_0.9.2.tar.gz");
 				
 		try {
 			given()
-				.auth()
-				.preemptive()
-				.basic(USER_LOGIN, PASSWORD)
+				.header(AUTHORIZATION, BEARER + USER_TOKEN)
 				.accept("application/json")
 				.contentType("multipart/form-data")
 				.multiPart("repository", "testrepo2")
@@ -251,7 +210,7 @@ public class SubmissionIntegrationTest {
 						.controlName("file")
 						.build())
 			.when()
-				.post("/api/manager/packages/submit")
+				.post(API_PACKAGES_PATH + "/submit")
 			.then()
 				.statusCode(200)
 				.extract();
@@ -262,11 +221,10 @@ public class SubmissionIntegrationTest {
 		
 		FileReader reader = new FileReader(JSON_PATH + "/submission/submissions_user_wants_to_upload_package.json");
 		
-		JsonArray expectedSubmissions = (JsonArray) jsonParser.parse(reader);
+		JsonArray expectedSubmissions = (JsonArray) JsonParser.parseReader(reader);
 		
 		String data = given()
-			.auth()
-			.basic(USER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + USER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_SUBMISSIONS_PATH + "/list")
@@ -274,16 +232,15 @@ public class SubmissionIntegrationTest {
 			.statusCode(200)
 			.extract()
 			.asString();
-		JsonArray actualSubmissions = (JsonArray) jsonParser.parse(data);
+		JsonArray actualSubmissions = (JsonArray) JsonParser.parseString(data);
 		
 		reader = new FileReader(JSON_PATH + "/submission/submissions_repositories_unchanged.json");
-		JsonArray expectedJSON = (JsonArray) jsonParser.parse(reader);
+		JsonArray expectedJSON = (JsonArray) JsonParser.parseReader(reader);
 		
 		List<Set> expectedPackages = convertNewPackagesFromRepo(expectedJSON);
 		
 		data = given()
-			.auth()
-			.basic(USER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + USER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_REPOSITORIES_PATH + "/list")
@@ -292,7 +249,7 @@ public class SubmissionIntegrationTest {
 			.extract()
 			.asString();
 		
-		JsonArray actualJSON = (JsonArray) jsonParser.parse(data);
+		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 		
 		List<Set> actualPackages = convertNewPackagesFromRepo(actualJSON);
 
@@ -306,14 +263,11 @@ public class SubmissionIntegrationTest {
 	
 	@Test
 	public void shouldReturnSubmissionsWithUserCredentials() throws ParseException, IOException {
-		JsonParser jsonParser = new JsonParser();
-		
 		FileReader reader = new FileReader(JSON_PATH + "/submission/submissions_view_by_user.json");
-		JsonArray expectedJSON = (JsonArray) jsonParser.parse(reader);
+		JsonArray expectedJSON = (JsonArray) JsonParser.parseReader(reader);
 		
 		String data = given()
-			.auth()
-			.basic(USER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + USER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_SUBMISSIONS_PATH + "/list")
@@ -322,21 +276,18 @@ public class SubmissionIntegrationTest {
 			.extract()
 			.asString();
 		
-		JsonArray actualJSON = (JsonArray) jsonParser.parse(data);
+		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 		
 		assertTrue(compare(expectedJSON, actualJSON));
 	}
 	
 	@Test
 	public void shouldReturnSubmissionsWithPackageMaintainerCredentials() throws ParseException, IOException {
-		JsonParser jsonParser = new JsonParser();
-		
 		FileReader reader = new FileReader(JSON_PATH + "/submission/submissions_view_by_package_maintainer.json");
-		JsonArray expectedJSON = (JsonArray) jsonParser.parse(reader);
+		JsonArray expectedJSON = (JsonArray) JsonParser.parseReader(reader);
 		
 		String data = given()
-			.auth()
-			.basic(PACKAGEMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_SUBMISSIONS_PATH + "/list")
@@ -345,7 +296,7 @@ public class SubmissionIntegrationTest {
 			.extract()
 			.asString();
 		
-		JsonArray actualJSON = (JsonArray) jsonParser.parse(data);
+		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 		
 		assertTrue(compare(expectedJSON, actualJSON));;
 	}
@@ -359,20 +310,17 @@ public class SubmissionIntegrationTest {
 		.when()
 			.get(API_SUBMISSIONS_PATH + "/list")
 		.then()
-			.statusCode(401);
+			.statusCode(403);
 	}
 
 
 	@Test
 	public void shouldReturnDeletedSubmissions() throws ParseException, IOException {
-		JsonParser jsonParser = new JsonParser();
-		
 		FileReader reader = new FileReader(JSON_PATH + "/submission/deleted_submissions.json");
-		JsonArray expectedJSON = (JsonArray) jsonParser.parse(reader);
+		JsonArray expectedJSON = (JsonArray) JsonParser.parseReader(reader);
 		
 		String data = given()
-			.auth()
-			.basic(ADMIN_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_SUBMISSIONS_PATH + "/deleted")
@@ -381,7 +329,7 @@ public class SubmissionIntegrationTest {
 			.extract()
 			.asString();
 		
-		JsonArray actualJSON = (JsonArray) jsonParser.parse(data);
+		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 		
 		assertTrue(compare(expectedJSON, actualJSON));
 	}
@@ -389,8 +337,7 @@ public class SubmissionIntegrationTest {
 	@Test
 	public void nonAdminShouldNotBeAbleToViewDeletedSubmissions() {
 		given()
-			.auth()
-			.basic(REPOSITORYMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_SUBMISSIONS_PATH + "/deleted")
@@ -398,29 +345,25 @@ public class SubmissionIntegrationTest {
 			.statusCode(403);
 	}
 
-	
-	@SuppressWarnings("rawtypes")
 	@Test
 	public void shouldAcceptSubmissionByRepositoryMaintainer() throws ParseException, IOException {
 		JSONParser jsonParser = new JSONParser();
 		
 		given()
-			.auth()
-			.basic(REPOSITORYMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.put(API_SUBMISSIONS_PATH + "/" + SUBMISSION_ID_TO_ACCEPT + "/accept")
 		.then()
 			.statusCode(200)
-			.body("success", equalTo("submission.accepted"));
+			.body("success", equalTo("Submission has been accepted successfully."));
 		
 		FileReader reader = new FileReader(JSON_PATH + "/submission/accepted_submission_by_repository_maintainer_packages.json");		
 		JSONArray rootJSON = (JSONArray) jsonParser.parse(reader);
 		Set<JSONObject> expectedPackages = convert(rootJSON);
 		
 		String data = given()
-			.auth()
-			.basic(ADMIN_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PACKAGES_PATH + "/list")
@@ -433,12 +376,10 @@ public class SubmissionIntegrationTest {
 		Set<JSONObject> actualPackages = convert(rootJSON);
 		
 		reader = new FileReader(JSON_PATH + "/submission/accepted_submission_by_repository_maintainer_repositories.json");
-		JsonParser parser = new JsonParser();
-		JsonArray expectedRepositories = (JsonArray) parser.parse(reader);
+		JsonArray expectedRepositories = (JsonArray) JsonParser.parseReader(reader);
 		
 		data = given()
-			.auth()
-			.basic(ADMIN_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_REPOSITORIES_PATH + "/list")
@@ -447,14 +388,13 @@ public class SubmissionIntegrationTest {
 			.extract()
 			.asString();
 		
-		JsonArray actualRepositories = (JsonArray) parser.parse(data);
+		JsonArray actualRepositories = (JsonArray) JsonParser.parseString(data);
 		
 		reader = new FileReader(JSON_PATH + "/submission/accepted_submission_by_repository_maintainer_submissions_view_by_submitter.json");
-		JsonArray expectedJSON = (JsonArray) parser.parse(reader);
+		JsonArray expectedJSON = (JsonArray) JsonParser.parseReader(reader);
 		
 		data = given()
-			.auth()
-			.basic(PACKAGEMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_SUBMISSIONS_PATH + "/list")
@@ -463,7 +403,7 @@ public class SubmissionIntegrationTest {
 			.extract()
 			.asString();
 		
-		JsonArray actualJSON = (JsonArray) parser.parse(data);
+		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 		
 		assertTrue("Different submissions",compare(expectedJSON, actualJSON));
 		assertTrue("Different repositories", compare(expectedRepositories, actualRepositories));
@@ -475,22 +415,20 @@ public class SubmissionIntegrationTest {
 		JSONParser jsonParser = new JSONParser();
 		
 		given()
-			.auth()
-			.basic(REPOSITORYMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.delete(API_SUBMISSIONS_PATH + "/" + SUBMISSION_ID_TO_REJECT + "/cancel")
 		.then()
 			.statusCode(200)
-			.body("success", equalTo("submission.canceled"));
+			.body("success", equalTo("Submission has been canceled successfully."));
 		
 		FileReader reader = new FileReader(JSON_PATH + "/submission/rejected_submission_by_repository_maintainer_packages.json");
 		JSONArray rootJSON = (JSONArray) jsonParser.parse(reader);
 		Set<JSONObject> expectedPackages = convert(rootJSON);
 		
 		String data = given()
-			.auth()
-			.basic(ADMIN_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PACKAGES_PATH + "/list")
@@ -502,13 +440,11 @@ public class SubmissionIntegrationTest {
 		rootJSON = (JSONArray) jsonParser.parse(data);
 		Set<JSONObject> actualPackages = convert(rootJSON);
 			
-		JsonParser parser = new JsonParser();
 		reader = new FileReader(JSON_PATH + "/submission/rejected_submission_by_repository_maintainer_repositories.json");
-		JsonArray expectedRepositories = (JsonArray) parser.parse(reader);
+		JsonArray expectedRepositories = (JsonArray) JsonParser.parseReader(reader);
 		
 		data = given()
-			.auth()
-			.basic(ADMIN_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_REPOSITORIES_PATH + "/list")
@@ -517,14 +453,13 @@ public class SubmissionIntegrationTest {
 			.extract()
 			.asString();
 		
-		JsonArray actualRepositories = (JsonArray) parser.parse(data);
+		JsonArray actualRepositories = (JsonArray) JsonParser.parseString(data);
 		
 		reader = new FileReader(JSON_PATH + "/submission/rejected_submission_by_repository_maintainer_submissions_view_by_admin.json");
-		JsonArray expectedJSON = (JsonArray) parser.parse(reader);
+		JsonArray expectedJSON = (JsonArray) JsonParser.parseReader(reader);
 		
 		data = given()
-				.auth()
-				.basic(ADMIN_LOGIN, PASSWORD)
+				.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 				.accept(ContentType.JSON)
 			.when()
 				.get(API_SUBMISSIONS_PATH + "/deleted")
@@ -533,7 +468,7 @@ public class SubmissionIntegrationTest {
 				.extract()
 				.asString();
 			
-		JsonArray actualJSON = (JsonArray) parser.parse(data);
+		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 		
 		assertTrue("Different deleted submissions", compare(expectedJSON, actualJSON));
 		assertTrue("Different repositoriies", compare(expectedRepositories, actualRepositories));
@@ -543,14 +478,13 @@ public class SubmissionIntegrationTest {
 	@Test
 	public void nonOwnerShouldNotBeAbleToCancelSubmission() {
 		given()
-			.auth()
-			.basic(USER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + USER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.delete(API_SUBMISSIONS_PATH + "/" + SUBMISSION_ID_TO_REJECT + "/cancel")
 		.then()
 			.assertThat()
-			.body("error", equalTo("You are not authorized to perform this operation"))
+			.body("error", equalTo("You are not authorized to perform this operation."))
 			.and()
 			.statusCode(200);
 	}
@@ -579,40 +513,6 @@ public class SubmissionIntegrationTest {
 		return true;
 	}
 	
-	@SuppressWarnings("unchecked")
-	private Set<JSONObject> convert(JSONArray rootJSON) throws ParseException {
-		Set<JSONObject> JSON = new HashSet<>();
-		
-		for(int i = 0; i < rootJSON.size(); i++) {
-			JSONObject objJSON = (JSONObject) rootJSON.get(i);
-			String source = objJSON.get("source").toString();
-			objJSON.remove("lastLoggedInOn");
-			objJSON.remove("source");
-			String newSource = source.replaceFirst("/[0-9]{2}[0-9]+", "");
-			objJSON.put("source", newSource);
-			JSON.add(objJSON);
-		}
-		
-		return JSON;
-	}
-	 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private List<Set> convertPackages(JsonArray rootJSON) throws ParseException {
-		List<Set> JSON = new ArrayList<>();
-			
-		for(int i = 0; i < rootJSON.size(); i++) {
-			JsonObject repositoryJSON = (JsonObject) rootJSON.get(i);
-			JsonArray packagesJSON = (JsonArray) repositoryJSON.get("packages");
-			Set JSONSet = new HashSet<>();
-			for(int k = 0; k < packagesJSON.size(); k++) {
-				JsonObject packageJSON = (JsonObject) packagesJSON.get(k);
-				JSONSet.add(packageJSON);
-			}
-			JSON.add(JSONSet);
-		}
-		return JSON;
-	 }
-	
 	 @SuppressWarnings({ "rawtypes", "unchecked" })
 	 private List<Set> convertNewPackagesFromRepo(JsonArray rootJSON) throws ParseException {
 		 List<Set> JSON = new ArrayList<>();
@@ -635,6 +535,7 @@ public class SubmissionIntegrationTest {
 		return JSON;
 	}
 		
+	@SuppressWarnings("unused")
 	private Set<JsonObject> convertNewPackages(JsonArray rootJSON) throws ParseException {	
 		Set<JsonObject> JSON = new HashSet<>();
 	

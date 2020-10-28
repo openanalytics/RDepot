@@ -24,7 +24,6 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
@@ -36,42 +35,20 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import io.restassured.RestAssured;
+import eu.openanalytics.rdepot.integrationtest.IntegrationTest;
 import io.restassured.http.ContentType;
-import io.restassured.path.json.JsonPath;
 
-public class UserIntegrationTest {
-	private static final String JSON_PATH = "src/integration-test/resources/JSONs";
+public class UserIntegrationTest extends IntegrationTest {
 	
-	private static final String ADMIN_LOGIN = "einstein";
-	private static final String REPOSITORYMAINTAINER_LOGIN = "tesla";
-	private static final String USER_LOGIN = "newton";
-	private static final String USER_TO_ACTIVATE_LOGIN = "admin";
-	private static final String USER_TO_DEACTIVATE_LOGIN = "galieleo";
-	private static final String PASSWORD = "testpassword";
-	private static final String API_PATH = "/api/manager/users";
-	private static final String USER_TO_ACTIVATE_ID = "8";
-	private static final String USER_TO_DEACTIVATE_ID = "6";
-	private static final String REPOSITORYMAINTAINER_ID = "5";
-	
-	@Before
-	public void setUp() throws IOException, InterruptedException {
-		String[] cmd = new String[] {"gradle", "restore", "-b","src/integration-test/resources/build.gradle"};
-		Process process = Runtime.getRuntime().exec(cmd);
-		process.waitFor();
-		process.destroy();
-	}
-	
-	@BeforeClass
-	public static void configureRestAssured() {
-		RestAssured.port = 8017;
-		RestAssured.urlEncodingEnabled = false;
-	}
+	private final String USER_TO_ACTIVATE_LOGIN = "admin";
+	private final String USER_TO_DEACTIVATE_LOGIN = "galieleo";
+
+	private final String API_PATH = "/api/manager/users";
+	private final String USER_TO_ACTIVATE_ID = "8";
+	private final String USER_TO_DEACTIVATE_ID = "6";
+	private final String REPOSITORYMAINTAINER_ID = "5";
 	
 	@Test
 	public void shouldReturnUsers() throws ParseException, IOException {
@@ -82,11 +59,10 @@ public class UserIntegrationTest {
 		Set<JSONObject> expectedJSON = convert(rootJSON);
 		
 		String data = given()
-			.auth()
-			.basic(ADMIN_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
-			.get(API_PATH+ "/list")
+			.get(API_PATH + "/list")
 		.then()
 			.statusCode(200)
 			.extract()
@@ -100,42 +76,20 @@ public class UserIntegrationTest {
 	}
 	
 	@Test
-	public void shouldNonAdminUserNotBeAbleToGetUserList() {
+	public void nonAdminShouldNotBeAbleToGetUserList() {
 		given()
-			.auth()
-			.basic(REPOSITORYMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/list")
 		.then()
 			.statusCode(403);
 	}
-	
-	
-	//TODO: this test doesn't pass
-	/*Script1.groovy: 1: expecting ''', found '<EOF>' @ line 1, column 54.
-	 *ct.Roles haven't been returned
-     *                             ^
-	 */
-//	@Test
-//	public void shouldReturnRoles() {
-//		JsonPath expectedJson = new JsonPath(new File(JSON_PATH + "/roles.json"));
-//		
-//		given()
-//			.auth().basic(ADMIN_LOGIN, PASSWORD)
-//			.accept(ContentType.JSON)
-//		.when()
-//			.get("/roles")
-//		.then()
-//			.statusCode(200)
-//			.body("Roles haven't been returned", equalTo(expectedJson.getList("")));
-//	}
-	
+		
 	@Test
-	public void shouldNonAdminUserNotBeAbleToGetUserRoles() {
+	public void nonAdminShouldNotBeAbleToGetUserRoles() {
 		given()
-			.auth()
-			.basic(REPOSITORYMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/roles")
@@ -147,31 +101,29 @@ public class UserIntegrationTest {
 	@Test
 	public void shouldReturnUserInfo() {			
 		given()
-			.auth()
-			.basic(USER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + USER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
-			.get(API_PATH + "/" + USER_LOGIN)
+			.get(API_PATH + "/newton")
 		.then()
 			.statusCode(200)
 			.body("user.name", equalTo("Isaac Newton"))
 			.body("user.role.name", equalTo("user"))
 			.body("user.role.description", equalTo("User"))
 			.body("user.email", equalTo("newton@ldap.forumsys.com"))
-			.body("user.login", equalTo(USER_LOGIN));
+			.body("user.login", equalTo("newton"));
 	}
 	
 	@Test
 	public void shouldNotReturnUserInfo() {			
 		given()
-			.auth()
-			.basic(REPOSITORYMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
-			.get(API_PATH + "/" + ADMIN_LOGIN)
+			.get(API_PATH + "/einstein")
 		.then()
 			.statusCode(200)
-			.body("error", equalTo("You are not authorized to perform this operation"));
+			.body("error", equalTo("You are not authorized to perform this operation."));
 	}
 	
 	@Test
@@ -184,8 +136,7 @@ public class UserIntegrationTest {
 		params.put("active", "true");
 		
 		given()
-			.auth()
-			.basic(ADMIN_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 			.formParams(params)
 		.when()
@@ -194,22 +145,20 @@ public class UserIntegrationTest {
 			.statusCode(200);
 		
 		given()
-			.auth()
-			.basic(ADMIN_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
-			.get(API_PATH + "/" + REPOSITORYMAINTAINER_LOGIN)
+			.get(API_PATH + "/tesla")
 		.then()
 			.statusCode(200)
 			.body("user.role.description", equalTo("User"))
-			.body("user.login", equalTo(REPOSITORYMAINTAINER_LOGIN));
+			.body("user.login", equalTo("tesla"));
 	}
 	
 	@Test
-	public void shouldNonAdminUserNotBeAbleToChangeRole() {
+	public void nonAdminShouldNotBeAbleToChangeRole() {
 		given()
-			.auth()
-			.basic(REPOSITORYMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.put(API_PATH + "/"  + REPOSITORYMAINTAINER_ID + "/edit")
@@ -220,18 +169,16 @@ public class UserIntegrationTest {
 	@Test
 	public void shouldDeactivateUser() {
 		given()
-			.auth()
-			.basic(ADMIN_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.put(API_PATH + "/" + USER_TO_DEACTIVATE_ID + "/deactivate")
 		.then()
 			.statusCode(200)
-			.body("success", equalTo("user.deactivated"));
+			.body("success", equalTo("User has been deleted successfully."));
 		
 		given()
-			.auth()
-			.basic(ADMIN_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/" + USER_TO_DEACTIVATE_LOGIN)
@@ -242,10 +189,9 @@ public class UserIntegrationTest {
 	}
 	
 	@Test
-	public void shouldNonAdminUserNotBeAbleToDeactivateUser() {
+	public void nonAdminShouldNotBeAbleToDeactivateUser() {
 		given()
-			.auth()
-			.basic(REPOSITORYMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.put(API_PATH + "/"+ REPOSITORYMAINTAINER_ID + "/deactivate")
@@ -256,17 +202,16 @@ public class UserIntegrationTest {
 	@Test
 	public void shouldActivateUser() {
 		given()
-			.auth()
-			.basic(ADMIN_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.put(API_PATH + "/" + USER_TO_ACTIVATE_ID + "/activate")
 		.then()
 			.statusCode(200)
-			.body("success", equalTo("user.activated"));
+			.body("success", equalTo("User has been activated successfully."));
 		
 		given()
-			.auth().basic(ADMIN_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/" + USER_TO_ACTIVATE_LOGIN)
@@ -277,10 +222,9 @@ public class UserIntegrationTest {
 	}
 	
 	@Test
-	public void shouldNonAdminUserNotBeAbleToActivateUser() {
+	public void nonAdminShouldNotBeAbleToActivateUser() {
 		given()
-			.auth()
-			.basic(REPOSITORYMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.put(API_PATH + "/"+ REPOSITORYMAINTAINER_ID + "/activate")
@@ -288,7 +232,8 @@ public class UserIntegrationTest {
 			.statusCode(403);
 	}
 	
-	private Set<JSONObject> convert(JSONArray rootJSON) throws ParseException {
+	@Override
+	protected Set<JSONObject> convert(JSONArray rootJSON) throws ParseException {
 		Set<JSONObject> JSON = new HashSet<>();
 		
 		for(int i = 0; i < rootJSON.size(); i++) {
@@ -299,4 +244,5 @@ public class UserIntegrationTest {
 		
 		return JSON;
 	}
+
 }

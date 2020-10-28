@@ -39,5 +39,6 @@ public interface RepositoryRepository extends JpaRepository<Repository, Integer>
 	List<Repository> findAll(Sort sort);
 	Repository findByNameAndDeleted(String name, boolean deleted);
 	Repository findByPublicationUriAndDeleted(String publicationUri, boolean deleted);
+	Repository findByServerAddressAndDeleted(String serverAddress, boolean deleted);
 }
 

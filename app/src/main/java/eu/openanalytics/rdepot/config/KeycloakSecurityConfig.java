@@ -25,12 +25,14 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.keycloak.OAuth2Constants;
 import org.keycloak.adapters.KeycloakConfigResolver;
 import org.keycloak.adapters.springboot.KeycloakSpringBootProperties;
 import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationFailureHandler;
 import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
 import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
 import org.keycloak.adapters.springsecurity.filter.KeycloakAuthenticationProcessingFilter;
+import org.keycloak.adapters.springsecurity.filter.QueryParamPresenceRequestMatcher;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.adapters.config.AdapterConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +40,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -49,6 +53,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.security.web.util.matcher.AndRequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestHeaderRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import eu.openanalytics.rdepot.authenticator.KeycloakCustomBindAuthenticator;
 import eu.openanalytics.rdepot.exception.AuthException;
@@ -59,8 +69,21 @@ import eu.openanalytics.rdepot.utils.CustomKeycloakSpringBootConfigResolver;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
 @ConditionalOnProperty(value = "app.authentication", havingValue = "keycloak")
+@Order(2)
 public class KeycloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 
+	public static final String DEFAULT_LOGIN_URL = "/sso/login";
+	public static final String AUTHORIZATION_HEADER = "Authorization";
+	public static final  RequestMatcher customRequestMatcher =
+			new AndRequestMatcher(
+				new NegatedRequestMatcher(new AntPathRequestMatcher("/api/**")),	
+	            new OrRequestMatcher(
+	                    new AntPathRequestMatcher(DEFAULT_LOGIN_URL),
+	                    new RequestHeaderRequestMatcher(AUTHORIZATION_HEADER),
+	                    new QueryParamPresenceRequestMatcher(OAuth2Constants.ACCESS_TOKEN)
+	                    )		       
+            );
+	
 	@Resource
 	private Environment environment;
 		
@@ -69,17 +92,30 @@ public class KeycloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter
 	
 	@Autowired
 	private KeycloakCustomBindAuthenticator authenticator;
-	
-	/**
-	 * Registers the KeycloakAuthenticationProvider with the authentication manager.
-	 */
-	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		KeycloakAuthenticationProvider keycloakAuthenticationProvider = keycloakAuthenticationProvider();
-		
-		auth.authenticationProvider(keycloakAuthenticationProvider);
+
+	@Override
+	public void configure(WebSecurity web) throws Exception {
+		web
+	    	.ignoring()
+	        .antMatchers("/static/**");
 	}
 
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+	    super.configure(http);    
+	        
+	    http	    
+	    	.authorizeRequests()
+	          	.antMatchers("/authfailed").anonymous()
+	           	.antMatchers("/manager/**").hasAuthority("user")
+	           	.antMatchers("/static/**").permitAll()
+	        .and()  	
+	          	.addFilter(keycloakAuthenticationProcessingFilter())
+	           	.logout()
+	           		.invalidateHttpSession(true)
+	           		.addLogoutHandler(keycloakLogoutHandler());
+	}
+	    
 	/**
 	 * Defines the session authentication strategy.
 	 */
@@ -88,44 +124,32 @@ public class KeycloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter
 	protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
 		return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
 	}
-	
+		
+	@Override
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+		KeycloakAuthenticationProvider keycloakAuthenticationProvider = keycloakAuthenticationProvider();
+			
+		auth.authenticationProvider(keycloakAuthenticationProvider);
+	}
+		
 	@Bean
 	public KeycloakAuthenticationProcessingFilter keycloakAuthenticationProcessingFilter() throws Exception {
-		KeycloakAuthenticationProcessingFilter keycloakAuthenticationProcessingFilter = new KeycloakAuthenticationProcessingFilter(authenticationManagerBean());
+		KeycloakAuthenticationProcessingFilter keycloakAuthenticationProcessingFilter = new KeycloakAuthenticationProcessingFilter(authenticationManagerBean(), customRequestMatcher);
 		keycloakAuthenticationProcessingFilter.setAuthenticationFailureHandler(keycloakAuthenticationFailureHandler());
 		return keycloakAuthenticationProcessingFilter;
-	}
+	}		
 	
 	@Bean
 	public KeycloakAuthenticationFailureHandler keycloakAuthenticationFailureHandler() {
 		return new CustomKeycloakAuthenticationFailureHandler();
-	}
-
-    /**
-     * Define security constraints for the application resources.
-     */
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        super.configure(http);    
-        
-        http
-            .authorizeRequests()
-            	.antMatchers("/authfailed").anonymous()
-            	.antMatchers("/manager/**").hasAuthority("user")
-            	.antMatchers("/static/**").permitAll()
-            .and()  	
-	          .logout()
-	          	.invalidateHttpSession(true)
-	          	.addLogoutHandler(keycloakLogoutHandler());
-//	          	.logoutUrl("/sso/logout").permitAll();
-    }
-    
+	}    
     
 	@Bean
+	@Primary
 	public KeycloakConfigResolver KeycloakConfigResolver(KeycloakSpringBootProperties properties) {
 		return new CustomKeycloakSpringBootConfigResolver(environment, cfg);
 	}
-				
+	
 	protected KeycloakAuthenticationProvider keycloakAuthenticationProvider() {
 		return new KeycloakAuthenticationProvider() {
 			@SuppressWarnings("unchecked")
@@ -137,7 +161,7 @@ public class KeycloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter
 				try {
 					auth = (Set<GrantedAuthority>) authenticator.authenticate(
 						token.getName(),
-						token.getAccount().getKeycloakSecurityContext().getIdToken()
+						token.getAccount().getKeycloakSecurityContext().getToken()
 						);
 				} catch (AuthException e) {
 					System.out.println("Failed: " + e.getMessage());

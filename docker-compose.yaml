@@ -23,10 +23,7 @@ services:
     hostname: oa-rdepot-app
     container_name: oa-rdepot-app
     volumes:
-#----------------------------------------------------------------
-#     Always choose proper auth config file
-      - ./docker/app/authentication.yml:/opt/rdepot/authentication.yml
-#----------------------------------------------------------------      
+      - ./docker/app/authentication.yml:/opt/rdepot/authentication.yml      
       - ./docker/app/application.yml:/opt/rdepot/application.yml
       - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
       - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
@@ -40,12 +37,6 @@ services:
     environment:
       - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/postgres
       - DB_USERNAME=postgres
-      - LDAP_URL=ldap://oa-rdepot-ldap:389
-      - LDAP_BASEDN=dc=example,dc=org
-      - LDAP_USEROU=
-      - LDAP_LOGINFIELD=cn
-      - LDAP_NAMEFIELD=description
-      - LDAP_DEFAULT_ADMINS=admin
       - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8001
     networks:
       - oa-rdepot  
@@ -70,6 +61,7 @@ services:
     volumes:
       - ./docker/db/rdepot.sql:/docker-entrypoint-initdb.d/rdepot.sql:ro
       - ./docker/db/rdepot.sql:/opt/database.sql:ro
+      - ./docker/db/dump/:/opt/dump/
     environment:
       - POSTGRES_PASSWORD=mysecretpassword
     networks:
@@ -90,7 +82,7 @@ services:
 #      - 9000:9000
 #    networks:
 #      - oa-rdepot
-#  
+  
 #  keycloak:
 #    image: quay.io/keycloak/keycloak:10.0.2
 #    restart: unless-stopped
@@ -109,7 +101,7 @@ services:
 #    networks:
 #      oa-rdepot:
 #        ipv4_address: 192.168.49.17
-# 
+ 
 #  ldap:
 #    build: ./docker/build/ldap
 #    restart: unless-stopped

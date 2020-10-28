@@ -376,8 +376,7 @@ CREATE SEQUENCE public."User_id_seq"
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
-
+    
 ALTER TABLE public."User_id_seq" OWNER TO postgres;
 
 --
@@ -386,6 +385,26 @@ ALTER TABLE public."User_id_seq" OWNER TO postgres;
 
 ALTER SEQUENCE public."User_id_seq" OWNED BY public."user".id;
 
+---------------------------------------------------------------
+    
+CREATE TABLE public.api_token (
+	id integer NOT NULL,
+	token character varying(255) NOT NULL,
+	user_login character varying(255) NOT NULL
+);
+
+ALTER TABLE public.api_token OWNER TO postgres;
+
+CREATE SEQUENCE public."Api_token_id_seq"
+	START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;   
+    
+ALTER SEQUENCE public."Api_token_id_seq" OWNED BY public.api_token.id;  
+ 
+--------------------------------------------------------------- 
 
 --
 -- Name: event; Type: TABLE; Schema: public; Owner: postgres
@@ -561,6 +580,8 @@ ALTER TABLE ONLY public.submission ALTER COLUMN id SET DEFAULT nextval('public."
 
 ALTER TABLE ONLY public."user" ALTER COLUMN id SET DEFAULT nextval('public."User_id_seq"'::regclass);
 
+ALTER TABLE ONLY public.api_token ALTER COLUMN id SET DEFAULT nextval('public."Api_token_id_seq"'::regclass);
+
 
 --
 -- Data for Name: event; Type: TABLE DATA; Schema: public; Owner: postgres
@@ -570,6 +591,17 @@ COPY public.event (id, value) FROM stdin;
 1	create
 2	delete
 3	update
+\.
+
+--
+-- Data for Name: api_token; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.api_token(id, token, user_login) FROM stdin;
+2	eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJlaW5zdGVpbiJ9.9VweA_kotRnnLn9giSE511MhWX4iDwtx85lidw_ZT5iTQ1aOB-3ytJNDB_Mrcop2H22MNhMjbpUW_sraHdvOlw	einstein
+3	eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXNsYSJ9.FEQ3KqMvTj4LQAgQx23f6Y0Z7PzKHgcO1a1UodG5iwCrzXhk6tHCR6V0T16F1tWtMMF0a3AQIShczN__d6KsFA	tesla
+4	eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnYWxpZWxlbyJ9.Hp95DiIZ0L0JXyQZOvhJkzyTDzNuos81QoTWfLeVPlodWvGg7ziJTI6nJFitg5VAwrGmA4wpbWbjK9aItCKB3A	galieleo
+5	eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJuZXd0b24ifQ.3E7UwKTwc8DchKRUSD_hdJxOcl4L6SOguwbm9WmVzWU4YDQMkIJ_wVNidpus6gNJvyT6OR6pREkfQCnWkEhEBQ	newton
 \.
 
 
@@ -1087,6 +1119,7 @@ COPY public."user" (id, role_id, name, email, login, active, last_logged_in_on, 
 5	3	Nikola Tesla	tesla@ldap.forumsys.com	tesla	t	2020-03-29	f
 4	4	Albert Einstein	einstein@ldap.forumsys.com	einstein	t	2020-08-20	f
 9	1	John Doe	doe@localhost	doe	f	2020-08-20	f
+10	1	Alfred Tarski	tarski@localhost	tarski	t	2020-08-25	f
 \.
 
 
@@ -1114,6 +1147,8 @@ COPY public.user_event (id, date, user_id, event_id, changed_variable, value_bef
 20	2020-08-20	9	3	last logged in	null	Thu Aug 20 09:58:52 GMT 2020	8	09:58:52.09+00
 21	2020-08-20	4	3	last logged in	2020-03-28 00:00:00.0	Thu Aug 20 09:59:08 GMT 2020	8	09:59:08.9+00
 22	2020-08-20	9	3	active	true	false	4	09:59:21.132+00
+23	2020-08-25	10	1	created			8	12:35:38.689+00
+24	2020-08-25	10	3	last logged in	null	Tue Aug 25 12:35:38 GMT 2020	8	12:35:38.788+00
 \.
 
 
@@ -1205,14 +1240,21 @@ SELECT pg_catalog.setval('public."Submission_id_seq"', 31, true);
 -- Name: UserEvent_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."UserEvent_id_seq"', 22, true);
+SELECT pg_catalog.setval('public."UserEvent_id_seq"', 24, true);
 
 
 --
 -- Name: User_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."User_id_seq"', 9, true);
+SELECT pg_catalog.setval('public."User_id_seq"', 10, true);
+
+
+--
+-- Name: Api_token_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public."Api_token_id_seq"', 5, true);
 
 
 --
@@ -1390,6 +1432,17 @@ ALTER TABLE ONLY public."user"
 ALTER TABLE ONLY public."user"
     ADD CONSTRAINT "User_pkey" PRIMARY KEY (id);
 
+
+    
+ALTER TABLE ONLY public.api_token
+    ADD CONSTRAINT "Api_token_token_key" UNIQUE (token);
+
+ALTER TABLE ONLY public.api_token
+    ADD CONSTRAINT "Api_token_user_login_key" UNIQUE (user_login);
+
+ALTER TABLE ONLY public.api_token
+    ADD CONSTRAINT "Api_token_pkey" PRIMARY KEY (id);        
+    
 
 --
 -- Name: package_event by_user; Type: FK CONSTRAINT; Schema: public; Owner: postgres

@@ -31,6 +31,7 @@ import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -60,12 +61,12 @@ import eu.openanalytics.rdepot.exception.AuthException;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
 @ConditionalOnProperty(value = "app.authentication", havingValue = "openid")
+@Order(2)
 public class OIDCSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	public static final String NAME = "openid";
 
 	private static final String REG_ID = "rdepot";
-	private static final String ENV_TOKEN_NAME = "RDEPOT_OIDC_ACCESS_TOKEN";
 	
 	@Resource
 	private Environment environment;

@@ -19,7 +19,7 @@ main.hover {
 .topbar-navigation .mdl-navigation__link {
     display: inline-block;
     height: 60px;
-    line-height: 68px;
+    /*line-height: 68px;*/
     /* background-color: transparent !important; */
     border-bottom: 4px solid transparent;
 
@@ -205,12 +205,12 @@ a:focus {
 	font-weight: 400;
 }
 
-a: active {
+a:active {
 	color: rgb(229, 35, 35);
 	text-decoration: underline;
 	font-weight: 400;
 }
-}
+
 
 html {
 	color:rgb(85, 85, 85)!important;

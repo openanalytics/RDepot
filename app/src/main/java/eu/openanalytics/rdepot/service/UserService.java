@@ -20,6 +20,8 @@
  */
 package eu.openanalytics.rdepot.service;
 
+import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -35,6 +37,8 @@ import javax.annotation.Resource;
 import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.annotation.Scope;
@@ -51,9 +55,12 @@ import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.auth0.jwt.JWT;
+
 import eu.openanalytics.rdepot.comparator.UserComparator;
 import eu.openanalytics.rdepot.exception.AdminNotFound;
 import eu.openanalytics.rdepot.exception.EventNotFound;
+import eu.openanalytics.rdepot.exception.NoAdminLeftException;
 import eu.openanalytics.rdepot.exception.PackageEditException;
 import eu.openanalytics.rdepot.exception.PackageMaintainerDeleteException;
 import eu.openanalytics.rdepot.exception.PackageMaintainerNotFound;
@@ -66,6 +73,7 @@ import eu.openanalytics.rdepot.exception.UserDeactivateException;
 import eu.openanalytics.rdepot.exception.UserDeleteException;
 import eu.openanalytics.rdepot.exception.UserEditException;
 import eu.openanalytics.rdepot.exception.UserNotFound;
+import eu.openanalytics.rdepot.model.ApiToken;
 import eu.openanalytics.rdepot.model.Event;
 import eu.openanalytics.rdepot.model.Package;
 import eu.openanalytics.rdepot.model.PackageEvent;
@@ -80,6 +88,7 @@ import eu.openanalytics.rdepot.model.Submission;
 import eu.openanalytics.rdepot.model.SubmissionEvent;
 import eu.openanalytics.rdepot.model.User;
 import eu.openanalytics.rdepot.model.UserEvent;
+import eu.openanalytics.rdepot.repository.ApiTokenRepository;
 import eu.openanalytics.rdepot.repository.UserRepository;
 import eu.openanalytics.rdepot.time.DateProvider;
 import eu.openanalytics.rdepot.warning.UserAlreadyActivatedWarning;
@@ -95,11 +104,17 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 	Locale locale = LocaleContextHolder.getLocale();
 	Logger logger = LoggerFactory.getLogger(UserService.class);
 	
+	@Value("${api_token.secret}")
+	private String SECRET;
+	
 	@Resource
 	MessageSource messageSource;
 	
 	@Resource
 	private UserRepository userRepository;
+	
+	@Resource
+	private ApiTokenRepository apiTokenRepository;
 	
 	@Resource
 	private RoleService roleService;
@@ -159,6 +174,22 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 		
 		userEventService.create(createEvent, admin, createdUser);
 		return createdUser;
+	}
+	
+	@Transactional(readOnly = false)
+	public String generateToken(String login) {
+		ApiToken apiToken = apiTokenRepository.findByUserLogin(login);
+		
+		if(apiToken != null) {
+			return apiToken.getToken();
+		} else {
+			String token = JWT.create()
+					.withSubject(login)
+					.sign(HMAC512(SECRET.getBytes()));
+			apiToken = new ApiToken(login, token);
+			apiTokenRepository.save(apiToken);
+			return token;
+		}
 	}
 	
 	public User findById(int id) {
@@ -268,6 +299,40 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 	}
 	
 	@Transactional(readOnly = false, rollbackFor={UserEditException.class})
+	public void updateName(User user, User updater, String newName) throws UserEditException {
+		if(updater == null)
+			updater = chooseBestUpdater(user);
+		
+		String oldName = user.getName();
+		try {
+			Event updateEvent = eventService.getUpdateEvent();
+			user.setName(newName);
+			UserEvent updateNameEvent = new UserEvent(0, DateProvider.now(), updater, user, updateEvent, "name", oldName, newName, DateProvider.now());
+			update(updateNameEvent);
+		} catch (EventNotFound e) {
+			logger.error(e.getClass().getName() + ": ", e.getMessage(), e);
+			throw new UserEditException(messageSource, locale, user);
+		}
+	}
+	
+	@Transactional(readOnly = false, rollbackFor={UserEditException.class})
+	public void updateEmail(User user, User updater, String newEmail) throws UserEditException {
+		if(updater == null)
+			updater = chooseBestUpdater(user);
+		
+		String oldEmail = user.getEmail();
+		try {
+			Event updateEvent = eventService.getUpdateEvent();
+			user.setEmail(newEmail);
+			UserEvent updateNameEvent = new UserEvent(0, DateProvider.now(), updater, user, updateEvent, "email", oldEmail, newEmail, DateProvider.now());
+			update(updateNameEvent);
+		} catch (EventNotFound e) {
+			logger.error(e.getClass().getName() + ": ", e.getMessage(), e);
+			throw new UserEditException(messageSource, locale, user);
+		}
+	}
+	
+	@Transactional(readOnly = false, rollbackFor={UserEditException.class})
 	public void activateUser(User user, User updater) throws UserActivateException, UserAlreadyActivatedWarning {
 		if(updater == null)
 			updater = chooseBestUpdater(user);
@@ -287,14 +352,20 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 	}
 	
 	@Transactional(readOnly = false, rollbackFor={UserEditException.class})
-	public void deactivateUser(User user, User updater) throws UserDeactivateException, UserAlreadyDeactivatedWarning {
+	public void deactivateUser(User user, User updater) throws UserDeactivateException, 
+		UserAlreadyDeactivatedWarning, NoAdminLeftException {
 		if(updater == null)
 			updater = chooseBestUpdater(user);
 		
 		if(!user.isActive())
 			throw new UserAlreadyDeactivatedWarning(messageSource, locale, user);
 		
+		List<User> admins = findAllActiveAdmins();
+		if(admins.size() == 1 && user.getRole().equals(roleService.getAdminRole()))
+			throw new NoAdminLeftException(messageSource, locale, user);
+		
 		try {
+
 			Event updateEvent = eventService.getUpdateEvent();
 			user.setActive(false);
 			UserEvent activateUserEvent = new UserEvent(0, DateProvider.now(), updater, user, updateEvent, "active", "" + !user.isActive(), "" + user.isActive(), DateProvider.now());
@@ -392,13 +463,21 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 			}
 		} catch(UserAlreadyActivatedWarning | UserAlreadyDeactivatedWarning w) {
 			logger.warn(w.getClass().getName() + ": ", w.getMessage(), w);
-		} catch (UserActivateException | UserDeactivateException e) {
+		} catch (UserActivateException | UserDeactivateException | NoAdminLeftException e) {
 			logger.error(e.getClass().getName() + ": ", e.getMessage(), e);
 			throw new UserEditException(messageSource, locale, user);
 		}
 		
 		if(currentUser.getLastLoggedInOn() != user.getLastLoggedInOn())
 			updateLastLoggedInOn(currentUser, updater, user.getLastLoggedInOn());
+		
+		if(!currentUser.getName().equals(user.getName())) {
+			updateName(currentUser, updater, user.getName());
+		}
+		
+		if(!currentUser.getEmail().equals(user.getEmail())) {
+			updateEmail(currentUser, updater, user.getEmail());
+		}
 	}
 	
 	@Transactional(readOnly = false)
@@ -471,6 +550,11 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 
 	public List<User> findByRole(Role role) {
 		return userRepository.findByRoleAndDeleted(role, false);
+	}
+	
+	public List<User> findAllActiveAdmins() {
+		Role adminRole = roleService.getAdminRole();
+		return userRepository.findByRoleAndActiveAndDeleted(adminRole, true, false);
 	}
 
 	public User findFirstAdmin() throws AdminNotFound {
@@ -556,7 +640,7 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 
 	public List<User> findEligibleRepositoryMaintainers() {
 		ArrayList<User> users = new ArrayList<User>();
-		users.addAll(findByRole(roleService.findByName("user"))); //TODO: should user be really able to become repository maintainer?
+		users.addAll(findByRole(roleService.findByName("user"))); //TODO: should user be really able to become a repository maintainer?
 		users.addAll(findByRole(roleService.findByName("repositorymaintainer")));
 		Collections.sort(users, new UserComparator());
 		return users;

@@ -75,9 +75,6 @@ public class LDAPCustomBindAuthenticator extends BindAuthenticator
 	@Value("${app.ldap.loginfield}")
 	private String ldapLoginField;
 	
-	@Value("${app.ldap.namefield}")
-	private String ldapNameField;
-	
 	@Value("${app.ldap.emailfield}")
 	private String ldapEmailField;
 	
@@ -92,11 +89,19 @@ public class LDAPCustomBindAuthenticator extends BindAuthenticator
 	public DirContextOperations authenticate(Authentication authentication)
 	{
 		
+		List<String> namefields = new ArrayList<>();
+		for (int i=0;;i++) {
+			String namefield = environment.getProperty(String.format("app.ldap.namefield[%d]", i));
+			if (namefield == null) break;
+			else namefields.add(namefield)		;
+		}
+		
 		LDAPSecurityConfig.validateConfiguration(ldapLoginField, "ldap.loginfield");
-		LDAPSecurityConfig.validateConfiguration(ldapNameField, "ldap.namefield");
+		LDAPSecurityConfig.validateConfiguration(namefields, "ldap.namefield");
 		LDAPSecurityConfig.validateConfiguration(ldapEmailField, "ldap.emailfield");
 		
 		DirContextOperations userData;
+		
 		
 		try
 		{
@@ -109,15 +114,14 @@ public class LDAPCustomBindAuthenticator extends BindAuthenticator
 		}
 		
 		String login = userData.getStringAttribute(ldapLoginField);
-		
-		String[] nameFields = ldapNameField.trim().split("\\s*,\\s*");
+				
 		String name = "";
-		for(String nameField : nameFields)
-		{
-			name += userData.getStringAttribute(nameField) + ", ";
-		}
 		
-		name = name.substring(0, name.length() - 2);
+		for(String namefield : namefields)
+			name += userData.getStringAttribute(namefield) + " ";
+		
+		name = name.substring(0,  name.length() - 1);
+		
 		String email = userData.getStringAttribute(ldapEmailField);
 		
 		if (email == null) 
@@ -197,11 +201,10 @@ public class LDAPCustomBindAuthenticator extends BindAuthenticator
 			if (defaultAdmins.contains(login) && !user.getRole().equals(adminRole))
 				user.setRole(adminRole);
 		}
-	
+		
 		user.setLastLoggedInOn(new Date());
 		try 
 		{
-			//userService.update(user, null);
 			userService.evaluateAndUpdate(user, null);
 		} 
 		catch (UserEditException | UserNotFound e) 

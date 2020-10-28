@@ -22,6 +22,8 @@ package eu.openanalytics.rdepot.test.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -113,10 +115,13 @@ public class RepositoryMaintainerControllerTest {
 		RepositoryMaintainer maintainer2 = new RepositoryMaintainer(2, tesla, repository2, false);
 		repositoryMaintainers.add(maintainer1);
 		repositoryMaintainers.add(maintainer2);
+		Principal mockPrincipal = mock(Principal.class);
+		when(mockPrincipal.getName()).thenReturn(einstein.getLogin());
+		when(userService.findByLogin(einstein.getLogin())).thenReturn(einstein);
 		
 		Mockito.when(repositoryMaintainerService.findAll()).thenReturn(repositoryMaintainers);
 		Model model = new ExtendedModelMap();
-		repositoryMaintainerController.repositoryMaintainersPage(model);
+		repositoryMaintainerController.repositoryMaintainersPage(model, mockPrincipal);
 		
 		assertEquals(repositoryMaintainers, (List<RepositoryMaintainer>)model.asMap().get("repositorymaintainers"));
 		assertEquals(9, (int)model.asMap().get("role"));

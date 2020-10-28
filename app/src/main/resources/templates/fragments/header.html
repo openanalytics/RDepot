@@ -67,6 +67,8 @@
 
                         <label class="mdl-button mdl-js-button mdl-button--icon" style="display: none;"><i class="material-icons">refresh</i></label>
                         <!--<a class="mdl-navigation__link" href="#">Settings</a>-->
+                        <i class="material-icons">person</i>
+                        <span name="username" th:text="${username}"></span>
                         <a name="logout" th:if="${role >= 0}" class="mdl-navigation__link" href="#" onclick="logout()">Log out</a>
                     </nav>
                 </div>

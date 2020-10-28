@@ -26,81 +26,43 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import io.restassured.RestAssured;
+import eu.openanalytics.rdepot.integrationtest.IntegrationTest;
 import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
 
-public class PackageIntegrationTest {
-	private static final String JSON_PATH = "src/integration-test/resources/JSONs";
-	private static final String PACKAGES_PATH = "src/integration-test/resources/itestPackages";
-	private static final String PDF_PATH = "src/integration-test/resources/itestPdf";
-	private static final String PACKAGE_NAME = "A3";
-	private static final String OLDER_VERSION = "0.9.1";
+public class PackageIntegrationTest extends IntegrationTest {
+	private final String PACKAGES_PATH = "src/integration-test/resources/itestPackages";
+	private final String PDF_PATH = "src/integration-test/resources/itestPdf";
+	private final String PACKAGE_NAME = "A3";
 	
-	private static final String PACKAGE_NAME_TO_DOWNLOAD = "accrued";
-	private static final String PACKAGE_VERSION_TO_DOWNLOAD = "1.3";
-	private static final String PACKAGE_ID_TO_DOWNLOAD = "5";
+	private final String PACKAGE_NAME_TO_DOWNLOAD = "accrued";
+	private final String PACKAGE_VERSION_TO_DOWNLOAD = "1.3";
+	private final String PACKAGE_ID_TO_DOWNLOAD = "5";
 	
-	private static final String PACKAGE_TO_DEACTIVATE_ID = "25";
-	private static final String PACKAGE_TO_DEACTIVATE_URI = "/testrepo1/src/contrib/usl_2.0.0.tar.gz";
+	private final String PACKAGE_TO_DEACTIVATE_ID = "25";
+	private final String PACKAGE_TO_DEACTIVATE_URI = "/testrepo1/src/contrib/usl_2.0.0.tar.gz";
 	
-	private static final String PACKAGE_TO_DEACTIVATE_ID_ARCHIVE = "8";
-	private static final String PACKAGE_TO_DEACTIVATE_URI_ARCHIVE = "/testrepo2/src/contrib/Archive/accrued/accrued_1.2.tar.gz";
+	private final String PACKAGE_TO_DEACTIVATE_ID_ARCHIVE = "8";
+	private final String PACKAGE_TO_DEACTIVATE_URI_ARCHIVE = "/testrepo2/src/contrib/Archive/accrued/accrued_1.2.tar.gz";
 	
-	private static final String PACKAGE_OLDER_ID = "9";
-	private static final String PACKAGE_INACTIVE_ID = "13";
+	private final String PACKAGE_OLDER_ID = "9";
+	private final String PACKAGE_INACTIVE_ID = "13";
 	
-	private static final String PUBLICATION_REPO_URI = "/repo";
+	private final String PUBLICATION_REPO_URI = "/repo";
 	
-	private static final String API_PATH = "/api/manager/packages";
-	private static final String ORDINARY_PATH = "/manager/packages";
+	private final String API_PATH = "/api/manager/packages";	
 	
-	private static final String ADMIN_LOGIN = "einstein";
-	private static final String REPOSITORYMAINTAINER_LOGIN = "tesla";
-	private static final String PACKAGEMAINTAINER_LOGIN = "galieleo";
-	private static final String USER_LOGIN = "newton";
-	private static final String PASSWORD = "testpassword";
-	
-	private static final Gson gson = new GsonBuilder()
-			.enableComplexMapKeySerialization()
-			.create();
-	
-	@Before
-	public void setUp() throws IOException, InterruptedException {
-		String[] cmd = new String[] {"gradle", "restore", "-b","src/integration-test/resources/build.gradle"};
-		Process process = Runtime.getRuntime().exec(cmd);
-		process.waitFor();
-		process.destroy();
-	}
-	
-	@BeforeClass
-	public static void configureRestAssured() throws IOException, InterruptedException {
-		RestAssured.port = 8017;
-		RestAssured.urlEncodingEnabled = false;
-	}
-	
-	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldReturnPackages() throws IOException, ParseException {
 		
@@ -113,8 +75,7 @@ public class PackageIntegrationTest {
 		Set<JSONObject> expectedJSON = convert(rootJSON);
 		
 		String data = given()
-			.auth()
-			.basic(ADMIN_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/list")
@@ -132,20 +93,6 @@ public class PackageIntegrationTest {
 	}
 	
 	@Test
-	public void shouldNotReturnPackages() {
-		String html = given()
-			.accept(ContentType.JSON)
-		.when()
-			.get(ORDINARY_PATH + "/list")
-		.then()
-			.statusCode(200)
-			.extract()
-			.asString();
-		
-		assertTrue("No redirection to login page", html.contains("Please enter your user credentials."));
-	}
-	
-	@Test
 	public void shouldReturnDeletedPackages() throws IOException, ParseException {		
 		JSONParser jsonParser = new JSONParser();
 		
@@ -154,8 +101,7 @@ public class PackageIntegrationTest {
 		Set<JSONObject> expectedJSON = convert(rootJSON);
 		
 		String data = given()
-			.auth()
-			.basic(ADMIN_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/deleted")
@@ -174,8 +120,7 @@ public class PackageIntegrationTest {
 	@Test
 	public void shouldNotReturnDeletedPackages() {
 		given()
-			.auth()
-			.basic(REPOSITORYMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/deleted")
@@ -184,12 +129,11 @@ public class PackageIntegrationTest {
 	}
 	
 	@Test
-	public void shouldReturnPackagesEvents() {
+	public void shouldReturnPackageEvents() {
 		JsonPath expectedJson = new JsonPath(new File(JSON_PATH + "/package/events_" + PACKAGE_NAME + ".json"));
 		
 		given()
-			.auth()
-			.basic(PACKAGEMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/" + PACKAGE_OLDER_ID + "/events")
@@ -199,10 +143,9 @@ public class PackageIntegrationTest {
 	}
 	
 	@Test
-	public void shouldNotReturnPackagesEvents() {
+	public void shouldNotReturnPackageEvents() {
 		given()
-			.auth()
-			.basic(USER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + USER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/" + PACKAGE_OLDER_ID + "/events")
@@ -213,8 +156,7 @@ public class PackageIntegrationTest {
 	@Test
 	public void shouldDownloadPackage() throws IOException {		
 		byte[] pkg = given()
-					.auth()
-					.basic(ADMIN_LOGIN, PASSWORD)
+					.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 					.accept(ContentType.ANY)
 				.when()
 	            	.get(API_PATH + "/" + PACKAGE_ID_TO_DOWNLOAD + "/download/" + PACKAGE_NAME_TO_DOWNLOAD + "_" + PACKAGE_VERSION_TO_DOWNLOAD + ".tar.gz")
@@ -234,8 +176,7 @@ public class PackageIntegrationTest {
 	public void shouldDownloadPdf() throws IOException {
 		
 		byte[] pdf = given()
-				.auth()
-				.basic(ADMIN_LOGIN, PASSWORD)
+				.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 				.accept(ContentType.ANY)
 				
 			.when()
@@ -253,15 +194,12 @@ public class PackageIntegrationTest {
 		assertTrue(content.contains(PACKAGE_NAME_TO_DOWNLOAD));
 		assertTrue(content.contains("Version " + PACKAGE_VERSION_TO_DOWNLOAD));
 		assertArrayEquals("Meta-data can cause some differences", expectedpdf, pdf);
-//		TODO: Meta-data?
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldActivatePackage() throws IOException, ParseException {
 		given()
-			.auth()
-			.basic(PACKAGEMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.put(API_PATH + "/" + PACKAGE_INACTIVE_ID + "/activate")
@@ -276,8 +214,7 @@ public class PackageIntegrationTest {
 		Set<JSONObject> expectedJSON = convert(rootJSON);
 		
 		String data = given()
-			.auth()
-			.basic(PACKAGEMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/list")
@@ -295,10 +232,9 @@ public class PackageIntegrationTest {
 	}
 	
 	@Test
-	public void shouldNotActivatePackage() {
+	public void nonPackageMaintainerShouldNotBeAbleToActivatePackage() {
 		given()
-			.auth()
-			.basic(USER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + USER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.put(API_PATH + "/" + PACKAGE_INACTIVE_ID + "/activate")
@@ -306,12 +242,10 @@ public class PackageIntegrationTest {
 			.statusCode(403);
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldDeactivatePackage() throws IOException, ParseException {
 		given()
-			.auth()
-			.basic(PACKAGEMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.put(API_PATH + "/" + PACKAGE_OLDER_ID + "/deactivate")
@@ -326,8 +260,7 @@ public class PackageIntegrationTest {
 		Set<JSONObject> expectedJSON = convert(rootJSON);
 		
 		String data = given()
-			.auth()
-			.basic(PACKAGEMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/list")
@@ -347,8 +280,7 @@ public class PackageIntegrationTest {
 	@Test
 	public void shouldRemoveInactivePackageFromPublicRepositoryArchive() {
 		given()
-		.auth()
-			.basic(ADMIN_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.put(API_PATH + "/" + PACKAGE_TO_DEACTIVATE_ID_ARCHIVE + "/deactivate")
@@ -368,8 +300,7 @@ public class PackageIntegrationTest {
 	@Test
 	public void shouldRemoveInactivePackageFromPublicRepository() {
 		given()
-			.auth()
-			.basic(ADMIN_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.put(API_PATH + "/" + PACKAGE_TO_DEACTIVATE_ID + "/deactivate")
@@ -387,23 +318,20 @@ public class PackageIntegrationTest {
 	}
 	
 	@Test
-	public void shouldNotDeactivatePackage() {
+	public void nonPackageMaintainerShouldNotBeAbleToDeactivatePackage() {
 		given()
-			.auth()
-			.basic(USER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + USER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.put(API_PATH + "/" + PACKAGE_OLDER_ID + "/deactivate")
 		.then()
 			.statusCode(403);
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	@Test
 	public void shouldDeletePackage() throws IOException, ParseException {
 		given()
-			.auth()
-			.basic(PACKAGEMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.delete(API_PATH + "/" + PACKAGE_OLDER_ID + "/delete")
@@ -418,8 +346,7 @@ public class PackageIntegrationTest {
 		Set<JSONObject> expectedJSONDeleted = convert(rootJSON);
 		
 		String data = given()
-			.auth()
-			.basic(ADMIN_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/deleted")
@@ -437,8 +364,7 @@ public class PackageIntegrationTest {
 		Set<JSONObject> expectedJSON = convert(rootJSON);
 		
 		data = given()
-			.auth()
-			.basic(PACKAGEMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/list")
@@ -456,48 +382,13 @@ public class PackageIntegrationTest {
 	}
 	
 	@Test
-	public void shouldNotDeletePackage() {
+	public void nonPackageMaintainerShouldNotBeAbleToDeletePackage() {
 		given()
-			.auth()
-			.basic(USER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + USER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.delete(API_PATH + "/" + PACKAGE_OLDER_ID + "/delete")
 		.then()
 			.statusCode(403);
-	}
-	
-	private static String extractContent(byte[] pdf) throws IOException {
-	    PDDocument document = PDDocument.load(new ByteArrayInputStream(pdf));
-	    try {
-	         return new PDFTextStripper().getText(document);
-	     } finally {
-	    	 document.close();
-	     }
-	}
-	
-	private static byte[] readFileToByteArray(File file){
-		FileInputStream fis;
-	    byte[] bArray = new byte[(int) file.length()];
-        try{
-            fis = new FileInputStream(file);
-            fis.read(bArray);
-            fis.close();             
-        } catch(IOException ioExp){
-        	ioExp.printStackTrace();
-	    }
-	    return bArray;
-	}
-	
-	private Set<JSONObject> convert(JSONArray rootJSON) throws ParseException {
-		Set<JSONObject> JSON = new HashSet<>();
-		
-		for(int i = 0; i < rootJSON.size(); i++) {
-			JSONObject objJSON = (JSONObject) rootJSON.get(i);
-			objJSON.remove("lastLoggedInOn");
-			JSON.add(objJSON);
-		}
-		
-		return JSON;
-	 }
+	}	
 }

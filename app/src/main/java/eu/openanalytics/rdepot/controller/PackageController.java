@@ -104,6 +104,7 @@ public class PackageController
         model.addAttribute("maintained", maintained);
         model.addAttribute("packages", packageService.findAll());
         model.addAttribute("role", requester.getRole().getValue());
+        model.addAttribute("username", requester.getName());
         return "packages";
     }
      

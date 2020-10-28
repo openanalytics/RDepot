@@ -97,6 +97,9 @@ public class FileUploadController {
     		requestQueue.add(requestBody);
     		
     		SynchronizeRepositoryResponseBody response = responseMap.getLastItem(requestBody.getId());
+    		if(requestBody.isLastChunk())
+    			responseMap.remove(requestBody.getId());
+    		
     		if(Objects.equals(response.getMessage(), SharedMessageCodes.RESPONSE_OK)) {
     			return ResponseEntity.ok(response);
     		} else {

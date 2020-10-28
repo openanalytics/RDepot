@@ -57,6 +57,7 @@ import org.springframework.context.MessageSource;
 
 import eu.openanalytics.rdepot.exception.AdminNotFound;
 import eu.openanalytics.rdepot.exception.EventNotFound;
+import eu.openanalytics.rdepot.exception.NoAdminLeftException;
 import eu.openanalytics.rdepot.exception.PackageEditException;
 import eu.openanalytics.rdepot.exception.PackageMaintainerDeleteException;
 import eu.openanalytics.rdepot.exception.PackageMaintainerNotFound;
@@ -608,7 +609,7 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	public void deactivateUser() throws EventNotFound, UserDeactivateException, UserAlreadyDeactivatedWarning {
+	public void deactivateUser() throws EventNotFound, UserDeactivateException, UserAlreadyDeactivatedWarning, NoAdminLeftException {
 		User admin = UserTestFixture.GET_FIXTURE_ADMIN();
 		User user = UserTestFixture.GET_FIXTURE_USER();
 		Event updateEvent = EventTestFixture.GET_FIXTURE_EVENT("update");
@@ -627,7 +628,7 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	public void deactivateUser_FindsBestUpdater_IfUpdaterIsNull() throws EventNotFound, UserEditException, UserDeactivateException, UserAlreadyDeactivatedWarning {
+	public void deactivateUser_FindsBestUpdater_IfUpdaterIsNull() throws EventNotFound, UserEditException, UserDeactivateException, UserAlreadyDeactivatedWarning, NoAdminLeftException {
 		User admin = UserTestFixture.GET_FIXTURE_ADMIN();
 		User user = UserTestFixture.GET_FIXTURE_USER();
 		Role adminRole = RoleTestFixture.GET_FIXTURE_ADMIN_ROLE();
@@ -651,7 +652,7 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	public void deactivateUser_ThrowsUserAlreadyDeactivatedWarning_IfUserIsAlreadyInactive() throws UserDeactivateException, UserAlreadyDeactivatedWarning {
+	public void deactivateUser_ThrowsUserAlreadyDeactivatedWarning_IfUserIsAlreadyInactive() throws UserDeactivateException, UserAlreadyDeactivatedWarning, NoAdminLeftException {
 		User user = UserTestFixture.GET_FIXTURE_USER();
 		User admin = UserTestFixture.GET_FIXTURE_ADMIN();
 		
@@ -663,7 +664,7 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	public void deactivateUser_ThrowsUserEditException_IfEventIsNotFound() throws EventNotFound, UserDeactivateException, UserAlreadyDeactivatedWarning {
+	public void deactivateUser_ThrowsUserEditException_IfEventIsNotFound() throws EventNotFound, UserDeactivateException, UserAlreadyDeactivatedWarning, NoAdminLeftException {
 		User user = UserTestFixture.GET_FIXTURE_USER();
 		final User admin = UserTestFixture.GET_FIXTURE_ADMIN();
 		
@@ -692,7 +693,7 @@ public class UserServiceTest {
 		
 		userService.updateLastLoggedInOn(user, admin, newLastLoggedInOn);
 		
-		assertTrue("LastLoggedInOn value should be updated", user.getLastLoggedInOn().equals(newLastLoggedInOn));;
+		assertTrue("LastLoggedInOn value should be updated", user.getLastLoggedInOn().equals(newLastLoggedInOn));
 		
 		verify(userEventService).create(any());
 	}
@@ -719,7 +720,7 @@ public class UserServiceTest {
 		
 		userService.updateLastLoggedInOn(user, null, newLastLoggedInOn);
 		
-		assertTrue("LastLoggedInOn value should be updated", user.getLastLoggedInOn().equals(newLastLoggedInOn));;
+		assertTrue("LastLoggedInOn value should be updated", user.getLastLoggedInOn().equals(newLastLoggedInOn));
 		
 		verify(userEventService).create(any());
 	}
@@ -738,6 +739,94 @@ public class UserServiceTest {
 		expectedException.expectMessage(user.getLogin() + ": " + MessageCodes.ERROR_USER_EDIT);
 		
 		userService.updateLastLoggedInOn(user, admin, new Date());
+	}
+	
+	@Test
+	public void updateName_FindsBestUpdater_IfUpdaterIsNull() throws EventNotFound, UserEditException {
+		User admin = UserTestFixture.GET_FIXTURE_ADMIN();
+		User user = UserTestFixture.GET_FIXTURE_USER();
+		Role adminRole = RoleTestFixture.GET_FIXTURE_ADMIN_ROLE();
+		Event updateEvent = EventTestFixture.GET_FIXTURE_EVENT("update");
+		List<User> admins = new ArrayList<User>();
+		admins.add(admin);
+		
+		String oldName = "Albert Einstein";
+		String newName = "Albus Dumbledore";
+		
+		user.setName(oldName);
+		
+		when(roleService.getAdminRole()).thenReturn(adminRole);
+		when(userRepository.findByRoleAndDeleted(adminRole, false)).thenReturn(admins);
+		when(eventService.getUpdateEvent()).thenReturn(updateEvent);
+		doAnswer(new UserEventAssertionAnswer(admin, user, updateEvent, "name", oldName, newName))
+		.when(userEventService).create(any());
+		
+		userService.updateName(user, null, newName);
+		
+		assertTrue("Name should be updated", user.getName().equals(newName));
+		
+		verify(userEventService).create(any());
+	}
+	
+	@Test
+	public void updateName_ThrowsUserEditException_IfEventIsNotFound() throws EventNotFound, UserEditException {
+		User user = UserTestFixture.GET_FIXTURE_USER();
+		final User admin = UserTestFixture.GET_FIXTURE_ADMIN();
+		
+		String oldName = "Albert Einstein";
+		
+		user.setName(oldName);
+		String newName = "Albus Dumbledore";
+		
+		when(eventService.getUpdateEvent()).thenThrow(new EventNotFound());
+		expectedException.expect(UserEditException.class);
+		expectedException.expectMessage(user.getLogin() + ": " + MessageCodes.ERROR_USER_EDIT);
+		
+		userService.updateName(user, admin, newName);
+	}
+	
+	@Test
+	public void updateEmail_FindsBestUpdater_IfUpdaterIsNull() throws EventNotFound, UserEditException {
+		User admin = UserTestFixture.GET_FIXTURE_ADMIN();
+		User user = UserTestFixture.GET_FIXTURE_USER();
+		Role adminRole = RoleTestFixture.GET_FIXTURE_ADMIN_ROLE();
+		Event updateEvent = EventTestFixture.GET_FIXTURE_EVENT("update");
+		List<User> admins = new ArrayList<User>();
+		admins.add(admin);
+		
+		String oldEmail = "einstein@localhost";
+		String newEmail = "einstein@gmail.com";
+		
+		user.setEmail(oldEmail);
+		
+		when(roleService.getAdminRole()).thenReturn(adminRole);
+		when(userRepository.findByRoleAndDeleted(adminRole, false)).thenReturn(admins);
+		when(eventService.getUpdateEvent()).thenReturn(updateEvent);
+		doAnswer(new UserEventAssertionAnswer(admin, user, updateEvent, "email", oldEmail, newEmail))
+		.when(userEventService).create(any());
+		
+		userService.updateEmail(user, null, newEmail);
+		
+		assertTrue("Email should be updated", user.getEmail().equals(newEmail));
+		
+		verify(userEventService).create(any());
+	}
+	
+	@Test
+	public void updateEmail_ThrowsUserEditException_IfEventIsNotFound() throws EventNotFound, UserEditException {
+		User user = UserTestFixture.GET_FIXTURE_USER();
+		final User admin = UserTestFixture.GET_FIXTURE_ADMIN();
+		
+		String oldEmail = "einstein@localhost";
+		String newEmail = "einstein@gmail.com";
+		
+		user.setEmail(oldEmail);
+		
+		when(eventService.getUpdateEvent()).thenThrow(new EventNotFound());
+		expectedException.expect(UserEditException.class);
+		expectedException.expectMessage(user.getLogin() + ": " + MessageCodes.ERROR_USER_EDIT);
+		
+		userService.updateEmail(user, admin, newEmail);
 	}
 	
 	@Test
@@ -867,6 +956,23 @@ public class UserServiceTest {
 		verify(userEventService).create(any());
 		verify(packageService, times(PACKAGE_COUNT)).refreshMaintainer(packages.get(0), admin);
 		verify(packageMaintainerService, times(PACKAGE_COUNT)).delete(anyInt(), eq(admin));
+	}
+	
+	@Test
+	public void deactivateUser_throwsNoAdminLeftException_WhenNoOtherAdminIsActive() throws UserDeactivateException, UserAlreadyDeactivatedWarning, NoAdminLeftException {
+		User admin = UserTestFixture.GET_FIXTURE_ADMIN();
+		Role adminRole = RoleTestFixture.GET_FIXTURE_ADMIN_ROLE();
+		List<User> admins = new ArrayList<User>();
+		admins.add(admin);
+		
+		when(roleService.getAdminRole()).thenReturn(adminRole);
+		when(userRepository.findByRoleAndActiveAndDeleted(adminRole, true, false))
+			.thenReturn(admins);
+		
+		expectedException.expect(NoAdminLeftException.class);
+		expectedException.expectMessage(admin.getLogin() + ": " + MessageCodes.ERROR_NO_ADMIN_LEFT);
+		
+		userService.deactivateUser(admin, admin);
 	}
 	
 } 

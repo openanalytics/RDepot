@@ -193,6 +193,7 @@ public class SubmissionController
 		else {
 			model.addAttribute("submission", submission);
 			model.addAttribute("role", requester.getRole().getValue());
+
 			address = "submission";
 		}
 		return address;

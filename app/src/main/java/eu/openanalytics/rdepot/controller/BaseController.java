@@ -20,8 +20,6 @@
  */
 package eu.openanalytics.rdepot.controller;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;

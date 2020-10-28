@@ -30,6 +30,7 @@ import java.util.Objects;
 
 import javax.annotation.Resource;
 
+import org.keycloak.representations.AccessToken;
 import org.keycloak.representations.IDToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,6 +46,7 @@ import org.springframework.stereotype.Service;
 import eu.openanalytics.rdepot.exception.AuthenticationDeletedUserException;
 import eu.openanalytics.rdepot.exception.AuthException;
 import eu.openanalytics.rdepot.exception.AuthenticationInactiveUserException;
+import eu.openanalytics.rdepot.exception.AuthenticationUserCreationException;
 import eu.openanalytics.rdepot.exception.AuthenticationUserEditionException;
 import eu.openanalytics.rdepot.exception.UserCreateException;
 import eu.openanalytics.rdepot.exception.UserEditException;
@@ -70,10 +72,10 @@ public class KeycloakCustomBindAuthenticator {
 	
 	private String login, email, name;
 	
-	public Collection<? extends GrantedAuthority> authenticate(String username, IDToken idToken) throws AuthException {
+	public Collection<? extends GrantedAuthority> authenticate(String username, AccessToken token) throws AuthException {
 		this.login = username;
-		this.email = idToken.getEmail();
-		this.name = idToken.getGivenName() + " " + idToken.getFamilyName();
+		this.email = token.getEmail();
+		this.name = token.getGivenName() + " " + token.getFamilyName();
 		
 		List<String> defaultAdmins = new ArrayList<>();
 		
@@ -113,7 +115,7 @@ public class KeycloakCustomBindAuthenticator {
 				try {
 					userService.create(user);
 				} catch (UserCreateException e) {
-//					throw new BadCredentialsException(messages.getMessage(e.getMessage(), e.getMessage()));
+					throw new AuthenticationUserCreationException();
 				}
 			}
 			else if(!user.isActive())
@@ -151,13 +153,11 @@ public class KeycloakCustomBindAuthenticator {
 		user.setLastLoggedInOn(new Date());
 		try 
 		{
-			//userService.update(user, null);
 			userService.evaluateAndUpdate(user, null);
 		} 
 		catch (UserEditException | UserNotFound e) 
 		{
 			throw new AuthenticationUserEditionException();
-//			throw new BadCredentialsException(messages.getMessage(e.getMessage(), e.getMessage()));
 		}
 		return userService.getGrantedAuthorities(login);
 	}

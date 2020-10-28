@@ -24,11 +24,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
-import java.util.concurrent.BlockingQueue;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
@@ -71,7 +69,6 @@ import eu.openanalytics.rdepot.formatter.UserFormatter;
 import eu.openanalytics.rdepot.mapper.HibernateAwareObjectMapper;
 import eu.openanalytics.rdepot.model.Repository;
 import eu.openanalytics.rdepot.model.Role;
-import eu.openanalytics.rdepot.model.SynchronizeRepositoryResponseBody;
 import eu.openanalytics.rdepot.model.User;
 import eu.openanalytics.rdepot.storage.PackageStorage;
 import eu.openanalytics.rdepot.storage.PackageStorageLocalImpl;
@@ -87,8 +84,7 @@ import eu.openanalytics.rdepot.validation.UserValidator;
 @Configuration
 @ComponentScan("eu.openanalytics.rdepot")
 @EnableJpaRepositories("eu.openanalytics.rdepot.repository")
-public class WebApplicationConfig implements WebMvcConfigurer
-{
+public class WebApplicationConfig implements WebMvcConfigurer {
 
 	@Value("${db.driver}")
 	private String databaseDriver;

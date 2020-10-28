@@ -41,6 +41,10 @@ public class SimpleAuthenticationIntegrationTest {
 	@Before
     public void setUp() throws InterruptedException, IOException{
         driver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), new ChromeOptions());
+        String[] cmd = new String[] {"gradle", "restore", "-b","src/integration-test/resources/build.gradle"};
+		Process process = Runtime.getRuntime().exec(cmd);
+		process.waitFor();
+		process.destroy();
     }
 	
 	@After
@@ -68,8 +72,7 @@ public class SimpleAuthenticationIntegrationTest {
 		
 		int sizeOfNavBar = navBar.findElements(By.xpath("./a")).size();
 		
-		assertEquals("Admin should see all 6 sections in menu", 6, sizeOfNavBar);	
-		
+		assertEquals("Admin should see all 6 sections in menu", 6, sizeOfNavBar);			
 		assertEquals("RDepot", title);
 	}
 	
@@ -96,9 +99,7 @@ public class SimpleAuthenticationIntegrationTest {
       	driver.findElementById("password").sendKeys("testpassword");
       	driver.findElementById("button").click();
 		String title = driver.getTitle();
-		
-		System.out.println(title);
-		
+				
 		WebElement navBar = driver.findElementById("navbar");
 		
 		int sizeOfNavBar = navBar.findElements(By.xpath("./a")).size();
@@ -117,6 +118,20 @@ public class SimpleAuthenticationIntegrationTest {
       	
 		String title = driver.getTitle();
 		
-		assertEquals("RDepot - Login Page", title);
+		assertEquals("It hasn't logged out", "RDepot - Login Page", title);
+	}
+	
+	@Test
+	public void tryToLogInAsInactiveUser() throws InterruptedException {
+      	driver.get(url);
+      	driver.findElementById("username").sendKeys("doe");
+      	driver.findElementById("password").sendKeys("testpassword");
+      	driver.findElementById("button").click();
+		String title = driver.getTitle();
+      	
+      	String errorMsg = driver.findElementById("error_message").getText();
+		
+		assertEquals("Wrong error message is displayed", "error.authentication.inactive.user", errorMsg);
+		assertEquals("It hasn't stayed on login page", "RDepot - Login Page", title);
 	}
 }

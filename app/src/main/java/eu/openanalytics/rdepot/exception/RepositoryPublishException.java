@@ -36,7 +36,6 @@ public class RepositoryPublishException extends RepositoryException {
 
 	public RepositoryPublishException(MessageSource messageSource, Locale locale, Repository repository) {
 		super(MessageCodes.ERROR_REPOSITORY_PUBLISH, messageSource, locale, repository);
-
 	}
 
 }

@@ -56,6 +56,9 @@ public class RepositoryValidator implements Validator {
 			Repository publicationUriCheck = repositoryService.findByPublicationUri(repository.getPublicationUri());
 			if(publicationUriCheck != null)
 				errors.rejectValue("publicationUri", MessageCodes.ERROR_FORM_DUPLICATE_PUBLICATIONURI);
+			Repository serverAddressCheck = repositoryService.findByServerAddress(repository.getServerAddress());
+			if(serverAddressCheck != null)
+				errors.rejectValue("serverAddress", MessageCodes.ERROR_FORM_DUPLICATE_SERVERADDRESS);
 		}
 		else
 		{
@@ -72,6 +75,9 @@ public class RepositoryValidator implements Validator {
 				Repository publicationUriCheck = repositoryService.findByPublicationUri(repository.getPublicationUri());
 				if(publicationUriCheck != null && publicationUriCheck.getId() != originalRepository.getId())
 					errors.rejectValue("publicationUri", MessageCodes.ERROR_FORM_DUPLICATE_PUBLICATIONURI);
+				Repository serverAddressCheck = repositoryService.findByServerAddress(repository.getServerAddress());
+				if(serverAddressCheck != null)
+					errors.rejectValue("serverAddress", MessageCodes.ERROR_FORM_DUPLICATE_SERVERADDRESS);
 			}
 		}
 	}

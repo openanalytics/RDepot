@@ -7,7 +7,9 @@ app:
     basedn: dc=example,dc=org
     userou: 
     loginfield: cn
-    namefield: cn
+    namefield:
+      - givenName
+      - sn
     emailfield: mail
     default:
       admins: einstein
@@ -47,19 +49,23 @@ app:
   simple:
     users:
       - login: einstein
-        password: testpassword
+        password: testpassword  
+        name: Albert Einstein 
       - login: tesla
         password: testpassword
+        name: Nicolas Tesla
       - login: galieleo
         password: testpassword
+        name: Galileo Galilei
       - login: newton
         password: testpassword
+        name: Isaac Newton
       - login: newbie
         password: testpassword
-        name: New User  
+        name: New User
       - login: doe
         password: testpassword
-        name: John Doe  
+        name: John Doe 
     default:
       admins: 
         - einstein              

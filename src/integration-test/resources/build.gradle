@@ -13,10 +13,21 @@ task restore {
         exec {
             executable "docker"
             args "exec", "oa-rdepot-repo", "/bin/sh", "-c", "rm -r /opt/rdepot/*; cp -rf /opt/testServer/* /opt/rdepot"
-        }
+        }	
 
         println "Files restored"
     }
+}
+
+task restoreDeclarative {
+	doLast {
+		exec {
+            executable "docker"
+            args "exec", "oa-rdepot-db-declarative", "su", "-", "postgres", "-c", "dropdb postgres; createdb postgres; psql < /opt/database.sql"
+        }
+        
+        println "Declarative restored"
+	}
 }
 
 task wait {
@@ -32,6 +43,15 @@ task checkServer {
         exec {
             executable "docker"
             args "exec", "oa-rdepot-repo", "/bin/sh", "-c", "cd /opt/rdepot/testrepo2/src/contrib/Archive/accrued/"
+        }
+    }
+}
+
+task checkOnServerIfRepositoryWithOnlyOnePackageDoesNotHaveArchive {
+	doLast{
+        exec {
+            executable "docker"
+            args "exec", "oa-rdepot-repo", "/bin/sh", "-c", "cd /opt/rdepot/testrepo2/src/contrib/Archive/visdat/"
         }
     }
 }

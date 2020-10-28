@@ -93,10 +93,12 @@ public class RepositoryMaintainerController
 	private int placeholder = 9;
 	
 	@RequestMapping(method=RequestMethod.GET)
-	public String repositoryMaintainersPage(Model model) 
+	public String repositoryMaintainersPage(Model model, Principal principal) 
 	{
+		User user = userService.findByLogin(principal.getName());
 		model.addAttribute("repositorymaintainers", repositoryMaintainers());
 		model.addAttribute("role", placeholder);
+
 		return "repositorymaintainers";
 	}
 	

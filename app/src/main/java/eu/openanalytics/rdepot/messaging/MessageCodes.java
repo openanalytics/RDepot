@@ -20,23 +20,17 @@
  */
 package eu.openanalytics.rdepot.messaging;
 
-public final class MessageCodes 
-{
+public final class MessageCodes {
 	public final static String ERROR_SUBMISSION_NOT_FOUND = "submission.notfound";
 	public final static String WARNING_SUBMISSION_ALREADY_ACCEPTED = "submission.alreadyaccepted";
-	public final static String ERROR_SUBMISSION_USER_CHANGE_DUPLICATE = "submission.user.change.duplicate";
-	public final static String ERROR_SUBMISSION_PACKAGE_CHANGE_DUPLICATE = "submission.package.change.duplicate";
-
 	
 	public final static String ERROR_PACKAGE_EVENT_NOT_FOUND = "package.event.notfound";
 	
 	public final static String ERROR_PACKAGE_DEACTIVATE = "package.deactivate.error";
 	public final static String ERROR_PACKAGE_ACTIVATE = "package.activate.error";
 
-//	public final static String WARNING_PACKAGE_ALREADY_ACTIVE = "package.already.active.warning";
 	public static final String ERROR_REPOSITORY_EDIT = "repository.edit.error";
 
-	
 	public final static String ERROR_PACKAGE_EDIT = "package.edit.error";
 	public final static String ERROR_PACKAGE_CREATE = "package.create.error";
 	public final static String ERROR_PACKAGE_DELETE = "package.delete.error";
@@ -51,10 +45,6 @@ public final class MessageCodes
 	public final static String ERROR_PACKAGE_EMPTY_LICENSE = "package.empty.license";
 	public static final String ERROR_PACKAGE_EMPTY_MD5SUM = "package.empty.md5sum";
 	public static final String ERROR_PACKAGE_EMPTY_SOURCE = "package.empty.source";
-//	public static final String ERROR_PACKAGE_ACTIVE_CHANGE_DUPLICATE = "package.active.change.duplicate";
-//	public static final String ERROR_PACKAGE_SOURCE_CHANGE_DUPLICATE = "package.source.change.duplicate";
-	public static final String ERROR_PACKAGE_ALREADY_UPLOADED = "package.already.uploaded";
-	public static final String ERROR_PACKAGE_ALREADY_ACCEPTED = "package.already.accepted";
 	public static final String ERROR_PACKAGE_STORAGE_SOURCE_NOTFOUND = "package.storage.source.notfound";
 	
 	public final static String ERROR_PACKAGEMAINTAINER_NOT_FOUND = "packagemaintainer.notfound";
@@ -62,24 +52,13 @@ public final class MessageCodes
 	public final static String ERROR_PACKAGEMAINTAINER_EVENT_NOT_FOUND = "packagemaintainer.event.notfound";
 	
 	public final static String ERROR_REPOSITORY_NOT_FOUND = "repository.notfound";
-	public final static String ERROR_REPOSITORY_DUPLICATE = "repository.duplicate";
-	public final static String ERROR_REPOSITORY_PUBLICATIONURI_CHANGE_DUPLICATE = "repository.publicationuri.change.duplicate";
-	public final static String ERROR_REPOSITORY_VERSION_CHANGE_DUPLICATE = "repository.version.change.duplicate";
-	public final static String ERROR_REPOSITORY_SERVERADDRESS_CHANGE_DUPLICATE = "repository.serveraddress.change.duplicate";
-	public final static String ERROR_REPOSITORY_NAME_CHANGE_DUPLICATE = "repository.name.change.duplicate";
-	public final static String ERROR_REPOSITORY_ALREADY_PUBLISHED = "repository.alreadypublished";
-	public final static String ERROR_REPOSITORY_ALREADY_UNPUBLISHED = "repository.alreadyunpublished";
 	
-	public final static String ERROR_REPOSITORYMAINTAINER_NOT_FOUND = "repositorymaintainer.notfound";
-	public final static String ERROR_REPOSITORYMAINTAINER_DUPLICATE = "repositorymaintainer.error.duplicate";
+	public final static String ERROR_REPOSITORYMAINTAINER_NOT_FOUND = "error.repositorymaintainer.notfound";
+	public final static String ERROR_REPOSITORYMAINTAINER_DUPLICATE = "error.repositorymaintainer.duplicate";
 	
 	public final static String ERROR_USER_NOT_FOUND = "user.notfound";
 	public final static String ERROR_USER_NOT_CAPABLE = "user.notcapable";
 	public final static String ERROR_USER_NOT_AUTHORIZED = "user.notauthorized";
-	public final static String ERROR_USER_ALREADY_ACTIVE = "user.already.active";
-	public final static String ERROR_USER_ALREADY_INACTIVE = "user.already.inactive";
-	public final static String ERROR_USER_LASTLOGGEDINON_CHANGE_DUPLICATE = "user.lastloggedinon.change.duplicate";
-	public static final String ERROR_USER_ROLE_CHANGE_DUPLICATE = "user.role.change.duplicate";
 	
 	public final static String ERROR_PASSWORD_DOES_NOT_MATCH = "password.doesnotmatch";
 	public final static String ERROR_PASSWORD_INVALID = "password.invalid";
@@ -106,6 +85,7 @@ public final class MessageCodes
 	public final static String ERROR_FORM_DUPLICATE_LOGIN = "form.duplicate.login";
 	public final static String ERROR_FORM_DUPLICATE_EMAIL = "form.duplicate.email";
 	public final static String ERROR_FORM_DUPLICATE_PUBLICATIONURI = "form.duplicate.publicationuri";
+	public final static String ERROR_FORM_DUPLICATE_SERVERADDRESS = "form.duplicate.serveraddress";
 
 	public final static String ERROR_EMAIL_SEND_EXCEPTION = "email.send.exception";
 	
@@ -152,10 +132,6 @@ public final class MessageCodes
 	public static final String ERROR_REPOSITORY_CREATE = "repository.create.error";
 	public static final String ERROR_REPOSITORY_DELETE = "repository.delete.error";
 	public static final String WARNING_REPOSITORY_ALREADY_UNPUBLISHED = "warning.repository.already.unpublished";
-	public static final String WARNING_REPOSITORY_VERSION_CHANGE_DUPLICATE = "warning.repository.version.change.duplicate";
-	public static final String WARNING_REPOSITORY_PUBLICATIONURI_CHANGE_DUPLICATE = "warning.repository.publicationuri.change.duplicate";
-	public static final String WARNING_REPOSITORY_SERVERADDRESS_CHANGE_DUPLICATE = "repository.serveraddress.change.duplicate";
-	public static final String WARNING_REPOSITORY_NAME_CHANGE_DUPLICATE = "warning.repository.name.change.duplicate";
 	public static final String ERROR_SUBMISSION_ACCEPT = "error.submission.accept";
 	public static final String ERROR_SUBMISSION_CREATE = "error.submission.create";
 	public static final String WARNING_SUBMISSION_CREATE = "warning.submission.create";
@@ -193,6 +169,7 @@ public final class MessageCodes
 	public static final String ERROR_PACKAGEMAINTAINER_CREATE = "error.package.maintainer.create";
 	public static final String ERROR_PACKAGEMAINTAINER_DELETE = "error.package.maintainer.delete";
 	public static final String ERROR_PACKAGEMAINTAINER_EDIT = "error.package.maintainer.edit";
+	public static final String ERROR_NO_ADMIN_LEFT = "error.no.admin.left";
 
 	public static final String ERROR_AUTHENTICATION_INACTIVE_USER = "error.authentication.inactive.user";
 	public static final String ERROR_AUTHENTICATION_DELETED_USER = "error.authentication.deleted.user";
@@ -202,4 +179,5 @@ public final class MessageCodes
 	public static final String ERROR_DELETE_FROM_REMOTE_SERVER = "error.delete.from.remote.server";
 	public static final String ERROR_SYNCHRONIZE_REPOSITORY_WITH_REMOTE_SERVER = "error.synchronize.repository.with.remote.server";
 	public static final String ERROR_INVALID_SERVER_ADDRESS = "error.invalid.server.address";
+	public static final String ERROR_STORE_ON_REMOTE_SERVER = "error.store.on.remote.server";
 }

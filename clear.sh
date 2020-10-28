@@ -1,15 +1,15 @@
 cd docker/app
-sudo rm -f rdepot.war
+sudo rm -rf rdepot.war
 cd ../repo
-sudo rm -f rdepot-repo.jar
+sudo rm -rf rdepot-repo.jar
 cd ../..
 cd src/integration-test/resources/docker/app
-sudo rm -f rdepot.war
+sudo rm -rf rdepot.war
 cd ../repo
-sudo rm -f rdepot-repo.jar
+sudo rm -rf rdepot-repo.jar
 cd ../../
 ./clearPackages.sh
-docker-compose down
+docker-compose -f docker-compose-dev.yaml down
 cd ../../../
 rm -rvf .gradle/*
 rm -rvf app/.gradle/*

@@ -45,7 +45,7 @@
 				</div>
 				<div th:if="${error} and ${session}"  th:with="errorMsg=${session['SPRING_SECURITY_LAST_EXCEPTION'] == null ? '' : session['SPRING_SECURITY_LAST_EXCEPTION'].message}" class="error">
 					<h3 th:text="#{login.error}">Your login attempt was not successful, please try again.</h3><br/>
-					More information: <span th:text="${errorMsg}">Wrong input!</span>
+					More information: <span id="error_message" th:text="${errorMsg}">Wrong input!</span>
 				</div>
 				<button id="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" th:text="#{login.button.submit}">Log in</button>
 				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>

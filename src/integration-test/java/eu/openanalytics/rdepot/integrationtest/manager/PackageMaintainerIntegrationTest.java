@@ -31,65 +31,38 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.json.simple.parser.ParseException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import io.restassured.RestAssured;
+import eu.openanalytics.rdepot.integrationtest.IntegrationTest;
 import io.restassured.http.ContentType;
 
-public class PackageMaintainerIntegrationTest {
-	private static final String JSON_PATH = "src/integration-test/resources/JSONs";
-	private static final String API_PATH = "/api/manager/packages/maintainers";
+public class PackageMaintainerIntegrationTest extends IntegrationTest {	
+	private final String API_PATH = "/api/manager/packages/maintainers";
 	
-	private static final String FIRST_REPO_ID = "2";
-	private static final String SECOND_REPO_ID = "5";
-	
-	private static final String ADMIN_LOGIN = "einstein";
-	private static final String REPOSITORYMAINTAINER_LOGIN = "tesla";
-	private static final String PACKAGEMAINTAINER_LOGIN = "galieleo";
-	private static final String PASSWORD = "testpassword";
-	
-	private static final String USER_ID_TO_CREATE = "6";
-	private static final String PACKAGEMAINTAINER_ID_TO_DELETE = "2";
-	private static final String PACKAGEMAINTAINER_ID_TO_EDIT = "2";
-	private static final String PACKAGEMAINTAINER_ID_TO_RECREATE = "5";
-	
-	private static final String PACKAGE_NAME_TO_CREATE = "usl";
-	private static final String PACKAGE_NAME_TO_EDIT = "abc";
-	
-	@Before
-	public void setUp() throws IOException, InterruptedException {
-		String[] cmd = new String[] {"gradle", "restore", "-b","src/integration-test/resources/build.gradle"};
-		Process process = Runtime.getRuntime().exec(cmd);
-		process.waitFor();
-		process.destroy();
-	}
-	
-	@BeforeClass
-	public static void configureRestAssured() throws IOException, InterruptedException {
-		RestAssured.port = 8017;
-		RestAssured.urlEncodingEnabled = false;
-
-	}
-	
-	@Test
-	public void shouldReturnPackageMaintainers() throws ParseException, IOException {
-		JsonParser jsonParser = new JsonParser();
+	private final String FIRST_REPO_ID = "2";
+	private final String SECOND_REPO_ID = "5";
 		
+	private final String USER_ID_TO_CREATE = "6";
+	private final String PACKAGEMAINTAINER_ID_TO_DELETE = "2";
+	private final String PACKAGEMAINTAINER_ID_TO_EDIT = "2";
+	private final String PACKAGEMAINTAINER_ID_TO_RECREATE = "5";
+	
+	private final String PACKAGE_NAME_TO_CREATE = "usl";
+	private final String PACKAGE_NAME_TO_EDIT = "abc";
+		
+	@Test
+	public void shouldReturnPackageMaintainers() throws ParseException, IOException {		
 		FileReader reader = new FileReader(JSON_PATH + "/packageMaintainer/list_package_maintainers_view_by_repo_maintainer.json");
-		JsonArray expectedJSON = (JsonArray) jsonParser.parse(reader);
+		JsonArray expectedJSON = (JsonArray) JsonParser.parseReader(reader);
 		reader = new FileReader(JSON_PATH + "/packageMaintainer/list_package_maintainers_view_by_admin.json");
-		JsonArray wrongJSON = (JsonArray) jsonParser.parse(reader);
+		JsonArray wrongJSON = (JsonArray) JsonParser.parseReader(reader);
 		
 		String data = given()
-			.auth()
-			.basic(REPOSITORYMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/list")
@@ -98,17 +71,16 @@ public class PackageMaintainerIntegrationTest {
 			.extract()
 			.asString();
 		
-		JsonArray actualJSON = (JsonArray) jsonParser.parse(data);
+		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 
 		assertTrue("Differences in JSON view by Repository Maintainer", compareArrays(expectedJSON, actualJSON));
 		assertFalse("Repository Maintainer can see JSON only allowed to Admin", compareArrays(wrongJSON, actualJSON));
 	}
 	
 	@Test
-	public void shouldNonRepositoryMaintainerUserNotBeAbleToReturnPackageMaintainers() {
+	public void nonRepositoryMaintainerShouldNotBeAbleToReturnPackageMaintainers() {
 		given()
-			.auth()
-			.basic(PACKAGEMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/list")
@@ -118,14 +90,11 @@ public class PackageMaintainerIntegrationTest {
 	
 	@Test
 	public void shouldReturnDeletedPackageMaintainers() throws ParseException, IOException {
-		JsonParser jsonParser = new JsonParser();
-		
 		FileReader reader = new FileReader(JSON_PATH + "/packageMaintainer/deleted_package_maintainers.json");
-		JsonArray expectedJSON = (JsonArray) jsonParser.parse(reader);
+		JsonArray expectedJSON = (JsonArray) JsonParser.parseReader(reader);
 		
 		String data = given()
-			.auth()
-			.basic(ADMIN_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/deleted")
@@ -134,16 +103,15 @@ public class PackageMaintainerIntegrationTest {
 			.extract()
 			.asString();
 		
-		JsonArray actualJSON = (JsonArray) jsonParser.parse(data);
+		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 
 		assertTrue("Differences in deleted package maintainers JSON", compareArrays(expectedJSON, actualJSON));
 	}
 	
 	@Test
-	public void shouldNonRepositoryMaintainerUserNotBeAbleToReturnDeletedPackageMaintainers() {
+	public void nonRepositoryMaintainerShouldNotBeAbleToReturnDeletedPackageMaintainers() {
 		given()
-			.auth()
-			.basic(REPOSITORYMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/deleted")
@@ -152,18 +120,15 @@ public class PackageMaintainerIntegrationTest {
 	}
 	
 	@Test
-	public void shouldListPackageMaintainersWithGetCreate() throws IOException, ParseException {
-		JsonParser jsonParser = new JsonParser();
-		
+	public void shouldListPackageMaintainersWithGetCreate() throws IOException, ParseException {		
 		FileReader reader = new FileReader(JSON_PATH + "/packageMaintainer/get_create_package_maintainers_view_by_repo_maintainer.json");
-		JsonObject expectedJSON = (JsonObject) jsonParser.parse(reader);
+		JsonObject expectedJSON = (JsonObject) JsonParser.parseReader(reader);
 		
 		reader = new FileReader(JSON_PATH + "/packageMaintainer/get_create_package_maintainers_view_by_admin.json");
-		JsonObject wrongJSON = (JsonObject) jsonParser.parse(reader);
+		JsonObject wrongJSON = (JsonObject) JsonParser.parseReader(reader);
 		
 		String data = given()
-			.auth()
-			.basic(REPOSITORYMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/create")
@@ -172,17 +137,16 @@ public class PackageMaintainerIntegrationTest {
 			.extract()
 			.asString();
 		
-		JsonObject actualJSON = (JsonObject) jsonParser.parse(data);
+		JsonObject actualJSON = (JsonObject) JsonParser.parseString(data);
 		
-		assertTrue(compareObjects(expectedJSON, actualJSON));
-		assertFalse(compareObjects(wrongJSON, actualJSON));
+		assertTrue("There are some differencess in the package maintainer list viewed by repository maintianer", compareListOfMaintainersFromGetMaintainers(expectedJSON, actualJSON));
+		assertFalse("Probably the package maintainer list is viewed by admin", compareListOfMaintainersFromGetMaintainers(wrongJSON, actualJSON));
 	}
 	
 	@Test
-	public void shouldNonRepositoryMaintainerUserNotBeAbleToCreateNewPackageMaintainerWithMethodGet() {
+	public void nonRepositoryMaintainerShouldNotBeAbleToListPackageMaintainersWithGetCreate() {
 		given()
-			.auth()
-			.basic(PACKAGEMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/create")
@@ -198,8 +162,7 @@ public class PackageMaintainerIntegrationTest {
 		params.put("packageName", PACKAGE_NAME_TO_CREATE);
 		
 		given()
-			.auth()
-			.basic(REPOSITORYMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.contentType(ContentType.JSON)
 			.accept(ContentType.JSON)
 			.body(params)
@@ -208,14 +171,11 @@ public class PackageMaintainerIntegrationTest {
 		.then()
 			.statusCode(200);
 		
-		JsonParser jsonParser = new JsonParser();
-		
 		FileReader reader = new FileReader(JSON_PATH + "/packageMaintainer/list_created_package_maintainer_view_by_admin.json");
-		JsonArray expectedJSON = (JsonArray) jsonParser.parse(reader);
+		JsonArray expectedJSON = (JsonArray) JsonParser.parseReader(reader);
 		
 		String data = given()
-			.auth()
-			.basic(ADMIN_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/list")
@@ -224,21 +184,20 @@ public class PackageMaintainerIntegrationTest {
 			.extract()
 			.asString();
 		
-		JsonArray actualJSON = (JsonArray) jsonParser.parse(data);
+		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 
-		assertTrue(compareArrays(expectedJSON, actualJSON));
+		assertTrue("New package maintainer hasn't been created", compareArrays(expectedJSON, actualJSON));
 	}
 	
 	@Test
-	public void shouldNonRepositoryMaintainerUserNotBeAbleToCreateNewPackageMaintainerWithMethodPost() {
+	public void nonRepositoryMaintainerShouldNotBeAbleToCreateNewPackageMaintainer() {
 		Map<String, String> params = new HashMap<>();
 		params.put("userId", USER_ID_TO_CREATE);
 		params.put("repositoryId", FIRST_REPO_ID);
 		params.put("packageName", PACKAGE_NAME_TO_CREATE);
 		
 		given()
-			.auth()
-			.basic(PACKAGEMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
 			.contentType(ContentType.JSON)
 			.accept(ContentType.JSON)
 			.body(params)
@@ -255,8 +214,7 @@ public class PackageMaintainerIntegrationTest {
 		params.put("packageName", PACKAGE_NAME_TO_EDIT);
 		
 		given()
-			.auth()
-			.basic(REPOSITORYMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.contentType(ContentType.JSON)
 			.accept(ContentType.JSON)
 			.body(params)
@@ -265,14 +223,11 @@ public class PackageMaintainerIntegrationTest {
 		.then()
 			.statusCode(200);
 		
-		JsonParser jsonParser = new JsonParser();
-		
 		FileReader reader = new FileReader(JSON_PATH + "/packageMaintainer/edited_package_maintainers_view_by_admin.json");
-		JsonArray expectedJSON = (JsonArray) jsonParser.parse(reader);
+		JsonArray expectedJSON = (JsonArray) JsonParser.parseReader(reader);
 		
 		String data = given()
-				.auth()
-				.basic(ADMIN_LOGIN, PASSWORD)
+				.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 				.accept(ContentType.JSON)
 			.when()
 				.get(API_PATH + "/list")
@@ -281,20 +236,19 @@ public class PackageMaintainerIntegrationTest {
 				.extract()
 				.asString();
 			
-		JsonArray actualJSON = (JsonArray) jsonParser.parse(data);
+		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 
-		assertTrue(compareArrays(expectedJSON, actualJSON));
+		assertTrue("Package maintainer hasn't been changed", compareArrays(expectedJSON, actualJSON));
 	}
 	
 	@Test
-	public void shouldNonRepositoryMaintainerUserNotBeAbleToEditPackageMaintainer() {
+	public void nonRepositoryMaintainerShouldNotBeAbleToEditPackageMaintainer() {
 		Map<String, String> params = new HashMap<>();
 		params.put("repositoryId", SECOND_REPO_ID);
 		params.put("packageName", PACKAGE_NAME_TO_EDIT);
 		
 		given()
-			.auth()
-			.basic(PACKAGEMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
 			.contentType(ContentType.JSON)
 			.accept(ContentType.JSON)
 			.body(params)
@@ -307,22 +261,18 @@ public class PackageMaintainerIntegrationTest {
 	@Test
 	public void shouldDeletePackageMaintainer() throws IOException, ParseException {		
 		given()
-			.auth()
-			.basic(REPOSITORYMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.delete(API_PATH + "/" + PACKAGEMAINTAINER_ID_TO_DELETE + "/delete")
 		.then()
 			.statusCode(200);
 		
-		JsonParser jsonParser = new JsonParser();
-		
 		FileReader reader = new FileReader(JSON_PATH + "/packageMaintainer/list_package_maintainers_without_one.json");
-		JsonArray expectedJSON = (JsonArray) jsonParser.parse(reader);
+		JsonArray expectedJSON = (JsonArray) JsonParser.parseReader(reader);
 		
 		String data = given()
-			.auth()
-			.basic(REPOSITORYMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/list")
@@ -331,14 +281,13 @@ public class PackageMaintainerIntegrationTest {
 			.extract()
 			.asString();
 		
-		JsonArray actualJSON = (JsonArray) jsonParser.parse(data);
+		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 		
 		reader = new FileReader(JSON_PATH + "/packageMaintainer/deleted_package_maintainers_with_new_one.json");
-		JsonArray expectedDeleted = (JsonArray) jsonParser.parse(reader);
+		JsonArray expectedDeleted = (JsonArray) JsonParser.parseReader(reader);
 		
 		String deleted = given()
-			.auth()
-			.basic(ADMIN_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/deleted")
@@ -347,17 +296,16 @@ public class PackageMaintainerIntegrationTest {
 			.extract()
 			.asString();
 		
-		JsonArray actualDeleted = (JsonArray) jsonParser.parse(deleted);
+		JsonArray actualDeleted = (JsonArray) JsonParser.parseString(deleted);
 
-		assertTrue(compareArrays(expectedJSON, actualJSON));
-		assertTrue(compareArrays(expectedDeleted, actualDeleted));
+		assertTrue("'Deleted' package maintainer still exists in the list of package maintainers", compareArrays(expectedJSON, actualJSON));
+		assertTrue("'Deleted' package maintainer hasn't been added to the lis of deleted ones", compareArrays(expectedDeleted, actualDeleted));
 	}
 	
 	@Test
-	public void shouldNonRepositoryMaintainerUserNotBeAbleToDeletePackageMaintainer() {
+	public void nonRepositoryMaintainerShouldNotBeAbleToDeletePackageMaintainer() {
 		given()
-			.auth()
-			.basic(PACKAGEMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.delete(API_PATH + "/" + PACKAGEMAINTAINER_ID_TO_DELETE + "/delete")
@@ -373,8 +321,7 @@ public class PackageMaintainerIntegrationTest {
 		params.put("packageName", PACKAGE_NAME_TO_CREATE);
 		
 		given()
-			.auth()
-			.basic(REPOSITORYMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.contentType(ContentType.JSON)
 			.accept(ContentType.JSON)
 			.body(params)
@@ -384,8 +331,7 @@ public class PackageMaintainerIntegrationTest {
 			.statusCode(200);
 		
 		given()
-			.auth()
-			.basic(REPOSITORYMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.delete(API_PATH + "/" + PACKAGEMAINTAINER_ID_TO_RECREATE + "/delete")
@@ -393,8 +339,7 @@ public class PackageMaintainerIntegrationTest {
 			.statusCode(200);
 		
 		given()
-			.auth()
-			.basic(REPOSITORYMAINTAINER_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.contentType(ContentType.JSON)
 			.accept(ContentType.JSON)
 			.body(params)
@@ -403,14 +348,11 @@ public class PackageMaintainerIntegrationTest {
 		.then()
 			.statusCode(200);
 		
-		JsonParser jsonParser = new JsonParser();
-		
 		FileReader reader = new FileReader(JSON_PATH + "/packageMaintainer/package_maintainers_recreated.json");
-		JsonArray expectedJSON = (JsonArray) jsonParser.parse(reader);
+		JsonArray expectedJSON = (JsonArray) JsonParser.parseReader(reader);
 		
 		String data = given()
-			.auth()
-			.basic(ADMIN_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/list")
@@ -419,14 +361,13 @@ public class PackageMaintainerIntegrationTest {
 			.extract()
 			.asString();
 		
-		JsonArray actualJSON = (JsonArray) jsonParser.parse(data);
+		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 		
 		reader = new FileReader(JSON_PATH + "/packageMaintainer/deleted_package_maintainers_recreated.json");
-		JsonArray expectedDeleted = (JsonArray) jsonParser.parse(reader);
+		JsonArray expectedDeleted = (JsonArray) JsonParser.parseReader(reader);
 		
 		String deleted = given()
-			.auth()
-			.basic(ADMIN_LOGIN, PASSWORD)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/deleted")
@@ -435,37 +376,17 @@ public class PackageMaintainerIntegrationTest {
 			.extract()
 			.asString();
 		
-		JsonArray actualDeleted = (JsonArray) jsonParser.parse(deleted);
+		JsonArray actualDeleted = (JsonArray) JsonParser.parseString(deleted);
 
-		assertTrue(compareArrays(expectedJSON, actualJSON));
-		assertTrue(compareArrays(expectedDeleted, actualDeleted));
+		assertTrue("'Reacreated' package maintainer hasn't been added to the list of package maintainers", compareArrays(expectedJSON, actualJSON));
+		assertTrue("'Reacreated' package maintainer still exists in the list of deleted ones", compareArrays(expectedDeleted, actualDeleted));
 	}
-	
-//	@SuppressWarnings({ "rawtypes", "unchecked" })
-//	private List<Set> convertPackages(JsonArray rootJSON) throws ParseException {
-//		List<Set> JSON = new ArrayList<>();
-//		
-//		for(int i = 0; i < rootJSON.size(); i++) {
-//			JsonObject repositoryJSON = (JsonObject) rootJSON.get(i);
-//			JsonArray packagesJSON = (JsonArray) repositoryJSON.get("packages");
-//			Set JSONSet = new HashSet<>();
-//			for(int k = 0; k < packagesJSON.size(); k++) {
-//				JsonObject packageJSON = (JsonObject) packagesJSON.get(k);
-//				JSONSet.add(packageJSON);
-//			}
-//			JSON.add(JSONSet);
-//		}
-//		return JSON;
-//	}
-	
+		
 	private boolean compareArrays(JsonArray expectedJSON, JsonArray actualJSON) throws ParseException {
 		
 		if (expectedJSON == null || actualJSON == null)
 			return false;
-		
-//		if (expectedJSON.size() != actualJSON.size())
-//			return false;
-		
+				
 		for(int i = 0; i < expectedJSON.size(); i++) {
 			JsonObject expectedRepository = (JsonObject) expectedJSON.get(i);
 			JsonObject actualRepository = (JsonObject) actualJSON.get(i);
@@ -483,20 +404,6 @@ public class PackageMaintainerIntegrationTest {
 			if(!expectedRepository.equals(actualRepository))
 				return false;
 		}
-		return true;
-	}
-
-	private boolean compareObjects(JsonObject expected, JsonObject actual) throws ParseException {
-		
-		if (expected == null || actual == null)
-			return false;
-		
-		expected.remove("repositories");
-		actual.remove("repositories");
-		
-		if(!expected.equals(actual))
-			return false;
-		
 		return true;
 	}
 }

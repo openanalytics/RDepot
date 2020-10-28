@@ -81,6 +81,7 @@ dependencies {
 	implementation dependencies.undertow
 	implementation dependencies.oAuth2Jose
     implementation dependencies.keycloakStarter
+    implementation dependencies.auth0
     
     implementation dependencies.commonsCollections4	
 

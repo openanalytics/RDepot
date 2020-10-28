@@ -109,7 +109,6 @@ public class OIDCCustomBindAuthenticator {
 					userService.create(user);
 				} catch (UserCreateException e) {
 					throw new AuthenticationUserCreationException();
-//					throw new BadCredentialsException(messages.getMessage(e.getMessage(), e.getMessage()));
 				}
 			}
 			else if(!user.isActive())
@@ -147,13 +146,11 @@ public class OIDCCustomBindAuthenticator {
 		user.setLastLoggedInOn(new Date());
 		try 
 		{
-			//userService.update(user, null);
 			userService.evaluateAndUpdate(user, null);
 		} 
 		catch (UserEditException | UserNotFound e) 
 		{
 			throw new AuthenticationUserEditionException();
-//			throw new BadCredentialsException(messages.getMessage(e.getMessage(), e.getMessage()));
 		}
 		return userService.getGrantedAuthorities(login);
 	}

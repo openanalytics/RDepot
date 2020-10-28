@@ -61,8 +61,8 @@ import eu.openanalytics.rdepot.exception.RepositoryMaintainerDeleteException;
 import eu.openanalytics.rdepot.exception.RepositoryMaintainerNotFound;
 import eu.openanalytics.rdepot.exception.RepositoryNotFound;
 import eu.openanalytics.rdepot.exception.RepositoryPublishException;
+import eu.openanalytics.rdepot.exception.StoreOnRemoteServerException;
 import eu.openanalytics.rdepot.exception.UploadToRemoteServerException;
-import eu.openanalytics.rdepot.messaging.MessageCodes;
 import eu.openanalytics.rdepot.model.Event;
 import eu.openanalytics.rdepot.model.Package;
 import eu.openanalytics.rdepot.model.PackageMaintainer;
@@ -418,14 +418,49 @@ public class RepositoryService
 		return repositoryRepository.findByPublicationUriAndDeleted(publicationUri, false);
 	}
 	
+	public Repository findByServerAddress(String serverAddres) {
+		return repositoryRepository.findByServerAddressAndDeleted(serverAddres, false);
+	}
+	
 	@Transactional(readOnly=false)
 	public void boostRepositoryVersion(Repository repository, User updater)
 			throws RepositoryEditException {
 		updateVersion(repository, updater, repository.getVersion() + 1);
 	}
+	
+	private synchronized void storeRepositoryOnRemoteServer(Repository repository,
+			String dateStamp, List<Package> packages, 
+			List<Package> archivePackages, List<Package> latestPackages) throws StoreOnRemoteServerException {
+		try {
+			repositoryStorage.createFolderStructureForGeneration(
+					repository, dateStamp);
+			repositoryStorage.populateGeneratedFolder(packages, repository, dateStamp);
+			repositoryStorage.copyFromRepositoryToRemoteServer(latestPackages, archivePackages,
+					repositoryStorage.linkCurrentFolderToGeneratedFolder(repository, dateStamp),
+					repository);
+		} catch (PackageFolderPopulationException |
+				UploadToRemoteServerException | 
+				LinkFoldersException e) {
+			
+			try {
+				repositoryStorage.deleteGenerationDirectory(repository, dateStamp);
+			} catch (DeleteFileException dfe) {
+				logger.error("Cannot remove generation directory after publication failure!\n" 
+							+ dfe.getMessage(), dfe);
+			}
+			
+			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
+			throw new StoreOnRemoteServerException(messageSource, locale, repository);
+			
+		} catch(CreateFolderStructureException e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
+			throw new StoreOnRemoteServerException(messageSource, locale, repository);
+		}
+		
+	}
 
 	@Transactional(readOnly = false, rollbackFor=RepositoryPublishException.class)
-	public synchronized void publishRepository(Repository repository, User uploader)
+	public void publishRepository(Repository repository, User uploader)
 			throws RepositoryPublishException {
 		String dateStamp = (new SimpleDateFormat("yyyyMMdd")).format(DateProvider.now());
 		List<Package> packages = packageService.findByRepositoryAndActive(repository, true);
@@ -448,33 +483,12 @@ public class RepositoryService
 			
 			repository.setPublished(true);
 			
-			repositoryStorage.createFolderStructureForGeneration(
-					repository, dateStamp);
-			repositoryStorage.populateGeneratedFolder(packages, repository, dateStamp);
-			repositoryStorage.copyFromRepositoryToRemoteServer(latestPackages, archivePackages,
-					repositoryStorage.linkCurrentFolderToGeneratedFolder(repository, dateStamp),
-					repository);
+			storeRepositoryOnRemoteServer(repository, dateStamp, packages, archivePackages, latestPackages);
 						
-		} catch (EventNotFound |
-				CreateFolderStructureException |
-				RepositoryEditException e) {
+		} catch (EventNotFound | RepositoryEditException | StoreOnRemoteServerException e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
 			throw new RepositoryPublishException(messageSource, locale, repository);
-		} catch (PackageFolderPopulationException |
-				UploadToRemoteServerException | 
-				LinkFoldersException e) {
-			
-			try {
-				repositoryStorage.deleteGenerationDirectory(repository, dateStamp);
-			} catch (DeleteFileException dfe) {
-				logger.error("Cannot remove generation directory after publication failure!\n" 
-							+ dfe.getMessage(), dfe);
-			}
-			
-			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
-			throw new RepositoryPublishException(messageSource, locale, repository);
-			
-		}
+		} 
 		// TODO:
 		// 4. Generate the HTML pages? -> use template inside the resources folder?
 	}
@@ -511,8 +525,7 @@ public class RepositoryService
 					}
 				}
 			}
-		} catch (AdminNotFound e1) {
-//			logger.error(e1.getMessage());
+		} catch (AdminNotFound e) {	
 			logger.error("When trying to create a preconfigured repository, we couldn't find any valid administrator");
 		}
 					

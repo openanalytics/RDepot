@@ -32,6 +32,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import org.apache.commons.io.FileUtils;
@@ -86,6 +88,8 @@ public class SynchronizeRepositoryTest {
 	private File testPackagesDir;
 	
 	private final String REPOSITORY = "testrepo";
+	
+	private final String NON_EXISTING_REPOSITORY = "testrepo1";
 	
     private FileSystemStorageService storageService;
     
@@ -212,6 +216,15 @@ public class SynchronizeRepositoryTest {
 	}
     
     @Test
+    public void getPackages_WhenRepositoryIsEmpty() {
+    	List<File> files = storageService.getRecentPackagesFromRepository(NON_EXISTING_REPOSITORY);
+    	Map<String, List<File>> archive = storageService.getArchiveFromRepository(NON_EXISTING_REPOSITORY);
+    	
+    	assertTrue(files.isEmpty(), "File list should be empty.");
+    	assertTrue(archive.isEmpty(), "Archive map should be empty.");
+    }
+    
+    @Test
     public void deletePackages() throws IOException, ProcessRequestException {
     	String randomId = RandomStringUtils.randomAlphabetic(16);
     	doNothing().when(requestMap).remove(randomId);
@@ -308,6 +321,11 @@ public class SynchronizeRepositoryTest {
     	assertTrue(backup.getTrashDirectory().exists());
     	assertTrue(backup.getTrashDirectory().toPath().resolve(TRASH_DATABASE_FILE).toFile().exists());
     	assertEquals(1, backupMap.size(), "There should be only one backup for transaction!");
+    }
+    
+    @Test
+    public void uploadPackages_toEmptyRepository() {
+    	
     }
     
     @Test

@@ -20,15 +20,49 @@
  */
 package eu.openanalytics.rdepot.controller;
 
+import org.keycloak.KeycloakPrincipal;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.ControllerAdvice; 
+
+import eu.openanalytics.rdepot.model.User;
+import eu.openanalytics.rdepot.service.UserService; 
 
 @ControllerAdvice
 public class GlobalController {
+	
+	@Autowired
+	UserService userService;
 	
 	@ModelAttribute("applicationVersion")
 	public String getVersion() {
 		return getClass().getPackage().getImplementationVersion();
 	}
 
+	@ModelAttribute("username")
+	public String getUser() {
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		String username = null;
+		
+		if(principal instanceof UserDetails) {
+			username = ((UserDetails)principal).getUsername();
+		} else if (principal instanceof KeycloakPrincipal) {
+			username = ((KeycloakPrincipal<?>)principal).getName();
+		} else if (principal instanceof DefaultOidcUser) {
+			username = ((DefaultOidcUser)principal).getName();
+		}
+		
+		if(username == null) {
+			username = SecurityContextHolder.getContext().getAuthentication().getName();
+		}
+		
+		User user = userService.findByLogin(username);
+		if(user != null)
+			return user.getName();
+		else
+			return username;
+	}
 }

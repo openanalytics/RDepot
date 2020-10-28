@@ -24,7 +24,9 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
+import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 
 import javax.validation.Valid;
 
@@ -32,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -45,14 +48,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import com.auth0.jwt.JWT;
 
+import eu.openanalytics.rdepot.exception.NoAdminLeftException;
 import eu.openanalytics.rdepot.exception.UserActivateException;
 import eu.openanalytics.rdepot.exception.UserDeactivateException;
 import eu.openanalytics.rdepot.exception.UserEditException;
 import eu.openanalytics.rdepot.exception.UserNotFound;
 import eu.openanalytics.rdepot.messaging.MessageCodes;
+import eu.openanalytics.rdepot.model.ApiToken;
 import eu.openanalytics.rdepot.model.Role;
 import eu.openanalytics.rdepot.model.User;
+import eu.openanalytics.rdepot.repository.ApiTokenRepository;
 import eu.openanalytics.rdepot.service.RoleService;
 import eu.openanalytics.rdepot.service.UserEventService;
 import eu.openanalytics.rdepot.service.UserService;
@@ -62,7 +69,7 @@ import eu.openanalytics.rdepot.warning.UserAlreadyDeactivatedWarning;
 @Controller
 @RequestMapping(value= {"/manager/users", "/api/manager/users"})
 public class UserController 
-{
+{	
 	@Autowired
 	private UserService userService;
 	
@@ -77,7 +84,7 @@ public class UserController
 
 	@Autowired
 	private MessageSource messageSource;
-	
+		
 	@InitBinder(value="user")
 	private void initBinder(WebDataBinder binder) 
 	{
@@ -88,11 +95,24 @@ public class UserController
 	
 	@PreAuthorize("hasAuthority('admin')")
 	@RequestMapping(method=RequestMethod.GET)
-	public String usersPage(Model model) 
+	public String usersPage(Model model, Principal principal) 
 	{
+		User requester = userService.findByLogin(principal.getName());
 		model.addAttribute("users", users());
 		model.addAttribute("role", placeholder);
+
 		return "users";
+	}
+	
+	@PreAuthorize("hasAuthority('user')")
+	@RequestMapping(value = "/token", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, String> getToken(Principal principal)  
+	{
+		HashMap<String, String> result = new HashMap<>();
+		
+		result.put("token", userService.generateToken(principal.getName()));
+
+		return result;
 	}
 
 	@PreAuthorize("hasAuthority('admin')")
@@ -222,7 +242,7 @@ public class UserController
 				result.put("success", messageSource.getMessage(MessageCodes.SUCCESS_USER_DEACTIVATED, null, locale));		
 			} 
 		}
-		catch (UserDeactivateException e) {
+		catch (UserDeactivateException | NoAdminLeftException e) {
 			result.put("error", e.getMessage());
 		} catch (UserAlreadyDeactivatedWarning w) {
 			result.put("warning", w.getMessage());

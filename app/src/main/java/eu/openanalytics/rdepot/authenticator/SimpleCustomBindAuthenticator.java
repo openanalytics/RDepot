@@ -34,9 +34,12 @@ import org.springframework.core.env.Environment;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
+import eu.openanalytics.rdepot.exception.AuthenticationDeletedUserException;
+import eu.openanalytics.rdepot.exception.AuthenticationInactiveUserException;
+import eu.openanalytics.rdepot.exception.AuthenticationUserCreationException;
+import eu.openanalytics.rdepot.exception.AuthenticationUserEditionException;
 import eu.openanalytics.rdepot.exception.UserCreateException;
 import eu.openanalytics.rdepot.exception.UserEditException;
-import eu.openanalytics.rdepot.exception.UserException;
 import eu.openanalytics.rdepot.exception.UserNotFound;
 import eu.openanalytics.rdepot.model.Role;
 import eu.openanalytics.rdepot.model.User;
@@ -59,7 +62,6 @@ public class SimpleCustomBindAuthenticator {
 	
 	private String login, email, name;
 	
-	@SuppressWarnings("unchecked")
 	public List<? extends GrantedAuthority> authenticate(String username, String useremail, String fullname) {
 		this.login = username;	
 		this.email = useremail;
@@ -106,18 +108,16 @@ public class SimpleCustomBindAuthenticator {
 				try {
 					userService.create(user);
 				} catch (UserCreateException e) {
-//					throw new BadCredentialsException(messages.getMessage(e.getMessage(), e.getMessage()));
+					throw new AuthenticationUserCreationException();
 				}
 			}
 			else if(!user.isActive())
 			{
-//				throw new BadCredentialsException(
-//	                    messages.getMessage("AbstractUserDetailsAuthenticationProvider.disabled", "Account disabled"));
+				throw new AuthenticationInactiveUserException();
 			}
 			else if(user.isDeleted())
 			{
-//				throw new BadCredentialsException(
-//	                    messages.getMessage("AbstractUserDetailsAuthenticationProvider.disabled", "Account disabled"));
+				throw new AuthenticationDeletedUserException();
 			}
 			else
 			{
@@ -125,6 +125,14 @@ public class SimpleCustomBindAuthenticator {
 				if(!Objects.equals(name, user.getName()))
 					user.setName(name);		
 			}		
+		}
+		else if(!user.isActive())
+		{
+			throw new AuthenticationInactiveUserException();
+		}
+		else if(user.isDeleted())
+		{
+			throw new AuthenticationDeletedUserException();
 		}
 		else
 		{
@@ -140,12 +148,11 @@ public class SimpleCustomBindAuthenticator {
 		user.setLastLoggedInOn(new Date());
 		try 
 		{
-			//userService.update(user, null);
 			userService.evaluateAndUpdate(user, null);
 		} 
 		catch (UserEditException | UserNotFound e) 
 		{
-//			throw new BadCredentialsException(messages.getMessage(e.getMessage(), e.getMessage()));
+			throw new AuthenticationUserEditionException();
 		}
 		return (List<? extends GrantedAuthority>) userService.getGrantedAuthorities(login);
 	}

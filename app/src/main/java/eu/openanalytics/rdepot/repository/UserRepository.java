@@ -43,4 +43,5 @@ public interface UserRepository extends JpaRepository<User, Integer>
 	public User findByLoginIgnoreCaseAndDeleted(String login, boolean deleted);
 	public User findByEmailAndDeleted(String email, boolean deleted);
 	public List<User> findByRoleAndDeleted(Role role, boolean deleted);
+	public List<User> findByRoleAndActiveAndDeleted(Role adminRole, boolean active, boolean deleted);
 }

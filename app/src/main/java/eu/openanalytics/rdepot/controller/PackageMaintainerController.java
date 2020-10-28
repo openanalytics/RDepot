@@ -102,6 +102,7 @@ public class PackageMaintainerController {
 		User requester = userService.findByLoginWithRepositoryMaintainers(principal.getName());
 		model.addAttribute("packagemaintainers", packageMaintainerService.findByRequester(requester));
 		model.addAttribute("role", requester.getRole().getValue());
+
 		return "packagemaintainers";
 	}
 	
@@ -132,6 +133,7 @@ public class PackageMaintainerController {
 		//result.put("packages", gson.toJson(packageService.findNamesPerRepository()));
 		result.put("packages", packageService.findNamesPerRepository());
 		result.put("role", requester.getRole().getValue());
+		
 		return result;
 	}
 	

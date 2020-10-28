@@ -6,8 +6,15 @@
         <div class="mdl-layout mdl-js-layout">
             <header th:replace="fragments/header :: topbar (module='repositories')"></header>
             <div th:replace="fragments/header :: drawer (module='repositories')"></div>
-            <main class="mdl-layout__content">
-                <button th:if="${role > 2}" type="button" class="add-repository-fab mdl-button mdl-button--fab mdl-button--primary" onclick="openAddRepositoryDialog()"><i class="material-icons">add</i></button>       
+            <main class="mdl-layout__content">                    
+                 <div th:switch="${disabled}">
+                 	<div th:case="${false}">
+                 		<button th:if="${role > 2}" type="button" class="add-repository-fab mdl-button mdl-button--fab mdl-button--primary" onclick="openAddRepositoryDialog()"><i class="material-icons">add</i></button>
+                 	</div>
+                 	<div th:case="${true}">
+                 		<button th:if="${role > 2}" type="button" class="add-repository-fab mdl-button mdl-button--fab mdl-button--primary" style="background-color:rgba(0,0,0, 0.26);" onclick="openAddRepositoryDialog()" disabled><i class="material-icons">add</i></button>
+                 	</div>
+                 </div>	                                             
                     
                 <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp full-width">
                     <thead>
@@ -44,12 +51,24 @@
                             </td>
                             <td class="mdl-data-table__cell--non-numeric">
                                 <div th:if="${role > 1 && maintained.contains(repository.id)}">
-                                        <button th:if="${role > 2}" class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" th:onclick="'openDeleteRepositoryDialog('+ ${repository.id} + ')'">
-                                            <i class="material-icons">delete_forever</i>
-                                        </button>
-                                        <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" style="color:rgb(50, 166, 211);" th:onclick="'openEditRepositoryDialog('+ ${repository.id} + ')'">
-                                            <i class="material-icons">edit</i>
-                                        </button>
+	                                <div th:switch="${disabled}">
+	                                    <div th:case="${false}">
+	                                    	<button th:if="${role > 2}" class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" th:onclick="'openDeleteRepositoryDialog('+ ${repository.id} + ')'">
+	                                            <i class="material-icons">delete_forever</i>
+	                                        </button>                                        
+	                                        <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" style="color:rgba(0,0,0, 0.26);" th:onclick="'openEditRepositoryDialog('+ ${repository.id} + ')'">
+	                                            <i class="material-icons">edit</i>
+	                                        </button>
+	                                    </div>
+	                                    <div th:case="${true}">
+	                                    	<button th:if="${role > 2}" class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" th:onclick="'openDeleteRepositoryDialog('+ ${repository.id} + ')'" disabled>
+	                                            <i class="material-icons">delete_forever</i>
+	                                        </button>                                        
+	                                        <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" style="color:rgba(0,0,0, 0.26));" th:onclick="'openEditRepositoryDialog('+ ${repository.id} + ')'" disabled>
+	                                            <i class="material-icons">edit</i>
+	                                        </button>
+	                                    </div>	                                    
+	                                </div>                                    
                                 </div>
                                 
                             </td>

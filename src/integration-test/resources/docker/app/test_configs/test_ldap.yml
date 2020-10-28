@@ -2,14 +2,12 @@ app:
   authentication: ldap
   ldap:
     url: ldap://oa-rdepot-ldap:389
-#   ldap.url=ldap://ldap.forumsys.com:389
-#    basedn: dc=example,dc=com
     basedn: dc=example,dc=org
-#    userou: scientists
     userou: 
-#    loginfield: uid
     loginfield: cn
-    namefield: cn
+    namefield:
+      - givenName
+      - sn
     emailfield: mail
     default:
       admins: einstein 

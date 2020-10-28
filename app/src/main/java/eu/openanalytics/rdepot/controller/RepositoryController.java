@@ -29,20 +29,24 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -83,7 +87,7 @@ import eu.openanalytics.rdepot.warning.RepositoryAlreadyUnpublishedWarning;
 @RequestMapping
 public class RepositoryController {
 	
-	Logger logger = LoggerFactory.getLogger(RepositoryService.class);
+	Logger logger = LoggerFactory.getLogger(RepositoryController.class);
 	Locale locale = LocaleContextHolder.getLocale();
 	
 	@Autowired
@@ -107,11 +111,14 @@ public class RepositoryController {
 	@Autowired
 	private RepositoryEventFormatter repositoryEventFormatter;
 	
+	@Value("${declarative}")
+	private String declarative;
+	
 	@InitBinder(value="repository")
 	private void initBinder(WebDataBinder binder) {
 		binder.setValidator(repositoryValidator);
 	}
-		
+	
 	@PreAuthorize("hasAuthority('user')")
 	@RequestMapping(value= {"/manager/repositories"}, method=RequestMethod.GET)
 	public String repositoriesPage(Model model, Principal principal)  {
@@ -121,50 +128,58 @@ public class RepositoryController {
 		repositoryService.findMaintainedBy(requester, false).forEach(r -> maintained.add(r.getId()));
 		model.addAttribute("maintained", maintained);
 		model.addAttribute("repositories", repositoryService.findAll());
-		
+		model.addAttribute("disabled", Boolean.valueOf(declarative));
+        model.addAttribute("username", requester.getName());
+
+
 		return "repositories";
 	}
 	
 	@PreAuthorize("hasAuthority('admin')")
 	@RequestMapping(value= {"/manager/repositories/create","/api/manager/repositories/create"}, method=RequestMethod.POST)
-	public @ResponseBody HashMap<String, Object> createNewRepository(@RequestBody Repository repository,
+	public @ResponseBody ResponseEntity<?> createNewRepository(@RequestBody Repository repository,
 			Principal principal, BindingResult bindingResult) {
 		
-		Locale locale = LocaleContextHolder.getLocale();
 		HashMap<String, Object> result = new HashMap<>();
-		User requester = userService.findByLogin(principal.getName());
-		if(requester == null)
-			result.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_FOUND, null, locale));
-		else if(!Objects.equals(requester.getRole().getName(), "admin"))
-			result.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_AUTHORIZED, null, locale));
-		else {
-			repositoryValidator.validate(repository, bindingResult);
-			
-			if (bindingResult.hasErrors()) {
-				result.put("repository", repository);
-				logger.error(bindingResult.toString());
+		if(Boolean.valueOf(declarative)) {
+			result.put("error", "create.disabled");
+			return new ResponseEntity<>(result, HttpStatus.FORBIDDEN);
+		} else {
+			Locale locale = LocaleContextHolder.getLocale();
+			User requester = userService.findByLogin(principal.getName());
+			if(requester == null)
+				result.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_FOUND, null, locale));
+			else if(!Objects.equals(requester.getRole().getName(), "admin"))
+				result.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_AUTHORIZED, null, locale));
+			else {
+				repositoryValidator.validate(repository, bindingResult);
 				
-				String errorMessage = "";
-				for(ObjectError error : bindingResult.getAllErrors()) {
-					errorMessage += messageSource.getMessage(error.getCode(), null, locale);
-				}
-				
-				result.put("error", errorMessage);
-			}
-			else {	
-				try {
-					repositoryService.create(repository, requester);
-					result.put("success", messageSource.getMessage(MessageCodes.SUCCESS_REPOSITORY_CREATED, null, locale));
-				} 
-				catch(RepositoryCreateException e) {
-					result.put("error", e.getMessage());
-				}
+				if (bindingResult.hasErrors()) {
+					result.put("repository", repository);
+					logger.error(bindingResult.toString());
 					
-				return result;	
+					String errorMessage = "";
+					for(ObjectError error : bindingResult.getAllErrors()) {
+						errorMessage += messageSource.getMessage(error.getCode(), null, locale);
+					}
+					
+					result.put("error", errorMessage);
+				}
+				else {	
+					try {
+						repositoryService.create(repository, requester);
+						result.put("success", messageSource.getMessage(MessageCodes.SUCCESS_REPOSITORY_CREATED, null, locale));
+					} 
+					catch(RepositoryCreateException e) {
+						result.put("error", e.getMessage());
+					}
+						
+					return new ResponseEntity<>(result, HttpStatus.OK);	
+				}
 			}
+			
+			return new ResponseEntity<>(result, HttpStatus.OK);
 		}
-		
-		return result;
 	}
 	
 	@PreAuthorize("hasAuthority('repositorymaintainer')")
@@ -211,8 +226,7 @@ public class RepositoryController {
 	@PreAuthorize("hasAuthority('user')")
 	@RequestMapping(value="/manager/repositories/{id}/packages", method=RequestMethod.GET)
 	public String packagesOfRepositoryPage(@PathVariable Integer id, Principal principal, 
-			Model model, RedirectAttributes redirectAttributes)
-	{
+			Model model, RedirectAttributes redirectAttributes)	{
 		User requester = userService.findByLoginWithRepositoryMaintainers(principal.getName());
 		Repository repository = repositoryService.findById(id);
 		String address = "redirect:/manager/repositories";
@@ -235,40 +249,43 @@ public class RepositoryController {
 
 	@PreAuthorize("hasAuthority('repositorymaintainer')")
 	@RequestMapping(value= {"/manager/repositories/{id}/edit","/api/manager/repositories/{id}/edit"}, method=RequestMethod.POST)
-	@ResponseBody
-	public HashMap<String, Object> updateRepository(@ModelAttribute(value="repository") @Valid Repository repository,
-			BindingResult result, @PathVariable Integer id, Principal principal) 
-	{
-		Locale locale = LocaleContextHolder.getLocale();
+	public @ResponseBody ResponseEntity<?> updateRepository(@ModelAttribute(value="repository") @Valid Repository repository,
+			BindingResult result, @PathVariable Integer id, Principal principal) {
 		HashMap<String, Object> response = new HashMap<>();
-		try
-		{
-			User requester = userService.findByLoginWithRepositoryMaintainers(principal.getName());
-			if(repository.getId() != id)
-				response.put("error", messageSource.getMessage(MessageCodes.ERROR_REPOSITORY_NOT_FOUND, null, locale));
-			else if(requester == null)
-				response.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_FOUND, null, locale));
-			else if(!userService.isAuthorizedToEdit(repository, requester))
-				response.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_AUTHORIZED, null, locale));
-			else
+		if(Boolean.valueOf(declarative)) {
+			response.put("error", "edit.disabled");
+			return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+		} else {
+			Locale locale = LocaleContextHolder.getLocale();
+			try
 			{
-				repositoryValidator.validate(repository, result);
-				if (result.hasErrors())
-					response.put("error", messageSource.getMessage(MessageCodes.ERROR_REPOSITORY_EDIT, null, locale));
+				User requester = userService.findByLoginWithRepositoryMaintainers(principal.getName());
+				if(repository.getId() != id)
+					response.put("error", messageSource.getMessage(MessageCodes.ERROR_REPOSITORY_NOT_FOUND, null, locale));
+				else if(requester == null)
+					response.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_FOUND, null, locale));
+				else if(!userService.isAuthorizedToEdit(repository, requester))
+					response.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_AUTHORIZED, null, locale));
 				else
 				{
-					repositoryService.evaluateAndUpdate(repository, requester);
-					response.put("success", messageSource.getMessage(MessageCodes.SUCCESS_REPOSITORY_UPDATED, null, locale));
+					repositoryValidator.validate(repository, result);
+					if (result.hasErrors())
+						response.put("error", messageSource.getMessage(MessageCodes.ERROR_REPOSITORY_EDIT, null, locale));
+					else
+					{
+						repositoryService.evaluateAndUpdate(repository, requester);
+						response.put("success", messageSource.getMessage(MessageCodes.SUCCESS_REPOSITORY_UPDATED, null, locale));
+					}
 				}
+				return new ResponseEntity<>(response, HttpStatus.OK);	
 			}
-			return response;
-		}
-		catch(RepositoryEditException | RepositoryNotFound e)	
-		{
-			response.put("repository", repository);
-			response.put("org.springframework.validation.BindingResult.repository", result);
-			response.put("error", e.getMessage());
-			return response;
+			catch(RepositoryEditException | RepositoryNotFound e)	
+			{
+				response.put("repository", repository);
+				response.put("org.springframework.validation.BindingResult.repository", result);
+				response.put("error", e.getMessage());
+				return new ResponseEntity<>(response, HttpStatus.OK);	
+			}
 		}
 	}
 	
@@ -390,48 +407,56 @@ public class RepositoryController {
 	@PreAuthorize("hasAuthority('admin')")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value= {"/manager/repositories/{id}/delete","/api/manager/repositories/{id}/delete"}, method=RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody HashMap<String, String> deleteRepository(@PathVariable Integer id, Principal principal)
-	{	
+	public @ResponseBody ResponseEntity<?> deleteRepository(@PathVariable Integer id, Principal principal) {	
 		HashMap<String, String> response = new HashMap<String, String>();
-		Locale locale = LocaleContextHolder.getLocale();
-		User requester = userService.findByLogin(principal.getName());
-		try
-		{
-			if(requester == null)
-				response.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_FOUND, null, locale));
-			else if(!Objects.equals(requester.getRole().getName(), "admin"))
-				response.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_AUTHORIZED, null, locale));
-			else
+		if(Boolean.valueOf(declarative)) {
+			response.put("error", "delete.disabled");
+			return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+		} else {
+			Locale locale = LocaleContextHolder.getLocale();
+			User requester = userService.findByLogin(principal.getName());
+			try
 			{
-				repositoryService.delete(id, requester);
-				response.put("success", messageSource.getMessage(MessageCodes.SUCCESS_REPOSITORY_DELETED, null, locale));
+				if(requester == null)
+					response.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_FOUND, null, locale));
+				else if(!Objects.equals(requester.getRole().getName(), "admin"))
+					response.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_AUTHORIZED, null, locale));
+				else
+				{
+					repositoryService.delete(id, requester);
+					response.put("success", messageSource.getMessage(MessageCodes.SUCCESS_REPOSITORY_DELETED, null, locale));
+				}
+				return new ResponseEntity<>(response, HttpStatus.OK);
 			}
-			return response;
-		}
-		catch(RepositoryDeleteException | RepositoryNotFound e)
-		{
-			response.put("error", e.getMessage());
-			return response;
+			catch(RepositoryDeleteException | RepositoryNotFound e)
+			{
+				response.put("error", e.getMessage());
+				return new ResponseEntity<>(response, HttpStatus.OK);
+			}
 		}
 	}
 	
 	@PreAuthorize("hasAuthority('admin')")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value= {"/manager/repositories/{id}/sdelete","/api/manager/repositories/{id}/sdelete"}, method=RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody HashMap<String, String> shiftDeleteRepository(@PathVariable Integer id)
-	{	
-		Locale locale = LocaleContextHolder.getLocale();
+	public @ResponseBody ResponseEntity<?> shiftDeleteRepository(@PathVariable Integer id) {	
 		HashMap<String, String> result = new HashMap<String, String>();
-		try
-		{
-			repositoryService.shiftDelete(id);
-			result.put("success", messageSource.getMessage(MessageCodes.SUCCESS_REPOSITORY_DELETED, null, locale));
-			return result;
-		}
-		catch(RepositoryDeleteException | RepositoryNotFound e)
-		{
-			result.put("error", e.getMessage());
-			return result;
+		if(Boolean.valueOf(declarative)) {
+			result.put("error", "delete.disabled");
+			return new ResponseEntity<>(result, HttpStatus.FORBIDDEN);
+		} else {
+			Locale locale = LocaleContextHolder.getLocale();
+			try
+			{
+				repositoryService.shiftDelete(id);
+				result.put("success", messageSource.getMessage(MessageCodes.SUCCESS_REPOSITORY_DELETED, null, locale));
+				return new ResponseEntity<>(result, HttpStatus.OK);
+			}
+			catch(RepositoryDeleteException | RepositoryNotFound e)
+			{
+				result.put("error", e.getMessage());
+				return new ResponseEntity<>(result, HttpStatus.OK);
+			}
 		}
 	}
 	
