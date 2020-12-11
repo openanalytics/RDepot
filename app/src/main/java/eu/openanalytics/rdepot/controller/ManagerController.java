@@ -23,7 +23,6 @@ package eu.openanalytics.rdepot.controller;
 import java.security.Principal;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,11 +34,13 @@ import eu.openanalytics.rdepot.model.User;
 import eu.openanalytics.rdepot.service.RepositoryService;
 import eu.openanalytics.rdepot.service.UserService;
 
+/**
+ * Controller providing content for "Upload Package" section.
+ */
 @Controller
 @PreAuthorize("hasAuthority('user')")
 @RequestMapping(value = {"/manager", "/api/manager"})
-public class ManagerController
-{
+public class ManagerController {
 	
 	@Autowired
 	private RepositoryService repositoryService;
@@ -47,9 +48,18 @@ public class ManagerController
 	@Autowired
 	private UserService userService;
 	
+	/**
+	 * This method provides content for "Upload Package" site.
+	 * It provides the following elements:
+	 * role - numeric value representing user's privileges
+	 * repositories - list of available repositories to upload package to
+	 * multiUploads - form containing packages which is then send back to @see SubmissionController
+	 * @param model contains values sent to the user
+	 * @param principal represents the user
+	 * @return string which represents manager template
+	 */
 	@RequestMapping(method = RequestMethod.GET)
-	public String manager(Model model, Principal principal)
-	{	
+	public String manager(Model model, Principal principal) {	
 		User user = userService.findByLogin(principal.getName());
 		
 		model.addAttribute("role", user.getRole().getValue());

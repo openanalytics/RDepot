@@ -1,5 +1,5 @@
 app:
-  authentication: simple
+  authentication: ldap
 
 # LDAP related properties 
   ldap:

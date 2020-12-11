@@ -20,6 +20,7 @@
  */
 package eu.openanalytics.rdepot.service;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -28,7 +29,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -47,6 +47,7 @@ import org.springframework.transaction.annotation.Transactional;
 import eu.openanalytics.rdepot.exception.AdminNotFound;
 import eu.openanalytics.rdepot.exception.EventNotFound;
 import eu.openanalytics.rdepot.exception.GetFileInBytesException;
+import eu.openanalytics.rdepot.exception.GetReferenceManualException;
 import eu.openanalytics.rdepot.exception.ManualCreateException;
 import eu.openanalytics.rdepot.exception.Md5SumCalculationException;
 import eu.openanalytics.rdepot.exception.PackageActivateException;
@@ -54,14 +55,13 @@ import eu.openanalytics.rdepot.exception.PackageCreateException;
 import eu.openanalytics.rdepot.exception.PackageDeactivateException;
 import eu.openanalytics.rdepot.exception.PackageDeleteException;
 import eu.openanalytics.rdepot.exception.PackageEditException;
-import eu.openanalytics.rdepot.exception.PackageNotFound;
+import eu.openanalytics.rdepot.exception.PackageException;
 import eu.openanalytics.rdepot.exception.PackageStorageException;
 import eu.openanalytics.rdepot.exception.ReadPackageVignetteException;
 import eu.openanalytics.rdepot.exception.RepositoryEditException;
 import eu.openanalytics.rdepot.exception.RepositoryPublishException;
 import eu.openanalytics.rdepot.exception.SourceFileDeleteException;
 import eu.openanalytics.rdepot.exception.SubmissionDeleteException;
-import eu.openanalytics.rdepot.exception.SubmissionNotFound;
 import eu.openanalytics.rdepot.messaging.MessageCodes;
 import eu.openanalytics.rdepot.model.Event;
 import eu.openanalytics.rdepot.model.Package;
@@ -69,6 +69,7 @@ import eu.openanalytics.rdepot.model.PackageEvent;
 import eu.openanalytics.rdepot.model.PackageMaintainer;
 import eu.openanalytics.rdepot.model.Repository;
 import eu.openanalytics.rdepot.model.RepositoryMaintainer;
+import eu.openanalytics.rdepot.model.Submission;
 import eu.openanalytics.rdepot.model.User;
 import eu.openanalytics.rdepot.repository.PackageRepository;
 import eu.openanalytics.rdepot.storage.PackageStorage;
@@ -148,8 +149,8 @@ public class PackageService {
 			
 			if (checkSameVersion != null)
 				try {
-					delete(checkSameVersion.getId(), creator);
-				} catch (PackageDeleteException | PackageNotFound e) {
+					delete(checkSameVersion, creator);
+				} catch (PackageException e) {
 					logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
 					throw new PackageCreateException(messageSource, locale, packageBag);
 				} catch (PackageAlreadyDeletedWarning e) {
@@ -175,12 +176,21 @@ public class PackageService {
 		return packageRepository.findByIdAndDeleted(id, deleted);
 	}
 	
+//	//This method remains here because of an older implementation
+//	//TODO: We need to discuss if packages should be fetched in the service or controller layer.
+//	//I personally think that controller is a right place to do it.
+//	public void delete(int id, User deleter) 
+//			throws PackageDeleteException, PackageNotFound, PackageAlreadyDeletedWarning {
+//		Package deletedPackage = packageRepository.findByIdAndDeleted(id, false);
+//		if (deletedPackage == null)
+//			throw new PackageNotFound(messageSource, locale, id);
+//		
+//		delete(deletedPackage, deleter);
+//	}
+	
 	@Transactional(readOnly=false, rollbackFor={PackageDeleteException.class})
-	public void delete(int id, User deleter) throws PackageDeleteException, PackageAlreadyDeletedWarning, PackageNotFound {
-		Package deletedPackage = packageRepository.findByIdAndDeleted(id, false);
-		if (deletedPackage == null)
-			throw new PackageNotFound(messageSource, locale, id);
-		
+	public void delete(Package deletedPackage, User deleter) 
+			throws PackageDeleteException, PackageAlreadyDeletedWarning {
 		try {
 			if (deletedPackage.isDeleted()) {
 				PackageAlreadyDeletedWarning warning = new PackageAlreadyDeletedWarning(messageSource, locale, deletedPackage);
@@ -195,10 +205,12 @@ public class PackageService {
 			deletedPackage.setDeleted(true);
 			update(deletePackageEvent, deletedPackage, deleter);
 			
-			if(!deletedPackage.getSubmission().isDeleted())
-				submissionService.deleteSubmission(deletedPackage.getSubmission().getId(), deleter);
+			Submission submission = deletedPackage.getSubmission(); 
+			
+			if(submission != null && !submission.isDeleted())
+				submissionService.deleteSubmission(deletedPackage.getSubmission(), deleter);
 		} 
-		catch (PackageEditException | EventNotFound | SubmissionNotFound | SubmissionDeleteException e) {
+		catch (PackageEditException | EventNotFound | SubmissionDeleteException e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
 			throw new PackageDeleteException(messageSource, locale, deletedPackage);
 		} catch(SubmissionDeleteWarning w) {
@@ -206,24 +218,48 @@ public class PackageService {
 		}
 	}
 	
+	//TODO: The same issue as the one in delete method
+//	public void shiftDelete(int id) throws PackageNotFound, PackageDeleteException {
+//		Package deletedPackage = packageRepository.findByIdAndDeleted(id, true);
+//		if (deletedPackage == null)
+//			throw new PackageNotFound(messageSource, locale, id);
+//		
+//		shiftDelete(deletedPackage);
+//	}
+//	
 	@Transactional(readOnly=false, rollbackFor=PackageDeleteException.class)
-	public Package shiftDelete(int id) throws PackageDeleteException , PackageNotFound {
-		Package deletedPackage = packageRepository.findByIdAndDeleted(id, true);
-		if (deletedPackage == null)
-			throw new PackageNotFound(messageSource, locale, id);
-		
+	public void shiftDelete(Package deletedPackage) throws PackageDeleteException {
 		try {
-			submissionService.shiftDelete(deletedPackage.getSubmission().getId());
+			Submission submission = deletedPackage.getSubmission();
+			if(submission != null) {
+				submissionService.shiftDelete(deletedPackage.getSubmission());
+			}
 			deleteSource(deletedPackage);
 			deletePackageEvents(deletedPackage);
 			packageRepository.delete(deletedPackage);
-			return deletedPackage;
 		} 
-		catch (PackageStorageException | SubmissionDeleteException | SubmissionNotFound e) {
+		catch (PackageStorageException | SubmissionDeleteException e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
 			throw new PackageDeleteException(messageSource, locale, deletedPackage);
 		}	
 	}
+	
+//	@Transactional(readOnly=false, rollbackFor=PackageDeleteException.class)
+//	public void shiftDeleteForRejectedSubmission(Package deletedPackage) throws PackageDeleteException {
+//		try {
+//			Submission submission = deletedPackage.getSubmission();
+//			if(submission != null) {
+//				submissionService.shiftDelete(deletedPackage.getSubmission());
+//			}
+//			deleteSource(deletedPackage);
+//			deletePackageEvents(deletedPackage);
+//			packageRepository.delete(deletedPackage);
+//		} 
+//		catch (PackageStorageException | SubmissionDeleteException e) {
+//			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
+//			throw new PackageDeleteException(messageSource, locale, deletedPackage);
+//		}	
+//	}
 	
 	@Transactional(readOnly = false, rollbackFor=PackageActivateException.class)
 	public void activatePackage(Package packageBag, User requester) throws PackageAlreadyActivatedWarning, PackageActivateException {
@@ -291,8 +327,16 @@ public class PackageService {
 	public List<Package> findAll() {
 		List<Package> allPackages = packageRepository.findByDeleted(false, Sort.by(new Order(Direction.ASC, "name")));
 		List<Package> filtered = new ArrayList<>();
-		filtered.addAll(allPackages.stream()
-				.filter(packageBag -> packageBag.getSubmission().isAccepted()).collect(Collectors.toList()));
+		
+		//TODO: when submission is shift deleted, the package 'gets orphaned', we decided not to treat it like a correct one
+		//TODO: in the future we would need a way to access such orphaned packages, maybe more advanced control panel for administrator
+//		filtered.addAll(allPackages.stream()
+//				.filter(packageBag -> packageBag.getSubmission().isAccepted()).collect(Collectors.toList()));
+		for(Package p : allPackages) {
+			if(p.getSubmission() != null && p.getSubmission().isAccepted()) {
+				filtered.add(p);
+			}
+		}
 		return filtered;
 	}
 	
@@ -314,8 +358,7 @@ public class PackageService {
 		updateAndRefreshMaintainer(updatePackageEvent, packageBag, requester);
 	}
 	
-	public byte[] readVignette(int id, String fileName) throws ReadPackageVignetteException {
-		Package packageBag = findById(id);
+	public byte[] readVignette(Package packageBag, String fileName) throws ReadPackageVignetteException, FileNotFoundException {
 		byte[] bytes = null;
 		if(packageBag != null) {
 			try {
@@ -453,7 +496,7 @@ public class PackageService {
 		Package packageBag = packageRepository.findByNameAndVersionAndRepositoryAndDeleted(name, version, repository, false);
 		
 		if(packageBag != null) {
-			if(!packageBag.getSubmission().isDeleted())
+			if(packageBag.getSubmission() != null && !packageBag.getSubmission().isDeleted())
 				return packageBag;
 		}
 		return null;
@@ -536,7 +579,7 @@ public class PackageService {
 	}
 
 	public void createManuals(Package packageBag) throws ManualCreateException {
-		packageStorage.createManuals(packageBag);
+		packageStorage.createManual(packageBag);
 	}
 	
 	public List<Package> findMaintainedBy(User user) {
@@ -571,4 +614,31 @@ public class PackageService {
 		}
 		return packages;
 	}
+	
+	//TODO: test it
+	public byte[] getPackageInBytes(Package packageBag) throws GetFileInBytesException, FileNotFoundException {
+		byte[] packageBytes = null;
+		try {
+			packageBytes = packageStorage.getPackageInBytes(packageBag);
+		} catch (GetFileInBytesException e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
+			throw e;
+		}
+		
+		return packageBytes;
+	}
+	
+	public byte[] getReferenceManualInBytes(Package packageBag) throws GetReferenceManualException, FileNotFoundException {
+		byte[] manualBytes = null;
+		
+		try {
+			manualBytes = packageStorage.getReferenceManualFileInBytes(packageBag);
+		} catch (ManualCreateException | GetFileInBytesException e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
+			throw new GetReferenceManualException(messageSource, locale, packageBag);
+		}
+		
+		return manualBytes;
+	}
+	
 }

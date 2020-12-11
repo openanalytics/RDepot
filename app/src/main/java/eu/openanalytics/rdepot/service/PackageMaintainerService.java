@@ -133,14 +133,20 @@ public class PackageMaintainerService {
 		return packageMaintainerRepository.findByIdAndDeleted(id, deleted);
 	}
 	
-	@Transactional(readOnly=false, rollbackFor={PackageMaintainerDeleteException.class})
-	public PackageMaintainer delete(int id, User deleter) throws PackageMaintainerDeleteException, PackageMaintainerNotFound {
+	@Transactional(readOnly=false, rollbackFor={PackageMaintainerEditException.class})
+	public PackageMaintainer delete(int id, User deleter) 
+			throws PackageMaintainerNotFound, PackageMaintainerDeleteException {
 		PackageMaintainer deletedPackageMaintainer = packageMaintainerRepository.findByIdAndDeleted(id, false);
+		if (deletedPackageMaintainer == null)
+			throw new PackageMaintainerNotFound(id, messageSource, locale);
 		
+		return delete(deletedPackageMaintainer, deleter);
+	}
+	
+	@Transactional(readOnly=false, rollbackFor={PackageMaintainerDeleteException.class})
+	public PackageMaintainer delete(PackageMaintainer deletedPackageMaintainer, User deleter) 
+			throws PackageMaintainerDeleteException {
 		try {			
-			if (deletedPackageMaintainer == null)
-				throw new PackageMaintainerNotFound(id, messageSource, locale);
-			
 			Event deleteEvent = eventService.getDeleteEvent();
 			
 			deletedPackageMaintainer.setDeleted(true);
@@ -163,12 +169,8 @@ public class PackageMaintainerService {
 	}
 	
 	@Transactional(readOnly=false, rollbackFor={PackageMaintainerDeleteException.class})
-	public PackageMaintainer shiftDelete(int id) 
-			throws PackageMaintainerDeleteException, PackageMaintainerNotFound {
-		PackageMaintainer deletedPackageMaintainer = packageMaintainerRepository.findByIdAndDeleted(id, true);
-		if (deletedPackageMaintainer == null)
-			throw new PackageMaintainerNotFound(id, messageSource, locale);
-		
+	public PackageMaintainer shiftDelete(PackageMaintainer deletedPackageMaintainer) 
+			throws PackageMaintainerDeleteException {
 		deletePackageMaintainerEvents(deletedPackageMaintainer);
 		// TODO: shiftDelete the "deleted" packages that were still maintained by the "deleted" package maintainer
 		packageMaintainerRepository.delete(deletedPackageMaintainer);
@@ -282,16 +284,13 @@ public class PackageMaintainerService {
 	}
 	
 	@Transactional(readOnly=false, rollbackFor= {PackageMaintainerEditException.class})
-	public void evaluateAndUpdate(PackageMaintainer packageMaintainer, User updater) 
-			throws PackageMaintainerNotFound, PackageMaintainerEditException {
-		PackageMaintainer updatedPackageMaintainer = packageMaintainerRepository.getOne(packageMaintainer.getId());
+	public void evaluateAndUpdate(PackageMaintainer packageMaintainer, PackageMaintainer updatedPackageMaintainer, User updater) 
+			throws PackageMaintainerEditException {
 		
-		if(updatedPackageMaintainer == null)
-			throw new PackageMaintainerNotFound(packageMaintainer.getId(), messageSource, locale);
-		if(updatedPackageMaintainer.getPackage().equals(packageMaintainer.getPackage()))
-			updatePackage(updatedPackageMaintainer, packageMaintainer.getPackage(), updater);
-		if(updatedPackageMaintainer.getRepository().getId() != packageMaintainer.getRepository().getId())
-			updateRepository(updatedPackageMaintainer, packageMaintainer.getRepository(), updater);
+		if(!packageMaintainer.getPackage().equals(updatedPackageMaintainer.getPackage()))
+			updatePackage(packageMaintainer, updatedPackageMaintainer.getPackage(), updater);
+		if(packageMaintainer.getRepository().getId() != updatedPackageMaintainer.getRepository().getId())
+			updateRepository(packageMaintainer, updatedPackageMaintainer.getRepository(), updater);
 
 	}
 

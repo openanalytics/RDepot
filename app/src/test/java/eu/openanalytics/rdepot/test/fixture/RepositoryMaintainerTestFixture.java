@@ -49,4 +49,8 @@ public class RepositoryMaintainerTestFixture {
 		
 		return repositoryMaintainers;
 	}
+
+	public static RepositoryMaintainer GET_FIXTURE_REPOSITORY_MAINTAINER(User user, Repository repository) {
+		return new RepositoryMaintainer(123, user, repository, DELETED);
+	}
 }

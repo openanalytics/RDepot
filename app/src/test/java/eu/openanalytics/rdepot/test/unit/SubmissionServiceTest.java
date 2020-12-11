@@ -23,7 +23,6 @@ package eu.openanalytics.rdepot.test.unit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doAnswer;
@@ -802,14 +801,12 @@ public class SubmissionServiceTest {
 		submission.setDeleted(false);
 		
 		when(eventService.getDeleteEvent()).thenReturn(deleteEvent);
-		when(submissionRepository.findByIdAndDeleted(id, false)).thenReturn(submission);
 		when(submissionEventService.create(deleteEvent, user, submission)).thenReturn(new ArrayList<>());
 		doNothing().when(emailService).sendCanceledSubmissionEmail(submission);
 		
-		submissionService.deleteSubmission(id, user);
+		submissionService.deleteSubmission(submission, user);
 		
 		assertTrue("Submission was not deleted correctly.", submission.isDeleted());
-		verify(submissionRepository).findByIdAndDeleted(id, false);
 		verify(submissionEventService).create(deleteEvent, user, submission);
 		verify(emailService).sendCanceledSubmissionEmail(submission);
 	}
@@ -826,12 +823,11 @@ public class SubmissionServiceTest {
 		submission.setDeleted(false);
 		
 		when(eventService.getDeleteEvent()).thenThrow(new EventNotFound());
-		when(submissionRepository.findByIdAndDeleted(id, false)).thenReturn(submission);
 		
 		expectedException.expect(SubmissionDeleteException.class);
 		expectedException.expectMessage(MessageCodes.ERROR_SUBMISSION_DELETE);
 		
-		submissionService.deleteSubmission(id, user);
+		submissionService.deleteSubmission(submission, user);
 	}
 	
 	@Test
@@ -859,20 +855,6 @@ public class SubmissionServiceTest {
 	}
 	
 	@Test
-	public void deleteSubmission_ThrowsSubmissionNotFound()
-			throws SubmissionDeleteException, SubmissionNotFound, SubmissionDeleteWarning {
-		User user = UserTestFixture.GET_FIXTURE_ADMIN();
-		int id = 1234;
-		
-		when(submissionRepository.findByIdAndDeleted(id, false)).thenReturn(null);
-		
-		expectedException.expect(SubmissionNotFound.class);
-		expectedException.expectMessage(MessageCodes.ERROR_SUBMISSION_NOT_FOUND);
-		
-		submissionService.deleteSubmission(id, user);
-	}
-	
-	@Test
 	public void deleteSubmission_ThrowsSubmissionDeleteWarning_WhenSendEmailExceptionIsThrown() 
 			throws EventNotFound, SendEmailException, SubmissionDeleteException, 
 					SubmissionNotFound, SubmissionDeleteWarning {
@@ -886,14 +868,13 @@ public class SubmissionServiceTest {
 		submission.setDeleted(false);
 		
 		when(eventService.getDeleteEvent()).thenReturn(deleteEvent);
-		when(submissionRepository.findByIdAndDeleted(id, false)).thenReturn(submission);
 		when(submissionEventService.create(deleteEvent, user, submission)).thenReturn(new ArrayList<>());
 		doThrow(new SendEmailException("error while sending email")).when(emailService).sendCanceledSubmissionEmail(submission);
 		
 		expectedException.expect(SubmissionDeleteWarning.class);
 		expectedException.expectMessage(MessageCodes.WARNING_SUBMISSION_DELETE);
 		
-		submissionService.deleteSubmission(id, user);
+		submissionService.deleteSubmission(submission, user);
 	}
 	
 	@Test
@@ -906,26 +887,40 @@ public class SubmissionServiceTest {
 		List<SubmissionEvent> events = SubmissionEventTestFixture.GET_SUBMISSION_EVENT_TEST_FIXTURE(3);
 		submission.setSubmissionEvents(new HashSet<SubmissionEvent>(events));
 		
-		when(submissionRepository.findByIdAndDeleted(submission.getId(), true)).thenReturn(submission);
-		doNothing().when(submissionEventService).delete(anyInt());
+		doNothing().when(submissionEventService).delete(any());
 		doNothing().when(submissionRepository).delete(submission);
 		
-		submissionService.shiftDelete(submission.getId());
+		submissionService.shiftDelete(submission);
 		
-		verify(submissionEventService, times(3)).delete(anyInt());
+		verify(submissionEventService, times(3)).delete(any());
 		verify(submissionRepository).delete(submission);
 	}
+
+
 	
-	@Test
-	public void shiftDelete_ThrowsSubmissionNotFoundException_WhenSubmissionIsNotFound()
-			throws SubmissionDeleteException, SubmissionNotFound {
-		int ID = 123;
-		
-		when(submissionRepository.findByIdAndDeleted(ID, true)).thenReturn(null);
-		
-		expectedException.expect(SubmissionNotFound.class);
-		expectedException.expectMessage(MessageCodes.ERROR_SUBMISSION_NOT_FOUND);
-		
-		submissionService.shiftDelete(ID);
-	}
+//	@Test
+//	public void shiftDeleteSubmissionForRejectedPackage() throws PackageDeleteException, SubmissionNotFound {
+//		User user = UserTestFixture.GET_FIXTURE_ADMIN();
+//		Repository repository = RepositoryTestFixture.GET_FIXTURE_REPOSITORY();
+//		Package packageBag = PackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
+//		Submission submission = SubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, packageBag);
+//		
+//		when(submissionRepository.findByIdAndDeleted(submission.getId(), true)).thenReturn(submission);
+//		when(packageService.shiftDeleteForRejectedSubmission(submission.getPackage())).thenReturn(packageBag);
+//		
+//		submissionService.shiftDeleteSubmissionForRejectedPackage(submission.getId());
+//		verify(packageService).shiftDeleteForRejectedSubmission(packageBag);
+//	}
+//	
+//	@Test
+//	public void shiftDeleteSubmissionForRejectedPackage_ThrowsSubmissionNotFoundException_WhenSubmissionIsNotFound() throws SubmissionDeleteException, SubmissionNotFound {
+//		int ID = 123;
+//		
+//		when(submissionRepository.findByIdAndDeleted(ID, true)).thenReturn(null);
+//		
+//		expectedException.expect(SubmissionNotFound.class);
+//		expectedException.expectMessage(MessageCodes.ERROR_SUBMISSION_NOT_FOUND);
+//		
+//		submissionService.shiftDelete(ID);
+//	}
 }

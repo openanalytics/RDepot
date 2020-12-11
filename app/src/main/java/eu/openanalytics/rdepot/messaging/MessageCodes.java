@@ -180,4 +180,13 @@ public final class MessageCodes {
 	public static final String ERROR_SYNCHRONIZE_REPOSITORY_WITH_REMOTE_SERVER = "error.synchronize.repository.with.remote.server";
 	public static final String ERROR_INVALID_SERVER_ADDRESS = "error.invalid.server.address";
 	public static final String ERROR_STORE_ON_REMOTE_SERVER = "error.store.on.remote.server";
+	public static final String ERROR_PACKAGE_GET_REFERENCE_MANUAL = "package.get.reference.manual";
+	public static final String SUCCESS_SUBMISSION_DELETED = "submission.deleted";
+	public static final String ERROR_REPOSITORY_CREATE_DISABLED = "repository.create.disabled";
+	public static final String ERROR_REPOSITORY_EDIT_DISABLED = "repository.edit.disabled";
+	public static final String ERROR_REPOSITORY_DECLARATIVE_MODE = "repository.declarative.mode";
+	public static final String ERROR_REPOSITORY_INVALID_ID = "repository.invalid.id";
+	public static final String SUCCESS_USER_UPDATED = "user.updated";
+	public static final String ERROR_REPOSITORYMAINTAINER_EDIT = "error.repositorymaintainer.edit";
+	public static final String ERROR_REPOSITORYMAINTAINER_DELETE = "error.repositorymaintainer.delete";
 }

@@ -40,7 +40,7 @@ ext.buildTime = {
 }
 
 group = 'eu.openanalytics'
-ext.versionNumber = '1.4.1'
+ext.versionNumber = '1.4.2'
 ext.baseVersion = versionNumber
 version = versionNumber
 description = """rdepot"""
@@ -68,6 +68,7 @@ dependencies {
 		
 	testImplementation project('rdepot-app')
 	testImplementation dependencies.sbStarterTest
+	testImplementation dependencies.springSecurityTest
 	testImplementation dependencies.restAssured
 	testImplementation dependencies.restAssuredJsonPath
 	testImplementation dependencies.restAssuredXmlPath

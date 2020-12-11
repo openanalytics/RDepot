@@ -22,6 +22,7 @@ package eu.openanalytics.rdepot.storage;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.FileSystems;
@@ -73,7 +74,7 @@ public class PackageStorageLocalImpl implements PackageStorage {
 	private Locale locale = LocaleContextHolder.getLocale();
 	
 	
-	public void createManuals(Package packageBag) throws ManualCreateException {
+	public void createManual(Package packageBag) throws ManualCreateException {
 		File targzFile = new File(packageBag.getSource());
 		
 		if(targzFile != null && targzFile.exists() && targzFile.getParentFile() != null && 
@@ -156,24 +157,19 @@ public class PackageStorageLocalImpl implements PackageStorage {
 		}
 	}
 
-	public byte[] getPackageInBytes(Package packageBag) throws GetFileInBytesException {	
+	public byte[] getPackageInBytes(Package packageBag) 
+			throws GetFileInBytesException, FileNotFoundException {	
 		return baseStorage.getFileInBytes(packageBag.getSource());
 	}
 	
 	public byte[] getReferenceManualFileInBytes(Package packageBag) 
-			throws ManualCreateException, GetFileInBytesException {
+			throws ManualCreateException, GetFileInBytesException, FileNotFoundException {
 		String manualPath = new File(packageBag.getSource()).getParent() + separator 
 				+ packageBag.getName() + separator + packageBag.getName() + ".pdf";
 		File manualFile = new File(manualPath);
 		byte[] bytes = null;
-		
-		if(manualFile == null || !manualFile.exists()) {
-			createManuals(packageBag);
-			manualFile = new File(manualPath);
-		}
-		
+				
 		bytes = baseStorage.getFileInBytes(manualFile.getAbsolutePath());
-
 		
 		return bytes;
 	}
@@ -182,7 +178,8 @@ public class PackageStorageLocalImpl implements PackageStorage {
 		return baseStorage.calculateMd5Sum(packageBag.getSource());
 	}
 
-	public byte[] readVignette(Package packageBag, String filename) throws GetFileInBytesException {
+	public byte[] readVignette(Package packageBag, String filename) 
+			throws GetFileInBytesException, FileNotFoundException {
 		return baseStorage.getFileInBytes(new File(packageBag.getSource()).getParent() 
 				+ packageBag.getName() + "/inst/doc/" + filename);
 	}

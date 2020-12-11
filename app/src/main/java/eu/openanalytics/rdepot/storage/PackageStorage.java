@@ -21,6 +21,7 @@
 package eu.openanalytics.rdepot.storage;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Properties;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -42,12 +43,12 @@ import eu.openanalytics.rdepot.model.Repository;
 public interface PackageStorage {
 	
 	/**
-	 * This method creates manuals for given package.
+	 * This method creates manual for given package.
 	 * @param packageBag Package which manuals are created for
 	 * @throws ManualCreateException 
 	 * @throws PackageStorageException
 	 */
-	public void createManuals(Package packageBag) throws ManualCreateException;
+	public void createManual(Package packageBag) throws ManualCreateException;
 	
 	/**
 	 * This method deletes source of given package.
@@ -63,7 +64,8 @@ public interface PackageStorage {
 	 * @return package file in raw bytes.
 	 * @throws GetFileInBytesException
 	 */
-	public byte[] getPackageInBytes(Package packageBag) throws GetFileInBytesException;
+	public byte[] getPackageInBytes(Package packageBag) 
+			throws GetFileInBytesException, FileNotFoundException;
 	
 	/**
 	 * This method returns and creates if necessary reference manual for a given package.
@@ -73,7 +75,8 @@ public interface PackageStorage {
 	 * @throws ManualCreateException 
 	 * @throws GetFileInBytesException 
 	 */
-	public byte[] getReferenceManualFileInBytes(Package packageBag) throws ManualCreateException, GetFileInBytesException;
+	public byte[] getReferenceManualFileInBytes(Package packageBag) 
+			throws ManualCreateException, GetFileInBytesException, FileNotFoundException;
 	
 	/**
 	 * This method calculates package's md5 sum.
@@ -89,8 +92,10 @@ public interface PackageStorage {
 	 * @param filename Name of vignette's file
 	 * @return Vignette in bytes
 	 * @throws GetFileInBytesException 
+	 * @throws FileNotFoundException
 	 */
-	public byte[] readVignette(Package packageBag, String filename) throws GetFileInBytesException;
+	public byte[] readVignette(Package packageBag, String filename) 
+			throws GetFileInBytesException, FileNotFoundException;
 	
 	/**
 	 * This method saves package in so-called "waiting room" where it stays 
@@ -101,7 +106,8 @@ public interface PackageStorage {
 	 * @throws DeleteFileException 
 	 * @throws WriteToDiskFromMultipartException 
 	 */
-	public File writeToWaitingRoom(MultipartFile muiltipartFile, Repository repository) throws WriteToDiskFromMultipartException;
+	public File writeToWaitingRoom(MultipartFile muiltipartFile, Repository repository) 
+			throws WriteToDiskFromMultipartException;
 
 	/**
 	 * This method saves uploaded package in the storage.
@@ -111,7 +117,8 @@ public interface PackageStorage {
 	 * @throws DeleteFileException 
 	 * @throws WriteToDiskFromMultipartException 
 	 */
-	public File writeToDisk(MultipartFile multipartFile, Repository repository) throws WriteToDiskFromMultipartException, DeleteFileException;
+	public File writeToDisk(MultipartFile multipartFile, Repository repository) 
+			throws WriteToDiskFromMultipartException, DeleteFileException;
 	
 	/**
 	 * This method moves a package source from waiting directory to the main one.
@@ -121,7 +128,8 @@ public interface PackageStorage {
 	 * @throws MovePackageSourceException 
 	 * @throws PackageSourceNotFoundException
 	 */
-	public File moveToMainDirectory(Package packageBag) throws PackageSourceNotFoundException, MovePackageSourceException;
+	public File moveToMainDirectory(Package packageBag) 
+			throws PackageSourceNotFoundException, MovePackageSourceException;
 	
 	/**
 	 * This method moves a package from its current directory to the new one.
@@ -131,7 +139,8 @@ public interface PackageStorage {
 	 * @throws PackageSourceNotFoundException
 	 * @throws MovePackageSourceException
 	 */
-	public File moveSource(Package packageBag, String destinationDir) throws PackageSourceNotFoundException, MovePackageSourceException;
+	public File moveSource(Package packageBag, String destinationDir) 
+			throws PackageSourceNotFoundException, MovePackageSourceException;
 	
 	/**
 	 * This method verifies if package source path is correct.

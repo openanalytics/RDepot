@@ -1,14 +1,7 @@
 declarative: false
-repositories:
-  - name: A
-    publication-uri: http://localhost/repo/A
-    server-address: http://oa-rdepot-repo:8080/A
-  - name: B
-    publication-uri: http://localhost/repo/B
-    server-address: http://oa-rdepot-repo:8080/B
-  - name: C
-    publication-uri: http://localhost/repo/C
-    server-address: http://oa-rdepot-repo:8080/C
+
+api_token:
+  secret: SecretKeyToGenJWTs
 
 message:
   source:
@@ -78,8 +71,14 @@ management:
         auto-time-requests: false
 
 springdoc:
+  pathsToMatch: /api/**
+  api-docs:
+    path: /v1/api-docs
   swagger-ui:
-    path: /swagger-ui/api-docs.html
+    path: /docs/api.html
+    disable-swagger-default-url: true
+    url: /v1/api-docs
+    display-query-params: true
 
 logging:
   level:

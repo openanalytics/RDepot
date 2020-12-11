@@ -59,7 +59,6 @@ import eu.openanalytics.rdepot.exception.RepositoryDeleteException;
 import eu.openanalytics.rdepot.exception.RepositoryEditException;
 import eu.openanalytics.rdepot.exception.RepositoryMaintainerDeleteException;
 import eu.openanalytics.rdepot.exception.RepositoryMaintainerNotFound;
-import eu.openanalytics.rdepot.exception.RepositoryNotFound;
 import eu.openanalytics.rdepot.exception.RepositoryPublishException;
 import eu.openanalytics.rdepot.exception.StoreOnRemoteServerException;
 import eu.openanalytics.rdepot.exception.UploadToRemoteServerException;
@@ -81,8 +80,7 @@ import eu.openanalytics.rdepot.warning.RepositoryAlreadyUnpublishedWarning;
 @Service
 @Transactional(readOnly = true)
 @Scope( proxyMode = ScopedProxyMode.TARGET_CLASS )
-public class RepositoryService
-{	
+public class RepositoryService {	
 	Logger logger = LoggerFactory.getLogger(RepositoryService.class);
 	Locale locale = LocaleContextHolder.getLocale();
 	
@@ -121,6 +119,9 @@ public class RepositoryService
 	
 	@Value("${app.authentication}")
 	private String mode;
+	
+	@Value("${declarative}")
+	private String declarative;
 
 	@Transactional(readOnly = false, rollbackFor = RepositoryCreateException.class)
 	public Repository create(Repository repository, User creator)  throws RepositoryCreateException {
@@ -145,13 +146,9 @@ public class RepositoryService
 	}
 	
 	@Transactional(readOnly = false, rollbackFor={RepositoryDeleteException.class})
-	public Repository delete(int id, User deleter) 
-			throws RepositoryDeleteException, RepositoryNotFound {
-		Repository deletedRepository = repositoryRepository.findByIdAndDeleted(id, false);
+	public Repository delete(Repository deletedRepository, User deleter) 
+			throws RepositoryDeleteException {
 		try {
-			if (deletedRepository == null)
-				throw new RepositoryNotFound(messageSource, locale, id);
-			
 			Event deleteEvent = eventService.getDeleteEvent();
 			
 			deletedRepository.setDeleted(true);
@@ -206,13 +203,8 @@ public class RepositoryService
 	}
 	
 	@Transactional(readOnly = false, rollbackFor={RepositoryDeleteException.class})
-	public Repository shiftDelete(int id) throws RepositoryDeleteException, RepositoryNotFound {
-		Repository deletedRepository = repositoryRepository.findByIdAndDeleted(id, true);
-
+	public Repository shiftDelete(Repository deletedRepository) throws RepositoryDeleteException {
 		try {
-			if (deletedRepository == null)
-				throw new RepositoryNotFound(messageSource, locale, id);
-			
 			shiftDeleteRepositoryMaintainers(deletedRepository);
 			shiftDeletePackageMaintainers(deletedRepository);
 			shiftDeletePackages(deletedRepository);
@@ -268,7 +260,7 @@ public class RepositoryService
 			throws RepositoryMaintainerDeleteException {
 		for(RepositoryMaintainer repositoryMaintainer : repository.getRepositoryMaintainers()) {
 			if(!repositoryMaintainer.isDeleted())
-				repositoryMaintainerService.delete(repositoryMaintainer.getId(), deleter);
+				repositoryMaintainerService.delete(repositoryMaintainer, deleter);
 		}
 	}
 	
@@ -285,7 +277,7 @@ public class RepositoryService
 	public void deletePackages(Repository repository, User deleter) 
 			throws PackageDeleteException, PackageAlreadyDeletedWarning, PackageNotFound {
 		for(Package p : repository.getNonDeletedPackages()) {
-			packageService.delete(p.getId(), deleter);
+			packageService.delete(p, deleter);
 		}
 	}
 	
@@ -293,7 +285,7 @@ public class RepositoryService
 	public void shiftDeleteRepositoryMaintainers(Repository repository)
 			throws RepositoryMaintainerNotFound {
 		for(RepositoryMaintainer repositoryMaintainer : repository.getRepositoryMaintainers()) {
-			repositoryMaintainerService.shiftDelete(repositoryMaintainer.getId());
+			repositoryMaintainerService.shiftDelete(repositoryMaintainer);
 		}
 	}
 	
@@ -301,7 +293,7 @@ public class RepositoryService
 	public void shiftDeletePackageMaintainers(Repository repository)
 			throws PackageMaintainerDeleteException, PackageMaintainerNotFound {
 		for(PackageMaintainer packageMaintainer : repository.getPackageMaintainers()) {
-			packageMaintainerService.shiftDelete(packageMaintainer.getId());
+			packageMaintainerService.shiftDelete(packageMaintainer);
 		}
 	}
 	
@@ -309,7 +301,7 @@ public class RepositoryService
 	public void shiftDeletePackages(Repository repository)
 			throws PackageDeleteException, PackageNotFound {
 		for(Package p :  repository.getPackages()) {
-			packageService.shiftDelete(p.getId());
+			packageService.shiftDelete(p);
 		}
 	}
 	
@@ -394,20 +386,17 @@ public class RepositoryService
 	}
 	
 	@Transactional
-	public void evaluateAndUpdate(Repository repository, User updater)
-			throws RepositoryEditException, RepositoryNotFound {
-		Repository currentRepository = repositoryRepository.findByIdAndDeleted(repository.getId(), false);
+	public void evaluateAndUpdate(Repository currentRepository, Repository updatedRepository, User updater)
+			throws RepositoryEditException {
 		
-		if(currentRepository == null)
-			throw new RepositoryNotFound(messageSource, locale, repository.getId());
-		if(!repository.getName().equals(currentRepository.getName()))
-			updateName(currentRepository, updater, repository.getName());
-		if(!repository.getPublicationUri().equals(currentRepository.getPublicationUri()))
-			updatePublicationUri(currentRepository, updater, repository.getPublicationUri());
-		if(!repository.getServerAddress().equals(currentRepository.getServerAddress()))
-			updateServerAddress(currentRepository, updater, repository.getServerAddress());
-		if(repository.getVersion() != currentRepository.getVersion())
-			updateVersion(currentRepository, updater, repository.getVersion());
+		if(!updatedRepository.getName().equals(currentRepository.getName()))
+			updateName(currentRepository, updater, updatedRepository.getName());
+		if(!updatedRepository.getPublicationUri().equals(currentRepository.getPublicationUri()))
+			updatePublicationUri(currentRepository, updater, updatedRepository.getPublicationUri());
+		if(!updatedRepository.getServerAddress().equals(currentRepository.getServerAddress()))
+			updateServerAddress(currentRepository, updater, updatedRepository.getServerAddress());
+		if(updatedRepository.getVersion() != currentRepository.getVersion())
+			updateVersion(currentRepository, updater, updatedRepository.getVersion());
 	}
 
 	public Repository findByName(String name) {
@@ -494,40 +483,54 @@ public class RepositoryService
 	}
 	
 	@Transactional(readOnly = false, rollbackFor = RepositoryCreateException.class)
-	public void createRepositoriesFromConfig(Repository repository) {		
+	public void createRepositoriesFromConfig(List<Repository> repositories) {		
 		User requester;
+		List<Repository> existingRepositories = findAllEvenDeleted();
 		try {
 			requester = userService.findFirstAdmin();
-			Repository existingRepository = findByName(repository.getName());
-			if(existingRepository != null) {
-				logger.warn("We tried to create one of the preconfigured repositories but "
-						+ "there already is such a repository with the following properties: " 
-						+ existingRepository.toString());
-			} else {				
-				BindException bindException = new BindException(repository, repository.getName());
-				
-				repositoryValidator.validate(repository, bindException);
-				
-				if (bindException.hasErrors()) {		
-					String errorMessage = "Creating a preconfigured repository failed: ";
-					for(ObjectError error : bindException.getAllErrors()) {
-						errorMessage += messageSource.getMessage(error.getCode(), null, locale);
-					}
-					logger.error(errorMessage);
-				}
-				else {	
-					try {
-						this.create(repository, requester);
-					} 
-					catch(RepositoryCreateException e) {
-						String errorMessage = "Creating a preconfigured repository failed: " + e.getMessage();
+			for(Repository repository : repositories) {
+				Repository existingRepository = findByName(repository.getName());
+				if(existingRepository != null) {
+					existingRepositories.remove(existingRepository);
+					logger.warn("We tried to create one of the preconfigured repositories but "
+							+ "there already is such a repository with the following properties: " 
+							+ existingRepository.toString());
+				} else {				
+					BindException bindException = new BindException(repository, repository.getName());
+					
+					repositoryValidator.validate(repository, bindException);
+					
+					if (bindException.hasErrors()) {		
+						String errorMessage = "Creating a preconfigured repository failed: ";
+						for(ObjectError error : bindException.getAllErrors()) {
+							errorMessage += messageSource.getMessage(error.getCode(), null, locale);
+						}
 						logger.error(errorMessage);
+					}
+					else {	
+						try {
+							this.create(repository, requester);
+						} 
+						catch(RepositoryCreateException e) {
+							String errorMessage = "Creating a preconfigured repository failed: " + e.getMessage();
+							logger.error(errorMessage);
+						}
 					}
 				}
 			}
+			if(Boolean.valueOf(declarative)) {
+				existingRepositories.forEach(r -> {
+					try {
+						logger.info("Delete old repository with name: " + r.getName());
+						delete(r, requester);
+						shiftDelete(r);
+					} catch (RepositoryDeleteException e) {
+						logger.error(e.getMessage());
+					}
+				});		
+			}
 		} catch (AdminNotFound e) {	
-			logger.error("When trying to create a preconfigured repository, we couldn't find any valid administrator");
+			logger.error("When trying to create a preconfigured repositories, we couldn't find any valid administrator");
 		}
-					
 	}
 }

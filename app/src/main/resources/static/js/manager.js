@@ -199,33 +199,33 @@ function handleFinalMessage(fileNumber, repositoryNumber, request){
         var failureColor = "rgb(208, 69, 56)";
         var warningColor = "rgb(255, 223, 0)";
         var message = '';
-        if(request.status == 200) {
-            var responseObject = JSON.parse(request.responseText);
-            if(responseObject['success'] != null) {
-                message = '<span style="color:green;">Success</span>';
-                icon.style.color = successColor;
-                icon.innerHTML = "check_circle";
-                progressBar.style.backgroundColor = successColor;
-            } else if(responseObject['warning'] != null) {
-                if(responseObject.warning.second == "email.send.exception") {
-                    message = '<span style="color:rgb(255,223,0);">Warning: Your submission needs to be accepted by administrator</span>';
-                } else {
-                    message = '<span style="color:rgb(255,223,0);">Warning: ' + responseObject.warning.second + '</span>';
-                }
-                
-                icon.style.color = warningColor;
-                icon.innerHTML = "check_circle";
-                progressBar.style.backgroundColor = warningColor;
-            } else if(responseObject['error'] != null){
-                message = '<span style="color:red;">Error: ' + responseObject.error.second + '</span>';
-                progressBar.style.backgroundColor = failureColor;
+        //if(request.status == 200) {
+        var responseObject = JSON.parse(request.responseText);
+        if(responseObject['success'] != null) {
+            message = '<span style="color:green;">Success</span>';
+            icon.style.color = successColor;
+            icon.innerHTML = "check_circle";
+            progressBar.style.backgroundColor = successColor;
+        } else if(responseObject['warning'] != null) {
+            if(responseObject.warning.second == "email.send.exception") {
+                message = '<span style="color:rgb(255,223,0);">Warning: Your submission needs to be accepted by administrator</span>';
             } else {
-                message = '<span style="color:red;">Unknown error</span>';
-                progressBar.style.backgroundColor = failureColor;
+                message = '<span style="color:rgb(255,223,0);">Warning: ' + responseObject.warning.second + '</span>';
             }
-        } else if(request.status != 0) {
-            message = '<span style="color:red;">Error ' + request.status + '</span>';
+            
+            icon.style.color = warningColor;
+            icon.innerHTML = "check_circle";
+            progressBar.style.backgroundColor = warningColor;
+        } else if(responseObject['error'] != null){
+            message = '<span style="color:red;">Error: ' + responseObject.error.second + '</span>';
+            progressBar.style.backgroundColor = failureColor;
+        } else {
+            message = '<span style="color:red;">Unknown error</span>';
+            progressBar.style.backgroundColor = failureColor;
         }
+        /*} else if(request.status != 0) {
+            message = '<span style="color:red;">Error ' + request.status + '</span>';
+        }*/
 
         var field = document.getElementById('card_' + fileNumber).getElementsByClassName('progress-text')[repositoryNumber];
         field.innerHTML = message;
@@ -276,6 +276,7 @@ function sendRequests(repositories, url) {
                 request.open("POST", url, true);
                 request.setRequestHeader("Accept", "application/json");
                 request.addEventListener("load", (handleFinalMessage)(i, k, request), true);
+                request.addEventListener("error", (handleFinalMessage)(i, k, request), true)
                 request.addEventListener("abort", (handleCancellation)("Canceled", i, k), true);
                 request.setRequestHeader(header, token);
                 request.send(formData);

@@ -7,7 +7,7 @@ task restore {
 
         exec {
             executable "docker"
-            args "exec", "oa-rdepot-db", "su", "-", "postgres", "-c", "dropdb postgres; createdb postgres; psql < /opt/database.sql"
+            args "exec", "oa-rdepot-db", "su", "-", "postgres", "-c", "dropdb rdepot; createdb rdepot; psql rdepot < /opt/database.sql"
         }
 
         exec {

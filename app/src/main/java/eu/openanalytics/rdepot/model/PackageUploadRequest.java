@@ -31,6 +31,7 @@ public class PackageUploadRequest {
 	private String repository;
 	@JsonProperty("changes")
 	private String changes;
+	private boolean generateManual = true;
 	private boolean replace = false;
 	
 	public PackageUploadRequest() {
@@ -42,10 +43,11 @@ public class PackageUploadRequest {
 		this.repository = repositories;
 	}
 	
-	public PackageUploadRequest(MultipartFile fileData, String repositories, boolean replace) {
+	public PackageUploadRequest(MultipartFile fileData, String repositories, boolean generateManual, boolean replace) {
 		this.fileData = fileData;
 		this.repository = repositories;
-		this.setReplace(replace);
+		this.generateManual = generateManual;
+		this.replace = replace;
 	}
 	
 	public PackageUploadRequest(MultipartFile fileData, String repositories, String changes) {
@@ -54,11 +56,12 @@ public class PackageUploadRequest {
 		this.changes = changes;
 	}
 	
-	public PackageUploadRequest(MultipartFile fileData, String repositories, String changes, Boolean replace) {
+	public PackageUploadRequest(MultipartFile fileData, String repositories, String changes, boolean generateManual, boolean replace) {
 		this.fileData = fileData;
 		this.repository = repositories;
 		this.changes = changes;
-		this.setReplace(replace);
+		this.generateManual = generateManual;
+		this.replace = replace;
 	}
 	
 	public MultipartFile getFileData() {
@@ -77,6 +80,14 @@ public class PackageUploadRequest {
 		this.repository = repository;
 	}
 
+	public boolean getGenerateManual() {
+		return generateManual;
+	}
+
+	public void setGenerateManual(boolean generateManual) {
+		this.generateManual = generateManual;
+	}
+	
 	public boolean getReplace() {
 		return replace;
 	}

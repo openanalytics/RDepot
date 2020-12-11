@@ -170,7 +170,7 @@ public class Submission  implements java.io.Serializable
 		this.accepted = accepted;
 	}
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "submission")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "submission")
 	//@JsonBackReference(value="submission-events")
 	@JsonIgnore
 	public Set<SubmissionEvent> getSubmissionEvents()

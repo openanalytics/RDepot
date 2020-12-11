@@ -20,17 +20,17 @@
  */
 package eu.openanalytics.rdepot.exception;
 
+import java.util.Locale;
+
+import org.springframework.context.MessageSource;
+
 import eu.openanalytics.rdepot.messaging.MessageCodes;
 
-public class RepositoryMaintainerNotFound extends Exception {
+public class RepositoryMaintainerNotFound extends RepositoryMaintainerException {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3743531888069985653L;
 	
-	public RepositoryMaintainerNotFound()
-	{
-		super(MessageCodes.ERROR_REPOSITORYMAINTAINER_NOT_FOUND);
+	public RepositoryMaintainerNotFound(int id, MessageSource messageSource, Locale locale) {
+		super(MessageCodes.ERROR_REPOSITORYMAINTAINER_NOT_FOUND, messageSource, locale, id);
 	}
 }

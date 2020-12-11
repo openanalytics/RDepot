@@ -25,24 +25,24 @@ function showMessageDialog(header, content) {
 function acceptSubmission(id) {
     var url = "/manager/submissions/" + id + "/accept";
     $.ajax({
-        type: "PUT",
+        type: "PATCH",
         dataType: "json",
         url: url,
         beforeSend: function(request) {
             request.setRequestHeader(HEADER, TOKEN);
         },
         success: function(data) {
-            if(data.error == null) {
-                $("#accept-submission-button-" + id).fadeOut(300, function(){ $(this).remove()});
-                $("#cancel-submission-button-" + id).fadeOut(300, function(){ $(this).remove()});
-                document.getElementById("checkbox-" + id).parentElement.classList.add("is-checked");
-
-            } else{
-                showMessageDialog('Error', data.error);
-            }
+            $("#accept-submission-button-" + id).fadeOut(300, function(){ $(this).remove()});
+            $("#cancel-submission-button-" + id).fadeOut(300, function(){ $(this).remove()});
+            document.getElementById("checkbox-" + id).parentElement.classList.add("is-checked");
         },
         error: function(data) {
-            showMessageDialog('Error', "Request error");
+            if(data.error != null) {
+                showMessageDialog('Error', data.error);
+
+            } else {
+                showMessageDialog('Error', "Unknown error");
+            }
         }
     });
 }
@@ -57,13 +57,15 @@ function cancelSubmission(id) {
             request.setRequestHeader(HEADER, TOKEN);
         },
         success: function(data) {
-            if(data.success != null) {
-                $("#submission-" + id).closest('tr').fadeOut(300, function(){ $(this).remove()});
-            } else if(data.error != null){
-                showMessageDialog("Error", data.error);
-            } else if(data.warning != null) {
+            $("#submission-" + id).closest('tr').fadeOut(300, function(){ $(this).remove()});
+
+            if(data.warning != null) {
                 showMessageDialog("Warning", data.warning);
-                $("#submission-" + id).closest('tr').fadeOut(300, function(){ $(this).remove()});
+            }
+        },
+        error: function(data) {
+            if(data.error != null){
+                showMessageDialog("Error", data.error);
             } else {
                 showMessageDialog("Error", "Unknown error");
             }

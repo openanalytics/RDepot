@@ -51,6 +51,8 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
+import org.springframework.validation.DefaultMessageCodesResolver;
+import org.springframework.validation.MessageCodesResolver;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
@@ -63,6 +65,7 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 import com.google.gson.Gson;
 
+import eu.openanalytics.rdepot.controller.GlobalController;
 import eu.openanalytics.rdepot.formatter.RepositoryFormatter;
 import eu.openanalytics.rdepot.formatter.RoleFormatter;
 import eu.openanalytics.rdepot.formatter.UserFormatter;
@@ -70,6 +73,7 @@ import eu.openanalytics.rdepot.mapper.HibernateAwareObjectMapper;
 import eu.openanalytics.rdepot.model.Repository;
 import eu.openanalytics.rdepot.model.Role;
 import eu.openanalytics.rdepot.model.User;
+import eu.openanalytics.rdepot.service.UserService;
 import eu.openanalytics.rdepot.storage.PackageStorage;
 import eu.openanalytics.rdepot.storage.PackageStorageLocalImpl;
 import eu.openanalytics.rdepot.storage.RepositoryStorage;
@@ -335,6 +339,19 @@ public class WebApplicationConfig implements WebMvcConfigurer {
     	LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
     	bean.setValidationMessageSource(messageSource());
     	return bean;
+    }
+    
+    @Override
+    public MessageCodesResolver getMessageCodesResolver() {
+    	return new DefaultMessageCodesResolver() {
+
+			private static final long serialVersionUID = 4328458877485113449L;
+
+			@Override
+    		public String[] resolveMessageCodes(String errorCode, String objectName) {
+    			return new String[]{errorCode};
+    		}
+    	};
     }
     
     @Bean(name="packageUploadDirectory")

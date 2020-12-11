@@ -114,8 +114,14 @@ management:
         auto-time-requests: false
 
 springdoc:
+  pathsToMatch: /api/**
+  api-docs:
+    path: /v1/api-docs
   swagger-ui:
-    path: /swagger-ui/api-docs.html
+    path: /docs/api.html
+    disable-swagger-default-url: true
+    url: /v1/api-docs
+    display-query-params: true
 
 logging:
   level:

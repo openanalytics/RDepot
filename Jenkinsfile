@@ -13,13 +13,11 @@ pipeline {
     environment {
         VERSION = sh(returnStdout: true, script: 'gradle properties -q | grep "baseVersion:" | sed -E "s/baseVersion: (.*)/\\1/g"').trim()
         NS = 'openanalytics'
-        REG = '196229073436.dkr.ecr.eu-west-1.amazonaws.com'
-        TAG = 'develop'
         DOCKER_BUILDKIT = '1'
     }
 
     stages {
-        stage('build integration test images') {
+        stage('build IT images and publish') {
             matrix {
                 axes {
                     axis {
@@ -28,16 +26,22 @@ pipeline {
                     }
                 }
                 stages {
-                    stage('Docker build') {
+                    stage('build') {
                         steps {
-                            withOARegistry {
-                                sh """
-                                    docker build --build-arg BUILDKIT_INLINE_CACHE=1 \
-                                        --cache-from ${env.REG}/${env.NS}/rdepot-${MODULE}-it:${env.TAG} \
-                                        -t ${env.NS}/rdepot-${MODULE}-it:${env.TAG} \
-                                        ./src/integration-test/resources/docker/${MODULE}
-                                """
-                                ecrPush "${env.REG}", "${env.NS}/rdepot-${MODULE}-it", "${env.TAG}", '', 'eu-west-1'
+                            sh """
+                                docker build --build-arg BUILDKIT_INLINE_CACHE=1 \
+                                    --cache-from ${env.NS}/rdepot-${MODULE}-it:${env.VERSION} \
+                                    -t ${env.NS}/rdepot-${MODULE}-it:${env.VERSION} \
+                                    ./src/integration-test/resources/docker/${MODULE}
+                            """
+                        }
+                    }
+                    stage('publish') {
+                        steps {
+                            withDockerRegistry([
+                                    credentialsId: "openanalytics-dockerhub",
+                                    url: ""]) {
+                                sh "docker push ${env.NS}/rdepot-${MODULE}-it:${env.VERSION}"
                             }
                         }
                     }
@@ -73,7 +77,7 @@ pipeline {
             }
         }
 
-        stage('build Docker images and publish') {
+        stage('build app images and publish') {
             matrix {
                 axes {
                     axis {
@@ -82,20 +86,16 @@ pipeline {
                     }
                 }
                 stages {
-                    stage('build Docker images') {
+                    stage('build') {
                         steps {
-                            withOARegistry {
-                                sh """
-                                docker build --build-arg BUILDKIT_INLINE_CACHE=1 \
-                                    --cache-from ${env.REG}/${env.NS}/rdepot-${MODULE}:${env.VERSION} \
-                                    -t ${env.NS}/rdepot-${MODULE}:${env.VERSION} \
-                                    -t ${env.NS}/rdepot-${MODULE}:latest \
-                                    -f ./docker/build/${MODULE}-standalone/Dockerfile \
-                                    ./${MODULE}/build/libs
-                                """
-                                ecrPush "${env.REG}", "${env.NS}/rdepot-${MODULE}", "${env.VERSION}", '', 'eu-west-1'
-                                ecrPush "${env.REG}", "${env.NS}/rdepot-${MODULE}", "latest", '', 'eu-west-1'
-                            }
+                            sh """
+                            docker build --build-arg BUILDKIT_INLINE_CACHE=1 \
+                                --cache-from ${env.NS}/rdepot-${MODULE}:${env.VERSION} \
+                                -t ${env.NS}/rdepot-${MODULE}:${env.VERSION} \
+                                -t ${env.NS}/rdepot-${MODULE}:latest \
+                                -f ./docker/build/${MODULE}-standalone/Dockerfile \
+                                ./${MODULE}/build/libs
+                            """
                         }
                     }
                     stage('publish') {
@@ -103,7 +103,6 @@ pipeline {
                             withDockerRegistry([
                                     credentialsId: "openanalytics-dockerhub",
                                     url: ""]) {
-                                
                                 sh "docker push ${env.NS}/rdepot-${MODULE}:${env.VERSION}"
                                 sh "docker push ${env.NS}/rdepot-${MODULE}:latest"
                             }

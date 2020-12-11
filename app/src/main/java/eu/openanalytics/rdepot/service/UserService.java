@@ -37,7 +37,6 @@ import javax.annotation.Resource;
 import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
@@ -202,7 +201,6 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 	
 	public User findByLoginWithRepositoryMaintainers(String login) {
 		User user = userRepository.findByLoginIgnoreCaseAndDeleted(login, false);
-//		TODO Is it necessary? 
 		Hibernate.initialize(user.getRepositoryMaintainers());
 		return user;
 	}
@@ -310,6 +308,23 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 			UserEvent updateNameEvent = new UserEvent(0, DateProvider.now(), updater, user, updateEvent, "name", oldName, newName, DateProvider.now());
 			update(updateNameEvent);
 		} catch (EventNotFound e) {
+			logger.error(e.getClass().getName() + ": ", e.getMessage(), e);
+			throw new UserEditException(messageSource, locale, user);
+		}
+	}
+	
+	@Transactional(readOnly = false, rollbackFor= {UserEditException.class})
+	public void updateLogin(User user, User updater, String newLogin) throws UserEditException {
+		if(updater == null)
+			updater = chooseBestUpdater(user);
+		
+		String oldLogin = user.getLogin();
+		try {
+			Event updateEvent = eventService.getUpdateEvent();
+			user.setLogin(newLogin);
+			UserEvent updateLoginEvent = new UserEvent(0, DateProvider.now(), updater, user, updateEvent, "login", oldLogin, newLogin, DateProvider.now());
+			update(updateLoginEvent);
+		} catch(EventNotFound e) {
 			logger.error(e.getClass().getName() + ": ", e.getMessage(), e);
 			throw new UserEditException(messageSource, locale, user);
 		}
@@ -445,12 +460,8 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 	}
 	
 	@Transactional(readOnly = false)
-	public void evaluateAndUpdate(User user, User updater) throws UserEditException, UserNotFound {
-		User currentUser = userRepository.findByIdAndDeleted(user.getId(), false);
-		
-		if(currentUser == null)
-			throw new UserNotFound(messageSource, locale, user.getId());
-		
+	public void evaluateAndUpdate(User currentUser, User user, User updater) throws UserEditException {
+
 		if(currentUser.getRole().getId() != user.getRole().getId())
 			updateRole(currentUser, updater, user.getRole());
 		try {
@@ -530,7 +541,7 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 		Set<RepositoryMaintainer> repositoryMaintainers = user.getRepositoryMaintainers();
 		for(RepositoryMaintainer repositoryMaintainer : repositoryMaintainers) {
 			if(!repositoryMaintainer.isDeleted()) 				
-				repositoryMaintainerService.delete(repositoryMaintainer.getId(), updater);
+				repositoryMaintainerService.delete(repositoryMaintainer, updater);
 				
 				//TODO: Is it necessary?
 				

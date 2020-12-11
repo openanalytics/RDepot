@@ -24,16 +24,25 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
+import org.springframework.context.MessageSource;
+
 import eu.openanalytics.rdepot.exception.EventNotFound;
 import eu.openanalytics.rdepot.exception.PackageEditException;
 import eu.openanalytics.rdepot.exception.RepositoryEditException;
@@ -71,6 +80,11 @@ public class RepositoryMaintainerServiceTest {
 	
 	@Mock
 	RepositoryMaintainerRepository repositoryMaintainerRepository;
+	
+	@Before
+	public void init() {
+		MockitoAnnotations.initMocks(this);
+	}
 	
 	@Test
 	public void testCreate() throws PackageEditException, RepositoryEditException, RepositoryMaintainerCreateException {
@@ -117,42 +131,27 @@ public class RepositoryMaintainerServiceTest {
 		
 		RepositoryMaintainer maintainer = new RepositoryMaintainer(123, new User(), repository, false);
 		
-		when(repositoryMaintainerRepository.findByIdAndDeleted(123, false)).thenReturn(maintainer);
 //		when(eventService.findByValue("delete")).thenReturn(deleteEvent);
 //		when(packageService.update(any(), any())).thenReturn(null);
 		doNothing().when(packageService).refreshMaintainer(any(), any());
 		when(repositoryMaintainerEventService.create(any(), any(), any())).thenReturn(null);
 		
-		RepositoryMaintainer deleted = repositoryMaintainerService.delete(123, new User());
+		RepositoryMaintainer deleted = repositoryMaintainerService.delete(maintainer, new User());
 		assertTrue(deleted.isDeleted());
 		assertEquals(maintainer.getId(), deleted.getId());
 	}
 	
-	@Test
-	public void testDeleteWhenRepositoryMaintainerIsNotFound() {
-		Event deleteEvent = new Event(1, "delete");
-		when(repositoryMaintainerRepository.findByIdAndDeleted(123, false)).thenReturn(null);
-//		when(eventService.findByValue("delete")).thenReturn(deleteEvent);
-		
-		try {
-			repositoryMaintainerService.delete(123, new User());
-			fail();
-		} catch(RepositoryMaintainerDeleteException e) {
-			assertEquals(MessageCodes.ERROR_REPOSITORYMAINTAINER_NOT_FOUND, e.getMessage());
-		}
-	}
-	
-	@Test
-	public void testDeleteWhenEventIsNotFound() throws EventNotFound {
-		when(repositoryMaintainerRepository.findByIdAndDeleted(123, false)).thenReturn(new RepositoryMaintainer());
-		when(eventService.getDeleteEvent()).thenThrow(new EventNotFound());
-		
-		try {
-			repositoryMaintainerService.delete(123, new User());
-		} catch(RepositoryMaintainerDeleteException e) {
-			assertEquals(MessageCodes.ERROR_EVENT_NOT_FOUND, e.getMessage());
-		}
-	}
+//	@Test
+//	public void testDeleteWhenEventIsNotFound() throws EventNotFound {
+//		RepositoryMaintainer maintainer = new RepositoryMaintainer(123, new User(), new Repository(), false);
+//		when(eventService.getDeleteEvent()).thenThrow(new EventNotFound());
+//		
+//		try {
+//			repositoryMaintainerService.delete(maintainer, new User());
+//		} catch(RepositoryMaintainerDeleteException e) {
+//			assertEquals(MessageCodes.ERROR_EVENT_NOT_FOUND, e.getMessage());
+//		}
+//	}
 	
 	@Test
 	public void testShiftDelete() throws RepositoryMaintainerDeleteException, RepositoryMaintainerNotFound {
@@ -161,23 +160,11 @@ public class RepositoryMaintainerServiceTest {
 		events.add(new RepositoryMaintainerEvent(1, new Date(), new User(), maintainer, new Event(), "", "", "", new Date()));
 		events.add(new RepositoryMaintainerEvent(2, new Date(), new User(), maintainer, new Event(), "", "", "", new Date()));
 		
-		when(repositoryMaintainerRepository.findByIdAndDeleted(123, true)).thenReturn(maintainer);
 		//doNothing().when(repositoryMaintainerEventService).delete(anyInt());
 		doNothing().when(repositoryMaintainerRepository).delete(any());
 		
-		RepositoryMaintainer deleted = repositoryMaintainerService.shiftDelete(123);
+		RepositoryMaintainer deleted = repositoryMaintainerService.shiftDelete(maintainer);
 		assertEquals(maintainer.getId(), deleted.getId());
-	}
-	
-	@Test
-	public void testShiftDeleteWhenRepositoryMaintainerIsNotFound() throws RepositoryMaintainerNotFound {
-		when(repositoryMaintainerRepository.findByIdAndDeleted(123, true)).thenReturn(null);
-		try {
-			repositoryMaintainerService.shiftDelete(123);
-			fail();
-		} catch(RepositoryMaintainerNotFound e) {
-			assertEquals(MessageCodes.ERROR_REPOSITORYMAINTAINER_NOT_FOUND, e.getMessage());
-		}
 	}
 	
 	@Test

@@ -118,7 +118,7 @@ public class DeclarativeIntegrationTest {
 			.headers(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
-			.post(API_PATH + "/repositories/2/publish")
+			.patch(API_PATH + "/repositories/2/publish")
 		.then()
 			.statusCode(200)
 			.body("success", equalTo("Repository has been published successfully."));
@@ -152,7 +152,7 @@ public class DeclarativeIntegrationTest {
 			.headers(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
-			.delete(API_PATH + "/repositories/3/delete")
+			.delete(API_PATH + "/repositories/2/delete")
 		.then()
 			.statusCode(403);			
 	}
@@ -187,7 +187,7 @@ public class DeclarativeIntegrationTest {
 			.accept(ContentType.JSON)
 			.formParams(params)
 		.when()
-			.post(API_PATH + "/repositories/3/edit")
+			.post(API_PATH + "/repositories/2/edit")
 		.then()
 			.statusCode(403);
 	}
@@ -241,7 +241,7 @@ public class DeclarativeIntegrationTest {
 			.headers(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
-			.post(API_PATH + "/repositories/2/unpublish")
+			.patch(API_PATH + "/repositories/2/unpublish")
 		.then()
 			.statusCode(200)
 			.body("success", equalTo("Repository has been unpublished successfully."));	

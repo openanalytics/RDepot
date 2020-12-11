@@ -225,7 +225,7 @@ public class RepositoryStorageLocalImpl implements RepositoryStorage {
 	}
 	
 	private void sendSynchronizeRequest(SynchronizeRepositoryRequestBody request,
-			String serverAddress, String repository) throws SendSynchronizeRequestException {
+			String serverAddress, String repositoryDirectory) throws SendSynchronizeRequestException {
 		RestTemplate rest = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
@@ -241,18 +241,18 @@ public class RepositoryStorageLocalImpl implements RepositoryStorage {
 				
 				HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(chunk);
 				ResponseEntity<RepoResponse> httpResponse = 
-						rest.postForEntity(serverAddress + "/" + repository, entity, RepoResponse.class);
+						rest.postForEntity(serverAddress + "/" + repositoryDirectory, entity, RepoResponse.class);
 				
 				if(!httpResponse.getStatusCode().is2xxSuccessful() || 
 						!Objects.equals(httpResponse.getBody().getMessage(), "OK")) {
-					throw new SendSynchronizeRequestException(httpResponse, request, serverAddress, repository);
+					throw new SendSynchronizeRequestException(httpResponse, request, serverAddress, repositoryDirectory);
 				}
 				
 				id = httpResponse.getBody().getId();
 			}
 		} catch(RestClientException e) {
 			logger.error(e.getClass().getCanonicalName() + ": " + e.getMessage(), e);
-			throw new SendSynchronizeRequestException(request, serverAddress, repository);
+			throw new SendSynchronizeRequestException(request, serverAddress, repositoryDirectory);
 		}
 		
 	}
@@ -350,7 +350,7 @@ public class RepositoryStorageLocalImpl implements RepositoryStorage {
 					latestPackages, archivePackages, remoteLatestPackages, 
 					remoteArchivePackages, repository, versionBefore);			
 			
-			sendSynchronizeRequest(requestBody, serverAndPort, repository.getName());
+			sendSynchronizeRequest(requestBody, serverAndPort, repositoryDirectory);
 			
 		} catch(SendSynchronizeRequestException e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);

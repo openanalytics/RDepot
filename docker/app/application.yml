@@ -20,8 +20,8 @@ message:
 # Database related properties
 db:
   driver: org.postgresql.Driver
-  url: jdbc:postgresql://oa-rdepot-db:5432/rdepot
-  username: rdepot
+#  url: jdbc:postgresql://oa-rdepot-db:5432/rdepot
+#  username: rdepot
   password: mysecretpassword
 
 # Hibernate related properties
@@ -81,8 +81,14 @@ management:
         auto-time-requests: false
 
 springdoc:
+  pathsToMatch: /api/**
+  api-docs:
+    path: /v1/api-docs
   swagger-ui:
-    path: /swagger-ui/api-docs.html
+    path: /docs/api.html
+    disable-swagger-default-url: true
+    url: /v1/api-docs
+    display-query-params: true
 
 logging:
   level:

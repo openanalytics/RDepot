@@ -48,7 +48,7 @@ public class UserIntegrationTest extends IntegrationTest {
 	private final String API_PATH = "/api/manager/users";
 	private final String USER_TO_ACTIVATE_ID = "8";
 	private final String USER_TO_DEACTIVATE_ID = "6";
-	private final String REPOSITORYMAINTAINER_ID = "5";
+	private final String REPOSITORYMAINTAINER_ID = "5";	
 	
 	@Test
 	public void shouldReturnUsers() throws ParseException, IOException {
@@ -122,7 +122,7 @@ public class UserIntegrationTest extends IntegrationTest {
 		.when()
 			.get(API_PATH + "/einstein")
 		.then()
-			.statusCode(200)
+			.statusCode(401)
 			.body("error", equalTo("You are not authorized to perform this operation."));
 	}
 	
@@ -161,9 +161,9 @@ public class UserIntegrationTest extends IntegrationTest {
 			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
-			.put(API_PATH + "/"  + REPOSITORYMAINTAINER_ID + "/edit")
+			.post(API_PATH + "/"  + REPOSITORYMAINTAINER_ID + "/edit")
 		.then()
-			.statusCode(405);
+			.statusCode(403);
 	}
 	
 	@Test
@@ -172,7 +172,7 @@ public class UserIntegrationTest extends IntegrationTest {
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
-			.put(API_PATH + "/" + USER_TO_DEACTIVATE_ID + "/deactivate")
+			.patch(API_PATH + "/" + USER_TO_DEACTIVATE_ID + "/deactivate")
 		.then()
 			.statusCode(200)
 			.body("success", equalTo("User has been deleted successfully."));
@@ -194,7 +194,7 @@ public class UserIntegrationTest extends IntegrationTest {
 			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
-			.put(API_PATH + "/"+ REPOSITORYMAINTAINER_ID + "/deactivate")
+			.patch(API_PATH + "/"+ REPOSITORYMAINTAINER_ID + "/deactivate")
 		.then()
 			.statusCode(403);
 	}
@@ -205,7 +205,7 @@ public class UserIntegrationTest extends IntegrationTest {
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
-			.put(API_PATH + "/" + USER_TO_ACTIVATE_ID + "/activate")
+			.patch(API_PATH + "/" + USER_TO_ACTIVATE_ID + "/activate")
 		.then()
 			.statusCode(200)
 			.body("success", equalTo("User has been activated successfully."));
@@ -227,9 +227,45 @@ public class UserIntegrationTest extends IntegrationTest {
 			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
-			.put(API_PATH + "/"+ REPOSITORYMAINTAINER_ID + "/activate")
+			.patch(API_PATH + "/"+ REPOSITORYMAINTAINER_ID + "/activate")
 		.then()
 			.statusCode(403);
+	}
+	
+	@Test
+	public void shouldAdminGetTokenOfAnyUser() {
+		given()
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.accept(ContentType.JSON)
+			.when()
+				.get(API_PATH + "/"+ REPOSITORYMAINTAINER_ID + "/token")
+			.then()
+				.statusCode(200)
+				.body("token", equalTo(REPOSITORYMAINTAINER_TOKEN));
+	}
+	
+	@Test
+	public void shouldRepositoryMaintainerGetHisToken() {
+		given()
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
+			.accept(ContentType.JSON)
+			.when()
+				.get(API_PATH + "/"+ REPOSITORYMAINTAINER_ID + "/token")
+			.then()
+				.statusCode(200)
+				.body("token", equalTo(REPOSITORYMAINTAINER_TOKEN));
+	}
+	
+	@Test
+	public void nonAdminShouldNotGetTokenOfDifferentUser() {
+		given()
+			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
+			.accept(ContentType.JSON)
+			.when()
+				.get(API_PATH + "/"+ REPOSITORYMAINTAINER_ID + "/token")
+			.then()
+				.statusCode(401)
+				.body("error", equalTo("You are not authorized to perform this operation."));
 	}
 	
 	@Override

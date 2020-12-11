@@ -133,4 +133,9 @@ public class SubmissionEventService
 		if(event != null)
 			submissionEventRepository.delete(event);
 	}
+	
+	@Transactional(readOnly = false)
+	public void delete(SubmissionEvent event) {
+		submissionEventRepository.delete(event);
+	}
 }

@@ -46,8 +46,6 @@
 -- CREATE USER rdepot;
 -- GRANT ALL PRIVILEGES ON DATABASE rdepot TO rdepot;
 
-\connect postgres
-
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
@@ -449,8 +447,6 @@ CREATE TABLE api_token (
 	user_login character varying(255) NOT NULL
 );
 
-ALTER TABLE api_token OWNER TO postgres;
-
 CREATE SEQUENCE "Api_token_id_seq"
 	START WITH 1
     INCREMENT BY 1
@@ -772,7 +768,7 @@ SELECT pg_catalog.setval('"User_id_seq"', 8, true);
 
 
 --
--- Name: Api_token_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: Api_token_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('"Api_token_id_seq"', 2, true);

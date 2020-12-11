@@ -68,7 +68,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		params.put("serverAddress", "http://oa-rdepot-repo:8080/" + REPO_NAME_TO_CREATE);
 		
 		given()
-			.headers(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.contentType(ContentType.JSON)
 			.accept(ContentType.JSON)
 			.body(params)
@@ -85,7 +85,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		List<Set> expectedPackages = convertPackages(expectedJSON);
 				
 		String data = given()
-			.headers(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/list")
@@ -110,7 +110,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		params.put("serverAddress", "http://oa-rdepot-repo:8080/" + REPO_NAME_TO_CREATE);
 		
 		given()
-			.headers(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.contentType(ContentType.JSON)
 			.body(params)
 		.when()
@@ -128,7 +128,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		params.put("serverAddress", "http://oa-rdepot-repo:8080/" + REPO_NAME_TO_EDIT);
 		
 		given()
-			.headers(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 			.formParams(params)
 		.when()
@@ -144,7 +144,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		List<Set> expectedPackages = convertPackages(expectedJSON);
 		
 		String data = given()
-			.headers(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/list")
@@ -169,7 +169,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		params.put("serverAddress", "http://oa-rdepot-repo:8080/" + REPO_NAME_TO_EDIT);
 		
 		given()
-			.headers(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
+			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 			.formParams(params)
 		.when()
@@ -189,7 +189,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		List<Set> expectedPackages = convertPackages(expectedJSON);
 		
 		String data = given()
-			.headers(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/list")
@@ -210,10 +210,10 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 	@Test
 	public void shouldPublishRepository() throws IOException, ParseException {
 		given()
-			.headers(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
-			.post(API_PATH + "/" + REPO_ID_TO_PUBLISH + "/publish")
+			.patch(API_PATH + "/" + REPO_ID_TO_PUBLISH + "/publish")
 		.then()
 			.statusCode(200)
 			.body("success", equalTo("Repository has been published successfully."));
@@ -226,7 +226,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		List<Set> expectedPackages = convertPackages(expectedJSON);
 		
 		String data = given()
-			.headers(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/list")
@@ -246,10 +246,10 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 	@Test
 	public void nonRepositoryMaintainerShouldNotBeAbleToPublishRepository() {
 		given()
-			.headers(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
+			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
-			.post(API_PATH + "/" + REPO_ID_TO_PUBLISH + "/publish")
+			.patch(API_PATH + "/" + REPO_ID_TO_PUBLISH + "/publish")
 		.then()
 			.statusCode(403);
 	}
@@ -261,10 +261,10 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 	@Test
 	public void shouldUnpublishRepository() throws IOException, ParseException {
 		given()
-			.headers(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
-			.post(API_PATH + "/" + REPO_ID_TO_UNPUBLISH + "/unpublish")
+			.patch(API_PATH + "/" + REPO_ID_TO_UNPUBLISH + "/unpublish")
 		.then()
 			.statusCode(200)
 			.body("success", equalTo("Repository has been unpublished successfully."));
@@ -277,7 +277,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		List<Set> expectedPackages = convertPackages(expectedJSON);
 		
 		String data = given()
-			.headers(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/list")
@@ -297,10 +297,10 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 	@Test
 	public void nonRepositoryMaintainerShouldNotBeAbleToUnpublishRepository() {
 		given()
-			.headers(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
+			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
-			.post(API_PATH + "/" + REPO_ID_TO_UNPUBLISH + "/unpublish")
+			.patch(API_PATH + "/" + REPO_ID_TO_UNPUBLISH + "/unpublish")
 		.then()
 			.statusCode(403);
 	}	
@@ -309,7 +309,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 	@Test
 	public void shouldDeleteRepository() throws IOException, ParseException, InterruptedException {
 		given()
-			.headers(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.delete(API_PATH + "/" + REPO_ID_TO_DELETE + "/delete")
@@ -325,7 +325,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		List<Set> expectedPackages = convertPackages(expectedJSON);
 		
 		String data = given()
-			.headers(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/list")
@@ -390,7 +390,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
-			.post(API_PATH + "/8/publish")
+			.patch(API_PATH + "/8/publish")
 		.then()
 			.statusCode(200)
 			.body("success", equalTo("Repository has been published successfully."));
@@ -417,13 +417,70 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 	@Test
 	public void shouldNonAdminUserNotBeAbleToDeleteRepository() {
 		given()
-			.headers(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.delete(API_PATH + "/" + DELETED_REPOSITORY_ID + "/delete")
 		.then()
 			.statusCode(403);
 	}	
+	
+	@SuppressWarnings({ "rawtypes" })
+	@Test
+	public void shouldAdminShiftDeleteRepository() throws IOException, ParseException, InterruptedException {
+		given()
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.delete(API_PATH + "/" + REPO_ID_TO_DELETE + "/delete")
+		.then()
+			.statusCode(200)
+			.body("success", equalTo("Repository has been deleted successfully."));
+		
+		given()
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.delete(API_PATH + "/" + REPO_ID_TO_DELETE + "/sdelete")
+		.then()
+			.statusCode(200)
+			.body("success", equalTo("Repository has been deleted successfully."));
+		
+		JSONParser jsonParser = new JSONParser();
+		
+		FileReader reader = new FileReader(JSON_PATH + "/repository/repositories_without_one.json");
+		JSONArray expectedJSON = (JSONArray) jsonParser.parse(reader);
+		
+		List<Set> expectedPackages = convertPackages(expectedJSON);
+		
+		String data = given()
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.get(API_PATH + "/list")
+		.then()
+			.statusCode(200)
+			.extract()
+			.asString();
+		
+		JSONArray actualJSON = (JSONArray) jsonParser.parse(data);
+		
+		List<Set> actualPackages = convertPackages(actualJSON);
+
+		assertEquals("Repository deletion caused some changes in packages in active repositories", expectedPackages, actualPackages);
+		assertTrue("Repository hasn't been removed", compare(expectedJSON, actualJSON));
+				
+		int exitValue = -1;
+		
+		String[] cmd = new String[] {"gradle", "checkServer", "-b","src/integration-test/resources/build.gradle"};
+		Process process = Runtime.getRuntime().exec(cmd);
+		exitValue = process.waitFor();
+		process.destroy();
+		
+		assertTrue("Files haven't been removed from server", exitValue == 0);
+	}
+	
+	//TODO: negative test for shift deletion
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private List<Set> convertPackages(JSONArray rootJSON) throws ParseException {

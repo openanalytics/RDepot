@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 
 import javax.validation.Valid;
 
@@ -35,6 +34,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -44,22 +44,21 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import com.auth0.jwt.JWT;
 
 import eu.openanalytics.rdepot.exception.NoAdminLeftException;
 import eu.openanalytics.rdepot.exception.UserActivateException;
 import eu.openanalytics.rdepot.exception.UserDeactivateException;
 import eu.openanalytics.rdepot.exception.UserEditException;
 import eu.openanalytics.rdepot.exception.UserNotFound;
+import eu.openanalytics.rdepot.exception.UserUnauthorizedException;
 import eu.openanalytics.rdepot.messaging.MessageCodes;
-import eu.openanalytics.rdepot.model.ApiToken;
 import eu.openanalytics.rdepot.model.Role;
 import eu.openanalytics.rdepot.model.User;
-import eu.openanalytics.rdepot.repository.ApiTokenRepository;
 import eu.openanalytics.rdepot.service.RoleService;
 import eu.openanalytics.rdepot.service.UserEventService;
 import eu.openanalytics.rdepot.service.UserService;
@@ -68,8 +67,10 @@ import eu.openanalytics.rdepot.warning.UserAlreadyDeactivatedWarning;
 
 @Controller
 @RequestMapping(value= {"/manager/users", "/api/manager/users"})
-public class UserController 
-{	
+public class UserController {	
+
+	Locale locale = LocaleContextHolder.getLocale();
+
 	@Autowired
 	private UserService userService;
 	
@@ -86,8 +87,7 @@ public class UserController
 	private MessageSource messageSource;
 		
 	@InitBinder(value="user")
-	private void initBinder(WebDataBinder binder) 
-	{
+	private void initBinder(WebDataBinder binder) {
 		binder.setValidator(userValidator);
 	}
 	
@@ -95,9 +95,7 @@ public class UserController
 	
 	@PreAuthorize("hasAuthority('admin')")
 	@RequestMapping(method=RequestMethod.GET)
-	public String usersPage(Model model, Principal principal) 
-	{
-		User requester = userService.findByLogin(principal.getName());
+	public String usersPage(Model model, Principal principal) {
 		model.addAttribute("users", users());
 		model.addAttribute("role", placeholder);
 
@@ -105,12 +103,21 @@ public class UserController
 	}
 	
 	@PreAuthorize("hasAuthority('user')")
-	@RequestMapping(value = "/token", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, String> getToken(Principal principal)  
-	{
+
+	@RequestMapping(value = "/{id}/token", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, String> getToken(@PathVariable Integer id, Principal principal) 
+			throws UserUnauthorizedException {
 		HashMap<String, String> result = new HashMap<>();
+		User requester = userService.findByLogin(principal.getName());
+		User expectedUser = userService.findById(id);
 		
-		result.put("token", userService.generateToken(principal.getName()));
+		if(requester.equals(expectedUser)) {		
+			result.put("token", userService.generateToken(expectedUser.getLogin()));
+		} else if(Objects.equals(requester.getRole().getName(), "admin")) {
+			result.put("token", userService.generateToken(expectedUser.getLogin()));
+		} else {
+			throw new UserUnauthorizedException(messageSource, locale);
+		}
 
 		return result;
 	}
@@ -118,8 +125,7 @@ public class UserController
 	@PreAuthorize("hasAuthority('admin')")
 	@RequestMapping(value="/list", method=RequestMethod.GET, produces="application/json")
 	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody List<User> users() 
-	{
+	public @ResponseBody List<User> users() {
 		return userService.findAll();
 	}
 
@@ -133,121 +139,114 @@ public class UserController
 	@PreAuthorize("hasAuthority('user')")
 	@RequestMapping(value="/{login}", method=RequestMethod.GET)
 	@ResponseBody
-	public HashMap<String, Object> userDetails(@PathVariable String login, Principal principal) {
+	public ResponseEntity<HashMap<String, Object>> userDetails(@PathVariable String login, Principal principal) 
+			throws UserNotFound, UserUnauthorizedException {
 		User requester = userService.findByLogin(principal.getName());
 		User user = userService.findByLogin(login);
-		Locale locale = LocaleContextHolder.getLocale();
+		HttpStatus httpStatus = HttpStatus.OK;
+
 		HashMap<String, Object> result = new HashMap<String, Object>();
-		if(user == null)
-			result.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_FOUND, null, locale));
-		else if(requester != null && !Objects.equals(requester.getRole().getName(), "admin") && !Objects.equals(requester.getLogin(), login)) {
-			result.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_AUTHORIZED, null, locale));
-		} else if(requester == null) {
-			result.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_FOUND, null, locale));
+		if(requester == null || (!Objects.equals(requester.getRole().getName(), "admin") 
+				&& !Objects.equals(requester.getLogin(), login))) {
+			throw new UserUnauthorizedException(messageSource, locale);
+		} else if(user == null) {
+			throw new UserNotFound(messageSource, locale, login);
 		} else {
 			result.put("created", userEventService.getCreatedOn(user));
 			result.put("lastloggedin", userEventService.getLastLoggedInOn(user));
 			result.put("user", user);
 		}
 		
-		
-		return result;
+		return new ResponseEntity<>(result, httpStatus);
 	}
 
 	@PreAuthorize("hasAuthority('admin')")
 	@RequestMapping(value="/{id}/edit", method=RequestMethod.POST)
 	@ResponseBody
-	public HashMap<String, Object> editUser(@PathVariable Integer id, @ModelAttribute(value="user") @Valid User user,
-			BindingResult bindingResult, Principal principal) {
+	public ResponseEntity<HashMap<String, Object>> editUser(@PathVariable Integer id, 
+			@ModelAttribute(value="user") @Valid User user,
+			BindingResult bindingResult, Principal principal) 
+					throws UserUnauthorizedException, UserNotFound, UserEditException {
 		HashMap<String, Object> result = new HashMap<>();
+		HttpStatus httpStatus = HttpStatus.OK;
 		User requester = userService.findByLogin(principal.getName());
-		Locale locale = LocaleContextHolder.getLocale();
-		try
-		{
-			if(requester == null || !Objects.equals(requester.getRole().getName(), "admin"))
-				result.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_AUTHORIZED, null, locale));
-			else if(user.getId() != id)
-				result.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_FOUND, null, locale));
-			else
-			{
-				userValidator.validate(user, bindingResult);
-				if (bindingResult.hasErrors())
-					throw new UserEditException(messageSource, locale, user);
-				userService.evaluateAndUpdate(user, requester);
-//				if(requester == null || !Objects.equals(requester.getRole().getName(), "admin"))
-//					result.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_AUTHORIZED, null, locale));	
-			} 
-			return result;
-		}
-		catch (UserEditException | UserNotFound e) 
-		{
-			result.put("user", user);
-			result.put("error", e.getMessage());
-			result.put("roles", roleService.findAll());
-			result.put("org.springframework.validation.BindingResult.user", bindingResult);
-			return result;
-		}
+		User currentUser = userService.findById(id);
+		
+		if(requester == null || !Objects.equals(requester.getRole().getName(), "admin")) {
+			throw new UserUnauthorizedException(messageSource, locale);
+		} else if(currentUser == null || user.getId() != id) {
+			throw new UserNotFound(messageSource, locale, id);
+		} else {
+			userValidator.validate(user, bindingResult);
+			if (bindingResult.hasErrors()) {
+				result.put("error", messageSource.getMessage(bindingResult.getFieldError().getCode(), 
+						null, bindingResult.getFieldError().getCode(), locale));
+				//result.put("org.springframework.validation.BindingResult.user", bindingResult);
+				httpStatus = HttpStatus.UNPROCESSABLE_ENTITY;
+			} else {
+				userService.evaluateAndUpdate(currentUser, user, requester);
+				result.put("success", messageSource.getMessage(MessageCodes.SUCCESS_USER_UPDATED, null, 
+						MessageCodes.SUCCESS_USER_UPDATED, locale));
+			}
+		} 
+
+		
+		return new ResponseEntity<>(result, httpStatus);
 	}
 	
 	@PreAuthorize("hasAuthority('admin')")
-	@RequestMapping(value="/{id}/activate", method=RequestMethod.PUT, produces="application/json")
+	@RequestMapping(value="/{id}/activate", method=RequestMethod.PATCH, produces="application/json")
 	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody HashMap<String, String> activateUser(@PathVariable Integer id, Principal principal)
-	{
+	public @ResponseBody ResponseEntity<HashMap<String, String>> activateUser(
+			@PathVariable Integer id, Principal principal) 
+					throws UserNotFound, UserUnauthorizedException, UserActivateException {
 		HashMap<String, String> result = new HashMap<String, String>();
 		User user = userService.findById(id);
-		Locale locale = LocaleContextHolder.getLocale();
 		User requester = userService.findByLogin(principal.getName());
+		HttpStatus httpStatus = HttpStatus.OK;
+		
 		try {
-			if(requester == null)
-				result.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_FOUND, null, locale));
-			else if(!Objects.equals(requester.getRole().getName(), "admin"))
-				result.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_AUTHORIZED, null, locale));
-			else if(user == null)
-				result.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_FOUND, null, locale));
-			else {
+			if(requester == null || !Objects.equals(requester.getRole().getName(), "admin")) {
+				throw new UserUnauthorizedException(messageSource, locale);
+			} else if(user == null) {
+				throw new UserNotFound(messageSource, locale, id);
+			} else {
 				userService.activateUser(user, requester);
-				result.put("success", messageSource.getMessage(MessageCodes.SUCCESS_USER_ACTIVATED, null, locale));				
+				result.put("success", messageSource.getMessage(MessageCodes.SUCCESS_USER_ACTIVATED, null, 
+						MessageCodes.SUCCESS_USER_ACTIVATED, locale));				
 			}
-		}
-		catch (UserActivateException e) {
-			result.put("error", e.getMessage());
 		} catch (UserAlreadyActivatedWarning w) {
 			result.put("warning", w.getMessage());
 		}			
 		
-		return result;
+		return new ResponseEntity<>(result, httpStatus);
 	}
 	
 	@PreAuthorize("hasAuthority('admin')")
-	@RequestMapping(value="/{id}/deactivate", method=RequestMethod.PUT, produces="application/json")
+	@RequestMapping(value="/{id}/deactivate", method=RequestMethod.PATCH, produces="application/json")
 	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody HashMap<String, String> deactivateUser(@PathVariable Integer id, Principal principal)
-	{
+	public @ResponseBody ResponseEntity<HashMap<String, String>> deactivateUser(
+			@PathVariable Integer id, Principal principal) 
+			throws UserUnauthorizedException, UserNotFound, UserDeactivateException, NoAdminLeftException {
 		HashMap<String, String> result = new HashMap<String, String>();
 		User user = userService.findById(id);
 		User requester = userService.findByLogin(principal.getName());
-		Locale locale = LocaleContextHolder.getLocale();
-		try
-		{
-			if(requester == null)
-				result.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_FOUND, null, locale));
-			else if(!Objects.equals(requester.getRole().getName(), "admin"))
-				result.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_AUTHORIZED, null, locale));
-			else if(user == null)
-				result.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_FOUND, null, locale));
-			else
-			{
+		HttpStatus httpStatus = HttpStatus.OK;
+		
+		try {
+			if(requester == null || !Objects.equals(requester.getRole().getName(), "admin")) {
+				throw new UserUnauthorizedException(messageSource, locale);
+			} else if(user == null) {
+				throw new UserNotFound(messageSource, locale, id);
+			} else {
 				userService.deactivateUser(user, requester);
-				result.put("success", messageSource.getMessage(MessageCodes.SUCCESS_USER_DEACTIVATED, null, locale));		
-			} 
-		}
-		catch (UserDeactivateException | NoAdminLeftException e) {
-			result.put("error", e.getMessage());
+				result.put("success", messageSource.getMessage(MessageCodes.SUCCESS_USER_DEACTIVATED, null, 
+						MessageCodes.SUCCESS_USER_DEACTIVATED, locale));				
+			}
 		} catch (UserAlreadyDeactivatedWarning w) {
 			result.put("warning", w.getMessage());
-		}
+		}			
 		
-		return result;
+		return new ResponseEntity<>(result, httpStatus);
 	}
 }

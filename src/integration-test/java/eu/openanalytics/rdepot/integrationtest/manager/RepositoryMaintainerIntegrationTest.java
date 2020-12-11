@@ -22,6 +22,7 @@ package eu.openanalytics.rdepot.integrationtest.manager;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
@@ -332,8 +333,71 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 		
 		JsonArray actualDeleted = (JsonArray) JsonParser.parseString(deleted);
 	
-		assertTrue(compareMaintainers(expectedJSON, actualJSON));
-		assertTrue(compareMaintainers(expectedDeleted, actualDeleted));
+		assertTrue("'Deleted' repository maintainer still exists in the list of repository maintainers", compareMaintainers(expectedJSON, actualJSON));
+		assertTrue("'Deleted' repository maintainer haven't been added to the list of deleted ones", compareMaintainers(expectedDeleted, actualDeleted));
+	}
+	
+	@Test
+	public void nonAdminShouldNotBeAbleToDeleteRepositoryMaintainer() throws IOException, ParseException {
+		given()
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.delete(API_PATH + "/" + REPOSITORYMAINTAINER_ID_TO_DELETE + "/delete")
+		.then()
+			.statusCode(403);
+	}
+	
+	@Test
+	public void shouldAdminShiftDeleteRepositoryMaintainer() throws IOException, ParseException {
+		given()
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.delete(API_PATH + "/" + REPOSITORYMAINTAINER_ID_TO_DELETE + "/delete")
+		.then()
+			.statusCode(200);
+		
+		given()
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.delete(API_PATH + "/" + REPOSITORYMAINTAINER_ID_TO_DELETE + "/sdelete")
+		.then()
+			.statusCode(200);
+		
+		FileReader reader = new FileReader(JSON_PATH + "/repositoryMaintainer/repository_maintainers_without_one.json");
+		JsonArray expectedJSON = (JsonArray) JsonParser.parseReader(reader);
+		
+		String data = given()
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.get(API_PATH + "/list")
+		.then()
+			.statusCode(200)
+			.extract()
+			.asString();
+		
+		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
+		
+		reader = new FileReader(JSON_PATH + "/repositoryMaintainer/deleted_repository_maintainers_with_new_one.json");
+		JsonArray expectedDeleted = (JsonArray) JsonParser.parseReader(reader);
+		
+		String deleted = given()
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.get(API_PATH + "/deleted")
+		.then()
+			.statusCode(200)
+			.extract()
+			.asString();
+		
+		JsonArray actualDeleted = (JsonArray) JsonParser.parseString(deleted);
+	
+		assertTrue("'Shift deleted' repository maintainer still exists in the list of repository maintainers", compareMaintainers(expectedJSON, actualJSON));
+		assertFalse("'Shift deleted' repository maintainer can't be added to the list of deleted ones", compareMaintainers(expectedDeleted, actualDeleted));
 	}
 	
 	@Test
@@ -384,23 +448,10 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 			.asString();
 		
 		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
-		
-		System.out.println(actualJSON.toString());
-		System.out.println(expectedJSON.toString());
-		
+				
 		assertTrue(compareMaintainers(expectedJSON, actualJSON));
 	}
 	
-	@Test
-	public void nonAdminShouldNotBeAbleToDeleteRepositoryMaintainer() throws IOException, ParseException {
-		given()
-			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
-			.accept(ContentType.JSON)
-		.when()
-			.delete(API_PATH + "/" + REPOSITORYMAINTAINER_ID_TO_DELETE + "/delete")
-		.then()
-			.statusCode(403);
-	}	
 	private boolean compareArrays(JsonArray expected, JsonArray actual) throws ParseException {
 		
 		if (expected == null || actual == null)

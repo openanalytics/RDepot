@@ -20,17 +20,18 @@
  */
 package eu.openanalytics.rdepot.exception;
 
-public class RepositoryMaintainerEditException extends Exception 
-{
+import java.util.Locale;
 
-	/**
-	 * 
-	 */
+import org.springframework.context.MessageSource;
+
+import eu.openanalytics.rdepot.messaging.MessageCodes;
+import eu.openanalytics.rdepot.model.RepositoryMaintainer;
+
+public class RepositoryMaintainerEditException extends RepositoryMaintainerException {
+	
 	private static final long serialVersionUID = 8406356789167890474L;
 	
-	public RepositoryMaintainerEditException(String message)
-	{
-		super(message);
+	public RepositoryMaintainerEditException(RepositoryMaintainer repositoryMaintainer, MessageSource messageSource, Locale locale) {
+		super(MessageCodes.ERROR_REPOSITORYMAINTAINER_EDIT, messageSource, locale, repositoryMaintainer);
 	}
-
 }

@@ -44,10 +44,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import eu.openanalytics.rdepot.exception.PackageDeleteException;
+import eu.openanalytics.rdepot.exception.PackageNotFound;
 import eu.openanalytics.rdepot.exception.SubmissionAcceptException;
 import eu.openanalytics.rdepot.exception.SubmissionCreateException;
 import eu.openanalytics.rdepot.exception.SubmissionDeleteException;
 import eu.openanalytics.rdepot.exception.SubmissionNotFound;
+import eu.openanalytics.rdepot.exception.UserUnauthorizedException;
 import eu.openanalytics.rdepot.messaging.MessageCodes;
 import eu.openanalytics.rdepot.model.PackageUploadRequest;
 import eu.openanalytics.rdepot.model.Submission;
@@ -60,8 +63,7 @@ import eu.openanalytics.rdepot.warning.SubmissionDeleteWarning;
 import eu.openanalytics.rdepot.warning.SubmissionNeedsToBeAcceptedWarning;
 
 @Controller
-public class SubmissionController
-{	
+public class SubmissionController {	
 	
 	@Autowired
 	private SubmissionService submissionService;
@@ -72,6 +74,16 @@ public class SubmissionController
 	@Autowired
 	private MessageSource messageSource;
 	
+	/**
+	 * This method is used to upload a package to the Manager.<br/>
+	 * It uses multipart form to carry a file.
+	 * @param multipartFile package file
+	 * @param repository where package is to be uploaded
+	 * @param replace if package should replace a similar one
+	 * @param principal represents the uploader
+	 * @return response entity with JSON object containing success, error or warning message under the respective fields
+	 * @throws UserUnauthorizedException 
+	 */
 	@PreAuthorize("hasAuthority('user')")
 	@RequestMapping(
 			value={"/api/manager/packages/submit", "/manager/packages/submit"}, 
@@ -81,33 +93,45 @@ public class SubmissionController
 	public @ResponseBody ResponseEntity<?> createSubmission(
 			@RequestParam("file") MultipartFile multipartFile,
 			@RequestParam("repository") String repository,
+			@RequestParam(name="generateManual", defaultValue="true") boolean generateManual,
 			@RequestParam(name="replace", defaultValue="false") boolean replace,
-			Principal principal) {
+			Principal principal) throws UserUnauthorizedException {
 		
 		HashMap<String, Pair<String, String>> result = new HashMap<>();
-		PackageUploadRequest uploadRequest = new PackageUploadRequest(multipartFile, repository, replace);
+		PackageUploadRequest uploadRequest = new PackageUploadRequest(multipartFile, repository, generateManual, replace);
 		User uploader = userService.findByLoginWithMaintainers(principal.getName());
 		Locale locale = LocaleContextHolder.getLocale();
+		HttpStatus httpStatus = HttpStatus.OK;
 		
-		if(uploader == null)
-			result.put("error", Pair.of(principal.getName(), messageSource.getMessage(MessageCodes.ERROR_USER_NOT_FOUND, null, locale)));
-		else {
+		if(uploader == null) {
+			throw new UserUnauthorizedException(messageSource, locale);
+		} else {
 			try {
 				submissionService.create(uploadRequest, uploader);
 
 				// TODO: check if submission really just is submission and doesn't alter anything in the db
-				result.put("success", Pair.of(multipartFile.getOriginalFilename(), messageSource.getMessage(MessageCodes.SUCCESS_SUBMISSION_CREATED, null, MessageCodes.SUCCESS_SUBMISSION_CREATED, locale)));
+				result.put("success", Pair.of(multipartFile.getOriginalFilename(), 
+						messageSource.getMessage(MessageCodes.SUCCESS_SUBMISSION_CREATED, null, 
+								MessageCodes.SUCCESS_SUBMISSION_CREATED, locale)));
 			} catch(SubmissionCreateException  e) {
 				result.put("error", Pair.of(multipartFile.getOriginalFilename(), e.getMessage()));
+				httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 			} catch(SubmissionCreateWarning | SubmissionNeedsToBeAcceptedWarning w) {
 				result.put("warning", Pair.of(multipartFile.getOriginalFilename(), w.getMessage()));
-			}
+			}			
 		}
-		return new ResponseEntity<>(result, HttpStatus.OK);
+		
+		return new ResponseEntity<>(result, httpStatus);
 	}
 
+	/**
+	 * This method provides a list of submissions created by the user.
+	 * @param principal represents the user
+	 * @return list of created submissions
+	 */
 	@PreAuthorize("hasAuthority('user')")
-	@RequestMapping(value= {"/manager/submissions/list", "/api/manager/submissions/list"}, method=RequestMethod.GET, produces="application/json")
+	@RequestMapping(value= {"/manager/submissions/list", "/api/manager/submissions/list"}, 
+		method=RequestMethod.GET, produces="application/json")
 	@ResponseStatus(HttpStatus.OK)
 	public @ResponseBody List<Submission> submissions(Principal principal) {
 		User submitter = userService.findByLoginWithMaintainers(principal.getName());
@@ -115,6 +139,10 @@ public class SubmissionController
 		return submissionList;
 	}
 	
+	/**
+	 * This method provides a list of all deleted submissions.
+	 * @return list of deleted submissions.
+	 */
 	@PreAuthorize("hasAuthority('admin')")
 	@RequestMapping(value= {"/manager/submissions/deleted","/api/manager/submissions/deleted"}, method=RequestMethod.GET, produces="application/json")
 	@ResponseStatus(HttpStatus.OK)
@@ -144,39 +172,49 @@ public class SubmissionController
 		return "submissions";
 	}
 
+	/**
+	 * This method cancels submission. <br/>
+	 * It means submission is deleted and uploaded package source is removed from the file system.
+	 * @param id submission ID
+	 * @param principal represents the user
+	 * @return response entity with JSON object containing success, error or warning message under the respective fields
+	 * @throws SubmissionNotFound 
+	 * @throws UserUnauthorizedException 
+	 * @throws SubmissionDeleteException 
+	 */
 	@PreAuthorize("hasAuthority('user')")
-	@RequestMapping(value= {"/manager/submissions/{id}/cancel","/api/manager/submissions/{id}/cancel"}, method=RequestMethod.DELETE, produces="application/json")
+	@RequestMapping(value= {"/manager/submissions/{id}/cancel","/api/manager/submissions/{id}/cancel"}, 
+		method=RequestMethod.DELETE, produces="application/json")
 	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody HashMap<String, String> cancelSubmissionBySubmitterOrMaintainer(
-			@PathVariable Integer id, 
-			Principal principal) {
+	public @ResponseBody ResponseEntity<HashMap<String, String>> cancelSubmissionBySubmitterOrMaintainer(
+			@PathVariable Integer id, Principal principal) 
+					throws SubmissionNotFound, UserUnauthorizedException, SubmissionDeleteException {
 		User requester = userService.findByLoginWithMaintainers(principal.getName());
 		Submission submission = submissionService.findById(id);
 		Locale locale = LocaleContextHolder.getLocale();
 		HashMap<String, String> result = new HashMap<String, String>();
-		try
-		{
-			if(submission == null)
-				result.put("error", messageSource.getMessage(MessageCodes.ERROR_SUBMISSION_NOT_FOUND, null, locale));
-			else if(submission.isAccepted())
-				result.put("warning", messageSource.getMessage(MessageCodes.WARNING_SUBMISSION_ALREADY_ACCEPTED, null, locale));
-			else if(!userService.isAuthorizedToCancel(submission, requester))
-				result.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_AUTHORIZED, null, locale));		
-			else
-			{
-				submissionService.rejectSubmission(id, requester);
+		HttpStatus httpStatus = HttpStatus.OK;
+		
+		try {
+			if(submission == null) {
+				throw new SubmissionNotFound(messageSource, locale, id);
+			} else if(!userService.isAuthorizedToCancel(submission, requester)) {
+				throw new UserUnauthorizedException(messageSource, locale);
+			} else if(submission.isAccepted()) {
+				result.put("warning", messageSource.getMessage(MessageCodes.WARNING_SUBMISSION_ALREADY_ACCEPTED, 
+						null, MessageCodes.WARNING_SUBMISSION_ALREADY_ACCEPTED, locale));
+			} else {
+				submissionService.rejectSubmission(submission, requester);
 //				if(requester.getId() == submission.getUser().getId() && !userService.isAuthorizedToAccept(submission, requester))
 //					emailService.sendCanceledSubmissionEmail(submission);
-				result.put("success", messageSource.getMessage(MessageCodes.SUCCESS_SUBMISSION_CANCELED, null, locale));					
-
+				result.put("success", messageSource.getMessage(MessageCodes.SUCCESS_SUBMISSION_CANCELED, null, 
+						MessageCodes.SUCCESS_SUBMISSION_CANCELED, locale));					
 			}
-		} catch(SubmissionDeleteException | SubmissionNotFound e) {
-			result.put("error", e.getMessage());
 		} catch(SubmissionDeleteWarning w) {
 			result.put("warning", w.getMessage());
 		}
 		
-		return result;
+		return new ResponseEntity<>(result, httpStatus);
 	}
 	
 	@PreAuthorize("hasAuthority('user')")
@@ -200,48 +238,50 @@ public class SubmissionController
 	}
 	
 	@PreAuthorize("hasAuthority('user')")
-	@RequestMapping(value= {"/manager/submissions/{id}/accept","/api/manager/submissions/{id}/accept"}, method=RequestMethod.PUT, produces="application/json")
+	@RequestMapping(value= {"/manager/submissions/{id}/accept","/api/manager/submissions/{id}/accept"}, method=RequestMethod.PATCH, produces="application/json")
 	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody HashMap<String, String> acceptSubmissionByMaintainerREST(@PathVariable Integer id, 
-			Principal principal) 
-	{
+	public @ResponseBody ResponseEntity<HashMap<String, String>> acceptSubmissionByMaintainerREST(@PathVariable Integer id, 
+			Principal principal) throws UserUnauthorizedException, SubmissionNotFound, SubmissionAcceptException {
 		Locale locale = LocaleContextHolder.getLocale();
 		User requester = userService.findByLoginWithMaintainers(principal.getName());
 		Submission submission = submissionService.findById(id);
+		HttpStatus httpStatus = HttpStatus.OK;
 		HashMap<String, String> result = new HashMap<String, String>();
 
-		if(requester == null)
-			result.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_FOUND, null, locale));
-		else if(!userService.isAuthorizedToAccept(submission, requester))
-			result.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_AUTHORIZED, null, locale));
-		
-		else {
+		if(submission == null) {
+			throw new SubmissionNotFound(messageSource, locale, id);
+		} else if(requester == null || !userService.isAuthorizedToAccept(submission, requester)) {
+			throw new UserUnauthorizedException(messageSource, locale);
+		} else {
 			try {
 				submissionService.acceptSubmission(submission, requester);
-				result.put("success", messageSource.getMessage(MessageCodes.SUCCESS_SUBMISSION_ACCEPTED, null, locale));
-			} catch(SubmissionAcceptException e) {
-				result.put("error", messageSource.getMessage(e.getMessage(), null, locale));
+				result.put("success", messageSource.getMessage(MessageCodes.SUCCESS_SUBMISSION_ACCEPTED, null, 
+						MessageCodes.SUCCESS_SUBMISSION_ACCEPTED, locale));
 			} catch(SubmissionAlreadyAcceptedWarning w) {
-				result.put("warning", messageSource.getMessage(w.getMessage(), null, locale));
+				result.put("warning", w.getMessage());
 			}
 		}
-		return result;
+		return new ResponseEntity<>(result, httpStatus);
 
 	}
 	
 	@PreAuthorize("hasAuthority('admin')")
 	@RequestMapping(value= {"/manager/submissions/{id}/sdelete","/api/manager/submissions/{id}/sdelete"}, method=RequestMethod.DELETE, produces="application/json")
 	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody HashMap<String, String> shiftDeleteSubmission(@PathVariable Integer id) {
+	public @ResponseBody ResponseEntity<HashMap<String, String>> shiftDeleteSubmission(@PathVariable Integer id) throws SubmissionDeleteException, SubmissionNotFound {
 		Locale locale = LocaleContextHolder.getLocale();
+		HttpStatus httpStatus = HttpStatus.OK;
+		Submission submission = submissionService.findByIdAndDeleted(id, true);
 		HashMap<String, String> result = new HashMap<String, String>();
-		try {
-			submissionService.shiftDelete(id);
-			result.put("success", messageSource.getMessage(MessageCodes.SUCCESS_SUBMISSION_CANCELED, null, locale));					
+		
+		if(submission == null) {
+			throw new SubmissionNotFound(messageSource, locale, id);
+		} else {
+			submissionService.shiftDelete(submission);
+			result.put("success", messageSource.getMessage(MessageCodes.SUCCESS_SUBMISSION_DELETED, null, 
+					MessageCodes.SUCCESS_SUBMISSION_DELETED, locale));		
 		}
-		catch(SubmissionDeleteException | SubmissionNotFound e) {
-			result.put("error", e.getMessage());
-		} 
-		return result;
+			
+		return new ResponseEntity<>(result, httpStatus);
 	}
 }

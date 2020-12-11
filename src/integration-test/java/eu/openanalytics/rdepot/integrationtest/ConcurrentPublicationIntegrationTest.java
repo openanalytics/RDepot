@@ -78,7 +78,7 @@ public class ConcurrentPublicationIntegrationTest extends IntegrationTest {
 						.headers(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 						.accept(ContentType.JSON)
 					.when()
-						.post(API_REPOSITORIES_PATH + "/" + REPOSITORY_ID + "/publish")
+						.patch(API_REPOSITORIES_PATH + "/" + REPOSITORY_ID + "/publish")
 					.then()
 						.statusCode(200)
 						.body("success", equalTo("Repository has been published successfully."));

@@ -23,7 +23,9 @@
  */
 package eu.openanalytics.rdepot;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -51,16 +53,7 @@ import eu.openanalytics.rdepot.service.RepositoryService;
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = {MultipartAutoConfiguration.class})
 @EnableConfigurationProperties(KeycloakSpringBootProperties.class)
-public class Application extends SpringBootServletInitializer {
-	
-	@Resource
-	private Environment environment;
-	
-	@Autowired
-	private RepositoryService repositoryService;
-	
-	@Value("${app.authentication}")
-	private String mode;
+public class Application extends SpringBootServletInitializer {	
 	
 	/**
 	 * @param args
@@ -74,29 +67,31 @@ public class Application extends SpringBootServletInitializer {
 		// TODO Auto-generated method stub
 		return super.run(application);
 	}
-	
-	@Bean
-    InitializingBean createRepositoriesFromConfig() {
-        return () -> {        
-        	for(int i=0;;i++) {
-        		String repositoryName = environment.getProperty(String.format("repositories[%d].name", i)); 
-        		if(repositoryName == null) break;
-        		else {
-        			Repository repository = new Repository(
-        					0,      
-        					environment.getProperty(String.format("repositories[%d].publication-uri", i)),
-        					environment.getProperty(String.format("repositories[%d].name", i)),
-        					environment.getProperty(String.format("repositories[%d].server-address", i)),
-        					false,
-        					false,
-        					new HashSet<>(),
-        					new HashSet<>(),
-        					new HashSet<>(),
-        					new HashSet<>()
-        					);
-        			repositoryService.createRepositoriesFromConfig(repository);
-        		}
-        	}
-        };
-	}	
+//	
+//	@Bean
+//    InitializingBean createRepositoriesFromConfig() {
+//        return () -> {        
+//        	List<Repository> repositories = new ArrayList<>();
+//        	for(int i=0;;i++) {
+//        		String repositoryName = environment.getProperty(String.format("repositories[%d].name", i)); 
+//        		if(repositoryName == null) break;
+//        		else {
+//        			Repository repository = new Repository(
+//        					0,      
+//        					environment.getProperty(String.format("repositories[%d].publication-uri", i)),
+//        					environment.getProperty(String.format("repositories[%d].name", i)),
+//        					environment.getProperty(String.format("repositories[%d].server-address", i)),
+//        					false,
+//        					false,
+//        					new HashSet<>(),
+//        					new HashSet<>(),
+//        					new HashSet<>(),
+//        					new HashSet<>()
+//        					);   
+//        			repositories.add(repository);
+//        		}
+//        	}
+//        	repositoryService.createRepositoriesFromConfig(repositories);
+//        };
+//	}	
 }

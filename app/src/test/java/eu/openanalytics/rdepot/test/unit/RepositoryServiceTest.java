@@ -212,20 +212,19 @@ public class RepositoryServiceTest {
 		Event updateEvent = EventTestFixture.GET_FIXTURE_EVENT("update");
 		User deleter = UserTestFixture.GET_FIXTURE_ADMIN();
 		
-		when(repositoryRepository.findByIdAndDeleted(ID, false)).thenReturn(deletedRepository);
 		when(eventService.getDeleteEvent()).thenReturn(deleteEvent);
 		when(eventService.getUpdateEvent()).thenReturn(updateEvent);
-		when(repositoryMaintainerService.delete(anyInt(), eq(deleter))).thenReturn(null);
+		when(repositoryMaintainerService.delete(any(), eq(deleter))).thenReturn(null);
 		when(packageMaintainerService.delete(anyInt(), eq(deleter))).thenReturn(null);
-		doNothing().when(packageService).delete(anyInt(), eq(deleter));
+		doNothing().when(packageService).delete(any(), eq(deleter));
 		when(repositoryEventService.create(any(), eq(deleter), eq(deletedRepository))).thenReturn(null);
 		doNothing().when(repositoryStorage).deleteCurrentDirectory(deletedRepository);
 		
-		Repository result = repositoryService.delete(ID, deleter);
+		Repository result = repositoryService.delete(deletedRepository, deleter);
 		
-		verify(repositoryMaintainerService, times(REPOSITORY_MAINTAINER_COUNT)).delete(anyInt(), eq(deleter));
+		verify(repositoryMaintainerService, times(REPOSITORY_MAINTAINER_COUNT)).delete(any(), eq(deleter));
 		verify(packageMaintainerService, times(PACKAGE_MAINTAINER_COUNT)).delete(anyInt(),  eq(deleter));
-		verify(packageService, times(PACKAGE_MAINTAINER_COUNT)).delete(anyInt(), eq(deleter));
+		verify(packageService, times(PACKAGE_MAINTAINER_COUNT)).delete(any(), eq(deleter));
 		verify(repositoryEventService).create(deleteEvent, deleter, deletedRepository);
 		verify(repositoryEventService, times(2)).create(any(RepositoryEvent.class));
 		verify(repositoryStorage).deleteCurrentDirectory(deletedRepository);
@@ -237,18 +236,15 @@ public class RepositoryServiceTest {
 	@Test
 	public void delete_ThrowsRepositoryDeleteException_IfEventIsNotFound() 
 			throws EventNotFound, RepositoryDeleteException, RepositoryNotFound {
-		final int ID = 123;
 		Repository deletedRepository = RepositoryTestFixture.GET_FIXTURE_REPOSITORY();
-		deletedRepository.setId(ID);
 		User deleter = UserTestFixture.GET_FIXTURE_ADMIN();
 		
-		when(repositoryRepository.findByIdAndDeleted(ID, false)).thenReturn(deletedRepository);
 		when(eventService.getDeleteEvent()).thenThrow(new EventNotFound());
 		
 		expectedException.expect(RepositoryDeleteException.class);
 		expectedException.expectMessage(MessageCodes.ERROR_REPOSITORY_DELETE);
 		
-		repositoryService.delete(ID, deleter);
+		repositoryService.delete(deletedRepository, deleter);
 	}
 	
 	@Test
@@ -266,16 +262,19 @@ public class RepositoryServiceTest {
 		deletedRepository.setPublished(true);
 		Event deleteEvent = EventTestFixture.GET_FIXTURE_EVENT("delete");
 		User deleter = UserTestFixture.GET_FIXTURE_ADMIN();
+		User user = UserTestFixture.GET_FIXTURE_USER();
+		RepositoryMaintainer maintainer = RepositoryMaintainerTestFixture.GET_FIXTURE_REPOSITORY_MAINTAINER(user, deletedRepository);
+		RepositoryMaintainerDeleteException exception = 
+				new RepositoryMaintainerDeleteException(maintainer, messageSource, new Locale("en"));
 		
-		when(repositoryRepository.findByIdAndDeleted(ID, false)).thenReturn(deletedRepository);
 		when(eventService.getDeleteEvent()).thenReturn(deleteEvent);
-		when(repositoryMaintainerService.delete(anyInt(), eq(deleter)))
-			.thenThrow(new RepositoryMaintainerDeleteException(""));
+		when(repositoryMaintainerService.delete(any(), eq(deleter)))
+			.thenThrow(exception);
 		
 		expectedException.expect(RepositoryDeleteException.class);
 		expectedException.expectMessage(MessageCodes.ERROR_REPOSITORY_DELETE);
 		
-		repositoryService.delete(ID, deleter);
+		repositoryService.delete(deletedRepository, deleter);
 	}
 	
 	@Test
@@ -298,15 +297,14 @@ public class RepositoryServiceTest {
 		
 		PackageMaintainerDeleteException exception = new PackageMaintainerDeleteException(packageMaintainer, messageSource, new Locale("en"));
 		
-		when(repositoryRepository.findByIdAndDeleted(ID, false)).thenReturn(deletedRepository);
 		when(eventService.getDeleteEvent()).thenReturn(deleteEvent);
-		when(repositoryMaintainerService.delete(anyInt(), eq(deleter))).thenReturn(null);
+		when(repositoryMaintainerService.delete(any(), eq(deleter))).thenReturn(null);
 		when(packageMaintainerService.delete(anyInt(), eq(deleter))).thenThrow(exception);
 
 		expectedException.expect(RepositoryDeleteException.class);
 		expectedException.expectMessage(MessageCodes.ERROR_REPOSITORY_DELETE);
 		
-		repositoryService.delete(ID, deleter);
+		repositoryService.delete(deletedRepository, deleter);
 	}
 	
 	@Test
@@ -326,18 +324,17 @@ public class RepositoryServiceTest {
 		Event deleteEvent = EventTestFixture.GET_FIXTURE_EVENT("delete");
 		User deleter = UserTestFixture.GET_FIXTURE_ADMIN();
 		
-		when(repositoryRepository.findByIdAndDeleted(ID, false)).thenReturn(deletedRepository);
 		when(eventService.getDeleteEvent()).thenReturn(deleteEvent);
-		when(repositoryMaintainerService.delete(anyInt(), eq(deleter))).thenReturn(null);
+		when(repositoryMaintainerService.delete(any(), eq(deleter))).thenReturn(null);
 		when(packageMaintainerService.delete(anyInt(), eq(deleter))).thenReturn(null);
 		doThrow(new PackageDeleteException(messageSource, new Locale("en"), 
 				deletedRepository.getPackages().iterator().next())).
-			when(packageService).delete(anyInt(), eq(deleter));
+			when(packageService).delete(any(), eq(deleter));
 		
 		expectedException.expect(RepositoryDeleteException.class);
 		expectedException.expectMessage(MessageCodes.ERROR_REPOSITORY_DELETE);
 		
-		repositoryService.delete(ID, deleter);
+		repositoryService.delete(deletedRepository, deleter);
 	}
 	
 	@Test
@@ -357,16 +354,15 @@ public class RepositoryServiceTest {
 		Event deleteEvent = EventTestFixture.GET_FIXTURE_EVENT("delete");
 		User deleter = UserTestFixture.GET_FIXTURE_ADMIN();
 		
-		when(repositoryRepository.findByIdAndDeleted(ID, false)).thenReturn(deletedRepository);
 		when(eventService.getDeleteEvent()).thenReturn(deleteEvent);
 		when(eventService.getUpdateEvent()).thenThrow(new EventNotFound());
-		when(repositoryMaintainerService.delete(anyInt(), eq(deleter))).thenReturn(null);
+		when(repositoryMaintainerService.delete(any(), eq(deleter))).thenReturn(null);
 		when(packageMaintainerService.delete(anyInt(), eq(deleter))).thenReturn(null);
 
 		expectedException.expect(RepositoryDeleteException.class);
 		expectedException.expectMessage(MessageCodes.ERROR_REPOSITORY_DELETE);
 		
-		repositoryService.delete(ID, deleter);
+		repositoryService.delete(deletedRepository, deleter);
 	}
 	
 	@Test
@@ -465,39 +461,25 @@ public class RepositoryServiceTest {
 		
 		repository.setDeleted(true);
 		
-		when(repositoryRepository.findByIdAndDeleted(repositoryId, true)).thenReturn(repository);
-		when(repositoryMaintainerService.shiftDelete(anyInt())).thenReturn(null);
-		when(packageMaintainerService.shiftDelete(anyInt())).thenReturn(null);
-		when(packageService.shiftDelete(anyInt())).thenReturn(null);
+		when(repositoryMaintainerService.shiftDelete(any())).thenReturn(null);
+		when(packageMaintainerService.shiftDelete(any())).thenReturn(null);
+		doNothing().when(packageService).shiftDelete(any());
 		doNothing().when(repositoryEventService).delete(anyInt());
 		doNothing().when(repositoryRepository).delete(repository);
 		doNothing().when(repositoryStorage).deleteRepositoryDirectory(repository);
 		
-		Repository result = repositoryService.shiftDelete(repositoryId);
+		Repository result = repositoryService.shiftDelete(repository);
 		
 		assertEquals("Returned repository is not correct.", repository, result);
 		
 		verify(repositoryMaintainerService).shiftDelete(
-				repository.getRepositoryMaintainers().iterator().next().getId());
+				repository.getRepositoryMaintainers().iterator().next());
 		verify(packageMaintainerService).shiftDelete(
-				repository.getPackageMaintainers().iterator().next().getId());
-		verify(packageService, times(PACKAGE_COUNT)).shiftDelete(anyInt());
+				repository.getPackageMaintainers().iterator().next());
+		verify(packageService, times(PACKAGE_COUNT)).shiftDelete(any());
 		verify(repositoryEventService, times(REPOSITORY_EVENT_COUNT)).delete(anyInt());
 		verify(repositoryStorage).deleteRepositoryDirectory(repository);
 		verify(repositoryRepository).delete(repository);
-	}
-	
-	@Test
-	public void shiftDelete_ThrowsRepositoryNotFound_WhenRepositoryIsNotFound() 
-			throws RepositoryDeleteException, RepositoryNotFound {
-		final int ID = new Random().nextInt();
-		when(repositoryRepository.findByIdAndDeleted(ID, true)).thenReturn(null);
-		
-		
-		expectedException.expect(RepositoryNotFound.class);
-		expectedException.expectMessage(MessageCodes.ERROR_REPOSITORY_NOT_FOUND);
-		
-		repositoryService.shiftDelete(ID);
 	}
 	
 	@Test
@@ -594,11 +576,11 @@ public class RepositoryServiceTest {
 		
 		repository.setRepositoryMaintainers(new HashSet<RepositoryMaintainer>(maintainers));
 		
-		when(repositoryMaintainerService.delete(anyInt(), eq(admin))).thenReturn(null);
+		when(repositoryMaintainerService.delete(any(), eq(admin))).thenReturn(null);
 		
 		repositoryService.deleteRepositoryMaintainers(repository, admin);
 		
-		verify(repositoryMaintainerService, times(2)).delete(anyInt(), eq(admin));
+		verify(repositoryMaintainerService, times(2)).delete(any(), eq(admin));
 	}
 	
 	@Test
@@ -633,11 +615,11 @@ public class RepositoryServiceTest {
 		
 		repository.setPackages(new HashSet<Package>(packages));
 		
-		doNothing().when(packageService).delete(anyInt(), eq(admin));
+		doNothing().when(packageService).delete(any(), eq(admin));
 		
 		repositoryService.deletePackages(repository, admin);
 		
-		verify(packageService, times(2)).delete(anyInt(), eq(admin));
+		verify(packageService, times(2)).delete(any(), eq(admin));
 	}
 	
 	@Test
@@ -648,11 +630,11 @@ public class RepositoryServiceTest {
 		List<RepositoryMaintainer> maintainers = RepositoryMaintainerTestFixture.GET_FIXTURE_REPOSITORY_MAINTAINERS(users, repository);
 		repository.setRepositoryMaintainers(new HashSet<RepositoryMaintainer>(maintainers));
 		
-		when(repositoryMaintainerService.shiftDelete(anyInt())).thenReturn(null);
+		when(repositoryMaintainerService.shiftDelete(any())).thenReturn(null);
 		
 		repositoryService.shiftDeleteRepositoryMaintainers(repository);
 		
-		verify(repositoryMaintainerService, times(3)).shiftDelete(anyInt());
+		verify(repositoryMaintainerService, times(3)).shiftDelete(any());
 	}
 	
 	@Test
@@ -663,11 +645,11 @@ public class RepositoryServiceTest {
 		List<PackageMaintainer> maintainers = PackageMaintainerTestFixture.GET_FIXTURE_PACKAGE_MAINTAINERS(user, repository, 3);
 		repository.setPackageMaintainers(new HashSet<PackageMaintainer>(maintainers));
 		
-		when(packageMaintainerService.shiftDelete(anyInt())).thenReturn(null);
+		when(packageMaintainerService.shiftDelete(any())).thenReturn(null);
 		
 		repositoryService.shiftDeletePackageMaintainers(repository);
 		
-		verify(packageMaintainerService, times(3)).shiftDelete(anyInt());
+		verify(packageMaintainerService, times(3)).shiftDelete(any());
 	}
 	
 	@Test
@@ -678,12 +660,11 @@ public class RepositoryServiceTest {
 		
 		repository.setPackages(new HashSet<Package>(packages));
 		
-//		doNothing().when(packageService).shiftDelete(anyInt());
-		when(packageService.shiftDelete(anyInt())).thenReturn(null);
+		doNothing().when(packageService).shiftDelete(any());
 		
 		repositoryService.shiftDeletePackages(repository);
 		
-		verify(packageService, times(3)).shiftDelete(anyInt());
+		verify(packageService, times(3)).shiftDelete(any());
 	}
 	
 	@Test

@@ -78,7 +78,11 @@ function deleteRepositoryMaintainer(id) {
             }
         },
         error: function(result) {
-           showErrorDialog("You cannot remove this repository maintainer.");
+            if(result.error != null) {
+                showErrorDialog(result.error);
+            } else {
+                showErrorDialog("You cannot remove this repository maintainer.");
+            }
         }
     });
 }
@@ -122,11 +126,15 @@ function changePublished(id) {
         url = "/manager/repositories/" + id + "/publish";
     }
 
-    request.open("POST", url);
+    request.open("PATCH", url);
     request.onreadystatechange = function(reponse) {
         if(this.readyState == 4) {
             if(this.status == 200) {
                 var responseObject = JSON.parse(this.responseText);
+                
+            } else if(this.status == 403) {
+                showErrorDialog("You are not allowed to perform this operation.");
+            } else {
                 if(responseObject['error'] != null) {
                     showErrorDialog(responseObject.error);
                     document.getElementById("checkbox-" + id).checked = checked;
@@ -136,11 +144,9 @@ function changePublished(id) {
                         document.getElementById("checkbox-" + id).parentElement.classList.add("is-checked");
                     }
 
+                } else {
+                    showErrorDialog(this.response.status);
                 }
-            } else if(this.status == 403) {
-                showErrorDialog("You are not allowed to perform this operation.");
-            } else {
-                showErrorDialog(this.response.status);
             }
         }
     };
@@ -228,15 +234,15 @@ function openEditMaintainerDialog(id, name) {
                 dialog.close();
                 var responseObject = JSON.parse(this.responseText);
                 if(this.status == 200) {
-                    if(responseObject['success'] != null) {
-                        location.reload();
-                    } else if(responseObject['error'] != null){
-                        showErrorDialog(responseObject['error']);
-                    }
+                    location.reload();
                 } else if(this.status == 403) {
                     showErrorDialog("You do not have permissions to edit repository maintainer.");
                 } else {
-                    showErrorDialog("Error " + this.status + ": " + this.responseText);
+                    if(responseObject['error'] != null){
+                        showErrorDialog(responseObject['error']);
+                    } else {
+                        showErrorDialog("Error " + this.status + ": " + this.responseText);
+                    }
                 }
             }
         };
@@ -314,15 +320,15 @@ function openAddMaintainerDialog() {
                 dialog.close();
                 var responseObject = JSON.parse(this.responseText);
                 if(this.status == 200) {
-                    if(responseObject['success'] != null) {
-                        location.reload();
-                    } else if(responseObject['error'] != null){
-                        showErrorDialog(responseObject['error']);
-                    }
+                    location.reload();
                 } else if(this.status == 403) {
                     showErrorDialog("You do not have permissions to create repository maintainer.");
                 } else {
-                    showErrorDialog("Error " + this.status);
+                    if(responseObject['error'] != null){
+                        showErrorDialog(responseObject['error']);
+                    } else {
+                        showErrorDialog("Error " + this.status);
+                    }
                 }
             }
         };
@@ -382,15 +388,15 @@ function openAddRepositoryDialog() {
                     dialog.close();
                     var responseObject = JSON.parse(this.responseText);
                     if(this.status == 200) {
-                        if(responseObject['success'] != null) {
-                            location.reload();
-                        } else if(responseObject['error'] != null){
-                            showErrorDialog(responseObject['error']);
-                        }
+                        location.reload();
                     } else if(this.status == 403) {
                         showErrorDialog("You do not have permissions to create repository.");
                     } else {
-                        showErrorDialog("Error " + this.status + ": " + this.responseText);
+                        if(responseObject['error'] != null){
+                            showErrorDialog(responseObject['error']);
+                        } else {
+                            showErrorDialog("Error " + this.status + ": " + this.responseText);                        
+                        }
                     }
                 }
             }
@@ -476,15 +482,15 @@ function openEditRepositoryDialog(id) {
                     dialog.close();
                     var responseObject = JSON.parse(this.responseText);
                     if(this.status == 200) {
-                        if(responseObject['success'] != null) {
-                            location.reload();
-                        } else if(responseObject['error'] != null){
-                            showErrorDialog(responseObject['error']);
-                        }
+                        location.reload();
                     } else if(this.status == 403) {
                         showErrorDialog("You do not have permissions to edit this repository.");
                     } else {
-                        showErrorDialog("Error " + this.status);
+                        if(responseObject['error'] != null){
+                            showErrorDialog(responseObject['error']);
+                        } else {
+                            showErrorDialog("Error " + this.status);
+                        }
                     }
                 }
             };

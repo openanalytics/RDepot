@@ -25,6 +25,7 @@ import java.util.Locale;
 import org.springframework.context.MessageSource;
 
 import eu.openanalytics.rdepot.messaging.MessageCodes;
+import eu.openanalytics.rdepot.model.Submission;
 
 public class SubmissionDeleteException extends SubmissionException 
 {
@@ -36,6 +37,10 @@ public class SubmissionDeleteException extends SubmissionException
 	
 	public SubmissionDeleteException(MessageSource messageSource, Locale locale, int submissionId) {
 		super(MessageCodes.ERROR_SUBMISSION_DELETE, messageSource, locale, submissionId);
+	}
+
+	public SubmissionDeleteException(MessageSource messageSource, Locale locale, Submission submission) {
+		super(MessageCodes.ERROR_SUBMISSION_DELETE, messageSource, locale, submission.getId());
 	}
 
 }

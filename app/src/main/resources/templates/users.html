@@ -22,7 +22,8 @@
                         <tr th:each="user : ${users}" >
                             <td class="mdl-data-table__cell--non-numeric user-name" th:data1="${user.login}" th:text="${user.name}" th:onclick="showUserDialog(this.getAttribute('data1'))"></td>
                             <td class="mdl-data-table__cell--non-numeric user-email" th:data1="${user.login}" th:text="${user.email}" th:onclick="showUserDialog(this.getAttribute('data1'))"></td>
-                            <td class="mdl-data-table__cell--non-numeric user-username" th:text="${user.login}" th:data1="${user.login}" th:onclick="showUserDialog(this.getAttribute('data1'))"></td>                            <td class="mdl-data-table__cell--non-numeric user-role"  th:data1="${user.login}" th:text="${user.role.description}" th:onclick="showUserDialog(this.getAttribute('data1'))"></td>
+                            <td class="mdl-data-table__cell--non-numeric user-username" th:text="${user.login}" th:data1="${user.login}" th:onclick="showUserDialog(this.getAttribute('data1'))"></td>
+                            <td class="mdl-data-table__cell--non-numeric user-role"  th:data1="${user.login}" th:text="${user.role.description}" th:onclick="showUserDialog(this.getAttribute('data1'))"></td>
                             <td class="mdl-data-table__cell--non-numeric">
                                 <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" th:for="'checkbox-' + ${user.id}" th:onclick="'changeActive('+ ${user.id} + ')'">
                                     <input type="checkbox" th:id="'checkbox-' + ${user.id}" class="mdl-checkbox__input" th:checked="${user.active}"/>

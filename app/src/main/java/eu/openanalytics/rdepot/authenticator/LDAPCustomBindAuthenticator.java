@@ -21,7 +21,6 @@
 package eu.openanalytics.rdepot.authenticator;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -42,7 +41,6 @@ import org.springframework.security.ldap.authentication.BindAuthenticator;
 import eu.openanalytics.rdepot.config.LDAPSecurityConfig;
 import eu.openanalytics.rdepot.exception.UserCreateException;
 import eu.openanalytics.rdepot.exception.UserEditException;
-import eu.openanalytics.rdepot.exception.UserNotFound;
 import eu.openanalytics.rdepot.model.Role;
 import eu.openanalytics.rdepot.model.User;
 import eu.openanalytics.rdepot.service.EventService;
@@ -102,7 +100,6 @@ public class LDAPCustomBindAuthenticator extends BindAuthenticator
 		
 		DirContextOperations userData;
 		
-		
 		try
 		{
 			userData = super.authenticate(authentication);
@@ -114,7 +111,6 @@ public class LDAPCustomBindAuthenticator extends BindAuthenticator
 		}
 		
 		String login = userData.getStringAttribute(ldapLoginField);
-				
 		String name = "";
 		
 		for(String namefield : namefields)
@@ -143,26 +139,43 @@ public class LDAPCustomBindAuthenticator extends BindAuthenticator
 			defaultAdmins.add("admin");
 		
 		Role adminRole = roleService.getAdminRole();
-		
-		if (user == null)
-		{
-			user = userService.findByEmailEvenDeleted(email);
+		try {
 			if (user == null)
 			{
-				user = new User();
-				user.setLogin(login);
-				if (defaultAdmins.contains(login))
-					user.setRole(adminRole);
+				user = userService.findByEmailEvenDeleted(email);
+				if (user == null)
+				{
+					user = new User();
+					user.setLogin(login);
+					if (defaultAdmins.contains(login))
+						user.setRole(adminRole);
+					else
+						user.setRole(roleService.getUserRole());
+					user.setName(name);
+					user.setEmail(email);
+					user.setActive(true);
+					
+					try {
+						userService.create(user);
+					} catch (UserCreateException e) {
+						throw new BadCredentialsException(messages.getMessage(e.getMessage(), e.getMessage()));
+					}
+				}
+				else if(!user.isActive())
+				{
+					throw new BadCredentialsException(
+		                    messages.getMessage("AbstractUserDetailsAuthenticationProvider.disabled", "Account disabled"));
+				}
+				else if(user.isDeleted())
+				{
+					throw new BadCredentialsException(
+		                    messages.getMessage("AbstractUserDetailsAuthenticationProvider.disabled", "Account disabled"));
+				}
 				else
-					user.setRole(roleService.getUserRole());
-				user.setName(name);
-				user.setEmail(email);
-				user.setActive(true);
-				
-				try {
-					userService.create(user);
-				} catch (UserCreateException e) {
-					throw new BadCredentialsException(messages.getMessage(e.getMessage(), e.getMessage()));
+				{
+					userService.updateLogin(user, null, login);
+					if(!Objects.equals(name, user.getName()))
+						userService.updateName(user, null, name);
 				}
 			}
 			else if(!user.isActive())
@@ -177,38 +190,16 @@ public class LDAPCustomBindAuthenticator extends BindAuthenticator
 			}
 			else
 			{
-				user.setLogin(login);
 				if(!Objects.equals(name, user.getName()))
-					user.setName(name);		
+					userService.updateName(user, null, name);
+				if(!Objects.equals(email, user.getEmail()))
+					userService.updateEmail(user, null, email);
+				if (defaultAdmins.contains(login) && !user.getRole().equals(adminRole))
+					userService.updateRole(user, null, adminRole);
 			}
-		}
-		else if(!user.isActive())
-		{
-			throw new BadCredentialsException(
-                    messages.getMessage("AbstractUserDetailsAuthenticationProvider.disabled", "Account disabled"));
-		}
-		else if(user.isDeleted())
-		{
-			throw new BadCredentialsException(
-                    messages.getMessage("AbstractUserDetailsAuthenticationProvider.disabled", "Account disabled"));
-		}
-		else
-		{
-			if(!Objects.equals(name, user.getName()))
-				user.setName(name);
-			if(!Objects.equals(email, user.getEmail()))
-				user.setEmail(email);
-			if (defaultAdmins.contains(login) && !user.getRole().equals(adminRole))
-				user.setRole(adminRole);
-		}
-		
-		user.setLastLoggedInOn(new Date());
-		try 
-		{
-			userService.evaluateAndUpdate(user, null);
-		} 
-		catch (UserEditException | UserNotFound e) 
-		{
+			
+			userService.updateLastLoggedInOn(user, null, new Date());
+		} catch(UserEditException e) {
 			throw new BadCredentialsException(messages.getMessage(e.getMessage(), e.getMessage()));
 		}
 		

@@ -399,7 +399,9 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	public void delete_ReturnsDeletedUser_IfUserHasRepositoryMaintainerCredentials() throws EventNotFound, RepositoryMaintainerDeleteException, UserDeleteException, SubmissionEditException, AdminNotFound, UserNotFound {
+	public void delete_ReturnsDeletedUser_IfUserHasRepositoryMaintainerCredentials() 
+			throws EventNotFound, RepositoryMaintainerDeleteException, UserDeleteException, 
+			SubmissionEditException, AdminNotFound, UserNotFound {
 		final int ID = new Random().nextInt();
 		User user = UserTestFixture.GET_FIXTURE_USER_REPOSITORYMAINTAINER();
 		User admin = UserTestFixture.GET_FIXTURE_ADMIN();
@@ -419,7 +421,7 @@ public class UserServiceTest {
 		when(eventService.getDeleteEvent()).thenReturn(deleteEvent);
 		doNothing().when(submissionService).fixSubmissions(user.getSubmissions(), admin);
 		when(userEventService.create(deleteEvent, admin, user)).thenReturn(new ArrayList<UserEvent>());
-		when(repositoryMaintainerService.delete(repositoryMaintainers.get(0).getId(), admin)).thenReturn(null);
+		when(repositoryMaintainerService.delete(repositoryMaintainers.get(0), admin)).thenReturn(null);
 		when(packageService.findByRepositoryAndMaintainer(repository, user)).thenReturn(new ArrayList<Package>());
 		
 		User result = userService.delete(ID, admin);
@@ -427,7 +429,7 @@ public class UserServiceTest {
 		assertEquals("Deleted user is not correct", user, result);
 		assertTrue("User was not set as deleted", user.isDeleted());
 		
-		verify(repositoryMaintainerService).delete(repositoryMaintainers.get(0).getId(), admin);
+		verify(repositoryMaintainerService).delete(repositoryMaintainers.get(0), admin);
 	}
 	
 	@Test

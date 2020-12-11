@@ -299,7 +299,59 @@ public class PackageMaintainerIntegrationTest extends IntegrationTest {
 		JsonArray actualDeleted = (JsonArray) JsonParser.parseString(deleted);
 
 		assertTrue("'Deleted' package maintainer still exists in the list of package maintainers", compareArrays(expectedJSON, actualJSON));
-		assertTrue("'Deleted' package maintainer hasn't been added to the lis of deleted ones", compareArrays(expectedDeleted, actualDeleted));
+		assertTrue("'Deleted' package maintainer hasn't been added to the list of deleted ones", compareArrays(expectedDeleted, actualDeleted));
+	}
+	
+	@Test
+	public void shouldAdminShiftDeletePackageMaintainer() throws IOException, ParseException {		
+		given()
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.delete(API_PATH + "/" + PACKAGEMAINTAINER_ID_TO_DELETE + "/delete")
+		.then()
+			.statusCode(200);
+		
+		given()
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.delete(API_PATH + "/" + PACKAGEMAINTAINER_ID_TO_DELETE + "/sdelete")
+		.then()
+			.statusCode(200);
+		
+		FileReader reader = new FileReader(JSON_PATH + "/packageMaintainer/list_package_maintainers_without_one.json");
+		JsonArray expectedJSON = (JsonArray) JsonParser.parseReader(reader);
+		
+		String data = given()
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.get(API_PATH + "/list")
+		.then()
+			.statusCode(200)
+			.extract()
+			.asString();
+		
+		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
+		
+		reader = new FileReader(JSON_PATH + "/packageMaintainer/deleted_package_maintainers_with_new_one.json");
+		JsonArray expectedDeleted = (JsonArray) JsonParser.parseReader(reader);
+		
+		String deleted = given()
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.get(API_PATH + "/deleted")
+		.then()
+			.statusCode(200)
+			.extract()
+			.asString();
+		
+		JsonArray actualDeleted = (JsonArray) JsonParser.parseString(deleted);
+
+		assertTrue("'Shift deleted' package maintainer still exists in the list of package maintainers", compareArrays(expectedJSON, actualJSON));
+		assertFalse("'Shift deleted' package maintainer can't be added to the list of deleted ones", compareArrays(expectedDeleted, actualDeleted));
 	}
 	
 	@Test

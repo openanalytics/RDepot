@@ -45,10 +45,9 @@ public class UserException extends Exception {
 						messageCode, locale));
 	}
 	
-//	public PackageException(String messageCode, MessageSource messageSource, Locale locale, int packageId) {
-//		super("Package " + Integer.toString(packageId)
-//				+ ": " + messageSource.getMessage(
-//						messageCode, null, 
-//						messageCode, locale));
-//	}
+	public UserException(String messageCode, MessageSource messageSource, Locale locale, String login) {
+		super("User " + login + ": " + messageSource.getMessage(
+						messageCode, null, 
+						messageCode, locale));
+	}
 }

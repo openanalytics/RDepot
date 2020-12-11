@@ -25,7 +25,6 @@ import java.util.Locale;
 import org.springframework.context.MessageSource;
 
 import eu.openanalytics.rdepot.messaging.MessageCodes;
-import eu.openanalytics.rdepot.model.User;
 
 public class UserNotFound extends UserException {
 
@@ -36,5 +35,9 @@ public class UserNotFound extends UserException {
 	
 	public UserNotFound(MessageSource messageSource, Locale locale, int userId) {
 		super(MessageCodes.ERROR_USER_NOT_FOUND, messageSource, locale, userId);
+	}
+	
+	public UserNotFound(MessageSource messageSource, Locale locale, String login) {
+		super(MessageCodes.ERROR_USER_NOT_FOUND, messageSource, locale, login);
 	}
 }

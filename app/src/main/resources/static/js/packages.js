@@ -45,14 +45,14 @@ function deletePackage(id)
             xhr.setRequestHeader(HEADER, TOKEN);
         },
         success: function(result) {
+             $("#package-" + id).closest('tr').fadeOut(300, function(){ $(this).remove()});
+        },
+        error: function(result) {
             if(result.error != null) {
                 showErrorDialog(result.error);
             } else {
-                $("#package-" + id).closest('tr').fadeOut(300, function(){ $(this).remove()});
+                showErrorDialog("You cannot remove this package. See log for more details.");
             }
-        },
-        error: function(result) {
-            showErrorDialog("You cannot remove this package.");
         }
     });
 }
@@ -97,18 +97,15 @@ function changeActive(id) {
     url = '/manager/packages/' + String(id) + '/' + action;
     $.ajax({
         url: url,
-        type: 'PUT',
+        type: 'PATCH',
         dataType: 'json',
         beforeSend: function(xhr) {
             xhr.setRequestHeader(HEADER, TOKEN);
         },
-        success: function(result) {
+        error: function(result) {
             if(result.error != null) {
                 showErrorDialog(result.error);
             }
-        },
-        error: function(result) {
-
         }
     });
 
@@ -278,13 +275,12 @@ function openAddMaintainerDialog() {
                 dialog.close();
                 var responseObject = JSON.parse(this.responseText);
                 if(this.status == 200) {
-                    if(responseObject['error'] != null) {
-                        showErrorDialog(responseObject['error']);
-                    } else {
-                        location.reload();
-                    }
+                    location.reload();
                 } else {
-                    showErrorDialog(this.status);
+                    if(responseObject['error'] != null)
+                        showErrorDialog(responseObject['error']);
+                    else
+                        showErrorDialog(this.status);
                 }
             }
         };
@@ -373,15 +369,13 @@ function openEditMaintainerDialog(id, name) {
                 dialog.close();
                 var responseObject = JSON.parse(this.responseText);
                 if(this.status == 200) {
-                    if(responseObject['success'] != null) {
-                        location.reload();
-                    } else if(responseObject['error'] != null){
-                        showErrorDialog(responseObject['error']);
-                    }
-                } else if(this.status == 403) {
-                    showErrorDialog("You do not have permissions to edit repository maintainer.");
+                    location.reload();
                 } else {
-                    showErrorDialog("Error " + this.status + ": " + this.responseText);
+                    if(responseObject['error'] != null){
+                        showErrorDialog(responseObject['error']);
+                    } else {
+                        showErrorDialog("Error " + this.status + ": " + this.responseText);
+                    }
                 }
             }
         };
@@ -441,14 +435,14 @@ function deletePackageMaintainer(id) {
             xhr.setRequestHeader(HEADER, TOKEN);
         },
         success: function(result) {
+            $("#packagemaintainer-" + id).closest('tr').fadeOut(300, function(){ $(this).remove()});
+        },
+        error: function(result) {
             if(result.error != null) {
                 showErrorDialog(result.error);
             } else {
-                $("#packagemaintainer-" + id).closest('tr').fadeOut(300, function(){ $(this).remove()});
-            }
-        },
-        error: function(result) {
-           showErrorDialog("You cannot remove this package maintainer.");
+                showErrorDialog("You cannot remove this package maintainer. See log for more details.");
+           }
         }
     });
 }

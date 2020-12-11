@@ -76,14 +76,16 @@ function changeActive(id) {
     url = '/manager/users/' + String(id) + '/' + action;
     $.ajax({
         url: url,
-        type: 'PUT',
+        type: 'PATCH',
         dataType: 'json',
         beforeSend: function(xhr) {
             xhr.setRequestHeader(HEADER, TOKEN);
         },
-        success: function(result) {
+        error: function(result) {
             if(result.error != null) {
                 showErrorDialog(result.error);
+            } else {
+                showErrorDialog("Unknown error");
             }
         }
     });
@@ -148,15 +150,25 @@ function openEditUserDialog(id, login, currentRole, name, email, isActive) {
         formData.set("role", role);
         formData.set("active", isActive);
 
-        request.addEventListener("load", function(event) {
-            dialog.close();
-            location.reload();
-        });
-        request.addEventListener("error", function(event) {
-            showErrorDialog("error!");
-        });
+
+        request.onreadystatechange = function() {
+            if(this.readyState == 4) {
+                dialog.close();
+                var responseObject = JSON.parse(this.responseText);
+                if(this.status == 200) {
+                    location.reload();
+                } else {
+                    if(responseObject['error'] != null) {
+                        showErrorDialog(responseObject['error']);
+                    } else {
+                        showErrorDialog("Error " + this.status);
+                    }
+                }
+            }
+        }
         request.open("POST", '/manager/users/' + id + '/edit');
         request.setRequestHeader(HEADER, TOKEN);
+        request.setRequestHeader("Accept", "application/json");
         request.send(formData);
 
     });

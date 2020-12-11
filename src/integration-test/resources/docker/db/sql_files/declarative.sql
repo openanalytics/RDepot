@@ -5,6 +5,8 @@
 -- Dumped from database version 12.4
 -- Dumped by pg_dump version 12.4
 
+\connect declarative
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
@@ -645,6 +647,8 @@ COPY public.repository (version, id, publication_uri, name, server_address, publ
 0	2	http://localhost/repo/A	A	http://oa-rdepot-repo:8080/A	f	f
 0	3	http://localhost/repo/B	B	http://oa-rdepot-repo:8080/B	f	f
 0	4	http://localhost/repo/C	C	http://oa-rdepot-repo:8080/C	f	f
+0	5	http://localhost/repo/G	G	http://oa-rdepot-repo:8080/G	f	f
+0	6	http://localhost/repo/H	H	http://oa-rdepot-repo:8080/H	f	t
 \.
 
 
@@ -787,7 +791,7 @@ SELECT pg_catalog.setval('public."RepositoryMaintainer_id_seq"', 1, true);
 -- Name: Repository_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."Repository_id_seq"', 4, true);
+SELECT pg_catalog.setval('public."Repository_id_seq"', 6, true);
 
 
 --

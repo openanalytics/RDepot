@@ -289,3 +289,7 @@ html {
     bottom: 10px;  
     left: 10px;  
 }
+
+.topbar-button {
+	margin: 10px;
+}

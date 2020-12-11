@@ -47,36 +47,47 @@ public class UserValidator implements Validator
 	public void validate(Object target, Errors errors) 
 	{
 		User user = (User) target;
+		//TODO: These do not seem to do their job when using PUT request
 		ValidationUtils.rejectIfEmpty(errors, "name", MessageCodes.ERROR_FORM_EMPTY_NAME);
 		ValidationUtils.rejectIfEmpty(errors, "login", MessageCodes.ERROR_FORM_EMPTY_LOGIN);
 		ValidationUtils.rejectIfEmpty(errors, "email", MessageCodes.ERROR_FORM_EMPTY_EMAIL);
-		Pattern emailPattern = Pattern.compile("^.+@.+$");
-		if(!emailPattern.matcher(user.getEmail()).matches())
-			errors.rejectValue("email", MessageCodes.ERROR_FORM_INVALID_EMAIL);
 		
-		if(user.getId() == 0)
-		{
-			//ValidationUtils.rejectIfEmpty(errors, "hashedPassword", MessageCodes.ERROR_FORM_EMPTY_PASSWORD);
-			User loginCheck = userService.findByLogin(user.getLogin());
-			if(loginCheck != null)
-				errors.rejectValue("login", MessageCodes.ERROR_FORM_DUPLICATE_LOGIN);
-			User emailCheck = userService.findByEmail(user.getEmail());
-			if(emailCheck != null)
-				errors.rejectValue("email", MessageCodes.ERROR_FORM_DUPLICATE_EMAIL);
-		}
-		else
-		{
-			User originalUser = userService.findById(user.getId());
-			if(originalUser == null)
-				errors.rejectValue("id", MessageCodes.ERROR_USER_NOT_FOUND);
-			else
+		//This seems to work like a charm, though
+		if(user.getEmail() == null)
+			errors.rejectValue("email", MessageCodes.ERROR_FORM_EMPTY_EMAIL);
+		if(user.getLogin() == null)
+			errors.rejectValue("login", MessageCodes.ERROR_FORM_EMPTY_LOGIN);
+		if(user.getName() == null)
+			errors.rejectValue("name", MessageCodes.ERROR_FORM_EMPTY_NAME);
+		else {
+			Pattern emailPattern = Pattern.compile("^.+@.+$");
+			if(!emailPattern.matcher(user.getEmail()).matches())
+				errors.rejectValue("email", MessageCodes.ERROR_FORM_INVALID_EMAIL);
+			
+			if(user.getId() == 0)
 			{
+				//ValidationUtils.rejectIfEmpty(errors, "hashedPassword", MessageCodes.ERROR_FORM_EMPTY_PASSWORD);
 				User loginCheck = userService.findByLogin(user.getLogin());
-				if(loginCheck != null && loginCheck.getId() != originalUser.getId())
+				if(loginCheck != null)
 					errors.rejectValue("login", MessageCodes.ERROR_FORM_DUPLICATE_LOGIN);
 				User emailCheck = userService.findByEmail(user.getEmail());
-				if(emailCheck != null && emailCheck.getId() != originalUser.getId())
+				if(emailCheck != null)
 					errors.rejectValue("email", MessageCodes.ERROR_FORM_DUPLICATE_EMAIL);
+			}
+			else
+			{
+				User originalUser = userService.findById(user.getId());
+				if(originalUser == null)
+					errors.rejectValue("id", MessageCodes.ERROR_USER_NOT_FOUND);
+				else
+				{
+					User loginCheck = userService.findByLogin(user.getLogin());
+					if(loginCheck != null && loginCheck.getId() != originalUser.getId())
+						errors.rejectValue("login", MessageCodes.ERROR_FORM_DUPLICATE_LOGIN);
+					User emailCheck = userService.findByEmail(user.getEmail());
+					if(emailCheck != null && emailCheck.getId() != originalUser.getId())
+						errors.rejectValue("email", MessageCodes.ERROR_FORM_DUPLICATE_EMAIL);
+				}
 			}
 		}
 	}

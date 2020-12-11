@@ -40,7 +40,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -259,8 +258,6 @@ public class PackageServiceTest {
 				replacingPackage.getName(), replacingPackage.getVersion(), 
 				replacingPackage.getRepository(), false))
 			.thenReturn(replacedPackage);
-		when(packageRepository.findByIdAndDeleted(replacedPackage.getId(), false))
-			.thenReturn(replacedPackage);
 		when(eventService.getDeleteEvent()).thenReturn(deleteEvent);
 		when(eventService.getCreateEvent()).thenReturn(createEvent);
 		when(packageEventService.create(any())).thenAnswer(new Answer<PackageEvent>() {
@@ -307,31 +304,30 @@ public class PackageServiceTest {
 		submission.setDeleted(false);
 		packageBag.setSubmission(submission);
 		
-		when(packageRepository.findByIdAndDeleted(packageBag.getId(), false)).thenReturn(packageBag);
 		when(eventService.getDeleteEvent()).thenReturn(deleteEvent);
-		doNothing().when(submissionService).deleteSubmission(submission.getId(), user);
+		doNothing().when(submissionService).deleteSubmission(submission, user);
 		when(packageEventService.create(any())).thenAnswer(
 				new PackageEventAssertionAnswer(user, packageBag, deleteEvent, "delete", "false", "true"));
 		
-		packageService.delete(packageBag.getId(), user);
+		packageService.delete(packageBag, user);
 		
 		assertTrue("Package was not deleted.", packageBag.isDeleted());
-		verify(submissionService).deleteSubmission(submission.getId(), user);
+		verify(submissionService).deleteSubmission(submission, user);
 	}
 	
-	@Test
-	public void delete_ThrowsPackageNotFound_IfPackageIsNull() 
-			throws PackageDeleteException, PackageAlreadyDeletedWarning, PackageNotFound {
-		User user = UserTestFixture.GET_FIXTURE_ADMIN();
-		Integer ID = new Random().nextInt();
-		
-		when(packageRepository.findByIdAndDeleted(ID, false)).thenReturn(null);
-		
-		expectedException.expect(PackageNotFound.class);
-		expectedException.expectMessage(MessageCodes.ERROR_PACKAGE_NOT_FOUND);
-		
-		packageService.delete(ID, user);
-	}
+//	@Test
+//	public void delete_ThrowsPackageNotFound_IfPackageIsNull() 
+//			throws PackageDeleteException, PackageAlreadyDeletedWarning, PackageNotFound {
+//		User user = UserTestFixture.GET_FIXTURE_ADMIN();
+//		Integer ID = new Random().nextInt();
+//		
+//		when(packageRepository.findByIdAndDeleted(ID, false)).thenReturn(null);
+//		
+//		expectedException.expect(PackageNotFound.class);
+//		expectedException.expectMessage(MessageCodes.ERROR_PACKAGE_NOT_FOUND);
+//		
+//		packageService.delete(ID, user);
+//	}
 	
 	@Test
 	public void delete_ThrowsPackageAlreadyDeletedWarning_IfPackageIsDeleted() 
@@ -342,12 +338,10 @@ public class PackageServiceTest {
 		
 		packageBag.setDeleted(true);
 		
-		when(packageRepository.findByIdAndDeleted(packageBag.getId(), false)).thenReturn(packageBag);
-		
 		expectedException.expect(PackageAlreadyDeletedWarning.class);
 		expectedException.expectMessage(MessageCodes.WARNING_PACKAGE_ALREADY_DELETED);
 		
-		packageService.delete(packageBag.getId(), user);
+		packageService.delete(packageBag, user);
 	}
 	
 	@Test
@@ -365,34 +359,33 @@ public class PackageServiceTest {
 		packageBag.setPackageEvents(new HashSet<PackageEvent>(events));
 		packageBag.setSubmission(submission);
 		
-		when(packageRepository.findByIdAndDeleted(packageBag.getId(), true)).thenReturn(packageBag);
-		when(submissionService.shiftDelete(submission.getId())).thenReturn(submission);
+		when(submissionService.shiftDelete(submission)).thenReturn(submission);
 		doNothing().when(packageStorage).deleteSource(packageBag);
 		doNothing().when(packageEventService).delete(anyInt());
 		doNothing().when(packageRepository).delete(packageBag);
 		
-		packageService.shiftDelete(packageBag.getId());
+		packageService.shiftDelete(packageBag);
 		
 		assertEquals("Package source is not empty.", "", packageBag.getSource());
 		
 		verify(packageStorage).deleteSource(packageBag);
 		verify(packageEventService, times(4)).delete(anyInt());
-		verify(submissionService).shiftDelete(submission.getId());
+		verify(submissionService).shiftDelete(submission);
 		verify(packageRepository).delete(packageBag);
 	}
 	
-	@Test
-	public void shiftDelete_ThrowsPackageNotFound_IfPackageIsNull()
-			throws PackageDeleteException, PackageNotFound {
-		Integer ID = new Random().nextInt();
-		
-		when(packageRepository.findByIdAndDeleted(ID, true)).thenReturn(null);
-		
-		expectedException.expect(PackageNotFound.class);
-		expectedException.expectMessage(MessageCodes.ERROR_PACKAGE_NOT_FOUND);
-		
-		packageService.shiftDelete(ID);
-	}
+//	@Test
+//	public void shiftDelete_ThrowsPackageNotFound_IfPackageIsNull()
+//			throws PackageDeleteException, PackageNotFound {
+//		Integer ID = new Random().nextInt();
+//		
+//		when(packageRepository.findByIdAndDeleted(ID, true)).thenReturn(null);
+//		
+//		expectedException.expect(PackageNotFound.class);
+//		expectedException.expectMessage(MessageCodes.ERROR_PACKAGE_NOT_FOUND);
+//		
+//		packageService.shiftDelete(ID);
+//	}
 	
 	@Test
 	public void shiftDelete_ThrowsPackageDeleteException_IfPackageStorageExceptionIsThrown() 
@@ -409,8 +402,7 @@ public class PackageServiceTest {
 		packageBag.setPackageEvents(new HashSet<PackageEvent>(events));
 		packageBag.setSubmission(submission);
 		
-		when(packageRepository.findByIdAndDeleted(packageBag.getId(), true)).thenReturn(packageBag);
-		when(submissionService.shiftDelete(submission.getId())).thenReturn(submission);
+		when(submissionService.shiftDelete(submission)).thenReturn(submission);
 		doThrow(
 				new SourceFileDeleteException( 
 						messageSource, new Locale("en"), packageBag, "some details")
@@ -419,7 +411,7 @@ public class PackageServiceTest {
 		expectedException.expect(PackageDeleteException.class);
 		expectedException.expectMessage(MessageCodes.ERROR_PACKAGE_DELETE);
 		
-		packageService.shiftDelete(packageBag.getId());
+		packageService.shiftDelete(packageBag);
 	}
 	
 	@Test
@@ -440,15 +432,96 @@ public class PackageServiceTest {
 		packageBag.setPackageEvents(new HashSet<PackageEvent>(events));
 		packageBag.setSubmission(submission);
 		
-		when(packageRepository.findByIdAndDeleted(packageBag.getId(), true)).thenReturn(packageBag);
-		when(submissionService.shiftDelete(submission.getId()))
+		when(submissionService.shiftDelete(submission))
 			.thenThrow(exceptionToThrow);
 		
 		expectedException.expect(PackageDeleteException.class);
 		expectedException.expectMessage(MessageCodes.ERROR_PACKAGE_DELETE);
 		
-		packageService.shiftDelete(packageBag.getId());
+		packageService.shiftDelete(packageBag);
 	}
+	
+//	@Test
+//	public void shiftDeleteForRejectedSubmission_deletesPackageFromDatabaseAndFilesystem() 
+//			throws SourceFileDeleteException, SubmissionDeleteException,
+//			SubmissionNotFound, PackageDeleteException, PackageNotFound {
+//		User user = UserTestFixture.GET_FIXTURE_ADMIN();
+//		Repository repository = RepositoryTestFixture.GET_FIXTURE_REPOSITORY();
+//		Package packageBag = PackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
+//		List<PackageEvent> events = PackageEventTestFixture
+//				.GET_FIXTURE_SORTED_PACKAGE_EVENTS(user, packageBag, 2, 2);
+//		Submission submission = SubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, packageBag);
+//		
+//		packageBag.setDeleted(false);
+//		packageBag.setPackageEvents(new HashSet<PackageEvent>(events));
+//		packageBag.setSubmission(submission);
+//		
+//		when(submissionService.shiftDelete(submission.getId())).thenReturn(submission);
+//		doNothing().when(packageStorage).deleteSource(packageBag);
+//		doNothing().when(packageEventService).delete(anyInt());
+//		doNothing().when(packageRepository).delete(packageBag);
+//		
+//		packageService.shiftDeleteForRejectedSubmission(packageBag);
+//		
+//		assertEquals("Package source is not empty.", "", packageBag.getSource());
+//		
+//		verify(packageStorage).deleteSource(packageBag);
+//		verify(packageEventService, times(4)).delete(anyInt());
+//		verify(submissionService).shiftDelete(submission.getId());
+//		verify(packageRepository).delete(packageBag);
+//	}
+//	
+//	@Test
+//	public void shiftDeleteForRejectedSubmission_ThrowsPackageDeleteException_IfPackageStorageExceptionIsThrown() 
+//			throws SubmissionDeleteException, SubmissionNotFound, SourceFileDeleteException,
+//					PackageDeleteException, PackageNotFound {
+//		User user = UserTestFixture.GET_FIXTURE_ADMIN();
+//		Repository repository = RepositoryTestFixture.GET_FIXTURE_REPOSITORY();
+//		Package packageBag = PackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
+//		List<PackageEvent> events = PackageEventTestFixture
+//				.GET_FIXTURE_SORTED_PACKAGE_EVENTS(user, packageBag, 2, 2);
+//		Submission submission = SubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, packageBag);
+//		
+//		packageBag.setPackageEvents(new HashSet<PackageEvent>(events));
+//		packageBag.setSubmission(submission);
+//				
+//		when(submissionService.shiftDelete(submission.getId())).thenReturn(submission);
+//		doThrow(
+//				new SourceFileDeleteException( 
+//						messageSource, new Locale("en"), packageBag, "some details")
+//		).when(packageStorage).deleteSource(packageBag);
+//		
+//		expectedException.expect(PackageDeleteException.class);
+//		expectedException.expectMessage(MessageCodes.ERROR_PACKAGE_DELETE);
+//		
+//		packageService.shiftDeleteForRejectedSubmission(packageBag);
+//	}
+//	
+//	@Test
+//	public void shiftDeleteForRejectedSubmission_ThrowsPackageDeleteException_IfSubmissionDeleteExceptionIsThrown() 
+//			throws SubmissionDeleteException, 
+//			SubmissionNotFound,
+//			PackageDeleteException,
+//			PackageNotFound {
+//		User user = UserTestFixture.GET_FIXTURE_ADMIN();
+//		Repository repository = RepositoryTestFixture.GET_FIXTURE_REPOSITORY();
+//		Package packageBag = PackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
+//		List<PackageEvent> events = PackageEventTestFixture
+//				.GET_FIXTURE_SORTED_PACKAGE_EVENTS(user, packageBag, 2, 2);
+//		Submission submission = SubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, packageBag);
+//		SubmissionDeleteException exceptionToThrow = new SubmissionDeleteException(messageSource, new Locale("en"), submission.getId());
+//		
+//		packageBag.setPackageEvents(new HashSet<PackageEvent>(events));
+//		packageBag.setSubmission(submission);
+//		
+//		when(submissionService.shiftDelete(submission.getId()))
+//			.thenThrow(exceptionToThrow);
+//		
+//		expectedException.expect(PackageDeleteException.class);
+//		expectedException.expectMessage(MessageCodes.ERROR_PACKAGE_DELETE);
+//		
+//		packageService.shiftDeleteForRejectedSubmission(packageBag);
+//	}
 	
 	@Test
 	public void refreshMaintainer_WhenThereIsMaintainerForPackage() throws EventNotFound, PackageEditException {

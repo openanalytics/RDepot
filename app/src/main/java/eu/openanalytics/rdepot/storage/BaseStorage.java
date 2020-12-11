@@ -22,6 +22,7 @@ package eu.openanalytics.rdepot.storage;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.FileSystems;
@@ -226,15 +227,18 @@ public class BaseStorage {
 	 * This method reads a file from given source as a byte array.
 	 * @param source Path to the file
 	 * @return byte array
-	 * @throws StorageException
+	 * @throws GetFileInBytesException
+	 * @throws FileNotFoundException
 	 */
-	public byte[] getFileInBytes(String source) throws GetFileInBytesException {
+	public byte[] getFileInBytes(String source) throws GetFileInBytesException, FileNotFoundException {
 		byte[] bytes = null;
 		File file = new File(source);
 		FileSystemResource fsResource = new FileSystemResource(file);
 		if(file != null && file.exists()) {
 			try {
 				bytes = Files.readAllBytes(fsResource.getFile().toPath());
+			} catch(FileNotFoundException e) {
+				throw e;
 			} catch (IOException e) {
 				throw new GetFileInBytesException(messageSource, locale, source, e.getMessage());
 			}
@@ -245,18 +249,13 @@ public class BaseStorage {
 
 	public File extractFile(File file) throws ExtractFileException {
 		ProcessBuilder processBuilder = new ProcessBuilder(
-				"tar", "-zxvf", file.getAbsolutePath(), "-C", file.getParent());
+				"tar", "-zxf", file.getAbsolutePath(), "-C", file.getParent());
 		
 		logger.info("Running tar for " + file.getAbsolutePath());
 		
 		Process process = null;
 		try {
 			process = processBuilder.start();
-//			BufferedReader output = new BufferedReader(new InputStreamReader(process.getInputStream()));
-//			String outputLine = null;
-//			
-//			while((outputLine = output.readLine()) != null)
-//				logger.info(outputLine);
 			
 			int exitValue = process.waitFor();
 			if(exitValue != 0) {

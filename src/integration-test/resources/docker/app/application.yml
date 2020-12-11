@@ -1,5 +1,12 @@
 declarative: false
-
+#repositories:
+#  - name: A
+#    publication-uri: http://localhost/repo/A
+#    server-address: http://oa-rdepot-repo:8080/A
+#  - name: D
+#    publication-uri: http://localhost/repo/D
+#    server-address: http://oa-rdepot-repo:8080/D
+  
 api_token:
   secret: SecretKeyToGenJWTs
 
@@ -71,8 +78,14 @@ management:
         auto-time-requests: false
 
 springdoc:
+  pathsToMatch: /api/**
+  api-docs:
+    path: /v1/api-docs
   swagger-ui:
-    path: /swagger-ui/api-docs.html
+    path: /docs/api.html
+    disable-swagger-default-url: true
+    url: /v1/api-docs
+    display-query-params: true
 
 logging:
   level:
@@ -90,4 +103,7 @@ storage:
   implementation: local
 
 requestTimeout: 10
+
+#logging.level.org.hibernate.SQL=DEBUG
+#logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
             

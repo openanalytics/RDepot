@@ -202,7 +202,7 @@ public class PackageIntegrationTest extends IntegrationTest {
 			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
-			.put(API_PATH + "/" + PACKAGE_INACTIVE_ID + "/activate")
+			.patch(API_PATH + "/" + PACKAGE_INACTIVE_ID + "/activate")
 		.then()
 			.statusCode(200)
 			.body("success", equalTo("Package activated successfully."));
@@ -237,7 +237,7 @@ public class PackageIntegrationTest extends IntegrationTest {
 			.header(AUTHORIZATION, BEARER + USER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
-			.put(API_PATH + "/" + PACKAGE_INACTIVE_ID + "/activate")
+			.patch(API_PATH + "/" + PACKAGE_INACTIVE_ID + "/activate")
 		.then()
 			.statusCode(403);
 	}
@@ -248,7 +248,7 @@ public class PackageIntegrationTest extends IntegrationTest {
 			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
-			.put(API_PATH + "/" + PACKAGE_OLDER_ID + "/deactivate")
+			.patch(API_PATH + "/" + PACKAGE_OLDER_ID + "/deactivate")
 		.then()
 			.statusCode(200)
 			.body("success", equalTo("Package deactivated successfully."));
@@ -283,7 +283,7 @@ public class PackageIntegrationTest extends IntegrationTest {
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
-			.put(API_PATH + "/" + PACKAGE_TO_DEACTIVATE_ID_ARCHIVE + "/deactivate")
+			.patch(API_PATH + "/" + PACKAGE_TO_DEACTIVATE_ID_ARCHIVE + "/deactivate")
 		.then()
 			.statusCode(200)
 			.body("success", equalTo("Package deactivated successfully."));
@@ -303,7 +303,7 @@ public class PackageIntegrationTest extends IntegrationTest {
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
-			.put(API_PATH + "/" + PACKAGE_TO_DEACTIVATE_ID + "/deactivate")
+			.patch(API_PATH + "/" + PACKAGE_TO_DEACTIVATE_ID + "/deactivate")
 		.then()
 			.statusCode(200)
 			.body("success", equalTo("Package deactivated successfully."));
@@ -323,7 +323,7 @@ public class PackageIntegrationTest extends IntegrationTest {
 			.header(AUTHORIZATION, BEARER + USER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
-			.put(API_PATH + "/" + PACKAGE_OLDER_ID + "/deactivate")
+			.patch(API_PATH + "/" + PACKAGE_OLDER_ID + "/deactivate")
 		.then()
 			.statusCode(403);
 	}
@@ -379,7 +379,7 @@ public class PackageIntegrationTest extends IntegrationTest {
 		
 		assertEquals("Package hasn't been added to the list of deleted packages", expectedJSONDeleted, actualJSONDeleted);
 		assertEquals("Package hasn't been removed from the list of packages", expectedJSON, actualJSON);
-	}
+	}	
 	
 	@Test
 	public void nonPackageMaintainerShouldNotBeAbleToDeletePackage() {
@@ -391,4 +391,68 @@ public class PackageIntegrationTest extends IntegrationTest {
 		.then()
 			.statusCode(403);
 	}	
+	
+	@Test
+	public void shouldAdminShiftDeletePackage() throws IOException, ParseException {
+		given()
+			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.delete(API_PATH + "/" + PACKAGE_OLDER_ID + "/delete")
+		.then()
+			.statusCode(200)
+			.body("success", equalTo("Package deleted successfully."));
+		
+		given()
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.delete(API_PATH + "/" + PACKAGE_OLDER_ID + "/sdelete")
+		.then()
+			.statusCode(200)
+			.body("success", equalTo("Package deleted successfully."));
+	
+		JSONParser jsonParser = new JSONParser();
+	
+		FileReader reader = new FileReader(JSON_PATH + "/package/deleted_packages_when_one_was_shift_deleted.json");
+		JSONArray rootJSON = (JSONArray) jsonParser.parse(reader);
+		Set<JSONObject> expectedJSONDeleted = convert(rootJSON);
+		
+		String data = given()
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.get(API_PATH + "/deleted")
+		.then()
+			.statusCode(200)
+			.extract()
+			.asString();
+			
+		rootJSON = (JSONArray) jsonParser.parse(data);
+	
+		Set<JSONObject> actualJSONDeleted = convert(rootJSON);
+		
+		reader = new FileReader(JSON_PATH + "/package/packages_without_deleted_one.json");
+		rootJSON = (JSONArray) jsonParser.parse(reader);
+		Set<JSONObject> expectedJSON = convert(rootJSON);
+		
+		data = given()
+			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.get(API_PATH + "/list")
+		.then()
+			.statusCode(200)
+			.extract()
+			.asString();
+			
+		rootJSON = (JSONArray) jsonParser.parse(data);
+	
+		Set<JSONObject> actualJSON = convert(rootJSON);
+		
+		assertEquals("Package hasn't been added to the list of deleted packages", expectedJSONDeleted, actualJSONDeleted);
+		assertEquals("Package hasn't been removed from the list of packages", expectedJSON, actualJSON);
+	}
+	
+	//TODO: negative test for shift deletion
 }

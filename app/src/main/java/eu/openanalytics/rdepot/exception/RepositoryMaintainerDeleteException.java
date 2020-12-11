@@ -20,7 +20,14 @@
  */
 package eu.openanalytics.rdepot.exception;
 
-public class RepositoryMaintainerDeleteException extends Exception 
+import java.util.Locale;
+
+import org.springframework.context.MessageSource;
+
+import eu.openanalytics.rdepot.messaging.MessageCodes;
+import eu.openanalytics.rdepot.model.RepositoryMaintainer;
+
+public class RepositoryMaintainerDeleteException extends RepositoryMaintainerException 
 {
 
 	/**
@@ -28,9 +35,9 @@ public class RepositoryMaintainerDeleteException extends Exception
 	 */
 	private static final long serialVersionUID = 8406356789167890474L;
 	
-	public RepositoryMaintainerDeleteException(String message)
-	{
-		super(message);
+	public RepositoryMaintainerDeleteException(RepositoryMaintainer repositoryMaintainer, 
+			MessageSource messageSource, Locale locale) {
+		super(MessageCodes.ERROR_REPOSITORYMAINTAINER_DELETE, messageSource, locale, repositoryMaintainer);
 	}
 
 }

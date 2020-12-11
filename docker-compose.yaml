@@ -6,9 +6,9 @@ services:
     restart: unless-stopped
     volumes:
       - ./docker/proxy/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./docker/proxy/sites-enabled/:/etc/nginx/sites-enabled/:ro
-      - ./docker/proxy/logs/:/var/log/nginx/
+      - ./docker/proxy/sites-enabled/rdepot:/etc/nginx/sites-enabled/rdepot:ro
       - repository:/opt/rdepot/repo/:ro
+      - logs:/var/log/nginx/
     ports:
       - ${RDEPOT_PORT}:80
     depends_on:
@@ -16,109 +16,54 @@ services:
       - repo
     networks:
       - oa-rdepot
-      
-  app:
-    build: ./docker/build/app
-    restart: unless-stopped
-    hostname: oa-rdepot-app
-    container_name: oa-rdepot-app
-    volumes:
-      - ./docker/app/authentication.yml:/opt/rdepot/authentication.yml      
-      - ./docker/app/application.yml:/opt/rdepot/application.yml
-      - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
-      - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
-      - ./src/main/resources/yaml:/opt/rdepot/yaml 
-    ports:
-      - 8001:8001
-    depends_on:
-      - db
-#      - keycloak
-#      - openid
-    environment:
-      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/postgres
-      - DB_USERNAME=postgres
-      - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8001
-    networks:
-      - oa-rdepot  
-      
-  repo:
-    build: ./docker/build/repo
-    restart: unless-stopped
-    hostname: oa-rdepot-repo
-    container_name: oa-rdepot-repo
-    volumes:
-      - ./docker/repo/rdepot-repo.jar:/opt/repo/rdepot-repo.jar:ro
-      - repository:/opt/rdepot/
-      - ./docker/repo/server/:/opt/rdepot/server/
-    networks:
-      - oa-rdepot 
-        
   db:
     image: library/postgres:alpine
     restart: unless-stopped
     hostname: oa-rdepot-db
     container_name: oa-rdepot-db
     volumes:
-      - ./docker/db/rdepot.sql:/docker-entrypoint-initdb.d/rdepot.sql:ro
-      - ./docker/db/rdepot.sql:/opt/database.sql:ro
-      - ./docker/db/dump/:/opt/dump/
+      - ./docker/db/populate_database.sh:/docker-entrypoint-initdb.d/populate_database.sh:ro
+      - ./docker/db/rdepot.sql:/opt/rdepot.sql:ro
     environment:
+      - POSTGRES_DB=rdepot
+      - POSTGRES_USER=rdepot
       - POSTGRES_PASSWORD=mysecretpassword
     networks:
       - oa-rdepot
-                      
-#  openid:
-#    image: qlik/simple-oidc-provider
-#    restart: unless-stopped
-#    hostname: oa-rdepot-openid
-#    container_name: oa-rdepot-openid
-#    environment:
-#      - CONFIG_FILE=/opt/rdepot/config.json
-#      - USERS_FILE=/opt/rdepot/users.json
-#    volumes:
-#      - ./docker/oidc/config.json:/opt/rdepot/config.json
-#      - ./docker/oidc/users.json:/opt/rdepot/users.json  
-#    ports:
-#      - 9000:9000
-#    networks:
-#      - oa-rdepot
-  
-#  keycloak:
-#    image: quay.io/keycloak/keycloak:10.0.2
-#    restart: unless-stopped
-#    hostname: oa-rdepot-keycloak
-#    container_name: oa-rdepot-keycloak
-#    ports:
-#      - 8080:8080
-#    environment:
-#      - DB_VENDOR=h2
-#      - KEYCLOAK_USER=admin
-#      - KEYCLOAK_PASSWORD=testpassword
-#      - KEYCLOAK_IMPORT=/opt/rdepot/realm-rdepot.json
-#      - PROXY_ADDRESS_FORWARDING=true
-#    volumes:
-#      - ./docker/keycloak/realm-rdepot.json:/opt/rdepot/realm-rdepot.json
-#    networks:
-#      oa-rdepot:
-#        ipv4_address: 192.168.49.17
- 
-#  ldap:
-#    build: ./docker/build/ldap
-#    restart: unless-stopped
-#    hostname: oa-rdepot-ldap
-#    container_name: oa-rdepot-ldap
-#    ports:
-#      - 8080:8080
-#      - 389:389
-#      - 636:636
-#    environment:
-#      - LDAP_TLS=false
-#      - LDAP_ORGANISATION=Test Company
-#      - LDAP_DOMAIN=example.org
-#      - LDAP_ADMIN_PASSWORD=testpassword
-#    networks:
-#      - oa-rdepot
- 
+  app:
+    image: openanalytics/rdepot-app:1.4.2
+    restart: unless-stopped
+    hostname: oa-rdepot-app
+    container_name: oa-rdepot-app
+    entrypoint:  java -jar /opt/rdepot/rdepot.war
+    volumes:
+      - repositories:/opt/rdepot/repositories/
+      - snapshots:/opt/rdepot/generated/
+      - queue:/opt/rdepot/new/
+      - ./docker/app/authentication.yml:/opt/rdepot/authentication.yml      
+      - ./docker/app/application.yml:/opt/rdepot/application.yml
+    networks:
+      - oa-rdepot
+    depends_on:
+      - db
+    environment:
+      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/rdepot
+      - DB_USERNAME=rdepot
+      - DB_PASSWORD=mysecretpassword
+    healthcheck:
+      test: ["CMD-SHELL", "if [ \"$$(curl -I localhost:8080 2>/dev/null | grep HTTP/1.1 | cut -d\" \" -f2)\" != \"302\" ]; then exit 1; else exit 0; fi;"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+  repo:
+    image: openanalytics/rdepot-repo:1.4.2
+    restart: unless-stopped
+    hostname: oa-rdepot-repo
+    container_name: oa-rdepot-repo
+    volumes:
+      - repository:/opt/rdepot/
+    networks:
+      - oa-rdepot
 networks:
   oa-rdepot:
     ipam:
@@ -126,3 +71,7 @@ networks:
         - subnet: 192.168.49.0/24
 volumes:
   repository:
+  repositories:
+  snapshots:
+  queue:
+  logs:

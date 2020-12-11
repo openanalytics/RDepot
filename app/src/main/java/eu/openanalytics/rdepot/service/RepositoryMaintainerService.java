@@ -23,11 +23,16 @@ package eu.openanalytics.rdepot.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
@@ -53,6 +58,13 @@ import eu.openanalytics.rdepot.repository.RepositoryMaintainerRepository;
 @Scope( proxyMode = ScopedProxyMode.TARGET_CLASS )
 public class RepositoryMaintainerService
 {	
+	Logger logger = LoggerFactory.getLogger(PackageService.class);
+	
+	Locale locale = LocaleContextHolder.getLocale();
+	
+	@Resource
+	private MessageSource messageSource;
+	
 	@Resource
 	private RepositoryMaintainerRepository repositoryMaintainerRepository;
 	
@@ -108,16 +120,11 @@ public class RepositoryMaintainerService
 	}
 	
 	@Transactional(readOnly=false, rollbackFor={RepositoryMaintainerDeleteException.class})
-	public RepositoryMaintainer delete(int id, User deleter) throws RepositoryMaintainerDeleteException 
-	{
-		RepositoryMaintainer deletedRepositoryMaintainer = repositoryMaintainerRepository.findByIdAndDeleted(id, false);
-		
+	public RepositoryMaintainer delete(RepositoryMaintainer deletedRepositoryMaintainer, User deleter) throws RepositoryMaintainerDeleteException 
+	{		
 		try
 		{
 			Event deleteEvent = eventService.getDeleteEvent();
-			if (deletedRepositoryMaintainer == null)
-				throw new RepositoryMaintainerNotFound();
-			
 			deletedRepositoryMaintainer.setDeleted(true);
 			for(Package p : deletedRepositoryMaintainer.getRepository().getNonDeletedPackages())
 				packageService.refreshMaintainer(p, deleter); //TODO: changed from update(p, deleter) which checked every value of the package. Is it sufficient check now or there are other parameters besides packageMaintainer that can get changed?
@@ -126,20 +133,16 @@ public class RepositoryMaintainerService
 			
 			return deletedRepositoryMaintainer;
 		}
-		catch(RepositoryMaintainerNotFound | PackageEditException | EventNotFound e)
+		catch(PackageEditException | EventNotFound e)
 		{
-			throw new RepositoryMaintainerDeleteException(e.getMessage());
+			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
+			throw new RepositoryMaintainerDeleteException(deletedRepositoryMaintainer, messageSource, locale);
 		}
 	}
 	
 	@Transactional(readOnly=false, rollbackFor={RepositoryMaintainerNotFound.class})
-	public RepositoryMaintainer shiftDelete(int id) throws RepositoryMaintainerNotFound 
+	public RepositoryMaintainer shiftDelete(RepositoryMaintainer deletedRepositoryMaintainer)
 	{
-		RepositoryMaintainer deletedRepositoryMaintainer = repositoryMaintainerRepository.findByIdAndDeleted(id, true);
-
-		if (deletedRepositoryMaintainer == null)
-			throw new RepositoryMaintainerNotFound();
-				
 		for(RepositoryMaintainerEvent event : deletedRepositoryMaintainer.getRepositoryMaintainerEvents())
 			repositoryMaintainerEventService.delete(event.getId());
 		// TODO: shiftDelete the "deleted" packages that were still maintained by the "deleted" repository maintainer
@@ -168,7 +171,7 @@ public class RepositoryMaintainerService
 			Event updateEvent = eventService.getUpdateEvent();
 			
 			if (updatedRepositoryMaintainer == null)
-				throw new RepositoryMaintainerNotFound();
+				throw new RepositoryMaintainerNotFound(repositoryMaintainer.getId(), messageSource, locale);
 			
 			Repository oldRepository = updatedRepositoryMaintainer.getRepository();
 			Repository newRepository = repositoryMaintainer.getRepository();
@@ -204,7 +207,8 @@ public class RepositoryMaintainerService
 		}
 		catch(RepositoryMaintainerNotFound | PackageEditException | EventNotFound e)
 		{
-			throw new RepositoryMaintainerEditException(e.getMessage());
+			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
+			throw new RepositoryMaintainerEditException(repositoryMaintainer, messageSource, locale);
 		}
 	}
 

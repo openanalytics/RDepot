@@ -19,7 +19,7 @@ services:
       - oa-rdepot      
       
   repo:
-    image: 196229073436.dkr.ecr.eu-west-1.amazonaws.com/openanalytics/rdepot-repo-it:develop
+    image: openanalytics/rdepot-repo-it:1.4.2
     restart: always
     hostname: oa-rdepot-repo
     container_name: oa-rdepot-repo
@@ -36,8 +36,9 @@ services:
     hostname: oa-rdepot-db
     container_name: oa-rdepot-db
     volumes:
-      - ./docker/db/rdepot.sql:/docker-entrypoint-initdb.d/rdepot.sql:ro
-      - ./docker/db/rdepot.sql:/opt/database.sql:ro
+      - ./docker/db/initial_scripts/:/docker-entrypoint-initdb.d/:ro
+      - ./docker/db/sql_files/test/database.sql:/opt/database.sql:ro
+      - ./docker/db/sql_files/:/opt/sql_files/:ro
     environment:
       - POSTGRES_PASSWORD=mysecretpassword
     networks:
@@ -79,7 +80,7 @@ services:
         ipv4_address: 192.168.49.17
  
   ldap:
-    image: 196229073436.dkr.ecr.eu-west-1.amazonaws.com/openanalytics/rdepot-ldap-it:develop
+    image: openanalytics/rdepot-ldap-it:1.4.2
     restart: unless-stopped
     hostname: oa-rdepot-ldap
     container_name: oa-rdepot-ldap
@@ -91,14 +92,14 @@ services:
     networks:
       - oa-rdepot
       
-  app:
-    image: 196229073436.dkr.ecr.eu-west-1.amazonaws.com/openanalytics/rdepot-app-it:develop
+  app:    
+    image: openanalytics/rdepot-app-it:1.4.2
     restart: always
     hostname: oa-rdepot-app
     container_name: oa-rdepot-app
     volumes:
       - ./docker/app/test_configs/test_ldap.yml:/opt/rdepot/authentication.yml      
-      - ./docker/app/application.yml:/opt/rdepot/application.yml
+      - ./docker/app/test_configs/application_test.yml:/opt/rdepot/application.yml
       - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
       - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
       - ./itestSourceFiles:/opt/testSourceFiles:ro
@@ -111,7 +112,7 @@ services:
     depends_on:
       - db
     environment:
-      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/postgres
+      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/rdepot
       - DB_USERNAME=postgres
       - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8001
     healthcheck:
@@ -123,13 +124,13 @@ services:
       - oa-rdepot      
                         
   app-openid:
-    image: 196229073436.dkr.ecr.eu-west-1.amazonaws.com/openanalytics/rdepot-app-it:develop
+    image: openanalytics/rdepot-app-it:1.4.2
     restart: always
     hostname: oa-rdepot-app-openid
     container_name: oa-rdepot-app-openid
     volumes:
       - ./docker/app/test_configs/test_openid.yml:/opt/rdepot/authentication.yml   
-      - ./docker/app/application.yml:/opt/rdepot/application.yml
+      - ./docker/app/test_configs/application_test.yml:/opt/rdepot/application.yml
       - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
       - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
       - ./itestSourceFiles:/opt/testSourceFiles:ro
@@ -141,7 +142,7 @@ services:
       - db
       - openid
     environment:
-      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/postgres
+      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/rdepot
       - DB_USERNAME=postgres
     healthcheck:
       test: ["CMD-SHELL", "if [ \"$$(curl -I localhost:8080 2>/dev/null | grep HTTP/1.1 | cut -d\" \" -f2)\" != \"302\" ]; then exit 1; else exit 0; fi;"]
@@ -150,13 +151,13 @@ services:
       retries: 50 
   
   app-keycloak:    
-    image: 196229073436.dkr.ecr.eu-west-1.amazonaws.com/openanalytics/rdepot-app-it:develop
+    image: openanalytics/rdepot-app-it:1.4.2
     restart: always
     hostname: oa-rdepot-app-keycloak
     container_name: oa-rdepot-app-keycloak
     volumes:
       - ./docker/app/test_configs/test_keycloak.yml:/opt/rdepot/authentication.yml
-      - ./docker/app/application.yml:/opt/rdepot/application.yml
+      - ./docker/app/test_configs/application_test.yml:/opt/rdepot/application.yml
       - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
       - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
       - ./itestSourceFiles:/opt/testSourceFiles:ro
@@ -168,7 +169,7 @@ services:
       - db
       - keycloak
     environment:
-      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/postgres
+      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/rdepot
       - DB_USERNAME=postgres
     healthcheck:
       test: ["CMD-SHELL", "if [ \"$$(curl -I localhost:8080 2>/dev/null | grep HTTP/1.1 | cut -d\" \" -f2)\" != \"302\" ]; then exit 1; else exit 0; fi;"]
@@ -177,13 +178,13 @@ services:
       retries: 50 
       
   app-simple:
-    image: 196229073436.dkr.ecr.eu-west-1.amazonaws.com/openanalytics/rdepot-app-it:develop
+    image: openanalytics/rdepot-app-it:1.4.2
     restart: always
     hostname: oa-rdepot-app-simple
     container_name: oa-rdepot-app-simple
     volumes:
       - ./docker/app/test_configs/test_simple.yml:/opt/rdepot/authentication.yml
-      - ./docker/app/application.yml:/opt/rdepot/application.yml
+      - ./docker/app/test_configs/application_test.yml:/opt/rdepot/application.yml
       - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
       - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
       - ./itestSourceFiles:/opt/testSourceFiles:ro
@@ -194,7 +195,7 @@ services:
     depends_on:
       - db
     environment:
-      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/postgres
+      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/rdepot
       - DB_USERNAME=postgres
     healthcheck:
       test: ["CMD-SHELL", "if [ \"$$(curl -I localhost:8080 2>/dev/null | grep HTTP/1.1 | cut -d\" \" -f2)\" != \"302\" ]; then exit 1; else exit 0; fi;"]
@@ -203,7 +204,7 @@ services:
       retries: 50   
           
   app-declarative:
-    image: 196229073436.dkr.ecr.eu-west-1.amazonaws.com/openanalytics/rdepot-app-it:develop
+    image: openanalytics/rdepot-app-it:1.4.2
     restart: always
     hostname: oa-rdepot-declarative
     container_name: oa-rdepot-declarative
@@ -213,9 +214,9 @@ services:
       - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
       - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro    
     depends_on:
-      - db-declarative
+      - db
     environment:
-      - DB_URL=jdbc:postgresql://oa-rdepot-db-declarative:5432/postgres
+      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/declarative
       - DB_USERNAME=postgres      
     healthcheck:
       test: ["CMD-SHELL", "if [ \"$$(curl -I localhost:8080 2>/dev/null | grep HTTP/1.1 | cut -d\" \" -f2)\" != \"302\" ]; then exit 1; else exit 0; fi;"]
@@ -224,19 +225,6 @@ services:
       retries: 50 
     networks:
       - oa-rdepot  
-  
-  db-declarative:
-    image: library/postgres:alpine
-    restart: always
-    hostname: oa-rdepot-db-declarative
-    container_name: oa-rdepot-db-declarative
-    volumes:
-      - ./docker/db/rdepot_declarative.sql:/docker-entrypoint-initdb.d/rdepot.sql:ro
-      - ./docker/db/rdepot_declarative.sql:/opt/database.sql:ro
-    environment:
-      - POSTGRES_PASSWORD=mysecretpassword
-    networks:
-      - oa-rdepot
   
   selenium-hub:
     image: selenium/hub:3.141.59-bismuth

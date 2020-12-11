@@ -23,6 +23,7 @@ package eu.openanalytics.rdepot.integrationtest.manager;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -31,10 +32,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.json.simple.JSONArray;
@@ -59,6 +58,10 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 	
 	private final String SUBMISSION_ID_TO_ACCEPT = "30";
 	private final String SUBMISSION_ID_TO_REJECT = "31";
+	
+	private final String PACKAGE_ID_TO_DOWNLOAD = "32";
+	private final String PACKAGE_NAME_TO_DOWNLOAD = "Benchmarking";
+	private final String PDF_PATH = "src/integration-test/resources/itestPdf";
 		
 	@Test
 	public void shouldNotPublishPackageWhenRepositoryIsUnpublished() throws IOException {
@@ -151,14 +154,14 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 	
 	@SuppressWarnings("rawtypes")
 	@Test
-	public void shouldUploadPackage() throws ParseException, IOException {
-		File packageBag = new File ("src/integration-test/resources/itestPackages/A3_0.9.1.tar.gz");
+	public void shouldUploadPackageAndCreateManualByDefault() throws ParseException, IOException {
+		File packageBag = new File ("src/integration-test/resources/itestPackages/Benchmarking_0.10.tar.gz");
 				
 		given()
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept("application/json")
 			.contentType("multipart/form-data")
-			.multiPart("repository", "testrepo1")
+			.multiPart("repository", "testrepo2")
 			.multiPart(new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
 					.fileName(packageBag.getName())
 					.mimeType("application/gzip")
@@ -188,9 +191,82 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 		
 		List<Set> actualPackages = convertNewPackagesFromRepo(actualJSON);
+		
+		byte[] pdf = given()
+				.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+				.accept(ContentType.ANY)
+				
+			.when()
+            	.get(API_PACKAGES_PATH + "/" + PACKAGE_ID_TO_DOWNLOAD +"/download/" + PACKAGE_NAME_TO_DOWNLOAD + ".pdf")
+			.then()
+				.statusCode(200)
+				.extract()
+				.asByteArray();
+		
+		File file = new File(PDF_PATH + "/" + PACKAGE_NAME_TO_DOWNLOAD + ".pdf");
+		byte[] expectedpdf = readFileToByteArray(file);
 
 		assertEquals(expectedPackages, actualPackages);
 		assertTrue(compare(expectedJSON, actualJSON));
+		assertTrue("Meta-data can cause some differences", expectedpdf.length + 1000 > pdf.length);
+		assertTrue("Meta-data can cause some differences", expectedpdf.length - 1000 < pdf.length);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@Test
+	public void shouldUploadPackageAndNotCreateManual() throws ParseException, IOException {
+		File packageBag = new File ("src/integration-test/resources/itestPackages/Benchmarking_0.10.tar.gz");
+				
+		given()
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.accept("application/json")
+			.contentType("multipart/form-data")
+			.multiPart("repository", "testrepo2")
+			.multiPart("generateManual", "false")
+			.multiPart(new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+					.fileName(packageBag.getName())
+					.mimeType("application/gzip")
+					.controlName("file")
+					.build())
+		.when()
+			.post(API_PACKAGES_PATH + "/submit")
+		.then()
+			.statusCode(200)
+			.extract();
+		
+		FileReader reader = new FileReader(JSON_PATH + "/submission/repositories_after_uploading_package.json");
+		JsonArray expectedJSON = (JsonArray) JsonParser.parseReader(reader);
+		
+		List<Set> expectedPackages = convertNewPackagesFromRepo(expectedJSON);
+		
+		String data = given()
+			.header(AUTHORIZATION, BEARER + USER_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.get(API_REPOSITORIES_PATH + "/list")
+		.then()
+			.statusCode(200)
+			.extract()
+			.asString();
+		
+		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
+		
+		List<Set> actualPackages = convertNewPackagesFromRepo(actualJSON);
+		
+		byte[] pdf = given()
+				.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+				.accept(ContentType.ANY)
+				
+			.when()
+            	.get(API_PACKAGES_PATH + "/" + PACKAGE_ID_TO_DOWNLOAD +"/download/" + PACKAGE_NAME_TO_DOWNLOAD + ".pdf")
+			.then()
+				.statusCode(200)
+				.extract()
+				.asByteArray();
+
+		assertEquals(expectedPackages, actualPackages);
+		assertTrue(compare(expectedJSON, actualJSON));
+		assertEquals("Manual should have not been created, but it was", pdf.length, 0);
 	}
 	
 	@SuppressWarnings({ "rawtypes" })
@@ -353,7 +429,7 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
-			.put(API_SUBMISSIONS_PATH + "/" + SUBMISSION_ID_TO_ACCEPT + "/accept")
+			.patch(API_SUBMISSIONS_PATH + "/" + SUBMISSION_ID_TO_ACCEPT + "/accept")
 		.then()
 			.statusCode(200)
 			.body("success", equalTo("Submission has been accepted successfully."));
@@ -411,9 +487,7 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 	}
 	
 	@Test
-	public void shouldRejectSubmissionByRepositoryMaintainer() throws ParseException, IOException {
-		JSONParser jsonParser = new JSONParser();
-		
+	public void shouldCancelSubmissionByRepositoryMaintainer() throws ParseException, IOException {		
 		given()
 			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
@@ -423,6 +497,7 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 			.statusCode(200)
 			.body("success", equalTo("Submission has been canceled successfully."));
 		
+		JSONParser jsonParser = new JSONParser();
 		FileReader reader = new FileReader(JSON_PATH + "/submission/rejected_submission_by_repository_maintainer_packages.json");
 		JSONArray rootJSON = (JSONArray) jsonParser.parse(reader);
 		Set<JSONObject> expectedPackages = convert(rootJSON);
@@ -471,7 +546,7 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 		
 		assertTrue("Different deleted submissions", compare(expectedJSON, actualJSON));
-		assertTrue("Different repositoriies", compare(expectedRepositories, actualRepositories));
+		assertTrue("Different repositories", compare(expectedRepositories, actualRepositories));
 		assertEquals("Differences in packages", expectedPackages, actualPackages);
 	}
 	
@@ -486,11 +561,81 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 			.assertThat()
 			.body("error", equalTo("You are not authorized to perform this operation."))
 			.and()
-			.statusCode(200);
+			.statusCode(401);
 	}
 	
-	
-
+	@Test
+	public void shouldAdminShiftDeleteSubmission() throws ParseException, IOException {		
+		given()
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.delete(API_SUBMISSIONS_PATH + "/" + SUBMISSION_ID_TO_REJECT + "/cancel")
+		.then()
+			.statusCode(200)
+			.body("success", equalTo("Submission has been canceled successfully."));
+		
+		given()
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.delete(API_SUBMISSIONS_PATH + "/" + SUBMISSION_ID_TO_REJECT + "/sdelete")
+		.then()
+			.statusCode(200)
+			.body("success", equalTo("Submission has been deleted successfully."));
+		
+		JSONParser jsonParser = new JSONParser();
+		FileReader reader = new FileReader(JSON_PATH + "/submission/rejected_submission_by_repository_maintainer_packages.json");
+		JSONArray rootJSON = (JSONArray) jsonParser.parse(reader);
+		Set<JSONObject> expectedPackages = convert(rootJSON);
+		
+		String data = given()
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.get(API_PACKAGES_PATH + "/list")
+		.then()
+			.statusCode(200)
+			.extract()
+			.asString();
+			
+		rootJSON = (JSONArray) jsonParser.parse(data);
+		Set<JSONObject> actualPackages = convert(rootJSON);
+			
+		reader = new FileReader(JSON_PATH + "/submission/rejected_submission_by_repository_maintainer_repositories.json");
+		JsonArray expectedRepositories = (JsonArray) JsonParser.parseReader(reader);
+		
+		data = given()
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.get(API_REPOSITORIES_PATH + "/list")
+		.then()
+			.statusCode(200)
+			.extract()
+			.asString();
+		
+		JsonArray actualRepositories = (JsonArray) JsonParser.parseString(data);
+		
+		reader = new FileReader(JSON_PATH + "/submission/rejected_submission_by_repository_maintainer_submissions_view_by_admin.json");
+		JsonArray expectedDeletedJSON = (JsonArray) JsonParser.parseReader(reader);
+		
+		data = given()
+				.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+				.accept(ContentType.JSON)
+			.when()
+				.get(API_SUBMISSIONS_PATH + "/deleted")
+			.then()
+				.statusCode(200)
+				.extract()
+				.asString();
+			
+		JsonArray actualDeletedJSON = (JsonArray) JsonParser.parseString(data);
+		
+		assertFalse("'Shift deleted' submission can't be added to the list of deleted ones", compare(expectedDeletedJSON, actualDeletedJSON));
+		assertTrue("Shift deletion caused differences in repositories", compare(expectedRepositories, actualRepositories));
+		assertEquals("Shift deletion caused differences in packages", expectedPackages, actualPackages);
+	}
 	
 	private boolean compare(JsonArray expected, JsonArray actual) throws ParseException {
 		

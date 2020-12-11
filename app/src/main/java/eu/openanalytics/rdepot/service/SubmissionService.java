@@ -45,6 +45,7 @@ import eu.openanalytics.rdepot.exception.AdminNotFound;
 import eu.openanalytics.rdepot.exception.EventNotFound;
 import eu.openanalytics.rdepot.exception.MovePackageSourceException;
 import eu.openanalytics.rdepot.exception.PackageActivateException;
+import eu.openanalytics.rdepot.exception.PackageDeleteException;
 import eu.openanalytics.rdepot.exception.PackageEditException;
 import eu.openanalytics.rdepot.exception.PackageSourceNotFoundException;
 import eu.openanalytics.rdepot.exception.RepositoryEditException;
@@ -179,26 +180,31 @@ public class SubmissionService
 	}
 	
 	@Transactional(readOnly=false)
-	public void deleteSubmission(int id, User deleter) 
-			throws SubmissionDeleteException, SubmissionNotFound, SubmissionDeleteWarning {
-		delete(id, deleter, false);
+	public void deleteSubmission(Submission submission, User deleter) 
+			throws SubmissionDeleteException, SubmissionDeleteWarning {
+		delete(submission, deleter, false);
+	}
+	
+	@Transactional(readOnly=false)
+	public void rejectSubmission(Submission submission, User deleter) 
+			throws SubmissionDeleteException, SubmissionDeleteWarning {
+		delete(submission, deleter, true);
 	}
 	
 	@Transactional(readOnly=false)
 	public void rejectSubmission(int id, User deleter) 
-			throws SubmissionDeleteException, SubmissionNotFound, SubmissionDeleteWarning {
-		delete(id, deleter, true);
-	}
-	
-	@Transactional(readOnly = false, rollbackFor={SubmissionDeleteException.class})
-	private void delete(int id, User deleter, boolean deletePackageSource) 
-			throws SubmissionDeleteException, SubmissionNotFound, SubmissionDeleteWarning {
-		
+			throws SubmissionNotFound, SubmissionDeleteException, SubmissionDeleteWarning {
 		Submission deletedSubmission = submissionRepository.findByIdAndDeleted(id, false);
-				
+		
 		if (deletedSubmission == null)
 			throw new SubmissionNotFound(messageSource, locale, id);
-
+		
+		delete(deletedSubmission, deleter, true);
+	}
+	////
+	@Transactional(readOnly = false, rollbackFor={SubmissionDeleteException.class})
+	private void delete(Submission deletedSubmission, User deleter, boolean deletePackageSource) 
+			throws SubmissionDeleteException, SubmissionDeleteWarning {
 		try {
 			Event deleteEvent = eventService.getDeleteEvent();
 			
@@ -214,26 +220,31 @@ public class SubmissionService
 		}
 		catch (EventNotFound | SourceFileDeleteException e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
-			throw new SubmissionDeleteException(messageSource, locale, id);
+			throw new SubmissionDeleteException(messageSource, locale, deletedSubmission);
 		}
 		catch (SendEmailException e) {
 			logger.warn(e.getClass().getName() + ": " + e.getMessage(), e);
-			throw new SubmissionDeleteWarning(messageSource, locale, id);
+			throw new SubmissionDeleteWarning(messageSource, locale, deletedSubmission);
 		}
 	}
 	
 	@Transactional(readOnly=false, rollbackFor={SubmissionDeleteException.class})
-	public Submission shiftDelete(int id) throws SubmissionDeleteException, SubmissionNotFound {
-		Submission deletedSubmission = submissionRepository.findByIdAndDeleted(id, true);
-		if (deletedSubmission == null)
-			throw new SubmissionNotFound(messageSource, locale, id);
-		
+	public Submission shiftDelete(Submission deletedSubmission) throws SubmissionDeleteException {
 		for(SubmissionEvent event : deletedSubmission.getSubmissionEvents())
-			submissionEventService.delete(event.getId());
+			submissionEventService.delete(event);
 		submissionRepository.delete(deletedSubmission);	
 		return deletedSubmission;
 	}
 
+	@Transactional(readOnly=false, rollbackFor={PackageDeleteException.class})
+	public void shiftDeleteSubmissionForRejectedPackage(int id) throws SubmissionNotFound, PackageDeleteException {
+		Submission deletedSubmission = submissionRepository.findByIdAndDeleted(id, true);
+		if (deletedSubmission == null)
+			throw new SubmissionNotFound(messageSource, locale, id);
+		Package packageBag = deletedSubmission.getPackage();
+		packageService.shiftDelete(packageBag);
+	}
+	
 	public List<Submission> findAll() {
 		return submissionRepository.findByDeleted(false, Sort.by(new Order(Direction.DESC, "id")));
 	}

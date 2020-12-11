@@ -30,6 +30,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,13 +44,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.google.gson.Gson;
-
 import eu.openanalytics.rdepot.exception.PackageMaintainerCreateException;
 import eu.openanalytics.rdepot.exception.PackageMaintainerDeleteException;
 import eu.openanalytics.rdepot.exception.PackageMaintainerEditException;
 import eu.openanalytics.rdepot.exception.PackageMaintainerNotFound;
 import eu.openanalytics.rdepot.exception.UserEditException;
+import eu.openanalytics.rdepot.exception.UserUnauthorizedException;
 import eu.openanalytics.rdepot.messaging.MessageCodes;
 import eu.openanalytics.rdepot.model.CreatePackageMaintainerRequestBody;
 import eu.openanalytics.rdepot.model.EditPackageMaintainerRequestBody;
@@ -84,9 +84,6 @@ public class PackageMaintainerController {
 	
 	@Autowired
 	private PackageMaintainerValidator packageMaintainerValidator;
-	
-	@Autowired
-	private Gson gson;
 
 	@Autowired
 	private MessageSource messageSource;
@@ -130,7 +127,6 @@ public class PackageMaintainerController {
 		result.put("packagemaintainer", new PackageMaintainer());
 		result.put("users", userService.findEligiblePackageMaintainers());
 		result.put("repositories", repositoryService.findMaintainedBy(requester, false));
-		//result.put("packages", gson.toJson(packageService.findNamesPerRepository()));
 		result.put("packages", packageService.findNamesPerRepository());
 		result.put("role", requester.getRole().getValue());
 		
@@ -138,12 +134,14 @@ public class PackageMaintainerController {
 	}
 	
 	@PreAuthorize("hasAuthority('repositorymaintainer')")
-	@RequestMapping(value="/create", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody HashMap<String, Object> createNewPackageMaintainer(
+	@RequestMapping(value="/create", method=RequestMethod.POST, 
+		consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ResponseEntity<HashMap<String, Object>> createNewPackageMaintainer(
 			@RequestBody CreatePackageMaintainerRequestBody requestBody,
-			Principal principal) {
+			Principal principal) throws UserUnauthorizedException {
 		Locale locale = LocaleContextHolder.getLocale();
 		HashMap<String, Object> result = new HashMap<String, Object>();
+		HttpStatus httpStatus = HttpStatus.OK;
 		
 		User requester = userService.findByLoginWithRepositoryMaintainers(principal.getName());
 		String packageName = requestBody.getPackageName();
@@ -154,28 +152,34 @@ public class PackageMaintainerController {
 		BindException bindingResult = new BindException(packageMaintainer, "packageMaintainer");
 
 		try {
-			if(!userService.isAuthorizedToEdit(packageMaintainer, requester))
-				result.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_AUTHORIZED, null, locale));
-			else {
+			if(requester == null || !userService.isAuthorizedToEdit(packageMaintainer, requester)) {
+				throw new UserUnauthorizedException(messageSource, locale);
+			} else {
 				packageMaintainerValidator.validate(packageMaintainer, bindingResult);
 				
 				if(bindingResult.hasErrors()) {
 					String errorCode = bindingResult.getFieldError().getCode();
 					String error = messageSource.getMessage(errorCode, null, locale);
 					result.put("error", error);
+					
+					httpStatus = HttpStatus.UNPROCESSABLE_ENTITY;
 				} else {
 					User maintainer = packageMaintainer.getUser();
 					// Can a repositorymaintainer be a packagemaintainer also, in another repository then? NO!
-
 					switch(maintainer.getRole().getName()) {
 						case "user":
 							userService.updateRole(maintainer, requester, roleService.getPackageMaintainerRole());
 						case "packagemaintainer":
 							packageMaintainerService.create(packageMaintainer, requester);
-							result.put("success", messageSource.getMessage(MessageCodes.SUCCESS_PACKAGEMAINTAINER_CREATED, null, locale));
+							result.put("success", messageSource.getMessage(
+									MessageCodes.SUCCESS_PACKAGEMAINTAINER_CREATED, null, 
+									MessageCodes.SUCCESS_PACKAGEMAINTAINER_CREATED, locale));
 							break;
 						default:
-							result.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_CAPABLE, null, locale));
+							result.put("error", messageSource.getMessage(
+									MessageCodes.ERROR_USER_NOT_CAPABLE, null, 
+									MessageCodes.ERROR_USER_NOT_CAPABLE, locale));
+							httpStatus = HttpStatus.UNPROCESSABLE_ENTITY;
 					}
 				}
 				
@@ -185,132 +189,102 @@ public class PackageMaintainerController {
 			result.put(
 					"org.springframework.validation.BindingResult.packagemaintainer", bindingResult);
 		}
-		return result;
+		return new ResponseEntity<>(result, httpStatus);
 		
 	}
 
 	@PreAuthorize("hasAuthority('repositorymaintainer')")
-	@RequestMapping(value="/{id}/edit", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody HashMap<String, Object> updatePackageMaintainer(
+	@RequestMapping(value="/{id}/edit", method=RequestMethod.POST, 
+	consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ResponseEntity<HashMap<String, Object>> updatePackageMaintainer(
 			@RequestBody EditPackageMaintainerRequestBody requestBody,
-			Principal principal, @PathVariable Integer id) {
+			Principal principal, @PathVariable Integer id) throws UserUnauthorizedException, PackageMaintainerNotFound {
 		HashMap<String, Object> result = new HashMap<>();
 		User requester = userService.findByLoginWithRepositoryMaintainers(principal.getName());
-		PackageMaintainer packageMaintainer = packageMaintainerService.findById(id);
+		PackageMaintainer packageMaintainer = packageMaintainerService.findByIdAndDeleted(id, false);
 		Locale locale = LocaleContextHolder.getLocale();
 		String packageName = requestBody.getPackageName();
 		Repository repository = repositoryService.findByIdAndDeleted(requestBody.getRepositoryId(), false);
+		HttpStatus httpStatus = HttpStatus.OK;
 		
-		packageMaintainer.setRepository(repository);
-		packageMaintainer.setPackage(packageName);
-		
-//		BindException bindingResult = new BindException(packageMaintainer, "packageMaintainer");
-//		try
-//		{
-//			if(packageMaintainer.getId() != id)
-//				result.put("error", messageSource.getMessage(MessageCodes.ERROR_PACKAGEMAINTAINER_NOT_FOUND, null, locale));
-//			else if(!userService.isAuthorizedToEdit(packageMaintainer, requester))
-//				result.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_AUTHORIZED, null, locale));
-//			else
-//			{
-//				packageMaintainerValidator.validate(packageMaintainer, bindingResult);
-//				if (bindingResult.hasErrors())
-//					throw new PackageMaintainerEditException(bindingResult.getFieldError().getCode());
-//				else
-//				{
-//					packageMaintainerService.update(packageMaintainer, requester);
-//					result.put("success", messageSource.getMessage(MessageCodes.SUCCESS_PACKAGEMAINTAINER_UPDATED, null, locale));
-//				}			
-//			}
-//			return result;
-//		}
-//		catch(PackageMaintainerEditException e)
-//		{
-//			result.put("packagemaintainer", packageMaintainer);
-//			result.put(
-//					"org.springframework.validation.BindingResult.packagemaintainer", bindingResult);
-//			result.put("error", e.getMessage());
-//			result.put("repositories", repositoryService.findMaintainedBy(requester, false));
-//			result.put("packages", gson.toJson(packageService.findNamesPerRepository()));
-//			return result;
-//		}
-		
-		BindException bindingResult = new BindException(packageMaintainer, "packageMaintainer");
-		try {
-			if(!userService.isAuthorizedToEdit(packageMaintainer, requester)) {
-				result.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_AUTHORIZED, null, locale));
-			} else {
-				packageMaintainerValidator.validate(packageMaintainer, bindingResult);
-				
-				if(bindingResult.hasErrors()) {
-					result.put("error", messageSource.getMessage(bindingResult.getFieldError().getCode(), null, locale));
-				} else {
-					packageMaintainerService.evaluateAndUpdate(packageMaintainer, requester);
-					result.put("success", messageSource.getMessage(MessageCodes.SUCCESS_PACKAGEMAINTAINER_UPDATED, null, locale));
-				}
-			}
-		} catch(PackageMaintainerNotFound | PackageMaintainerEditException e) {
-			result.put("error", e.getMessage());
-			result.put(
-			"org.springframework.validation.BindingResult.packagemaintainer", bindingResult);
+		if(packageMaintainer == null) {
+			throw new PackageMaintainerNotFound(id, messageSource, locale);
 		}
 		
-		return result;
+		//TODO: This is a very temporary solution; Eventually I'd try to get rid of all "requestBodies"
+		PackageMaintainer updatedPackageMaintainer = new PackageMaintainer();
+		updatedPackageMaintainer.setPackage(packageName);
+		updatedPackageMaintainer.setRepository(repository);
+		updatedPackageMaintainer.setUser(packageMaintainer.getUser());
+		
+		BindException bindingResult = new BindException(packageMaintainer, "packageMaintainer");
+		if(!userService.isAuthorizedToEdit(packageMaintainer, requester)) {
+			throw new UserUnauthorizedException(messageSource, locale);
+		} else {
+			try {
+				packageMaintainerValidator.validate(updatedPackageMaintainer, bindingResult);
+				
+				if(bindingResult.hasErrors()) {
+					result.put("error", messageSource.getMessage(bindingResult.getFieldError().getCode(), null, 
+							bindingResult.getFieldError().getCode(), locale));
+					httpStatus = HttpStatus.UNPROCESSABLE_ENTITY;
+				} else {
+					packageMaintainerService.evaluateAndUpdate(packageMaintainer, updatedPackageMaintainer, requester);
+					result.put("success", messageSource.getMessage(MessageCodes.SUCCESS_PACKAGEMAINTAINER_UPDATED, null, locale));
+				}
+				
+			} catch(PackageMaintainerEditException e) {
+				result.put("error", e.getMessage());
+				result.put(
+				"org.springframework.validation.BindingResult.packagemaintainer", bindingResult); //do we need binding result?
+				httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+			}
+		}
+		return new ResponseEntity<>(result, httpStatus);
 	}
 	
 	@PreAuthorize("hasAuthority('repositorymaintainer')")
 	@RequestMapping(value="/{id}/delete", method=RequestMethod.DELETE, produces="application/json")
-	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody HashMap<String, String> deletePackageMaintainer(@PathVariable Integer id, Principal principal)
-	{	
+	public @ResponseBody ResponseEntity<HashMap<String, String>> deletePackageMaintainer(
+			@PathVariable Integer id, Principal principal) 
+					throws PackageMaintainerNotFound, UserUnauthorizedException, 
+					PackageMaintainerDeleteException {	
 		HashMap<String, String> result = new HashMap<String, String>();
 		User requester = userService.findByLoginWithRepositoryMaintainers(principal.getName());
 		Locale locale = LocaleContextHolder.getLocale();
-//		PackageMaintainer packageMaintainer = packageMaintainerService.findById(id);
-//		try
-//		{
-//			if(packageMaintainer == null)
-//				result.put("error", messageSource.getMessage(MessageCodes.ERROR_PACKAGEMAINTAINER_NOT_FOUND, null, locale));
-//			else if(!userService.isAuthorizedToEdit(packageMaintainer, requester))
-//				result.put("error", messageSource.getMessage(MessageCodes.ERROR_USER_NOT_AUTHORIZED, null, locale));
-//			else
-//			{
-//				packageMaintainerService.delete(id, requester);
-//				result.put("success", messageSource.getMessage(MessageCodes.SUCCESS_PACKAGEMAINTAINER_DELETED, null, locale));	
-//			}	
-//			return result;
-//		}
-//		catch(PackageMaintainerDeleteException e)
-//		{
-//			result.put("error", e.getMessage());
-//			return result;
-//		}
-		try {
-			packageMaintainerService.delete(id, requester);
-			result.put("success", messageSource.getMessage(MessageCodes.SUCCESS_PACKAGEMAINTAINER_DELETED, null, locale));
-		} catch (PackageMaintainerDeleteException | PackageMaintainerNotFound e) {
-			result.put("error", e.getMessage());
+		PackageMaintainer packageMaintainer = packageMaintainerService.findById(id);
+		HttpStatus httpStatus = HttpStatus.OK;
+		
+		if(packageMaintainer == null) {
+			throw new PackageMaintainerNotFound(id, messageSource, locale);
+		} else if(!userService.isAuthorizedToEdit(packageMaintainer, requester)) {
+			throw new UserUnauthorizedException(messageSource, locale);
+		} else {
+			packageMaintainerService.delete(packageMaintainer, requester);
+			result.put("success", messageSource.getMessage(MessageCodes.SUCCESS_PACKAGEMAINTAINER_DELETED, null, 
+					MessageCodes.SUCCESS_PACKAGEMAINTAINER_DELETED, locale));
 		}
-		return result;
+		
+		return new ResponseEntity<>(result, httpStatus);
 	}
 	
 	@PreAuthorize("hasAuthority('admin')")
 	@RequestMapping(value="/{id}/sdelete", method=RequestMethod.DELETE, produces="application/json")
-	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody HashMap<String, String> deletePackageMaintainer(@PathVariable Integer id)
-	{	
+	public @ResponseBody ResponseEntity<HashMap<String, String>> deletePackageMaintainer(
+			@PathVariable Integer id) throws PackageMaintainerDeleteException, PackageMaintainerNotFound {	
+		PackageMaintainer packageMaintainer = packageMaintainerService.findByIdAndDeleted(id, true);
 		Locale locale = LocaleContextHolder.getLocale();
-		HashMap<String, String> result = new HashMap<String, String>();
-		try {
-			packageMaintainerService.shiftDelete(id);
-			result.put("success", messageSource.getMessage(MessageCodes.SUCCESS_PACKAGEMAINTAINER_DELETED, null, locale));	
-		}
-		catch(PackageMaintainerDeleteException e) {
-			result.put("error", e.getMessage());
-		} catch (PackageMaintainerNotFound e) {
-			result.put("error", e.getMessage());
-		}
+		HttpStatus httpStatus = HttpStatus.OK;
 		
-		return result;
+		HashMap<String, String> result = new HashMap<String, String>();
+		
+		if(packageMaintainer == null) {
+			throw new PackageMaintainerNotFound(id, messageSource, locale);
+		} else {
+			packageMaintainerService.shiftDelete(packageMaintainer);
+			result.put("success", messageSource.getMessage(MessageCodes.SUCCESS_PACKAGEMAINTAINER_DELETED, 
+					null, MessageCodes.SUCCESS_PACKAGEMAINTAINER_DELETED, locale));	
+		}
+		return new ResponseEntity<>(result, httpStatus);
 	}
 }

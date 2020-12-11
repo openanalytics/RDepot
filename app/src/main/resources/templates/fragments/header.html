@@ -38,6 +38,7 @@
         <script src="/selectizejs/dist/js/standalone/selectize.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
         <script th:src="@{/js/{module}.js(module=${module})}"></script>
+        <script th:src="@{/js/header.js}"></script>
         <script th:src="@{/js/dialog-polyfill.js}"></script>
         <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css"/>
         <link rel='stylesheet' href='/webjars/material-design-lite/1.3.0/material.css'>
@@ -55,7 +56,7 @@
                     <td th:switch="${module}">
                         <label th:case="'manager'">
                         	<label id="upload-button" onclick="submitFiles()" class="mdl-button mdl-js-button" disabled><i class="material-icons">cloud_upload</i><span class="button-title">Upload</span></label>
-                        	<label id="reload-button" onclick="reloadPage()" class="mdl-button mdl-js-button" style="display:none"><i class="material-icons">refresh</i><span class="button-title">Reload</span></label>
+                        	<label id="reload-button" onclick="reloadPage()" class="mdl-button mdl-js-button" style="display:none;"><i class="material-icons">refresh</i><span class="button-title">Reload</span></label>
                         </label>
                         <label th:case="'newsfeed'" id="refresh-button" onclick="sendNewsfeedUpdateRequest()" class="mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">refresh</i></label>
                         <label th:if="${role > 2}" th:case="'repositories'" id="maintainers-button" onclick="openMaintainersPage()" class="mdl-button mdl-js-button"><i class="material-icons">people</i><span class="button-title">View Maintainers</span></label>
@@ -65,10 +66,10 @@
                     <div class="mdl-layout-spacer"></div>
                     <nav th:fragment="topbar" class="topbar-navigation mdl-navigation">
 
-                        <label class="mdl-button mdl-js-button mdl-button--icon" style="display: none;"><i class="material-icons">refresh</i></label>
                         <!--<a class="mdl-navigation__link" href="#">Settings</a>-->
                         <i class="material-icons">person</i>
                         <span name="username" th:text="${username}"></span>
+                        <label class="mdl-button mdl-js-button mdl-button--icon topbar-button" th:data1="${user_id}" th:onclick="showApiTokenDialog(this.getAttribute('data1'))"><i class="material-icons">settings</i></label>
                         <a name="logout" th:if="${role >= 0}" class="mdl-navigation__link" href="#" onclick="logout()">Log out</a>
                     </nav>
                 </div>

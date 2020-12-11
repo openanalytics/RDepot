@@ -30,6 +30,7 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -105,6 +106,7 @@ public class UploadRequestService {
 	public Package createPackage(PackageUploadRequest packageUploadRequest, User uploader)
 			throws UploadRequestValidationException, UploadRequestValidationWarning {
 		Package packageBag = new Package();
+		boolean generateManual = packageUploadRequest.getGenerateManual();
 
 		try {
 			multipartFileValidator.validate(packageUploadRequest.getFileData());
@@ -165,7 +167,12 @@ public class UploadRequestService {
 //					}
 //				}
 //			}
-			packageService.createManuals(packageBag);
+			if(generateManual) {
+				packageService.createManuals(packageBag);
+				logger.info("Manuals were generated");
+			} else {
+				logger.info("Manuals were not generated");
+			}
 			return packageBag;
 			
 		} catch (MultipartFileValidationException | 
