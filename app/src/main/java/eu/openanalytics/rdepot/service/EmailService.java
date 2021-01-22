@@ -22,8 +22,6 @@ package eu.openanalytics.rdepot.service;
 
 import java.util.Objects;
 import java.util.Properties;
-
-import javax.annotation.Resource;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
@@ -31,12 +29,12 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
-
 import eu.openanalytics.rdepot.exception.SendEmailException;
 import eu.openanalytics.rdepot.model.Submission;
 import eu.openanalytics.rdepot.model.User;
@@ -44,21 +42,46 @@ import eu.openanalytics.rdepot.model.User;
 @Service
 @Scope( proxyMode = ScopedProxyMode.TARGET_CLASS )
 public class EmailService {
-	@Resource
-	private Environment env;
 	
-	private static final String PROPERTY_NAME_EMAIL_PASSWORD = "email.password";
-	private static final String PROPERTY_NAME_EMAIL_USERNAME = "email.username";
-	private static final String PROPERTY_NAME_EMAIL_FROM = "email.from";
-	private static final String PROPERTY_NAME_EMAIL_SMTP_HOST = "email.smtp.host";
-	private static final String PROPERTY_NAME_EMAIL_SMTP_PORT = "email.smtp.port";
-	private static final String PROPERTY_NAME_EMAIL_SMTP_AUTH = "email.smtp.auth";
-	private static final String PROPERTY_NAME_EMAIL_SMTP_STARTTLS = "email.smtp.starttls";
+	Logger logger = LoggerFactory.getLogger(EmailService.class);
+	
+	public static final String PROPERTY_NAME_EMAIL_ENABLED = "email.enabled";
+	public static final String PROPERTY_NAME_EMAIL_PASSWORD = "email.password";
+	public static final String PROPERTY_NAME_EMAIL_USERNAME = "email.username";
+	public static final String PROPERTY_NAME_EMAIL_FROM = "email.from";
+	public static final String PROPERTY_NAME_EMAIL_SMTP_HOST = "email.smtp.host";
+	public static final String PROPERTY_NAME_EMAIL_SMTP_PORT = "email.smtp.port";
+	public static final String PROPERTY_NAME_EMAIL_SMTP_AUTH = "email.smtp.auth";
+	public static final String PROPERTY_NAME_EMAIL_SMTP_STARTTLS = "email.smtp.starttls";
+	
+	private final boolean enabled;
+	private final String username;
+	private final String password;
+	private final String from;
+	private final String host;
+	private final String port;
+	private final String auth;
+	private final String starttls;
+	
+	public EmailService(Environment env) {
+	  enabled = Objects.equals(env.getProperty(PROPERTY_NAME_EMAIL_ENABLED, "false"), "true");
+      username = env.getProperty(PROPERTY_NAME_EMAIL_USERNAME, "");
+      password = env.getProperty(PROPERTY_NAME_EMAIL_PASSWORD, "");
+      from = env.getProperty(PROPERTY_NAME_EMAIL_FROM, "root@localhost");
+      host = env.getProperty(PROPERTY_NAME_EMAIL_SMTP_HOST, "localhost");
+      port = env.getProperty(PROPERTY_NAME_EMAIL_SMTP_PORT, "22");
+      auth = env.getProperty(PROPERTY_NAME_EMAIL_SMTP_AUTH, "false");
+      starttls = env.getProperty(PROPERTY_NAME_EMAIL_SMTP_STARTTLS, "false");
+	}
 	
 	public void sendActivateSubmissionEmail(Submission submission, String submissionUrl) 
 			throws SendEmailException {
+        if(!enabled) {
+            logger.debug("Not sending an activate submission email, because it is disabled.");
+            return;
+        }
 		User to = submission.getPackage().getUser();
-		String subject = "R Repository Manager: new submission!";
+		String subject = "RDepot: new submission";
 		String message = "Dear " + to.getName() + ",<br><br>";
 		message += "There's a new submission from " + submission.getUser().getName() + 
 				": " + submission.getPackage().getName() + 
@@ -70,13 +93,17 @@ public class EmailService {
 		message += "To <strong>cancel</strong> the submission directly, please use <a href='" + submissionUrl + "/cancel'>this</a> link.<br><br>";
 		message += "Thank you for your cooperation.<br><br>";
 		message += "Sincerely yours,<br>";
-		message += "the R Repository Manager team";
+		message += "The RDepot team";
 		sendEmail(to, subject, message);
 	}
 	
 	public void sendCanceledSubmissionEmail(Submission submission) throws SendEmailException {
-		User to = submission.getPackage().getUser();
-		String subject = "R Repository Manager: canceled submission!";
+  	    if(!enabled) {
+            logger.debug("Not sending a canceled submission email, because it is disabled.");
+            return;
+        }
+	    User to = submission.getPackage().getUser();
+		String subject = "RDepot: canceled submission";
 		String message = "Dear " + to.getName() + ",<br><br>";
 		message += "The submission from " + submission.getUser().getName() + 
 				": " + submission.getPackage().getName() + 
@@ -86,19 +113,15 @@ public class EmailService {
 				") has been canceled by the submitter.<br>";
 		message += "The previous email can now be neglected and no further action is required.<br><br>";
 		message += "Sincerely yours,<br>";
-		message += "the R Repository Manager team";
+		message += "The RDepot team";
 		sendEmail(to, subject, message);
 	}
 
-	public void sendEmail(User user, String subject, String message_) throws SendEmailException {
-		final String username = env.getRequiredProperty(PROPERTY_NAME_EMAIL_USERNAME);
-		final String password = env.getRequiredProperty(PROPERTY_NAME_EMAIL_PASSWORD);
-		String from = env.getRequiredProperty(PROPERTY_NAME_EMAIL_FROM);
-		String host = env.getRequiredProperty(PROPERTY_NAME_EMAIL_SMTP_HOST);
-		String port = env.getRequiredProperty(PROPERTY_NAME_EMAIL_SMTP_PORT);
-		String auth = env.getRequiredProperty(PROPERTY_NAME_EMAIL_SMTP_AUTH);
-		String starttls = env.getRequiredProperty(PROPERTY_NAME_EMAIL_SMTP_STARTTLS);
-		
+	public void sendEmail(User user, String subject, String message) throws SendEmailException {
+  	    if(!enabled) {
+            logger.debug("Not sending an email, because it is disabled.");
+            return;
+        }
 		String to = user.getEmail();
 
 		Properties properties = System.getProperties();
@@ -122,12 +145,12 @@ public class EmailService {
 		
 		try	{
 		
-			MimeMessage message = new MimeMessage(session);
-			message.setFrom(new InternetAddress(from));
-			message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-			message.setSubject(subject);
-			message.setContent(message_, "text/html");
-			Transport.send(message);
+			MimeMessage mimeMessage = new MimeMessage(session);
+			mimeMessage.setFrom(new InternetAddress(from));
+			mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+			mimeMessage.setSubject(subject);
+			mimeMessage.setContent(message, "text/html");
+			Transport.send(mimeMessage);
 		}
 		catch (MessagingException mex) {
 			throw new SendEmailException(mex.getMessage());

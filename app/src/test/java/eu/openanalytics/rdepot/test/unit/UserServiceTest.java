@@ -22,6 +22,7 @@ package eu.openanalytics.rdepot.test.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -33,7 +34,6 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -42,11 +42,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -54,7 +52,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.context.MessageSource;
-
 import eu.openanalytics.rdepot.exception.AdminNotFound;
 import eu.openanalytics.rdepot.exception.EventNotFound;
 import eu.openanalytics.rdepot.exception.NoAdminLeftException;
@@ -159,9 +156,6 @@ public class UserServiceTest {
 	UserService userService;
 	
 	@Rule
-	public ExpectedException expectedException = ExpectedException.none();
-	
-	@Rule
 	public TestDateRule testDateRule = new TestDateRule();
 	
 	private class UserEventAssertionAnswer implements Answer<UserEvent> {
@@ -255,125 +249,135 @@ public class UserServiceTest {
 	@Test
 	public void create_ThrowsUserCreateException_IfNoEventIsFound() throws EventNotFound, UserCreateException {
 		User user = UserTestFixture.GET_FIXTURE_USER();
-		expectedException.expect(UserCreateException.class);
-		expectedException.expectMessage(user.getLogin() + ": " + MessageCodes.ERROR_USER_CREATE);
 
 		when(userRepository.save(user)).thenReturn(user);
 		when(eventService.getCreateEvent()).thenThrow(new EventNotFound());
 
-		userService.create(user);
+		assertThrows(
+		    user.getLogin() + ": " + MessageCodes.ERROR_USER_CREATE,
+		    UserCreateException.class,
+            () -> {
+              userService.create(user);
+        });
 	}
 	
 	@Test
 	public void shiftDelete_ThrowsUserNotFoundException_IfUserIsNotFound() throws UserNotFound {
 		when(userRepository.findByIdAndDeleted(0, true)).thenReturn(null);
-		expectedException.expect(UserNotFound.class);
-		expectedException.expectMessage("User " + Integer.toString(0) + ": " + MessageCodes.ERROR_USER_NOT_FOUND);
-		
-		userService.shiftDelete(0);
+
+		assertThrows(
+		    "User " + Integer.toString(0) + ": " + MessageCodes.ERROR_USER_NOT_FOUND,
+            UserNotFound.class,
+            () -> {
+              userService.shiftDelete(0);
+        });
 	}
 	
 	@Test
 	public void shiftDelete_ReturnsDeletedUser() throws UserNotFound {
-		final int ID = 0;
+		final int id = 0;
 		User user = UserTestFixture.GET_FIXTURE_USER();
 		user.setDeleted(true);
 		
-		when(userRepository.findByIdAndDeleted(ID,  true)).thenReturn(user);
+		when(userRepository.findByIdAndDeleted(id,  true)).thenReturn(user);
 		doNothing().when(userRepository).delete(user);
 		
-		User result = userService.shiftDelete(ID);
+		User result = userService.shiftDelete(id);
 		
 		assertEquals("UserService unit test: deleted user is not correct!", result, user);
 	}
 		
 	@Test
 	public void deleteEvents_DeletesAllEventsOfGivenUser() {
-		final int ID = new Random().nextInt();
+		final int id = new Random().nextInt();
 		User user = UserTestFixture.GET_FIXTURE_USER();
 		
 		UserEvent userEvent = new UserEvent();
-		userEvent.setId(ID);
+		userEvent.setId(id);
 		
 		PackageEvent packageEvent = new PackageEvent();
-		packageEvent.setId(ID);
+		packageEvent.setId(id);
 		
 		RepositoryEvent repositoryEvent = new RepositoryEvent();
-		repositoryEvent.setId(ID);
+		repositoryEvent.setId(id);
 		
 		PackageMaintainerEvent packageMaintainerEvent = new PackageMaintainerEvent();
-		packageMaintainerEvent.setId(ID);
+		packageMaintainerEvent.setId(id);
 		
 		RepositoryMaintainerEvent repositoryMaintainerEvent = new RepositoryMaintainerEvent();
-		repositoryMaintainerEvent.setId(ID);
+		repositoryMaintainerEvent.setId(id);
 		
 		SubmissionEvent submissionEvent = new SubmissionEvent();
-		submissionEvent.setId(ID);
+		submissionEvent.setId(id);
 		
 		Set<UserEvent> userEvents = new HashSet<>();
 		userEvents.add(userEvent);
 		user.setUserEvents(userEvents);
 		user.setChangedUserEvents(userEvents);
-		doNothing().when(userEventService).delete(ID);
+		doNothing().when(userEventService).delete(id);
 		
 		Set<PackageEvent> packageEvents = new HashSet<>();
 		packageEvents.add(packageEvent);
 		user.setChangedPackageEvents(packageEvents);
-		doNothing().when(packageEventService).delete(ID);
+		doNothing().when(packageEventService).delete(id);
 		
 		Set<RepositoryEvent> repositoryEvents = new HashSet<>();
 		repositoryEvents.add(repositoryEvent);
 		user.setChangedRepositoryEvents(repositoryEvents);
-		doNothing().when(repositoryEventService).delete(ID);
+		doNothing().when(repositoryEventService).delete(id);
 		
 		Set<PackageMaintainerEvent> packageMaintainerEvents = new HashSet<>();
 		packageMaintainerEvents.add(packageMaintainerEvent);
 		user.setChangedPackageMaintainerEvents(packageMaintainerEvents);
-		doNothing().when(packageMaintainerEventService).delete(ID);
+		doNothing().when(packageMaintainerEventService).delete(id);
 		
 		Set<RepositoryMaintainerEvent> repositoryMaintainerEvents = new HashSet<>();
 		repositoryMaintainerEvents.add(repositoryMaintainerEvent);
 		user.setChangedRepositoryMaintainerEvents(repositoryMaintainerEvents);
-		doNothing().when(repositoryMaintainerEventService).delete(ID);
+		doNothing().when(repositoryMaintainerEventService).delete(id);
 		
 		Set<SubmissionEvent> submissionEvents = new HashSet<>();
 		submissionEvents.add(submissionEvent);
 		user.setChangedSubmissionEvents(submissionEvents);
-		doNothing().when(submissionEventService).delete(ID);
+		doNothing().when(submissionEventService).delete(id);
 		
 		userService.deleteEvents(user);
 		
-		verify(userEventService, times(2)).delete(ID);
-		verify(packageEventService).delete(ID);
-		verify(repositoryEventService).delete(ID);
-		verify(packageMaintainerEventService).delete(ID);
-		verify(repositoryMaintainerEventService).delete(ID);
-		verify(submissionEventService).delete(ID);
+		verify(userEventService, times(2)).delete(id);
+		verify(packageEventService).delete(id);
+		verify(repositoryEventService).delete(id);
+		verify(packageMaintainerEventService).delete(id);
+		verify(repositoryMaintainerEventService).delete(id);
+		verify(submissionEventService).delete(id);
 	}
 	
 	@Test
 	public void delete_ThrowsUserNotFound_IfUserIsNotFound() throws UserDeleteException, UserNotFound {
-		final int ID = new Random().nextInt();
-		when(userRepository.findByIdAndDeleted(ID, false)).thenReturn(null);
+		final int id = new Random().nextInt();
+		when(userRepository.findByIdAndDeleted(id, false)).thenReturn(null);
 		
-		expectedException.expect(UserNotFound.class);
-		expectedException.expectMessage("User " + Integer.toString(ID) + ": " + MessageCodes.ERROR_USER_NOT_FOUND);
-
-		userService.delete(ID, UserTestFixture.GET_FIXTURE_ADMIN());
+		assertThrows(
+            "User " + Integer.toString(id) + ": " + MessageCodes.ERROR_USER_NOT_FOUND,
+            UserNotFound.class,
+            () -> {
+              userService.delete(id, UserTestFixture.GET_FIXTURE_ADMIN());
+        });
 	}
 	
 	@Test
 	public void delete_ThrowsUserDeleteException_IfEventIsNotFound() throws EventNotFound, UserDeleteException, UserNotFound {
 		User user = UserTestFixture.GET_FIXTURE_USER();
 		
-		final int ID = new Random().nextInt();
-		when(userRepository.findByIdAndDeleted(ID, false)).thenReturn(user);
+		final int id = new Random().nextInt();
+		when(userRepository.findByIdAndDeleted(id, false)).thenReturn(user);
 		when(eventService.getDeleteEvent()).thenThrow(new EventNotFound());
-		
-		expectedException.expect(UserDeleteException.class);
-		expectedException.expectMessage("User " + ID + ": " + MessageCodes.ERROR_USER_DELETE);
-		
-		userService.delete(ID, UserTestFixture.GET_FIXTURE_ADMIN());
+
+		assertThrows(
+		    "User " + id + ": " + MessageCodes.ERROR_USER_DELETE,
+            UserDeleteException.class,
+            () -> {
+              userService.delete(id, UserTestFixture.GET_FIXTURE_ADMIN());
+        });
 	}
 	
 	@Test
@@ -383,16 +387,16 @@ public class UserServiceTest {
 		Event deleteEvent = EventTestFixture.GET_FIXTURE_EVENT("delete");
 		Set<Submission> submissions = new HashSet<Submission>();
 		user.setSubmissions(submissions);
-		final int ID = new Random().nextInt();
+		final int id = new Random().nextInt();
 		
 		user.setDeleted(false);
 		
-		when(userRepository.findByIdAndDeleted(ID, false)).thenReturn(user);
+		when(userRepository.findByIdAndDeleted(id, false)).thenReturn(user);
 		when(eventService.getDeleteEvent()).thenReturn(deleteEvent);
 		doNothing().when(submissionService).fixSubmissions(user.getSubmissions(), admin);
 		when(userEventService.create(deleteEvent, admin, user)).thenReturn(new ArrayList<UserEvent>());
 		
-		User result = userService.delete(ID, admin);
+		User result = userService.delete(id, admin);
 		
 		assertEquals("Deleted user is not correct", user, result);
 		assertTrue("User was not set as deleted", user.isDeleted());
@@ -402,7 +406,7 @@ public class UserServiceTest {
 	public void delete_ReturnsDeletedUser_IfUserHasRepositoryMaintainerCredentials() 
 			throws EventNotFound, RepositoryMaintainerDeleteException, UserDeleteException, 
 			SubmissionEditException, AdminNotFound, UserNotFound {
-		final int ID = new Random().nextInt();
+		final int id = new Random().nextInt();
 		User user = UserTestFixture.GET_FIXTURE_USER_REPOSITORYMAINTAINER();
 		User admin = UserTestFixture.GET_FIXTURE_ADMIN();
 		Event deleteEvent = EventTestFixture.GET_FIXTURE_EVENT("delete");
@@ -415,16 +419,16 @@ public class UserServiceTest {
 		user.setRepositoryMaintainers(new HashSet<RepositoryMaintainer>(repositoryMaintainers));
 		user.setSubmissions(submissions);
 		user.setDeleted(false);
-		user.setId(ID);
+		user.setId(id);
 		
-		when(userRepository.findByIdAndDeleted(ID, false)).thenReturn(user);
+		when(userRepository.findByIdAndDeleted(id, false)).thenReturn(user);
 		when(eventService.getDeleteEvent()).thenReturn(deleteEvent);
 		doNothing().when(submissionService).fixSubmissions(user.getSubmissions(), admin);
 		when(userEventService.create(deleteEvent, admin, user)).thenReturn(new ArrayList<UserEvent>());
 		when(repositoryMaintainerService.delete(repositoryMaintainers.get(0), admin)).thenReturn(null);
 		when(packageService.findByRepositoryAndMaintainer(repository, user)).thenReturn(new ArrayList<Package>());
 		
-		User result = userService.delete(ID, admin);
+		User result = userService.delete(id, admin);
 		
 		assertEquals("Deleted user is not correct", user, result);
 		assertTrue("User was not set as deleted", user.isDeleted());
@@ -436,7 +440,7 @@ public class UserServiceTest {
 	public void delete_ReturnsDeletedUser_IfUserHasPackageMaintainerCredentials() 
 			throws EventNotFound, PackageMaintainerDeleteException, UserDeleteException, 
 			SubmissionEditException, AdminNotFound, UserNotFound, PackageMaintainerNotFound {
-		final int ID = new Random().nextInt();
+		final int id = new Random().nextInt();
 		User user = UserTestFixture.GET_FIXTURE_USER_PACKAGEMAINTAINER();
 		User admin = UserTestFixture.GET_FIXTURE_ADMIN();
 		Event deleteEvent = EventTestFixture.GET_FIXTURE_EVENT("delete");
@@ -447,16 +451,16 @@ public class UserServiceTest {
 		user.setPackageMaintainers(new HashSet<>(packageMaintainers));
 		user.setSubmissions(submissions);
 		user.setDeleted(false);
-		user.setId(ID);
+		user.setId(id);
 		
-		when(userRepository.findByIdAndDeleted(ID, false)).thenReturn(user);
+		when(userRepository.findByIdAndDeleted(id, false)).thenReturn(user);
 		when(eventService.getDeleteEvent()).thenReturn(deleteEvent);
 		doNothing().when(submissionService).fixSubmissions(user.getSubmissions(), admin);
 		when(userEventService.create(deleteEvent, admin, user)).thenReturn(new ArrayList<UserEvent>());
 		when(packageMaintainerService.delete(packageMaintainers.get(0).getId(), admin)).thenReturn(null);
 		when(packageService.findByNameAndRepository(packageMaintainers.get(0).getPackage(), repository)).thenReturn(new ArrayList<Package>());
 		
-		User result = userService.delete(ID, admin);
+		User result = userService.delete(id, admin);
 		
 		assertEquals("Deleted user is not correct", user, result);
 		assertTrue("User was not set as deleted", user.isDeleted());
@@ -467,12 +471,12 @@ public class UserServiceTest {
 	@Test
 	public void delete_ReturnsDeletedUser_IfAnotherAdminIsFound() throws EventNotFound, 
 		PackageEditException, UserDeleteException, UserNotFound, SubmissionEditException, AdminNotFound {
-		final int ID = new Random().nextInt();
-		final int PACKAGE_COUNT = new Random().nextInt(10);
+		final int id = new Random().nextInt();
+		final int packageCount = new Random().nextInt(10);
 		User user = UserTestFixture.GET_FIXTURE_ADMIN();
 		User admin = UserTestFixture.GET_FIXTURE_ADMIN();
 		Event deleteEvent = EventTestFixture.GET_FIXTURE_EVENT("delete");
-		List<Package> packages = PackageTestFixture.GET_FIXTURE_PACKAGES(new Repository(), user, PACKAGE_COUNT);
+		List<Package> packages = PackageTestFixture.GET_FIXTURE_PACKAGES(new Repository(), user, packageCount);
 		
 		Role adminRole = RoleTestFixture.GET_FIXTURE_ROLES(1, 0, 0, 0).get(0);
 		Set<User> admins = new HashSet<>();
@@ -481,25 +485,25 @@ public class UserServiceTest {
 		adminRole.setUsers(admins);
 		
 		user.setDeleted(false);
-		user.setId(ID);
+		user.setId(id);
 		
-		when(userRepository.findByIdAndDeleted(ID, false)).thenReturn(user);
+		when(userRepository.findByIdAndDeleted(id, false)).thenReturn(user);
 		when(eventService.getDeleteEvent()).thenReturn(deleteEvent);
 		doNothing().when(submissionService).fixSubmissions(eq(user.getSubmissions()), eq(admin));
 		when(roleService.getAdminRole()).thenReturn(adminRole);
 		when(packageService.findAll()).thenReturn(packages);
 		
-		User result = userService.delete(ID, admin);
+		User result = userService.delete(id, admin);
 		
 		assertEquals("Deleted user is not correct", user, result);
 		assertTrue("User was not set as deleted", user.isDeleted());
 		
-		verify(packageService, times(PACKAGE_COUNT)).refreshMaintainer(any(), eq(admin));
+		verify(packageService, times(packageCount)).refreshMaintainer(any(), eq(admin));
 	}
 	
 	@Test
 	public void delete_ThrowsUserDeleteException_IfOnlyAdminIsLeft() throws EventNotFound, UserDeleteException, UserNotFound {
-		final int ID = new Random().nextInt();
+		final int id = new Random().nextInt();
 		User admin = UserTestFixture.GET_FIXTURE_ADMIN();
 		Event deleteEvent = EventTestFixture.GET_FIXTURE_EVENT("delete");
 
@@ -509,35 +513,42 @@ public class UserServiceTest {
 		adminRole.setUsers(admins);
 
 		admin.setDeleted(false);
-		admin.setId(ID);
+		admin.setId(id);
 		
-		expectedException.expect(UserDeleteException.class);
-		expectedException.expectMessage("User " + ID + ": " + MessageCodes.ERROR_USER_DELETE);
-		when(userRepository.findByIdAndDeleted(ID, false)).thenReturn(admin);
+		when(userRepository.findByIdAndDeleted(id, false)).thenReturn(admin);
 		when(eventService.getDeleteEvent()).thenReturn(deleteEvent);
 		when(roleService.getAdminRole()).thenReturn(adminRole);
-
-		userService.delete(ID, admin);
+		
+		assertThrows(
+            "User " + id + ": " + MessageCodes.ERROR_USER_DELETE,
+            UserDeleteException.class,
+            () -> {
+              userService.delete(id, admin);
+        });
 		
 		assertFalse("Admin should not be deleted if exception is thrown", admin.isDeleted());
 	}
 	
 	@Test
 	public void delete_ThrowsUserDeleteException_IfNoAdminRoleIsFound() throws EventNotFound, UserDeleteException, UserNotFound {
-		final int ID = new Random().nextInt();
+		final int id = new Random().nextInt();
 		User admin = UserTestFixture.GET_FIXTURE_ADMIN();
 		Event deleteEvent = EventTestFixture.GET_FIXTURE_EVENT("delete");
 		
 		admin.setDeleted(false);
-		admin.setId(ID);
+		admin.setId(id);
 		
-		expectedException.expect(UserDeleteException.class);
-		expectedException.expectMessage("User " + ID + ": " + MessageCodes.ERROR_USER_DELETE);
-		when(userRepository.findByIdAndDeleted(ID, false)).thenReturn(admin);
+		when(userRepository.findByIdAndDeleted(id, false)).thenReturn(admin);
 		when(eventService.getDeleteEvent()).thenReturn(deleteEvent);
 		when(roleService.getAdminRole()).thenReturn(null);
 		
-		userService.delete(ID, admin);
+		assertThrows(
+            "User " + id + ": " + MessageCodes.ERROR_USER_DELETE,
+            UserDeleteException.class,
+            () -> {
+              userService.delete(id, admin);
+        });
+		
 		assertFalse("Admin should not be deleted if exception is thrown", admin.isDeleted());
 	}
 	
@@ -590,10 +601,13 @@ public class UserServiceTest {
 		User admin = UserTestFixture.GET_FIXTURE_ADMIN();
 		
 		user.setActive(true);
-		expectedException.expect(UserAlreadyActivatedWarning.class);
-		expectedException.expectMessage(user.getLogin() + ": " + MessageCodes.WARNING_USER_ALREADY_ACTIVATED);
-		
-		userService.activateUser(user, admin);
+
+		assertThrows(
+		    user.getLogin() + ": " + MessageCodes.WARNING_USER_ALREADY_ACTIVATED,
+		    UserAlreadyActivatedWarning.class,
+            () -> {
+              userService.activateUser(user, admin);
+        });
 	}
 	
 	@Test
@@ -604,10 +618,13 @@ public class UserServiceTest {
 		user.setActive(false);
 		
 		when(eventService.getUpdateEvent()).thenThrow(new EventNotFound());
-		expectedException.expect(UserActivateException.class);
-		expectedException.expectMessage(user.getLogin() + ": " + MessageCodes.ERROR_USER_ACTIVATE);
 		
-		userService.activateUser(user, admin);
+		assertThrows(
+            user.getLogin() + ": " + MessageCodes.ERROR_USER_ACTIVATE,
+            UserActivateException.class,
+            () -> {
+              userService.activateUser(user, admin);
+        });
 	}
 	
 	@Test
@@ -659,10 +676,13 @@ public class UserServiceTest {
 		User admin = UserTestFixture.GET_FIXTURE_ADMIN();
 		
 		user.setActive(false);
-		expectedException.expect(UserAlreadyDeactivatedWarning.class);
-		expectedException.expectMessage(user.getLogin() + ": " + MessageCodes.WARNING_USER_ALREADY_DEACTIVATED);
-		
-		userService.deactivateUser(user, admin);
+
+		assertThrows(
+            user.getLogin() + ": " + MessageCodes.WARNING_USER_ALREADY_DEACTIVATED,
+            UserAlreadyDeactivatedWarning.class,
+            () -> {
+              userService.deactivateUser(user, admin);
+        });
 	}
 	
 	@Test
@@ -673,10 +693,13 @@ public class UserServiceTest {
 		user.setActive(true);
 		
 		when(eventService.getUpdateEvent()).thenThrow(new EventNotFound());
-		expectedException.expect(UserDeactivateException.class);
-		expectedException.expectMessage(user.getLogin() + ": " + MessageCodes.ERROR_USER_DEACTIVATE);
 		
-		userService.deactivateUser(user, admin);
+		assertThrows(
+            user.getLogin() + ": " + MessageCodes.ERROR_USER_DEACTIVATE,
+            UserDeactivateException.class,
+            () -> {
+              userService.deactivateUser(user, admin);
+        });
 	}
 	
 	@Test
@@ -737,10 +760,13 @@ public class UserServiceTest {
 		user.setLastLoggedInOn(currentLastLoggedInOn);
 		
 		when(eventService.getUpdateEvent()).thenThrow(new EventNotFound());
-		expectedException.expect(UserEditException.class);
-		expectedException.expectMessage(user.getLogin() + ": " + MessageCodes.ERROR_USER_EDIT);
-		
-		userService.updateLastLoggedInOn(user, admin, new Date());
+
+		assertThrows(
+            user.getLogin() + ": " + MessageCodes.ERROR_USER_EDIT,
+            UserEditException.class,
+            () -> {
+              userService.updateLastLoggedInOn(user, admin, new Date());
+        });
 	}
 	
 	@Test
@@ -781,10 +807,13 @@ public class UserServiceTest {
 		String newName = "Albus Dumbledore";
 		
 		when(eventService.getUpdateEvent()).thenThrow(new EventNotFound());
-		expectedException.expect(UserEditException.class);
-		expectedException.expectMessage(user.getLogin() + ": " + MessageCodes.ERROR_USER_EDIT);
-		
-		userService.updateName(user, admin, newName);
+
+		assertThrows(
+            user.getLogin() + ": " + MessageCodes.ERROR_USER_EDIT,
+            UserEditException.class,
+            () -> {
+              userService.updateName(user, admin, newName);
+        });
 	}
 	
 	@Test
@@ -825,10 +854,13 @@ public class UserServiceTest {
 		user.setEmail(oldEmail);
 		
 		when(eventService.getUpdateEvent()).thenThrow(new EventNotFound());
-		expectedException.expect(UserEditException.class);
-		expectedException.expectMessage(user.getLogin() + ": " + MessageCodes.ERROR_USER_EDIT);
-		
-		userService.updateEmail(user, admin, newEmail);
+
+		assertThrows(
+            user.getLogin() + ": " + MessageCodes.ERROR_USER_EDIT,
+            UserEditException.class,
+            () -> {
+              userService.updateEmail(user, admin, newEmail);
+        });
 	}
 	
 	@Test
@@ -923,7 +955,7 @@ public class UserServiceTest {
 	@Test
 	public void updateRole_FromPackageMaintainerToUser() throws EventNotFound, UserEditException, 
 		PackageMaintainerDeleteException, PackageEditException, PackageMaintainerNotFound {
-		final int PACKAGE_COUNT = 3;
+		final int packageCount = 3;
 		User admin = UserTestFixture.GET_FIXTURE_ADMIN();
 		User user = UserTestFixture.GET_FIXTURE_USER_PACKAGEMAINTAINER();
 		Role userRole = RoleTestFixture.GET_FIXTURE_USER_ROLE();
@@ -932,7 +964,7 @@ public class UserServiceTest {
 		User packagesOwner = UserTestFixture.GET_FIXTURE_USER();
 		
 		List<Package> packages = PackageTestFixture.GET_FIXTURE_PACKAGES(repository, packagesOwner, 1);
-		List<PackageMaintainer> packageMaintainers = PackageMaintainerTestFixture.GET_FIXTURE_PACKAGE_MAINTAINERS(user, repository, PACKAGE_COUNT);
+		List<PackageMaintainer> packageMaintainers = PackageMaintainerTestFixture.GET_FIXTURE_PACKAGE_MAINTAINERS(user, repository, packageCount);
 		
 		user.setPackageMaintainers(new HashSet<>(packageMaintainers));
 		
@@ -956,8 +988,8 @@ public class UserServiceTest {
 		assertEquals("Updated role id is not correct", userRole.getId(), user.getRole().getId());
 	
 		verify(userEventService).create(any());
-		verify(packageService, times(PACKAGE_COUNT)).refreshMaintainer(packages.get(0), admin);
-		verify(packageMaintainerService, times(PACKAGE_COUNT)).delete(anyInt(), eq(admin));
+		verify(packageService, times(packageCount)).refreshMaintainer(packages.get(0), admin);
+		verify(packageMaintainerService, times(packageCount)).delete(anyInt(), eq(admin));
 	}
 	
 	@Test
@@ -970,11 +1002,13 @@ public class UserServiceTest {
 		when(roleService.getAdminRole()).thenReturn(adminRole);
 		when(userRepository.findByRoleAndActiveAndDeleted(adminRole, true, false))
 			.thenReturn(admins);
-		
-		expectedException.expect(NoAdminLeftException.class);
-		expectedException.expectMessage(admin.getLogin() + ": " + MessageCodes.ERROR_NO_ADMIN_LEFT);
-		
-		userService.deactivateUser(admin, admin);
+
+		assertThrows(
+		    admin.getLogin() + ": " + MessageCodes.ERROR_NO_ADMIN_LEFT,
+		    NoAdminLeftException.class,
+            () -> {
+              userService.deactivateUser(admin, admin);
+        });
 	}
 	
 } 

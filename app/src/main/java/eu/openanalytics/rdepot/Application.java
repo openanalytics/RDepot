@@ -23,28 +23,14 @@
  */
 package eu.openanalytics.rdepot;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.keycloak.adapters.springboot.KeycloakSpringBootProperties;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.servlet.MultipartAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.core.env.Environment;
 import org.springframework.web.context.WebApplicationContext;
-
-import eu.openanalytics.rdepot.model.Repository;
-import eu.openanalytics.rdepot.service.RepositoryService;
 
 /**
  * @author jonas

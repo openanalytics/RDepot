@@ -24,7 +24,6 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -43,9 +42,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import eu.openanalytics.rdepot.exception.PackageDeleteException;
-import eu.openanalytics.rdepot.exception.PackageNotFound;
 import eu.openanalytics.rdepot.exception.SubmissionAcceptException;
 import eu.openanalytics.rdepot.exception.SubmissionCreateException;
 import eu.openanalytics.rdepot.exception.SubmissionDeleteException;

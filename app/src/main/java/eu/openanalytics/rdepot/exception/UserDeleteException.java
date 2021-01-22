@@ -21,11 +21,8 @@
 package eu.openanalytics.rdepot.exception;
 
 import java.util.Locale;
-
 import org.springframework.context.MessageSource;
-
 import eu.openanalytics.rdepot.messaging.MessageCodes;
-import eu.openanalytics.rdepot.model.User;
 
 public class UserDeleteException extends UserException 
 {

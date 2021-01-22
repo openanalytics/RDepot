@@ -20,26 +20,85 @@
  */
 package eu.openanalytics.rdepot.test.unit;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.core.env.Environment;
-
+import org.springframework.mock.env.MockEnvironment;
+import eu.openanalytics.rdepot.exception.SendEmailException;
 import eu.openanalytics.rdepot.service.EmailService;
+import eu.openanalytics.rdepot.test.fixture.PackageTestFixture;
+import eu.openanalytics.rdepot.test.fixture.RepositoryTestFixture;
+import eu.openanalytics.rdepot.test.fixture.UserTestFixture;
 
-@RunWith(MockitoJUnitRunner.class)
 public class EmailServiceTest {
-	
-	@InjectMocks
-	private EmailService emailService;
-	
-	@Mock
-	private Environment environment;
+
+	@Test
+	public void sendNoEmails() {
+	    MockEnvironment env = new MockEnvironment();
+	    EmailService emailService = new EmailService(env);
+	    
+	    try {
+	      emailService.sendEmail(null, null, null);
+	      emailService.sendActivateSubmissionEmail(null, null);
+	      emailService.sendCanceledSubmissionEmail(null);
+	    } catch (Exception e) {
+	      fail("EmailService tried to send a mail when it shouldn't have");
+	    }
+	    
+	    env.setProperty(EmailService.PROPERTY_NAME_EMAIL_ENABLED, "");
+	    emailService = new EmailService(env);
+	    
+	    try {
+          emailService.sendEmail(null, null, null);
+          emailService.sendActivateSubmissionEmail(null, null);
+          emailService.sendCanceledSubmissionEmail(null);
+        } catch (Exception e) {
+          fail("EmailService tried to send a mail when it shouldn't have");
+        }
+	    
+	    env.setProperty(EmailService.PROPERTY_NAME_EMAIL_ENABLED, "false");
+        emailService = new EmailService(env);
+        
+        try {
+          emailService.sendEmail(null, null, null);
+          emailService.sendActivateSubmissionEmail(null, null);
+          emailService.sendCanceledSubmissionEmail(null);
+        } catch (Exception e) {
+          fail("EmailService tried to send a mail when it shouldn't have");
+        }
+        
+        env.setProperty(EmailService.PROPERTY_NAME_EMAIL_ENABLED, "aklsfh");
+        emailService = new EmailService(env);
+        
+        try {
+          emailService.sendEmail(null, null, null);
+          emailService.sendActivateSubmissionEmail(null, null);
+          emailService.sendCanceledSubmissionEmail(null);
+        } catch (Exception e) {
+          fail("EmailService tried to send a mail when it shouldn't have");
+        }
+	}
 	
 	@Test
-	public void sendEmail() {
-		
-	}
+    public void sendEmailsButThrowException() {
+      MockEnvironment env = new MockEnvironment();
+      env.setProperty(EmailService.PROPERTY_NAME_EMAIL_ENABLED, "true");
+      EmailService emailService = new EmailService(env);
+      
+      assertThrows(SendEmailException.class, () -> {
+        emailService.sendEmail(UserTestFixture.GET_FIXTURE_USER(), "test", "test");
+      });
+      
+      assertThrows(SendEmailException.class, () -> {
+        eu.openanalytics.rdepot.model.Package testPackage = PackageTestFixture.GET_FIXTURE_PACKAGE(
+            RepositoryTestFixture.GET_FIXTURE_REPOSITORY(), UserTestFixture.GET_FIXTURE_USER());
+        emailService.sendActivateSubmissionEmail(testPackage.getSubmission(), "http://test.com");
+      });
+      
+      assertThrows(SendEmailException.class, () -> {
+        eu.openanalytics.rdepot.model.Package testPackage = PackageTestFixture.GET_FIXTURE_PACKAGE(
+            RepositoryTestFixture.GET_FIXTURE_REPOSITORY(), UserTestFixture.GET_FIXTURE_USER());
+        emailService.sendCanceledSubmissionEmail(testPackage.getSubmission());
+      });
+    }
 }

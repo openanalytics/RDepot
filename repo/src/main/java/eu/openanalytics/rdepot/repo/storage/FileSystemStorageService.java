@@ -20,15 +20,20 @@
  */
 package eu.openanalytics.rdepot.repo.storage;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,27 +43,28 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.Set;
-
+import java.util.UUID;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import eu.openanalytics.rdepot.repo.collection.QueueMap;
 import eu.openanalytics.rdepot.repo.exception.EmptyTrashException;
 import eu.openanalytics.rdepot.repo.exception.GetRepositoryVersionException;
 import eu.openanalytics.rdepot.repo.exception.InitTransactionException;
 import eu.openanalytics.rdepot.repo.exception.InitTrashDirectoryException;
-import eu.openanalytics.rdepot.repo.exception.InvalidRequestPageNumberException;
 import eu.openanalytics.rdepot.repo.exception.MoveToTrashException;
 import eu.openanalytics.rdepot.repo.exception.ProcessRequestException;
 import eu.openanalytics.rdepot.repo.exception.RepositoryVersionMismatchException;
 import eu.openanalytics.rdepot.repo.exception.RestoreRepositoryException;
 import eu.openanalytics.rdepot.repo.exception.SetRepositoryVersionException;
 import eu.openanalytics.rdepot.repo.exception.StorageException;
+import eu.openanalytics.rdepot.repo.model.ArchiveIndex;
+import eu.openanalytics.rdepot.repo.model.ArchiveInfo;
 import eu.openanalytics.rdepot.repo.model.RepositoryBackup;
 import eu.openanalytics.rdepot.repo.model.SynchronizeRepositoryRequestBody;
 import eu.openanalytics.rdepot.repo.model.SynchronizeRepositoryResponseBody;
@@ -171,10 +177,77 @@ public class FileSystemStorageService implements StorageService {
 		}
 		
 	}
+	
+	private void generateArchiveRds(String repository) throws IOException {
+	  Path latestLocation = ((repository != null) && (!repository.trim().isEmpty())) ? 
+          this.rootLocation.resolve(repository) : this.rootLocation;
+	  Path archiveLocation = latestLocation.resolve("src").resolve("contrib").resolve("Archive");
+	  
+	  if(Files.notExists(archiveLocation)) {
+	    Path archiveRds = latestLocation.resolve("src").resolve("contrib").resolve("Meta").resolve("archive.rds");
+	    Files.deleteIfExists(archiveRds);
+	    return;
+	  }
+	  
+	  Map<String, List<ArchiveInfo>> archives = new HashMap<>();
+	  
+	  File[] directories = archiveLocation.toFile().listFiles(new FileFilter() {
+        @Override
+        public boolean accept(File file) {
+          return file.canRead() && file.isDirectory();
+        }
+	  });
+	  for(File dir : directories) {
+	      List<ArchiveInfo> infos = new ArrayList<>();
+	      File[] packages = dir.listFiles(new FileFilter() {
+	        @Override
+	        public boolean accept(File file) {
+	          return file.canRead() && file.isFile();
+	        }
+	      });
+	      for(File file : packages) {
+	          LocalDateTime modifiedTime = null;
+	          LocalDateTime accessTime = null;
+	          LocalDateTime createdTime = null;
+	          try {
+	            BasicFileAttributes attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
+	            modifiedTime = LocalDateTime.ofInstant(attr.lastModifiedTime().toInstant(), ZoneId.systemDefault());
+	            accessTime = LocalDateTime.ofInstant(attr.lastAccessTime().toInstant(), ZoneId.systemDefault());
+	            createdTime = LocalDateTime.ofInstant(attr.creationTime().toInstant(), ZoneId.systemDefault());
+	          } catch (Exception e) {
+	            logger.debug(
+	                "Exception when querying for basic file attributes of path " + file.toString() + ": " + e.getMessage(), e);
+	          }
+	          infos.add(
+	            new ArchiveInfo(
+	                dir.getName() + "/" + file.getName(), Long.valueOf(file.length()).intValue(),
+	                436, modifiedTime, createdTime, accessTime, 1000, 1000, null, null));
+	          }
+	      if(!infos.isEmpty()) {
+	        archives.put(dir.getName(), infos);
+	      }
+	  }
+	  if(archives.isEmpty()) {
+        Path archiveRds = latestLocation.resolve("src").resolve("contrib").resolve("Meta").resolve("archive.rds");
+        Files.deleteIfExists(archiveRds);
+        return;
+      }
+	  
+	  ArchiveIndex archiveIndex = new ArchiveIndex(archives);
+	  Path metaLocation = latestLocation.resolve("src").resolve("contrib").resolve("Meta");
+	  if(Files.notExists(metaLocation)) {
+	    Files.createDirectories(metaLocation);
+	  }
+	  Path archiveRds = metaLocation.resolve("archive.rds");
+	  FileOutputStream archiveRdsStrean = new FileOutputStream(archiveRds.toFile());
+	  BufferedOutputStream outputStream = new BufferedOutputStream(archiveRdsStrean);
+	  archiveIndex.serialize(outputStream);
+	}
     
     public void processRequest(SynchronizeRepositoryRequestBody request) throws ProcessRequestException {
     	String repository = request.getRepository();
-    	
+    	boolean failed = false;
+
     	try {
     		String versionBefore = request.getVersionBefore();
     		String currentVersion = getRepositoryVersion(repository);
@@ -189,14 +262,14 @@ public class FileSystemStorageService implements StorageService {
     		String[] filesToDeleteFromArchive = request.getFilesToDeleteFromArchive();
     		
     		if(filesToUpload != null)
-        		store(filesToUpload, repository);
+        		store(filesToUpload, repository, request.getId());
         	if(filesToUploadToArchive != null)
-        		storeInArchive(filesToUploadToArchive, repository);
+        		storeInArchive(filesToUploadToArchive, repository, request.getId());
         	if(filesToDelete != null)
         		delete(filesToDelete, repository, request.getId());
         	if(filesToDeleteFromArchive != null)
         		deleteFromArchive(filesToDeleteFromArchive, repository, request.getId());
-        	
+        	        	
         	boostRepositoryVersion(repository);
 
         	logger.info("Repository updated successfully!");
@@ -204,14 +277,17 @@ public class FileSystemStorageService implements StorageService {
     			FileNotFoundException | GetRepositoryVersionException e) {
     		logger.error(e.getClass().getCanonicalName() + ": " + e.getMessage(), e);
     		logger.debug("Trying to restore repository...");
-    		
+    		failed = true;
     		RepositoryBackup backup = backupMap.get(request.getId());
     		if(backup != null) {
         		try {
-					restoreRepository(repository, 
+					restoreRepository(
+					        request.getId(),
+					        repository, 
 							backup.getRecentPackages(), 
 							backup.getArchivePackages(), 
 							request.getVersionBefore());
+					
 				} catch (RestoreRepositoryException rre) {
 					logger.error("Could not restore repository after failure!", rre);
 				}
@@ -221,27 +297,33 @@ public class FileSystemStorageService implements StorageService {
     	} finally {
         	try {
 				if(request.isLastChunk()) {
+		            generateArchiveRds(repository);
 					requestMap.remove(request.getId());
 					emptyTrash(repository, request.getId());
+				} else if (failed) {
+				  generateArchiveRds(repository);
 				}
 				
-			} catch (InvalidRequestPageNumberException | EmptyTrashException e) {
+			} catch (Exception e) {
 				logger.error(e.getClass().getCanonicalName() + ": " + e.getMessage());
 			}
 		}
     }
     
-    private void copyToDedicatedDirectory(MultipartFile file, Path rootDirectory) throws IOException {
+    private void copyToDedicatedDirectory(MultipartFile file, Path rootDirectory, String id) throws IOException, MoveToTrashException {
     	Path saveLocation = rootDirectory.resolve(file.getOriginalFilename().split("_")[0]);
     	if(!Files.exists(saveLocation))
     	{
     		Files.createDirectory(saveLocation);
     	}
-    	Files.copy(file.getInputStream(), saveLocation.resolve(file.getOriginalFilename()), 
-    			StandardCopyOption.REPLACE_EXISTING);
+    	Path destination = saveLocation.resolve(file.getOriginalFilename());  
+        if(Files.exists(destination)) {
+            moveToTrash(id, destination.toFile());
+        }
+    	Files.copy(file.getInputStream(), saveLocation.resolve(file.getOriginalFilename()));
     }
 
-    private void storeInArchive(MultipartFile[] files, String repository) {
+    private void storeInArchive(MultipartFile[] files, String repository, String id) {
     	Path saveLocation = ((repository != null) && (!repository.trim().isEmpty())) ? this.rootLocation.resolve(repository) : this.rootLocation;
     	saveLocation = saveLocation.resolve("src").resolve("contrib").resolve("Archive");
     	System.out.println("Saving to location " + saveLocation.toString());
@@ -257,17 +339,22 @@ public class FileSystemStorageService implements StorageService {
     	{
 	        try 
 	        {
-	        	if(file.getOriginalFilename().equals("PACKAGES") || file.getOriginalFilename().equals("PACKAGES.gz"))
-	        		Files.copy(file.getInputStream(), saveLocation.resolve(file.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
-	        	else
-	        		copyToDedicatedDirectory(file, saveLocation);
-	        } catch (IOException e) {
+	        	if(file.getOriginalFilename().equals("PACKAGES") || file.getOriginalFilename().equals("PACKAGES.gz")) {
+	        	    Path destination = saveLocation.resolve(file.getOriginalFilename());  
+	        	    if(Files.exists(destination)) {
+	                    moveToTrash(id, destination.toFile());
+	                }
+	        	    Files.copy(file.getInputStream(), destination);
+	        	} else {
+	        		copyToDedicatedDirectory(file, saveLocation, id);
+	        	}
+	        } catch (IOException | MoveToTrashException e) {
 	            throw new StorageException("Failed to store file " + file.getOriginalFilename(), e);
 	        }
     	}
     }
 
-    private void store(MultipartFile[] files, String repository) 
+    private void store(MultipartFile[] files, String repository, String id) 
     {
     	Path saveLocation = ((repository != null) && (!repository.trim().isEmpty())) ? this.rootLocation.resolve(repository) : this.rootLocation;
     	saveLocation = saveLocation.resolve("src").resolve("contrib");
@@ -282,10 +369,14 @@ public class FileSystemStorageService implements StorageService {
         }
     	for(MultipartFile file : files)
     	{
+    	    Path destination = saveLocation.resolve(file.getOriginalFilename());
 	        try 
 	        {
-	            Files.copy(file.getInputStream(), saveLocation.resolve(file.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
-	        } catch (IOException e) {
+	            if(Files.exists(destination)) {
+	              moveToTrash(id, destination.toFile());
+	            }
+	            Files.copy(file.getInputStream(), destination);
+	        } catch (IOException | MoveToTrashException e) {
 	            throw new StorageException("Failed to store file " + file.getOriginalFilename(), e);
 	        }
     	}
@@ -350,12 +441,12 @@ public class FileSystemStorageService implements StorageService {
     	}
     	
     	try {
-        	FileWriter fileWriter = new FileWriter(trashDatabase);
-        	fileWriter.write(packageFile.getName() + ":" + packageFile.getAbsolutePath());
+    	    UUID uuid = UUID.randomUUID();
+        	FileWriter fileWriter = new FileWriter(trashDatabase, true);
+        	fileWriter.append(uuid.toString() + ":" + packageFile.getAbsolutePath() + System.lineSeparator());
         	fileWriter.close();
         	
-			Files.move(packageFile.toPath(),
-					trash.resolve(packageFile.getName()), StandardCopyOption.REPLACE_EXISTING);
+			Files.move(packageFile.toPath(), trash.resolve(uuid.toString()));
 		} catch (IOException e) {
 			logger.error("Error while moving file: " + e.getMessage(), e);
 			throw new MoveToTrashException(id, packageFile);
@@ -391,9 +482,9 @@ public class FileSystemStorageService implements StorageService {
 		}
     }
     
-    private void restoreRepository(String repository, List<String> latestPackages,
+    private void restoreRepository(String id, String repository, List<String> latestPackages,
     		List<String> archivePackages, String version) throws RestoreRepositoryException {
-    	Path trash = this.rootLocation.resolve(TRASH_PREFIX + repository);
+    	Path trash = this.rootLocation.resolve(TRASH_PREFIX + id);
 		File trashDatabase = trash.resolve(TRASH_DATABASE_FILE).toFile();
     	
 		if(Files.exists(trashDatabase.toPath())) {
@@ -408,12 +499,16 @@ public class FileSystemStorageService implements StorageService {
 			try {
 				while(scanner.hasNextLine()) {
 					String data = scanner.nextLine();
+					if(Strings.isBlank(data)) {
+					  continue;
+					}
 					String fileName = data.split(":")[0];
 					String previousDirectory = data.split(":")[1];
 					
 					Files.move(trash.resolve(fileName), new File(previousDirectory).toPath(), 
 							StandardCopyOption.REPLACE_EXISTING);
 				}
+                new FileWriter(trashDatabase).close();
 			} catch (IOException e) {
 				logger.error("Could not restore file! " + e.getMessage(), e);
 				throw new RestoreRepositoryException(repository);
@@ -426,7 +521,7 @@ public class FileSystemStorageService implements StorageService {
 				this.rootLocation.resolve(repository) : this.rootLocation;
     	File[] latestFiles = latestLocation.resolve("src").resolve("contrib").toFile().listFiles();
     	
-    	Path archiveLocation = latestLocation.resolve("Archive");
+    	Path archiveLocation = latestLocation.resolve("src").resolve("contrib").resolve("Archive");
     	File[] allArchiveFiles = archiveLocation.toFile().listFiles();
     	List<File> archiveFiles = new ArrayList<>();
     	
@@ -445,8 +540,10 @@ public class FileSystemStorageService implements StorageService {
     	try {
     		if(latestFiles != null) {
     			for(File packageFile : latestFiles) {
-            		if(!latestPackages.contains(packageFile.getName())) {
-        				FileUtils.forceDelete(packageFile);
+    			    if(packageFile.getName().equals("Archive") || packageFile.getName().equals("PACKAGES") || packageFile.getName().equals("PACKAGES.gz")) {
+    			      continue;
+    			    } else if(!latestPackages.contains(packageFile.getName())) {
+    			      FileUtils.forceDelete(packageFile);
             		}
             	}
     		} else {
@@ -455,7 +552,9 @@ public class FileSystemStorageService implements StorageService {
     		
         	
     		for(File packageFile : archiveFiles) {
-        		if(!archivePackages.contains(packageFile.getName())) {
+    		  if(packageFile.getName().equals("PACKAGES") || packageFile.getName().equals("PACKAGES.gz")) {
+                continue;
+              } else if(!archivePackages.contains(packageFile.getName())) {
     				FileUtils.forceDelete(packageFile);
         		}
         	}

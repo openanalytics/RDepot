@@ -21,6 +21,7 @@
 package eu.openanalytics.rdepot.test.unit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -32,18 +33,15 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -52,7 +50,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.context.MessageSource;
-
 import eu.openanalytics.rdepot.exception.EventNotFound;
 import eu.openanalytics.rdepot.exception.MovePackageSourceException;
 import eu.openanalytics.rdepot.exception.PackageActivateException;
@@ -144,9 +141,6 @@ public class SubmissionServiceTest {
 	public TemporaryFolder temporaryFolder = new TemporaryFolder();
 	
 	@Rule
-	public ExpectedException expectedException = ExpectedException.none();
-	
-	@Rule
 	public TestDateRule testDateRule = new TestDateRule();
 	
 	@Before
@@ -215,12 +209,14 @@ public class SubmissionServiceTest {
 		Submission submission = SubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, packageBag);
 		
 		when(eventService.getUpdateEvent()).thenThrow(new EventNotFound());
-		
-		expectedException.expect(SubmissionEditException.class);
-		expectedException.expectMessage("Submission " + submission.getId() + ": " 
-				+ MessageCodes.ERROR_SUBMISSION_EDIT);
-		
-		submissionService.updateUser(user, submission, admin);
+
+		assertThrows(
+		    "Submission " + submission.getId() + ": " 
+            + MessageCodes.ERROR_SUBMISSION_EDIT,
+            SubmissionEditException.class,
+            () -> {
+              submissionService.updateUser(user, submission, admin);
+        });
 	}
 	
 	@Test
@@ -256,12 +252,14 @@ public class SubmissionServiceTest {
 		Submission submission = SubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, packageBag);
 		
 		when(eventService.getUpdateEvent()).thenThrow(new EventNotFound());
-		
-		expectedException.expect(SubmissionEditException.class);
-		expectedException.expectMessage("Submission " + submission.getId() + ": " 
-				+ MessageCodes.ERROR_SUBMISSION_EDIT);
-		
-		submissionService.updatePackage(packageBag, submission, admin);
+
+		assertThrows(
+            "Submission " + submission.getId() + ": " 
+            + MessageCodes.ERROR_SUBMISSION_EDIT,
+            SubmissionEditException.class,
+            () -> {
+              submissionService.updatePackage(packageBag, submission, admin);
+        });
 	}
 	
 	@Test
@@ -453,11 +451,13 @@ public class SubmissionServiceTest {
 		Submission submission = SubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, packageBag);
 		
 		submission.setAccepted(true);
-		
-		expectedException.expect(SubmissionAlreadyAcceptedWarning.class);
-		expectedException.expectMessage(MessageCodes.WARNING_SUBMISSION_ALREADY_ACCEPTED);
-		
-		submissionService.acceptSubmission(submission, user);
+
+		assertThrows(
+            MessageCodes.WARNING_SUBMISSION_ALREADY_ACCEPTED,
+            SubmissionAlreadyAcceptedWarning.class,
+            () -> {
+              submissionService.acceptSubmission(submission, user);
+        });
 	}
 	
 	@Test
@@ -495,10 +495,12 @@ public class SubmissionServiceTest {
 			.when(repositoryEventService).create(any());
 		when(packageStorage.moveSource(packageBag, initialSource)).thenReturn(oldPackageSource);
 		
-		expectedException.expect(SubmissionAcceptException.class);
-		expectedException.expectMessage(MessageCodes.ERROR_SUBMISSION_ACCEPT);
-		
-		submissionService.acceptSubmission(submission, user);
+		assertThrows(
+            MessageCodes.ERROR_SUBMISSION_ACCEPT,
+            SubmissionAcceptException.class,
+            () -> {
+              submissionService.acceptSubmission(submission, user);
+        });
 		
 		verify(packageStorage).moveToMainDirectory(packageBag);
 		verify(packageService).updateSource(packageBag, newPackageSource.toString(), user);
@@ -544,10 +546,12 @@ public class SubmissionServiceTest {
 			.when(repositoryEventService).create(any());
 		when(packageStorage.moveSource(packageBag, initialSource)).thenReturn(oldPackageSource);
 		
-		expectedException.expect(SubmissionAcceptException.class);
-		expectedException.expectMessage(MessageCodes.ERROR_SUBMISSION_ACCEPT);
-		
-		submissionService.acceptSubmission(submission, user);
+		assertThrows(
+            MessageCodes.ERROR_SUBMISSION_ACCEPT,
+            SubmissionAcceptException.class,
+            () -> {
+              submissionService.acceptSubmission(submission, user);
+        });
 		
 		verify(packageStorage).moveToMainDirectory(packageBag);
 		verify(packageService).activatePackage(packageBag, user);
@@ -569,10 +573,12 @@ public class SubmissionServiceTest {
 		
 		when(eventService.getUpdateEvent()).thenThrow(new EventNotFound());
 		
-		expectedException.expect(SubmissionAcceptException.class);
-		expectedException.expectMessage(MessageCodes.ERROR_SUBMISSION_ACCEPT);
-		
-		submissionService.acceptSubmission(submission, user);
+		assertThrows(
+            MessageCodes.ERROR_SUBMISSION_ACCEPT,
+            SubmissionAcceptException.class,
+            () -> {
+              submissionService.acceptSubmission(submission, user);
+        });
 	}
 	
 	@Test
@@ -601,10 +607,12 @@ public class SubmissionServiceTest {
 				"added", "", Integer.toString(packageBag.getId())))
 			.when(repositoryEventService).create(any());
 		
-		expectedException.expect(SubmissionAcceptException.class);
-		expectedException.expectMessage(MessageCodes.ERROR_SUBMISSION_ACCEPT);
-		
-		submissionService.acceptSubmission(submission, user);
+		assertThrows(
+            MessageCodes.ERROR_SUBMISSION_ACCEPT,
+            SubmissionAcceptException.class,
+            () -> {
+              submissionService.acceptSubmission(submission, user);
+        });
 		
 		verify(packageService).activatePackage(packageBag, user);
 		verify(repositoryService).boostRepositoryVersion(repository, user);
@@ -629,15 +637,15 @@ public class SubmissionServiceTest {
 		when(eventService.getUpdateEvent()).thenReturn(updateEvent);
 		doThrow(new RepositoryEditException(messageSource, new Locale("en"), repository))
 			.when(repositoryService).boostRepositoryVersion(repository, user);
-		
-		expectedException.expect(SubmissionAcceptException.class);
-		expectedException.expectMessage(MessageCodes.ERROR_SUBMISSION_ACCEPT);
-		
-		submissionService.acceptSubmission(submission, user);
+
+		assertThrows(
+            MessageCodes.ERROR_SUBMISSION_ACCEPT,
+            SubmissionAcceptException.class,
+            () -> {
+              submissionService.acceptSubmission(submission, user);
+        });
 		
 		verify(repositoryService).boostRepositoryVersion(repository, user);
-		verify(submissionEventService).create(any());
-		verify(repositoryEventService).create(any());
 	}
 	
 	@Test
@@ -670,10 +678,12 @@ public class SubmissionServiceTest {
 				"added", "", Integer.toString(packageBag.getId())))
 			.when(repositoryEventService).create(any());
 		
-		expectedException.expect(SubmissionAcceptException.class);
-		expectedException.expectMessage(MessageCodes.ERROR_SUBMISSION_ACCEPT);
-		
-		submissionService.acceptSubmission(submission, user);
+		assertThrows(
+            MessageCodes.ERROR_SUBMISSION_ACCEPT,
+            SubmissionAcceptException.class,
+            () -> {
+              submissionService.acceptSubmission(submission, user);
+        });
 		
 		verify(packageStorage).moveToMainDirectory(packageBag);
 		verify(packageService).activatePackage(packageBag, user);
@@ -712,10 +722,12 @@ public class SubmissionServiceTest {
 				"added", "", Integer.toString(packageBag.getId())))
 			.when(repositoryEventService).create(any());
 		
-		expectedException.expect(SubmissionAcceptException.class);
-		expectedException.expectMessage(MessageCodes.ERROR_SUBMISSION_ACCEPT);
-		
-		submissionService.acceptSubmission(submission, user);
+		assertThrows(
+            MessageCodes.ERROR_SUBMISSION_ACCEPT,
+            SubmissionAcceptException.class,
+            () -> {
+              submissionService.acceptSubmission(submission, user);
+        });
 		
 		verify(packageStorage).moveToMainDirectory(packageBag);
 		verify(packageService).activatePackage(packageBag, user);
@@ -795,7 +807,6 @@ public class SubmissionServiceTest {
 		Repository repository = RepositoryTestFixture.GET_FIXTURE_REPOSITORY();
 		Package packageBag = PackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
 		Submission submission = SubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, packageBag);
-		int id = submission.getId();
 		Event deleteEvent = EventTestFixture.GET_FIXTURE_EVENT("delete");
 		
 		submission.setDeleted(false);
@@ -818,16 +829,17 @@ public class SubmissionServiceTest {
 		Repository repository = RepositoryTestFixture.GET_FIXTURE_REPOSITORY();
 		Package packageBag = PackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
 		Submission submission = SubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, packageBag);
-		int id = submission.getId();
 		
 		submission.setDeleted(false);
 		
 		when(eventService.getDeleteEvent()).thenThrow(new EventNotFound());
-		
-		expectedException.expect(SubmissionDeleteException.class);
-		expectedException.expectMessage(MessageCodes.ERROR_SUBMISSION_DELETE);
-		
-		submissionService.deleteSubmission(submission, user);
+
+		assertThrows(
+            MessageCodes.ERROR_SUBMISSION_DELETE,
+            SubmissionDeleteException.class,
+            () -> {
+              submissionService.deleteSubmission(submission, user);
+        });
 	}
 	
 	@Test
@@ -847,11 +859,13 @@ public class SubmissionServiceTest {
 		when(submissionRepository.findByIdAndDeleted(id, false)).thenReturn(submission);
 		doThrow(new SourceFileDeleteException(messageSource, new Locale("en"), packageBag))
 			.when(packageService).deleteSource(packageBag);
-		
-		expectedException.expect(SubmissionDeleteException.class);
-		expectedException.expectMessage(MessageCodes.ERROR_SUBMISSION_DELETE);
-		
-		submissionService.rejectSubmission(id, user);
+
+		assertThrows(
+            MessageCodes.ERROR_SUBMISSION_DELETE,
+            SubmissionDeleteException.class,
+            () -> {
+              submissionService.rejectSubmission(id, user);
+        });
 	}
 	
 	@Test
@@ -862,7 +876,6 @@ public class SubmissionServiceTest {
 		Repository repository = RepositoryTestFixture.GET_FIXTURE_REPOSITORY();
 		Package packageBag = PackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
 		Submission submission = SubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, packageBag);
-		int id = submission.getId();
 		Event deleteEvent = EventTestFixture.GET_FIXTURE_EVENT("delete");
 		
 		submission.setDeleted(false);
@@ -870,11 +883,13 @@ public class SubmissionServiceTest {
 		when(eventService.getDeleteEvent()).thenReturn(deleteEvent);
 		when(submissionEventService.create(deleteEvent, user, submission)).thenReturn(new ArrayList<>());
 		doThrow(new SendEmailException("error while sending email")).when(emailService).sendCanceledSubmissionEmail(submission);
-		
-		expectedException.expect(SubmissionDeleteWarning.class);
-		expectedException.expectMessage(MessageCodes.WARNING_SUBMISSION_DELETE);
-		
-		submissionService.deleteSubmission(submission, user);
+
+		assertThrows(
+            MessageCodes.WARNING_SUBMISSION_DELETE,
+            SubmissionDeleteWarning.class,
+            () -> {
+              submissionService.deleteSubmission(submission, user);
+        });
 	}
 	
 	@Test

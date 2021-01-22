@@ -20,10 +20,8 @@
  */
 package eu.openanalytics.rdepot.storage;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -34,9 +32,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-
 import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,9 +45,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-
 import com.google.gson.Gson;
-
 import eu.openanalytics.rdepot.exception.CreateFolderStructureException;
 import eu.openanalytics.rdepot.exception.DeleteFileException;
 import eu.openanalytics.rdepot.exception.GzipFileException;
@@ -93,7 +87,7 @@ public class RepositoryStorageLocalImpl implements RepositoryStorage {
 	
 	private String generatePackageString(Package packageBag) {
 		String packageString = "";
-		String lineSeparator = System.getProperty("line.separator");
+		String lineSeparator = System.lineSeparator();
 		
 		packageString += "Package: " + packageBag.getName() + lineSeparator;
 		packageString += "Version: " + packageBag.getVersion() + lineSeparator;
@@ -165,27 +159,14 @@ public class RepositoryStorageLocalImpl implements RepositoryStorage {
 			
 			try {
 				File packagesFile = new File(folderPath + separator + "PACKAGES");
-				String currentPackageString = "";
-				
-				if(packagesFile.exists()) {
-					BufferedReader reader = new BufferedReader(new FileReader(packagesFile));
-					String currentLine = "";
-					while((currentLine = reader.readLine()) != null) {
-						currentPackageString += currentLine + '\n';
-					}
-					
-					reader.close();
-				}
 				
 				Files.copy(new File(targetFilePath).toPath(), new File(destinationFilePath).toPath());
 				if(!packageBag.getMd5sum().equals(baseStorage.calculateMd5Sum(destinationFilePath))) {
 					throw new Md5MismatchException(messageSource, locale, packageBag);
 				}
 				
-				currentPackageString += generatePackageString(packageBag);
-				
-				BufferedWriter writer = new BufferedWriter(new FileWriter(packagesFile));
-				writer.write(currentPackageString);
+				BufferedWriter writer = new BufferedWriter(new FileWriter(packagesFile, true));
+				writer.append(generatePackageString(packageBag));
 				writer.close();
 				
 				baseStorage.gzipFile(packagesFile.getAbsolutePath());

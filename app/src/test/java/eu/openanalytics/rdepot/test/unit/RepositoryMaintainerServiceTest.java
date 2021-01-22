@@ -22,27 +22,19 @@ package eu.openanalytics.rdepot.test.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
-import org.springframework.context.MessageSource;
-
 import eu.openanalytics.rdepot.exception.EventNotFound;
 import eu.openanalytics.rdepot.exception.PackageEditException;
 import eu.openanalytics.rdepot.exception.RepositoryEditException;
@@ -97,7 +89,7 @@ public class RepositoryMaintainerServiceTest {
 		repository.setPackages(packages);
 		
 		RepositoryMaintainer maintainer = new RepositoryMaintainer(123, new User(), repository, false);
-		Event createEvent = new Event(1, "create");
+//		Event createEvent = new Event(1, "create");
 //		when(eventService.findByValue("create")).thenReturn(createEvent);
 		when(repositoryMaintainerRepository.save(maintainer)).thenReturn(maintainer);
 //		when(packageService.update(any(), any())).thenReturn(null);
@@ -120,7 +112,7 @@ public class RepositoryMaintainerServiceTest {
 	
 	@Test
 	public void testDelete() throws PackageEditException, RepositoryEditException, RepositoryMaintainerDeleteException {
-		Event deleteEvent = new Event(1, "delete");
+//		Event deleteEvent = new Event(1, "delete");
 		Package packageBag1 = new Package();
 		Package packageBag2 = new Package();
 		Repository repository = new Repository();

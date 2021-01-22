@@ -22,6 +22,7 @@ package eu.openanalytics.rdepot.test.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,7 +36,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -44,11 +44,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -59,7 +57,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
-
 import eu.openanalytics.rdepot.exception.CreateFolderStructureException;
 import eu.openanalytics.rdepot.exception.DeleteFileException;
 import eu.openanalytics.rdepot.exception.EventNotFound;
@@ -140,9 +137,6 @@ public class RepositoryServiceTest {
 	private RepositoryStorageLocalImpl repositoryStorage;
 	
 	@Rule
-	public ExpectedException expectedException = ExpectedException.none();
-	
-	@Rule
 	public TestDateRule testDateRule = new TestDateRule();
 	
 	@Rule
@@ -186,11 +180,13 @@ public class RepositoryServiceTest {
 		User creator = UserTestFixture.GET_FIXTURE_ADMIN();
 		
 		when(eventService.getUpdateEvent()).thenThrow(new EventNotFound());
-		
-		expectedException.expect(RepositoryCreateException.class);
-		expectedException.expectMessage(MessageCodes.ERROR_REPOSITORY_CREATE);
-		
-		repositoryService.create(repository, creator);
+
+		assertThrows(
+            MessageCodes.ERROR_REPOSITORY_CREATE,
+            RepositoryCreateException.class,
+            () -> {
+              repositoryService.create(repository, creator);
+        });
 	}
 	
 	@Test
@@ -241,10 +237,12 @@ public class RepositoryServiceTest {
 		
 		when(eventService.getDeleteEvent()).thenThrow(new EventNotFound());
 		
-		expectedException.expect(RepositoryDeleteException.class);
-		expectedException.expectMessage(MessageCodes.ERROR_REPOSITORY_DELETE);
-		
-		repositoryService.delete(deletedRepository, deleter);
+		assertThrows(
+            MessageCodes.ERROR_REPOSITORY_DELETE,
+            RepositoryDeleteException.class,
+            () -> {
+              repositoryService.delete(deletedRepository, deleter);
+        });
 	}
 	
 	@Test
@@ -271,10 +269,12 @@ public class RepositoryServiceTest {
 		when(repositoryMaintainerService.delete(any(), eq(deleter)))
 			.thenThrow(exception);
 		
-		expectedException.expect(RepositoryDeleteException.class);
-		expectedException.expectMessage(MessageCodes.ERROR_REPOSITORY_DELETE);
-		
-		repositoryService.delete(deletedRepository, deleter);
+	    assertThrows(
+	        MessageCodes.ERROR_REPOSITORY_DELETE,
+	        RepositoryDeleteException.class,
+	        () -> {
+	          repositoryService.delete(deletedRepository, deleter);
+	    });
 	}
 	
 	@Test
@@ -301,10 +301,12 @@ public class RepositoryServiceTest {
 		when(repositoryMaintainerService.delete(any(), eq(deleter))).thenReturn(null);
 		when(packageMaintainerService.delete(anyInt(), eq(deleter))).thenThrow(exception);
 
-		expectedException.expect(RepositoryDeleteException.class);
-		expectedException.expectMessage(MessageCodes.ERROR_REPOSITORY_DELETE);
-		
-		repositoryService.delete(deletedRepository, deleter);
+        assertThrows(
+            MessageCodes.ERROR_REPOSITORY_DELETE,
+            RepositoryDeleteException.class,
+            () -> {
+              repositoryService.delete(deletedRepository, deleter);
+        });
 	}
 	
 	@Test
@@ -331,10 +333,12 @@ public class RepositoryServiceTest {
 				deletedRepository.getPackages().iterator().next())).
 			when(packageService).delete(any(), eq(deleter));
 		
-		expectedException.expect(RepositoryDeleteException.class);
-		expectedException.expectMessage(MessageCodes.ERROR_REPOSITORY_DELETE);
-		
-		repositoryService.delete(deletedRepository, deleter);
+        assertThrows(
+            MessageCodes.ERROR_REPOSITORY_DELETE,
+            RepositoryDeleteException.class,
+            () -> {
+              repositoryService.delete(deletedRepository, deleter);
+        });
 	}
 	
 	@Test
@@ -359,10 +363,12 @@ public class RepositoryServiceTest {
 		when(repositoryMaintainerService.delete(any(), eq(deleter))).thenReturn(null);
 		when(packageMaintainerService.delete(anyInt(), eq(deleter))).thenReturn(null);
 
-		expectedException.expect(RepositoryDeleteException.class);
-		expectedException.expectMessage(MessageCodes.ERROR_REPOSITORY_DELETE);
-		
-		repositoryService.delete(deletedRepository, deleter);
+        assertThrows(
+            MessageCodes.ERROR_REPOSITORY_DELETE,
+            RepositoryDeleteException.class,
+            () -> {
+              repositoryService.delete(deletedRepository, deleter);
+        });
 	}
 	
 	@Test
@@ -400,11 +406,13 @@ public class RepositoryServiceTest {
 		Repository repository = RepositoryTestFixture.GET_FIXTURE_REPOSITORY();
 		User updater = UserTestFixture.GET_FIXTURE_ADMIN();
 		repository.setPublished(false);
-		
-		expectedException.expect(RepositoryAlreadyUnpublishedWarning.class);
-		expectedException.expectMessage(MessageCodes.WARNING_REPOSITORY_ALREADY_UNPUBLISHED);
-		
-		repositoryService.unpublishRepository(repository, updater);
+
+        assertThrows(
+            MessageCodes.WARNING_REPOSITORY_ALREADY_UNPUBLISHED,
+            RepositoryAlreadyUnpublishedWarning.class,
+            () -> {
+              repositoryService.unpublishRepository(repository, updater);
+        });
 	}
 	
 	@Test
@@ -414,11 +422,13 @@ public class RepositoryServiceTest {
 		repository.setPublished(true);
 		
 		when(eventService.getUpdateEvent()).thenThrow(new EventNotFound());
-		
-		expectedException.expect(RepositoryEditException.class);
-		expectedException.expectMessage(MessageCodes.ERROR_REPOSITORY_EDIT);
 
-		repositoryService.unpublishRepository(repository, updater);
+		assertThrows(
+            MessageCodes.ERROR_REPOSITORY_EDIT,
+            RepositoryEditException.class,
+            () -> {
+              repositoryService.unpublishRepository(repository, updater);
+        });
 	}
 	
 	@Test
@@ -435,10 +445,12 @@ public class RepositoryServiceTest {
 		when(repositoryEventService.create(any())).thenReturn(null);
 		doThrow(new DeleteFileException(messageSource, new Locale("en"), "target", "cause")).when(repositoryStorage).deleteCurrentDirectory(repository);
 		
-		expectedException.expect(RepositoryEditException.class);
-		expectedException.expectMessage(MessageCodes.ERROR_REPOSITORY_EDIT);
-		
-		repositoryService.unpublishRepository(repository, updater);
+		assertThrows(
+            MessageCodes.ERROR_REPOSITORY_EDIT,
+            RepositoryEditException.class,
+            () -> {
+              repositoryService.unpublishRepository(repository, updater);
+        });
 	}
 	
 	@Test
@@ -454,7 +466,6 @@ public class RepositoryServiceTest {
 		
 		List<Package> packages = PackageTestFixture.GET_FIXTURE_PACKAGES(repository, user, PACKAGE_COUNT);
 		repository.setPackages(new HashSet<Package>(packages));
-		final int repositoryId = repository.getId();
 		
 		List<RepositoryEvent> repositoryEvents = RepositoryEventTestFixture.GET_FIXTURE_REPOSITORY_EVENTS(user, repository, REPOSITORY_EVENT_COUNT);
 		repository.setRepositoryEvents(new HashSet<RepositoryEvent>(repositoryEvents));
@@ -693,11 +704,13 @@ public class RepositoryServiceTest {
 		Repository repository = RepositoryTestFixture.GET_FIXTURE_REPOSITORY();
 		
 		when(eventService.getUpdateEvent()).thenThrow(new EventNotFound());
-		
-		expectedException.expect(RepositoryEditException.class);
-		expectedException.expectMessage(MessageCodes.ERROR_REPOSITORY_EDIT);
-		
-		repositoryService.updateVersion(repository, updater, 123);
+
+		assertThrows(
+            MessageCodes.ERROR_REPOSITORY_EDIT,
+            RepositoryEditException.class,
+            () -> {
+              repositoryService.updateVersion(repository, updater, 123);
+        });
 	}
 	
 	@Test
@@ -726,11 +739,13 @@ public class RepositoryServiceTest {
 		Repository repository = RepositoryTestFixture.GET_FIXTURE_REPOSITORY();
 		
 		when(eventService.getUpdateEvent()).thenThrow(new EventNotFound());
-		
-		expectedException.expect(RepositoryEditException.class);
-		expectedException.expectMessage(MessageCodes.ERROR_REPOSITORY_EDIT);
-		
-		repositoryService.updatePublicationUri(repository, updater, "test");
+
+		assertThrows(
+            MessageCodes.ERROR_REPOSITORY_EDIT,
+            RepositoryEditException.class,
+            () -> {
+              repositoryService.updatePublicationUri(repository, updater, "test");
+        });
 	}
 	
 	@Test
@@ -758,11 +773,13 @@ public class RepositoryServiceTest {
 		Repository repository = RepositoryTestFixture.GET_FIXTURE_REPOSITORY();
 		
 		when(eventService.getUpdateEvent()).thenThrow(new EventNotFound());
-		
-		expectedException.expect(RepositoryEditException.class);
-		expectedException.expectMessage(MessageCodes.ERROR_REPOSITORY_EDIT);
-		
-		repositoryService.updateServerAddress(repository, updater, "test");
+
+		assertThrows(
+            MessageCodes.ERROR_REPOSITORY_EDIT,
+            RepositoryEditException.class,
+            () -> {
+              repositoryService.updateServerAddress(repository, updater, "test");
+        });
 	}
 	
 	@Test
@@ -791,11 +808,13 @@ public class RepositoryServiceTest {
 		Repository repository = RepositoryTestFixture.GET_FIXTURE_REPOSITORY();
 		
 		when(eventService.getUpdateEvent()).thenThrow(new EventNotFound());
-		
-		expectedException.expect(RepositoryEditException.class);
-		expectedException.expectMessage(MessageCodes.ERROR_REPOSITORY_EDIT);
-		
-		repositoryService.updateName(repository, updater, "test");
+
+		assertThrows(
+            MessageCodes.ERROR_REPOSITORY_EDIT,
+            RepositoryEditException.class,
+            () -> {
+              repositoryService.updateName(repository, updater, "test");
+        });
 	}
 	
 	@Test
@@ -910,11 +929,13 @@ public class RepositoryServiceTest {
 		when(packageService.findByRepositoryAndActiveAndNewest(repository, true)).thenReturn(latestPackages);
 		
 		when(eventService.getUpdateEvent()).thenThrow(new EventNotFound());
-		
-		expectedException.expect(RepositoryPublishException.class);
-		expectedException.expectMessage(MessageCodes.ERROR_REPOSITORY_PUBLISH);
-		
-		repositoryService.publishRepository(repository, user);
+
+		assertThrows(
+            MessageCodes.ERROR_REPOSITORY_PUBLISH,
+            RepositoryPublishException.class,
+            () -> {
+              repositoryService.publishRepository(repository, user);
+        });
 	}
 	
 	@Test
@@ -953,9 +974,11 @@ public class RepositoryServiceTest {
 				
 		when(eventService.getUpdateEvent()).thenReturn(updateEvent);
 
-		expectedException.expect(RepositoryPublishException.class);
-		expectedException.expectMessage(MessageCodes.ERROR_REPOSITORY_PUBLISH);
-		
-		repositoryService.publishRepository(repository, user);
+		assertThrows(
+            MessageCodes.ERROR_REPOSITORY_PUBLISH,
+            RepositoryPublishException.class,
+            () -> {
+              repositoryService.publishRepository(repository, user);
+        });
 	}
 }

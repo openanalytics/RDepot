@@ -17,6 +17,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.9.RELEASE'
     id 'com.avast.gradle.docker-compose' version '0.7.1'
     id 'org.springframework.boot' version '2.3.1.RELEASE'
+    id "org.owasp.dependencycheck" version "6.0.5"
 }
 
 jar {
@@ -40,7 +41,7 @@ ext.buildTime = {
 }
 
 group = 'eu.openanalytics'
-ext.versionNumber = '1.4.2'
+ext.versionNumber = '1.4.3'
 ext.baseVersion = versionNumber
 version = versionNumber
 description = """rdepot"""
@@ -109,6 +110,11 @@ license {
     excludes(['**/*.html', '**/*.Rmd', '**/*.tar.gz', '**/DESCRIPTION', '**/DESCRIPTION_NEWLINES', '**/*.properties', '**/*.ttf', '**/*.eot', '**/*.woff', '**/*.css', '**/*.js', '**/*.svg', '**/*.png', '**/*.ico', '**/*.old', '**/*.sql', '**/*.yaml', '**/*.xml', '**/*.json', 
     			'**/*.yml', '**/NEWS', '**/LICENSE', '**/*.txt' , '**/NAMESPACE', '**/*.Rd', '**/*.pdf', '**/*.R', '**/*.c', '**/*.cpp', '**/*.h', '**/*.tex', '**/*.sh', '**/*.rda', '**/*.ldif', '**/*.gz', '**/*.bk*', '**/*.gradle' ])
     			//the above exclusions are for integration testing purposes
+}
+
+dependencyCheck {
+    format='ALL'
+    suppressionFile='owasp-suppression.xml'
 }
 
 task setHttpProxyFromEnv {
@@ -263,3 +269,5 @@ ext.maven = {
         password = System.getenv("OA_NEXUS_PWD")
     }
 }
+
+check.dependsOn dependencyCheckAggregate

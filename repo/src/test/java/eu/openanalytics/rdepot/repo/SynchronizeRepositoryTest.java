@@ -20,10 +20,11 @@
  */
 package eu.openanalytics.rdepot.repo;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doNothing;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -35,14 +36,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.Spy;
@@ -50,7 +49,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
-
 import eu.openanalytics.rdepot.repo.collection.QueueMap;
 import eu.openanalytics.rdepot.repo.exception.InitTransactionException;
 import eu.openanalytics.rdepot.repo.exception.ProcessRequestException;
@@ -78,9 +76,6 @@ public class SynchronizeRepositoryTest {
 	
 	@Spy
 	QueueMap<String, SynchronizeRepositoryResponseBody> responseMap = new QueueMap<>();
-	
-	@Rule
-	public ExpectedException expectedException = ExpectedException.none();
 	
 	@Spy
 	HashMap<String, RepositoryBackup> backupMap = new HashMap<>();
@@ -213,6 +208,10 @@ public class SynchronizeRepositoryTest {
     	
     	assertFiles(recent, recentDir);
     	assertFiles(archive, archiveDir);
+    	
+    	assertTrue(Files.exists(recentDir.toPath().resolve("Meta")));
+    	assertTrue(Files.exists(recentDir.toPath().resolve("Meta").resolve("archive.rds")));
+    	assertTrue(recentDir.toPath().resolve("Meta").resolve("archive.rds").toFile().length() > 0);
 	}
     
     @Test
@@ -253,6 +252,9 @@ public class SynchronizeRepositoryTest {
     	
     	assertEquals(3, recentDir.listFiles().length);
     	assertEquals(0, archiveDir.listFiles().length);
+    	
+    	assertFalse(Files.exists(recentDir.toPath().resolve("Meta")));
+    	assertFalse(Files.exists(recentDir.toPath().resolve("Meta").resolve("archive.rds")));
     }
     
     @Test
@@ -289,10 +291,12 @@ public class SynchronizeRepositoryTest {
     	SynchronizeRepositoryRequestBody requestBody = new SynchronizeRepositoryRequestBody(
     			randomId, recent, archive, 
     			new String[0], new String[0], "10", "11", "1/1", REPOSITORY);
-    	
-    	expectedException.expect(ProcessRequestException.class);
-    	
-    	storageService.processRequest(requestBody);
+    	    	
+    	assertThrows(
+            ProcessRequestException.class,
+            () -> {
+              storageService.processRequest(requestBody);
+        });
     }
     
     @Test
@@ -325,13 +329,11 @@ public class SynchronizeRepositoryTest {
     
     @Test
     public void uploadPackages_toEmptyRepository() {
-    	
+    	// TODO ?
     }
     
     @Test
-    public void deletePackages_restoresRepositoryAfterFailure() throws IOException, InitTransactionException, ProcessRequestException {
-    	String randomId = RandomStringUtils.randomAlphabetic(16);
-    	
+    public void deletePackages_restoresRepositoryAfterFailure() throws IOException, InitTransactionException, ProcessRequestException {    	
     	Path restoreTestResourcesDir = new File(TEST_PACKAGES_DIR).toPath().resolve("restore_test");
     	File currentStateDir = restoreTestResourcesDir.resolve("current_state").toFile();
     	File recentDir = copyTestPackagesToTemporaryFolder(currentStateDir.toPath());
@@ -361,20 +363,28 @@ public class SynchronizeRepositoryTest {
     	recentFiles.toArray(recentMultipartFiles);
     	archiveFiles.toArray(archiveMultipartFiles);
     	
+        String id = storageService.initTransaction(REPOSITORY, "1");
+    	
     	SynchronizeRepositoryRequestBody requestBody = new SynchronizeRepositoryRequestBody(
-    			randomId, recentMultipartFiles, archiveMultipartFiles, 
+    			id, recentMultipartFiles, archiveMultipartFiles, 
     			recentToDelete, archiveToDelete, "1", "2", "1/1", REPOSITORY);
+    	    	
     	
-    	expectedException.expect(ProcessRequestException.class);
-    	
-    	storageService.initTransaction(REPOSITORY, "1");
-    	storageService.processRequest(requestBody);
-    	
+    	assertThrows(
+            ProcessRequestException.class,
+            () -> {
+              storageService.processRequest(requestBody);
+        });
+    	    	
     	File[] expectedRecent = currentStateDir.toPath().resolve("recent").toFile().listFiles();
     	File[] expectedArchive = currentStateDir.toPath().resolve("archive").toFile().listFiles();
     	
     	assertFiles(expectedRecent, recentDir);
     	assertFiles(expectedArchive, archiveDir);
+    	
+    	assertTrue(Files.exists(recentDir.toPath().resolve("Meta")));
+        assertTrue(Files.exists(recentDir.toPath().resolve("Meta").resolve("archive.rds")));
+        assertTrue(recentDir.toPath().resolve("Meta").resolve("archive.rds").toFile().length() > 0);
     }
     
     private File copyTestPackagesToTemporaryFolder(Path testPackagesDirectory) throws IOException {

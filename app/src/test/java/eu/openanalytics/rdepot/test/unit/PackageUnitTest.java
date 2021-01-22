@@ -26,8 +26,6 @@ import eu.openanalytics.rdepot.model.Package;
 
 public class PackageUnitTest 
 {
-	private final ClassLoader classLoader = getClass().getClassLoader();
-
 	@Test
 	public void testCompareToDots()
 	{

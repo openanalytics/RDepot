@@ -22,19 +22,15 @@ package eu.openanalytics.rdepot.deserializer;
 
 import java.io.IOException;
 import java.util.Locale;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.support.SpringBeanAutowiringSupport;
-
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-
 import eu.openanalytics.rdepot.model.Role;
 import eu.openanalytics.rdepot.model.User;
 import eu.openanalytics.rdepot.service.RoleService;

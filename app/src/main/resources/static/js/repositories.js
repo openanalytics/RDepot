@@ -512,7 +512,7 @@ function openRepositoryPage(name) {
 }
 
 function openPackagePage(repository, packageName, packageVersion) {
-    window.location.href = "/manager/repositories/" + repository + "/packages/" + packageName;   // + "/" + packageVersion;
+    window.location.href = "/manager/repositories/" + repository + "/packages/" + packageName;
 //    without packageVersion!!!!!!
 }
 

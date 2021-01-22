@@ -22,6 +22,7 @@ package eu.openanalytics.rdepot.test.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -34,17 +35,14 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -55,7 +53,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 //import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.context.MessageSource;
-
 import eu.openanalytics.rdepot.exception.AdminNotFound;
 import eu.openanalytics.rdepot.exception.EventNotFound;
 import eu.openanalytics.rdepot.exception.PackageActivateException;
@@ -139,9 +136,6 @@ public class PackageServiceTest {
 	
 	@InjectMocks
 	private PackageService packageService;
-	
-	@Rule
-	public ExpectedException expectedException = ExpectedException.none();
 	
 	@Rule
 	public TestDateRule testDateRule = new TestDateRule();
@@ -232,11 +226,13 @@ public class PackageServiceTest {
 		
 		when(packageRepository.save(createdPackage)).thenReturn(createdPackage);
 		when(eventService.getCreateEvent()).thenThrow(new EventNotFound());
-		
-		expectedException.expect(PackageCreateException.class);
-		expectedException.expectMessage(MessageCodes.ERROR_PACKAGE_CREATE);
-		
-		packageService.create(createdPackage, user, false);
+
+		assertThrows(
+		    MessageCodes.ERROR_PACKAGE_CREATE,
+		    PackageCreateException.class,
+            () -> {
+              packageService.create(createdPackage, user, false);
+        });
 	}
 	
 	@Test
@@ -337,11 +333,13 @@ public class PackageServiceTest {
 		Package packageBag = PackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
 		
 		packageBag.setDeleted(true);
-		
-		expectedException.expect(PackageAlreadyDeletedWarning.class);
-		expectedException.expectMessage(MessageCodes.WARNING_PACKAGE_ALREADY_DELETED);
-		
-		packageService.delete(packageBag, user);
+			
+		assertThrows(
+            MessageCodes.WARNING_PACKAGE_ALREADY_DELETED,
+            PackageAlreadyDeletedWarning.class,
+            () -> {
+              packageService.delete(packageBag, user);
+        });
 	}
 	
 	@Test
@@ -408,10 +406,12 @@ public class PackageServiceTest {
 						messageSource, new Locale("en"), packageBag, "some details")
 		).when(packageStorage).deleteSource(packageBag);
 		
-		expectedException.expect(PackageDeleteException.class);
-		expectedException.expectMessage(MessageCodes.ERROR_PACKAGE_DELETE);
-		
-		packageService.shiftDelete(packageBag);
+        assertThrows(
+            MessageCodes.ERROR_PACKAGE_DELETE,
+            PackageDeleteException.class,
+            () -> {
+              packageService.shiftDelete(packageBag);
+        });
 	}
 	
 	@Test
@@ -434,11 +434,13 @@ public class PackageServiceTest {
 		
 		when(submissionService.shiftDelete(submission))
 			.thenThrow(exceptionToThrow);
-		
-		expectedException.expect(PackageDeleteException.class);
-		expectedException.expectMessage(MessageCodes.ERROR_PACKAGE_DELETE);
-		
-		packageService.shiftDelete(packageBag);
+
+		assertThrows(
+            MessageCodes.ERROR_PACKAGE_DELETE,
+            PackageDeleteException.class,
+            () -> {
+              packageService.shiftDelete(packageBag);
+        });
 	}
 	
 //	@Test
@@ -607,12 +609,14 @@ public class PackageServiceTest {
 			.thenReturn(null);
 		when(repositoryMaintainerService.findByRepository(repository)).thenReturn(new ArrayList<RepositoryMaintainer>());
 		when(userService.findFirstAdmin()).thenThrow(new AdminNotFound());
-		
-		expectedException.expect(PackageEditException.class);
-		expectedException.expectMessage(packageBag.getName() + " " 
-				+ packageBag.getVersion() + ": " + MessageCodes.ERROR_PACKAGE_EDIT);
-		
-		packageService.refreshMaintainer(packageBag, admin);
+
+		assertThrows(
+		    packageBag.getName() + " " 
+            + packageBag.getVersion() + ": " + MessageCodes.ERROR_PACKAGE_EDIT,
+            PackageEditException.class,
+            () -> {
+              packageService.refreshMaintainer(packageBag, admin);
+        });
 	}
 	
 	@Test
@@ -633,11 +637,13 @@ public class PackageServiceTest {
 			.thenReturn(packageMaintainer);
 		when(eventService.getUpdateEvent()).thenThrow(new EventNotFound());
 		
-		expectedException.expect(PackageEditException.class);
-		expectedException.expectMessage(packageBag.getName() + " " 
-				+ packageBag.getVersion() + ": " + MessageCodes.ERROR_PACKAGE_EDIT);
-		
-		packageService.refreshMaintainer(packageBag, user);	
+		assertThrows(
+            packageBag.getName() + " " 
+            + packageBag.getVersion() + ": " + MessageCodes.ERROR_PACKAGE_EDIT,
+            PackageEditException.class,
+            () -> {
+              packageService.refreshMaintainer(packageBag, user);
+        });
 	}
 	
 	@Test
@@ -686,11 +692,13 @@ public class PackageServiceTest {
 		Package packageBag = PackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
 		
 		packageBag.setActive(true);
-		
-		expectedException.expect(PackageAlreadyActivatedWarning.class);
-		expectedException.expectMessage(MessageCodes.WARNING_PACKAGE_ALREADY_ACTIVATED);
-		
-		packageService.activatePackage(packageBag, user);
+
+		assertThrows(
+            MessageCodes.WARNING_PACKAGE_ALREADY_ACTIVATED,
+            PackageAlreadyActivatedWarning.class,
+            () -> {
+              packageService.activatePackage(packageBag, user);
+        });
 	}
 	
 	@Test
@@ -703,12 +711,14 @@ public class PackageServiceTest {
 		packageBag.setActive(false);
 		
 		when(eventService.getUpdateEvent()).thenThrow(new EventNotFound());
-		
-		expectedException.expect(PackageActivateException.class);
-		expectedException.expectMessage(packageBag.getName() + " " 
-				+ packageBag.getVersion() + ": " + MessageCodes.ERROR_PACKAGE_ACTIVATE);
-		
-		packageService.activatePackage(packageBag, user);
+
+		assertThrows(
+		    packageBag.getName() + " " 
+            + packageBag.getVersion() + ": " + MessageCodes.ERROR_PACKAGE_ACTIVATE,
+            PackageActivateException.class,
+            () -> {
+              packageService.activatePackage(packageBag, user);
+        });
 	}
 	
 	@Test
@@ -727,11 +737,13 @@ public class PackageServiceTest {
 		when(userService.findFirstAdmin()).thenThrow(new AdminNotFound());
 		when(eventService.getUpdateEvent()).thenReturn(updateEvent);
 		
-		expectedException.expect(PackageActivateException.class);
-		expectedException.expectMessage(packageBag.getName() + " " + packageBag.getVersion() + ": "
-				+ MessageCodes.ERROR_PACKAGE_ACTIVATE);
-		
-		packageService.activatePackage(packageBag, user);
+		assertThrows(
+            packageBag.getName() + " " 
+            + packageBag.getVersion() + ": " + MessageCodes.ERROR_PACKAGE_ACTIVATE,
+            PackageActivateException.class,
+            () -> {
+              packageService.activatePackage(packageBag, user);
+        });
 	}
 	
 	@Test
@@ -780,11 +792,13 @@ public class PackageServiceTest {
 		Package packageBag = PackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
 		
 		packageBag.setActive(false);
-		
-		expectedException.expect(PackageAlreadyDeactivatedWarning.class);
-		expectedException.expectMessage(MessageCodes.WARNING_PACKAGE_ALREADY_DEACTIVATED);
-		
-		packageService.deactivatePackage(packageBag, user);
+
+		assertThrows(
+            MessageCodes.WARNING_PACKAGE_ALREADY_DEACTIVATED,
+            PackageAlreadyDeactivatedWarning.class,
+            () -> {
+              packageService.deactivatePackage(packageBag, user);
+        });
 	}
 	
 	@Test
@@ -797,12 +811,14 @@ public class PackageServiceTest {
 		packageBag.setActive(true);
 		
 		when(eventService.getUpdateEvent()).thenThrow(new EventNotFound());
-		
-		expectedException.expect(PackageDeactivateException.class);
-		expectedException.expectMessage(packageBag.getName() + " " 
-				+ packageBag.getVersion() + ": " + MessageCodes.ERROR_PACKAGE_DEACTIVATE);
-		
-		packageService.deactivatePackage(packageBag, user);
+
+		assertThrows(
+            packageBag.getName() + " " 
+            + packageBag.getVersion() + ": " + MessageCodes.ERROR_PACKAGE_DEACTIVATE,
+            PackageDeactivateException.class,
+            () -> {
+              packageService.deactivatePackage(packageBag, user);
+        });
 	}
 	
 	@Test
@@ -821,11 +837,13 @@ public class PackageServiceTest {
 		when(userService.findFirstAdmin()).thenThrow(new AdminNotFound());
 		when(eventService.getUpdateEvent()).thenReturn(updateEvent);
 		
-		expectedException.expect(PackageDeactivateException.class);
-		expectedException.expectMessage(packageBag.getName() + " " + packageBag.getVersion() + ": "
-				+ MessageCodes.ERROR_PACKAGE_DEACTIVATE);
-		
-		packageService.deactivatePackage(packageBag, user);
+		assertThrows(
+            packageBag.getName() + " " 
+            + packageBag.getVersion() + ": " + MessageCodes.ERROR_PACKAGE_DEACTIVATE,
+            PackageDeactivateException.class,
+            () -> {
+              packageService.deactivatePackage(packageBag, user);
+        });
 	}
 	
 	@Test
@@ -907,10 +925,12 @@ public class PackageServiceTest {
 		packageBag.setSource("");
 		when(eventService.getUpdateEvent()).thenThrow(new EventNotFound());
 		
-		expectedException.expect(PackageEditException.class);
-		expectedException.expectMessage(MessageCodes.ERROR_PACKAGE_EDIT);
-		
-		packageService.updateSource(packageBag, "", user);
+		assertThrows(
+            MessageCodes.ERROR_PACKAGE_EDIT,
+            PackageEditException.class,
+            () -> {
+              packageService.updateSource(packageBag, "", user);
+        });
 	}
 	
 	@Test
@@ -930,11 +950,13 @@ public class PackageServiceTest {
 		packageBag.setSource("");
 		when(eventService.getUpdateEvent()).thenReturn(updateEvent);
 		doThrow(exception).when(packageStorage).verifySource(packageBag, newSource);
-		
-		expectedException.expect(PackageEditException.class);
-		expectedException.expectMessage(MessageCodes.ERROR_PACKAGE_EDIT);
-		
-		packageService.updateSource(packageBag, newSource, user);
+
+		assertThrows(
+            MessageCodes.ERROR_PACKAGE_EDIT,
+            PackageEditException.class,
+            () -> {
+              packageService.updateSource(packageBag, newSource, user);
+        });
 	}
 	
 	@Test

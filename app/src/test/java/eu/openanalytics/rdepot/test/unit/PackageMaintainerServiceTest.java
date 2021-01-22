@@ -21,47 +21,38 @@
 package eu.openanalytics.rdepot.test.unit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.internal.verification.Times;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.context.MessageSource;
-
 import eu.openanalytics.rdepot.exception.EventNotFound;
 import eu.openanalytics.rdepot.exception.PackageEditException;
 import eu.openanalytics.rdepot.exception.PackageMaintainerCreateException;
 import eu.openanalytics.rdepot.exception.PackageMaintainerDeleteException;
 import eu.openanalytics.rdepot.exception.PackageMaintainerEditException;
 import eu.openanalytics.rdepot.exception.PackageMaintainerNotFound;
-import eu.openanalytics.rdepot.exception.RepositoryEditException;
 import eu.openanalytics.rdepot.messaging.MessageCodes;
 import eu.openanalytics.rdepot.model.Event;
 import eu.openanalytics.rdepot.model.Package;
@@ -104,9 +95,6 @@ public class PackageMaintainerServiceTest {
 	MessageSource messageSource;
 	
 	Locale locale = new Locale("en");
-	
-	@Rule
-	public ExpectedException expectedException = ExpectedException.none();
 	
 	@Rule
 	public TestDateRule testDateRule = new TestDateRule();
@@ -212,13 +200,15 @@ public class PackageMaintainerServiceTest {
 				PackageMaintainerTestFixture.GET_FIXTURE_PACKAGE_MAINTAINER(user, repository);
 		
 		when(eventService.getCreateEvent()).thenThrow(new EventNotFound());
-		
-		expectedException.expect(PackageMaintainerCreateException.class);
-		expectedException.expectMessage("Maintainer " + packageMaintainer.getUser().getName() 
-				+ " of the package " + packageMaintainer.getPackage() + ": " 
-				+ MessageCodes.ERROR_PACKAGEMAINTAINER_CREATE);
-		
-		packageMaintainerService.create(packageMaintainer, user);
+				
+		assertThrows(
+		    "Maintainer " + packageMaintainer.getUser().getName() 
+            + " of the package " + packageMaintainer.getPackage() + ": " 
+            + MessageCodes.ERROR_PACKAGEMAINTAINER_CREATE,
+            PackageMaintainerCreateException.class,
+            () -> {
+              packageMaintainerService.create(packageMaintainer, user);
+		});
 	}
 	
 	@Test
@@ -242,11 +232,14 @@ public class PackageMaintainerServiceTest {
 		doThrow(new PackageEditException(messageSource, locale, packages.get(0)))
 			.when(packageService).refreshMaintainer(packages.get(0), user);
 		
-		expectedException.expect(PackageMaintainerCreateException.class);
-		expectedException.expectMessage("Maintainer " + packageMaintainer.getUser().getName() 
-				+ " of the package " + packageMaintainer.getPackage() + ": " + MessageCodes.ERROR_PACKAGEMAINTAINER_CREATE);
-	
-		packageMaintainerService.create(packageMaintainer, user);
+		assertThrows(
+            "Maintainer " + packageMaintainer.getUser().getName() 
+            + " of the package " + packageMaintainer.getPackage() + ": " 
+            + MessageCodes.ERROR_PACKAGEMAINTAINER_CREATE,
+            PackageMaintainerCreateException.class,
+            () -> {
+              packageMaintainerService.create(packageMaintainer, user);
+        });
 	}
 	
 	@Test
@@ -289,16 +282,18 @@ public class PackageMaintainerServiceTest {
 	@Test
 	public void delete_ThrowsPackageMaintainerNotFound() 
 			throws PackageMaintainerDeleteException, PackageMaintainerNotFound {
-		int ID = 123;
+		int id = 123;
 		User user = UserTestFixture.GET_FIXTURE_ADMIN();
 		
-		when(packageMaintainerRepository.findByIdAndDeleted(ID, false)).thenReturn(null);
-		
-		expectedException.expect(PackageMaintainerNotFound.class);
-		expectedException.expectMessage("Package maintainer with id of " + ID + ": " 
-				+ MessageCodes.ERROR_PACKAGEMAINTAINER_NOT_FOUND);
-		
-		packageMaintainerService.delete(ID, user);
+		when(packageMaintainerRepository.findByIdAndDeleted(id, false)).thenReturn(null);
+
+		assertThrows(
+		    "Package maintainer with id of " + id + ": " 
+            + MessageCodes.ERROR_PACKAGEMAINTAINER_NOT_FOUND,
+            PackageMaintainerNotFound.class,
+            () -> {
+              packageMaintainerService.delete(id, user);
+        });
 	}
 	
 	@Test
@@ -313,13 +308,15 @@ public class PackageMaintainerServiceTest {
 		when(packageMaintainerRepository.findByIdAndDeleted(packageMaintainer.getId(), false))
 			.thenReturn(packageMaintainer);
 		when(eventService.getDeleteEvent()).thenThrow(new EventNotFound());
-		
-		expectedException.expect(PackageMaintainerDeleteException.class);
-		expectedException.expectMessage("Maintainer " + packageMaintainer.getUser().getName() 
-				+ " of the package " + packageMaintainer.getPackage() + ": " 
-				+ MessageCodes.ERROR_PACKAGEMAINTAINER_DELETE);
-		
-		packageMaintainerService.delete(packageMaintainer.getId(), user);
+				
+		assertThrows(
+		    "Maintainer " + packageMaintainer.getUser().getName() 
+            + " of the package " + packageMaintainer.getPackage() + ": " 
+            + MessageCodes.ERROR_PACKAGEMAINTAINER_DELETE,
+            PackageMaintainerDeleteException.class,
+            () -> {
+              packageMaintainerService.delete(packageMaintainer.getId(), user);
+        });
 	}
 	
 	@Test
@@ -350,12 +347,14 @@ public class PackageMaintainerServiceTest {
 		doThrow(new PackageEditException(messageSource, locale, packages.get(0)))
 			.when(packageService).refreshMaintainer(any(), eq(user));
 		
-		expectedException.expect(PackageMaintainerDeleteException.class);
-		expectedException.expectMessage("Maintainer " + maintainer.getUser().getName() 
-				+ " of the package " + maintainer.getPackage() + ": " 
-				+ MessageCodes.ERROR_PACKAGEMAINTAINER_DELETE);
-		
-		packageMaintainerService.delete(maintainer.getId(), user);
+		assertThrows(
+            "Maintainer " + maintainer.getUser().getName() 
+            + " of the package " + maintainer.getPackage() + ": " 
+            + MessageCodes.ERROR_PACKAGEMAINTAINER_DELETE,
+            PackageMaintainerDeleteException.class,
+            () -> {
+              packageMaintainerService.delete(maintainer.getId(), user);
+        });
 	}
 	
 	@Test
@@ -397,14 +396,16 @@ public class PackageMaintainerServiceTest {
 		PackageMaintainer packageMaintainer = 
 				PackageMaintainerTestFixture.GET_FIXTURE_PACKAGE_MAINTAINER(user, repository);
 		
-		when(eventService.getUpdateEvent()).thenThrow(new EventNotFound());
+		when(eventService.getUpdateEvent()).thenThrow(new EventNotFound());		
 		
-		expectedException.expect(PackageMaintainerEditException.class);
-		expectedException.expectMessage("Maintainer " + packageMaintainer.getUser().getName() 
-				+ " of the package " + packageMaintainer.getPackage() + ": " 
-				+ MessageCodes.ERROR_PACKAGEMAINTAINER_EDIT);
-		
-		packageMaintainerService.updateUser(packageMaintainer, newUser, requester);
+		assertThrows(
+            "Maintainer " + packageMaintainer.getUser().getName() 
+            + " of the package " + packageMaintainer.getPackage() + ": " 
+            + MessageCodes.ERROR_PACKAGEMAINTAINER_EDIT,
+            PackageMaintainerEditException.class,
+            () -> {
+              packageMaintainerService.updateUser(packageMaintainer, newUser, requester);
+        });
 	}
 	
 	@Test
@@ -427,13 +428,15 @@ public class PackageMaintainerServiceTest {
 		when(eventService.getUpdateEvent()).thenReturn(updateEvent);
 		doThrow(new PackageEditException(messageSource, locale, packageToMaintain))
 			.when(packageService).refreshMaintainer(packageToMaintain, requester);
-		
-		expectedException.expect(PackageMaintainerEditException.class);
-		expectedException.expectMessage("Maintainer " + newUser.getName()
-				+ " of the package " + packageMaintainer.getPackage() + ": " 
-				+ MessageCodes.ERROR_PACKAGEMAINTAINER_EDIT);
-		
-		packageMaintainerService.updateUser(packageMaintainer, newUser, requester);
+	
+		assertThrows(
+            "Maintainer " + newUser.getName()
+            + " of the package " + packageMaintainer.getPackage() + ": " 
+            + MessageCodes.ERROR_PACKAGEMAINTAINER_EDIT,
+            PackageMaintainerEditException.class,
+            () -> {
+              packageMaintainerService.updateUser(packageMaintainer, newUser, requester);
+        });
 	}
 	
 	@Test
@@ -497,13 +500,15 @@ public class PackageMaintainerServiceTest {
 		packageMaintainer.setPackage(packageToMaintain.getName());
 		
 		when(eventService.getUpdateEvent()).thenThrow(new EventNotFound());
-		
-		expectedException.expect(PackageMaintainerEditException.class);
-		expectedException.expectMessage("Maintainer " + user.getName()
-			+ " of the package " + packageMaintainer.getPackage() + ": " 
-			+ MessageCodes.ERROR_PACKAGEMAINTAINER_EDIT);
-		
-		packageMaintainerService.updateRepository(packageMaintainer, newRepository, requester);
+
+		assertThrows(
+            "Maintainer " + user.getName() 
+            + " of the package " + packageMaintainer.getPackage() + ": " 
+            + MessageCodes.ERROR_PACKAGEMAINTAINER_EDIT,
+            PackageMaintainerEditException.class,
+            () -> {
+              packageMaintainerService.updateRepository(packageMaintainer, newRepository, requester);
+        });
 	}
 	
 	@Test
@@ -543,13 +548,15 @@ public class PackageMaintainerServiceTest {
 		when(eventService.getUpdateEvent()).thenReturn(updateEvent);
 		doThrow(new PackageEditException(messageSource, locale, packageToMaintain))
 			.when(packageService).refreshMaintainer(any(), eq(requester));
-		
-		expectedException.expect(PackageMaintainerEditException.class);
-		expectedException.expectMessage("Maintainer " + user.getName()
-			+ " of the package " + packageMaintainer.getPackage() + ": " 
-			+ MessageCodes.ERROR_PACKAGEMAINTAINER_EDIT);
-		
-		packageMaintainerService.updateRepository(packageMaintainer, newRepository, requester);
+
+		assertThrows(
+            "Maintainer " + user.getName() 
+            + " of the package " + packageMaintainer.getPackage() + ": " 
+            + MessageCodes.ERROR_PACKAGEMAINTAINER_EDIT,
+            PackageMaintainerEditException.class,
+            () -> {
+              packageMaintainerService.updateRepository(packageMaintainer, newRepository, requester);
+        });
 	}
 	
 	@Test
@@ -597,12 +604,14 @@ public class PackageMaintainerServiceTest {
 		
 		when(eventService.getUpdateEvent()).thenThrow(new EventNotFound());
 		
-		expectedException.expect(PackageMaintainerEditException.class);
-		expectedException.expectMessage("Maintainer " + user.getName()
-			+ " of the package " + packageMaintainer.getPackage() + ": " 
-			+ MessageCodes.ERROR_PACKAGEMAINTAINER_EDIT);
-		
-		packageMaintainerService.updatePackage(packageMaintainer, newPackage.getName(), requester);
+	    assertThrows(
+	        "Maintainer " + user.getName() 
+	        + " of the package " + packageMaintainer.getPackage() + ": " 
+	        + MessageCodes.ERROR_PACKAGEMAINTAINER_EDIT,
+	        PackageMaintainerEditException.class,
+	        () -> {
+	          packageMaintainerService.updatePackage(packageMaintainer, newPackage.getName(), requester);
+	    });
 	}
 	
 	@Test
@@ -628,12 +637,14 @@ public class PackageMaintainerServiceTest {
 		doThrow(exception)
 			.when(packageService).refreshMaintainer(oldPackage, requester);
 //		doNothing().when(packageService).refreshMaintainer(newPackage, requester);
-		
-		expectedException.expect(PackageMaintainerEditException.class);
-		expectedException.expectMessage("Maintainer " + user.getName()
-			+ " of the package " + oldPackage.getName() + ": " 
-			+ MessageCodes.ERROR_PACKAGEMAINTAINER_EDIT);
-		
-		packageMaintainerService.updatePackage(packageMaintainer, newPackage.getName(), requester);
+
+		assertThrows(
+            "Maintainer " + user.getName() 
+            + " of the package " + oldPackage.getName() + ": " 
+            + MessageCodes.ERROR_PACKAGEMAINTAINER_EDIT,
+            PackageMaintainerEditException.class,
+            () -> {
+              packageMaintainerService.updatePackage(packageMaintainer, newPackage.getName(), requester);
+        });
 	}
 }

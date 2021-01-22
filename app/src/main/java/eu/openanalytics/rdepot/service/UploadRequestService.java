@@ -25,18 +25,14 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
-
 import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
-
 import eu.openanalytics.rdepot.exception.ExtractFileException;
 import eu.openanalytics.rdepot.exception.ManualCreateException;
 import eu.openanalytics.rdepot.exception.Md5SumCalculationException;

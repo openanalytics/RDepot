@@ -27,10 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
-
 import javax.annotation.Resource;
 import javax.sql.DataSource;
-
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
@@ -62,10 +60,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
-
 import com.google.gson.Gson;
-
-import eu.openanalytics.rdepot.controller.GlobalController;
 import eu.openanalytics.rdepot.formatter.RepositoryFormatter;
 import eu.openanalytics.rdepot.formatter.RoleFormatter;
 import eu.openanalytics.rdepot.formatter.UserFormatter;
@@ -73,7 +68,6 @@ import eu.openanalytics.rdepot.mapper.HibernateAwareObjectMapper;
 import eu.openanalytics.rdepot.model.Repository;
 import eu.openanalytics.rdepot.model.Role;
 import eu.openanalytics.rdepot.model.User;
-import eu.openanalytics.rdepot.service.UserService;
 import eu.openanalytics.rdepot.storage.PackageStorage;
 import eu.openanalytics.rdepot.storage.PackageStorageLocalImpl;
 import eu.openanalytics.rdepot.storage.RepositoryStorage;

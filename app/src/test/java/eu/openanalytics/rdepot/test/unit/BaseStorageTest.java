@@ -23,7 +23,6 @@ package eu.openanalytics.rdepot.test.unit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,18 +32,15 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.zip.GZIPInputStream;
-
 import org.apache.commons.io.FileUtils;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
-
 import eu.openanalytics.rdepot.exception.CreateFolderStructureException;
 import eu.openanalytics.rdepot.exception.ExtractFileException;
 import eu.openanalytics.rdepot.exception.GzipFileException;
@@ -57,10 +53,7 @@ public class BaseStorageTest {
 
 	@Mock
 	private MessageSource messageSource;
-	
-	@Rule
-	public ExpectedException expectedException = ExpectedException.none();
-	
+		
 	@Rule
 	public TemporaryFolder temporaryFolder = new TemporaryFolder();
 	

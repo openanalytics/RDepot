@@ -22,6 +22,7 @@ package eu.openanalytics.rdepot.service;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -74,6 +75,7 @@ import eu.openanalytics.rdepot.model.User;
 import eu.openanalytics.rdepot.repository.PackageRepository;
 import eu.openanalytics.rdepot.storage.PackageStorage;
 import eu.openanalytics.rdepot.time.DateProvider;
+import eu.openanalytics.rdepot.utils.PackagesComparator;
 import eu.openanalytics.rdepot.warning.PackageAlreadyActivatedWarning;
 import eu.openanalytics.rdepot.warning.PackageAlreadyDeactivatedWarning;
 import eu.openanalytics.rdepot.warning.PackageAlreadyDeletedWarning;
@@ -326,6 +328,7 @@ public class PackageService {
 	
 	public List<Package> findAll() {
 		List<Package> allPackages = packageRepository.findByDeleted(false, Sort.by(new Order(Direction.ASC, "name")));
+		Collections.sort(allPackages, new PackagesComparator());
 		List<Package> filtered = new ArrayList<>();
 		
 		//TODO: when submission is shift deleted, the package 'gets orphaned', we decided not to treat it like a correct one
