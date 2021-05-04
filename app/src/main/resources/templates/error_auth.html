@@ -30,14 +30,15 @@
 	</head>
 	<body>
 		<hgroup>
-			<h1 th:text="#{application.name}">R Depot</h1>
+			<h1 th:text="#{application.name}">RDepot</h1>
 		</hgroup>
 		<div id="container">
 			<form th:action="${link}" method="get">
 				<div>
-					<h2 id="error_message" th:text="${error}">Authentication failed</h1>
-				</div>
-				<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" th:text="#{auth.back}">Unknown</button>
+					<h2 id="error_message">An error occurred during the authentication procedure.</h2>
+					<p><b>If you are a user of <span th:text="#{application.name}"></span>:</b> please report this issue to your administrator.</p>
+					<p><b>If you are an administrator of <span th:text="#{application.name}"></span>:</b> check the <span th:text="#{application.name}"></span> logs for more information.</p>
+				</div>				
 			</form>
 		</div>
 		<footer>

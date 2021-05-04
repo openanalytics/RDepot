@@ -46,5 +46,13 @@
         "name" : "John Doe",
         "nickname" : "doe",
         "password" : "testpassword"
+    },
+    {
+        "id" : "SIMPLE_OIDC_USER_TARSKI",
+        "email" : "tajtelbaum@localhost",
+        "email_verified" : true,
+        "name" : "Alfred Tajtelbaum",
+        "nickname" : "tarski",
+        "password" : "testpassword"
     }
 ]

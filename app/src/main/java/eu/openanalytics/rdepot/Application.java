@@ -52,32 +52,5 @@ public class Application extends SpringBootServletInitializer {
 	protected WebApplicationContext run(SpringApplication application) {
 		// TODO Auto-generated method stub
 		return super.run(application);
-	}
-//	
-//	@Bean
-//    InitializingBean createRepositoriesFromConfig() {
-//        return () -> {        
-//        	List<Repository> repositories = new ArrayList<>();
-//        	for(int i=0;;i++) {
-//        		String repositoryName = environment.getProperty(String.format("repositories[%d].name", i)); 
-//        		if(repositoryName == null) break;
-//        		else {
-//        			Repository repository = new Repository(
-//        					0,      
-//        					environment.getProperty(String.format("repositories[%d].publication-uri", i)),
-//        					environment.getProperty(String.format("repositories[%d].name", i)),
-//        					environment.getProperty(String.format("repositories[%d].server-address", i)),
-//        					false,
-//        					false,
-//        					new HashSet<>(),
-//        					new HashSet<>(),
-//        					new HashSet<>(),
-//        					new HashSet<>()
-//        					);   
-//        			repositories.add(repository);
-//        		}
-//        	}
-//        	repositoryService.createRepositoriesFromConfig(repositories);
-//        };
-//	}	
+	}	
 }

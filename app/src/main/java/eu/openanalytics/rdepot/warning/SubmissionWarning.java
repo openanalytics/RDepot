@@ -42,4 +42,8 @@ public class SubmissionWarning extends Exception {
 		super("Submission " + Integer.toString(submissionId) + 
 				": " + messageSource.getMessage(messageCode, null, messageCode, locale));
 	}
+
+	public SubmissionWarning(String messageCode, MessageSource messageSource, Locale locale) {
+		super(messageSource.getMessage(messageCode, null, messageCode, locale));
+	}
 }

@@ -20,7 +20,10 @@
  */
 package eu.openanalytics.rdepot.validation;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import eu.openanalytics.rdepot.exception.PackageValidationException;
@@ -33,6 +36,10 @@ import eu.openanalytics.rdepot.warning.PackageValidationWarning;
 @Component
 public class PackageValidator
 {
+	
+	@Resource
+	private Environment environment;
+	
 	@Autowired
 	private PackageService packageService;
 	
@@ -69,26 +76,17 @@ public class PackageValidator
 	private void validateVersion(Package target, boolean replace) throws PackageValidationException, PackageValidationWarning
 	{
 		String version = target.getVersion();
+		String[] splitted = version.split("-|\\.");
 		String name = target.getName();
 		Repository repository = target.getRepository();
 		if(version == null || version.isEmpty() || version.trim().equals(""))
 			throw new PackageValidationException(MessageCodes.ERROR_PACKAGE_INVALID_VERSION, target);
-//		String[] splitDot = version.split("\\.");
-//		if(splitDot.length < 2 || splitDot[0] == null || splitDot[0].isEmpty() || splitDot[0].trim().equals("") || splitDot[1] == null || splitDot[1].isEmpty() || splitDot[1].trim().equals(""))
-//			throw new PackageValidationException(MessageCodes.ERROR_PACKAGE_INVALID_VERSION, target);
-//		String[] splitHyphen = version.split("\\-");
-//		if(splitHyphen.length < 2 || splitHyphen[0] == null || splitHyphen[0].isEmpty() || splitHyphen[0].trim().equals("") || splitHyphen[1] == null || splitHyphen[1].isEmpty() || splitHyphen[1].trim().equals(""))
-//			throw new PackageValidationException(MessageCodes.ERROR_PACKAGE_INVALID_VERSION, target);
-//		try
-//		{
-//			Integer.parseInt(splitDot[0]);
-//			Integer.parseInt(splitHyphen[1]);
-//			Integer.parseInt(splitHyphen[0].split("\\.")[1]);
-//		}
-//		catch(NumberFormatException e)
-//		{
-//			throw new PackageValidationException(MessageCodes.ERROR_PACKAGE_INVALID_VERSION, target);
-//		}		
+
+		int maxLength = Integer.valueOf(environment.getProperty("package.version.max-numbers", "10"));
+		if(splitted.length > maxLength) {
+			throw new PackageValidationException(MessageCodes.ERROR_PACKAGE_INVALID_VERSION, target);
+		}
+		
 		if(target.getId() <= 0 && !replace)
 		{
 			Package checkSameVersion = packageService.findByNameAndVersionAndRepository(name, version, repository);

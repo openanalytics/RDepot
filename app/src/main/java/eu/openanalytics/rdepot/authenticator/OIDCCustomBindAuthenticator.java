@@ -24,13 +24,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.env.Environment;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
@@ -43,6 +47,7 @@ import eu.openanalytics.rdepot.exception.AuthenticationUserCreationException;
 import eu.openanalytics.rdepot.exception.AuthenticationUserEditionException;
 import eu.openanalytics.rdepot.exception.UserCreateException;
 import eu.openanalytics.rdepot.exception.UserEditException;
+import eu.openanalytics.rdepot.mapper.NameMapper;
 import eu.openanalytics.rdepot.model.Role;
 import eu.openanalytics.rdepot.model.User;
 import eu.openanalytics.rdepot.service.RoleService;
@@ -50,6 +55,7 @@ import eu.openanalytics.rdepot.service.UserService;
 
 @ComponentScan("eu.openanalytics.rdepot")
 @Service
+@Transactional
 @ConditionalOnProperty(value = "app.authentication", havingValue = "openid")
 public class OIDCCustomBindAuthenticator {
 	
@@ -62,12 +68,18 @@ public class OIDCCustomBindAuthenticator {
 	@Autowired
 	private RoleService roleService;
 	
+	@Autowired
+    private MessageSource messageSource;
+	
+	private Locale locale = LocaleContextHolder.getLocale();
+
+	
 	private String login, email, name;
 	
 	public Collection<? extends GrantedAuthority> authenticate(String username, OidcIdToken idToken) throws AuthException {
 		this.login = username;
 		this.email = idToken.getEmail();
-		this.name = idToken.getFullName();
+		this.name = NameMapper.getName(environment, idToken);
 		
 		List<String> defaultAdmins = new ArrayList<>();
 		
@@ -108,16 +120,16 @@ public class OIDCCustomBindAuthenticator {
 					try {
 						userService.create(user);
 					} catch (UserCreateException e) {
-						throw new AuthenticationUserCreationException();
+						throw new AuthenticationUserCreationException(messageSource, locale, user);
 					}
 				}
 				else if(!user.isActive())
 				{
-					throw new AuthenticationInactiveUserException();
+					throw new AuthenticationInactiveUserException(messageSource, locale, user);
 				}
 				else if(user.isDeleted())
 				{
-					throw new AuthenticationDeletedUserException();
+					throw new AuthenticationDeletedUserException(messageSource, locale, user);
 				}
 				else
 				{
@@ -128,11 +140,11 @@ public class OIDCCustomBindAuthenticator {
 			}	
 			else if(!user.isActive())
 			{
-				throw new AuthenticationInactiveUserException();
+				throw new AuthenticationInactiveUserException(messageSource, locale, user);
 			}
 			else if(user.isDeleted())
 			{
-				throw new AuthenticationDeletedUserException();
+				throw new AuthenticationDeletedUserException(messageSource, locale, user);
 			}
 			else
 			{
@@ -145,7 +157,7 @@ public class OIDCCustomBindAuthenticator {
 			}
 			userService.updateLastLoggedInOn(user, null, new Date());
 		} catch(UserEditException e) {
-			throw new AuthenticationUserEditionException();
+			throw new AuthenticationUserEditionException(messageSource, locale, user);
 		}
 		
 		return userService.getGrantedAuthorities(login);

@@ -96,6 +96,5 @@ public interface RepositoryStorage {
 	 * @throws DeleteFileException 
 	 * @throws RepositoryStorageException
 	 */
-	public void deleteCurrentDirectory(Repository repository) throws DeleteFileException;
-
+	public void deleteCurrentDirectory(Repository repository) throws DeleteFileException;	
 }

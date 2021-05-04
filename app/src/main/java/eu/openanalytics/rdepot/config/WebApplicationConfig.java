@@ -48,6 +48,8 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.validation.DefaultMessageCodesResolver;
 import org.springframework.validation.MessageCodesResolver;
@@ -80,6 +82,7 @@ import eu.openanalytics.rdepot.validation.RepositoryValidator;
 import eu.openanalytics.rdepot.validation.UserValidator;
 
 @Configuration
+@EnableAsync
 @ComponentScan("eu.openanalytics.rdepot")
 @EnableJpaRepositories("eu.openanalytics.rdepot.repository")
 public class WebApplicationConfig implements WebMvcConfigurer {
@@ -426,5 +429,15 @@ public class WebApplicationConfig implements WebMvcConfigurer {
     	loggingFilter.setIncludePayload(true);
     	loggingFilter.setIncludeHeaders(true);
     	return loggingFilter;
+    }
+    
+    @Bean
+    public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
+    	ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
+    	
+    	threadPoolTaskScheduler.setPoolSize(100); //TODO: fetch from the configuration
+    	threadPoolTaskScheduler.setThreadNamePrefix("ThreadPoolTaskScheduler");
+    	
+    	return threadPoolTaskScheduler;
     }
 }

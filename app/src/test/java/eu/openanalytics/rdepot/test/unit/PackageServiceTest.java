@@ -24,7 +24,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -35,11 +34,15 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -53,6 +56,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 //import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.context.MessageSource;
+
 import eu.openanalytics.rdepot.exception.AdminNotFound;
 import eu.openanalytics.rdepot.exception.EventNotFound;
 import eu.openanalytics.rdepot.exception.PackageActivateException;
@@ -240,7 +244,9 @@ public class PackageServiceTest {
 		User user = UserTestFixture.GET_FIXTURE_ADMIN();
 		Repository repository = RepositoryTestFixture.GET_FIXTURE_REPOSITORY();
 		Package replacedPackage = PackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
+		replacedPackage.setVersion("1.2.3");
 		Package replacingPackage = PackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
+		replacingPackage.setVersion("1-2-3");
 		Event deleteEvent = EventTestFixture.GET_FIXTURE_EVENT("delete");
 		Event createEvent = EventTestFixture.GET_FIXTURE_EVENT("create");
 		Submission submission = SubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, replacedPackage);
@@ -250,9 +256,11 @@ public class PackageServiceTest {
 		submission.setDeleted(false);
 		replacedPackage.setSubmission(submission);
 		
-		when(packageRepository.findByNameAndVersionAndRepositoryAndDeleted(
-				replacingPackage.getName(), replacingPackage.getVersion(), 
-				replacingPackage.getRepository(), false))
+		Collection<String> versions = Arrays.asList("1.2.3", "1.2-3", "1-2.3", "1-2-3");
+		
+		when(packageRepository.findByNameAndRepositoryAndDeletedAndVersionIn(
+				replacingPackage.getName(), replacingPackage.getRepository(),
+				false, versions))
 			.thenReturn(replacedPackage);
 		when(eventService.getDeleteEvent()).thenReturn(deleteEvent);
 		when(eventService.getCreateEvent()).thenReturn(createEvent);
@@ -847,7 +855,7 @@ public class PackageServiceTest {
 	}
 	
 	@Test
-	public void findAll_skipsNotAcceptedSubmissions() {
+	public void findAll() {
 		Repository repository = RepositoryTestFixture.GET_FIXTURE_REPOSITORY();
 		User user = UserTestFixture.GET_FIXTURE_USER();
 		List<Package> packages = PackageTestFixture.GET_FIXTURE_PACKAGES(repository, user, 4);
@@ -855,18 +863,11 @@ public class PackageServiceTest {
 		for(Package packageBag : packages) 
 			packageBag.getSubmission().setAccepted(true);
 		
-		packages.get(1).getSubmission().setAccepted(false);
-		
-		when(packageRepository.findByDeleted(eq(false), any())).thenReturn(packages);
+		when(packageRepository.findNonDeletedByAcceptedSubmission()).thenReturn(packages);
 		
 		List<Package> returnedPackages = packageService.findAll();
 		
-		assertEquals("Number of packages is not correct.", 3, returnedPackages.size());
-		
-		for(Package packageBag : returnedPackages) {
-			if(packageBag.getId() == packages.get(1).getId())
-				fail("Packages were not filtered properly");
-		}
+		assertEquals("Number of packages is not correct.", 4, returnedPackages.size());
 	}
 	
 	@Test

@@ -1,102 +1,85 @@
-/**
- * R Depot
- *
- * Copyright (C) 2012-2020 Open Analytics NV
- *
- * ===========================================================================
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the Apache License as published by
- * The Apache Software Foundation, either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * Apache License for more details.
- *
- * You should have received a copy of the Apache License
- * along with this program.  If not, see <http://www.apache.org/licenses/>
- */
 package eu.openanalytics.rdepot.controller;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import javax.annotation.Resource;
+import static eu.openanalytics.rdepot.security.keycloak.CustomKeycloakAuthenticationFailureHandler.SP_KEYCLOAK_ERROR_REASON;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
+
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.core.env.Environment;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+
+import org.keycloak.adapters.OIDCAuthenticationError;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.util.NestedServletException;
 
 @Controller
-public class ErrorController extends SimpleUrlAuthenticationFailureHandler {
+@RequestMapping("/error")
+public class ErrorController implements org.springframework.boot.web.servlet.error.ErrorController {
 	
-	@Resource
-	private Environment environment;
-	
-	Locale locale = LocaleContextHolder.getLocale();
-	
-	@Resource
-	MessageSource messageSource;
-	
-	@RequestMapping(value = "/authfailed", method=RequestMethod.GET)
-	public String authFailed(HttpServletRequest request, Model model, @RequestParam String error) {
-		if(environment.getProperty("app.authentication").equals("openid")) {
-			model.addAttribute("link", environment.getProperty("app.openid.baseUrl"));
-		} else {
-			model.addAttribute("link", environment.getProperty("app.keycloak.baseUrl") + "/manager");
+	@RequestMapping(produces = "text/html")
+	public String handleError(Model model, HttpServletRequest request, HttpServletResponse response) throws ServletException {
+		
+	    Object obj = request.getSession().getAttribute(SP_KEYCLOAK_ERROR_REASON);
+	    if (obj instanceof OIDCAuthenticationError.Reason) {
+	    	request.getSession().removeAttribute(SP_KEYCLOAK_ERROR_REASON);
+			OIDCAuthenticationError.Reason reason = (OIDCAuthenticationError.Reason) obj;
+	    	if (reason == OIDCAuthenticationError.Reason.INVALID_STATE_COOKIE ||
+				reason == OIDCAuthenticationError.Reason.STALE_TOKEN) {
+	    		// These errors are typically caused by users using wrong bookmarks (e.g. bookmarks with states in)
+				// or when some cookies got stale. However, the user is logged into the IDP, therefore it's enough to
+				// send the user to the main page and they will get logged in automatically.
+				return "redirect:/";
+			} else {
+				return "redirect:/authfailed";
+			}
 		}
+	    
+		Throwable exception = (Throwable) request.getAttribute("javax.servlet.error.exception");
+		if (exception == null) {
+			exception = (Throwable) request.getAttribute("SPRING_SECURITY_LAST_EXCEPTION");
+		}
+
+		String[] msg = createMsgStack(exception);
+		if (exception == null) {
+			msg[0] = HttpStatus.valueOf(response.getStatus()).getReasonPhrase();
+		}
+
+		model.addAttribute("message", msg[0]);
+		model.addAttribute("stackTrace", msg[1]);
+		model.addAttribute("status", response.getStatus());
+	    
 		
-		model.addAttribute("error", messageSource.getMessage(error, null, error, locale));
-		
-		
-		return "error_auth";
+		return "error";
 	}
 
 	@Override
-	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
-			AuthenticationException exception) throws IOException, ServletException {		
+	public String getErrorPath() {		
+		return "/error";
+	}
+
+	private String[] createMsgStack(Throwable exception) {
+		String message = "";
+		String stackTrace = "";
 		
-		if(environment.getProperty("app.authentication").equals("openid")) {
-			List<String> cookies = new ArrayList<>();
-			
-			for(int i=0;;i++) {
-				String cookie = environment.getProperty(String.format("app.openid.delete_cookies[%d].name", i));
-				if (cookie == null) break;
-				else cookies.add(cookie);
+		if (exception instanceof NestedServletException && exception.getCause() instanceof Exception) {
+			exception = (Exception) exception.getCause();
+		}
+		if (exception != null) {
+			if (exception.getMessage() != null) message = exception.getMessage();
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			try (PrintWriter writer = new PrintWriter(bos)) {
+				exception.printStackTrace(writer);
 			}
-			
-			deleteCookies(request, response, cookies);
+			stackTrace = bos.toString();
 		}
 		
-		request.logout();
-		response.sendRedirect("/authfailed?error=" + exception.getMessage());
-	}
+		if (message == null || message.isEmpty()) message = "An unexpected server error occurred";
+		if (stackTrace == null || stackTrace.isEmpty()) stackTrace = "n/a";
 		
-	private void deleteCookies(HttpServletRequest request, HttpServletResponse response, List<String> names) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null && cookies.length > 0) {
-            for (Cookie cookie: cookies) {
-                if (names.contains(cookie.getName())) {
-                    cookie.setValue("");
-                    cookie.setPath("/");
-                    cookie.setMaxAge(0);
-                    response.addCookie(cookie);
-                }
-            }
-        }
-    }
-
+		return new String[] { message, stackTrace };
+	}
 }

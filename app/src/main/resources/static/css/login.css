@@ -99,7 +99,6 @@ footer img {
 	max-width: 30px;
 	background: white;
 	transition: all .2s ease;
-	vertical-align: sub;
 }
 
 footer a:hover img { opacity: 0.5; }

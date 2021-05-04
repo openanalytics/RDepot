@@ -56,6 +56,7 @@ import eu.openanalytics.rdepot.exception.RepositoryPublishException;
 import eu.openanalytics.rdepot.exception.SubmissionAcceptException;
 import eu.openanalytics.rdepot.exception.SubmissionDeleteException;
 import eu.openanalytics.rdepot.exception.SubmissionNotFound;
+import eu.openanalytics.rdepot.exception.SynchronizeMirrorException;
 import eu.openanalytics.rdepot.exception.UserActivateException;
 import eu.openanalytics.rdepot.exception.UserDeactivateException;
 import eu.openanalytics.rdepot.exception.UserEditException;
@@ -138,14 +139,14 @@ public class GlobalController {
 		RepositoryPublishException.class, RepositoryDeleteException.class,
 		RepositoryMaintainerEditException.class, RepositoryMaintainerDeleteException.class,
 		SubmissionDeleteException.class, SubmissionAcceptException.class, UserEditException.class, 
-		UserActivateException.class, NoAdminLeftException.class, UserDeactivateException.class})
+		UserActivateException.class, NoAdminLeftException.class, UserDeactivateException.class,
+		SynchronizeMirrorException.class})
 	public ResponseEntity<Map<String, String>> handleInternalServerError(
 			Exception exception, HandlerMethod handlerMethod) {
 		return handleException(exception, handlerMethod, HttpStatus.INTERNAL_SERVER_ERROR,
 				"Action could not be completed due to internal server error.", true);
 	}
 	
-
 	@ExceptionHandler({PackageNotFound.class, RepositoryNotFound.class, PackageMaintainerNotFound.class,
 		RepositoryMaintainerNotFound.class, SubmissionNotFound.class, UserNotFound.class})
     public ResponseEntity<Map<String, String>> handleObjectNotFoundException(

@@ -32,7 +32,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+
 import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,7 +47,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
 import com.google.gson.Gson;
+
 import eu.openanalytics.rdepot.exception.CreateFolderStructureException;
 import eu.openanalytics.rdepot.exception.DeleteFileException;
 import eu.openanalytics.rdepot.exception.GzipFileException;
@@ -377,6 +381,4 @@ public class RepositoryStorageLocalImpl implements RepositoryStorage {
 		
 		baseStorage.deleteFile(current.getAbsolutePath());
 	}
-
-	
 }

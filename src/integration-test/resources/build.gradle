@@ -2,7 +2,7 @@ task restore {
     doLast{
         exec {
             executable "docker"
-            args "exec", "oa-rdepot-app", "/bin/bash", "-c", "mkdir -p /opt/rdepot/repositories; mkdir -p /opt/rdepot/new; mkdir -p /opt/rdepot/generated; cp -fr /opt/testSourceFiles/info/* /opt/rdepot/repositories; cp -fr /opt/testGenerated/repository/* /opt/rdepot/generated; cp -fr /opt/newFiles/new/* /opt/rdepot/new"
+            args "exec", "oa-rdepot-app", "/bin/bash", "-c", "rm -rf /opt/rdepot/repositories; rm -rf /opt/rdepot/generated; mkdir -p /opt/rdepot/repositories; mkdir -p /opt/rdepot/new; mkdir -p /opt/rdepot/generated; cp -fr /opt/testSourceFiles/info/* /opt/rdepot/repositories; cp -fr /opt/testGenerated/repository/* /opt/rdepot/generated; cp -fr /opt/newFiles/new/* /opt/rdepot/new"
         }
 
         exec {
@@ -20,14 +20,33 @@ task restore {
 }
 
 task restoreDeclarative {
-	doLast {
+	doLast {	
 		exec {
             executable "docker"
-            args "exec", "oa-rdepot-db-declarative", "su", "-", "postgres", "-c", "dropdb postgres; createdb postgres; psql < /opt/database.sql"
+            args "exec", "oa-rdepot-db", "su", "-", "postgres", "-c", "dropdb declarative; createdb declarative; psql declarative < /opt/declarative_ready.sql"
+        }
+        
+        exec {
+            executable "docker"
+            args "exec", "oa-rdepot-db", "su", "-", "root", "-c", "rm -f /opt/declarative_ready.sql"
+        }
+        
+        exec {
+            executable "docker"
+            args "exec", "oa-rdepot-app-declarative", "/bin/bash", "-c", "rm -rf /opt/rdepot/repositories; rm -rf /opt/rdepot/new; rm -rf /opt/rdepot/generated; mkdir -p /opt/rdepot/generated"
         }
         
         println "Declarative restored"
 	}
+}
+
+task backupDeclarative {
+	doLast {	
+		exec {
+            executable "docker"
+            args "exec", "oa-rdepot-db", "su", "-", "root", "-c", "pg_dump -U postgres declarative > /opt/declarative_ready.sql"
+        }
+    }	
 }
 
 task wait {
@@ -54,4 +73,22 @@ task checkOnServerIfRepositoryWithOnlyOnePackageDoesNotHaveArchive {
             args "exec", "oa-rdepot-repo", "/bin/sh", "-c", "cd /opt/rdepot/testrepo2/src/contrib/Archive/visdat/"
         }
     }
+}
+
+task checkIfSourceOfPackageExistsInFilesystem {
+	doLast{
+		exec {
+			executable "docker"
+			args "exec", "oa-rdepot-app", "/bin/bash", "-c", "cd /opt/rdepot/repositories/8/*/visdat/"
+		}
+	}
+}
+
+task checkIfSymbolicLinkWasCreated {
+	doLast{
+		exec {
+			executable "docker"
+			args "exec", "oa-rdepot-app", "/bin/bash", "-c", "cd /opt/rdepot/generated/8/current/src/"
+		}
+	}
 }

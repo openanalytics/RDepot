@@ -34,4 +34,8 @@ public class SubmissionCreateWarning extends SubmissionWarning {
 	public SubmissionCreateWarning(MessageSource messageSource, Locale locale, Submission submission) {
 		super(MessageCodes.WARNING_SUBMISSION_CREATE, messageSource, locale, submission);
 	}
+
+	public SubmissionCreateWarning(MessageSource messageSource, Locale locale) {
+		super(MessageCodes.WARNING_SUBMISSION_CREATE, messageSource, locale);
+	}
 }

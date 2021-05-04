@@ -1,0 +1,40 @@
+api_token:
+  secret: SecretKeyToGenJWTs
+
+declarative: false
+
+app:
+  authentication: simple  
+  simple:
+    users:
+      - login: einstein
+        password: testpassword
+      - login: tesla
+        password: testpassword
+      - login: galieleo
+        password: testpassword
+      - login: newton
+        password: testpassword
+      - login: newbie
+        password: testpassword
+        name: New User  
+      - login: doe
+        password: testpassword
+        name: John Doe             
+
+# Database related properties
+db:
+  driver: org.postgresql.Driver
+  url: jdbc:postgresql://oa-rdepot-db:5432/rdepot
+  username: rdepot
+  password: mysecretpassword
+
+# Hibernate related properties
+hibernate:
+  dialect: org.hibernate.dialect.PostgreSQLDialect
+  show_sql: false   
+
+# Enable Liquibase
+spring:
+  liquibase:
+    enabled: false       

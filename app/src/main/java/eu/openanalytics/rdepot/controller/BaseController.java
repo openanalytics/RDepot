@@ -21,21 +21,32 @@
 package eu.openanalytics.rdepot.controller;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.keycloak.KeycloakPrincipal;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 
+import eu.openanalytics.rdepot.messaging.MessageCodes;
 import eu.openanalytics.rdepot.utils.AjaxUtils;
 
 @Controller
@@ -43,6 +54,11 @@ public class BaseController {
 	
 	@Value("${app.authentication}")
 	private String mode;
+	
+	@Autowired
+	private MessageSource messageSource;
+	
+	private static Locale locale = LocaleContextHolder.getLocale();
 	
     @ExceptionHandler(Exception.class)
     public @ResponseBody String handleUncaughtException(Exception ex, WebRequest request, HttpServletResponse response) throws IOException 
@@ -58,8 +74,7 @@ public class BaseController {
     }
 	
 	@RequestMapping(value={"/", "index"}, method=RequestMethod.GET)
-	public String index() {
-		
+	public String index() {		
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	    if (principal == null || principal instanceof String)
 	        if(mode.equals("keycloak")) {
@@ -73,5 +88,20 @@ public class BaseController {
 	    	)
 	        return "redirect:/manager";
 	    return "redirect:/login";
+	}
+	
+	@RequestMapping("/accessdenied")
+	public String handleAccessDenied() {
+		return "accessdenied";
+	}
+	
+	@RequestMapping(value = "/api/accessdenied", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<String, String>> handleApiAccessDenied() {
+		Map<String, String> body = new HashMap<>();
+		body.put("status", "error");
+		body.put("message", messageSource.getMessage(MessageCodes.ERROR_ACCESS_DENIED, null, 
+				MessageCodes.ERROR_ACCESS_DENIED, locale));
+		
+		return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
 	}
 }

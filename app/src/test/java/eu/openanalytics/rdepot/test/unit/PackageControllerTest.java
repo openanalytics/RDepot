@@ -173,8 +173,7 @@ public class PackageControllerTest extends ControllerUnitTest {
 		
 		String expected = objectMapper.writeValueAsString(maintainedByUser);
 		
-		when(userService.findByLogin(principal.getName())).thenReturn(user);
-		when(packageService.findMaintainedBy(user)).thenReturn(maintainedByUser);
+		when(packageService.findAllByRepositoryName(null)).thenReturn(maintainedByUser);		
 		
 		mockMvc.perform(
 				get(URI_PREFIX + "/list")

@@ -36,7 +36,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 public class SimpleAuthenticationIntegrationTest {
 	private RemoteWebDriver driver;
 	
-	private final String url = "oa-rdepot-app-simple:8080";
+	private final String url = "http://192.168.49.24:8080";
 								
 	@Before
     public void setUp() throws InterruptedException, IOException{
@@ -131,7 +131,7 @@ public class SimpleAuthenticationIntegrationTest {
       	
       	String errorMsg = driver.findElementById("error_message").getText();
 		
-		assertEquals("Wrong error message is displayed", "error.authentication.inactive.user", errorMsg);
+		assertEquals("Wrong error message displayed", "doe: This account is inactive", errorMsg);
 		assertEquals("It hasn't stayed on login page", "RDepot - Login Page", title);
 	}
 }

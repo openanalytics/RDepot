@@ -38,7 +38,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "repository", schema = "public")
-public class Repository implements java.io.Serializable
+public class Repository implements java.io.Serializable, IRepositoryProjection
 {
 
 	/**
@@ -57,6 +57,22 @@ public class Repository implements java.io.Serializable
 	private Set<RepositoryMaintainer> repositoryMaintainers = new HashSet<RepositoryMaintainer>(0);
 	private Set<RepositoryEvent> repositoryEvents = new HashSet<RepositoryEvent>(0);
 	
+	@Transient
+	private Set<Mirror> mirrors = new HashSet<Mirror>();
+	
+	@Transient
+	private Boolean synchronizing;
+	
+	@Transient
+	public Boolean isSynchronizing() {
+		return synchronizing;
+	}
+
+	@Transient
+	public void setSynchronizing(Boolean synchronizing) {
+		this.synchronizing = synchronizing;
+	}
+
 	public Repository(Repository that) {
 		this.id = that.id;
 		this.version = that.version;
@@ -257,5 +273,15 @@ public class Repository implements java.io.Serializable
 	@Override
 	public String toString() {
 		return "Name: " + this.name + ", publication URI: " + this.publicationUri + ", server address: " + this.serverAddress;		
+	}
+
+	@Transient
+	public Set<Mirror> getMirrors() {
+		return mirrors;
+	}
+
+	@Transient
+	public void setMirrors(Set<Mirror> mirrors) {
+		this.mirrors = mirrors;
 	}
 }

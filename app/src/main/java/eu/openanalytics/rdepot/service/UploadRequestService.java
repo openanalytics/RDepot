@@ -25,7 +25,9 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
+
 import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -33,6 +35,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
+
 import eu.openanalytics.rdepot.exception.ExtractFileException;
 import eu.openanalytics.rdepot.exception.ManualCreateException;
 import eu.openanalytics.rdepot.exception.Md5SumCalculationException;
@@ -45,6 +48,7 @@ import eu.openanalytics.rdepot.exception.PackageValidationException;
 import eu.openanalytics.rdepot.exception.RepositoryNotFound;
 import eu.openanalytics.rdepot.exception.SourceFileDeleteException;
 import eu.openanalytics.rdepot.exception.UploadRequestValidationException;
+import eu.openanalytics.rdepot.exception.WriteToDiskException;
 import eu.openanalytics.rdepot.exception.WriteToDiskFromMultipartException;
 import eu.openanalytics.rdepot.model.Package;
 import eu.openanalytics.rdepot.model.PackageMaintainer;
@@ -99,21 +103,14 @@ public class UploadRequestService {
 	
 	private Locale locale = LocaleContextHolder.getLocale();
 	
-	public Package createPackage(PackageUploadRequest packageUploadRequest, User uploader)
-			throws UploadRequestValidationException, UploadRequestValidationWarning {
+	private Package createPackage(String name, File packageFile, 
+			User uploader, Boolean generateManual, Repository repository, 
+			Boolean replace) 
+						throws UploadRequestValidationException, UploadRequestValidationWarning {
 		Package packageBag = new Package();
-		boolean generateManual = packageUploadRequest.getGenerateManual();
-
+		
 		try {
-			multipartFileValidator.validate(packageUploadRequest.getFileData());
-			
-			String name = packageUploadRequest.getFileData().getOriginalFilename().split("_")[0];
-			Repository repository = repositoryService.findByName(packageUploadRequest.getRepository());
-			if(repository == null)
-				throw new RepositoryNotFound(messageSource, locale, packageUploadRequest.getRepository());
-			
-			File onDisk = packageStorage.writeToWaitingRoom(packageUploadRequest.getFileData(),repository);
-			File extracted = packageStorage.extractPackageFile(onDisk);
+			File extracted = packageStorage.extractPackageFile(packageFile);
 			File descriptionFile = packageStorage.getDescriptionFile(extracted, name);
 			
 			Properties properties = readDescription(descriptionFile);
@@ -126,9 +123,9 @@ public class UploadRequestService {
 			String systemRequirements = properties.getProperty("System Requirements");
 			String license = properties.getProperty("License");
 			String url = properties.getProperty("URL");
-			String source = onDisk.getAbsolutePath();
+			String source = packageFile.getAbsolutePath();
 			String title = properties.getProperty("Title");
-			String md5sum = packageStorage.calculateFileMd5Sum(onDisk.getAbsolutePath());
+			String md5sum = packageStorage.calculateFileMd5Sum(packageFile.getAbsolutePath());
 			User user = packageService.chooseBestMaintainer(packageBag);
 			
 			packageBag.setName(name);
@@ -148,21 +145,9 @@ public class UploadRequestService {
 			packageBag.setUser(user);
 			packageBag.setActive(false);
 			
-			packageValidator.validate(packageBag, packageUploadRequest.getReplace());
-			packageBag = packageService.create(packageBag, uploader, packageUploadRequest.getReplace());
+			packageValidator.validate(packageBag, replace);
+			packageBag = packageService.create(packageBag, uploader, replace);
 			
-			// TODO: where to do this? if submission not accepted, wait until accepted...
-			// also check if submission really just is submission and doesn't alter anything in the db
-//			if (active) 
-//			{
-//				for(Package p : packageBag.getRepository().getPackages())
-//				{
-//					if (p.getName().equals(name) && p.getId() != packageBag.getId())
-//					{
-//						packageService.deactivatePackage(p, uploader);
-//					}
-//				}
-//			}
 			if(generateManual) {
 				packageService.createManuals(packageBag);
 				logger.info("Manuals were generated");
@@ -170,18 +155,13 @@ public class UploadRequestService {
 				logger.info("Manuals were not generated");
 			}
 			return packageBag;
-			
-		} catch (MultipartFileValidationException | 
-			   PackageEditException | 
-			   Md5SumCalculationException | 
-			   ManualCreateException | 
-			   PackageDescriptionNotFound | 
-			   ExtractFileException | 
-			   WriteToDiskFromMultipartException |
-			   RepositoryNotFound e) {
+		} catch(PackageEditException | 
+				   Md5SumCalculationException | 
+				   ManualCreateException | 
+				   PackageDescriptionNotFound | 
+				   ExtractFileException e) {
 			logger.error(e.getClass() + ": " + e.getMessage());
 			throw new UploadRequestValidationException(e.getMessage());
-			
 		} catch (PackageCreateException e) {
 			if(packageBag != null && !packageBag.getSource().isEmpty()) {
 				try {
@@ -221,19 +201,63 @@ public class UploadRequestService {
 		}
 	}
 	
-//	public Boolean chooseActive(Package packageBag, User maintainer) 
-//	{
-//		String name = packageBag.getName();
-//		Repository repository = packageBag.getRepository();
-//		if(canUpload(name, repository, maintainer))
-//		{
-//			if(packageService.isHighestVersion(packageBag))
-//			{
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
+	/**
+	 * Creates a user-submitted package from an upload request.
+	 * @param packageUploadRequest
+	 * @param uploader
+	 * @return
+	 * @throws UploadRequestValidationException
+	 * @throws UploadRequestValidationWarning
+	 */
+	public Package createPackage(PackageUploadRequest packageUploadRequest, User uploader)
+			throws UploadRequestValidationException, UploadRequestValidationWarning {
+		boolean generateManual = packageUploadRequest.getGenerateManual();
+		boolean replace = packageUploadRequest.getReplace();
+		try {
+
+			multipartFileValidator.validate(packageUploadRequest.getFileData());
+			String name = packageUploadRequest.getFileData().getOriginalFilename().split("_")[0];
+			Repository repository = repositoryService.findByName(packageUploadRequest.getRepository());
+			if(repository == null)
+				throw new RepositoryNotFound(messageSource, locale, packageUploadRequest.getRepository());
+			
+			File onDisk = packageStorage.writeToWaitingRoom(packageUploadRequest.getFileData(), repository);
+
+			return createPackage(name, onDisk, uploader, generateManual, repository, replace);
+		} catch(MultipartFileValidationException | 
+				RepositoryNotFound | 
+				WriteToDiskFromMultipartException e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
+			throw new UploadRequestValidationException(e.getMessage());
+		}		
+	}
+	
+	/**
+	 * Creates or replaces existing package. 
+	 * Unlike {@link #createPackage(PackageUploadRequest, User) createPackage} method,
+	 * it takes an existing .tar.gz file as a parameter so that it can be used for internal submission.
+	 * @param packageFile
+	 * @param uploader
+	 * @param repository
+	 * @param generateManuals
+	 * @return
+	 * @throws UploadRequestValidationException
+	 * @throws UploadRequestValidationWarning
+	 */
+	public Package createOrReplacePackage(File packageFile, User uploader, Repository repository, 
+			Boolean generateManuals) 
+			throws UploadRequestValidationException, UploadRequestValidationWarning {
+		String name = packageFile.getName().split("_")[0];
+		
+		try {
+			File onDisk = packageStorage.writeToWaitingRoom(packageFile, repository);
+			
+			return createPackage(name, onDisk, uploader, generateManuals, repository, true);
+		} catch (WriteToDiskException e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
+			throw new UploadRequestValidationException(e.getMessage());
+		}
+	}
 	
 	public boolean canUpload(String packageName, Repository repository, User uploader) {
 		if(Objects.equals(uploader.getRole().getName(), "admin"))

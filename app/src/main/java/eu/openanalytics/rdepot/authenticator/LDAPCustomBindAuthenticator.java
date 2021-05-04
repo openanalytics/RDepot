@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,17 +39,18 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 
-import eu.openanalytics.rdepot.config.LDAPSecurityConfig;
 import eu.openanalytics.rdepot.exception.UserCreateException;
 import eu.openanalytics.rdepot.exception.UserEditException;
 import eu.openanalytics.rdepot.model.Role;
 import eu.openanalytics.rdepot.model.User;
+import eu.openanalytics.rdepot.security.LDAPSecurityConfig;
 import eu.openanalytics.rdepot.service.EventService;
 import eu.openanalytics.rdepot.service.RoleService;
 import eu.openanalytics.rdepot.service.UserEventService;
 import eu.openanalytics.rdepot.service.UserService;
 
 @ConditionalOnProperty(value = "app.authentication", havingValue = "ldap")
+@Transactional
 public class LDAPCustomBindAuthenticator extends BindAuthenticator
 {
 	

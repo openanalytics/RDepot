@@ -157,6 +157,7 @@ public final class MessageCodes {
 	public static final String ERROR_STORAGE_GET_FILE_IN_BYTES = "error.storage.get.file.in.bytes";
 	public static final String ERROR_STORAGE_MOVE_FILE = "error.storage.move.file";
 	public static final String ERROR_STORAGE_WRITE_TO_DISK_FROM_MULTIPART = "error.write.to.disk.from.multipart";
+	public static final String ERROR_STORAGE_WRITE_TO_DISK = "error.write.to.disk";
 	public static final String ERROR_MANUAL_CREATE = "error.manual.create";
 	public static final String ERROR_PACKAGE_SOURCE_DELETE = "error.package.source.delete";
 	public static final String ERROR_PACKAGE_STORAGE_GET_IN_BYTES = "error.package.storage.get.in.bytes";
@@ -188,5 +189,15 @@ public final class MessageCodes {
 	public static final String ERROR_REPOSITORY_INVALID_ID = "repository.invalid.id";
 	public static final String SUCCESS_USER_UPDATED = "user.updated";
 	public static final String ERROR_REPOSITORYMAINTAINER_EDIT = "error.repositorymaintainer.edit";
-	public static final String ERROR_REPOSITORYMAINTAINER_DELETE = "error.repositorymaintainer.delete";
+	public static final String ERROR_REPOSITORYMAINTAINER_DELETE = "error.repositorymaintainer.delete";	
+	public static final String ERROR_NO_SUCH_PACKAGE = "error.no.such.package";
+	public static final String ERROR_UPDATE_PACKAGE = "error.update.package";
+	public static final String ERROR_DOWNLOAD_PACKAGES_FILE = "error.download.packages.file";
+	public static final String ERROR_CLEAN_FS = "error.clean.fs";
+	public static final String ERROR_SYNCHRONIZE_MIRROR = "error.synchronize.mirror";
+	public static final String SUCCESS_REPOSITORY_SYNCHRONIZATION_STARTED = "success.repository.synchronization.started";
+	public static final String ERROR_DOWNLOAD_FILE = "error.download.file";
+	public static final String ERROR_STORAGE_CREATE_TEMPORARY_FOLDER = "error.storage.create.temporary.folder";
+	public static final String WARNING_SYNCHRONIZATION_IN_PROGRESS = "warning.synchronization.in.progress";
+	public static final String ERROR_ACCESS_DENIED = "error.access.denied"; 
 }

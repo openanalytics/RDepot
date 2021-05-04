@@ -26,6 +26,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -47,13 +48,16 @@ import eu.openanalytics.rdepot.integrationtest.IntegrationTest;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.http.ContentType;
 
-public class RepositoryIntegrationTest extends IntegrationTest {	
+public class RepositoryIntegrationTest extends IntegrationTest {
+	private final String API_PACKAGES_PATH = "/api/manager/packages";
+	
 	private final String REPO_NAME_TO_CREATE = "testrepo7";
 	private final String REPO_NAME_TO_EDIT = "newName";
 	
 	private final String REPO_ID_TO_PUBLISH = "5";
 	private final String REPO_ID_TO_UNPUBLISH = "2";
 	private final String REPO_ID_TO_DELETE = "2";
+	private final String REPO_ID_TO_DELETE_UNPUBLISHED = "4";
 	private final String REPO_ID_TO_EDIT = "2";
 	private final String DELETED_REPOSITORY_ID = "5";
 	
@@ -112,6 +116,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		given()
 			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.contentType(ContentType.JSON)
+			.accept(ContentType.JSON)
 			.body(params)
 		.when()
 			.post(API_PATH + "/create")
@@ -183,7 +188,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 	public void shouldReturnRepositories() throws ParseException, IOException {
 		JSONParser jsonParser = new JSONParser();
 		
-		FileReader reader = new FileReader(JSON_PATH + "/repository/list_repositories_user.json");
+		FileReader reader = new FileReader(JSON_PATH + "/repository/list_repositories.json");
 		JSONArray expectedJSON = (JSONArray) jsonParser.parse(reader);
 		
 		List<Set> expectedPackages = convertPackages(expectedJSON);
@@ -352,6 +357,39 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 	}
 	
 	@Test
+	public void shouldRemovePackagesWhenUnpublishedRepositoryIsDeleted() throws IOException, ParseException {
+		given()
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.delete(API_PATH + "/" + REPO_ID_TO_DELETE_UNPUBLISHED + "/delete")
+		.then()
+			.statusCode(200)
+			.body("success", equalTo("Repository has been deleted successfully."));
+		
+		JSONParser jsonParser = new JSONParser();
+		
+		FileReader reader = new FileReader(JSON_PATH + "/repository/packages_after_removing_unpublished_repository.json");
+		JSONArray expectedJSONArray = (JSONArray) jsonParser.parse(reader);
+		Set<JSONObject> expectedJSON = convert(expectedJSONArray);
+
+		String data = given()
+				.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+				.accept(ContentType.JSON)
+		.when()
+			.get(API_PACKAGES_PATH + "/list")
+		.then()
+			.statusCode(200)
+			.extract()
+			.asString();
+			
+		JSONArray actualJSONArray = (JSONArray) jsonParser.parse(data);
+		Set<JSONObject> actualJSON = convert(actualJSONArray);
+
+		assertEquals("Differences in packages", expectedJSON, actualJSON);
+	}
+	
+	@Test
 	public void shouldCreateRepositoryUploadPackageAndPublishRepository() throws IOException, InterruptedException {
 		Map<String, String> params = new HashMap<>();
 		params.put("name", REPO_NAME_TO_CREATE);
@@ -412,6 +450,22 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		process.destroy();
 		
 		assertTrue("Archive directory should be empty", exitValue == 1);
+		
+		exitValue = -1;
+		
+		cmd = new String[] {"gradle", "checkIfSourceOfPackageExistsInFilesystem", "-b","src/integration-test/resources/build.gradle"};
+		process = Runtime.getRuntime().exec(cmd);
+		exitValue = process.waitFor();
+		process.destroy();
+		
+		assertTrue("Source of package doesn't exist in filesystem", exitValue == 0);
+		
+		cmd = new String[] {"gradle", "checkIfSymbolicLinkWasCreated", "-b","src/integration-test/resources/build.gradle"};
+		process = Runtime.getRuntime().exec(cmd);
+		exitValue = process.waitFor();
+		process.destroy();
+		
+		assertTrue("Symbolic link wasn't created", exitValue == 0);
 	}
 	
 	@Test
@@ -480,7 +534,16 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		assertTrue("Files haven't been removed from server", exitValue == 0);
 	}
 	
-	//TODO: negative test for shift deletion
+	@Test
+	public void shouldNonAdminUserNotBeAbleToShiftDeleteRepository() {
+		given()
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.delete(API_PATH + "/" + REPO_ID_TO_DELETE + "/sdelete")
+		.then()
+			.statusCode(403);
+	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private List<Set> convertPackages(JSONArray rootJSON) throws ParseException {

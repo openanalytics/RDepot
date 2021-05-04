@@ -36,7 +36,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 public class KeycloakIntegrationTest {
 	private RemoteWebDriver driver;
 	
-	private final String url = "oa-rdepot-app-keycloak:8080";
+	private final String url = "http://192.168.49.23:8080";
 	
 	@Before
     public void setUp() throws IOException, InterruptedException{
@@ -109,6 +109,24 @@ public class KeycloakIntegrationTest {
 	}
 	
 	@Test
+	public void testUpdateFamilyName() throws InterruptedException {
+      	driver.get(url);
+      	driver.findElementByName("username").sendKeys("tarski");
+      	driver.findElementByName("password").sendKeys("testpassword");
+      	driver.findElementByName("login").click();
+		String title = driver.getTitle();
+		String username = driver.findElementByName("username").getText();
+		
+		WebElement navBar = driver.findElementById("navbar");
+		
+		int sizeOfNavBar = navBar.findElements(By.xpath("./a")).size();
+		
+		assertEquals("Simple user can only see 4 sections in menu", 4, sizeOfNavBar);
+		assertEquals("RDepot", title);
+		assertEquals("Alfred Tajtelbaum", username);
+	}
+	
+	@Test
 	public void testLogOut() throws InterruptedException {
       	driver.get(url);
       	driver.findElementByName("username").sendKeys("einstein");
@@ -131,7 +149,7 @@ public class KeycloakIntegrationTest {
       	String errorMsg = driver.findElementById("error_message").getText();
 		String title = driver.getTitle();
 		
-		assertEquals("This account is inactive", errorMsg);
+		assertEquals("An error occurred during the authentication procedure.", errorMsg);
 		assertEquals("RDepot - Authentication failed", title);
 	}
 }

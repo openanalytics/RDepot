@@ -23,8 +23,8 @@ services:
     hostname: oa-rdepot-app
     container_name: oa-rdepot-app
     volumes:
-      - ./docker/app/authentication.yml:/opt/rdepot/authentication.yml      
       - ./docker/app/application.yml:/opt/rdepot/application.yml
+#      - ./docker/app/test_configs/test_declarative_config.yml:/opt/rdepot/application.yml      
       - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
       - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
       - ./itestSourceFiles:/opt/testSourceFiles:ro
@@ -49,7 +49,8 @@ services:
       timeout: 10s
       retries: 50 
     networks:
-      - oa-rdepot  
+      oa-rdepot:
+        ipv4_address: 192.168.49.23  
       
   repo:
     build: ./docker/repo
@@ -74,6 +75,8 @@ services:
       - ./docker/db/sql_files/:/opt/sql_files/:ro
     environment:
       - POSTGRES_PASSWORD=mysecretpassword
+    ports:
+      - 54321:5432  
     networks:
       - oa-rdepot
                       
@@ -87,11 +90,13 @@ services:
 #      - USERS_FILE=/opt/rdepot/users.json
 #    volumes:
 #      - ./docker/oidc/config.json:/opt/rdepot/config.json
+##      - ./docker/oidc/test-config.json:/opt/rdepot/config.json
 #      - ./docker/oidc/users.json:/opt/rdepot/users.json  
 #    ports:
 #      - 9000:9000
 #    networks:
-#      - oa-rdepot
+#      oa-rdepot:
+#        ipv4_address: 192.168.49.16
   
 #  keycloak:
 #    image: quay.io/keycloak/keycloak:10.0.2
@@ -107,7 +112,8 @@ services:
 #      - KEYCLOAK_IMPORT=/opt/rdepot/realm-rdepot.json
 #      - PROXY_ADDRESS_FORWARDING=true
 #    volumes:
-#     - ./docker/keycloak/realm-rdepot.json:/opt/rdepot/realm-rdepot.json
+#     - ./docker/keycloak/test-realm-rdepot.json:/opt/rdepot/realm-rdepot.json
+##     - ./docker/keycloak/realm-rdepot.json:/opt/rdepot/realm-rdepot.json
 #    networks:
 #      oa-rdepot:
 #        ipv4_address: 192.168.49.17
@@ -131,7 +137,7 @@ services:
 #-----------------------------------------------------------------------------------------------------------------
 # Tests related containers      
 #  selenium-hub:
-#    image: selenium/hub:3.141.59-bismuth
+#    image: selenium/hub
 #    container_name: oa-rdepot-selenium-hub
 #    hostname: oa-rdepot-selenium-hub
 #    ports:
@@ -139,7 +145,7 @@ services:
 #    networks:
 #      - oa-rdepot  
 #  chrome:
-#    image: selenium/node-chrome:3.141.59-bismuth
+#    image: selenium/node-chrome
 #    container_name: oa-rdepot-chrome
 #    hostname: oa-rdepot-chrome
 #    depends_on:

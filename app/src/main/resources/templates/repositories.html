@@ -2,7 +2,7 @@
 <html>
     <head th:replace="fragments/header :: head (module='repositories')">
     </head>
-    <body>
+    <body th:data-role="${role}" th:onload="${disabled} ? 'scheduleSynchronization()'">
         <div class="mdl-layout mdl-js-layout">
             <header th:replace="fragments/header :: topbar (module='repositories')"></header>
             <div th:replace="fragments/header :: drawer (module='repositories')"></div>
@@ -25,11 +25,12 @@
                             <th class="mdl-data-table__cell--non-numeric">Version</th>
                             <th class="mdl-data-table__cell--non-numeric">Number of packages</th>
                             <th class="mdl-data-table__cell--non-numeric">Published</th>
+                            <th class="mdl-data-table__cell--non-numeric">Synchronization</th>
                             <th class="mdl-data-table__cell--non-numeric">Actions</th>
                         </tr>                
                     </thead>
                     <tbody>
-                        <tr th:each="repository : ${repositories}" >
+                        <tr th:class="repository-row" th:id="'repository-' + ${repository.id} + '-row'" th:data-id="${repository.id}" th:each="repository : ${repositories}" >
                             <input type="hidden" th:id="'repository-' + ${repository.id}"/>
                             <div th:id="'editrepository-' + ${repository.id}" th:text="${repository.name}" style="display:none;"></div> <!-- edit later-->
                             <td class="mdl-data-table__cell--non-numeric repository-name" th:text="${repository.name}" th:data1="${repository.name}" th:onclick="openRepositoryPage(this.getAttribute('data1'))"></td>
@@ -49,14 +50,21 @@
                                 </div>
                                 
                             </td>
+                            <td th:if="${disabled}" class="mdl-data-table__cell--non-numeric">
+                            	<div class="synchronization-field" >
+                               		<button th:if="${role > 2}" class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored-alternative" th:onclick="'synchronizeMirrors('+ ${repository.id} + ')'">
+                                           <i class="material-icons">update</i>
+                                       </button>
+                                </div>
+                            </td>
                             <td class="mdl-data-table__cell--non-numeric">
                                 <div th:if="${role > 1 && maintained.contains(repository.id)}">
-	                                <div th:switch="${disabled}">
+	                                <div class="enableable-buttons" th:switch="${disabled}">
 	                                    <div th:case="${false}">
 	                                    	<button th:if="${role > 2}" class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" th:onclick="'openDeleteRepositoryDialog('+ ${repository.id} + ')'">
 	                                            <i class="material-icons">delete_forever</i>
 	                                        </button>                                        
-	                                        <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" style="color:rgba(50, 166, 211);" th:onclick="'openEditRepositoryDialog('+ ${repository.id} + ')'">
+	                                        <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored-alternative" th:onclick="'openEditRepositoryDialog('+ ${repository.id} + ')'">
 	                                            <i class="material-icons">edit</i>
 	                                        </button>
 	                                    </div>
@@ -64,11 +72,11 @@
 	                                    	<button th:if="${role > 2}" class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" th:onclick="'openDeleteRepositoryDialog('+ ${repository.id} + ')'" disabled>
 	                                            <i class="material-icons">delete_forever</i>
 	                                        </button>                                        
-	                                        <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" style="color:rgba(0,0,0, 0.26));" th:onclick="'openEditRepositoryDialog('+ ${repository.id} + ')'" disabled>
+	                                        <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored-alternative" th:onclick="'openEditRepositoryDialog('+ ${repository.id} + ')'" disabled>
 	                                            <i class="material-icons">edit</i>
 	                                        </button>
 	                                    </div>	                                    
-	                                </div>                                    
+	                                </div>
                                 </div>
                                 
                             </td>

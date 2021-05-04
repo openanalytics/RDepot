@@ -40,8 +40,7 @@ import org.junit.Test;
 import eu.openanalytics.rdepot.integrationtest.IntegrationTest;
 import io.restassured.http.ContentType;
 
-public class UserIntegrationTest extends IntegrationTest {
-	
+public class UserIntegrationTest extends IntegrationTest {	
 	private final String USER_TO_ACTIVATE_LOGIN = "admin";
 	private final String USER_TO_DEACTIVATE_LOGIN = "galieleo";
 

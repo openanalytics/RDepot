@@ -22,6 +22,8 @@ package eu.openanalytics.rdepot.storage;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -36,6 +38,7 @@ import eu.openanalytics.rdepot.exception.PackageDescriptionNotFound;
 import eu.openanalytics.rdepot.exception.PackageSourceNotFoundException;
 import eu.openanalytics.rdepot.exception.PackageStorageException;
 import eu.openanalytics.rdepot.exception.SourceFileDeleteException;
+import eu.openanalytics.rdepot.exception.WriteToDiskException;
 import eu.openanalytics.rdepot.exception.WriteToDiskFromMultipartException;
 import eu.openanalytics.rdepot.model.Package;
 import eu.openanalytics.rdepot.model.Repository;
@@ -108,6 +111,17 @@ public interface PackageStorage {
 	 */
 	public File writeToWaitingRoom(MultipartFile muiltipartFile, Repository repository) 
 			throws WriteToDiskFromMultipartException;
+	
+	/**
+	 * This method saves package in so-called "waiting room" where it stays 
+	 * until it's accepted by administrator
+	 * @param packageFile
+	 * @param packageId ID of uploaded package - needed to provide uniqueness
+	 * @return Package file
+	 * @throws DeleteFileException 
+	 * @throws WriteToDiskFromMultipartException 
+	 */
+	public File writeToWaitingRoom(File packageFile, Repository repository) throws WriteToDiskException;
 
 	/**
 	 * This method saves uploaded package in the storage.
@@ -117,8 +131,19 @@ public interface PackageStorage {
 	 * @throws DeleteFileException 
 	 * @throws WriteToDiskFromMultipartException 
 	 */
-	public File writeToDisk(MultipartFile multipartFile, Repository repository) 
+	public File writeToDisk(MultipartFile packageFile, Repository repository) 
 			throws WriteToDiskFromMultipartException, DeleteFileException;
+	
+	/**
+	 * This method saves uploaded package in the storage.
+	 * @param packageFile uploaded file
+	 * @param repository Repository which package should be uploaded to
+	 * @return Package file
+	 * @throws WriteToDiskException
+	 * @throws DeleteFileException
+	 */
+	public File writeToDisk(File packageFile, Repository repository) 
+			throws WriteToDiskException, DeleteFileException;
 	
 	/**
 	 * This method moves a package source from waiting directory to the main one.
@@ -154,4 +179,19 @@ public interface PackageStorage {
 	public Properties readPackageDescription(File file) throws PackageStorageException;
 	public File getDescriptionFile(File extracted, String packageName) throws PackageDescriptionNotFound;
 	public String calculateFileMd5Sum(String path) throws Md5SumCalculationException;
+
+	/**
+	 * Finds all vignette files in package directory.
+	 * @param packageBag
+	 * @return File objects for all available vignettes
+	 */
+	public List<File> getVignetteFiles(Package packageBag);
+
+	
+	/**
+	 * Returns available reference manual filename for a given package.
+	 * @param packageBag
+	 * @return filename
+	 */
+	public Optional<String> getReferenceManualFilename(Package packageBag);
 }

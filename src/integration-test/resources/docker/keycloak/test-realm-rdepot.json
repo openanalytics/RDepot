@@ -87,17 +87,17 @@
       "id": "ac075956-54a2-4e16-b3a3-0544feb913fa",
       "clientId": "oa-rdepot-app-keycloak",
       "rootUrl": "",
-      "baseUrl": "http://oa-rdepot-app-keycloak:8080/",
+      "baseUrl": "http://192.168.49.23:8080/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "secret": "68951b41-39bd-4f1f-b7e8-d17228c8132c",
       "redirectUris": [
-        "http://oa-rdepot-app-keycloak:8080/*"
+        "http://192.168.49.23:8080/*"
       ],
       "webOrigins": [
-        "http://oa-rdepot-app-keycloak:8080/*"
+        "http://192.168.49.23:8080/*"
       ],
       "notBefore": 0,
       "bearerOnly": false,

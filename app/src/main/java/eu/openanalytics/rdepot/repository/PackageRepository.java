@@ -20,10 +20,13 @@
  */
 package eu.openanalytics.rdepot.repository;
 
+import java.util.Collection;
 import java.util.List;
 
+import org.hibernate.query.NativeQuery;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.openanalytics.rdepot.model.Package;
@@ -40,7 +43,7 @@ public interface PackageRepository extends JpaRepository<Package, Integer> {
 
 	public List<Package> findByNameAndRepository(String name, Repository repository);
 
-	public Package findByNameAndVersionAndRepository(String name, String version, Repository repository);
+//	public Package findByNameAndVersionAndRepository(String name, String version, Repository repository);
 
 	public List<Package> findByRepositoryAndUser(Repository repository,	User user);
 
@@ -57,7 +60,19 @@ public interface PackageRepository extends JpaRepository<Package, Integer> {
 	public List<Package> findByNameAndRepositoryAndDeleted(String name,	Repository repository, boolean deleted);
 	
 	public List<Package> findByNameAndRepositoryAndActive(String name,	Repository repository, boolean active);
-
-	public Package findByNameAndVersionAndRepositoryAndDeleted(String name,	String version, Repository repository, boolean deleted);
-
+	
+	public Package findByNameAndRepositoryAndDeletedAndVersionIn(String name, Repository repository, boolean deleted, Collection<String> versions);
+	
+	@Query(value = "select p.* from submission s "
+			+ "join package p on s.package_id = p.id and p.deleted = false "
+			+ "where s.accepted = true",
+			nativeQuery = true)
+	List<Package> findNonDeletedByAcceptedSubmission();
+	
+	@Query(value = "select p.* from submission s "
+			+ "join package p on s.package_id = p.id and p.deleted = false "
+			+ "join repository r on p.repository_id = r.id and r.name = ?1 "
+			+ "where s.accepted = true",
+			nativeQuery = true)
+	List<Package> findNonDeletedByRepositoryNameAndAcceptedSubmission(String repositoryName);
 }

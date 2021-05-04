@@ -29,13 +29,16 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.junit.Test;
+import org.springframework.http.MediaType;
 
 import eu.openanalytics.rdepot.integrationtest.IntegrationTest;
 import io.restassured.http.ContentType;
@@ -49,6 +52,9 @@ public class PackageIntegrationTest extends IntegrationTest {
 	private final String PACKAGE_NAME_TO_DOWNLOAD = "accrued";
 	private final String PACKAGE_VERSION_TO_DOWNLOAD = "1.3";
 	private final String PACKAGE_ID_TO_DOWNLOAD = "5";
+	private final String PACKAGE_ID_WITHOUT_MANUAL = "18";
+	
+	private final String VIGNETTE = "/25/vignettes/usl.pdf";
 	
 	private final String PACKAGE_TO_DEACTIVATE_ID = "25";
 	private final String PACKAGE_TO_DEACTIVATE_URI = "/testrepo1/src/contrib/usl_2.0.0.tar.gz";
@@ -64,10 +70,7 @@ public class PackageIntegrationTest extends IntegrationTest {
 	private final String API_PATH = "/api/manager/packages";	
 	
 	@Test
-	public void shouldReturnPackages() throws IOException, ParseException {
-		
-		//FYI: only admin sees the full list of packages
-		
+	public void shouldReturnPackages() throws IOException, ParseException {				
 		JSONParser jsonParser = new JSONParser();
 		
 		FileReader reader = new FileReader(JSON_PATH + "/package/packages.json");
@@ -89,7 +92,31 @@ public class PackageIntegrationTest extends IntegrationTest {
 		Set<JSONObject> actualJSON = convert(rootJSON);
 		
 		assertEquals("Differences in packages", expectedJSON, actualJSON);
+	}
+	
+	@Test
+	public void shouldReturnPackagesFromCertainRepository() throws IOException, ParseException {				
+		JSONParser jsonParser = new JSONParser();
+		
+		FileReader reader = new FileReader(JSON_PATH + "/package/packages_from_one_repository.json");
+		JSONArray rootJSON = (JSONArray) jsonParser.parse(reader);
+		Set<JSONObject> expectedJSON = convert(rootJSON);
+		
+		String data = given()
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.get(API_PATH + "/list?repositoryName=testrepo1")
+		.then()
+			.statusCode(200)
+			.extract()
+			.asString();
+			
+		rootJSON = (JSONArray) jsonParser.parse(data);
 
+		Set<JSONObject> actualJSON = convert(rootJSON);
+		
+		assertEquals("Differences in packages", expectedJSON, actualJSON);
 	}
 	
 	@Test
@@ -452,6 +479,45 @@ public class PackageIntegrationTest extends IntegrationTest {
 		
 		assertEquals("Package hasn't been added to the list of deleted packages", expectedJSONDeleted, actualJSONDeleted);
 		assertEquals("Package hasn't been removed from the list of packages", expectedJSON, actualJSON);
+	}
+	
+	@Test
+	public void shouldDownloadVignette() throws IOException {
+		byte[] actual = given()
+			.header(AUTHORIZATION, BEARER + USER_TOKEN)
+			.accept(MediaType.APPLICATION_PDF_VALUE)
+		.when()
+			.get(API_PATH + VIGNETTE)
+		.then()
+			.statusCode(200)
+			.extract()
+		.asByteArray();
+		
+		File expected = new File(PDF_PATH + "/usl.pdf");
+
+		assertTrue(Arrays.equals(actual, FileUtils.readFileToByteArray(expected)));
+	}
+	
+	@Test
+	public void shouldReturn404IfReferenceManualIsNotAvailable() {
+		given()
+			.header(AUTHORIZATION, BEARER + USER_TOKEN)
+			.accept(MediaType.APPLICATION_PDF_VALUE)
+		.when()
+			.get(API_PATH + "/" + PACKAGE_ID_WITHOUT_MANUAL +"/download/nonexisting.pdf")
+		.then()
+			.statusCode(404);
+	}
+	
+	@Test
+	public void shouldReturn404IfVignetteIsNotAvailable() {
+		given()
+			.header(AUTHORIZATION, BEARER + USER_TOKEN)
+			.accept(MediaType.APPLICATION_PDF_VALUE)
+		.when()
+			.get(API_PATH + "/" + PACKAGE_ID_WITHOUT_MANUAL +"/vignettes/nonexisting.pdf")
+		.then()
+			.statusCode(404);
 	}
 	
 	//TODO: negative test for shift deletion

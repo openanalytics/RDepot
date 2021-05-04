@@ -157,9 +157,13 @@ public class RepositoryService {
 			
 			try {
 				unpublishRepository(deletedRepository, deleter);
+			} catch (RepositoryAlreadyUnpublishedWarning w) {
+				logger.warn(w.getClass().getName() + ": " + w.getMessage(), w);
+			}
+			
+			try {
 				deletePackages(deletedRepository, deleter);
-				
-			} catch (PackageAlreadyDeletedWarning | RepositoryAlreadyUnpublishedWarning w) {
+			} catch (PackageAlreadyDeletedWarning w) {
 				logger.warn(w.getClass().getName() + ": " + w.getMessage(), w);
 			}
 			
@@ -488,6 +492,7 @@ public class RepositoryService {
 		List<Repository> existingRepositories = findAllEvenDeleted();
 		try {
 			requester = userService.findFirstAdmin();
+			
 			for(Repository repository : repositories) {
 				Repository existingRepository = findByName(repository.getName());
 				if(existingRepository != null) {
@@ -529,6 +534,7 @@ public class RepositoryService {
 					}
 				});		
 			}
+			
 		} catch (AdminNotFound e) {	
 			logger.error("When trying to create a preconfigured repositories, we couldn't find any valid administrator");
 		}

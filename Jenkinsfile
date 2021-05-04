@@ -103,6 +103,12 @@ pipeline {
                         }
                     }
                     stage('publish') {
+						when {
+							anyOf {
+								branch 'develop'
+								branch 'master'
+							}
+						}
                         steps {
                             withDockerRegistry([
                                     credentialsId: "openanalytics-dockerhub",

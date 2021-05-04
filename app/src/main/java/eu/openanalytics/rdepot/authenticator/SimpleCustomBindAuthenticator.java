@@ -23,13 +23,17 @@ package eu.openanalytics.rdepot.authenticator;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.env.Environment;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
@@ -47,6 +51,7 @@ import eu.openanalytics.rdepot.service.UserService;
 
 @ComponentScan("eu.openanalytics.rdepot")
 @Service
+@Transactional
 @ConditionalOnProperty(value = "app.authentication", havingValue = "simple")
 public class SimpleCustomBindAuthenticator {
 
@@ -58,6 +63,12 @@ public class SimpleCustomBindAuthenticator {
 	
 	@Autowired
 	private RoleService roleService;
+	
+	@Autowired
+    private MessageSource messageSource;
+	
+	private Locale locale = LocaleContextHolder.getLocale();
+
 	
 	private String login, email, name;
 	
@@ -86,10 +97,10 @@ public class SimpleCustomBindAuthenticator {
 		if(name == null) {		
 			name = login;
 		}
-			
-		try {
-			User user = userService.findByLoginEvenDeleted(login);
-			
+		
+		User user = userService.findByLoginEvenDeleted(login);
+		
+		try {				
 			if (user == null)
 			{
 				user = userService.findByEmailEvenDeleted(email);
@@ -108,16 +119,16 @@ public class SimpleCustomBindAuthenticator {
 					try {
 						userService.create(user);
 					} catch (UserCreateException e) {
-						throw new AuthenticationUserCreationException();
+						throw new AuthenticationUserCreationException(messageSource, locale, user);
 					}
 				}
 				else if(!user.isActive())
 				{
-					throw new AuthenticationInactiveUserException();
+					throw new AuthenticationInactiveUserException(messageSource, locale, user);
 				}
 				else if(user.isDeleted())
 				{
-					throw new AuthenticationDeletedUserException();
+					throw new AuthenticationDeletedUserException(messageSource, locale, user);
 				}
 				else
 				{
@@ -128,11 +139,11 @@ public class SimpleCustomBindAuthenticator {
 			}
 			else if(!user.isActive())
 			{
-				throw new AuthenticationInactiveUserException();
+				throw new AuthenticationInactiveUserException(messageSource, locale, user);
 			}
 			else if(user.isDeleted())
 			{
-				throw new AuthenticationDeletedUserException();
+				throw new AuthenticationDeletedUserException(messageSource, locale, user);
 			}
 			else
 			{
@@ -148,7 +159,7 @@ public class SimpleCustomBindAuthenticator {
 			userService.updateLastLoggedInOn(user, null, new Date());
 			
 		} catch(UserEditException e) {
-			throw new AuthenticationUserEditionException();
+			throw new AuthenticationUserEditionException(messageSource, locale, user);
 		}
 		
 		return (List<? extends GrantedAuthority>) userService.getGrantedAuthorities(login);

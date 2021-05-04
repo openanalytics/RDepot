@@ -30,15 +30,15 @@
                         <p class="install">install.packages(&quot;<span th:text="${packageBag.name}"></span>&quot;, repos = c(rdepot = &quot;<span th:text="${packageBag.repository.publicationUri}"></span>&quot;, getOption(&quot;repos&quot;)))</p>
                     </div>
                     <h3>Documentation</h3>
-                    <div th:if="${#lists.isEmpty(packageBag.vignettes)} == true">
+                    <div th:if="${#lists.isEmpty(vignettes)} == true">
                         No vignettes available
                     </div>
-                    <div th:if="${#lists.isEmpty(packageBag.vignettes)} == false">
+                    <div th:if="${#lists.isEmpty(vignettes)} == false">
                         <ul>
-                            <li th:each="vignette : ${packageBag.vignettes}"><a th:href="@{/manager/packages/} + ${packageBag.id} + @{/vignettes/} + ${vignette.fileName}" th:text="${vignette.title}"></a></li>
+                            <li th:each="vignette : ${vignettes}"><a th:href="@{/manager/packages/} + ${packageBag.id} + @{/vignettes/} + ${vignette.fileName}" th:text="${vignette.title}"></a></li>
                         </ul>
                     </div>
-                    <a th:href="@{/manager/packages/} + ${packageBag.id} + @{/download/} + ${packageBag.name} + '.pdf'">Reference Manual</a>
+                    <a th:if="${isManualAvailable}" th:href="@{/manager/packages/} + ${packageBag.id} + @{/download/} + ${packageBag.name} + '.pdf'">Reference Manual</a>
                     <h3>Details</h3>
                     <table>
                         <tbody>

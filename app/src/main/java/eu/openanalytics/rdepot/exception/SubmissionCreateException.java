@@ -33,4 +33,9 @@ public class SubmissionCreateException extends SubmissionException {
 	public SubmissionCreateException(MessageSource messageSource, Locale locale, Submission submission) {
 		super(MessageCodes.ERROR_SUBMISSION_CREATE, messageSource, locale, submission);
 	}
+
+	public SubmissionCreateException(MessageSource messageSource, Locale locale) {
+		super(MessageCodes.ERROR_SUBMISSION_CREATE, messageSource, locale);
+
+	}
 }

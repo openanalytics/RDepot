@@ -29,6 +29,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -47,6 +49,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -65,6 +68,7 @@ import eu.openanalytics.rdepot.model.Package;
 import eu.openanalytics.rdepot.model.PackageEvent;
 import eu.openanalytics.rdepot.model.Repository;
 import eu.openanalytics.rdepot.model.User;
+import eu.openanalytics.rdepot.model.Vignette;
 import eu.openanalytics.rdepot.service.PackageEventService;
 import eu.openanalytics.rdepot.service.PackageService;
 import eu.openanalytics.rdepot.service.RepositoryService;
@@ -122,16 +126,16 @@ public class PackageController {
     }
      
     /**
-     * This method provides a list of all packages maintained by the user.
+     * This method provides a list of all packages.
      * @param principal represents the user
+     * @param repository name (optional)
      * @return list of maintained packages
      */
     @PreAuthorize("hasAuthority('user')")
-    @RequestMapping(value="/list", method=RequestMethod.GET)
+    @RequestMapping(value="/list", method=RequestMethod.GET, produces="application/json")
     @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody List<Package> packages(Principal principal) {
-        User requester = userService.findByLogin(principal.getName());
-        return packageService.findMaintainedBy(requester);
+    public @ResponseBody List<Package> packages(Principal principal, @RequestParam(required = false) String repositoryName) {
+        return packageService.findAllByRepositoryName(repositoryName);
     }
      
     /**
@@ -185,6 +189,9 @@ public class PackageController {
         //TODO: set vignettes for packageBag
         
         model.addAttribute("packageBag", packageBag);
+        model.addAttribute("vignettes", packageService.getAvailableVignettes(packageBag));
+        model.addAttribute("isManualAvailable", 
+        		packageService.getReferenceManualFilename(packageBag).isPresent());
          
         Repository repository = repositoryService.findByName(packageBag.getRepository().getName());
         model.addAttribute("repository", repository);
@@ -507,6 +514,43 @@ public class PackageController {
         }
         
         return new ResponseEntity<>(result, httpStatus);
+    }
+    
+    @RequestMapping(value="/{id}/vignettes", method=RequestMethod.GET, produces="application/json")
+    public @ResponseBody ResponseEntity<List<Vignette>> getVignetteLinks(@PathVariable Integer id) {
+    	List<Vignette> result = new ArrayList<Vignette>();
+    	HttpStatus httpStatus = HttpStatus.OK;
+    	
+    	Package packageBag = packageService.findByIdAndDeleted(id, false);
+    	
+    	if(packageBag == null) {
+    		httpStatus = HttpStatus.NOT_FOUND;
+    	} else {
+    		result = packageService.getAvailableVignettes(packageBag);
+    	}
+    	
+    	return new ResponseEntity<>(result, httpStatus);
+    }
+    
+    @RequestMapping(value="/{id}/manual", method=RequestMethod.GET, produces="application/json")
+    public @ResponseBody ResponseEntity<Map<String, String>> getReferenceManualFilename(@PathVariable Integer id) {
+    	Map<String, String> result = new HashMap<String, String>();
+    	HttpStatus httpStatus = HttpStatus.OK;
+    	
+    	Package packageBag = packageService.findByIdAndDeleted(id, false);
+    	
+    	if(packageBag == null) {
+    		httpStatus = HttpStatus.NOT_FOUND;
+    	} else {
+    		Optional<String> filename = packageService.getReferenceManualFilename(packageBag);
+    		
+    		Boolean available = filename.isPresent();
+    		
+    		result.put("isAvailable", Boolean.toString(available));
+    		result.put("filename", filename.orElse(""));
+    	}
+    	
+    	return new ResponseEntity<>(result, httpStatus);
     }
  
 }

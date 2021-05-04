@@ -20,8 +20,11 @@
  */
 package eu.openanalytics.rdepot.service;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -29,10 +32,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.TreeMap;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.compress.utils.FileNameUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -45,6 +52,7 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import eu.openanalytics.rdepot.comparator.PackageComparator;
 import eu.openanalytics.rdepot.exception.AdminNotFound;
 import eu.openanalytics.rdepot.exception.EventNotFound;
 import eu.openanalytics.rdepot.exception.GetFileInBytesException;
@@ -72,10 +80,10 @@ import eu.openanalytics.rdepot.model.Repository;
 import eu.openanalytics.rdepot.model.RepositoryMaintainer;
 import eu.openanalytics.rdepot.model.Submission;
 import eu.openanalytics.rdepot.model.User;
+import eu.openanalytics.rdepot.model.Vignette;
 import eu.openanalytics.rdepot.repository.PackageRepository;
 import eu.openanalytics.rdepot.storage.PackageStorage;
 import eu.openanalytics.rdepot.time.DateProvider;
-import eu.openanalytics.rdepot.utils.PackagesComparator;
 import eu.openanalytics.rdepot.warning.PackageAlreadyActivatedWarning;
 import eu.openanalytics.rdepot.warning.PackageAlreadyDeactivatedWarning;
 import eu.openanalytics.rdepot.warning.PackageAlreadyDeletedWarning;
@@ -203,7 +211,8 @@ public class PackageService {
 			Event deleteEvent = eventService.getDeleteEvent();
 			PackageEvent deletePackageEvent = new PackageEvent(0, DateProvider.now(), deleter, 
 					deletedPackage, deleteEvent, "delete", "false", "true", DateProvider.now());
-					
+			
+			deletedPackage.setActive(false);
 			deletedPackage.setDeleted(true);
 			update(deletePackageEvent, deletedPackage, deleter);
 			
@@ -327,20 +336,19 @@ public class PackageService {
 	}
 	
 	public List<Package> findAll() {
-		List<Package> allPackages = packageRepository.findByDeleted(false, Sort.by(new Order(Direction.ASC, "name")));
-		Collections.sort(allPackages, new PackagesComparator());
-		List<Package> filtered = new ArrayList<>();
-		
 		//TODO: when submission is shift deleted, the package 'gets orphaned', we decided not to treat it like a correct one
 		//TODO: in the future we would need a way to access such orphaned packages, maybe more advanced control panel for administrator
-//		filtered.addAll(allPackages.stream()
-//				.filter(packageBag -> packageBag.getSubmission().isAccepted()).collect(Collectors.toList()));
-		for(Package p : allPackages) {
-			if(p.getSubmission() != null && p.getSubmission().isAccepted()) {
-				filtered.add(p);
-			}
-		}
-		return filtered;
+		List<Package> allPackages = packageRepository.findNonDeletedByAcceptedSubmission();		
+		Collections.sort(allPackages, new PackageComparator());
+		return allPackages;
+	}
+	
+	public List<Package> findAllByRepositoryName(String repositoryName) {
+		if(Objects.isNull(repositoryName))
+			return findAll();		
+		List<Package> allPackages = packageRepository.findNonDeletedByRepositoryNameAndAcceptedSubmission(repositoryName);
+		Collections.sort(allPackages, new PackageComparator());
+		return allPackages;
 	}
 	
 	@Transactional(readOnly = false, rollbackFor=PackageEditException.class)
@@ -494,25 +502,55 @@ public class PackageService {
 		
 		return packages;
 	}
+	
+	public Package findByNameAndRepositoryAndNewest(String name, Repository repository) {
+		List<Package> packages = packageRepository.findByNameAndRepositoryAndDeleted(name, repository, false);
+		packages.sort(new PackageComparator());
+		
+		if(packages.size() > 0)
+			return packages.get(0);
+		else
+			return null; //TODO: We should move to Optional instead of returning null
+	}
 
 	public Package findByNameAndVersionAndRepository(String name, String version, Repository repository) {
-		Package packageBag = packageRepository.findByNameAndVersionAndRepositoryAndDeleted(name, version, repository, false);
+		Collection<String> versions = generateVariantsOfVersion(version);
+		
+		Package packageBag = packageRepository.findByNameAndRepositoryAndDeletedAndVersionIn(name, repository, false, versions);
 		
 		if(packageBag != null) {
 			if(packageBag.getSubmission() != null && !packageBag.getSubmission().isDeleted())
 				return packageBag;
 		}
 		return null;
-//		return packageRepository.findByNameAndVersionAndRepositoryAndDeleted(name, version, repository, false);
-//		if (packageBag == null) {
-//			return null;
-//		}
-//		else if(!packageBag.getSubmission().isDeleted()) {
-//			return packageBag;
-//		} else {
-//			return null;
-//		}
-
+	}
+	
+	private Collection<String> generateVariantsOfVersion(String version) {
+		List<String> variants = new ArrayList<>();
+		String[] splitted = version.split("-|\\.");
+		int length = splitted.length;
+		
+		int numberOfVariations = 1 << (length - 1);
+		
+		//0 in schema means dot
+		//1 in schema means hyphen
+		for(int i = 0; i < numberOfVariations; i++) {
+			String schema = String.format("%" + (length - 1) + "s", Integer.toBinaryString(i)).replace(' ', '0');
+			String newVersion = "";
+			for(int j = 0; j < length - 1; j++) {
+				newVersion += splitted[j];
+				char separator = schema.charAt(j);
+				if(separator == '0') {
+					newVersion += ".";
+				} else {
+					newVersion += "-";
+				}
+			}
+			newVersion += splitted[length - 1];
+			variants.add(newVersion);
+		}
+		
+		return variants;
 	}
 	
 	public User chooseBestMaintainer(Package packageBag) throws PackageEditException {
@@ -586,7 +624,7 @@ public class PackageService {
 	}
 	
 	public List<Package> findMaintainedBy(User user) {
-		ArrayList<Package> packages = new ArrayList<Package>();
+		List<Package> packages = new ArrayList<>();
 		switch(user.getRole().getName())
 		{
 			case "admin":
@@ -617,7 +655,7 @@ public class PackageService {
 		}
 		return packages;
 	}
-	
+		
 	//TODO: test it
 	public byte[] getPackageInBytes(Package packageBag) throws GetFileInBytesException, FileNotFoundException {
 		byte[] packageBytes = null;
@@ -642,6 +680,37 @@ public class PackageService {
 		}
 		
 		return manualBytes;
+	}
+
+	public List<Vignette> getAvailableVignettes(Package packageBag) {
+		List<Vignette> vignettes = new ArrayList<>();
+		List<File> vignetteFiles = packageStorage.getVignetteFiles(packageBag);
+		
+		for(File vignetteFile : vignetteFiles) {
+			if(FileNameUtils.getExtension(vignetteFile.getName()).equals("html")) {
+				try {
+					Document htmlDoc = Jsoup.parse(vignetteFile, "UTF-8");
+					
+					vignettes.add(new Vignette(
+							htmlDoc.title(), 
+							vignetteFile.getName()
+						));
+				} catch (IOException e) {
+					logger.error(e.getMessage(), e);
+				}
+			} else {
+				vignettes.add(new Vignette(
+						FileNameUtils.getBaseName(vignetteFile.getName()), 
+						vignetteFile.getName()
+					));
+			}
+		}
+		
+		return vignettes;
+	}
+
+	public Optional<String> getReferenceManualFilename(Package packageBag) {
+		return packageStorage.getReferenceManualFilename(packageBag);
 	}
 	
 }

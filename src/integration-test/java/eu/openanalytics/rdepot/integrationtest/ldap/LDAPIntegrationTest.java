@@ -26,6 +26,8 @@ import java.net.URL;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -33,7 +35,7 @@ public class LDAPIntegrationTest {
 	
 	private RemoteWebDriver driver;
 	
-	private final String url = "oa-rdepot-app:8080";
+	private final String url = "http://192.168.49.21:8080";
 								
 	@Before
     public void setUp() throws MalformedURLException{
@@ -64,36 +66,37 @@ public class LDAPIntegrationTest {
 		assertEquals("RDepot", title);
 	} 
 	
-//	@Test
-//	public void shouldUpdateUserNameAndEmail() throws IOException, ParseException {
-//		JSONParser jsonParser = new JSONParser();
-//		
-//		FileReader reader = new FileReader(JSON_PATH + "/user/updated_users.json");
-//		JSONArray rootJSON = (JSONArray) jsonParser.parse(reader);
-//		Set<JSONObject> expectedJSON = convert(rootJSON);
-//		
-//		given()
-//			.header(AUTHORIZATION, BEARER + USER_TO_UPDATE_TOKEN)
-//			.accept(ContentType.JSON)
-//		.when()
-//			.get("/api/manager/repositories/list")
-//		.then()
-//			.statusCode(200);			
-//		
-//		String data = given()
-//			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
-//			.accept(ContentType.JSON)
-//		.when()
-//			.get(API_PATH + "/list")
-//		.then()
-//			.statusCode(200)
-//			.extract()
-//			.asString();
-//		
-//		rootJSON = (JSONArray) jsonParser.parse(data);
-//
-//		Set<JSONObject> actualJSON = convert(rootJSON);
-//
-//		assertEquals("User hasn't been updated", expectedJSON, actualJSON);
-//	}
+	@Test
+	public void testCreateUserAccount() throws InterruptedException {
+      	driver.get(url);
+      	driver.findElementById("username").sendKeys("newbie");
+      	driver.findElementById("password").sendKeys("testpassword");
+      	driver.findElementById("button").click();
+		String title = driver.getTitle();
+		
+		WebElement navBar = driver.findElementById("navbar");
+		
+		int sizeOfNavBar = navBar.findElements(By.xpath("./a")).size();
+		
+		assertEquals("Simple user can only see 4 sections in menu", 4, sizeOfNavBar);
+		assertEquals("RDepot", title);
+	}
+	
+	@Test
+	public void testUpdateFamilyName() throws InterruptedException {
+      	driver.get(url);
+      	driver.findElementById("username").sendKeys("tarski");
+      	driver.findElementById("password").sendKeys("testpassword");
+      	driver.findElementById("button").click();
+		String title = driver.getTitle();
+		String username = driver.findElementByName("username").getText();
+		
+		WebElement navBar = driver.findElementById("navbar");
+		
+		int sizeOfNavBar = navBar.findElements(By.xpath("./a")).size();
+		
+		assertEquals("Simple user can only see 4 sections in menu", 4, sizeOfNavBar);
+		assertEquals("RDepot", title);
+		assertEquals("Alfred Tajtelbaum", username);
+	}
 }

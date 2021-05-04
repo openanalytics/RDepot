@@ -4,8 +4,7 @@ buildscript {
     }
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:2.3.1.RELEASE"
-        classpath("io.spring.gradle:dependency-management-plugin:1.0.9.RELEASE")
-        
+        classpath("io.spring.gradle:dependency-management-plugin:1.0.9.RELEASE")                   	    
     }
 }
 
@@ -18,6 +17,7 @@ plugins {
     id 'com.avast.gradle.docker-compose' version '0.7.1'
     id 'org.springframework.boot' version '2.3.1.RELEASE'
     id "org.owasp.dependencycheck" version "6.0.5"
+    id 'org.liquibase.gradle' version '2.0.4'
 }
 
 jar {
@@ -41,7 +41,7 @@ ext.buildTime = {
 }
 
 group = 'eu.openanalytics'
-ext.versionNumber = '1.4.3'
+ext.versionNumber = '1.5.0'
 ext.baseVersion = versionNumber
 version = versionNumber
 description = """rdepot"""
@@ -66,7 +66,7 @@ repositories {
 
 dependencies {
 	Map<String, String> dependencies = globalConf.commonDependencies
-		
+	
 	testImplementation project('rdepot-app')
 	testImplementation dependencies.sbStarterTest
 	testImplementation dependencies.springSecurityTest
@@ -79,6 +79,15 @@ dependencies {
     testImplementation dependencies.testcontainers
     testImplementation dependencies.selenium
     testImplementation dependencies.chromeDriver
+    
+    liquibaseRuntime dependencies.liquibaseCore
+	liquibaseRuntime dependencies.postgresql
+	liquibaseRuntime dependencies.snakeYaml
+	liquibaseRuntime("ch.qos.logback:logback-core:1.2.3")
+  	liquibaseRuntime("ch.qos.logback:logback-classic:1.2.3")           
+    
+    testImplementation dependencies.awaitility
+    testImplementation dependencies.commonsIO
 }
 
 sourceSets {
@@ -115,6 +124,22 @@ license {
 dependencyCheck {
     format='ALL'
     suppressionFile='owasp-suppression.xml'
+}
+
+def props = new Properties()
+file("liquibase.properties").withInputStream { props.load(it) }
+
+task liquibase {
+	liquibase {
+	    activities {
+	        main {
+	            changeLogFile props.getProperty("changeLogFile")
+	            url props.getProperty("url")
+	            username props.getProperty("username")
+	            password props.getProperty("password")
+	        }
+	    } 
+	}
 }
 
 task setHttpProxyFromEnv {

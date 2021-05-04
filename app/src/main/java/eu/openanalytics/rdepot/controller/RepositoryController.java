@@ -21,6 +21,7 @@
 package eu.openanalytics.rdepot.controller;
 
 import java.security.Principal;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,7 +30,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.validation.Valid;
@@ -49,6 +52,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -66,14 +70,18 @@ import eu.openanalytics.rdepot.exception.RepositoryDeleteException;
 import eu.openanalytics.rdepot.exception.RepositoryEditException;
 import eu.openanalytics.rdepot.exception.RepositoryNotFound;
 import eu.openanalytics.rdepot.exception.RepositoryPublishException;
+import eu.openanalytics.rdepot.exception.SynchronizeMirrorException;
 import eu.openanalytics.rdepot.exception.UserUnauthorizedException;
 import eu.openanalytics.rdepot.formatter.RepositoryEventFormatter;
 import eu.openanalytics.rdepot.messaging.MessageCodes;
+import eu.openanalytics.rdepot.model.Mirror;
 import eu.openanalytics.rdepot.model.Package;
 import eu.openanalytics.rdepot.model.Repository;
 import eu.openanalytics.rdepot.model.RepositoryEvent;
 import eu.openanalytics.rdepot.model.Role;
+import eu.openanalytics.rdepot.model.SynchronizationStatus;
 import eu.openanalytics.rdepot.model.User;
+import eu.openanalytics.rdepot.service.CranMirrorService;
 import eu.openanalytics.rdepot.service.PackageService;
 import eu.openanalytics.rdepot.service.RepositoryEventService;
 import eu.openanalytics.rdepot.service.RepositoryService;
@@ -109,6 +117,9 @@ public class RepositoryController {
 	@Autowired
 	private RepositoryEventFormatter repositoryEventFormatter;
 	
+	@Autowired
+	private CranMirrorService mirrorService;
+	
 	@Value("${declarative}")
 	private String declarative;
 	
@@ -124,14 +135,61 @@ public class RepositoryController {
 		model.addAttribute("role", requester.getRole().getValue());
 		List<Integer> maintained = new ArrayList<>();
 		repositoryService.findMaintainedBy(requester, false).forEach(r -> maintained.add(r.getId()));
+		List<Repository> repositories = repositoryService.findAll();
 		
 		model.addAttribute("maintained", maintained);
-		model.addAttribute("repositories", repositoryService.findAll());
-		model.addAttribute("disabled", Boolean.valueOf(declarative));
+		model.addAttribute("repositories", repositories);
+		model.addAttribute("disabled", Boolean.valueOf(declarative)); //TODO: Give "disabled" field a more informative name
         model.addAttribute("username", requester.getName());
 
 		return "repositories";
 	}
+	
+	@PreAuthorize("hasAuthority('repositorymaintainer')")
+	@GetMapping(value= {"/manager/repositories/synchronization/status", "/api/manager/repositories/synchronization/status"})
+	public @ResponseBody ResponseEntity<List<Map<String, String>>> getSynchronizationStatus(
+			Principal principal) {
+		User requester = userService.findByLogin(principal.getName());
+		
+		List<Map<String, String>> response = new ArrayList<>();
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss"); //TODO: add as a configuration property
+		//TODO: It would be better to map it automatically by adding JDK 8 support for ObjectMapper
+		List<SynchronizationStatus> status = mirrorService.getSynchronizationStatusList();
+		status.forEach(s -> {
+			Repository repository = repositoryService.findById(s.getRepositoryId());
+			
+			//authorization
+			if(repository != null && userService.isAuthorizedToEdit(repository, requester)) {
+				Map<String, String> statusMap = new HashMap<>();
+				statusMap.put("repositoryId", String.valueOf(s.getRepositoryId()));
+				statusMap.put("pending", String.valueOf(s.isPending()));
+				statusMap.put("timestamp", dateFormat.format(s.getTimestamp()));
+//				statusMap.put("error", s.getError().get());
+				if(s.getError().isPresent()) {
+					statusMap.put("error", s.getError().get().getMessage());
+				} else {
+					statusMap.put("error", String.valueOf((Object)null));
+				}
+				response.add(statusMap);
+			}
+		});
+		
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+//	@PreAuthorize("hasAuthority('user')") //TODO: The same question as above
+//	@GetMapping(value= {"/manager/repositories/synchronization-errors",
+//						"/api/manager/repositories/synchronization-errors"})
+//	public @ResponseBody ResponseEntity<Map<Integer, String>> getSynchronizationErrors(Principal principal) {
+//		Map<Integer, String> errors = new HashMap<>();
+//		mirrorService.getSynchronizationErrors().forEach((k, v) -> {
+//			errors.put(k, v.getMessage());
+//		});
+//		
+//		return new ResponseEntity<>(errors, HttpStatus.OK);
+//	}
+//	
+	
 	
 	@PreAuthorize("hasAuthority('admin')")
 	@RequestMapping(value= {"/manager/repositories/create","/api/manager/repositories/create"}, method=RequestMethod.POST)
@@ -391,6 +449,37 @@ public class RepositoryController {
 		return new ResponseEntity<>(response, httpStatus);
 	}
 	
+	
+	@PreAuthorize("hasAuthority('repositorymaintainer')")
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = {"/manager/repositories/{id}/synchronize-mirrors", 
+			"/api/manager/repositories/{id}/synchronize-mirrors"},
+			method=RequestMethod.PATCH, produces=MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ResponseEntity<HashMap<String, String>> synchronizeWithMirror(
+			@PathVariable Integer id, Principal principal) 
+					throws RepositoryNotFound, UserUnauthorizedException, SynchronizeMirrorException {
+		HashMap<String, String> response = new HashMap<String, String>();
+		User requester = userService.findByLogin(principal.getName());
+		Repository repository = repositoryService.findById(id);
+		HttpStatus httpStatus = HttpStatus.OK;
+		
+		if(repository == null) {
+			throw new RepositoryNotFound(messageSource, locale, id);
+		} else if(requester == null || !userService.isAuthorizedToEdit(repository, requester)) {
+			throw new UserUnauthorizedException(messageSource, locale);
+		} else {
+			Set<Mirror> mirrors = mirrorService.findByRepository(repository);
+			
+			for(Mirror mirror : mirrors) {
+				mirrorService.synchronize(repository, mirror);
+			}
+			
+			response.put("success", messageSource.getMessage(MessageCodes.SUCCESS_REPOSITORY_SYNCHRONIZATION_STARTED, null, locale));
+		}
+		
+		return new ResponseEntity<>(response, httpStatus);
+	}
+	
 	@PreAuthorize("hasAuthority('repositorymaintainer')")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value= {"/manager/repositories/{id}/unpublish","/api/manager/repositories/{id}/unpublish"}, 
@@ -506,6 +595,9 @@ public class RepositoryController {
 			return "redirect:/manager/repositories/" + repository.getName();
 		}
 		model.addAttribute("packageBag", packageBag);
+		model.addAttribute("vignettes", packageService.getAvailableVignettes(packageBag));
+		model.addAttribute("isManualAvailable", 
+				packageService.getReferenceManualFilename(packageBag).isPresent());
 		return "package-published";
 	}
 	
@@ -539,6 +631,10 @@ public class RepositoryController {
 				latest = packages.get(i);
 		}
 		model.addAttribute("packageBag", latest);
+		model.addAttribute("vignettes", packageService.getAvailableVignettes(latest));
+		model.addAttribute("isManualAvailable", 
+				packageService.getReferenceManualFilename(latest).isPresent());
+		
 		return "package-published";
 	}
 		

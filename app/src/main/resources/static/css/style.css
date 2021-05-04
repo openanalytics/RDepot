@@ -76,6 +76,10 @@ main.hover {
     color: rgb(255, 255, 255);
 }
 
+.mdl-spinner--single-color {
+	border-color: rgb(50, 166, 211);
+}
+
 .mdl-layout__drawer .mdl-navigation .mdl-navigation__link.active:hover {
     background-color: rgb(229, 35, 35);
     text-decoration: none;
@@ -106,12 +110,20 @@ main.hover {
     background-color: rgb(50, 166, 211);
 }
 
+.mdl-spinner__layer.mdl-spinner__layer-1, .mdl-spinner__layer.mdl-spinner__layer-2, .mdl-spinner__layer.mdl-spinner__layer-3, .mdl-spinner__layer.mdl-spinner__layer-4 {
+	border-color: rgb(50, 166, 211);
+}
+
 .mdl-checkbox.is-checked .mdl-checkbox__box-outline {
     border-color: rgb(50, 166, 211);
 }
 
 .mdl-button.mdl-button--colored {
     color: rgb(229, 35, 35);
+}
+
+.mdl-button.mdl-button--colored-alternative {
+	color: rgb(50, 166, 211);
 }
 
 .mdl-data-table tbody tr:hover {
@@ -121,6 +133,10 @@ main.hover {
 .mdl-data-table tbody tr:active {
     background-color: #c4c4c4;
     cursor: pointer;
+}
+
+.icon-success {
+	color: rgb(79, 210, 49);
 }
 
 .mdl-dialog p {
@@ -292,4 +308,12 @@ html {
 
 .topbar-button {
 	margin: 10px;
+}
+
+.synchronization-field {
+	float:left;
+}
+
+.enableable-buttons {
+	float:left;
 }

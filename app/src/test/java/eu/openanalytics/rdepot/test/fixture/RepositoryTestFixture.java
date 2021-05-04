@@ -21,10 +21,13 @@
 package eu.openanalytics.rdepot.test.fixture;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import eu.openanalytics.rdepot.model.Mirror;
 import eu.openanalytics.rdepot.model.Package;
 import eu.openanalytics.rdepot.model.PackageMaintainer;
 import eu.openanalytics.rdepot.model.Repository;
@@ -89,5 +92,229 @@ public class RepositoryTestFixture {
 		repository.setPackages(packages);
 		repository.setPackageMaintainers(new HashSet<PackageMaintainer>(packageMaintainers));
 		return repository;
+	}
+	
+	public static List<Repository> GET_DECLARED_REPOSITORIES_WITH_MIRRORS() {
+		List<Repository> repositories = GET_FIXTURE_REPOSITORIES(3);
+		
+		Mirror mirrorA = new Mirror();
+		mirrorA.setName("CRAN");
+		mirrorA.setUri("https://cran.r-project.org");
+		mirrorA.setSyncInterval("* */60 * * * *");
+		mirrorA.setType("tarball");
+		
+		Package ggplot2 = new Package();
+		ggplot2.setName("ggplot2");
+		ggplot2.setVersion("3.3.2");
+		
+		Package plotly = new Package();
+		plotly.setName("plotly");
+		
+		List<Package> packagesA = new ArrayList<>();
+		packagesA.add(ggplot2);
+		packagesA.add(plotly);
+		
+		mirrorA.setPackages(packagesA);
+		
+		Mirror mirrorB = new Mirror();
+		mirrorB.setName("Bioconductor-3.12");
+		mirrorB.setUri("https://bioconductor.org/packages/3.12/bioc");
+		mirrorB.setSyncInterval("* */60 * * * *");
+		mirrorB.setType("tarball");
+		
+		Package annotate = new Package();
+		annotate.setName("annotate");
+		annotate.setVersion("1.68.0");
+		
+		List<Package> packagesB = new ArrayList<>();
+		packagesB.add(annotate);
+		
+		mirrorB.setPackages(packagesB);
+		
+		Mirror mirrorC = new Mirror();
+		mirrorC.setName("Bioconductor-release");
+		mirrorC.setUri("https://bioconductor.org/packages/release/bioc");
+		mirrorC.setSyncInterval("* */60 * * * *");
+		mirrorC.setType("tarball");
+		
+		Package genefilter = new Package();
+		genefilter.setName("genefilter");
+		
+		List<Package> packagesC = new ArrayList<>();
+		packagesC.add(genefilter);
+		
+		mirrorC.setPackages(packagesC);
+		Set<Mirror> mirrors1 = new HashSet<Mirror>();
+		mirrors1.add(mirrorA);
+		
+		repositories.get(0).setMirrors(mirrors1);
+		
+		Set<Mirror> mirrors2 = new HashSet<Mirror>();
+		mirrors2.add(mirrorB);
+		mirrors2.add(mirrorC);
+		
+		repositories.get(1).setMirrors(mirrors2);
+		
+		return repositories;
+	}
+	
+	public static Map<String, Map<String, Package>> GET_REPOSITORIES_WITH_THE_LATEST_PACKAGES() {
+		Map<String, Map<String, Package>> repositories = new HashMap<>();
+		
+		//TestRepo0
+		Package ggplot2 = new Package();
+		ggplot2.setName("ggplot2");
+		ggplot2.setVersion("3.3.2");
+		ggplot2.setMd5sum("123412341323241");
+		
+		Package plotly = new Package();
+		plotly.setName("plotly");
+		plotly.setVersion("4.9.3");
+		plotly.setMd5sum("5b1cae380156c2d5c9052111e0431f85");
+		
+		Map<String, Package> testRepo0 = new HashMap<>();
+		testRepo0.put("ggplot2_3.3.2", ggplot2);
+		testRepo0.put("plotly_4.9.3", plotly);
+		
+		repositories.put("TestRepo0", testRepo0);
+		
+		//TestRepo1
+		Package annotate = new Package();
+		annotate.setName("annotate");
+		annotate.setVersion("1.68.0");
+		annotate.setMd5sum("c06830f9bcfc0ae87023bfe03acb319e");
+		
+		Package genefilter = new Package();
+		genefilter.setName("genefilter");
+		genefilter.setVersion("1.72.1");
+		genefilter.setMd5sum("ebf02b933c3f4e09ed52cdf46f65cb1e");
+		
+		Map<String, Package> testRepo1 = new HashMap<>();
+		testRepo1.put("annotate_1.68.0", annotate);
+		testRepo1.put("genefilter_1.72.1", genefilter);
+		
+		repositories.put("TestRepo1", testRepo1);
+		
+		//TestRepo2
+		repositories.put("TestRepo2", new HashMap<>());
+		
+		return repositories;
+	}
+	
+	public static Map<String, Map<String, Package>> GET_REPOSITORIES_WITH_NO_PACKAGES() {
+		Map<String, Map<String, Package>> repositories = new HashMap<>();
+		
+		repositories.put("TestRepo0", new HashMap<>());
+		repositories.put("TestRepo1", new HashMap<>());
+		repositories.put("TestRepo2", new HashMap<>());
+		
+		return repositories;
+	}
+	
+	public static Map<String, Map<String, Package>> GET_REPOSITORIES_WITH_ONE_PACKAGE_OUT_OF_DATE() {
+		Map<String, Map<String, Package>> repositories = new HashMap<>();
+		
+		//TestRepo0
+		Package ggplot2 = new Package();
+		ggplot2.setName("ggplot2");
+		ggplot2.setVersion("3.3.2");
+		ggplot2.setMd5sum("123412341323241");
+		
+		Package plotly = new Package();
+		plotly.setName("plotly");
+		plotly.setVersion("4.9.1"); //out of date
+		plotly.setMd5sum("alteredmd5sum9430493");
+		
+		Map<String, Package> testRepo0 = new HashMap<>();
+		testRepo0.put("ggplot2_3.3.2", ggplot2);
+		testRepo0.put("plotly_4.9.3", plotly);
+		
+		repositories.put("TestRepo0", testRepo0);
+		
+		//TestRepo1
+		Package annotate = new Package();
+		annotate.setName("annotate");
+		annotate.setVersion("1.68.0");
+		annotate.setMd5sum("c06830f9bcfc0ae87023bfe03acb319e");
+		
+		Package genefilter = new Package();
+		genefilter.setName("genefilter");
+		genefilter.setVersion("1.72.1");
+		genefilter.setMd5sum("ebf02b933c3f4e09ed52cdf46f65cb1e");
+		
+		Map<String, Package> testRepo1 = new HashMap<>();
+		testRepo1.put("annotate_1.68.0", annotate);
+		testRepo1.put("genefilter_1.72.1", genefilter);
+		
+		repositories.put("TestRepo1", testRepo1);
+		
+		//TestRepo2
+		repositories.put("TestRepo2", new HashMap<>());
+		
+		return repositories;		
+	}
+	
+	public static List<Repository> GET_DECLARED_REPOSITORIES_WITH_MIRRORS_ONE_PACKAGE_OUT_OF_DATE() {
+		List<Repository> repositories = GET_FIXTURE_REPOSITORIES(3);
+		
+		Mirror mirrorA = new Mirror();
+		mirrorA.setName("CRAN");
+		mirrorA.setUri("https://cran.r-project.org");
+		mirrorA.setSyncInterval("* */60 * * * *");
+		mirrorA.setType("tarball");
+		
+		Package ggplot2 = new Package();
+		ggplot2.setName("ggplot2");
+		ggplot2.setVersion("3.3.1");
+		
+		Package plotly = new Package();
+		plotly.setName("plotly");
+		
+		List<Package> packagesA = new ArrayList<>();
+		packagesA.add(ggplot2);
+		packagesA.add(plotly);
+		
+		mirrorA.setPackages(packagesA);
+		
+		Mirror mirrorB = new Mirror();
+		mirrorB.setName("Bioconductor-3.12");
+		mirrorB.setUri("https://bioconductor.org/packages/3.12/bioc");
+		mirrorB.setSyncInterval("* */60 * * * *");
+		mirrorB.setType("tarball");
+		
+		Package annotate = new Package();
+		annotate.setName("annotate");
+		annotate.setVersion("1.68.0");
+		
+		List<Package> packagesB = new ArrayList<>();
+		packagesB.add(annotate);
+		
+		mirrorB.setPackages(packagesB);
+		
+		Mirror mirrorC = new Mirror();
+		mirrorC.setName("Bioconductor-release");
+		mirrorC.setUri("https://bioconductor.org/packages/release/bioc");
+		mirrorC.setSyncInterval("* */60 * * * *");
+		mirrorC.setType("tarball");
+		
+		Package genefilter = new Package();
+		genefilter.setName("genefilter");
+		
+		List<Package> packagesC = new ArrayList<>();
+		packagesC.add(genefilter);
+		
+		mirrorC.setPackages(packagesC);
+		Set<Mirror> mirrors1 = new HashSet<Mirror>();
+		mirrors1.add(mirrorA);
+		
+		repositories.get(0).setMirrors(mirrors1);
+		
+		Set<Mirror> mirrors2 = new HashSet<Mirror>();
+		mirrors2.add(mirrorB);
+		mirrors2.add(mirrorC);
+		
+		repositories.get(1).setMirrors(mirrors2);
+		
+		return repositories;
 	}
 }

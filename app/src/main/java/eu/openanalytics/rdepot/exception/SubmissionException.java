@@ -43,4 +43,8 @@ public class SubmissionException extends Exception {
 		super("Submission " + Integer.toString(submissionId) + 
 				": " + messageSource.getMessage(messageCode, null, messageCode, locale));
 	}
+
+	public SubmissionException(String messageCode, MessageSource messageSource, Locale locale) {
+		super(messageSource.getMessage(messageCode, null, messageCode, locale));
+	}
 }

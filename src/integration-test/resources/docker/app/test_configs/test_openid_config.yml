@@ -1,0 +1,38 @@
+api_token:
+  secret: SecretKeyToGenJWTs
+
+declarative: false
+
+app:
+  authentication: openid
+  openid:
+    auth-url: http://192.168.49.16:9000/auth    
+    token-url: http://192.168.49.16:9000/token
+    jwks-url: http://192.168.49.16:9000/certs
+    client-id: rdepot
+    client-secret: mysecret123
+    username-attribute: nickname
+    baseUrl: http://192.168.49.22:8080
+    registrationId: rdepot
+    logout-url: http://192.168.49.16:9000/session/end    
+    delete_cookies:
+      - name: _session
+      - name: _state.rdepot     
+    name-mapping: "{fullName}"   
+
+# Database related properties
+db:
+  driver: org.postgresql.Driver
+  url: jdbc:postgresql://oa-rdepot-db:5432/rdepot
+  username: rdepot
+  password: mysecretpassword
+
+# Hibernate related properties
+hibernate:
+  dialect: org.hibernate.dialect.PostgreSQLDialect
+  show_sql: false
+  
+# Enable Liquibase
+spring:
+  liquibase:
+    enabled: false  

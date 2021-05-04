@@ -19,14 +19,13 @@ services:
       
   app:
     #    build: ./docker/app
-    image: openanalytics/rdepot-app-it:1.4.3
+    image: openanalytics/rdepot-app-it:1.5.0
     restart: always
     hostname: oa-rdepot-app
     container_name: oa-rdepot-app
     volumes:
-      - ./docker/app/authentication.yml:/opt/rdepot/authentication.yml    
-      - ./docker/app/application.yml:/opt/rdepot/application.yml #standard
-#      - ./docker/app/test_configs/application_declarative.yml:/opt/rdepot/application.yml #declarative
+      - ./docker/app/test_configs/test_declarative_config.yml:/opt/rdepot/application.yml #for declarative mode
+        # - ./docker/app/test_configs/test_ldap_config.yml:/opt/rdepot/application.yml #for regular mode
       - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
       - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
       - ./itestSourceFiles:/opt/testSourceFiles:ro
@@ -40,7 +39,8 @@ services:
 #      - keycloak
 #      - openid
     environment:
-      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/rdepot
+      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/declarative #for declarative mode
+        #      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/rdepot #for regular mode
       - DB_USERNAME=postgres
       - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8001
     healthcheck:
@@ -52,7 +52,7 @@ services:
       - oa-rdepot  
       
   repo:
-    image: openanalytics/rdepot-repo-it:1.4.3
+    image: openanalytics/rdepot-repo-it:1.5.0
     restart: always
     hostname: oa-rdepot-repo
     container_name: oa-rdepot-repo
@@ -119,9 +119,9 @@ services:
         #ipv4_address: 192.168.49.17
  
   ldap:
-    image: openanalytics/rdepot-ldap-it:1.4.3
+    image: openanalytics/rdepot-ldap-it:1.5.0
     restart: unless-stopped
-    hostname: oa-rdepot-
+    hostname: oa-rdepot-ldap
     container_name: oa-rdepot-ldap
     environment:
       - LDAP_TLS=false

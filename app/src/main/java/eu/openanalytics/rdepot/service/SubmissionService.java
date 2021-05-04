@@ -20,6 +20,7 @@
  */
 package eu.openanalytics.rdepot.service;
 
+import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -129,17 +130,69 @@ public class SubmissionService
 	
 	@Resource
 	private RepositoryMaintainerService repositoryMaintainerService;
-
+	
+//	@Transactional(readOnly = false, rollbackFor=SubmissionCreateException.class)
+//	public Submission createInternalSubmission(File packageFile, Repository repository) 
+//			throws SubmissionCreateException {
+//		Submission submission = new Submission();
+//		Event createEvent = null;
+//		User uploader = null;
+//		
+//		try {
+//			createEvent = eventService.getCreateEvent();
+//			uploader = userService.findFirstAdmin();
+//			submission.setUser(uploader); //TODO: a dedicated user for internal submissions?
+//			submission.setPackage(uploadRequestService.createOrReplacePackage(
+//					packageFile, uploader, repository));
+//			
+//		} catch (EventNotFound | AdminNotFound | UploadRequestValidationException e) {
+//			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
+//			throw new SubmissionCreateException(messageSource, locale, submission);
+//		} catch (UploadRequestValidationWarning e) {
+//			logger.warn(e.getClass().getName() + ": " + e.getMessage(), e);
+//		}
+//		
+//		submission = submissionRepository.save(submission);
+//		submissionEventService.create(createEvent, uploader, submission);
+//		
+//		try {
+//			acceptSubmission(submission, uploader);
+//		} catch (SubmissionAlreadyAcceptedWarning e) {
+//			logger.warn(e.getClass().getName() + ": " + e.getMessage(), e);
+//		} catch (SubmissionAcceptException e) {
+//			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
+//			throw new SubmissionCreateException(messageSource, locale, submission);
+//		}
+//		
+//		return submission;
+//	}
+	
 	@Transactional(readOnly = false, rollbackFor=SubmissionCreateException.class)
-	public Submission create(PackageUploadRequest uploadRequest, User creator) 
-			throws SubmissionCreateException,
-			SubmissionCreateWarning,
-			SubmissionNeedsToBeAcceptedWarning  {
+	public Submission createInternalSubmission(File packageFile, User creator, 
+			Repository repository, Boolean generateManuals) 
+			throws SubmissionCreateWarning, SubmissionCreateException, SubmissionNeedsToBeAcceptedWarning {
+		try {
+			Package packageBag = uploadRequestService.createOrReplacePackage(packageFile, creator, repository, generateManuals);
+			
+			return create(packageBag, creator);
+		} catch (UploadRequestValidationException e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
+			throw new SubmissionCreateException(messageSource, locale);
+		} catch (UploadRequestValidationWarning w) {
+			logger.warn(w.getClass().getName() + ": " + w.getMessage(), w);
+			throw new SubmissionCreateWarning(messageSource, locale);
+		}
+	}
+	
+	@Transactional(readOnly = false, rollbackFor=SubmissionCreateException.class)
+	private Submission create(Package packageBag, User creator) 
+			throws SubmissionCreateWarning, SubmissionCreateException, 
+					SubmissionNeedsToBeAcceptedWarning {
 		Submission submission = new Submission();
 		try {
 			Event createEvent = eventService.getCreateEvent();
 			submission.setUser(creator);
-			submission.setPackage(uploadRequestService.createPackage(uploadRequest, creator));
+			submission.setPackage(packageBag);
 			submission = submissionRepository.save(submission);
 			submissionEventService.create(createEvent, creator, submission);
 			
@@ -153,10 +206,10 @@ public class SubmissionService
 				throw new SubmissionNeedsToBeAcceptedWarning(messageSource, locale, submission);
 			}
 			
-		} catch (UploadRequestValidationException | EventNotFound | SubmissionAcceptException e) {
+		} catch (EventNotFound | SubmissionAcceptException e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
 			throw new SubmissionCreateException(messageSource, locale, submission);
-		} catch(UploadRequestValidationWarning | SubmissionAlreadyAcceptedWarning | SendEmailException w) {
+		} catch(SubmissionAlreadyAcceptedWarning | SendEmailException w) {
 			logger.warn(w.getClass().getName() + ": " + w.getMessage(), w);
 			throw new SubmissionCreateWarning(messageSource, locale, submission);
 		} catch(SubmissionNeedsToBeAcceptedWarning w) {
@@ -165,6 +218,24 @@ public class SubmissionService
 		}
 		
 		return submission;
+	}
+
+	@Transactional(readOnly = false, rollbackFor=SubmissionCreateException.class)
+	public Submission create(PackageUploadRequest uploadRequest, User creator) 
+			throws SubmissionCreateException,
+			SubmissionCreateWarning,
+			SubmissionNeedsToBeAcceptedWarning  {
+		try {
+			Package packageBag = uploadRequestService.createPackage(uploadRequest, creator);
+			
+			return create(packageBag, creator);
+		} catch (UploadRequestValidationException e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
+			throw new SubmissionCreateException(messageSource, locale);
+		} catch (UploadRequestValidationWarning w) {
+			logger.warn(w.getClass().getName() + ": " + w.getMessage(), w);
+			throw new SubmissionCreateWarning(messageSource, locale);
+		}
 	}
 	
 	public Submission findById(int id) {

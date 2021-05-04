@@ -1,41 +1,15 @@
-declarative: false
-repositories:
-  - name: A
-    publication-uri: http://localhost/repo/A
-    server-address: http://oa-rdepot-repo:8080/A
-  - name: B
-    publication-uri: http://localhost/repo/B
-    server-address: http://oa-rdepot-repo:8080/B
-  - name: C
-    publication-uri: http://localhost/repo/C
-    server-address: http://oa-rdepot-repo:8080/C
-
 api_token:
   secret: SecretKeyToGenJWTs
 
-message:
-  source:
-    basename: i18n/messages
-
-# Database related properties
-db:
-  driver: org.postgresql.Driver
-#  url: jdbc:postgresql://oa-rdepot-db:5432/rdepot
-#  username: rdepot
-  password: mysecretpassword
-
-# Hibernate related properties
-hibernate:
-  dialect: org.hibernate.dialect.PostgreSQLDialect
-  show_sql: false
-
-entitymanager:
-  packages:
-    to:
-      scan: eu.openanalytics.rdepot.model
+declarative: false
+#repositories:
+#  - name: 
+#    publication-uri:
+#    server-address:
 
 # Email related properties
 email:
+  enabled: false
   password:
   username:
   from:
@@ -45,67 +19,50 @@ email:
     auth:
     starttls:
 
-# Package upload related properties
-package:
-  upload:
-    dir: /opt/rdepot
+# Authentication related properties
+app:
+  authentication: simple
+  simple:
+    users:
+      - login: einstein
+        password: testpassword  
+        name: Albert Einstein 
+      - login: tesla
+        password: testpassword
+        name: Nicolas Tesla
+      - login: galieleo
+        password: testpassword
+        name: Galileo Galilei
+      - login: newton
+        password: testpassword
+        name: Isaac Newton
+      - login: newbie
+        password: testpassword
+        name: New User
+      - login: doe
+        password: testpassword
+        name: John Doe 
+    default:
+      admins:
+        - einstein            
 
-# Repository generation related properties
-repository:
-  generation:
-    dir: /opt/rdepot/generated
+# Database related properties
+db:
+  driver: org.postgresql.Driver
+  url: jdbc:postgresql://oa-rdepot-db:5432/rdepot
+  username: rdepot
+  password: mysecretpassword
 
-#spring.mvc.view.prefix=/WEB-INF/pages/
-#spring.mvc.view.suffix=.jsp
+# Hibernate related properties
+hibernate:
+  dialect: org.hibernate.dialect.PostgreSQLDialect
+  show_sql: false
+  
+# Liquibase related properties
 spring:
-  mvc:
-    view:
-      suffix: .html
-  main:
-    allow-bean-definition-overriding: true
-    log-startup-info: false  
-
-  output:
-    ansi:
-      enabled: always    
-#spring.devtools.remote.secret=thisismysecret
-server:
-  error:
-    include-stacktrace: always
-    path: /error
-    
-management:
-  metrics:
-    web:
-      server:
-        auto-time-requests: false
-
-springdoc:
-  pathsToMatch: /api/**
-  api-docs:
-    path: /v1/api-docs
-  swagger-ui:
-    path: /docs/api.html
-    disable-swagger-default-url: true
-    url: /v1/api-docs
-    display-query-params: true
-
-logging:
-  level:
-    org:
-      springframework:
-        web:
-          filter:
-            CommonsRequestLoggingFilter: INFO   
-            
-
-#storage related properties
-localStorage:
-  maxRequestSize: 10
-
-storage:
-  implementation: local
-
-requestTimeout: 10
-#repo:            
-      
+  liquibase:
+    change-log: classpath:liquibase-changeLog.xml
+    url: jdbc:postgresql://oa-rdepot-db:5432/rdepot
+    user: rdepot
+    password: mysecretpassword
+    enabled: true

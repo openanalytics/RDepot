@@ -1,64 +1,13 @@
-app:
-  authentication: simple   
-# Simple authentication related properties
-  simple:
-    users:
-      - login: einstein
-        password: testpassword
-      - login: tesla
-        password: testpassword
-      - login: galieleo
-        password: testpassword
-      - login: newton
-        password: testpassword
-      - login: newbie
-        password: testpassword
-        name: New User
-      - login: doe
-        password: testpassword
-        name: John Doe  
-    default:
-      admins:
-        - einstein 
+api_token:
+  secret: SecretKeyToGenJWTsButItShouldBeReplaced
+  
+generate_manuals: true
 
 declarative: false
-repositories:
-  - name: A
-    publication-uri: http://localhost/repo/A
-    server-address: http://oa-rdepot-repo:8080/A
-  - name: B
-    publication-uri: http://localhost/repo/B
-    server-address: http://oa-rdepot-repo:8080/B
-  - name: C
-    publication-uri: http://localhost/repo/C
-    server-address: http://oa-rdepot-repo:8080/C
-
-api_token:
-  secret: SecretKeyToGenJWTs
-
-message:
-  source:
-    basename: i18n/messages
-
-# Database related properties
-db:
-  driver: org.postgresql.Driver
-  url: jdbc:postgresql://localhost:5432/rdepot
-  username: rdepot
-  password: mysecretpassword
-
-# Hibernate related properties
-hibernate:
-  dialect: org.hibernate.dialect.PostgreSQLDialect
-  show_sql: false
-
-entitymanager:
-  packages:
-    to:
-      scan: eu.openanalytics.rdepot.model
 
 # Email related properties
 email:
+  enabled: false
   password:
   username:
   from:
@@ -68,18 +17,58 @@ email:
     auth:
     starttls:
 
-ldap:
-  url: ldap://oa-rdepot-ldap:389
-  basedn: dc=example,dc=com
-  userou: scientists
-  loginfield: uid
-  namefield: cn
-  emailfield: mail
-  default:
-    admins: einstein
+# Authentication related properties
+app:
+  authentication: simple
+  simple:
+    users:
+      - login: einstein
+        password: testpassword  
+        name: Albert Einstein 
+      - login: tesla
+        password: testpassword
+        name: Nicolas Tesla
+      - login: galieleo
+        password: testpassword
+        name: Galileo Galilei
+      - login: newton
+        password: testpassword
+        name: Isaac Newton
+      - login: newbie
+        password: testpassword
+        name: New User
+      - login: doe
+        password: testpassword
+        name: John Doe 
+    default:
+      admins:
+        - einstein
+
+# Database related properties
+db:
+  driver: org.postgresql.Driver
+  url: jdbc:postgresql://oa-rdepot-db:5432/rdepot
+  username: rdepot
+  password: mysecretpassword
+
+# Hibernate related properties
+hibernate:
+  dialect: org.hibernate.dialect.PostgreSQLDialect
+  show_sql: false
+
+message:
+  source:
+    basename: i18n/messages
+
+entitymanager:
+  packages:
+    to:
+      scan: eu.openanalytics.rdepot.model
 
 # Package upload related properties
 package:
+  version:
+    max-numbers: 10
   upload:
     dir: /opt/rdepot
 
@@ -100,7 +89,16 @@ spring:
 
   output:
     ansi:
-      enabled: always    
+      enabled: always
+        
+#Liquibase related properties
+  liquibase:
+    change-log: classpath:liquibase-changeLog.xml
+    url: jdbc:postgresql://oa-rdepot-db:5432/rdepot
+    user: rdepot
+    password: mysecretpassword
+    enabled: true
+    
 #spring.devtools.remote.secret=thisismysecret
 server:
   error:
@@ -139,5 +137,3 @@ storage:
   implementation: local
 
 requestTimeout: 10
-            
-#repo:            

@@ -59,6 +59,7 @@ dependencies {
 	implementation dependencies.materialDesignLite
 	implementation dependencies.gson
 	implementation dependencies.jacksonDatatypeHibernate
+	implementation dependencies.jacksonAnnotations
 	implementation dependencies.javaxPersistanceApi
 	implementation dependencies.hibernateCore
 	implementation dependencies.hibernateValidator
@@ -84,6 +85,9 @@ dependencies {
     implementation dependencies.auth0
     
     implementation dependencies.commonsCollections4	
+    implementation dependencies.apacheCommons
+    
+    implementation dependencies.liquibaseCore    
 
 	testImplementation dependencies.sbStarterTest
 	testImplementation dependencies.secTest

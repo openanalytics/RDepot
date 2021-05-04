@@ -38,3 +38,7 @@
     border-radius: 4px;
     border: 1px solid rgb(204, 204, 204);
 }
+
+.synchronization-error-button {
+    color:rgb(229, 35, 35);
+}

@@ -9,7 +9,7 @@ cd ../repo
 sudo rm -rf rdepot-repo.jar
 cd ../../
 ./clearPackages.sh
-docker-compose -f docker-compose-dev.yaml down
+docker-compose -f docker-compose-dev.yaml down --remove-orphans
 cd ../../../
 rm -rvf .gradle/*
 rm -rvf app/.gradle/*

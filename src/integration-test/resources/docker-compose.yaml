@@ -19,7 +19,7 @@ services:
       - oa-rdepot      
       
   repo:
-    image: openanalytics/rdepot-repo-it:1.4.3
+    image: openanalytics/rdepot-repo-it:1.5.0
     restart: always
     hostname: oa-rdepot-repo
     container_name: oa-rdepot-repo
@@ -58,7 +58,8 @@ services:
     ports:
       - 9000:9000
     networks:
-      - oa-rdepot
+      oa-rdepot:
+        ipv4_address: 192.168.49.16
   
   keycloak:
     image: quay.io/keycloak/keycloak:10.0.2
@@ -80,7 +81,7 @@ services:
         ipv4_address: 192.168.49.17
  
   ldap:
-    image: openanalytics/rdepot-ldap-it:1.4.3
+    image: openanalytics/rdepot-ldap-it:1.5.0
     restart: unless-stopped
     hostname: oa-rdepot-ldap
     container_name: oa-rdepot-ldap
@@ -93,13 +94,12 @@ services:
       - oa-rdepot
       
   app:    
-    image: openanalytics/rdepot-app-it:1.4.3
+    image: openanalytics/rdepot-app-it:1.5.0
     restart: always
     hostname: oa-rdepot-app
     container_name: oa-rdepot-app
     volumes:
-      - ./docker/app/test_configs/test_ldap.yml:/opt/rdepot/authentication.yml      
-      - ./docker/app/test_configs/application_test.yml:/opt/rdepot/application.yml
+      - ./docker/app/test_configs/test_ldap_config.yml:/opt/rdepot/application.yml      
       - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
       - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
       - ./itestSourceFiles:/opt/testSourceFiles:ro
@@ -119,25 +119,23 @@ services:
       test: ["CMD-SHELL", "if [ \"$$(curl -I localhost:8080 2>/dev/null | grep HTTP/1.1 | cut -d\" \" -f2)\" != \"302\" ]; then exit 1; else exit 0; fi;"]
       interval: 10s
       timeout: 10s
-      retries: 50 
+      retries: 100 
     networks:
-      - oa-rdepot      
+      oa-rdepot:
+        ipv4_address: 192.168.49.21      
                         
   app-openid:
-    image: openanalytics/rdepot-app-it:1.4.3
+    image: openanalytics/rdepot-app-it:1.5.0
     restart: always
     hostname: oa-rdepot-app-openid
     container_name: oa-rdepot-app-openid
     volumes:
-      - ./docker/app/test_configs/test_openid.yml:/opt/rdepot/authentication.yml   
-      - ./docker/app/test_configs/application_test.yml:/opt/rdepot/application.yml
+      - ./docker/app/test_configs/test_openid_config.yml:/opt/rdepot/application.yml   
       - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
       - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
       - ./itestSourceFiles:/opt/testSourceFiles:ro
       - ./itestGenerated:/opt/testGenerated:ro
       - ./itestNewFiles:/opt/newFiles:ro
-    networks:
-      - oa-rdepot
     depends_on:
       - db
       - openid
@@ -148,23 +146,23 @@ services:
       test: ["CMD-SHELL", "if [ \"$$(curl -I localhost:8080 2>/dev/null | grep HTTP/1.1 | cut -d\" \" -f2)\" != \"302\" ]; then exit 1; else exit 0; fi;"]
       interval: 10s
       timeout: 10s
-      retries: 50 
+      retries: 100 
+    networks:
+      oa-rdepot:
+        ipv4_address: 192.168.49.22  
   
   app-keycloak:    
-    image: openanalytics/rdepot-app-it:1.4.3
+    image: openanalytics/rdepot-app-it:1.5.0
     restart: always
     hostname: oa-rdepot-app-keycloak
     container_name: oa-rdepot-app-keycloak
     volumes:
-      - ./docker/app/test_configs/test_keycloak.yml:/opt/rdepot/authentication.yml
-      - ./docker/app/test_configs/application_test.yml:/opt/rdepot/application.yml
+      - ./docker/app/test_configs/test_keycloak_config.yml:/opt/rdepot/application.yml
       - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
       - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
       - ./itestSourceFiles:/opt/testSourceFiles:ro
       - ./itestGenerated:/opt/testGenerated:ro
-      - ./itestNewFiles:/opt/newFiles:ro
-    networks:
-      - oa-rdepot        
+      - ./itestNewFiles:/opt/newFiles:ro        
     depends_on:
       - db
       - keycloak
@@ -175,23 +173,23 @@ services:
       test: ["CMD-SHELL", "if [ \"$$(curl -I localhost:8080 2>/dev/null | grep HTTP/1.1 | cut -d\" \" -f2)\" != \"302\" ]; then exit 1; else exit 0; fi;"]
       interval: 10s
       timeout: 10s
-      retries: 50 
+      retries: 100
+    networks:
+      oa-rdepot:
+        ipv4_address: 192.168.49.23   
       
   app-simple:
-    image: openanalytics/rdepot-app-it:1.4.3
+    image: openanalytics/rdepot-app-it:1.5.0
     restart: always
     hostname: oa-rdepot-app-simple
     container_name: oa-rdepot-app-simple
     volumes:
-      - ./docker/app/test_configs/test_simple.yml:/opt/rdepot/authentication.yml
-      - ./docker/app/test_configs/application_test.yml:/opt/rdepot/application.yml
+      - ./docker/app/test_configs/test_simple_config.yml:/opt/rdepot/application.yml
       - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
       - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
       - ./itestSourceFiles:/opt/testSourceFiles:ro
       - ./itestGenerated:/opt/testGenerated:ro
-      - ./itestNewFiles:/opt/newFiles:ro
-    networks:
-      - oa-rdepot        
+      - ./itestNewFiles:/opt/newFiles:ro        
     depends_on:
       - db
     environment:
@@ -201,16 +199,18 @@ services:
       test: ["CMD-SHELL", "if [ \"$$(curl -I localhost:8080 2>/dev/null | grep HTTP/1.1 | cut -d\" \" -f2)\" != \"302\" ]; then exit 1; else exit 0; fi;"]
       interval: 10s
       timeout: 10s
-      retries: 50   
+      retries: 100  
+    networks:
+      oa-rdepot:
+        ipv4_address: 192.168.49.24   
           
   app-declarative:
-    image: openanalytics/rdepot-app-it:1.4.3
+    image: openanalytics/rdepot-app-it:1.5.0
     restart: always
     hostname: oa-rdepot-declarative
     container_name: oa-rdepot-declarative
     volumes:
-      - ./docker/app/test_configs/test_ldap.yml:/opt/rdepot/authentication.yml
-      - ./docker/app/test_configs/application_declarative.yml:/opt/rdepot/application.yml    
+      - ./docker/app/test_configs/test_declarative_config.yml:/opt/rdepot/application.yml   
       - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
       - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro    
     depends_on:
@@ -222,12 +222,12 @@ services:
       test: ["CMD-SHELL", "if [ \"$$(curl -I localhost:8080 2>/dev/null | grep HTTP/1.1 | cut -d\" \" -f2)\" != \"302\" ]; then exit 1; else exit 0; fi;"]
       interval: 10s
       timeout: 10s
-      retries: 50 
+      retries: 100 
     networks:
       - oa-rdepot  
   
   selenium-hub:
-    image: selenium/hub:3.141.59-bismuth
+    image: selenium/hub
     container_name: oa-rdepot-selenium-hub
     hostname: oa-rdepot-selenium-hub
     ports:
@@ -235,7 +235,7 @@ services:
     networks:
       - oa-rdepot  
   chrome:
-    image: selenium/node-chrome:3.141.59-bismuth
+    image: selenium/node-chrome
     container_name: oa-rdepot-chrome
     hostname: oa-rdepot-chrome
     depends_on:
@@ -243,6 +243,7 @@ services:
     environment:
       - HUB_HOST=selenium-hub
       - HUB_PORT=4444
+      - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
     networks:
       - oa-rdepot   
  

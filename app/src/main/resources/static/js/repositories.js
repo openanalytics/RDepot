@@ -513,7 +513,7 @@ function openRepositoryPage(name) {
 
 function openPackagePage(repository, packageName, packageVersion) {
     window.location.href = "/manager/repositories/" + repository + "/packages/" + packageName;
-//    without packageVersion!!!!!!
+//    without packageVersion!!!
 }
 
 function openPackagePageWithVersion(repository, packageName, packageVersion) {
@@ -539,6 +539,121 @@ function displayMaintainersButton() {
             button.style.display = "none";
         }
     }
+}
+
+function synchronizeMirrors(id) {
+	var url = '/manager/repositories/' + id + '/synchronize-mirrors'; 
+	const synchronizationField = document.getElementById('repository-' + id + '-row')
+		.getElementsByClassName('synchronization-field')[0];
+	const previousFieldContent = synchronizationField.innerHTML;
+	synchronizationField.innerHTML = 
+			'<div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>';
+	componentHandler.upgradeDom();
+	$.ajax({
+        url: url,
+        type: 'PATCH',
+        dataType: 'json',
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader(HEADER, TOKEN);
+        },
+        success: function(result) {
+            if(result.error != null) {
+                showErrorDialog(result.error);
+				synchronizationField.innerHTML = previousFieldContent;
+            }
+            checkSynchronization();
+        },
+        error: function(result) {
+            showErrorDialog("You cannot synchronize this repository.");
+		    synchronizationField.innerHTML = previousFieldContent;
+        }
+    });
+}
+
+function checkSynchronization() {
+    const request = new XMLHttpRequest();
+    const url = '/manager/repositories/synchronization/status';
+
+    request.onreadystatechange = function() {
+        if(this.readyState == 4 && this.status == 200) {
+            var response = JSON.parse(this.responseText);
+            updateSynchronization(response);
+        }
+    }
+    request.open("GET", url);
+    request.setRequestHeader(HEADER, TOKEN);
+    request.setRequestHeader("Accept", "application/json");
+    request.setRequestHeader("Content-Type", "application/json");
+    request.send();
+}
+
+function updateSynchronization(synchronizingRepositories) {
+    const role = document.getElementsByTagName("body")[0].dataset.role;
+    var rows = document.getElementsByClassName('repository-row');
+    
+    for(var i = 0; i < rows.length; i++) {
+        var row = rows[i];
+        var repositoryId = row.id.split('-')[1];
+        const synchronizationField = row.getElementsByClassName('synchronization-field')[0];
+
+        var matchingRepositories = synchronizingRepositories.filter(r => r.repositoryId === repositoryId);
+        var html = '';
+
+        if(matchingRepositories.length === 1 && matchingRepositories[0].pending === "true") {
+                html = '<div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>';
+        } else if(parseInt(role) > 2) {
+            if(matchingRepositories.length === 1 && matchingRepositories[0].error !== "null") {
+                html = '<button class="mdl-button mdl-js-button mdl-button--icon synchronization-error-button" onclick="synchronizeMirrors('+ repositoryId + ')" >';
+            } else {
+                html = '<button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored-alternative" onclick="synchronizeMirrors('+ repositoryId + ')" >';
+            }
+
+            html += '<i class="material-icons">update</i>';
+            html += '</button>';
+        }
+
+        synchronizationField.innerHTML = html;
+        componentHandler.upgradeDom();
+
+    }
+
+    // for(var i = 0; i < synchronizingRepositories.length; i++) {
+    //     var id = synchronizingRepositories[i].repositoryId;
+
+    //     const synchronizationField = document.getElementById('repository-' + id + '-row')
+    //             .getElementsByClassName('synchronization-field')[0];
+
+    //     if(synchronizingRepositories[i].pending === "true") {
+    //         if(synchronizationField.getElementsByClassName('mdl-spinner').length == 0) {
+    //             synchronizationField.innerHTML = 
+    //                 '<div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>';
+    //         }
+
+    //     } else {
+    //         var html = '';
+    //         if(parseInt(role) > 2) {
+    //             if(synchronizingRepositories[i].error === "null") {
+    //                 html = '<button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored-alternative" onclick="synchronizeMirrors('+ id + ')" >';
+
+    //             } else {
+    //                 html = '<button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored-alternative synchronization-error-button" onclick="synchronizeMirrors('+ id + ')" >';
+                    
+    //             }
+
+    //             html += '<i class="material-icons">update</i>';
+    //             html += '</button>';
+    //         }
+            
+    //         synchronizationField.innerHTML = html;
+    //     }
+
+    //     componentHandler.upgradeDom();
+    // }
+}
+
+function scheduleSynchronization() {
+    checkSynchronization();
+    var intervalId = window.setInterval(checkSynchronization, 10000);
 }
 
 $(document).ready(function() {

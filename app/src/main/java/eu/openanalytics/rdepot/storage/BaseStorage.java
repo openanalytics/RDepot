@@ -20,17 +20,28 @@
  */
 package eu.openanalytics.rdepot.storage;
 
-import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Locale;
+import java.util.zip.GZIPInputStream;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.compress.archivers.ArchiveException;
+import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
+import org.apache.commons.compress.utils.IOUtils;
 //import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -44,7 +55,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import eu.openanalytics.rdepot.exception.CopyException;
 import eu.openanalytics.rdepot.exception.CreateFolderStructureException;
+import eu.openanalytics.rdepot.exception.CreateTemporaryFolderException;
 import eu.openanalytics.rdepot.exception.DeleteFileException;
+import eu.openanalytics.rdepot.exception.DownloadFileException;
 import eu.openanalytics.rdepot.exception.ExtractFileException;
 import eu.openanalytics.rdepot.exception.GetFileInBytesException;
 import eu.openanalytics.rdepot.exception.GzipFileException;
@@ -52,6 +65,7 @@ import eu.openanalytics.rdepot.exception.LinkFoldersException;
 import eu.openanalytics.rdepot.exception.Md5SumCalculationException;
 import eu.openanalytics.rdepot.exception.MoveFileException;
 import eu.openanalytics.rdepot.exception.StorageException;
+import eu.openanalytics.rdepot.exception.WriteToDiskException;
 import eu.openanalytics.rdepot.exception.WriteToDiskFromMultipartException;
 
 @Component
@@ -95,39 +109,16 @@ public class BaseStorage {
 	 * @throws LinkFoldersException
 	 */
 	public File linkTwoFolders(String targetPath, String linkPath) throws LinkFoldersException {
-		File target = new File(targetPath);
 		File link = new File(linkPath);
 		
-		ProcessBuilder processBuilder = new ProcessBuilder(
-				"ln", "-fsn", target.getAbsolutePath(), link.getAbsolutePath())
-				.redirectErrorStream(true);
-		
-		logger.info("Creating a link to " + targetPath + " from " + linkPath);
-
-		Process process = null;
-		
 		try {
-			process = processBuilder.start();
-//			BufferedReader output = new BufferedReader(new InputStreamReader(process.getInputStream()));
-//			String outputLine = null;
-//			
-//			while((outputLine = output.readLine()) != null)
-//				logger.info(outputLine);
-			
-			int exitValue = process.waitFor();
-			
-			if(exitValue != 0) {
-				throw new LinkFoldersException(messageSource, locale, targetPath, linkPath, 
-						"ln failed with exit code: " + process.exitValue());
+			if(Files.exists(Paths.get(linkPath))) {
+				Files.delete(Paths.get(linkPath));
 			}
-		} catch (IOException | InterruptedException e) {
+			Files.createSymbolicLink(Paths.get(linkPath), Paths.get(targetPath));
+		} catch (IOException e) {
 			throw new LinkFoldersException(messageSource, locale, targetPath, linkPath, e.getMessage());
-		} finally {
-			if(process != null) {
-				if(process.isAlive())
-					process.destroyForcibly();
-			}
-		}
+		}		
 
 		return link;
 	}
@@ -159,40 +150,14 @@ public class BaseStorage {
 	 * @throws StorageException
 	 */
 	public File gzipFile(String path) throws GzipFileException {
-		File target = new File(path);
-		
-		ProcessBuilder processBuilder = new ProcessBuilder(
-				"gzip", "-fk", target.getAbsolutePath())
-				.redirectErrorStream(true);
-		
-		logger.info("Running gzip for " + path);
-		
-		Process process = null;
-		
-		try {
-			process = processBuilder.start();
-			BufferedReader output = new BufferedReader(new InputStreamReader(process.getInputStream()));
-			String outputLine = null;
-			
-			while((outputLine = output.readLine()) != null)
-				logger.info(outputLine);
-			
-			int exitValue = process.waitFor();
-			
-			if(exitValue != 0)
-				throw new GzipFileException(messageSource, locale, path, 
-						"Gzip failed with exit code: " + exitValue);
-			
-		} catch (IOException | InterruptedException e) {
+		File source = new File(path);
+		File destination = new File(path + ".gz");
+		try (GzipCompressorOutputStream compressor = new GzipCompressorOutputStream(new FileOutputStream(destination))){
+            IOUtils.copy(new FileInputStream(source), compressor);
+        } catch (IOException e) {
 			throw new GzipFileException(messageSource, locale, path, e.getMessage());
-		} finally {
-			if(process != null) {
-				if(process.isAlive())
-					process.destroyForcibly();
-			}
-		}
-		
-		return new File(path + ".gz");
+		}	
+		return destination;
 	}
 	
 	/**
@@ -213,16 +178,7 @@ public class BaseStorage {
 		
 		return DigestUtils.md5DigestAsHex(bytes);
 	}
-	
-	
-//	protected void delete(String path) throws StorageException {
-//		try {
-//			FileUtils.forceDelete(new File(path));
-//		} catch(IOException e) {
-//			throw new StorageException(e.getMessage());
-//		}
-//	}
-//	
+
 	/**
 	 * This method reads a file from given source as a byte array.
 	 * @param source Path to the file
@@ -237,48 +193,105 @@ public class BaseStorage {
 		if(file != null && file.exists()) {
 			try {
 				bytes = Files.readAllBytes(fsResource.getFile().toPath());
-			} catch(FileNotFoundException e) {
-				throw e;
+				
+				return bytes;
 			} catch (IOException e) {
 				throw new GetFileInBytesException(messageSource, locale, source, e.getMessage());
 			}
+		} else {
+			throw new FileNotFoundException();
 		}
-		
-		return bytes;
 	}
 
 	public File extractFile(File file) throws ExtractFileException {
-		ProcessBuilder processBuilder = new ProcessBuilder(
-				"tar", "-zxf", file.getAbsolutePath(), "-C", file.getParent());
-		
-		logger.info("Running tar for " + file.getAbsolutePath());
-		
-		Process process = null;
+		final File outputDir = file.getParentFile();
+		File unGzippedFile = null;
 		try {
-			process = processBuilder.start();
-			
-			int exitValue = process.waitFor();
-			if(exitValue != 0) {
-				throw new ExtractFileException(messageSource, locale, 
-						file.getAbsolutePath(), "Tar failed with exit code " + exitValue);
-			}
-			
-		} catch (IOException | InterruptedException e) {
+			unGzippedFile = unGzip(file, outputDir);
+			unTar(unGzippedFile, outputDir);
+		} catch (IOException | ArchiveException | IllegalStateException e) {
 			try {
-			if(file.getParentFile().exists())
-				deleteFile(file.getParentFile().getAbsolutePath());
+				if(file.getParentFile().exists())
+					deleteFile(file.getParentFile().getAbsolutePath());
 			} catch (DeleteFileException dfe) {
-				logger.error(dfe.getClass() + ": " + dfe.getMessage());
+					logger.error(dfe.getClass() + ": " + dfe.getMessage());
 			}
+			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
 			throw new ExtractFileException(messageSource, locale, file.getAbsolutePath(), e.getMessage());
 		} finally {
-			if(process != null) {
-				if(process.isAlive())
-					process.destroyForcibly();
+			try {
+				if(unGzippedFile != null && unGzippedFile.exists()) {
+					deleteFile(unGzippedFile.getAbsolutePath());
+				}
+			} catch (DeleteFileException e) {
+				logger.error(e.getClass() + ": " + e.getMessage(), e);
 			}
 		}
-
 		return file;
+	}
+	
+	/**
+	 * Ungzip an input file into an output file.
+	 * The output file is created in the output folder, having the same name
+	 * as the input file, minus the '.gz' extension. 	 * 
+	 * @param inputFile     the input .gz file
+	 * @param outputDir     the output directory file.
+	 * @return  The {@File} with the ungzipped content. 
+	 * @throws IOException 
+	 */
+	private File unGzip(final File inputFile, final File outputDir) throws IOException {
+		logger.info(String.format("Ungzipping %s to dir %s.", inputFile.getAbsolutePath(), outputDir.getAbsolutePath()));
+		
+		final File outputFile = new File(outputDir, inputFile.getName().substring(0, inputFile.getName().length() - 3));
+
+	    final GZIPInputStream in = new GZIPInputStream(new FileInputStream(inputFile));
+	    final FileOutputStream out = new FileOutputStream(outputFile);
+
+	    IOUtils.copy(in, out);
+
+	    in.close();
+	    out.close();
+
+	    return outputFile;
+	}
+	
+	/** Untar an input file into an output file.
+	 * The output file is created in the output folder, having the same name
+	 * as the input file, minus the '.tar' extension. 
+	 * 
+	 * @param inputFile     the input .tar file
+	 * @param outputDir     the output directory file. 
+	 * @throws IOException 
+	 * @throws ArchiveException 
+	 */
+	private void unTar(final File inputFile, final File outputDir) throws IOException, ArchiveException {
+		logger.info(String.format("Untarring %s to dir %s.", inputFile.getAbsolutePath(), outputDir.getAbsolutePath()));
+		
+	    final InputStream is = new FileInputStream(inputFile); 
+	    final TarArchiveInputStream debInputStream = (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream("tar", is);
+	    TarArchiveEntry entry = null; 
+	    
+	    while ((entry = (TarArchiveEntry)debInputStream.getNextEntry()) != null) {
+	        final File outputFile = new File(outputDir, entry.getName());
+	        File outputFileParentDir = outputFile.getParentFile();
+	        
+	        if(!outputFileParentDir.exists()) {
+	        	outputFileParentDir.mkdirs();
+	        }
+	        
+	        if (entry.isDirectory()) {	            
+	            if (!outputFile.exists()) {
+	                if (!outputFile.mkdirs()) {
+	                    throw new IllegalStateException(String.format("Couldn't create directory %s.", outputFile.getAbsolutePath()));
+	                }
+	            }
+	        } else {
+	            final OutputStream outputFileStream = new FileOutputStream(outputFile); 
+	            IOUtils.copy(debInputStream, outputFileStream);
+	            outputFileStream.close();
+	        }
+	    }
+	    debInputStream.close();
 	}
 	
 	/**
@@ -310,37 +323,18 @@ public class BaseStorage {
 		if(!destination.getParentFile().exists())
 			createFolderStructure(destination.getParent());
 		
-		ProcessBuilder processBuilder = new ProcessBuilder(
-				"mv", source.getAbsolutePath(), destination.getAbsolutePath());
-		
-		logger.info("Running mv for " + source.getAbsolutePath() + " and "
+		logger.info("Moving from " + source.getAbsolutePath() + " to "
 				+ destination.getAbsolutePath());
 		
-		Process process = null;
 		try {
-			process = processBuilder.start();
-			
-//			BufferedReader output = new BufferedReader(new InputStreamReader(process.getInputStream()));
-//			String outputLine = null;
-//			
-//			while((outputLine = output.readLine()) != null)
-//				logger.info(outputLine);
-			
-			int exitValue = process.waitFor();
-			
-			if(exitValue != 0) {
-				throw new MoveFileException(messageSource, locale, 
-						source.getAbsolutePath(), destination.getAbsolutePath(),
-						"Mv failed with exit code: " + exitValue);
+			if(source.isDirectory()) {
+			  FileUtils.moveDirectory(source, destination);
+			} else {
+			  FileUtils.moveFile(source, destination);
 			}
-			
-		} catch (IOException | InterruptedException e) {
+		} catch (NullPointerException | IOException e) {
+		  e.printStackTrace();
 			throw new MoveFileException(messageSource, locale, source.getAbsolutePath(), destination.getAbsolutePath(), e.getMessage());
-		} finally {
-			if(process != null) {
-				if(process.isAlive())
-					process.destroyForcibly();
-			}
 		}
 		
 		return destination;
@@ -373,4 +367,112 @@ public class BaseStorage {
 					multipartFile, destinationDir.getAbsolutePath(), e.getMessage());
 		}
 	}
+	
+	/**
+	 * This method reads data from a file and saves it on the disk.
+	 * @param file
+	 * @param destinationDir
+	 * @param filename
+	 * @return
+	 * @throws WriteToDiskException
+	 */
+	public File writeToDisk(File file, File destinationDir) throws WriteToDiskException {
+		return writeToDisk(file, destinationDir, file.getName());
+	}
+	
+	/**
+	 * This method reads data from a file and saves it on the disk.
+	 * @param file
+	 * @param destinationDir
+	 * @param filename
+	 * @return
+	 * @throws WriteToDiskException
+	 */
+	public File writeToDisk(File file, File destinationDir, String filename) throws WriteToDiskException {
+		File destinationFile = new File(destinationDir.getAbsolutePath() + separator + filename);
+		
+		try {
+			FileUtils.forceMkdir(destinationDir);
+			FileUtils.moveFile(file, destinationFile);
+			
+			return destinationFile;
+		} catch (IOException e) {
+			try {
+				deleteFile(destinationDir.getAbsolutePath());
+			} catch (DeleteFileException dfe) {
+				logger.error(dfe.getMessage());
+			}
+			throw new WriteToDiskException(messageSource, locale, 
+					file, destinationDir.getAbsolutePath(), e.getMessage());
+		}
+	}
+	
+	/**
+	 * Downloads file from a given URL.
+	 * @param url
+	 * @param destinationFile
+	 * @return downloaded file
+	 * @throws DownloadFileException 
+	 */
+	public File downloadFile(String url, File destinationFile) throws DownloadFileException {
+		try {
+			FileUtils.copyURLToFile(new URL(url), destinationFile);
+		} catch (IOException e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
+			throw new DownloadFileException(messageSource, locale, url, destinationFile.getAbsolutePath());
+		}		
+		return destinationFile;
+	}
+
+	/**
+	 * Downloads file from a given URL and saves it in a temporary directory.
+	 * @param url
+	 * @return downloaded file
+	 * @throws DownloadFileException
+	 */
+	public File downloadFile(String url) throws DownloadFileException {
+		try {
+			File tempFile = Files.createTempFile(null, null).toFile();
+			return downloadFile(url, tempFile);
+		} catch (IOException e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
+			throw new DownloadFileException(messageSource, locale, url, "Could not create temporary file");
+		}
+	}
+	
+	/**
+	 * Creates a temporary folder with a given prefix.
+	 * @param prefix
+	 * @return
+	 * @throws CreateTemporaryFolderException
+	 */
+	public File createTemporaryFolder(String prefix) throws CreateTemporaryFolderException {
+		try {
+			return Files.createTempDirectory(prefix).toFile();
+		} catch (IOException e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
+			throw new CreateTemporaryFolderException(messageSource, locale, prefix);
+		}
+	}
+	
+//	/**
+//	 * This method moves data from 
+//	 * @param file
+//	 * @param destinationDir
+//	 * @param filename
+//	 * @return
+//	 */
+//	public File writeToDisk(File file, File destinationDir, String filename) {
+//		File destinationFile = new File(destinationDir.getAbsolutePath() + separator + filename);
+//		
+//		try {
+//			FileUtils.forceMkdir(destinationDir);
+//			FileUtils.moveFile(file, destinationFile);
+//			
+//			return destinationFile;
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
 }

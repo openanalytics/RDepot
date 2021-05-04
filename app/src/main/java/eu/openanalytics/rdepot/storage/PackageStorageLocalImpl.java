@@ -23,10 +23,16 @@ package eu.openanalytics.rdepot.storage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.FileSystems;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Random;
 
@@ -51,6 +57,7 @@ import eu.openanalytics.rdepot.exception.PackageSourceNotFoundException;
 import eu.openanalytics.rdepot.exception.PackageStorageException;
 import eu.openanalytics.rdepot.exception.ReadPackageDescriptionException;
 import eu.openanalytics.rdepot.exception.SourceFileDeleteException;
+import eu.openanalytics.rdepot.exception.WriteToDiskException;
 import eu.openanalytics.rdepot.exception.WriteToDiskFromMultipartException;
 import eu.openanalytics.rdepot.model.Package;
 import eu.openanalytics.rdepot.model.Repository;
@@ -181,11 +188,24 @@ public class PackageStorageLocalImpl implements PackageStorage {
 	public byte[] readVignette(Package packageBag, String filename) 
 			throws GetFileInBytesException, FileNotFoundException {
 		return baseStorage.getFileInBytes(new File(packageBag.getSource()).getParent() 
-				+ packageBag.getName() + "/inst/doc/" + filename);
+				+ separator + packageBag.getName() + "/inst/doc/" + filename);
 	}
 
-	public File writeToWaitingRoom(MultipartFile multipartFile, Repository repository) 
+	public File writeToWaitingRoom(MultipartFile packageFile, Repository repository) 
 			throws WriteToDiskFromMultipartException {
+		File waitingRoom = generateWaitingRoom(packageUploadDirectory, repository);
+		
+		return baseStorage.writeToDiskFromMultipart(packageFile, waitingRoom);
+	}
+	
+	public File writeToWaitingRoom(File packageFile, Repository repository) 
+			throws WriteToDiskException {
+		File waitingRoom = generateWaitingRoom(packageUploadDirectory, repository);
+		
+		return baseStorage.writeToDisk(packageFile, waitingRoom);
+	}
+	
+	private File generateWaitingRoom(File packageUploadDirectory, Repository repository) {
 		File waitingRoom = new File(packageUploadDirectory.getAbsolutePath() 
 				+ separator + "new" + separator + (new Random()).nextInt(100000000));
 		
@@ -198,19 +218,32 @@ public class PackageStorageLocalImpl implements PackageStorage {
 					+ (new Random()).nextInt(100000000));
 		}
 		
-		return baseStorage.writeToDiskFromMultipart(multipartFile, waitingRoom);
+		return waitingRoom;
 	}
-
-	public File writeToDisk(MultipartFile multipartFile, Repository repository) 
-			throws WriteToDiskFromMultipartException, DeleteFileException {
+	
+	private File generateRandomUploadDir(File packageUploadDirectory, Repository repository) {
 		File randomDir = new File(packageUploadDirectory.getAbsolutePath() + separator 
 				+ "repositories" + separator + repository.getId() + separator 
 				+ (new Random()).nextInt(100000000));
 		
 		while(randomDir.exists())
 			randomDir = new File(randomDir.getParent() + separator + (new Random()).nextInt(100000000));
+
+		return randomDir;
+	}
+
+	public File writeToDisk(MultipartFile multipartFile, Repository repository) 
+			throws WriteToDiskFromMultipartException, DeleteFileException {
+		File randomDir = generateRandomUploadDir(packageUploadDirectory, repository);
 		
 		return baseStorage.writeToDiskFromMultipart(multipartFile, randomDir);
+	}
+	
+	public File writeToDisk(File packageFile, Repository repository)
+		throws WriteToDiskException, DeleteFileException {
+		File randomDir = generateRandomUploadDir(packageUploadDirectory, repository);
+				
+		return baseStorage.writeToDisk(packageFile, randomDir);
 	}
 
 	public File moveToMainDirectory(Package packageBag)
@@ -311,5 +344,45 @@ public class PackageStorageLocalImpl implements PackageStorage {
 	public String calculateFileMd5Sum(String path) throws Md5SumCalculationException {
 			return baseStorage.calculateMd5Sum(path);
 	}
-	
+
+	@Override
+	public List<File> getVignetteFiles(Package packageBag) {
+		List<File> files = new ArrayList<>();
+		
+		if(packageBag == null) {
+			return files;
+		}
+		
+		File vignettesFolder = new File(new File(packageBag.getSource()).getParent(), 
+				packageBag.getName() + "/inst/doc/");
+		
+		if(vignettesFolder.exists() && vignettesFolder.isDirectory()) {
+			File[] vignetteFiles = vignettesFolder.listFiles(new FilenameFilter() {
+				
+				@Override
+				public boolean accept(File dir, String name) {
+					return (name != null && (
+							name.toLowerCase().endsWith(".html") || name.toLowerCase().endsWith(".pdf")));
+				}
+			});
+			
+			files = Collections.unmodifiableList(Arrays.asList(vignetteFiles));
+		}
+		
+		return files;
+	}
+
+	@Override
+	public Optional<String> getReferenceManualFilename(Package packageBag) {
+		//This is a temporary solution.
+		String manualPath = new File(packageBag.getSource()).getParent() + separator 
+				+ packageBag.getName() + separator + packageBag.getName() + ".pdf";
+		File manualFile = new File(manualPath);
+		
+		if(manualFile.exists()) {
+			return Optional.of(manualFile.getName());
+		}
+		
+		return Optional.empty();
+	}
 }
