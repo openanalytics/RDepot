@@ -1,0 +1,73 @@
+{
+    "status": "success",
+    "code": 200,
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "data": {
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost/api/v2/manager/r/package-maintainers"
+            }
+        ],
+        "content": [
+            {
+                "id": 100,
+                "userId": 111,
+                "packageName": "TestPackage100",
+                "repositoryId": 123,
+                "deleted": false,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost/api/v2/manager/r/package-maintainers/100"
+                    },
+                    {
+                        "rel": "packageMaintainerList",
+                        "href": "http://localhost/api/v2/manager/r/package-maintainers"
+                    }
+                ]
+            },
+            {
+                "id": 101,
+                "userId": 111,
+                "packageName": "TestPackage101",
+                "repositoryId": 123,
+                "deleted": false,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost/api/v2/manager/r/package-maintainers/101"
+                    },
+                    {
+                        "rel": "packageMaintainerList",
+                        "href": "http://localhost/api/v2/manager/r/package-maintainers"
+                    }
+                ]
+            },
+            {
+                "id": 102,
+                "userId": 111,
+                "packageName": "TestPackage102",
+                "repositoryId": 123,
+                "deleted": true,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost/api/v2/manager/r/package-maintainers/102"
+                    },
+                    {
+                        "rel": "packageMaintainerList",
+                        "href": "http://localhost/api/v2/manager/r/package-maintainers"
+                    }
+                ]
+            }
+        ],
+        "page": {
+            "size": 3,
+            "totalElements": 3,
+            "totalPages": 1,
+            "number": 0
+        }
+    }
+}

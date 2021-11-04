@@ -5,6 +5,8 @@ generate_manuals: true
 
 declarative: false
 
+repository-snapshots: false
+
 # Email related properties
 email:
   enabled: false
@@ -63,7 +65,8 @@ message:
 entitymanager:
   packages:
     to:
-      scan: eu.openanalytics.rdepot.model
+      scan:
+        - eu.openanalytics.rdepot.model
 
 # Package upload related properties
 package:
@@ -105,6 +108,10 @@ server:
     include-stacktrace: always
     path: /error
     
+error:
+  whitelabel:
+    enabled: false
+  
 management:
   metrics:
     web:

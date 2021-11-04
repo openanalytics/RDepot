@@ -1,6 +1,8 @@
 api_token:
   secret: SecretKeyToGenJWTs
 
+repository-snapshots: true
+
 declarative: false
 #repositories:
 #  - name: A
@@ -110,4 +112,4 @@ hibernate:
 spring:
   liquibase:
     user: postgres
-    enabled: true  
+    enabled: true

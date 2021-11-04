@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -454,25 +454,4 @@ public class BaseStorage {
 			throw new CreateTemporaryFolderException(messageSource, locale, prefix);
 		}
 	}
-	
-//	/**
-//	 * This method moves data from 
-//	 * @param file
-//	 * @param destinationDir
-//	 * @param filename
-//	 * @return
-//	 */
-//	public File writeToDisk(File file, File destinationDir, String filename) {
-//		File destinationFile = new File(destinationDir.getAbsolutePath() + separator + filename);
-//		
-//		try {
-//			FileUtils.forceMkdir(destinationDir);
-//			FileUtils.moveFile(file, destinationFile);
-//			
-//			return destinationFile;
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
 }

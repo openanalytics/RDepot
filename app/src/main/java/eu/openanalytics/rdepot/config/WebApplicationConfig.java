@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -27,17 +27,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+
 import javax.annotation.Resource;
 import javax.sql.DataSource;
+
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.env.Environment;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.format.Formatter;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.MediaType;
@@ -55,6 +57,7 @@ import org.springframework.validation.DefaultMessageCodesResolver;
 import org.springframework.validation.MessageCodesResolver;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -62,14 +65,22 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr353.JSR353Module;
 import com.google.gson.Gson;
-import eu.openanalytics.rdepot.formatter.RepositoryFormatter;
-import eu.openanalytics.rdepot.formatter.RoleFormatter;
-import eu.openanalytics.rdepot.formatter.UserFormatter;
-import eu.openanalytics.rdepot.mapper.HibernateAwareObjectMapper;
+
 import eu.openanalytics.rdepot.model.Repository;
 import eu.openanalytics.rdepot.model.Role;
 import eu.openanalytics.rdepot.model.User;
+import eu.openanalytics.rdepot.api.v2.dto.SubmissionState;
+import eu.openanalytics.rdepot.api.v2.resolver.NestedIdSortArgumentResolver;
+import eu.openanalytics.rdepot.formatter.RepositoryFormatter;
+import eu.openanalytics.rdepot.formatter.RoleFormatter;
+import eu.openanalytics.rdepot.formatter.StringToSubmissionStateConverter;
+import eu.openanalytics.rdepot.formatter.UserFormatter;
+import eu.openanalytics.rdepot.mapper.HibernateAwareObjectMapper;
 import eu.openanalytics.rdepot.storage.PackageStorage;
 import eu.openanalytics.rdepot.storage.PackageStorageLocalImpl;
 import eu.openanalytics.rdepot.storage.RepositoryStorage;
@@ -83,8 +94,8 @@ import eu.openanalytics.rdepot.validation.UserValidator;
 
 @Configuration
 @EnableAsync
-@ComponentScan("eu.openanalytics.rdepot")
-@EnableJpaRepositories("eu.openanalytics.rdepot.repository")
+//@ComponentScan("eu.openanalytics.rdepot")
+//@EnableJpaRepositories("eu.openanalytics.rdepot.repository")
 public class WebApplicationConfig implements WebMvcConfigurer {
 
 	@Value("${db.driver}")
@@ -111,7 +122,10 @@ public class WebApplicationConfig implements WebMvcConfigurer {
 	@Value("${repository.generation.dir}")
 	private String repositoryGenerationDir;
 	
-	private static final String PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN = "entitymanager.packages.to.scan";
+//	@Value("${entitymanager.packages.to.scan}")
+//	private List<String> packagesToScanProp;
+	
+	//private static final String PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN = "entitymanager.packages.to.scan";
 
 	@Resource
 	private Environment env;
@@ -136,7 +150,20 @@ public class WebApplicationConfig implements WebMvcConfigurer {
 		entityManagerFactoryBean.setDataSource(dataSource());
 		//entityManagerFactoryBean.setPersistenceProviderClass(HibernatePersistenceProvider.class);
 		entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-		entityManagerFactoryBean.setPackagesToScan(env.getRequiredProperty(PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN));
+		
+		List<String> packagesToScanProp = new ArrayList<>();
+		
+		for (int i=0;;i++) {
+			String packageToScan = env.getProperty(String.format("entitymanager.packages.to.scan[%d]", i));
+			if (packageToScan == null) break;
+			else packagesToScanProp.add(packageToScan);
+		}
+		
+		String[] packagesToScan = new String[packagesToScanProp.size()];
+		for(int i = 0; i < packagesToScanProp.size(); i++) {
+			packagesToScan[i] = packagesToScanProp.get(i);
+		}
+		entityManagerFactoryBean.setPackagesToScan(packagesToScan);
 		
 		entityManagerFactoryBean.setJpaProperties(hibProperties());
 		
@@ -165,7 +192,13 @@ public class WebApplicationConfig implements WebMvcConfigurer {
         registry.addFormatter(roleFormatter());
         registry.addFormatter(repositoryFormatter());
         registry.addFormatter(userFormatter());
+        registry.addConverter(submissionStateConverter());
     }
+
+    @Bean
+    public Converter<String, SubmissionState> submissionStateConverter() {
+		return new StringToSubmissionStateConverter();
+	}
 
 //	@Bean
 //	public ViewResolver jspViewResolver() 
@@ -216,7 +249,7 @@ public class WebApplicationConfig implements WebMvcConfigurer {
     	converters.add(jsonConverter());
     	converters.add(byteConverter());
 	}
-	
+
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) 
 	{		
@@ -261,6 +294,9 @@ public class WebApplicationConfig implements WebMvcConfigurer {
     public MappingJackson2HttpMessageConverter jsonConverter()
     {
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        List<MediaType> mediaTypes = new ArrayList<>(converter.getSupportedMediaTypes());
+		mediaTypes.add(MediaType.valueOf("application/json-patch+json"));
+		converter.setSupportedMediaTypes(mediaTypes);
         converter.setObjectMapper(new HibernateAwareObjectMapper());
         return converter;
     }
@@ -275,6 +311,7 @@ public class WebApplicationConfig implements WebMvcConfigurer {
     	converter.setSupportedMediaTypes(mediaTypes);
     	return converter;
     }
+    
     
     @Bean
     public Formatter<Role> roleFormatter()
@@ -439,5 +476,21 @@ public class WebApplicationConfig implements WebMvcConfigurer {
     	threadPoolTaskScheduler.setThreadNamePrefix("ThreadPoolTaskScheduler");
     	
     	return threadPoolTaskScheduler;
+    }
+    
+    @Bean
+    public ObjectMapper objectMapper() {
+    	ObjectMapper objectMapper = new ObjectMapper();
+    	objectMapper.registerModule(new JSR353Module());
+    	objectMapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
+    	
+    	return objectMapper;
+    }
+    
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+    	WebMvcConfigurer.super.addArgumentResolvers(resolvers);
+    	
+    	resolvers.add(new PageableHandlerMethodArgumentResolver(new NestedIdSortArgumentResolver()));
     }
 }

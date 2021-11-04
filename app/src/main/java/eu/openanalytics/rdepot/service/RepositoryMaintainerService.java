@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -24,26 +24,33 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.NotImplementedException;
+import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import eu.openanalytics.rdepot.api.v2.dto.RepositoryMaintainerDto;
 import eu.openanalytics.rdepot.exception.EventNotFound;
 import eu.openanalytics.rdepot.exception.PackageEditException;
 import eu.openanalytics.rdepot.exception.RepositoryMaintainerCreateException;
 import eu.openanalytics.rdepot.exception.RepositoryMaintainerDeleteException;
 import eu.openanalytics.rdepot.exception.RepositoryMaintainerEditException;
+import eu.openanalytics.rdepot.exception.RepositoryMaintainerException;
 import eu.openanalytics.rdepot.exception.RepositoryMaintainerNotFound;
 import eu.openanalytics.rdepot.model.Event;
 import eu.openanalytics.rdepot.model.Package;
@@ -76,6 +83,12 @@ public class RepositoryMaintainerService
 	
 	@Resource
 	private RepositoryMaintainerEventService repositoryMaintainerEventService;
+	
+	@Resource
+	private RepositoryService repositoryService;
+	
+	@Resource
+	private UserService userService;
 
 	@Transactional(readOnly=false, rollbackFor={RepositoryMaintainerCreateException.class})
 	public RepositoryMaintainer create(RepositoryMaintainer repositoryMaintainer, User creator) throws RepositoryMaintainerCreateException 
@@ -104,7 +117,7 @@ public class RepositoryMaintainerService
 		} 
 		catch (PackageEditException | EventNotFound e) 
 		{
-			throw new RepositoryMaintainerCreateException(e.getMessage());
+			throw new RepositoryMaintainerCreateException(messageSource, locale, repositoryMaintainer);
 		}
 		return createdRepositoryMaintainer;
 	}
@@ -112,6 +125,10 @@ public class RepositoryMaintainerService
 	public RepositoryMaintainer findById(int id) 
 	{
 		return repositoryMaintainerRepository.findByIdAndDeleted(id, false);
+	}
+	
+	public Optional<RepositoryMaintainer> findByIdEvenDeleted(int id) {
+		return repositoryMaintainerRepository.findById(id);
 	}
 	
 	public RepositoryMaintainer findByIdAndDeleted(int id, boolean deleted) 
@@ -141,13 +158,13 @@ public class RepositoryMaintainerService
 	}
 	
 	@Transactional(readOnly=false, rollbackFor={RepositoryMaintainerNotFound.class})
-	public RepositoryMaintainer shiftDelete(RepositoryMaintainer deletedRepositoryMaintainer)
+	public void shiftDelete(RepositoryMaintainer deletedRepositoryMaintainer)
 	{
 		for(RepositoryMaintainerEvent event : deletedRepositoryMaintainer.getRepositoryMaintainerEvents())
 			repositoryMaintainerEventService.delete(event.getId());
 		// TODO: shiftDelete the "deleted" packages that were still maintained by the "deleted" repository maintainer
 		repositoryMaintainerRepository.delete(deletedRepositoryMaintainer);
-		return deletedRepositoryMaintainer;
+//		return deletedRepositoryMaintainer;
 	}
 
 	public List<RepositoryMaintainer> findAll() 
@@ -158,6 +175,14 @@ public class RepositoryMaintainerService
 	public List<RepositoryMaintainer> findByDeleted(boolean deleted) 
 	{
 		return repositoryMaintainerRepository.findByDeleted(deleted, Sort.by(new Order(Direction.ASC, "user.name")));
+	}
+	
+	public Page<RepositoryMaintainer> findAll(Pageable pageable) {
+		return repositoryMaintainerRepository.findAll(pageable);
+	}
+	
+	public Page<RepositoryMaintainer> findByDeleted(Pageable pageable, Boolean deleted) {
+		return repositoryMaintainerRepository.findByDeleted(pageable, deleted);
 	}
 
 	@Transactional(readOnly=false, rollbackFor={RepositoryMaintainerEditException.class})
@@ -220,6 +245,34 @@ public class RepositoryMaintainerService
 	public RepositoryMaintainer findByUserAndRepository(User user, Repository repository) 
 	{
 		return repositoryMaintainerRepository.findByUserAndRepositoryAndDeleted(user, repository, false);
+	}
+
+	@Transactional(readOnly = false)
+	public RepositoryMaintainer evaluateAndUpdate(RepositoryMaintainerDto dto, User requester) throws RepositoryMaintainerException {
+		RepositoryMaintainer oldMaintainer = findById(dto.getId());
+		
+		if(dto.isDeleted() != oldMaintainer.isDeleted()) {
+			if(dto.isDeleted())
+				delete(oldMaintainer, requester);
+			else
+				throw new NotImplementedException();
+		}
+		
+		RepositoryMaintainer newMaintainer = dto.toEntity();
+		
+		Repository repository = repositoryService.findById(newMaintainer.getRepository().getId());
+		newMaintainer.setRepository(repository);
+		User user = userService.findById(newMaintainer.getUser().getId());
+		newMaintainer.setUser(user);
+		
+		return update(newMaintainer, requester);
+	}
+
+	public List<RepositoryMaintainer> findByUser(User requester) {
+		List<RepositoryMaintainer> maintainers = repositoryMaintainerRepository.findByUser(requester);
+		maintainers.forEach(m -> Hibernate.initialize(m.getRepository()));
+		
+		return maintainers;
 	}
 
 }

@@ -1,0 +1,7 @@
+{
+    "status": "error",
+    "code": 404,
+    "message": "Repository not found!",
+    "messageCode": "repository.notfound",
+    "data": null
+}

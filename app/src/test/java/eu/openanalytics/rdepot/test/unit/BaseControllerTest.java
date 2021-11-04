@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -39,7 +39,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.context.request.WebRequest;
 
-import eu.openanalytics.rdepot.controller.BaseController;
+import eu.openanalytics.rdepot.api.v1.controller.BaseController;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BaseControllerTest {

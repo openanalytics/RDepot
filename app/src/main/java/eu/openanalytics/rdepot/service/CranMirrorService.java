@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -30,11 +30,9 @@ import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import eu.openanalytics.rdepot.exception.AdminNotFound;
@@ -55,28 +53,25 @@ import eu.openanalytics.rdepot.properties.RepositoriesProps;
 import eu.openanalytics.rdepot.storage.BaseStorage;
 import eu.openanalytics.rdepot.utils.PackagesFileParser;
 import eu.openanalytics.rdepot.warning.SubmissionCreateWarning;
-import eu.openanalytics.rdepot.warning.SubmissionNeedsToBeAcceptedWarning;
 
 /**
  * Mirroring implementation for R repositories
  */
-@Component
 @Service
 public class CranMirrorService extends MirrorService {
 	
-	Logger logger = LoggerFactory.getLogger(CranMirrorService.class);
-	Locale locale = LocaleContextHolder.getLocale();
-	public static final String PACKAGES_FILE_PATH = "/src/contrib/PACKAGES";
-	public static final String PACKAGE_PREFIX = "/src/contrib/";
-	public static final String PACKAGE_ARCHIVE_PREFIX = "/src/contrib/Archive";
+	private static final Logger logger = LoggerFactory.getLogger(CranMirrorService.class);
+	private static final Locale locale = LocaleContextHolder.getLocale();
+	private static final String PACKAGES_FILE_PATH = "/src/contrib/PACKAGES";
+	private static final String PACKAGE_PREFIX = "/src/contrib/";
+	private static final String PACKAGE_ARCHIVE_PREFIX = "/src/contrib/Archive";
 
-	BaseStorage baseStorage;
-	PackageService packageService;
-	UserService userService;
-	SubmissionService submissionService;
-	MessageSource messageSource;
+	private final BaseStorage baseStorage;
+	private final PackageService packageService;
+	private final UserService userService;
+	private final SubmissionService submissionService;
+	private final MessageSource messageSource;
 	
-	@Autowired
 	public CranMirrorService(PackageService packageService, UserService userService,
 			SubmissionService submissionService,
 			MessageSource messageSource, RepositoriesProps repositoriesProps,
@@ -92,8 +87,6 @@ public class CranMirrorService extends MirrorService {
 	@Override
 	@Async
 	public void synchronize(Repository repository, Mirror mirror) {
-		//TODO: Add synchronization to logger info
-				
 		if(isPendingAddNewStatusIfFinished(repository)) {
 			logger.warn(
 					"Cannot start synchronization because it is already pending for this repository: " 
@@ -212,7 +205,7 @@ public class CranMirrorService extends MirrorService {
 				DownloadFileException | SubmissionCreateException e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
 			throw new UpdatePackageException(name, version, mirror, messageSource, locale);
-		} catch (SubmissionCreateWarning | SubmissionNeedsToBeAcceptedWarning w) {
+		} catch (SubmissionCreateWarning w) {
 			logger.warn(w.getClass().getName() + ": " + w.getMessage(), w);
 		} finally {
 			try {

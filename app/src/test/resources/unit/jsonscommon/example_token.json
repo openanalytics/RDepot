@@ -1,0 +1,15 @@
+{
+    "status": "success",
+    "code": 200,
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+	"data": {
+		"token": "S3CR3TT0K3N",
+		"links": [
+            {
+                "rel": "self",
+                "href": "http://localhost/api/v2/manager/users/3/token"
+            }
+    	]
+	}
+}

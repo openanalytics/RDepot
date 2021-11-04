@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -22,6 +22,8 @@ package eu.openanalytics.rdepot.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,8 +39,11 @@ public interface RepositoryRepository extends JpaRepository<Repository, Integer>
 	Repository findByIdAndDeleted(int id, boolean deleted);
 	List<Repository> findByDeleted(boolean deleted, Sort sort);
 	List<Repository> findAll(Sort sort);
+	Page<Repository> findByDeleted(boolean deleted, Pageable pageable);
+	Page<Repository> findAll(Pageable pageable);
 	Repository findByNameAndDeleted(String name, boolean deleted);
 	Repository findByPublicationUriAndDeleted(String publicationUri, boolean deleted);
 	Repository findByServerAddressAndDeleted(String serverAddress, boolean deleted);
 }
+
 

@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -53,8 +53,9 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+
+import eu.openanalytics.rdepot.api.v1.controller.AuthenticationFailureController;
 import eu.openanalytics.rdepot.authenticator.OIDCCustomBindAuthenticator;
-import eu.openanalytics.rdepot.controller.AuthenticationFailureController;
 import eu.openanalytics.rdepot.exception.AuthException;
 
 @Configuration

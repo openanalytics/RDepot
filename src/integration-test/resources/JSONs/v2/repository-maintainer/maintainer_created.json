@@ -1,0 +1,22 @@
+{
+    "status": "success",
+    "code": 201,
+    "message": "Your resource has been created successfully.",
+    "messageCode": "success.resource.created",
+    "data": {
+        "id": 4,
+        "userId": 5,
+        "repositoryId": 3,
+        "deleted": false,
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/r/repository-maintainers/4"
+            },
+            {
+                "rel": "repositoryMaintainerList",
+                "href": "http://localhost:8017/api/v2/manager/r/repository-maintainers"
+            }
+        ]
+    }
+} 

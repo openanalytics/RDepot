@@ -1,0 +1,22 @@
+ {
+    "status": "success",
+    "code": 200,
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "data": {
+        "id": 3,
+        "userId": 5,
+        "repositoryId": 3,
+        "deleted": false,
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/r/repository-maintainers/3"
+            },
+            {
+                "rel": "repositoryMaintainerList",
+                "href": "http://localhost:8017/api/v2/manager/r/repository-maintainers"
+            }
+        ]
+    }
+}

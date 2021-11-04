@@ -4,8 +4,8 @@ api_token:
 declarative: true
 repositories:
   - name: A
-    publication-uri: http://localhost/repo/A13
-    server-address: http://oa-rdepot-repo:8080/A13
+    publication-uri: http://localhost/repo/A
+    server-address: http://oa-rdepot-repo:8080/A
   - name: D
     publication-uri: http://localhost/repo/D
     server-address: http://oa-rdepot-repo:8080/D
@@ -65,7 +65,8 @@ hibernate:
 # Enable Liquibase
 spring:
   liquibase:
-    enabled: false
+    user: postgres
+    enabled: true
 
 # Debug SQL queries
 #logging:

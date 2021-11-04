@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.annotation.Resource;
 
@@ -34,18 +35,23 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import eu.openanalytics.rdepot.api.v2.dto.PackageMaintainerDto;
 import eu.openanalytics.rdepot.comparator.PackageMaintainerComparator;
 import eu.openanalytics.rdepot.exception.EventNotFound;
 import eu.openanalytics.rdepot.exception.PackageEditException;
 import eu.openanalytics.rdepot.exception.PackageMaintainerCreateException;
 import eu.openanalytics.rdepot.exception.PackageMaintainerDeleteException;
 import eu.openanalytics.rdepot.exception.PackageMaintainerEditException;
+import eu.openanalytics.rdepot.exception.PackageMaintainerException;
 import eu.openanalytics.rdepot.exception.PackageMaintainerNotFound;
 import eu.openanalytics.rdepot.model.Event;
 import eu.openanalytics.rdepot.model.Package;
@@ -79,6 +85,15 @@ public class PackageMaintainerService {
 	
 	@Resource
 	private PackageMaintainerEventService packageMaintainerEventService;
+	
+	@Resource
+	private RepositoryMaintainerService repositoryMaintainerService;
+	
+	@Resource
+	private RepositoryService repositoryService;
+	
+	@Resource
+	private UserService userService;
 	
 	@Transactional(readOnly=false, rollbackFor={PackageMaintainerCreateException.class})
 	public PackageMaintainer create(PackageMaintainer packageMaintainer, User creator) 
@@ -129,6 +144,10 @@ public class PackageMaintainerService {
 		return packageMaintainerRepository.findByIdAndDeleted(id, false);
 	}
 	
+	public Optional<PackageMaintainer> findByIdEvenDeleted(int id) {
+		return packageMaintainerRepository.findById(id);
+	}
+	
 	public PackageMaintainer findByIdAndDeleted(int id, boolean deleted) {
 		return packageMaintainerRepository.findByIdAndDeleted(id, deleted);
 	}
@@ -169,12 +188,12 @@ public class PackageMaintainerService {
 	}
 	
 	@Transactional(readOnly=false, rollbackFor={PackageMaintainerDeleteException.class})
-	public PackageMaintainer shiftDelete(PackageMaintainer deletedPackageMaintainer) 
+	public void shiftDelete(PackageMaintainer deletedPackageMaintainer) 
 			throws PackageMaintainerDeleteException {
 		deletePackageMaintainerEvents(deletedPackageMaintainer);
 		// TODO: shiftDelete the "deleted" packages that were still maintained by the "deleted" package maintainer
 		packageMaintainerRepository.delete(deletedPackageMaintainer);
-		return deletedPackageMaintainer;
+//		return deletedPackageMaintainer;
 		
 	}
 	
@@ -284,7 +303,7 @@ public class PackageMaintainerService {
 	}
 	
 	@Transactional(readOnly=false, rollbackFor= {PackageMaintainerEditException.class})
-	public void evaluateAndUpdate(PackageMaintainer packageMaintainer, PackageMaintainer updatedPackageMaintainer, User updater) 
+	public PackageMaintainer evaluateAndUpdate(PackageMaintainer packageMaintainer, PackageMaintainer updatedPackageMaintainer, User updater) 
 			throws PackageMaintainerEditException {
 		
 		if(!packageMaintainer.getPackage().equals(updatedPackageMaintainer.getPackage()))
@@ -292,6 +311,7 @@ public class PackageMaintainerService {
 		if(packageMaintainer.getRepository().getId() != updatedPackageMaintainer.getRepository().getId())
 			updateRepository(packageMaintainer, updatedPackageMaintainer.getRepository(), updater);
 
+		return packageMaintainer;
 	}
 
 //	@Transactional(readOnly=false, rollbackFor={PackageMaintainerEditException.class})
@@ -389,6 +409,43 @@ public class PackageMaintainerService {
 		return packageMaintainerRepository.findByRepository(repository);
 	}
 	
+	private Page<PackageMaintainer> findByRequester(User requester, Boolean deleted, Pageable pageable) {
+		switch(requester.getRole().getName()) {
+		case "admin":
+			return packageMaintainerRepository.findByDeleted(deleted, pageable);
+		case "repositorymaintainer":
+			for(RepositoryMaintainer repositoryMaintainer : repositoryMaintainerService.findByUser(requester)) {
+				if(!repositoryMaintainer.isDeleted()) {
+					return packageMaintainerRepository.findByRepositoryAndDeleted(repositoryMaintainer.getRepository(), deleted, pageable);
+				}
+			}
+		}
+		return new PageImpl<PackageMaintainer>(new ArrayList<>());
+	}
+	
+	public Page<PackageMaintainer> findByRequester(User requester, Pageable pageable) {
+		switch(requester.getRole().getName()) {
+		case "admin":
+			return packageMaintainerRepository.findAll(pageable);
+		case "repositorymaintainer":
+			for(RepositoryMaintainer repositoryMaintainer : repositoryMaintainerService.findByUser(requester)) {
+				//TODO: Can a repository maintainer maintain more then 1 repository then?
+				if(!repositoryMaintainer.isDeleted()) {
+					return packageMaintainerRepository.findByRepository(repositoryMaintainer.getRepository(), pageable);
+				}
+			}
+		}
+		
+		return new PageImpl<PackageMaintainer>(new ArrayList<>());
+	}
+	
+	public Page<PackageMaintainer> findByRequesterAndDeleted(User requester, Pageable pageable, Boolean deleted) {
+		return findByRequester(requester, deleted, pageable);
+	}
+//	
+//	public Page<PackageMaintainer> findByRequester(User requester, Pageable pageable) {
+//		return findByRequester(requester, false, pageable);
+//	}
 	
 	public List<PackageMaintainer> findByRequester(User requester) {
 		ArrayList<PackageMaintainer> result = new ArrayList<PackageMaintainer>();
@@ -405,5 +462,17 @@ public class PackageMaintainerService {
 		}
 		Collections.sort(result, new PackageMaintainerComparator());
 		return result;
+	}
+
+	@Transactional(readOnly = false)
+	public PackageMaintainer evaluateAndUpdate(PackageMaintainerDto dto, User requester) throws PackageMaintainerException {
+		PackageMaintainer current = packageMaintainerRepository.findById(
+				dto.getEntity().getId()).orElseThrow(() -> new IllegalArgumentException());
+		
+		PackageMaintainer updated = dto.toEntity();
+		updated.setRepository(repositoryService.findById(dto.getRepositoryId()));
+		updated.setUser(userService.findById(dto.getUserId()));
+		
+		return evaluateAndUpdate(current, updated, requester);
 	}
 }

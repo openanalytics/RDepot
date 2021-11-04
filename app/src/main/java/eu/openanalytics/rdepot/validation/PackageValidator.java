@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -31,6 +31,7 @@ import eu.openanalytics.rdepot.messaging.MessageCodes;
 import eu.openanalytics.rdepot.model.Package;
 import eu.openanalytics.rdepot.model.Repository;
 import eu.openanalytics.rdepot.service.PackageService;
+import eu.openanalytics.rdepot.service.RepositoryService;
 import eu.openanalytics.rdepot.warning.PackageValidationWarning;
 
 @Component
@@ -42,7 +43,7 @@ public class PackageValidator
 	
 	@Autowired
 	private PackageService packageService;
-	
+
 	//TODO: implement this using Spring validator?
 	// There's no need for "rejectValue", can use "reject" and check for error code, then throw error or warning?
 	
@@ -58,7 +59,7 @@ public class PackageValidator
 		validateTitle(target);
 		validateMd5Sum(target);
 	}
-	
+		
 	private void validateMd5Sum(Package target) throws PackageValidationException 
 	{
 		String md5sum = target.getMd5sum();

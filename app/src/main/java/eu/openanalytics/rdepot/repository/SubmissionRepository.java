@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -22,8 +22,13 @@ package eu.openanalytics.rdepot.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.openanalytics.rdepot.model.Package;
@@ -33,25 +38,61 @@ import eu.openanalytics.rdepot.model.User;
 
 @org.springframework.stereotype.Repository
 @Transactional(readOnly = true)
-public interface SubmissionRepository extends JpaRepository<Submission, Integer>
-{
+public interface SubmissionRepository extends JpaRepository<Submission, Integer> {
 
-	public List<Submission> findByUser(User submitter);
+	List<Submission> findByUser(User submitter);
 
-	public List<Submission> findByUser(User submitter, Sort sort);
+	List<Submission> findByUser(User submitter, Sort sort);
 
-	public List<Submission> findByPackage_Repository(Repository repository);
+	List<Submission> findByPackage_Repository(Repository repository);
 
-	public Submission findByPackage(Package packageBag);
+	Submission findByPackage(Package packageBag);
 
-	public Submission findByIdAndDeleted(int id, boolean deleted);
+	Submission findByIdAndDeleted(int id, boolean deleted);
 
-	public List<Submission> findByDeleted(boolean deleted, Sort sort);
+	List<Submission> findByDeleted(boolean deleted, Sort sort);
 
-	public List<Submission> findByUserAndDeleted(User submitter, boolean deleted, Sort sort);
+	List<Submission> findByUserAndDeleted(User submitter, boolean deleted, Sort sort);
 
-	public List<Submission> findByDeletedAndPackage_Repository(boolean deleted, Repository repository);
+	List<Submission> findByDeletedAndPackage_Repository(boolean deleted, Repository repository);
 
-	public Submission findByPackageAndDeleted(Package packageBag, boolean deleted);
+	Submission findByPackageAndDeleted(Package packageBag, boolean deleted);
 
+	Page<Submission> findByAcceptedAndDeleted(boolean accepted, boolean deleted, Pageable pageable);
+	
+	Page<Submission> findByUserAndAcceptedAndDeleted(User submitter, boolean accepted, boolean deleted, Pageable pageable);
+
+////	@Query()
+//	public Page<Submission> findAllForRequester(User requester, User user, Boolean deleted, Boolean accepted,
+//			Pageable pageable);
+	
+	@Query(value = "select s from Submission s "
+			+ "where s.user = :requester "
+			+ "and (:user is null or s.user = :user) "
+			+ "and (:deleted is null or s.deleted = :deleted) "
+			+ "and (:accepted is null or s.accepted = :accepted)")
+	Page<Submission> findAllForUser(@Param("requester") User requester, @Param("user") User user, @Param("deleted") Boolean deleted, @Param("accepted") Boolean accepted, Pageable pageable);
+	
+	@Query(value = "select s from Submission s join PackageMaintainer m on m.package = s.package.name "
+			+ "and m.repository = s.package.repository "
+			+ "where (m.user = :requester "
+			+ "or s.user = :requester) "
+			+ "and (:user is null or s.user = :user) "
+			+ "and (:deleted is null or s.deleted = :deleted) "
+			+ "and (:accepted is null or s.accepted = :accepted) ")
+	Page<Submission> findAllForPackageMaintainer(@Param("requester") User requester, @Param("user") User user, @Param("deleted") Boolean deleted, @Param("accepted") Boolean accepted, Pageable pageable);
+	
+	@Query(value = "select s from Submission s "
+			+ "join RepositoryMaintainer m on s.package.repository = m.repository "
+			+ "where (m.user = :requester or s.user=:requester) "
+			+ "and  ((:deleted is null or s.deleted = :deleted) "
+			+ "and (:accepted is null or s.accepted = :accepted))" 
+			+ "and (:user is null or s.user = :user)")
+	Page<Submission> findAllForRepositoryMaintainer(@Param("requester") User requester, @Param("user") User user, @Param("deleted") Boolean deleted, @Param("accepted") Boolean accepted, Pageable pageable);
+	
+	@Query(value = "select s from Submission s where "
+			+ "(:deleted is null or s.deleted = :deleted) "
+			+ "and (:accepted is null or s.accepted = :accepted) "
+			+ "and (:user is null or s.user = :user)")
+	Page<Submission> findAll(@Param("user") User user, @Param("deleted") Boolean deleted, @Param("accepted") Boolean accepted, Pageable pageable);
 }

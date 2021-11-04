@@ -1,0 +1,23 @@
+{
+    "status": "success",
+    "code": 200,
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "data": {
+        "id": 1,
+        "userId": 6,
+        "packageName": "accrued",
+        "repositoryId": 2,
+        "deleted": false,
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/r/package-maintainers/1"
+            },
+            {
+                "rel": "packageMaintainerList",
+                "href": "http://localhost:8017/api/v2/manager/r/package-maintainers"
+            }
+        ]
+    }
+} 

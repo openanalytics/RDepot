@@ -7,8 +7,8 @@ task restore {
 
         exec {
             executable "docker"
-            args "exec", "oa-rdepot-db", "su", "-", "postgres", "-c", "dropdb rdepot; createdb rdepot; psql rdepot < /opt/database.sql"
-        }
+            args "exec", "oa-rdepot-db", "su", "-", "postgres", "-c", "psql rdepot -c 'TRUNCATE public.user_event, public.package_event, public.package_maintainer_event, public.repository_event, public.repository_maintainer_event, public.submission_event, public.submission, public.repository_maintainer, public.package_maintainer, public.package, public.repository, public.api_token, public.user'; psql rdepot < /opt/sql_files/rdepot.sql"
+        }		
 
         exec {
             executable "docker"
@@ -89,6 +89,24 @@ task checkIfSymbolicLinkWasCreated {
 		exec {
 			executable "docker"
 			args "exec", "oa-rdepot-app", "/bin/bash", "-c", "cd /opt/rdepot/generated/8/current/src/"
+		}
+	}
+}
+
+task checkIfSnapshotWasCreated {
+	doLast {
+		exec {
+			executable "docker"
+			args "exec", "oa-rdepot-app", "/bin/bash", "-c", "cd /opt/rdepot/generated/5/"
+		}
+	}
+}
+
+task checkIfSnapshotWasCreatedDeclarative {
+	doLast {
+		exec {
+			executable "docker"
+			args "exec", "oa-rdepot-app-declarative", "/bin/bash", "-c", "cd /opt/rdepot/generated/2/"
 		}
 	}
 }

@@ -1,0 +1,37 @@
+{
+    "status": "success",
+    "code": 200,
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "data": {
+        "id": 32,
+        "version": "0.10",
+        "repositoryId": 3,
+        "submissionId": 32,
+        "name": "Benchmarking",
+        "description": "Estimates and graphs deterministic (DEA) frontier models with different technology assumptions (fdh, vrs, drs, crs, irs, add). Also handles possible slacks, peers and their weights (lambdas), optimal cost, revenue and profit allocation, super--efficiency, and mergers. A comparative method for estimating SFA efficiencies is included.",
+        "author": "Peter Bogetoft and Lars Otto",
+        "depends": "lpSolveAPI, ucminf",
+        "imports": null,
+        "suggests": null,
+        "systemRequirements": null,
+        "license": "GPL (>= 2)",
+        "title": "Benchmark and frontier analysis using DEA and SFA",
+        "url": null,
+        "source": "/opt/rdepot/repositories/3/70236345/Benchmarking_0.10.tar.gz",
+        "md5sum": "9a99c2ebefa6d49422ca7893c1f4ead8",
+        "active": true,
+        "deleted": false,
+        "fileName": "Benchmarking_0.10.tar.gz",
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/r/packages/32"
+            },
+            {
+                "rel": "packageList",
+                "href": "http://localhost:8017/api/v2/manager/r/packages"
+            }
+        ]
+    }
+}

@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -21,6 +21,7 @@
 package eu.openanalytics.rdepot.storage;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import eu.openanalytics.rdepot.exception.CreateFolderStructureException;
@@ -71,6 +72,13 @@ public interface RepositoryStorage {
 	 */
 	public void populateGeneratedFolder(List<Package> packages, Repository repository, String dateStamp) 
 			throws PackageFolderPopulationException;
+	
+	/**
+	 * This method deletes repository snapshot
+	 * @param repository Repository to delete
+	 * @throws IOException
+	 */
+	public void deleteGeneratedFolder(Repository repository) throws IOException;
 	
 	/**
 	 * This method transfers given packages from target directory to the contrib directory of remote server.

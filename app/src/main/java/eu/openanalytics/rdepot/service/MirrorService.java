@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -117,7 +117,7 @@ public abstract class MirrorService {
 			
 			SynchronizationStatus newStatus = new SynchronizationStatus();
 			newStatus.setRepositoryId(repository.getId());
-			newStatus.setTimestamp(new Date());
+			newStatus.setTimestamp(new Date()); //TODO: parse date here
 			newStatus.setPending(true);
 			
 			synchronizationStatusList.add(newStatus);

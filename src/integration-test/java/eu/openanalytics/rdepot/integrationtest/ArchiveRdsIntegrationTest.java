@@ -35,7 +35,11 @@ import io.restassured.response.Response;
 
 public class ArchiveRdsIntegrationTest extends IntegrationTest {
 
-  private static final String API_PACKAGES_PATH = "/api/manager/packages";
+  public ArchiveRdsIntegrationTest() {
+		super("/api/manager/packages");
+	}
+
+private static final String API_PACKAGES_PATH = "/api/manager/packages";
 
   @Test
   public void shouldNotHaveArchiveRdsFile() throws IOException {

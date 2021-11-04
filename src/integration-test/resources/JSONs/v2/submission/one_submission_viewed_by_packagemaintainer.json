@@ -1,0 +1,53 @@
+{
+    "status": "success",
+    "code": 200,
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "data": {
+        "id": 14,
+        "userId": 4,
+        "packageBag": {
+            "id": 13,
+            "version": "1.0",
+            "repositoryId": 2,
+            "submissionId": 14,
+            "name": "accrued",
+            "description": "Package for visualizing data quality of partially accruing time series.",
+            "author": "Julie Eaton and Ian Painter",
+            "depends": "R (>= 3.0), grid",
+            "imports": null,
+            "suggests": null,
+            "systemRequirements": null,
+            "license": "GPL-3",
+            "title": "Visualization tools for partially accruing data",
+            "url": null,
+            "source": "/opt/rdepot/repositories/2/40553654/accrued_1.0.tar.gz",
+            "md5sum": "1c75d59b18e554a285a9b156a06a288c",
+            "active": false,
+            "deleted": false,
+            "fileName": "accrued_1.0.tar.gz",
+            "links": [
+                {
+                    "rel": "self",
+                    "href": "http://localhost:8017/api/v2/manager/r/packages/13"
+                },
+                {
+                    "rel": "packageList",
+                    "href": "http://localhost:8017/api/v2/manager/r/packages"
+                }
+            ]
+        },
+        "changes": null,
+        "state": "ACCEPTED",
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/r/submissions/14"
+            },
+            {
+                "rel": "submissionList",
+                "href": "http://localhost:8017/api/v2/manager/r/submissions"
+            }
+        ]
+    }
+}

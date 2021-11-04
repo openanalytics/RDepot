@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -33,7 +33,7 @@ import eu.openanalytics.rdepot.model.User;
 import eu.openanalytics.rdepot.model.UserEvent;
 
 @Repository
-@Transactional(readOnly = true)
+//@Transactional(readOnly = true)
 public interface UserEventRepository extends JpaRepository<UserEvent, Integer>
 {
 	public List<UserEvent> findByChangedBy(User changedBy);

@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -64,8 +64,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import eu.openanalytics.rdepot.controller.GlobalController;
-import eu.openanalytics.rdepot.controller.PackageController;
+import eu.openanalytics.rdepot.api.v1.controller.GlobalController;
+import eu.openanalytics.rdepot.api.v1.controller.PackageController;
 import eu.openanalytics.rdepot.exception.GetFileInBytesException;
 import eu.openanalytics.rdepot.exception.PackageActivateException;
 import eu.openanalytics.rdepot.exception.PackageDeactivateException;

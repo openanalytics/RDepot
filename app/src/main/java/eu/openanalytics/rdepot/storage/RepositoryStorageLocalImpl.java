@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -35,6 +35,7 @@ import java.util.Objects;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -380,5 +381,13 @@ public class RepositoryStorageLocalImpl implements RepositoryStorage {
 		File current = new File(parent, "current");
 		
 		baseStorage.deleteFile(current.getAbsolutePath());
+	}
+
+	@Override
+	public void deleteGeneratedFolder(Repository repository) throws IOException {
+		String folderPath = repositoryGenerationDirectory.getAbsolutePath()
+				+ separator + repository.getId();
+		FileUtils.forceDelete(new File(folderPath));
+		
 	}
 }

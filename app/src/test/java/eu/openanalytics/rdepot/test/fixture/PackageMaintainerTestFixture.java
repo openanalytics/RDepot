@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -23,6 +23,9 @@ package eu.openanalytics.rdepot.test.fixture;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+
 import eu.openanalytics.rdepot.model.PackageMaintainer;
 import eu.openanalytics.rdepot.model.Repository;
 import eu.openanalytics.rdepot.model.User;
@@ -32,10 +35,29 @@ public class PackageMaintainerTestFixture {
 	public static final String PACKAGE_NAME = PackageTestFixture.NAME;
 	public static final Boolean DELETED = false;
 	
+	public static List<PackageMaintainer> GET_EXAMPLE_PACKAGE_MAINTAINERS() {
+		Repository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY(123);
+		User user = UserTestFixture.GET_FIXTURE_PACKAGEMAINTAINER(111);
+		
+		List<PackageMaintainer> maintainers = new ArrayList<>();
+		for(int i = 100; i < 103; i++) {
+			PackageMaintainer maintainer = new PackageMaintainer(i, user, repository, PACKAGE_NAME + i, false);
+			maintainers.add(maintainer);
+		}
+		
+		maintainers.get(2).setDeleted(true);
+		
+		return maintainers;
+	}
+	
+	public static Page<PackageMaintainer> GET_EXAMPLE_PACKAGE_MAINTAINERS_PAGED() {
+		return new PageImpl<>(GET_EXAMPLE_PACKAGE_MAINTAINERS());
+	}
+	
 	public static List<PackageMaintainer> GET_FIXTURE_PACKAGE_MAINTAINERS(User user, Repository repository, int packageCount, int idShift) {
 		List<PackageMaintainer> packageMaintainers = new ArrayList<>();
 		
-		for(int i = 0; i < packageCount; i++) {
+		for(int i = idShift; i < packageCount + idShift; i++) {
 			packageMaintainers.add(new PackageMaintainer(i, user, repository, PACKAGE_NAME + Integer.toString(i), DELETED));
 		}
 		
@@ -56,5 +78,9 @@ public class PackageMaintainerTestFixture {
 	
 	public static PackageMaintainer GET_FIXTURE_PACKAGE_MAINTAINER(User user, Repository repository, Package packageBag) {
 		return GET_FIXTURE_PACKAGE_MAINTAINER(user, repository, packageBag, 0);
+	}
+
+	public static PackageMaintainer GET_FIXTURE_PACKAGE_MAINTAINER() {
+		return GET_EXAMPLE_PACKAGE_MAINTAINERS().get(0);
 	}
 }

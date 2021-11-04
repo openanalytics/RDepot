@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -36,9 +36,12 @@ import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import eu.openanalytics.rdepot.api.v2.dto.EntityDto;
+import eu.openanalytics.rdepot.api.v2.dto.RRepositoryDto;
+
 @Entity
 @Table(name = "repository", schema = "public")
-public class Repository implements java.io.Serializable, IRepositoryProjection
+public class Repository implements java.io.Serializable, IRepositoryProjection, IEntity<Repository>
 {
 
 	/**
@@ -61,7 +64,7 @@ public class Repository implements java.io.Serializable, IRepositoryProjection
 	private Set<Mirror> mirrors = new HashSet<Mirror>();
 	
 	@Transient
-	private Boolean synchronizing;
+	private Boolean synchronizing = false;
 	
 	@Transient
 	public Boolean isSynchronizing() {
@@ -176,17 +179,9 @@ public class Repository implements java.io.Serializable, IRepositoryProjection
 		this.serverAddress = serverAddress;
 	}
 	
-	// Could this be done differently?
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "repository")
-	//@JsonBackReference(value="repository-packages")
-	//@JsonIgnore
 	public Set<Package> getPackages()
-	{
-		Set<Package> packages = new HashSet<Package>();
-		for(Package p : this.packages)
-		{
-			packages.add(p);
-		}
+	{		
 		return packages;
 	}
 
@@ -283,5 +278,10 @@ public class Repository implements java.io.Serializable, IRepositoryProjection
 	@Transient
 	public void setMirrors(Set<Mirror> mirrors) {
 		this.mirrors = mirrors;
+	}
+
+	@Override
+	public EntityDto<Repository> createDto() {
+		return new RRepositoryDto(this);
 	}
 }

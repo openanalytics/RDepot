@@ -20,9 +20,13 @@
  */
 package eu.openanalytics.rdepot.integrationtest;
 
+import static io.restassured.RestAssured.given;
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -33,6 +37,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -41,6 +46,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 
 public abstract class IntegrationTest {
 	public static final String ADMIN_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJlaW5zdGVpbiJ9.9VweA_kotRnnLn9giSE511MhWX4iDwtx85lidw_ZT5iTQ1aOB-3ytJNDB_Mrcop2H22MNhMjbpUW_sraHdvOlw"; 
@@ -53,6 +59,176 @@ public abstract class IntegrationTest {
 	public static final String JSON_PATH = "src/integration-test/resources/JSONs";
 	public static final String PUBLICATION_URI_PATH = "/repo";
 	
+	public final String API_PATH;
+	
+	public IntegrationTest(String apiPath) {
+		this.API_PATH = apiPath;
+	}
+	
+	protected void testGetEndpoint(String expectedJsonPath, String urlSuffix, 
+			Integer statusCode, String token) throws Exception {
+		JSONParser jsonParser = new JSONParser();
+		
+		FileReader reader = new FileReader(JSON_PATH + expectedJsonPath);
+		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
+		
+		String data = given()
+				.header(AUTHORIZATION, BEARER + token)
+				.accept(ContentType.JSON)
+			.when()
+				.get(API_PATH + urlSuffix)
+			.then()
+				.statusCode(statusCode)
+				.extract()
+				.asString();
+		
+		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);
+		assertEquals("Incorrect JSON output.", expectedJSON, actualJSON);
+	}
+	
+	protected void testGetEndpoint(String expectedJsonPath, String path, String urlSuffix, 
+			Integer statusCode, String token) throws Exception {
+		JSONParser jsonParser = new JSONParser();
+		
+		FileReader reader = new FileReader(JSON_PATH + expectedJsonPath);
+		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
+		
+		String data = given()
+				.header(AUTHORIZATION, BEARER + token)
+				.accept(ContentType.JSON)
+			.when()
+				.get(path + urlSuffix)
+			.then()
+				.statusCode(statusCode)
+				.extract()
+				.asString();
+		
+		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);
+		assertEquals("Incorrect JSON output.", expectedJSON, actualJSON);
+	}
+	
+	protected void testDeleteEndpoint(String urlSuffix, Integer statusCode, String token) {
+			given()
+				.header(AUTHORIZATION, BEARER + token)
+				.accept(ContentType.JSON)
+			.when()
+				.delete(API_PATH + urlSuffix)
+			.then()
+				.statusCode(statusCode);
+	}
+	
+	protected void testGetEndpointUnauthenticated(String urlSuffix) throws Exception {
+		JSONParser jsonParser = new JSONParser();
+		
+		FileReader reader = new FileReader(JSON_PATH + "/v2/401.json");
+		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
+		
+		String data = given()
+				.accept(ContentType.JSON)
+			.when()
+				.get(API_PATH + urlSuffix)
+			.then()
+				.statusCode(401)
+				.extract()
+				.asString();
+		
+		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);
+		assertEquals("Incorrect JSON output", expectedJSON, actualJSON);
+	}
+	
+	protected void testPatchEndpointUnauthenticated(String patch, String urlSuffix) throws Exception {
+		JSONParser jsonParser = new JSONParser();
+		
+		FileReader reader = new FileReader(JSON_PATH + "/v2/401.json");
+		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
+		
+		String data = given()
+				.accept(ContentType.JSON)
+				.contentType("application/json-patch+json")
+				.body(patch)
+			.when()
+				.patch(API_PATH + urlSuffix)
+			.then()
+				.statusCode(401)
+				.extract()
+				.asString();
+		
+		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);
+		assertEquals("Incorrect JSON output.", expectedJSON, actualJSON);		
+	}
+	
+	protected void testPatchEndpoint(String patch, String expectedJsonPath, String urlSuffix, 
+			Integer statusCode, String token) throws Exception {
+		JSONParser jsonParser = new JSONParser();
+		
+		FileReader reader = new FileReader(JSON_PATH + expectedJsonPath);
+		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
+		
+		String data = given()
+				.header(AUTHORIZATION, BEARER + token)
+				.accept(ContentType.JSON)
+				.contentType("application/json-patch+json")
+				.body(patch)
+			.when()
+				.patch(API_PATH + urlSuffix)
+			.then()
+				.statusCode(statusCode)
+				.extract()
+				.asString();
+		
+		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);
+		assertEquals("Incorrect JSON output", expectedJSON, actualJSON);		
+	}
+	
+	protected void testPostEndpoint(String body, String expectedJsonPath, 
+			Integer statusCode, String token) throws Exception {
+		JSONParser jsonParser = new JSONParser();
+		
+		FileReader reader = new FileReader(JSON_PATH + expectedJsonPath);
+		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
+		
+		String data = given()
+				.header(AUTHORIZATION, BEARER + token)
+				.accept(ContentType.JSON)
+				.contentType(ContentType.JSON)
+				.body(body)
+			.when()
+				.post(API_PATH)
+			.then()
+				.statusCode(statusCode)
+				.extract()
+				.asString();
+		
+		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);
+		assertEquals("There are some differences in packages that user sees.", expectedJSON, actualJSON);		
+	}
+	
+	protected void testPostEndpoint_asUnauthenticated(String body, String expectedJsonPath, 
+			Integer statusCode) throws Exception {
+		JSONParser jsonParser = new JSONParser();
+		
+		FileReader reader = new FileReader(JSON_PATH + expectedJsonPath);
+		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
+		
+		String data = given()
+				.accept(ContentType.JSON)
+				.contentType(ContentType.JSON)
+				.body(body)
+			.when()
+				.post(API_PATH)
+			.then()
+				.statusCode(statusCode)
+				.extract()
+				.asString();
+		
+		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);
+		assertEquals("There are some differences in packages that user sees.", expectedJSON, actualJSON);
+	}
+	
+	protected void testDeleteEndpointUnauthenticated(String suffix) {
+		given().accept(ContentType.JSON).when().delete(API_PATH + suffix).then().statusCode(401);
+	}
+	
 	@BeforeClass
 	public static final void configureRestAssured() throws IOException, InterruptedException {
 		RestAssured.port = 8017;
@@ -64,7 +240,7 @@ public abstract class IntegrationTest {
 		String[] cmd = new String[] {"gradle", "restore", "-b","src/integration-test/resources/build.gradle"};
 		Process process = Runtime.getRuntime().exec(cmd);
 		process.waitFor();
-		process.destroy();
+		process.destroy();		
 	}
 	
 	@SuppressWarnings("unchecked")

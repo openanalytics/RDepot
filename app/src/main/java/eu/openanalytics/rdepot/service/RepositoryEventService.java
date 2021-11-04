@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -24,12 +24,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.TreeMap;
 
 import javax.annotation.Resource;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -213,8 +216,9 @@ public class RepositoryEventService {
                 Package added = packageService.findByIdEvenDeleted(Integer.parseInt(repositoryEvent.getValueAfter()));
                 repositoryEvent.setValueAfter(added.toString());
             } else if(Objects.equals(repositoryEvent.getChangedVariable(), "submitted")) {
-                Submission submitted = submissionService.findByIdEvenDeleted(Integer.parseInt(repositoryEvent.getValueAfter()));
-                repositoryEvent.setValueAfter(submitted.toString());
+                Optional<Submission> submitted = submissionService.findByIdEvenDeleted(Integer.parseInt(repositoryEvent.getValueAfter()));
+                if(submitted.isPresent())
+                	repositoryEvent.setValueAfter(submitted.get().toString());
             } else if(Objects.equals(repositoryEvent.getChangedVariable(), "removed")) {
                 Package removed = packageService.findByIdEvenDeleted(Integer.parseInt(repositoryEvent.getValueAfter()));
                 repositoryEvent.setValueAfter(removed.toString());
@@ -227,4 +231,8 @@ public class RepositoryEventService {
         }
 	}
 	
+	public Page<RepositoryEvent> findAllByUser(User user, Pageable pageable) {
+		List<Repository> repositories = repositoryService.findMaintainedBy(user, true);
+		return repositoryEventRepository.findByRepositoryIn(repositories, pageable);
+	}
 }

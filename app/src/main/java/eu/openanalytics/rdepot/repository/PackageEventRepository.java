@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -23,6 +23,8 @@ package eu.openanalytics.rdepot.repository;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,4 +42,5 @@ public interface PackageEventRepository extends JpaRepository<PackageEvent, Inte
 	public List<PackageEvent> findByDate(Date date);
 	public PackageEvent findByPackageAndEvent_Value(Package packageBag, String string);
 	public List<PackageEvent> findByDateAndPackage(Date date, Package packageBag);
+	public Page<PackageEvent> findByPackageIn(List<Package> packageList, Pageable pageable);
 }

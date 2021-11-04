@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -23,6 +23,8 @@ package eu.openanalytics.rdepot.repository;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -45,4 +47,5 @@ public interface RepositoryEventRepository extends JpaRepository<RepositoryEvent
 	public List<RepositoryEvent> findByValueAfterAndChangedVariableNot(@Param("valueAfter") String valueAfter, @Param("changedVariable") String changedVariable);	
 	@Query("SELECT r FROM RepositoryEvent r WHERE r.date = (:date) AND r.valueAfter = (:valueAfter) AND r.changedVariable = (:changedVariable)")
 	public List<RepositoryEvent> findByDateAndValueAfterAndChangedVariableNot(@Param("date") Date date, @Param("valueAfter") String valueAfter, @Param("changedVariable") String changedVariable);
+	public Page<RepositoryEvent> findByRepositoryIn(List<Repository> repositoryList, Pageable pageable);
 }

@@ -1,0 +1,73 @@
+{
+    "status": "success",
+    "code": 200,
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "data": {
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/r/package-maintainers?deleted=false&page=0&size=20&sort=id,asc"
+            }
+        ],
+        "content": [
+            {
+                "id": 1,
+                "userId": 6,
+                "packageName": "accrued",
+                "repositoryId": 2,
+                "deleted": false,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/r/package-maintainers/1"
+                    },
+                    {
+                        "rel": "packageMaintainerList",
+                        "href": "http://localhost:8017/api/v2/manager/r/package-maintainers"
+                    }
+                ]
+            },
+            {
+                "id": 2,
+                "userId": 6,
+                "packageName": "abc",
+                "repositoryId": 4,
+                "deleted": false,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/r/package-maintainers/2"
+                    },
+                    {
+                        "rel": "packageMaintainerList",
+                        "href": "http://localhost:8017/api/v2/manager/r/package-maintainers"
+                    }
+                ]
+            },
+            {
+                "id": 3,
+                "userId": 6,
+                "packageName": "A3",
+                "repositoryId": 4,
+                "deleted": false,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/r/package-maintainers/3"
+                    },
+                    {
+                        "rel": "packageMaintainerList",
+                        "href": "http://localhost:8017/api/v2/manager/r/package-maintainers"
+                    }
+                ]
+            }
+        ],
+        "page": {
+            "size": 20,
+            "totalElements": 3,
+            "totalPages": 1,
+            "number": 0
+        }
+    }
+} 

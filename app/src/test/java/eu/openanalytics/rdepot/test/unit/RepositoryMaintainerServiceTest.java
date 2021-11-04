@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -23,6 +23,8 @@ package eu.openanalytics.rdepot.test.unit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import java.util.Date;
@@ -34,7 +36,11 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
+import org.springframework.context.MessageSource;
+
 import eu.openanalytics.rdepot.exception.EventNotFound;
 import eu.openanalytics.rdepot.exception.PackageEditException;
 import eu.openanalytics.rdepot.exception.RepositoryEditException;
@@ -53,6 +59,7 @@ import eu.openanalytics.rdepot.service.EventService;
 import eu.openanalytics.rdepot.service.PackageService;
 import eu.openanalytics.rdepot.service.RepositoryMaintainerEventService;
 import eu.openanalytics.rdepot.service.RepositoryMaintainerService;
+import eu.openanalytics.rdepot.test.fixture.RepositoryMaintainerTestFixture;
 
 @RunWith(MockitoJUnitRunner.class)
 
@@ -66,6 +73,9 @@ public class RepositoryMaintainerServiceTest {
 	
 	@Mock
 	EventService eventService;
+	
+	@Mock
+	MessageSource messageSource;
 	
 	@Mock
 	RepositoryMaintainerEventService repositoryMaintainerEventService;
@@ -98,69 +108,5 @@ public class RepositoryMaintainerServiceTest {
 		
 		RepositoryMaintainer created = repositoryMaintainerService.create(maintainer, new User());
 		assertEquals(maintainer.getId(), created.getId());
-	}
-	
-	@Test
-	public void testCreateWhenEventIsNotFound() throws EventNotFound {
-		when(eventService.getCreateEvent()).thenThrow(new EventNotFound());
-		try {
-			repositoryMaintainerService.create(new RepositoryMaintainer(), new User());
-		} catch(RepositoryMaintainerCreateException e) {
-			assertEquals(MessageCodes.ERROR_EVENT_NOT_FOUND, e.getMessage());
-		}
-	}
-	
-	@Test
-	public void testDelete() throws PackageEditException, RepositoryEditException, RepositoryMaintainerDeleteException {
-//		Event deleteEvent = new Event(1, "delete");
-		Package packageBag1 = new Package();
-		Package packageBag2 = new Package();
-		Repository repository = new Repository();
-		Set<Package> packages = new HashSet<>();
-		packages.add(packageBag1);
-		packages.add(packageBag2);
-		repository.setPackages(packages);
-		
-		RepositoryMaintainer maintainer = new RepositoryMaintainer(123, new User(), repository, false);
-		
-//		when(eventService.findByValue("delete")).thenReturn(deleteEvent);
-//		when(packageService.update(any(), any())).thenReturn(null);
-		doNothing().when(packageService).refreshMaintainer(any(), any());
-		when(repositoryMaintainerEventService.create(any(), any(), any())).thenReturn(null);
-		
-		RepositoryMaintainer deleted = repositoryMaintainerService.delete(maintainer, new User());
-		assertTrue(deleted.isDeleted());
-		assertEquals(maintainer.getId(), deleted.getId());
-	}
-	
-//	@Test
-//	public void testDeleteWhenEventIsNotFound() throws EventNotFound {
-//		RepositoryMaintainer maintainer = new RepositoryMaintainer(123, new User(), new Repository(), false);
-//		when(eventService.getDeleteEvent()).thenThrow(new EventNotFound());
-//		
-//		try {
-//			repositoryMaintainerService.delete(maintainer, new User());
-//		} catch(RepositoryMaintainerDeleteException e) {
-//			assertEquals(MessageCodes.ERROR_EVENT_NOT_FOUND, e.getMessage());
-//		}
-//	}
-	
-	@Test
-	public void testShiftDelete() throws RepositoryMaintainerDeleteException, RepositoryMaintainerNotFound {
-		RepositoryMaintainer maintainer = new RepositoryMaintainer(123, new User(), new Repository(), true);
-		Set<RepositoryMaintainerEvent> events = new HashSet<>();
-		events.add(new RepositoryMaintainerEvent(1, new Date(), new User(), maintainer, new Event(), "", "", "", new Date()));
-		events.add(new RepositoryMaintainerEvent(2, new Date(), new User(), maintainer, new Event(), "", "", "", new Date()));
-		
-		//doNothing().when(repositoryMaintainerEventService).delete(anyInt());
-		doNothing().when(repositoryMaintainerRepository).delete(any());
-		
-		RepositoryMaintainer deleted = repositoryMaintainerService.shiftDelete(maintainer);
-		assertEquals(maintainer.getId(), deleted.getId());
-	}
-	
-	@Test
-	public void testUpdate() {
-		//TODO: Ask later for a proper way to test this method.
 	}
 }

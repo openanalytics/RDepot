@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -36,11 +36,19 @@ import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import eu.openanalytics.rdepot.api.v2.dto.EntityDto;
+import eu.openanalytics.rdepot.api.v2.dto.RCreateEventDto;
+import eu.openanalytics.rdepot.api.v2.dto.RPackageDto;
+import eu.openanalytics.rdepot.api.v2.dto.RRepositoryDto;
+import eu.openanalytics.rdepot.api.v2.dto.RUpdateEventDto;
+import eu.openanalytics.rdepot.api.v2.dto.UpdatedVariable;
+import eu.openanalytics.rdepot.api.v2.dto.UserDto;
+
 @Entity
 @Table(name="package_event"
     ,schema="public"
 )
-public class PackageEvent  implements java.io.Serializable
+public class PackageEvent  implements java.io.Serializable, IEventEntity
 {
 
 	private static final long serialVersionUID = 1528085596442084681L;
@@ -189,6 +197,24 @@ public class PackageEvent  implements java.io.Serializable
 	public void setTime(Date time)
 	{
 		this.time = time;
+	}
+
+
+	@Override
+	public EntityDto<IEventEntity> createDto() {
+		if(event.getValue() == "create") {
+			return new RCreateEventDto<IEventEntity, RPackageDto>(this,
+					id, new UserDto(changedBy), new RRepositoryDto(packageBag.getRepository()), 
+					"timestamp", new RPackageDto(packageBag));
+		} else if(event.getValue() == "update" || event.getValue() == "delete") {
+			RUpdateEventDto<IEventEntity, RPackageDto> dto = new RUpdateEventDto<IEventEntity, RPackageDto>(this,
+					id, new UserDto(changedBy), new RRepositoryDto(packageBag.getRepository()), "timestamp", new RPackageDto(packageBag));
+			
+			dto.getUpdatedVariables().add(new UpdatedVariable(changedVariable, valueBefore, valueAfter));
+			return dto;
+		} else {
+			throw new IllegalArgumentException(event.getValue());
+		}
 	}
 
 }

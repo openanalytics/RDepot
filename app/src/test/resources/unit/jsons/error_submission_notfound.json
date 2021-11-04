@@ -1,0 +1,7 @@
+{
+    "status": "error",
+    "code": 404,
+    "message": "Submission not found!",
+    "messageCode": "submission.notfound",
+    "data": null
+}

@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -194,4 +194,13 @@ public interface PackageStorage {
 	 * @return filename
 	 */
 	public Optional<String> getReferenceManualFilename(Package packageBag);
+
+	/**
+	 * This method moves a package from its current directory to the trash.
+	 * May be used in case of submission rejection.
+	 * @param packageBag
+	 * @return
+	 */
+	public File moveToTrashDirectory(Package packageBag) 
+			throws PackageSourceNotFoundException, MovePackageSourceException;
 }

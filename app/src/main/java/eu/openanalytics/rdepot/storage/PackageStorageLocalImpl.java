@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -384,5 +384,21 @@ public class PackageStorageLocalImpl implements PackageStorage {
 		}
 		
 		return Optional.empty();
+	}
+
+	@Override
+	public File moveToTrashDirectory(Package packageBag)
+			throws PackageSourceNotFoundException, MovePackageSourceException {
+		File trashDir = new File(packageUploadDirectory.getAbsolutePath() + separator 
+				+ "trash" + separator + packageBag.getRepository().getId() 
+				+ separator + (new Random()).nextInt(100000000));
+		
+		while(trashDir.exists()) {
+			trashDir = new File(packageUploadDirectory.getAbsolutePath() + separator 
+					+ "trash" + separator + packageBag.getRepository().getId() 
+					+ separator + (new Random()).nextInt(100000000));
+		}
+		
+		return moveSource(packageBag, trashDir.getAbsolutePath());
 	}
 }

@@ -3,19 +3,19 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:2.3.1.RELEASE"
-        classpath("io.spring.gradle:dependency-management-plugin:1.0.9.RELEASE")                   	    
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:2.5.0"
+        classpath("io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE")                   	    
     }
 }
 
 plugins {
-    id "com.github.hierynomus.license" version "0.15.0"
+    id "com.github.hierynomus.license" version "0.16.1"
     id 'java'
     id 'eclipse'
     id 'idea'
-    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
-    id 'com.avast.gradle.docker-compose' version '0.7.1'
-    id 'org.springframework.boot' version '2.3.1.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'com.avast.gradle.docker-compose' version '0.14.3'
+    id 'org.springframework.boot' version '2.5.4'
     id "org.owasp.dependencycheck" version "6.0.5"
     id 'org.liquibase.gradle' version '2.0.4'
 }
@@ -41,7 +41,7 @@ ext.buildTime = {
 }
 
 group = 'eu.openanalytics'
-ext.versionNumber = '1.5.0'
+ext.versionNumber = '1.6.0'
 ext.baseVersion = versionNumber
 version = versionNumber
 description = """rdepot"""
@@ -111,15 +111,19 @@ configurations {
     integrationTestImplementation.extendsFrom testImplementation
 }
 
-license {
-    header rootProject.file('./LICENSE_HEADER')
-    strictCheck true
-    ext.year = Calendar.getInstance().get(Calendar.YEAR)
-    ext.company = 'Open Analytics NV'
-    excludes(['**/*.html', '**/*.Rmd', '**/*.tar.gz', '**/DESCRIPTION', '**/DESCRIPTION_NEWLINES', '**/*.properties', '**/*.ttf', '**/*.eot', '**/*.woff', '**/*.css', '**/*.js', '**/*.svg', '**/*.png', '**/*.ico', '**/*.old', '**/*.sql', '**/*.yaml', '**/*.xml', '**/*.json', 
-    			'**/*.yml', '**/NEWS', '**/LICENSE', '**/*.txt' , '**/NAMESPACE', '**/*.Rd', '**/*.pdf', '**/*.R', '**/*.c', '**/*.cpp', '**/*.h', '**/*.tex', '**/*.sh', '**/*.rda', '**/*.ldif', '**/*.gz', '**/*.bk*', '**/*.gradle' ])
-    			//the above exclusions are for integration testing purposes
+allprojects {
+    apply plugin: 'license'
+    license {    
+	    header rootProject.file('./LICENSE_HEADER')
+	    strictCheck true
+	    ext.year = Calendar.getInstance().get(Calendar.YEAR)
+	    ext.company = 'Open Analytics NV'
+	    excludes(['**/*.html', '**/*.Rmd', '**/*.tar.gz', '**/DESCRIPTION', '**/DESCRIPTION_NEWLINES', '**/*.properties', '**/*.ttf', '**/*.eot', '**/*.woff', '**/*.css', '**/*.js', '**/*.svg', '**/*.png', '**/*.ico', '**/*.old', '**/*.sql', '**/*.yaml', '**/*.xml', '**/*.json', 
+	    			'**/*.yml', '**/NEWS', '**/LICENSE', '**/*.txt' , '**/NAMESPACE', '**/*.Rd', '**/*.pdf', '**/*.R', '**/*.c', '**/*.cpp', '**/*.h', '**/*.tex', '**/*.sh', '**/*.rda', '**/*.ldif', '**/*.gz', '**/*.bk*', '**/*.gradle' ])
+	    			//the above exclusions are for integration testing purposes
+	}
 }
+
 
 dependencyCheck {
     format='ALL'
@@ -137,6 +141,7 @@ task liquibase {
 	            url props.getProperty("url")
 	            username props.getProperty("username")
 	            password props.getProperty("password")
+	            //diffTypes 'data'
 	        }
 	    } 
 	}

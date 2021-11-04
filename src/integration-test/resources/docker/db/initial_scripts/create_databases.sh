@@ -9,5 +9,7 @@ do
 	    CREATE DATABASE $result;
 	    GRANT ALL PRIVILEGES ON DATABASE $result TO postgres;
 	EOSQL
-    psql -U postgres -f $file
+	if [ "$result" == "declarative" ]; then
+        psql -U postgres -f $file
+	fi
 done

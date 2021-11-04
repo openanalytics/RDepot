@@ -47,6 +47,10 @@ repositories {
    	jcenter()
 }
 
+test {
+	useJUnitPlatform()
+}
+
 dependencies {
 	Map<String, String> dependencies = globalConf.commonDependencies
 	implementation dependencies.jsonSimple
@@ -83,6 +87,11 @@ dependencies {
 	implementation dependencies.oAuth2Jose
     implementation dependencies.keycloakStarter
     implementation dependencies.auth0
+    implementation dependencies.hateoas
+    implementation dependencies.jakartaJsonApi
+    implementation dependencies.apacheJohnzon
+    implementation dependencies.jakartaJsonProvider
+    implementation dependencies.jacksonJSR353
     
     implementation dependencies.commonsCollections4	
     implementation dependencies.apacheCommons
@@ -90,20 +99,28 @@ dependencies {
     implementation dependencies.liquibaseCore    
 
 	testImplementation dependencies.sbStarterTest
+	
 	testImplementation dependencies.secTest
 	testImplementation dependencies.jerseyHk2
 	testImplementation dependencies.httpComponents
-	testImplementation dependencies.httpComponentsTest
+	testImplementation dependencies.httpComponentsTest	
+	testImplementation dependencies.junit5Engine
+	testImplementation dependencies.junit5Api
+	testImplementation dependencies.junit5Params
+	testImplementation dependencies.junitVintage
+	
 }
 
 sourceSets {
 	test {	
         java {
             include '**/eu/openanalytics/rdepot/test/unit/*'
+            include '**/eu/openanalytics/rdepot/test/unit/api/v2/*'
             include '**/eu/openanalytics/rdepot/test/fixture/*'
             include '**/eu/openanalytics/rdepot/test/unit/answer/*'
         	include '**/eu/openanalytics/rdepot/test/unit/time/*'
         	include '**/eu/openanalytics/rdepot/test/config/*'
+        	include '**/eu/openanalytics/rdepot/test/context/*'
         }
 	}
 }

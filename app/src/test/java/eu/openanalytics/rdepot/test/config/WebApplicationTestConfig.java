@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -67,15 +67,6 @@ import eu.openanalytics.rdepot.validation.RepositoryValidator;
 import eu.openanalytics.rdepot.validation.UserValidator;
 
 @Configuration
-//@ComponentScan({
-//	"eu.openanalytics.rdepot.controller", 
-//	"eu.openanalytics.rdepot.model",
-//	"eu.openanalytics.rdepot.service",
-//	"eu.openanalytics.rdepot.validation",
-//	"eu.openanalytics.rdepot.messaging",
-//	"eu.openanalytics.rdepot.service",
-//	"eu.openanalytics.rdepot.storage",
-//	"eu.openanalytics.rdepot.formatter"})
 public class WebApplicationTestConfig implements WebMvcConfigurer {
 	
 	private static final String repositoryGenerationDir = "/tmp/rdepot_test/generated";

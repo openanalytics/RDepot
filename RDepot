@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head data-suburl="">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<title>Sign In -  OA SCM</title>
+	<link rel="manifest" href="/manifest.json" crossorigin="use-credentials">
+	
+	<script>
+		if ('serviceWorker' in navigator) {
+			navigator.serviceWorker.register('/serviceworker.js').then(function(registration) {
+				
+				console.info('ServiceWorker registration successful with scope: ', registration.scope);
+			}, function(err) {
+				
+				console.info('ServiceWorker registration failed: ', err);
+			});
+		}
+	</script>
+	
+	<meta name="theme-color" content="#6cc644">
+	<meta name="author" content="Gitea - Git with a cup of tea" />
+	<meta name="description" content="Gitea (Git with a cup of tea) is a painless self-hosted Git service written in Go" />
+	<meta name="keywords" content="go,git,self-hosted,gitea">
+	<meta name="referrer" content="no-referrer" />
+	<meta name="_csrf" content="D5UKuO2cIl5LopxUwpjErIwcCTQ6MTYyNjE2OTg0OTg0OTM4Nzk3MQ" />
+	<meta name="_suburl" content="" />
+	
+	
+	
+
+
+	<script>
+	/*
+	@licstart  The following is the entire license notice for the
+        JavaScript code in this page.
+
+	Copyright (c) 2016 The Gitea Authors
+	Copyright (c) 2015 The Gogs Authors
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in
+	all copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+	THE SOFTWARE.
+	---
+	Licensing information for additional javascript libraries can be found at:
+	  {{StaticUrlPrefix}}/vendor/librejs.html
+
+	@licend  The above is the entire license notice
+        for the JavaScript code in this page.
+	*/
+	</script>
+	<script>
+		window.config = {
+			StaticUrlPrefix: ''
+		}
+	</script>
+	<link rel="shortcut icon" href="/img/favicon.png" />
+	<link rel="mask-icon" href="/img/gitea-safari.svg" color="#609926">
+	<link rel="preload" href="/vendor/assets/font-awesome/css/font-awesome.min.css" as="style" onload="this.rel='stylesheet'">
+	<noscript><link rel="stylesheet" href="/vendor/assets/font-awesome/css/font-awesome.min.css"></noscript>
+	<link rel="stylesheet" href="/vendor/assets/octicons/octicons.min.css">
+
+
+
+
+
+	
+	<link rel="stylesheet" href="/vendor/plugins/fomantic/semantic.min.css?v=92f195cdcbf1bd7ffe6bc1a12b4bc1f0">
+	<link rel="stylesheet" href="/css/index.css?v=92f195cdcbf1bd7ffe6bc1a12b4bc1f0">
+	<noscript>
+		<style>
+			.dropdown:hover > .menu { display: block; }
+			.ui.secondary.menu .dropdown.item > .menu { margin-top: 0; }
+		</style>
+	</noscript>
+
+
+
+
+
+
+	<style class="list-search-style"></style>
+
+	<script src="/vendor/plugins/promise-polyfill/polyfill.min.js"></script>
+	<script src="/vendor/plugins/cssrelpreload/loadCSS.min.js"></script>
+	<script src="/vendor/plugins/cssrelpreload/cssrelpreload.min.js"></script>
+
+	<meta property="og:title" content="OA SCM">
+	<meta property="og:type" content="website" />
+	<meta property="og:image" content="/img/gitea-lg.png" />
+	<meta property="og:url" content="https://scm.openanalytics.eu/" />
+	<meta property="og:description" content="Gitea (Git with a cup of tea) is a painless self-hosted Git service written in Go">
+
+<meta property="og:site_name" content="OA SCM" />
+
+
+</head>
+<body>
+	
+
+	<div class="full height">
+		<noscript>This website works better with JavaScript.</noscript>
+
+		
+
+		
+			<div class="ui top secondary stackable main menu following bar light">
+				<div class="ui container" id="navbar">
+	<div class="item brand" style="justify-content: space-between;">
+		<a href="/">
+			<img class="ui mini image" src="/img/gitea-sm.png">
+		</a>
+		<div class="ui basic icon button mobile-only" id="navbar-expand-toggle">
+			<i class="sidebar icon"></i>
+		</div>
+	</div>
+
+	
+		<a class="item " href="/">Home</a>
+		<a class="item " href="/explore/repos">Explore</a>
+	
+
+	
+
+	
+
+	
+
+		<a class="item" target="_blank" rel="noopener noreferrer" href="https://docs.gitea.io">Help</a>
+		<div class="right stackable menu">
+			
+			<a class="item active" rel="nofollow" href="/user/login?redirect_to=%2fuser%2flogin">
+				<i class="octicon octicon-sign-in"></i> Sign In
+			</a>
+		</div>
+
+	
+</div>
+
+			</div>
+		
+
+
+<div class="user signin">
+	
+<div class="ui secondary pointing tabular top attached borderless menu new-menu navbar">
+	<a class="active item" rel="nofollow" href="/user/login">
+		Sign In
+	</a>
+	
+	<a class=" item" rel="nofollow" href="/user/login/openid">
+		<i class="fa fa-openid"></i>
+		&nbsp;OpenID
+	</a>
+	
+	
+</div>
+
+
+	<div class="ui container">
+				
+		
+
+
+
+		
+		<h4 class="ui top attached header center">
+			
+				Sign In
+			
+		</h4>
+		<div class="ui attached segment">
+			<form class="ui form" action="/user/login" method="post">
+			<input type="hidden" name="_csrf" value="D5UKuO2cIl5LopxUwpjErIwcCTQ6MTYyNjE2OTg0OTg0OTM4Nzk3MQ">
+			<div class="required inline field ">
+				<label for="user_name">Username or Email Address</label>
+				<input id="user_name" name="user_name" value="" autofocus required>
+			</div>
+			
+			<div class="required inline field ">
+				<label for="password">Password</label>
+				<input id="password" name="password" type="password" value="" autocomplete="off" required>
+			</div>
+			
+			
+			<div class="inline field">
+				<label></label>
+				<div class="ui checkbox">
+					<label>Remember Me</label>
+					<input name="remember" type="checkbox">
+				</div>
+			</div>
+			
+
+			<div class="inline field">
+				<label></label>
+				<button class="ui green button">
+					
+						Sign In
+					
+				</button>
+				<a href="/user/forgot_password">Forgot password?</a>
+			</div>
+
+			
+
+			
+			<div class="ui attached segment">
+				<div class="oauth2 center">
+					<div id="oauth2-login-loader" class="ui disabled centered  loader"></div>
+					<div>
+						<div id="oauth2-login-navigator">
+							<p>Sign In With</p>
+							
+								
+								<a href="/user/oauth2/oa-oidc">
+									<img
+										alt="OpenID Connect (oa-oidc)"
+										title="OpenID Connect (oa-oidc)"
+										class="openidConnect"
+										src="/img/auth/openid_connect.png"
+										onclick="window.onOAuthLoginClick()"
+									></a>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			</form>
+		</div>
+
+	</div>
+</div>
+
+
+	
+
+	</div>
+
+	
+
+	<footer>
+	<div class="ui container">
+		<div class="ui left">
+			Powered by Gitea  
+		</div>
+		<div class="ui right links">
+			
+			<div class="ui language bottom floating slide up dropdown link item">
+				<i class="world icon"></i>
+				<div class="text">English</div>
+				<div class="menu">
+					
+						<a lang="en-US" class="item active selected" href="#">English</a>
+					
+						<a lang="zh-CN" class="item " href="/user/login?lang=zh-CN">简体中文</a>
+					
+						<a lang="zh-HK" class="item " href="/user/login?lang=zh-HK">繁體中文（香港）</a>
+					
+						<a lang="zh-TW" class="item " href="/user/login?lang=zh-TW">繁體中文（台灣）</a>
+					
+						<a lang="de-DE" class="item " href="/user/login?lang=de-DE">Deutsch</a>
+					
+						<a lang="fr-FR" class="item " href="/user/login?lang=fr-FR">français</a>
+					
+						<a lang="nl-NL" class="item " href="/user/login?lang=nl-NL">Nederlands</a>
+					
+						<a lang="lv-LV" class="item " href="/user/login?lang=lv-LV">latviešu</a>
+					
+						<a lang="ru-RU" class="item " href="/user/login?lang=ru-RU">русский</a>
+					
+						<a lang="uk-UA" class="item " href="/user/login?lang=uk-UA">Українська</a>
+					
+						<a lang="ja-JP" class="item " href="/user/login?lang=ja-JP">日本語</a>
+					
+						<a lang="es-ES" class="item " href="/user/login?lang=es-ES">español</a>
+					
+						<a lang="pt-BR" class="item " href="/user/login?lang=pt-BR">português do Brasil</a>
+					
+						<a lang="pl-PL" class="item " href="/user/login?lang=pl-PL">polski</a>
+					
+						<a lang="bg-BG" class="item " href="/user/login?lang=bg-BG">български</a>
+					
+						<a lang="it-IT" class="item " href="/user/login?lang=it-IT">italiano</a>
+					
+						<a lang="fi-FI" class="item " href="/user/login?lang=fi-FI">suomi</a>
+					
+						<a lang="tr-TR" class="item " href="/user/login?lang=tr-TR">Türkçe</a>
+					
+						<a lang="cs-CZ" class="item " href="/user/login?lang=cs-CZ">čeština</a>
+					
+						<a lang="sr-SP" class="item " href="/user/login?lang=sr-SP">српски</a>
+					
+						<a lang="sv-SE" class="item " href="/user/login?lang=sv-SE">svenska</a>
+					
+						<a lang="ko-KR" class="item " href="/user/login?lang=ko-KR">한국어</a>
+					
+				</div>
+			</div>
+			<a href="/vendor/librejs.html" data-jslicense="1">JavaScript licenses</a>
+			<a href="/api/swagger">API</a>
+			<a target="_blank" rel="noopener noreferrer" href="https://gitea.io">Website</a>
+			
+			
+		</div>
+	</div>
+</footer>
+
+
+	<script src="/vendor/plugins/jquery/jquery.min.js?v=3.4.1"></script>
+	<script src="/vendor/plugins/jquery-migrate/jquery-migrate.min.js?v=3.0.1"></script>
+	<script src="/vendor/plugins/jquery.areyousure/jquery.are-you-sure.js"></script>
+
+
+
+
+
+
+
+
+
+
+	<script src="/vendor/plugins/emojify/emojify.custom.js"></script>
+	<script src="/vendor/plugins/clipboard/clipboard.min.js"></script>
+	<script src="/vendor/plugins/vue/vue.min.js"></script>
+
+	
+	<script src="/vendor/plugins/fomantic/semantic.min.js?v=92f195cdcbf1bd7ffe6bc1a12b4bc1f0"></script>
+	<script src="/js/index.js?v=92f195cdcbf1bd7ffe6bc1a12b4bc1f0"></script>
+
+
+</body>
+</html>
+

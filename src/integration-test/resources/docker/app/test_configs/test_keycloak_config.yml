@@ -32,4 +32,5 @@ hibernate:
 # Enable Liquibase
 spring:
   liquibase:
-    enabled: false          
+    user: postgres
+    enabled: true         

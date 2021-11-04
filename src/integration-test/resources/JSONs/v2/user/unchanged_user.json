@@ -1,0 +1,26 @@
+{
+    "status": "success",
+    "code": 200,
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "data": {
+        "id": 9,
+        "name": "John Doe",
+        "email": "doe@localhost",
+        "login": "doe",
+        "active": false,
+        "lastLoggedInOn": "2020-08-20T00:00:00",
+        "deleted": false,
+        "roleId": 1,
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/users/9"
+            },
+            {
+                "rel": "userList",
+                "href": "http://localhost:8017/api/v2/manager/users"
+            }
+        ]
+    }
+}

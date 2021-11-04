@@ -1,0 +1,100 @@
+{
+    "status": "success",
+    "code": 200,
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "data": {
+        "links": [
+            {
+                "rel": "first",
+                "href": "http://localhost:8017/api/v2/manager/r/packages?page=0&size=2&sort=package.name,desc"
+            },
+            {
+                "rel": "prev",
+                "href": "http://localhost:8017/api/v2/manager/r/packages?page=0&size=2&sort=package.name,desc"
+            },
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/r/packages?page=1&size=2&sort=package.name,desc"
+            },
+            {
+                "rel": "next",
+                "href": "http://localhost:8017/api/v2/manager/r/packages?page=2&size=2&sort=package.name,desc"
+            },
+            {
+                "rel": "last",
+                "href": "http://localhost:8017/api/v2/manager/r/packages?page=9&size=2&sort=package.name,desc"
+            }
+        ],
+        "content": [
+            {
+                "id": 25,
+                "version": "2.0.0",
+                "repositoryId": 2,
+                "submissionId": 25,
+                "name": "usl",
+                "description": "The Universal Scalability Law (Gunther 2007)",
+                "author": "Neil J. Gunther [aut], Stefan Moeding [aut, cre]",
+                "depends": "R (>= 3.0), methods",
+                "imports": "graphics, stats, nlsr",
+                "suggests": "knitr",
+                "systemRequirements": null,
+                "license": "BSD_2_clause + file LICENSE",
+                "title": "Analyze System Scalability with the Universal Scalability Law",
+                "url": null,
+                "source": "/opt/rdepot/repositories/2/33930690/usl_2.0.0.tar.gz",
+                "md5sum": "868140a3c3c29327eef5d5a485aee5b6",
+                "active": true,
+                "deleted": false,
+                "fileName": "usl_2.0.0.tar.gz",
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/25"
+                    },
+                    {
+                        "rel": "packageList",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages"
+                    }
+                ]
+            },
+            {
+                "id": 14,
+                "version": "1.1",
+                "repositoryId": 2,
+                "submissionId": 15,
+                "name": "npordtests",
+                "description": "Performs nonparametric tests for equality of location against ordered alternatives.",
+                "author": "Bulent Altunkaynak [aut, cre], Hamza Gamgam [aut]",
+                "depends": "R (>= 2.15.0)",
+                "imports": null,
+                "suggests": null,
+                "systemRequirements": null,
+                "license": "GPL (>= 2)",
+                "title": "Nonparametric Tests for Equality of Location Against Ordered Alternatives",
+                "url": null,
+                "source": "/opt/rdepot/repositories/2/8436419/npordtests_1.1.tar.gz",
+                "md5sum": "da8be1247d3145b757bd62e01fc6eb8b",
+                "active": false,
+                "deleted": true,
+                "fileName": "npordtests_1.1.tar.gz",
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/14"
+                    },
+                    {
+                        "rel": "packageList",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages"
+                    }
+                ]
+            }
+        ],
+        "page": {
+            "size": 2,
+            "totalElements": 20,
+            "totalPages": 10,
+            "number": 1
+        }
+    }
+}

@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -23,7 +23,11 @@ package eu.openanalytics.rdepot.model;
 import java.util.Date;
 import java.util.Optional;
 
-public class SynchronizationStatus {
+import org.apache.commons.lang3.NotImplementedException;
+
+import eu.openanalytics.rdepot.api.v2.dto.EntityDto;
+
+public class SynchronizationStatus extends EntityDto<SynchronizationStatus> {
 	
 	private Integer repositoryId;
 	private Date timestamp;
@@ -64,5 +68,14 @@ public class SynchronizationStatus {
 
 	public void setPending(Boolean pending) {
 		this.pending = pending;
+	}
+
+	/**
+	 * Synchronization status is read-only so this should never be used.
+	 * @throws NotImplementedException
+	 */
+	@Override
+	public SynchronizationStatus toEntity() {
+		throw new NotImplementedException();
 	}	
 }

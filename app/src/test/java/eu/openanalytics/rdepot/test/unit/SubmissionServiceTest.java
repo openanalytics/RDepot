@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -53,6 +53,7 @@ import org.springframework.context.MessageSource;
 import eu.openanalytics.rdepot.exception.EventNotFound;
 import eu.openanalytics.rdepot.exception.MovePackageSourceException;
 import eu.openanalytics.rdepot.exception.PackageActivateException;
+import eu.openanalytics.rdepot.exception.PackageDeleteException;
 import eu.openanalytics.rdepot.exception.PackageEditException;
 import eu.openanalytics.rdepot.exception.PackageSourceNotFoundException;
 import eu.openanalytics.rdepot.exception.RepositoryEditException;
@@ -775,7 +776,7 @@ public class SubmissionServiceTest {
 	
 	@Test
 	public void rejectSubmission_deletesSource() throws SourceFileDeleteException, SubmissionDeleteWarning, 
-		SubmissionNotFound, SubmissionDeleteException, EventNotFound, SendEmailException {
+		SubmissionNotFound, SubmissionDeleteException, EventNotFound, SendEmailException, PackageSourceNotFoundException, MovePackageSourceException, PackageEditException {
 		User user = UserTestFixture.GET_FIXTURE_ADMIN();
 		Repository repository = RepositoryTestFixture.GET_FIXTURE_REPOSITORY();
 		Package packageBag = PackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
@@ -787,7 +788,8 @@ public class SubmissionServiceTest {
 		
 		when(eventService.getDeleteEvent()).thenReturn(deleteEvent);
 		when(submissionRepository.findByIdAndDeleted(id, false)).thenReturn(submission);
-		doNothing().when(packageService).deleteSource(packageBag);
+//		doNothing().when(packageService).deleteSource(packageBag);
+		doNothing().when(packageService).moveSourceToTrashDirectory(packageBag, user);
 		when(submissionEventService.create(deleteEvent, user, submission)).thenReturn(new ArrayList<>());
 		doNothing().when(emailService).sendCanceledSubmissionEmail(submission);
 		
@@ -795,7 +797,8 @@ public class SubmissionServiceTest {
 		
 		assertTrue("Submission was not deleted correctly.", submission.isDeleted());
 		verify(submissionRepository).findByIdAndDeleted(id, false);
-		verify(packageService).deleteSource(packageBag);
+//		verify(packageService).deleteSource(packageBag);
+		verify(packageService).moveSourceToTrashDirectory(packageBag, user);
 		verify(submissionEventService).create(deleteEvent, user, submission);
 		verify(emailService).sendCanceledSubmissionEmail(submission);
 	}
@@ -845,7 +848,7 @@ public class SubmissionServiceTest {
 	@Test
 	public void deleteSubmission_ThrowsSubmissionDeleteException_WhenSourceFileDeleteExceptionIsThrown() 
 			throws EventNotFound, SourceFileDeleteException, SubmissionDeleteException, 
-				SubmissionNotFound, SubmissionDeleteWarning {
+				SubmissionNotFound, SubmissionDeleteWarning, PackageSourceNotFoundException, MovePackageSourceException, PackageEditException {
 		User user = UserTestFixture.GET_FIXTURE_ADMIN();
 		Repository repository = RepositoryTestFixture.GET_FIXTURE_REPOSITORY();
 		Package packageBag = PackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
@@ -857,8 +860,8 @@ public class SubmissionServiceTest {
 		
 		when(eventService.getDeleteEvent()).thenReturn(deleteEvent);
 		when(submissionRepository.findByIdAndDeleted(id, false)).thenReturn(submission);
-		doThrow(new SourceFileDeleteException(messageSource, new Locale("en"), packageBag))
-			.when(packageService).deleteSource(packageBag);
+		doThrow(new MovePackageSourceException(messageSource, new Locale("en"), packageBag))
+			.when(packageService).moveSourceToTrashDirectory(packageBag, user);
 
 		assertThrows(
             MessageCodes.ERROR_SUBMISSION_DELETE,
@@ -893,7 +896,7 @@ public class SubmissionServiceTest {
 	}
 	
 	@Test
-	public void shiftDelete() throws SubmissionDeleteException, SubmissionNotFound {
+	public void shiftDelete() throws SubmissionDeleteException, SubmissionNotFound, PackageDeleteException {
 		User user = UserTestFixture.GET_FIXTURE_ADMIN();
 		Repository repository = RepositoryTestFixture.GET_FIXTURE_REPOSITORY();
 		Package packageBag = PackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
@@ -904,7 +907,7 @@ public class SubmissionServiceTest {
 		
 		doNothing().when(submissionEventService).delete(any());
 		doNothing().when(submissionRepository).delete(submission);
-		
+//		doNothing().when(packageService).shiftDelete(submission.getPackage());		
 		submissionService.shiftDelete(submission);
 		
 		verify(submissionEventService, times(3)).delete(any());

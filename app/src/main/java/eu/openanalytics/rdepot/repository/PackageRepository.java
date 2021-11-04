@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -23,7 +23,8 @@ package eu.openanalytics.rdepot.repository;
 import java.util.Collection;
 import java.util.List;
 
-import org.hibernate.query.NativeQuery;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -51,6 +52,13 @@ public interface PackageRepository extends JpaRepository<Package, Integer> {
 
 	public List<Package> findByDeleted(boolean deleted, Sort sort);
 	
+	@Query(value = "select package.* from submission s "
+			+ "join package package on s.package_id = package.id and package.deleted = ?1 "
+			+ "join repository repository on package.repository_id = repository.id "
+			+ "where s.accepted = true",
+			nativeQuery = true)
+	public Page<Package> findByDeleted(Boolean deleted, Pageable pageable);
+	
 	public List<Package> findByRepositoryAndDeleted(Repository repository, boolean deleted);
 
 	public List<Package> findByRepositoryAndUserAndDeleted(Repository repository, User maintainer, boolean deleted);
@@ -69,10 +77,45 @@ public interface PackageRepository extends JpaRepository<Package, Integer> {
 			nativeQuery = true)
 	List<Package> findNonDeletedByAcceptedSubmission();
 	
+	@Query(value = "select package.* from submission s "
+			+ "join package package on s.package_id = package.id and package.deleted = false "
+			+ "join repository repository on package.repository_id = repository.id "
+			+ "where s.accepted = true",
+			nativeQuery = true)
+	Page<Package> findNonDeletedByAcceptedSubmission(Pageable pageable);
+	
 	@Query(value = "select p.* from submission s "
 			+ "join package p on s.package_id = p.id and p.deleted = false "
 			+ "join repository r on p.repository_id = r.id and r.name = ?1 "
 			+ "where s.accepted = true",
 			nativeQuery = true)
 	List<Package> findNonDeletedByRepositoryNameAndAcceptedSubmission(String repositoryName);
+	
+	@Query(value = "select package.* from submission s "
+			+ "join package package on s.package_id = package.id and package.deleted = false "
+			+ "join repository repository on package.repository_id = repository.id and repository.name = ?1 "
+			+ "where s.accepted = true",
+			nativeQuery = true)
+	Page<Package> findNonDeletedByRepositoryNameAndAcceptedSubmission(String repositoryName, Pageable pageable);
+	
+	@Query(value = "select package.* from submission s "
+			+ "join package package on s.package_id = package.id and package.deleted = true "
+			+ "join repository repository on package.repository_id = repository.id and repository.name = ?1 "
+			+ "where s.accepted = true",
+			nativeQuery = true)
+	Page<Package> findDeletedByRepositoryNameAndAcceptedSubmission(String repositoryName, Pageable pageable);
+
+	@Query(value = "select package.* from submission s "
+			+ "join package package on s.package_id = package.id "
+			+ "join repository repository on package.repository_id = repository.id "
+			+ "where s.accepted = true",
+			nativeQuery = true)
+	public Page<Package> findAllAcceptedSubmissions(Pageable pageable);
+
+	@Query(value = "select package.* from submission s "
+			+ "join package package on s.package_id = package.id "
+			+ "join repository repository on package.repository_id = repository.id and repository.name = ?1 "
+			+ "where s.accepted = true",
+			nativeQuery = true)
+	public Page<Package> findByRepositoryNameAndAcceptedSubmission(String repositoryName, Pageable pageable);
 }

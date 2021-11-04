@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -29,6 +29,8 @@ import javax.annotation.Resource;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -198,5 +200,10 @@ public class PackageEventService
 		if (deletedPackageEvent != null)	
 			packageEventRepository.delete(deletedPackageEvent);	
 
+	}
+
+	public Page<PackageEvent> findAllByUser(User requester, Pageable pageable) {
+		List<Package> packages = packageService.findMaintainedBy(requester);
+		return packageEventRepository.findByPackageIn(packages, pageable);
 	}
 }

@@ -1,0 +1,70 @@
+{
+    "status": "success",
+    "code": 200,
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "data": {
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost/api/v2/manager/r/repository-maintainers"
+            }
+        ],
+        "content": [
+            {
+                "id": 100,
+                "userId": 111,
+                "repositoryId": 100,
+                "deleted": false,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost/api/v2/manager/r/repository-maintainers/100"
+                    },
+                    {
+                        "rel": "repositoryMaintainerList",
+                        "href": "http://localhost/api/v2/manager/r/repository-maintainers"
+                    }
+                ]
+            },
+            {
+                "id": 101,
+                "userId": 111,
+                "repositoryId": 100,
+                "deleted": false,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost/api/v2/manager/r/repository-maintainers/101"
+                    },
+                    {
+                        "rel": "repositoryMaintainerList",
+                        "href": "http://localhost/api/v2/manager/r/repository-maintainers"
+                    }
+                ]
+            },
+            {
+                "id": 102,
+                "userId": 111,
+                "repositoryId": 100,
+                "deleted": true,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost/api/v2/manager/r/repository-maintainers/102"
+                    },
+                    {
+                        "rel": "repositoryMaintainerList",
+                        "href": "http://localhost/api/v2/manager/r/repository-maintainers"
+                    }
+                ]
+            }
+        ],
+        "page": {
+            "size": 3,
+            "totalElements": 3,
+            "totalPages": 1,
+            "number": 0
+        }
+    }
+}

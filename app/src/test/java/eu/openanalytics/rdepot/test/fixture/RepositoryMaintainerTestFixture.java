@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -23,12 +23,30 @@ package eu.openanalytics.rdepot.test.fixture;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+
 import eu.openanalytics.rdepot.model.Repository;
 import eu.openanalytics.rdepot.model.RepositoryMaintainer;
 import eu.openanalytics.rdepot.model.User;
 
 public class RepositoryMaintainerTestFixture {
 	public static final Boolean DELETED = false;
+	
+	public static List<RepositoryMaintainer> GET_EXAMPLE_REPOSITORY_MAINTAINERS() {
+		User user = UserTestFixture.GET_FIXTURE_USER_REPOSITORYMAINTAINER(111);
+		
+		List<RepositoryMaintainer> maintainers = new ArrayList<>();
+		for(int i = 100; i < 103; i++) {
+			Repository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY(100);
+			RepositoryMaintainer maintainer = new RepositoryMaintainer(i, user, repository, false);
+			
+			maintainers.add(maintainer);
+		}
+		
+		maintainers.get(2).setDeleted(true);
+		return maintainers;
+	}
 	
 	public static List<RepositoryMaintainer> GET_FIXTURE_REPOSITORY_MAINTAINERS(User user, List<Repository> repositories) {
 		List<RepositoryMaintainer> repositoryMaintainers = new ArrayList<>();
@@ -52,5 +70,13 @@ public class RepositoryMaintainerTestFixture {
 
 	public static RepositoryMaintainer GET_FIXTURE_REPOSITORY_MAINTAINER(User user, Repository repository) {
 		return new RepositoryMaintainer(123, user, repository, DELETED);
+	}
+	
+	public static RepositoryMaintainer GET_FIXTURE_REPOSITORY_MAINTAINER() {
+		return GET_EXAMPLE_REPOSITORY_MAINTAINERS().get(0);
+	}
+
+	public static Page<RepositoryMaintainer> GET_EXAMPLE_REPOSITORY_MAINTAINERS_PAGED() {
+		return new PageImpl<RepositoryMaintainer>(GET_EXAMPLE_REPOSITORY_MAINTAINERS());
 	}
 }

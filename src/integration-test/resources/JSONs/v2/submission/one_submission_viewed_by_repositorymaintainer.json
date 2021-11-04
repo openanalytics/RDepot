@@ -1,0 +1,53 @@
+{
+    "status": "success",
+    "code": 200,
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "data": {
+        "id": 17,
+        "userId": 7,
+        "packageBag": {
+            "id": 17,
+            "version": "0.9.2",
+            "repositoryId": 2,
+            "submissionId": 17,
+            "name": "A3",
+            "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
+            "author": "Scott Fortmann-Roe",
+            "depends": "R (>= 2.15.0), xtable, pbapply",
+            "imports": null,
+            "suggests": "randomForest, e1071",
+            "systemRequirements": null,
+            "license": "GPL (>= 2)",
+            "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
+            "url": null,
+            "source": "/opt/rdepot/repositories/2/9907084/A3_0.9.2.tar.gz",
+            "md5sum": "76d726aee8dd7c6ed94d150d5718015b",
+            "active": true,
+            "deleted": false,
+            "fileName": "A3_0.9.2.tar.gz",
+            "links": [
+                {
+                    "rel": "self",
+                    "href": "http://localhost:8017/api/v2/manager/r/packages/17"
+                },
+                {
+                    "rel": "packageList",
+                    "href": "http://localhost:8017/api/v2/manager/r/packages"
+                }
+            ]
+        },
+        "changes": null,
+        "state": "ACCEPTED",
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/r/submissions/17"
+            },
+            {
+                "rel": "submissionList",
+                "href": "http://localhost:8017/api/v2/manager/r/submissions"
+            }
+        ]
+    }
+}

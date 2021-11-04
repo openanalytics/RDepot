@@ -3,6 +3,8 @@ api_token:
 
 declarative: false
 
+repository-snapshots: true
+
 app:
   authentication: ldap
   ldap:

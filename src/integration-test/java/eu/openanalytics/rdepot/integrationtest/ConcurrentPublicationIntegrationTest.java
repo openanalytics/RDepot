@@ -44,6 +44,10 @@ import io.restassured.http.ContentType;
 
 public class ConcurrentPublicationIntegrationTest extends IntegrationTest {
 	
+	public ConcurrentPublicationIntegrationTest() {
+		super("/api/manager/repositories");
+	}
+
 	private static final String PACKAGE_ID = "17";
 	private static final String REPOSITORY_ID = "2";
 	private static final String API_PACKAGES_PATH = "/api/manager/packages";

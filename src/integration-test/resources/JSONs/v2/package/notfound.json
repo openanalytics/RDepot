@@ -1,0 +1,7 @@
+{
+    "status": "error",
+    "code": 404,
+    "message": "Package not found!",
+    "messageCode": "package.notfound",
+    "data": null
+} 

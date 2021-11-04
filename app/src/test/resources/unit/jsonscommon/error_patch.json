@@ -1,0 +1,7 @@
+{
+    "status": "error",
+    "code": 500,
+    "message": "Could not apply patch to requested resource.",
+    "messageCode": "error.apply.patch",
+    "data": null
+}

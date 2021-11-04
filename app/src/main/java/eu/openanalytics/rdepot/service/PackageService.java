@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -38,6 +38,7 @@ import java.util.TreeMap;
 import javax.annotation.Resource;
 
 import org.apache.commons.compress.utils.FileNameUtils;
+import org.apache.commons.lang3.NotImplementedException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
@@ -46,12 +47,15 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import eu.openanalytics.rdepot.api.v2.dto.RPackageDto;
 import eu.openanalytics.rdepot.comparator.PackageComparator;
 import eu.openanalytics.rdepot.exception.AdminNotFound;
 import eu.openanalytics.rdepot.exception.EventNotFound;
@@ -59,18 +63,19 @@ import eu.openanalytics.rdepot.exception.GetFileInBytesException;
 import eu.openanalytics.rdepot.exception.GetReferenceManualException;
 import eu.openanalytics.rdepot.exception.ManualCreateException;
 import eu.openanalytics.rdepot.exception.Md5SumCalculationException;
+import eu.openanalytics.rdepot.exception.MovePackageSourceException;
 import eu.openanalytics.rdepot.exception.PackageActivateException;
 import eu.openanalytics.rdepot.exception.PackageCreateException;
 import eu.openanalytics.rdepot.exception.PackageDeactivateException;
 import eu.openanalytics.rdepot.exception.PackageDeleteException;
 import eu.openanalytics.rdepot.exception.PackageEditException;
 import eu.openanalytics.rdepot.exception.PackageException;
+import eu.openanalytics.rdepot.exception.PackageSourceNotFoundException;
 import eu.openanalytics.rdepot.exception.PackageStorageException;
 import eu.openanalytics.rdepot.exception.ReadPackageVignetteException;
 import eu.openanalytics.rdepot.exception.RepositoryEditException;
 import eu.openanalytics.rdepot.exception.RepositoryPublishException;
 import eu.openanalytics.rdepot.exception.SourceFileDeleteException;
-import eu.openanalytics.rdepot.exception.SubmissionDeleteException;
 import eu.openanalytics.rdepot.messaging.MessageCodes;
 import eu.openanalytics.rdepot.model.Event;
 import eu.openanalytics.rdepot.model.Package;
@@ -87,7 +92,7 @@ import eu.openanalytics.rdepot.time.DateProvider;
 import eu.openanalytics.rdepot.warning.PackageAlreadyActivatedWarning;
 import eu.openanalytics.rdepot.warning.PackageAlreadyDeactivatedWarning;
 import eu.openanalytics.rdepot.warning.PackageAlreadyDeletedWarning;
-import eu.openanalytics.rdepot.warning.SubmissionDeleteWarning;
+import eu.openanalytics.rdepot.warning.PackageWarning;
 
 @Service
 @Transactional(readOnly = true)
@@ -175,28 +180,20 @@ public class PackageService {
 	}
 	
 	public Package findByIdEvenDeleted(int id) {
-		return packageRepository.getOne(id);
+		return packageRepository.findById(id).orElse(null); //TODO: Soon we should move to Optional annotation for all services
 	}
 	
 	public List<Package> findByDeleted(boolean deleted) {
 		return packageRepository.findByDeleted(deleted, Sort.by(new Order(Direction.ASC, "name")));
 	}
 	
+	public Page<Package> findByDeleted(boolean deleted, Pageable pageable) {
+		return packageRepository.findByDeleted(deleted, pageable);
+	}
+	
 	public Package findByIdAndDeleted(int id, boolean deleted) {
 		return packageRepository.findByIdAndDeleted(id, deleted);
 	}
-	
-//	//This method remains here because of an older implementation
-//	//TODO: We need to discuss if packages should be fetched in the service or controller layer.
-//	//I personally think that controller is a right place to do it.
-//	public void delete(int id, User deleter) 
-//			throws PackageDeleteException, PackageNotFound, PackageAlreadyDeletedWarning {
-//		Package deletedPackage = packageRepository.findByIdAndDeleted(id, false);
-//		if (deletedPackage == null)
-//			throw new PackageNotFound(messageSource, locale, id);
-//		
-//		delete(deletedPackage, deleter);
-//	}
 	
 	@Transactional(readOnly=false, rollbackFor={PackageDeleteException.class})
 	public void delete(Package deletedPackage, User deleter) 
@@ -216,40 +213,35 @@ public class PackageService {
 			deletedPackage.setDeleted(true);
 			update(deletePackageEvent, deletedPackage, deleter);
 			
-			Submission submission = deletedPackage.getSubmission(); 
+//			Submission submission = deletedPackage.getSubmission(); 
 			
-			if(submission != null && !submission.isDeleted())
-				submissionService.deleteSubmission(deletedPackage.getSubmission(), deleter);
+//			if(submission != null && !submission.isDeleted())
+//				submissionService.deleteSubmission(deletedPackage.getSubmission(), deleter);
 		} 
-		catch (PackageEditException | EventNotFound | SubmissionDeleteException e) {
+		catch (PackageEditException | EventNotFound e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
 			throw new PackageDeleteException(messageSource, locale, deletedPackage);
-		} catch(SubmissionDeleteWarning w) {
-			logger.warn(w.getClass().getName() + ": " + w.getMessage(), w);
 		}
 	}
 	
-	//TODO: The same issue as the one in delete method
-//	public void shiftDelete(int id) throws PackageNotFound, PackageDeleteException {
-//		Package deletedPackage = packageRepository.findByIdAndDeleted(id, true);
-//		if (deletedPackage == null)
-//			throw new PackageNotFound(messageSource, locale, id);
-//		
-//		shiftDelete(deletedPackage);
-//	}
-//	
 	@Transactional(readOnly=false, rollbackFor=PackageDeleteException.class)
 	public void shiftDelete(Package deletedPackage) throws PackageDeleteException {
+		shiftDeleteAdditionalActions(deletedPackage, true);
+		packageRepository.delete(deletedPackage);
+	}
+	
+	@Transactional(readOnly=false, rollbackFor=PackageDeleteException.class)
+	public void shiftDeleteAdditionalActions(Package deletedPackage, boolean deleteSubmission) throws PackageDeleteException {
 		try {
-			Submission submission = deletedPackage.getSubmission();
-			if(submission != null) {
-				submissionService.shiftDelete(deletedPackage.getSubmission());
-			}
 			deleteSource(deletedPackage);
 			deletePackageEvents(deletedPackage);
-			packageRepository.delete(deletedPackage);
+			Submission submission = deletedPackage.getSubmission();
+			
+			if(submission != null && deleteSubmission) {
+				submissionService.shiftDeleteAdditionalActions(submission, false);
+			}
 		} 
-		catch (PackageStorageException | SubmissionDeleteException e) {
+		catch (PackageStorageException e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
 			throw new PackageDeleteException(messageSource, locale, deletedPackage);
 		}	
@@ -343,12 +335,31 @@ public class PackageService {
 		return allPackages;
 	}
 	
+	public Page<Package> findAll(Pageable pageable) {
+		Page<Package> allPackages = packageRepository.findNonDeletedByAcceptedSubmission(pageable);				
+		return allPackages;
+	}
+	
 	public List<Package> findAllByRepositoryName(String repositoryName) {
 		if(Objects.isNull(repositoryName))
 			return findAll();		
 		List<Package> allPackages = packageRepository.findNonDeletedByRepositoryNameAndAcceptedSubmission(repositoryName);
 		Collections.sort(allPackages, new PackageComparator());
 		return allPackages;
+	}
+	
+	public Page<Package> findAllByRepositoryName(String repositoryName, Pageable pageable) {
+		if(Objects.isNull(repositoryName))
+			return findAll(pageable);		
+		else
+			return packageRepository.findByRepositoryNameAndAcceptedSubmission(repositoryName, pageable);		
+	}
+	
+	public Page<Package> findAllByRepositoryAndDeleted(String repositoryName, Boolean deleted, Pageable pageable) {
+		if(deleted)
+			return packageRepository.findDeletedByRepositoryNameAndAcceptedSubmission(repositoryName, pageable);
+		else
+			return findAllByRepositoryName(repositoryName, pageable);
 	}
 	
 	@Transactional(readOnly = false, rollbackFor=PackageEditException.class)
@@ -712,5 +723,48 @@ public class PackageService {
 	public Optional<String> getReferenceManualFilename(Package packageBag) {
 		return packageStorage.getReferenceManualFilename(packageBag);
 	}
-	
+
+	@Transactional(readOnly = false, rollbackFor = PackageException.class)
+	public Package evaluateAndUpdate(RPackageDto packageDto, User requester) throws PackageException {
+		Package packageEntity = findById(packageDto.getEntity().getId());
+		
+		try {
+			if(packageDto.getActive() != packageEntity.isActive()) {
+				if(!packageDto.getActive()) {
+					deactivatePackage(packageEntity, requester);
+				} else {
+					activatePackage(packageEntity, requester);
+				}
+			}
+			if(packageDto.getDeleted() != packageEntity.isDeleted()) {
+				if(packageDto.getDeleted()) {
+					delete(packageEntity, requester);
+				} else {
+					throw new NotImplementedException();
+				}
+			}
+			if(packageDto.getSource() != packageEntity.getSource()) {
+				updateSource(packageEntity, packageDto.getSource(), requester);
+			}
+		} catch (PackageWarning w) {
+			logger.warn(w.getClass().getName() + ": " + w.getMessage(), w);
+		}
+		
+		return packageEntity;
+	}
+
+	public Page<Package> findAllEvenDeleted(Pageable pageable) {
+		return packageRepository.findAllAcceptedSubmissions(pageable);
+	}
+
+	public Page<Package> findAllByDeleted(Boolean deleted, Pageable pageable) {
+		return packageRepository.findByDeleted(deleted, pageable);
+	}
+
+	public void moveSourceToTrashDirectory(Package packageBag, User requester) 
+			throws PackageSourceNotFoundException, MovePackageSourceException, PackageEditException {
+		String newSource = packageStorage.moveToTrashDirectory(packageBag).getAbsolutePath();
+		updateSource(packageBag, newSource, requester);
+	}
+
 }

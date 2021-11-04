@@ -1,0 +1,26 @@
+{
+    "status": "success",
+    "code": 201,
+    "message": "Your resource has been created successfully.",
+    "messageCode": "success.resource.created",
+	"data": {
+        "id": 100,
+        "version": 0,
+        "publicationUri": "http://localhost/repo/testrepo100",
+        "name": "Test Repository 100",
+        "serverAddress": "http://192.168.1.100/testrepo100",
+        "deleted": false,
+        "published": false,
+        "synchronizing": false,
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost/api/v2/manager/r/repositories/100"
+            },
+            {
+                "rel": "repositoryList",
+                "href": "http://localhost/api/v2/manager/r/repositories"
+            }
+        ]
+    }
+}

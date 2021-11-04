@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -37,7 +37,6 @@ public class GetPackageInBytesException extends PackageStorageException {
 	public GetPackageInBytesException(MessageSource messageSource, Locale locale,
 			Package packageBag) {
 		super(MessageCodes.ERROR_PACKAGE_STORAGE_GET_IN_BYTES, messageSource, locale, packageBag, "");
-		// TODO Auto-generated constructor stub
 	}
 
 }

@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -309,14 +309,14 @@ public class PackageServiceTest {
 		packageBag.setSubmission(submission);
 		
 		when(eventService.getDeleteEvent()).thenReturn(deleteEvent);
-		doNothing().when(submissionService).deleteSubmission(submission, user);
+//		doNothing().when(submissionService).deleteSubmission(submission, user);
 		when(packageEventService.create(any())).thenAnswer(
 				new PackageEventAssertionAnswer(user, packageBag, deleteEvent, "delete", "false", "true"));
 		
 		packageService.delete(packageBag, user);
 		
 		assertTrue("Package was not deleted.", packageBag.isDeleted());
-		verify(submissionService).deleteSubmission(submission, user);
+//		verify(submissionService).deleteSubmission(submission, user);
 	}
 	
 //	@Test
@@ -365,7 +365,7 @@ public class PackageServiceTest {
 		packageBag.setPackageEvents(new HashSet<PackageEvent>(events));
 		packageBag.setSubmission(submission);
 		
-		when(submissionService.shiftDelete(submission)).thenReturn(submission);
+//		doNothing().when(submissionService).shiftDelete(submission);
 		doNothing().when(packageStorage).deleteSource(packageBag);
 		doNothing().when(packageEventService).delete(anyInt());
 		doNothing().when(packageRepository).delete(packageBag);
@@ -376,7 +376,7 @@ public class PackageServiceTest {
 		
 		verify(packageStorage).deleteSource(packageBag);
 		verify(packageEventService, times(4)).delete(anyInt());
-		verify(submissionService).shiftDelete(submission);
+//		verify(submissionService).shiftDelete(submission);
 		verify(packageRepository).delete(packageBag);
 	}
 	
@@ -408,7 +408,7 @@ public class PackageServiceTest {
 		packageBag.setPackageEvents(new HashSet<PackageEvent>(events));
 		packageBag.setSubmission(submission);
 		
-		when(submissionService.shiftDelete(submission)).thenReturn(submission);
+//		doNothing().when(submissionService).shiftDelete(submission);
 		doThrow(
 				new SourceFileDeleteException( 
 						messageSource, new Locale("en"), packageBag, "some details")
@@ -422,34 +422,33 @@ public class PackageServiceTest {
         });
 	}
 	
-	@Test
-	public void shiftDelete_ThrowsPackageDeleteException_IfSubmissionDeleteExceptionIsThrown() 
-			throws SubmissionDeleteException, 
-			SubmissionNotFound,
-			PackageDeleteException,
-			PackageNotFound {
-		User user = UserTestFixture.GET_FIXTURE_ADMIN();
-		Repository repository = RepositoryTestFixture.GET_FIXTURE_REPOSITORY();
-		Package packageBag = PackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
-		List<PackageEvent> events = PackageEventTestFixture
-				.GET_FIXTURE_SORTED_PACKAGE_EVENTS(user, packageBag, 2, 2);
-		Submission submission = SubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, packageBag);
-		SubmissionDeleteException exceptionToThrow = new SubmissionDeleteException(messageSource, new Locale("en"), submission.getId());
-		
-		packageBag.setDeleted(true);
-		packageBag.setPackageEvents(new HashSet<PackageEvent>(events));
-		packageBag.setSubmission(submission);
-		
-		when(submissionService.shiftDelete(submission))
-			.thenThrow(exceptionToThrow);
-
-		assertThrows(
-            MessageCodes.ERROR_PACKAGE_DELETE,
-            PackageDeleteException.class,
-            () -> {
-              packageService.shiftDelete(packageBag);
-        });
-	}
+//	@Test
+//	public void shiftDelete_ThrowsPackageDeleteException_IfSubmissionDeleteExceptionIsThrown() 
+//			throws SubmissionDeleteException, 
+//			SubmissionNotFound,
+//			PackageDeleteException,
+//			PackageNotFound {
+//		User user = UserTestFixture.GET_FIXTURE_ADMIN();
+//		Repository repository = RepositoryTestFixture.GET_FIXTURE_REPOSITORY();
+//		Package packageBag = PackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
+//		List<PackageEvent> events = PackageEventTestFixture
+//				.GET_FIXTURE_SORTED_PACKAGE_EVENTS(user, packageBag, 2, 2);
+//		Submission submission = SubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, packageBag);
+//		SubmissionDeleteException exceptionToThrow = new SubmissionDeleteException(messageSource, new Locale("en"), submission.getId());
+//		
+//		packageBag.setDeleted(true);
+//		packageBag.setPackageEvents(new HashSet<PackageEvent>(events));
+//		packageBag.setSubmission(submission);
+//		
+//		doThrow(exceptionToThrow).when(submissionService).shiftDelete(submission);
+//
+//		assertThrows(
+//            MessageCodes.ERROR_PACKAGE_DELETE,
+//            PackageDeleteException.class,
+//            () -> {
+//              packageService.shiftDelete(packageBag);
+//        });
+//	}
 	
 //	@Test
 //	public void shiftDeleteForRejectedSubmission_deletesPackageFromDatabaseAndFilesystem() 

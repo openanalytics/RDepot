@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -44,6 +44,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
@@ -56,6 +58,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.auth0.jwt.JWT;
 
+import eu.openanalytics.rdepot.api.v2.dto.UserDto;
 import eu.openanalytics.rdepot.comparator.UserComparator;
 import eu.openanalytics.rdepot.exception.AdminNotFound;
 import eu.openanalytics.rdepot.exception.EventNotFound;
@@ -71,6 +74,7 @@ import eu.openanalytics.rdepot.exception.UserCreateException;
 import eu.openanalytics.rdepot.exception.UserDeactivateException;
 import eu.openanalytics.rdepot.exception.UserDeleteException;
 import eu.openanalytics.rdepot.exception.UserEditException;
+import eu.openanalytics.rdepot.exception.UserException;
 import eu.openanalytics.rdepot.exception.UserNotFound;
 import eu.openanalytics.rdepot.model.ApiToken;
 import eu.openanalytics.rdepot.model.Event;
@@ -460,7 +464,7 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 	}
 	
 	@Transactional(readOnly = false)
-	public void evaluateAndUpdate(User currentUser, User user, User updater) throws UserEditException {
+	public User evaluateAndUpdate(User currentUser, User user, User updater) throws UserEditException {
 
 		if(currentUser.getRole().getId() != user.getRole().getId())
 			updateRole(currentUser, updater, user.getRole());
@@ -479,9 +483,8 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 			throw new UserEditException(messageSource, locale, user);
 		}
 		
-		if(currentUser.getLastLoggedInOn() != user.getLastLoggedInOn())
-			updateLastLoggedInOn(currentUser, updater, user.getLastLoggedInOn());
-		
+//		if(currentUser.getLastLoggedInOn() != user.getLastLoggedInOn())
+//			updateLastLoggedInOn(currentUser, updater, user.getLastLoggedInOn());
 		if(!currentUser.getName().equals(user.getName())) {
 			updateName(currentUser, updater, user.getName());
 		}
@@ -489,6 +492,8 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 		if(!currentUser.getEmail().equals(user.getEmail())) {
 			updateEmail(currentUser, updater, user.getEmail());
 		}
+		
+		return currentUser;
 	}
 	
 	@Transactional(readOnly = false)
@@ -683,5 +688,77 @@ public class UserService implements MessageSourceAware, LdapAuthoritiesPopulator
 			authorities.add(new SimpleGrantedAuthority(roleService.findByValue(i).getName()));
 		}		
 		return authorities;
+	}
+
+	public boolean isAdmin(User user) {
+		return user.getRole().getValue() == Role.VALUE.ADMIN;
+	}
+
+	@Transactional(readOnly = false)
+	public User evaluateAndUpdate(UserDto user, User requester) throws UserException {
+		User entity = user.toEntity();
+		entity.setRole(roleService.findById(entity.getRole().getId()));
+		
+		User oldUser = findById(user.getId());
+		
+		return evaluateAndUpdate(oldUser, entity, requester);
+	}
+	
+	public boolean isAuthorizedToEdit(Submission submission, User requester) {
+		return isAuthorizedToEdit(submission.getPackage(), requester);
+	}
+	
+	public boolean isAuthorizedToSee(Submission submission, User requester) {
+		if(submission.getUser() == requester || isAdmin(requester))
+			return true;
+		
+		if(requester.getRole().getValue() == Role.VALUE.REPOSITORYMAINTAINER) {
+			for(RepositoryMaintainer maintainer : 
+				repositoryMaintainerService.findByUser(requester)) {
+				if(maintainer.getRepository() == submission.getPackage().getRepository())
+					return true;
+			}
+		}
+		
+		if(requester.getRole().getValue() == Role.VALUE.PACKAGEMAINTAINER) {
+			PackageMaintainer maintainer = packageMaintainerService
+					.findByPackageAndRepository(submission.getPackage().getName(), 
+							submission.getPackage().getRepository());
+			
+			if(maintainer.getUser() == requester) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isAuthorizedToSee(PackageMaintainer packageMaintainer, User requester) {
+		if(isAdmin(requester) || packageMaintainer.getUser() == requester)
+			return true;
+		
+		if(requester.getRole().getValue() == Role.VALUE.REPOSITORYMAINTAINER) {
+			for(RepositoryMaintainer maintainer : repositoryMaintainerService.findByUser(requester)) {
+				if(!maintainer.isDeleted() && maintainer.getRepository() == packageMaintainer.getRepository()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public boolean isAuthorizedToSee(RepositoryEvent event, User requester) {
+		if(isAdmin(requester))
+			return true;
+		
+		RepositoryMaintainer maintainer = repositoryMaintainerService.findByUserAndRepository(requester, event.getRepository());
+		
+		if(maintainer != null && !maintainer.isDeleted()) {
+			return true;
+		}
+		return false;
+	}
+
+	public Page<User> findAll(Pageable pageable) {
+		return userRepository.findAll(pageable);
 	}
 }

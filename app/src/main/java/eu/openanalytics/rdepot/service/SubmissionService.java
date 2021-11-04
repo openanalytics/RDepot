@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -25,6 +25,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -35,6 +36,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
@@ -42,6 +46,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import eu.openanalytics.rdepot.api.v2.dto.RSubmissionDto;
+import eu.openanalytics.rdepot.api.v2.dto.SubmissionState;
 import eu.openanalytics.rdepot.exception.AdminNotFound;
 import eu.openanalytics.rdepot.exception.EventNotFound;
 import eu.openanalytics.rdepot.exception.MovePackageSourceException;
@@ -52,12 +58,13 @@ import eu.openanalytics.rdepot.exception.PackageSourceNotFoundException;
 import eu.openanalytics.rdepot.exception.RepositoryEditException;
 import eu.openanalytics.rdepot.exception.RepositoryPublishException;
 import eu.openanalytics.rdepot.exception.SendEmailException;
-import eu.openanalytics.rdepot.exception.SourceFileDeleteException;
 import eu.openanalytics.rdepot.exception.SubmissionAcceptException;
 import eu.openanalytics.rdepot.exception.SubmissionCreateException;
 import eu.openanalytics.rdepot.exception.SubmissionDeleteException;
 import eu.openanalytics.rdepot.exception.SubmissionEditException;
+import eu.openanalytics.rdepot.exception.SubmissionException;
 import eu.openanalytics.rdepot.exception.SubmissionNotFound;
+import eu.openanalytics.rdepot.exception.UpdateNotAllowedException;
 import eu.openanalytics.rdepot.exception.UploadRequestValidationException;
 import eu.openanalytics.rdepot.model.Event;
 import eu.openanalytics.rdepot.model.Package;
@@ -66,6 +73,7 @@ import eu.openanalytics.rdepot.model.PackageUploadRequest;
 import eu.openanalytics.rdepot.model.Repository;
 import eu.openanalytics.rdepot.model.RepositoryEvent;
 import eu.openanalytics.rdepot.model.RepositoryMaintainer;
+import eu.openanalytics.rdepot.model.Role;
 import eu.openanalytics.rdepot.model.Submission;
 import eu.openanalytics.rdepot.model.SubmissionEvent;
 import eu.openanalytics.rdepot.model.User;
@@ -74,10 +82,12 @@ import eu.openanalytics.rdepot.storage.PackageStorage;
 import eu.openanalytics.rdepot.storage.RepositoryStorage;
 import eu.openanalytics.rdepot.time.DateProvider;
 import eu.openanalytics.rdepot.warning.PackageAlreadyActivatedWarning;
+import eu.openanalytics.rdepot.warning.PackageAlreadyDeletedWarning;
 import eu.openanalytics.rdepot.warning.SubmissionAlreadyAcceptedWarning;
 import eu.openanalytics.rdepot.warning.SubmissionCreateWarning;
 import eu.openanalytics.rdepot.warning.SubmissionDeleteWarning;
 import eu.openanalytics.rdepot.warning.SubmissionNeedsToBeAcceptedWarning;
+import eu.openanalytics.rdepot.warning.SubmissionWarning;
 import eu.openanalytics.rdepot.warning.UploadRequestValidationWarning;
 
 @Service
@@ -170,7 +180,7 @@ public class SubmissionService
 	@Transactional(readOnly = false, rollbackFor=SubmissionCreateException.class)
 	public Submission createInternalSubmission(File packageFile, User creator, 
 			Repository repository, Boolean generateManuals) 
-			throws SubmissionCreateWarning, SubmissionCreateException, SubmissionNeedsToBeAcceptedWarning {
+			throws SubmissionCreateWarning, SubmissionCreateException {
 		try {
 			Package packageBag = uploadRequestService.createOrReplacePackage(packageFile, creator, repository, generateManuals);
 			
@@ -186,14 +196,14 @@ public class SubmissionService
 	
 	@Transactional(readOnly = false, rollbackFor=SubmissionCreateException.class)
 	private Submission create(Package packageBag, User creator) 
-			throws SubmissionCreateWarning, SubmissionCreateException, 
-					SubmissionNeedsToBeAcceptedWarning {
+			throws SubmissionCreateWarning, SubmissionCreateException {
 		Submission submission = new Submission();
 		try {
 			Event createEvent = eventService.getCreateEvent();
 			submission.setUser(creator);
-			submission.setPackage(packageBag);
+			submission.setPackage(packageBag);			
 			submission = submissionRepository.save(submission);
+			packageBag.setSubmission(submission);
 			submissionEventService.create(createEvent, creator, submission);
 			
 			if(uploadRequestService.canUpload(submission.getPackage().getName(),
@@ -214,7 +224,6 @@ public class SubmissionService
 			throw new SubmissionCreateWarning(messageSource, locale, submission);
 		} catch(SubmissionNeedsToBeAcceptedWarning w) {
 			logger.warn(w.getClass().getName() + ": " + w.getMessage(), w);
-			throw w;
 		}
 		
 		return submission;
@@ -222,28 +231,30 @@ public class SubmissionService
 
 	@Transactional(readOnly = false, rollbackFor=SubmissionCreateException.class)
 	public Submission create(PackageUploadRequest uploadRequest, User creator) 
-			throws SubmissionCreateException,
-			SubmissionCreateWarning,
-			SubmissionNeedsToBeAcceptedWarning  {
-		try {
-			Package packageBag = uploadRequestService.createPackage(uploadRequest, creator);
-			
-			return create(packageBag, creator);
-		} catch (UploadRequestValidationException e) {
-			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
-			throw new SubmissionCreateException(messageSource, locale);
-		} catch (UploadRequestValidationWarning w) {
-			logger.warn(w.getClass().getName() + ": " + w.getMessage(), w);
-			throw new SubmissionCreateWarning(messageSource, locale);
-		}
+			throws UploadRequestValidationException, UploadRequestValidationWarning, 
+			SubmissionCreateWarning, SubmissionCreateException {
+		Package packageBag = uploadRequestService.createPackage(uploadRequest, creator);
+		
+		return create(packageBag, creator);
+//		try {
+//			Package packageBag = uploadRequestService.createPackage(uploadRequest, creator);
+//			
+//			return create(packageBag, creator);
+//		} catch (UploadRequestValidationException e) {
+//			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
+//			throw new SubmissionCreateException(messageSource, locale);
+//		} catch (UploadRequestValidationWarning w) {
+//			logger.warn(w.getClass().getName() + ": " + w.getMessage(), w);
+//			throw new SubmissionCreateWarning(messageSource, locale);
+//		}
 	}
 	
 	public Submission findById(int id) {
 		return submissionRepository.findByIdAndDeleted(id, false);
 	}
 	
-	public Submission findByIdEvenDeleted(int id) {
-		return submissionRepository.getOne(id);
+	public Optional<Submission> findByIdEvenDeleted(int id) {
+		return submissionRepository.findById(id);
 	}
 	
 	public Submission findByIdAndDeleted(int id, boolean deleted) {
@@ -280,16 +291,18 @@ public class SubmissionService
 			Event deleteEvent = eventService.getDeleteEvent();
 			
 			if(deletePackageSource)
-				packageService.deleteSource(deletedSubmission.getPackage());
+				packageService.moveSourceToTrashDirectory(deletedSubmission.getPackage(), deleter);
 			
 			submissionEventService.create(deleteEvent, deleter, deletedSubmission);
 			deletedSubmission.setDeleted(true);
+			packageService.delete(deletedSubmission.getPackage(), deleter);
 			
 			if(deleter.getId() == deletedSubmission.getUser().getId() && 
 					!userService.isAuthorizedToAccept(deletedSubmission, deleter))
 				emailService.sendCanceledSubmissionEmail(deletedSubmission); 
 		}
-		catch (EventNotFound | SourceFileDeleteException e) {
+		catch (EventNotFound | PackageDeleteException | PackageAlreadyDeletedWarning | 
+				MovePackageSourceException | PackageEditException | PackageSourceNotFoundException e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
 			throw new SubmissionDeleteException(messageSource, locale, deletedSubmission);
 		}
@@ -300,11 +313,18 @@ public class SubmissionService
 	}
 	
 	@Transactional(readOnly=false, rollbackFor={SubmissionDeleteException.class})
-	public Submission shiftDelete(Submission deletedSubmission) throws SubmissionDeleteException {
+	public void shiftDelete(Submission deletedSubmission) throws SubmissionDeleteException, PackageDeleteException {
+		shiftDeleteAdditionalActions(deletedSubmission, true);
+		submissionRepository.delete(deletedSubmission);	
+	}
+	
+	@Transactional(readOnly=false, rollbackFor={SubmissionDeleteException.class})
+	public void shiftDeleteAdditionalActions(Submission deletedSubmission, boolean deletePackage) throws PackageDeleteException {
+		if(deletePackage)
+			packageService.shiftDeleteAdditionalActions(deletedSubmission.getPackage(), false);
+		
 		for(SubmissionEvent event : deletedSubmission.getSubmissionEvents())
 			submissionEventService.delete(event);
-		submissionRepository.delete(deletedSubmission);	
-		return deletedSubmission;
 	}
 
 	@Transactional(readOnly=false, rollbackFor={PackageDeleteException.class})
@@ -422,23 +442,70 @@ public class SubmissionService
 		}
 	}
 	
-	public void evaluateAndUpdate(Submission submission, User updater) 
+	@Transactional(readOnly = false)
+	public Submission evaluateAndUpdate(Submission submission, User updater) 
 			throws SubmissionEditException, 
-			SubmissionAlreadyAcceptedWarning, SubmissionAcceptException {
+			SubmissionAlreadyAcceptedWarning, SubmissionAcceptException, SubmissionNotFound, SubmissionDeleteException, SubmissionDeleteWarning {
 		Submission currentSubmission = submissionRepository.findByIdAndDeleted(submission.getId(), false);
 		
-		if(currentSubmission.getUser().getId() != submission.getUser().getId())
-			updateUser(submission.getUser(), currentSubmission, updater);
-		if(currentSubmission.getPackage().getId() != submission.getPackage().getId())
-			updatePackage(submission.getPackage(), currentSubmission, updater);
-		if(!currentSubmission.isAccepted() && submission.isAccepted())
+//		if(currentSubmission.getUser().getId() != submission.getUser().getId())
+//			updateUser(submission.getUser(), currentSubmission, updater);
+//		if(currentSubmission.getPackage().getId() != submission.getPackage().getId())
+//			updatePackage(submission.getPackage(), currentSubmission, updater);
+		//TODO: Should this not be actually immutable?
+		if(!currentSubmission.isAccepted() && submission.isAccepted() 
+				&& !currentSubmission.isDeleted() && !submission.isDeleted())
 			acceptSubmission(currentSubmission, updater);
+		if(!currentSubmission.isDeleted() && submission.isDeleted() 
+				&& !submission.isAccepted() && !currentSubmission.isAccepted()) {
+			rejectSubmission(submission.getId(), updater); //de facto "cancel"
+		}
+		
+		return currentSubmission;
 	}
 	
 	public Submission chooseBestSubmitter(Submission submission, User requester) 
 			throws AdminNotFound, SubmissionEditException {
 		updateUser(userService.findFirstAdmin(), submission, requester);
 		return submission;
+	}
+	
+	public Page<Submission> findAllForUserOfUserAndWithState(User requester, User user, 
+			Optional<SubmissionState> state, Pageable pageable) {
+		Boolean deleted = null;
+		Boolean accepted = null;
+		
+		if(state.isPresent()) {
+			switch(state.get()) {
+			case ACCEPTED:
+				deleted = false;
+				accepted = true;
+				break;
+			case CANCELLED:
+				deleted = true;
+				accepted = false;
+				break;
+			case REJECTED:
+				return new PageImpl<>(new ArrayList<>());
+			case WAITING:
+				deleted = false;
+				accepted = false;
+				break;
+			default:
+				break;
+			}
+		}
+		
+		switch(requester.getRole().getValue()) {
+		case Role.VALUE.ADMIN:
+				return submissionRepository.findAll(user, deleted, accepted, pageable);
+		case Role.VALUE.REPOSITORYMAINTAINER:
+				return submissionRepository.findAllForRepositoryMaintainer(requester, user, deleted, accepted, pageable);
+		case Role.VALUE.PACKAGEMAINTAINER:
+				return submissionRepository.findAllForPackageMaintainer(requester, user, deleted, accepted, pageable);
+		default:
+				return submissionRepository.findAllForUser(requester, user, deleted, accepted, pageable);
+		}
 	}
 	
 	public List<Submission> findAllFor(User user) {
@@ -501,6 +568,15 @@ public class SubmissionService
 			chooseBestSubmitter(submission, requester);
 		}
 //			evaluateAndUpdate(chooseBestSubmitter(submission), requester);
+	}
+	
+	@Transactional(readOnly = false)
+	public Submission evaluateAndUpdate(RSubmissionDto dto, User requester) throws UpdateNotAllowedException, SubmissionException, SubmissionWarning {
+		Submission entity = dto.toEntity();
+//		entity.setPackage(packageService.findById(entity.getPackage().getId()));
+//		entity.setUser(userService.findById(entity.getUser().getId()));
+		
+		return evaluateAndUpdate(entity, requester);
 	}
 
 }

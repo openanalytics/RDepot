@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,13 +20,18 @@
  */
 package eu.openanalytics.rdepot.test.fixture;
 
+import java.sql.Date;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+
 import eu.openanalytics.rdepot.model.Role;
 import eu.openanalytics.rdepot.model.User;
 
 public class UserTestFixture {
-	
+
 	public static final class ROLE {
 		public static Role ADMIN = new Role(0, 3, "admin", "Admin");
 		public static Role REPOSITORY_MAINTAINER = new Role(1, 2, "repositorymaintainer", "RepositoryMaintainer");
@@ -46,9 +51,13 @@ public class UserTestFixture {
 				ROLE.ADMIN,
 				NAME + "0",
 				"0" + EMAIL,
-				LOGIN + "0",
+				"admin_" + LOGIN + "0",
 				ACTIVE,
 				DELETED);
+		
+		Instant lastLoggedInOn = LocalDateTime.of(2017, 7, 3, 7, 0).atZone(ZoneId.of("Etc/UTC")).toInstant();
+		admin.setLastLoggedInOn(Date.from(lastLoggedInOn));
+		
 		return admin;
 	}
 	
@@ -57,38 +66,53 @@ public class UserTestFixture {
 		//users.add(GET_FIXTURE_ADMIN());
 		
 		for(int i = shift; i < repositoryMaintainerCount + shift; i++) {
-			users.add(new User(
+			User user = new User(
 					i,
 					ROLE.REPOSITORY_MAINTAINER,
 					NAME + Integer.toString(i),
 					Integer.toString(i) + EMAIL,
-					LOGIN + Integer.toString(i),
+					"repositorymaintainer_" + LOGIN + Integer.toString(i),
 					ACTIVE,
-					DELETED));
+					DELETED);
+			
+			Instant lastLoggedInOn = LocalDateTime.of(2017, 8, 11, 15, 30).atZone(ZoneId.of("Etc/UTC")).toInstant();
+			user.setLastLoggedInOn(Date.from(lastLoggedInOn));
+			
+			users.add(user);
 		}
 		
 		int localShift = users.size() + shift;
 		for(int i = localShift; i < packageMaintainerCount + localShift; i++) {
-			users.add(new User(
+			User user = new User(
 					i,
 					ROLE.PACKAGE_MAINTAINER,
 					NAME + Integer.toString(i),
 					Integer.toString(i) + EMAIL,
-					LOGIN + Integer.toString(i),
+					"packagemaintainer_" + LOGIN + Integer.toString(i),
 					ACTIVE,
-					DELETED));
+					DELETED);
+			
+			Instant lastLoggedInOn = LocalDateTime.of(2018, 7, 2, 7, 0).atZone(ZoneId.of("Etc/UTC")).toInstant();
+			user.setLastLoggedInOn(Date.from(lastLoggedInOn));
+			
+			users.add(user);
 		}
 		
 		localShift = users.size() + shift;
 		for(int i = localShift; i < userCount + localShift; i++) {
-			users.add(new User(
+			User user = new User(
 					i,
 					ROLE.USER,
 					NAME + Integer.toString(i),
 					Integer.toString(i) + EMAIL,
-					LOGIN + Integer.toString(i),
+					"user_" + LOGIN + Integer.toString(i),
 					ACTIVE,
-					DELETED));
+					DELETED);
+			
+			Instant lastLoggedInOn = LocalDateTime.of(2018, 8, 30, 15, 30).atZone(ZoneId.of("Etc/UTC")).toInstant();
+			user.setLastLoggedInOn(Date.from(lastLoggedInOn));
+			
+			users.add(user);
 		}
 		
 		return users;
@@ -102,6 +126,10 @@ public class UserTestFixture {
 		return GET_FIXTURE_USERS(1, 0, 0).get(0);
 	}
 	
+	public static User GET_FIXTURE_USER_REPOSITORYMAINTAINER(int shift) {
+		return GET_FIXTURE_USERS(1, 0, 0, shift).get(0);
+	}
+	
 	public static User GET_FIXTURE_USER_PACKAGEMAINTAINER() {
 		return GET_FIXTURE_PACKAGEMAINTAINER(0);
 	}
@@ -113,19 +141,4 @@ public class UserTestFixture {
 	public static User GET_FIXTURE_PACKAGEMAINTAINER(int shift) {
 		return GET_FIXTURE_USERS(0, 1, 0, shift).get(0);
 	}
-	
-//	public static User GET_FIXTURE_USER_WITH_EVENTS() {
-//		User user = GET_FIXTURE_USER();
-//		Event event = EventTestFixture.GET_FIXTURE_EVENT();
-//		
-//		Set<Event> events = new HashSet<>();
-//		events.add(event);
-//		user.setChangedPackageEvents(events);
-//		return null;
-//		
-//	}
-	
-//	public static Set<RepositoryMaintainer> GET_FIXTURE_REPOSITORY_MAINTAINERS() {
-//		
-//	}
 }

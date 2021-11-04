@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -37,7 +37,6 @@ public class CopyException extends StorageException {
 			String targetPath, String destinationPath, String cause) {
 		super(MessageCodes.ERROR_STORAGE_COPY, messageSource, locale, 
 				"Target: " + targetPath + " Destination: " + destinationPath + " Cause: " + cause);
-		// TODO Auto-generated constructor stub
 	}
 
 }

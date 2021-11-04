@@ -644,7 +644,7 @@ COPY public.package_maintainer_event (id, date, package_maintainer_id, event_id,
 --
 
 COPY public.repository (version, id, publication_uri, name, server_address, published, deleted) FROM stdin;
-0	2	http://localhost/repo/A	A	http://oa-rdepot-repo:8080/A	f	f
+0	2	http://localhost/repo/oldWrongUri	A	http://oa-rdepot-repo:8080/oldWrongUri	f	f
 0	3	http://localhost/repo/B	B	http://oa-rdepot-repo:8080/B	f	f
 0	4	http://localhost/repo/C	C	http://oa-rdepot-repo:8080/C	f	f
 0	5	http://localhost/repo/G	G	http://oa-rdepot-repo:8080/G	f	f

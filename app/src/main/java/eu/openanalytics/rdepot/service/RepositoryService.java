@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,12 +20,11 @@
  */
 package eu.openanalytics.rdepot.service;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +35,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
@@ -44,6 +45,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
 
+import eu.openanalytics.rdepot.api.v2.dto.RRepositoryDto;
 import eu.openanalytics.rdepot.exception.AdminNotFound;
 import eu.openanalytics.rdepot.exception.CreateFolderStructureException;
 import eu.openanalytics.rdepot.exception.DeleteFileException;
@@ -70,12 +72,10 @@ import eu.openanalytics.rdepot.model.RepositoryEvent;
 import eu.openanalytics.rdepot.model.RepositoryMaintainer;
 import eu.openanalytics.rdepot.model.User;
 import eu.openanalytics.rdepot.repository.RepositoryRepository;
-import eu.openanalytics.rdepot.repository.RoleRepository;
 import eu.openanalytics.rdepot.storage.RepositoryStorage;
 import eu.openanalytics.rdepot.time.DateProvider;
 import eu.openanalytics.rdepot.validation.RepositoryValidator;
 import eu.openanalytics.rdepot.warning.PackageAlreadyDeletedWarning;
-import eu.openanalytics.rdepot.warning.RepositoryAlreadyUnpublishedWarning;
 
 @Service
 @Transactional(readOnly = true)
@@ -84,34 +84,31 @@ public class RepositoryService {
 	Logger logger = LoggerFactory.getLogger(RepositoryService.class);
 	Locale locale = LocaleContextHolder.getLocale();
 	
-	@Resource
+	@Autowired
 	private MessageSource messageSource;
 	
-	@Resource
+	@Autowired
 	private RepositoryStorage repositoryStorage;
 	
-	@Resource
+	@Autowired
 	private RepositoryRepository repositoryRepository;
 	
-	@Resource
-	private RoleRepository roleRepository;
-	
-	@Resource
+	@Autowired
 	private RepositoryMaintainerService repositoryMaintainerService;
 	
-	@Resource
+	@Autowired
 	private PackageMaintainerService packageMaintainerService;
 	
-	@Resource
+	@Autowired
 	private PackageService packageService;
 	
-	@Resource
+	@Autowired
 	private RepositoryEventService repositoryEventService;
 	
-	@Resource
+	@Autowired
 	private EventService eventService;
 	
-	@Resource
+	@Autowired
 	private UserService userService;
 	
 	@Autowired
@@ -122,11 +119,14 @@ public class RepositoryService {
 	
 	@Value("${declarative}")
 	private String declarative;
+	
+	@Value("${repository-snapshots}")
+	private String snapshot;
 
 	@Transactional(readOnly = false, rollbackFor = RepositoryCreateException.class)
 	public Repository create(Repository repository, User creator)  throws RepositoryCreateException {
 		try {
-			Event createEvent = eventService.getUpdateEvent();
+			Event createEvent = eventService.getCreateEvent();
 			Repository createdRepository = repositoryRepository.saveAndFlush(repository);
 			repositoryEventService.create(createEvent, creator, createdRepository);
 			return createdRepository;
@@ -154,12 +154,9 @@ public class RepositoryService {
 			deletedRepository.setDeleted(true);
 			deleteRepositoryMaintainers(deletedRepository, deleter);
 			deletePackageMaintainers(deletedRepository, deleter);
+
+			unpublishRepository(deletedRepository, deleter);
 			
-			try {
-				unpublishRepository(deletedRepository, deleter);
-			} catch (RepositoryAlreadyUnpublishedWarning w) {
-				logger.warn(w.getClass().getName() + ": " + w.getMessage(), w);
-			}
 			
 			try {
 				deletePackages(deletedRepository, deleter);
@@ -184,9 +181,10 @@ public class RepositoryService {
 	
 	@Transactional(readOnly = false, rollbackFor=RepositoryEditException.class)
 	public void unpublishRepository(Repository repository, User updater) 
-			throws RepositoryEditException, RepositoryAlreadyUnpublishedWarning {
+			throws RepositoryEditException {
 		if(!repository.isPublished())
-			throw new RepositoryAlreadyUnpublishedWarning(messageSource, locale, repository);
+			return; //TODO: Handle it differently in the new modular approach
+//			throw new RepositoryAlreadyUnpublishedWarning(messageSource, locale, repository);
 		
 		try {
 			Event updateEvent = eventService.getUpdateEvent();
@@ -232,8 +230,20 @@ public class RepositoryService {
 		return repositoryRepository.findByDeleted(false, Sort.by(new Order(Direction.ASC, "name")));
 	}
 	
+	public Page<Repository> findAll(Pageable pageable) {
+		return repositoryRepository.findByDeleted(false, pageable);
+	}
+	
 	public List<Repository> findAllEvenDeleted() {
 		return repositoryRepository.findAll(Sort.by(new Order(Direction.ASC, "name")));
+	}
+	
+	public Page<Repository> findAllEvenDeleted(Pageable pageable) {
+		return repositoryRepository.findAll(pageable);
+	}
+	
+	public Page<Repository> findAllOnlyDeleted(Pageable pageable) {
+		return repositoryRepository.findByDeleted(true, pageable);
 	}
 	
 	public List<Repository> findByDeleted(boolean deleted) {
@@ -391,7 +401,7 @@ public class RepositoryService {
 	
 	@Transactional
 	public void evaluateAndUpdate(Repository currentRepository, Repository updatedRepository, User updater)
-			throws RepositoryEditException {
+			throws RepositoryEditException, RepositoryPublishException, RepositoryDeleteException {
 		
 		if(!updatedRepository.getName().equals(currentRepository.getName()))
 			updateName(currentRepository, updater, updatedRepository.getName());
@@ -401,6 +411,24 @@ public class RepositoryService {
 			updateServerAddress(currentRepository, updater, updatedRepository.getServerAddress());
 		if(updatedRepository.getVersion() != currentRepository.getVersion())
 			updateVersion(currentRepository, updater, updatedRepository.getVersion());
+		if(updatedRepository.isDeleted() != currentRepository.isDeleted()) {
+			if(!currentRepository.isDeleted())
+				delete(currentRepository, updater);
+		}
+		if(updatedRepository.isPublished() != currentRepository.isPublished()) {
+			if(updatedRepository.isPublished())
+				publishRepository(currentRepository, updater);
+			else
+				unpublishRepository(currentRepository, updater);
+		}
+	}
+	
+	@Transactional
+	public Repository evaluateAndUpdate(RRepositoryDto repositoryDto, User updater) throws RepositoryEditException, RepositoryPublishException, RepositoryDeleteException {
+		Repository currentRepository = findById(repositoryDto.toEntity().getId());
+		evaluateAndUpdate(currentRepository, repositoryDto.toEntity(), updater); //TODO: Should e.g. name update elevate repository version?
+		
+		return currentRepository;
 	}
 
 	public Repository findByName(String name) {
@@ -431,6 +459,9 @@ public class RepositoryService {
 			repositoryStorage.copyFromRepositoryToRemoteServer(latestPackages, archivePackages,
 					repositoryStorage.linkCurrentFolderToGeneratedFolder(repository, dateStamp),
 					repository);
+			if(!Boolean.valueOf(snapshot)) {
+				repositoryStorage.deleteGeneratedFolder(repository);
+			}
 		} catch (PackageFolderPopulationException |
 				UploadToRemoteServerException | 
 				LinkFoldersException e) {
@@ -448,6 +479,8 @@ public class RepositoryService {
 		} catch(CreateFolderStructureException e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
 			throw new StoreOnRemoteServerException(messageSource, locale, repository);
+		} catch (IOException e) {
+			logger.error("Cannot remove generated folder! Snapshots are still being kept.");
 		}
 		
 	}
@@ -496,13 +529,21 @@ public class RepositoryService {
 			for(Repository repository : repositories) {
 				Repository existingRepository = findByName(repository.getName());
 				if(existingRepository != null) {
-					existingRepositories.remove(existingRepository);
-					logger.warn("We tried to create one of the preconfigured repositories but "
-							+ "there already is such a repository with the following properties: " 
-							+ existingRepository.toString());
+					existingRepositories.remove(existingRepository);				
+					if(Boolean.valueOf(declarative)) {
+						try {
+							evaluateAndUpdate(existingRepository, repository, requester);
+						} catch (RepositoryEditException | RepositoryPublishException | RepositoryDeleteException e) {
+							logger.error("We tried to update " + existingRepository.getName() + " repository from preconfigured " 
+									+ "repositories but unexpected error occured");
+						}
+					} else {
+						logger.warn("We tried to create one of the preconfigured repositories but "					
+								+ "there already is such a repository with the following properties: " 
+								+ existingRepository.toString());
+					}																				
 				} else {				
-					BindException bindException = new BindException(repository, repository.getName());
-					
+					BindException bindException = new BindException(repository, repository.getName());					
 					repositoryValidator.validate(repository, bindException);
 					
 					if (bindException.hasErrors()) {		

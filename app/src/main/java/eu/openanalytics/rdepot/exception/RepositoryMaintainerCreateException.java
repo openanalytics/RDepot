@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,17 +20,23 @@
  */
 package eu.openanalytics.rdepot.exception;
 
-public class RepositoryMaintainerCreateException extends Exception 
+import java.util.Locale;
+
+import org.springframework.context.MessageSource;
+
+import eu.openanalytics.rdepot.messaging.MessageCodes;
+import eu.openanalytics.rdepot.model.RepositoryMaintainer;
+
+public class RepositoryMaintainerCreateException extends RepositoryMaintainerException 
 {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 8406356789167890474L;
-	
-	public RepositoryMaintainerCreateException(String message)
-	{
-		super(message);
-	}
+	private static final long serialVersionUID = 8873370369695212347L;
 
+	public RepositoryMaintainerCreateException(MessageSource messageSource, Locale locale, 
+			RepositoryMaintainer repositoryMaintainer) {
+		super(MessageCodes.ERROR_REPOSITORYMAINTAINER_CREATE, messageSource, locale, repositoryMaintainer);
+	}
 }

@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -50,7 +50,6 @@ public class Application extends SpringBootServletInitializer {
 
 	@Override
 	protected WebApplicationContext run(SpringApplication application) {
-		// TODO Auto-generated method stub
 		return super.run(application);
 	}	
 }

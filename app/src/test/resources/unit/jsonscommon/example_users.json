@@ -1,0 +1,102 @@
+{
+    "status": "success",
+    "code": 200,
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "data": {
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost/api/v2/manager/users"
+            }
+        ],
+        "content": [
+            {
+                "id": 0,
+                "name": "Test User0",
+                "email": "0test@example.org",
+                "login": "admin_testusername0",
+                "active": true,
+                "lastLoggedInOn": "2017-07-03T07:00:00",
+                "deleted": false,
+                "roleId": 0,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost/api/v2/manager/users/0"
+                    },
+                    {
+                        "rel": "userList",
+                        "href": "http://localhost/api/v2/manager/users"
+                    }
+                ]
+            },
+            {
+                "id": 1,
+                "name": "Test User1",
+                "email": "1test@example.org",
+                "login": "repositorymaintainer_testusername1",
+                "active": true,
+                "lastLoggedInOn": "2017-08-11T15:30:00",
+                "deleted": false,
+                "roleId": 1,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost/api/v2/manager/users/1"
+                    },
+                    {
+                        "rel": "userList",
+                        "href": "http://localhost/api/v2/manager/users"
+                    }
+                ]
+            },
+            {
+                "id": 2,
+                "name": "Test User2",
+                "email": "2test@example.org",
+                "login": "packagemaintainer_testusername2",
+                "active": true,
+                "lastLoggedInOn": "2018-07-02T07:00:00",
+                "deleted": false,
+                "roleId": 2,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost/api/v2/manager/users/2"
+                    },
+                    {
+                        "rel": "userList",
+                        "href": "http://localhost/api/v2/manager/users"
+                    }
+                ]
+            },
+            {
+                "id": 3,
+                "name": "Test User3",
+                "email": "3test@example.org",
+                "login": "user_testusername3",
+                "active": true,
+                "lastLoggedInOn": "2018-08-30T15:30:00",
+                "deleted": false,
+                "roleId": 3,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost/api/v2/manager/users/3"
+                    },
+                    {
+                        "rel": "userList",
+                        "href": "http://localhost/api/v2/manager/users"
+                    }
+                ]
+            }
+        ],
+        "page": {
+            "size": 4,
+            "totalElements": 4,
+            "totalPages": 1,
+            "number": 0
+        }
+    }
+}

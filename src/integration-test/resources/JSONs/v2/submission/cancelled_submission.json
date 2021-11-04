@@ -1,0 +1,53 @@
+{
+    "status": "success",
+    "code": 200,
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "data": {
+        "id": 31,
+        "userId": 6,
+        "packageBag": {
+            "id": 31,
+            "version": "1.0",
+            "repositoryId": 5,
+            "submissionId": 31,
+            "name": "abc",
+            "description": "The 'abc' package provides various functions for parameter estimation and model selection in an ABC framework. Three main",
+            "author": "Katalin Csillery, with contributions from Michael Blum and Olivier Francois",
+            "depends": "R (>= 1.8.0), nnet, quantreg, locfit, methods",
+            "imports": null,
+            "suggests": null,
+            "systemRequirements": null,
+            "license": "Unlimited",
+            "title": "Functions to perform Approximate Bayesian Computation (ABC) using simulated data",
+            "url": null,
+            "source": "/opt/rdepot/trash/5/RANDOM_VALUE/abc_1.0.tar.gz",
+            "md5sum": "91599204c92275ed4b36d55e8d7c144b",
+            "active": false,
+            "deleted": true,
+            "fileName": "abc_1.0.tar.gz",
+            "links": [
+                {
+                    "rel": "self",
+                    "href": "http://localhost:8017/api/v2/manager/r/packages/31"
+                },
+                {
+                    "rel": "packageList",
+                    "href": "http://localhost:8017/api/v2/manager/r/packages"
+                }
+            ]
+        },
+        "changes": null,
+        "state": "CANCELLED",
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/r/submissions/31"
+            },
+            {
+                "rel": "submissionList",
+                "href": "http://localhost:8017/api/v2/manager/r/submissions"
+            }
+        ]
+    }
+}

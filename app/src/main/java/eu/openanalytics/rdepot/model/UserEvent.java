@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -35,6 +35,14 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import eu.openanalytics.rdepot.api.v2.dto.EntityDto;
+import eu.openanalytics.rdepot.api.v2.dto.PackageMaintainerDto;
+import eu.openanalytics.rdepot.api.v2.dto.RCreateEventDto;
+import eu.openanalytics.rdepot.api.v2.dto.RRepositoryDto;
+import eu.openanalytics.rdepot.api.v2.dto.RUpdateEventDto;
+import eu.openanalytics.rdepot.api.v2.dto.UpdatedVariable;
+import eu.openanalytics.rdepot.api.v2.dto.UserDto;
 
 @Entity
 @Table(name="user_event"

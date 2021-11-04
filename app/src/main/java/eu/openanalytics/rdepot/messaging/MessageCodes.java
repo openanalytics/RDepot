@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2020 Open Analytics NV
+ * Copyright (C) 2012-2021 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -47,7 +47,7 @@ public final class MessageCodes {
 	public static final String ERROR_PACKAGE_EMPTY_SOURCE = "package.empty.source";
 	public static final String ERROR_PACKAGE_STORAGE_SOURCE_NOTFOUND = "package.storage.source.notfound";
 	
-	public final static String ERROR_PACKAGEMAINTAINER_NOT_FOUND = "packagemaintainer.notfound";
+	public final static String ERROR_PACKAGEMAINTAINER_NOT_FOUND = "error.packagemaintainer.notfound";
 	
 	public final static String ERROR_PACKAGEMAINTAINER_EVENT_NOT_FOUND = "packagemaintainer.event.notfound";
 	
@@ -58,7 +58,7 @@ public final class MessageCodes {
 	
 	public final static String ERROR_USER_NOT_FOUND = "user.notfound";
 	public final static String ERROR_USER_NOT_CAPABLE = "user.notcapable";
-	public final static String ERROR_USER_NOT_AUTHORIZED = "user.notauthorized";
+	public final static String ERROR_USER_NOT_AUTHORIZED = "user.not.authorized";
 	
 	public final static String ERROR_PASSWORD_DOES_NOT_MATCH = "password.doesnotmatch";
 	public final static String ERROR_PASSWORD_INVALID = "password.invalid";
@@ -200,4 +200,24 @@ public final class MessageCodes {
 	public static final String ERROR_STORAGE_CREATE_TEMPORARY_FOLDER = "error.storage.create.temporary.folder";
 	public static final String WARNING_SYNCHRONIZATION_IN_PROGRESS = "warning.synchronization.in.progress";
 	public static final String ERROR_ACCESS_DENIED = "error.access.denied"; 
+	public static final String ERROR_REPOSITORYMAINTAINER_CREATE = "error.repositorymaintainer.create";
+	
+	//API V2 messages
+	public static final String ERROR_RESOURCE_NOT_FOUND = "error.resource.not.found";
+	public static final String ERROR_MANUAL_NOT_FOUND = "error.manual.not.found";
+//	public static final String RESOURCE_PACKAGE = "resource.package";
+	public static final String SUCCESS_REQUEST_PROCESSED = "success.request.processed";
+	public static final String ERROR_APPLY_PATCH = "error.apply.patch";
+	public static final String ERROR_DELETE_RESOURCE = "error.delete.resource";
+	public static final String ERROR_VIGNETTE_NOT_FOUND = "error.vignette.not.found";
+	public static final String ERROR_DOWNLOAD_VIGNETTE = "error.download.vignette";
+	public static final String ERROR_USER_NOT_AUTHENTICATED = "error.user.not.authenticated";
+	public static final String ERROR_VALIDATION = "error.validation";
+	public static final String ERROR_CREATE_RESOURCE = "error.create.resource";
+	public static final String SUCCESS_RESOURCE_CREATED = "success.resource.created";
+	public static final String ERROR_MALFORMED_PATCH = "error.malformed.patch";
+	public static final String ERROR_UPDATE_NOT_ALLOWED = "error.update.notallowed";
+	public static final String ERROR_INVALID_SUBMISSION = "error.invalid.submission";
+	public static final String ERROR_GET_SYNCHRONIZATION_STATUS = "error.get.synchronization.status";
+
 }

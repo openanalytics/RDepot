@@ -1,0 +1,4 @@
+ggplot2,https://cran.r-project.org/src/contrib/PACKAGES,3.3.2
+plotly,https://cran.r-project.org/src/contrib/PACKAGES,latest
+annotate,https://bioconductor.org/packages/3.12/bioc/src/contrib/PACKAGES,1.68.0
+genefilter,https://bioconductor.org/packages/release/bioc/src/contrib/PACKAGES,latest

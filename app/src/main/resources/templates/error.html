@@ -1,9 +1,47 @@
 <!DOCTYPE html>
 <html>
-    <body>      
-    	<h3>Oops, something went wrong</h3>
-    	<p id="error_message" th:text="${message}">Message</p>
-    	<p id="error_status" th:text="${status}">status</p>
-    	<p id="error_stacktrace" th:text="${stackTrace}">status</p>
-    </body>
+	<head>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="/webjars/material-design-lite/1.3.0/material.js"></script>
+		<script>
+			function changePosition(){
+				var height = $(window).innerHeight();
+				if(height > 750) {
+					$("footer").css({position: "absolute"});
+				}
+				else {
+					$("footer").css({position: "relative"});
+				}
+			}
+
+			$(document).ready(function() {
+				$("form").find(".mdl-textfield").removeClass("is-invalid");
+				changePosition();
+			});
+			
+			$(window).on('resize', changePosition);
+		</script>
+		<title>RDepot - Access Denied</title>
+		<link rel="shortcut icon" th:href="@{/img/favicon.ico}"/>
+		<link rel='stylesheet' href='/webjars/material-design-lite/1.3.0/material.css'>
+		<link rel="stylesheet" th:href="@{/css/accessdenied.css}">		
+		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	</head>
+	<body>
+		<hgroup>
+				<h1 th:text="#{application.name}">RDepot</h1>
+				<h3 th:text="${status}">HTTP Status</h3>
+				<h4 th:text="${message}">Ooops, something went wrong!</h4>
+				<button id="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" onclick="goToManager();">Go back to main page</button>
+		</hgroup>
+		<footer>
+				<div id = "oa-logo"><a href="https://openanalytics.eu/" target="_blank"><img class="logo"  src = "/img/logo.png"> </a></div> 
+				<div id = "text-oa-link"> <a href="https://openanalytics.eu/" target="_blank"> Powered by<div id = "blue-link"> Open Analytics </div></a></div>	
+		</footer>
+	</body>
+	<script>
+		function goToManager() {
+			window.location = '/manager';
+		}
+	</script>
 </html>
