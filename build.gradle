@@ -41,7 +41,7 @@ ext.buildTime = {
 }
 
 group = 'eu.openanalytics'
-ext.versionNumber = '1.6.0'
+ext.versionNumber = '1.6.1'
 ext.baseVersion = versionNumber
 version = versionNumber
 description = """rdepot"""
@@ -119,7 +119,7 @@ allprojects {
 	    ext.year = Calendar.getInstance().get(Calendar.YEAR)
 	    ext.company = 'Open Analytics NV'
 	    excludes(['**/*.html', '**/*.Rmd', '**/*.tar.gz', '**/DESCRIPTION', '**/DESCRIPTION_NEWLINES', '**/*.properties', '**/*.ttf', '**/*.eot', '**/*.woff', '**/*.css', '**/*.js', '**/*.svg', '**/*.png', '**/*.ico', '**/*.old', '**/*.sql', '**/*.yaml', '**/*.xml', '**/*.json', 
-	    			'**/*.yml', '**/NEWS', '**/LICENSE', '**/*.txt' , '**/NAMESPACE', '**/*.Rd', '**/*.pdf', '**/*.R', '**/*.c', '**/*.cpp', '**/*.h', '**/*.tex', '**/*.sh', '**/*.rda', '**/*.ldif', '**/*.gz', '**/*.bk*', '**/*.gradle' ])
+	    			'**/*.yml', '**/NEWS', '**/LICENSE', '**/*.txt' , '**/NAMESPACE', '**/*.Rd', '**/*.pdf', '**/*.R', '**/*.c', '**/*.cpp', '**/*.h', '**/*.tex', '**/*.sh', '**/*.rda', '**/*.ldif', '**/*.gz', '**/*.bk*', '**/*.gradle', '**/*.xsd' ])
 	    			//the above exclusions are for integration testing purposes
 	}
 }

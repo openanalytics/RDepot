@@ -152,7 +152,6 @@ public class UserEventServiceTest {
 		User creator = new User(2, new Role(1, 2, "admin", "Administrator"), "tesla", "tesla@example.org", "tesla", true, false);
 		
 		Mockito.when(userService.findById(123)).thenReturn(null);
-		UserEvent expectedEvent = new UserEvent(0, new Date(), creator, user, event, "deleted", "", new Date().toString(), new Date());
 		
 		Mockito.when(userEventRepository.save(Mockito.any())).thenAnswer(new Answer<UserEvent>() {
 			@Override
@@ -162,6 +161,8 @@ public class UserEventServiceTest {
 			}
 		});
 		
+		Date expectedDate = new Date();
+	  UserEvent expectedEvent = new UserEvent(0, expectedDate, creator, user, event, "deleted", "", expectedDate.toString(), expectedDate);
 		List<UserEvent> events = userEventService.create(event, creator, user);
 		UserEvent deleteEvent = events.get(0);
 		

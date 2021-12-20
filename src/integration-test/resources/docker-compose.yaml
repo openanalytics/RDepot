@@ -19,7 +19,7 @@ services:
       - oa-rdepot      
       
   repo:
-    image: openanalytics/rdepot-repo-it:1.6.0
+    image: openanalytics/rdepot-repo-it:1.6.1
     restart: always
     hostname: oa-rdepot-repo
     container_name: oa-rdepot-repo
@@ -80,7 +80,7 @@ services:
         ipv4_address: 192.168.49.17
  
   ldap:
-    image: openanalytics/rdepot-ldap-it:1.6.0
+    image: openanalytics/rdepot-ldap-it:1.6.1
     restart: unless-stopped
     hostname: oa-rdepot-ldap
     container_name: oa-rdepot-ldap
@@ -93,7 +93,7 @@ services:
       - oa-rdepot
       
   app:    
-    image: openanalytics/rdepot-app-it:1.6.0
+    image: openanalytics/rdepot-app-it:1.6.1
     restart: always
     hostname: oa-rdepot-app
     container_name: oa-rdepot-app
@@ -124,7 +124,7 @@ services:
         ipv4_address: 192.168.49.21      
                         
   app-openid:
-    image: openanalytics/rdepot-app-it:1.6.0
+    image: openanalytics/rdepot-app-it:1.6.1
     restart: always
     hostname: oa-rdepot-app-openid
     container_name: oa-rdepot-app-openid
@@ -151,7 +151,7 @@ services:
         ipv4_address: 192.168.49.22  
   
   app-keycloak:    
-    image: openanalytics/rdepot-app-it:1.6.0
+    image: openanalytics/rdepot-app-it:1.6.1
     restart: always
     hostname: oa-rdepot-app-keycloak
     container_name: oa-rdepot-app-keycloak
@@ -178,7 +178,7 @@ services:
         ipv4_address: 192.168.49.23   
       
   app-simple:
-    image: openanalytics/rdepot-app-it:1.6.0
+    image: openanalytics/rdepot-app-it:1.6.1
     restart: always
     hostname: oa-rdepot-app-simple
     container_name: oa-rdepot-app-simple
@@ -204,7 +204,7 @@ services:
         ipv4_address: 192.168.49.24   
           
   app-declarative:
-    image: openanalytics/rdepot-app-it:1.6.0
+    image: openanalytics/rdepot-app-it:1.6.1
     restart: always
     hostname: oa-rdepot-declarative
     container_name: oa-rdepot-declarative
