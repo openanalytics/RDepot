@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2021 Open Analytics NV
+ * Copyright (C) 2012-2022 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -63,10 +63,8 @@ import eu.openanalytics.rdepot.repository.RepositoryMaintainerRepository;
 @Service
 @Transactional(readOnly = true)
 @Scope( proxyMode = ScopedProxyMode.TARGET_CLASS )
-public class RepositoryMaintainerService
-{	
-	Logger logger = LoggerFactory.getLogger(PackageService.class);
-	
+public class RepositoryMaintainerService {
+	Logger logger = LoggerFactory.getLogger(RepositoryMaintainerService.class);
 	Locale locale = LocaleContextHolder.getLocale();
 	
 	@Resource
@@ -104,11 +102,10 @@ public class RepositoryMaintainerService
 							repositoryMaintainer.getRepository(), true);
 			
 			if(deletedMaintainer != null) {
-				deletedMaintainer.setDeleted(false);
+				deletedMaintainer.setDeleted(false);				
 			} else {
 				Event createEvent = eventService.getCreateEvent();
-				createdRepositoryMaintainer = repositoryMaintainerRepository.save(createdRepositoryMaintainer);
-				
+				createdRepositoryMaintainer = repositoryMaintainerRepository.save(createdRepositoryMaintainer);				
 				repositoryMaintainerEventService.create(createEvent, creator, createdRepositoryMaintainer);
 			}
 			
@@ -169,7 +166,7 @@ public class RepositoryMaintainerService
 
 	public List<RepositoryMaintainer> findAll() 
 	{
-		return repositoryMaintainerRepository.findByDeleted(false, Sort.by(new Order(Direction.ASC, "user.name")));
+		return repositoryMaintainerRepository.findByDeleted(false, Sort.by(new Order(Direction.ASC, "id")));		
 	}
 	
 	public List<RepositoryMaintainer> findByDeleted(boolean deleted) 

@@ -66,6 +66,24 @@ task checkServer {
     }
 }
 
+task checkServerDeclarative {
+	doLast {
+		exec {
+			executable "docker"
+			args "exec", "oa-rdepot-repo", "/bin/bash", "-c", "cd /opt/rdepot/A/"
+		}
+	}
+}
+
+task checkServerInDeclarativeIfNotPublished {
+	doLast {
+		exec {
+			executable "docker"
+			args "exec", "oa-rdepot-repo", "/bin/bash", "-c", "cd /opt/rdepot/D/"
+		}
+	}
+}
+
 task checkOnServerIfRepositoryWithOnlyOnePackageDoesNotHaveArchive {
 	doLast{
         exec {

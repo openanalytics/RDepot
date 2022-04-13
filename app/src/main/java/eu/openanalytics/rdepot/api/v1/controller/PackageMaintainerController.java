@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2021 Open Analytics NV
+ * Copyright (C) 2012-2022 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -67,6 +69,8 @@ import eu.openanalytics.rdepot.validation.PackageMaintainerValidator;
 @RequestMapping(value= {"/manager/packages/maintainers", "/api/manager/packages/maintainers"})
 public class PackageMaintainerController {
 
+	private static final Logger logger = LoggerFactory.getLogger(PackageMaintainerController.class);
+	
 	@Autowired
 	private RepositoryService repositoryService;
 	
@@ -150,7 +154,7 @@ public class PackageMaintainerController {
 		
 		PackageMaintainer packageMaintainer = new PackageMaintainer(0, user, repository, packageName, false);
 		BindException bindingResult = new BindException(packageMaintainer, "packageMaintainer");
-
+		
 		try {
 			if(requester == null || !userService.isAuthorizedToEdit(packageMaintainer, requester)) {
 				throw new UserUnauthorizedException(messageSource, locale);
@@ -170,7 +174,8 @@ public class PackageMaintainerController {
 						case "user":
 							userService.updateRole(maintainer, requester, roleService.getPackageMaintainerRole());
 						case "packagemaintainer":
-							packageMaintainerService.create(packageMaintainer, requester);
+							packageMaintainerService.create(packageMaintainer, requester);												
+							
 							result.put("success", messageSource.getMessage(
 									MessageCodes.SUCCESS_PACKAGEMAINTAINER_CREATED, null, 
 									MessageCodes.SUCCESS_PACKAGEMAINTAINER_CREATED, locale));

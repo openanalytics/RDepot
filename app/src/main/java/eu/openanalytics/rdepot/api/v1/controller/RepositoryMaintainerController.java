@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2021 Open Analytics NV
+ * Copyright (C) 2012-2022 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -67,6 +69,9 @@ import eu.openanalytics.rdepot.validation.RepositoryMaintainerValidator;
 @RequestMapping(value= {"/manager/repositories/maintainers", "/api/manager/repositories/maintainers"})
 @PreAuthorize("hasAuthority('admin')")
 public class RepositoryMaintainerController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(RepositoryMaintainerController.class);
+	
 	@Autowired
 	private RepositoryService repositoryService;
 	
@@ -124,8 +129,8 @@ public class RepositoryMaintainerController {
 		HttpStatus httpStatus = HttpStatus.OK;
 		
 		RepositoryMaintainer repositoryMaintainer = new RepositoryMaintainer(0, user, repository, false);
-		BindException bindingResult = new BindException(repositoryMaintainer, "repositoryMaintainer");
-
+		BindException bindingResult = new BindException(repositoryMaintainer, "repositoryMaintainer");	
+		
 		try {
 			repositoryMaintainerValidator.validate(repositoryMaintainer, bindingResult);
 			if(requester == null || !Objects.equals(requester.getRole().getName(), "admin")) {
@@ -142,7 +147,8 @@ public class RepositoryMaintainerController {
 				case "user":
 					userService.updateRole(maintainer, requester, roleService.getRepositoryMaintainerRole());
 				case "repositorymaintainer":
-					repositoryMaintainerService.create(repositoryMaintainer, requester);
+					repositoryMaintainerService.create(repositoryMaintainer, requester);									
+					
 					result.put("success", messageSource.getMessage(
 							MessageCodes.SUCCESS_REPOSITORYMAINTAINER_CREATED, null, locale));
 					break;

@@ -23,8 +23,8 @@ services:
     hostname: oa-rdepot-app
     container_name: oa-rdepot-app
     volumes:
-#      - ./docker/app/application.yml:/opt/rdepot/application.yml
-      - ./docker/app/test_configs/test_declarative_config.yml:/opt/rdepot/application.yml
+      - ./docker/app/application.yml:/opt/rdepot/application.yml
+#      - ./docker/app/test_configs/test_declarative_config.yml:/opt/rdepot/application.yml
       - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
       - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
       - ./itestSourceFiles:/opt/testSourceFiles:ro

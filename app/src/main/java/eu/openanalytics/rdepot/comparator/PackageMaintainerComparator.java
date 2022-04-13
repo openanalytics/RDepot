@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2021 Open Analytics NV
+ * Copyright (C) 2012-2022 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -29,7 +29,7 @@ public class PackageMaintainerComparator implements Comparator<PackageMaintainer
 	@Override
 	public int compare(PackageMaintainer pm1, PackageMaintainer pm2)
 	{
-		return pm1.getUser().getName().compareTo(pm2.getUser().getName());
+		return pm1.getId() < pm2.getId() ? -1 : 1;
 	}
 
 	

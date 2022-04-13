@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2021 Open Analytics NV
+ * Copyright (C) 2012-2022 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -32,8 +32,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.method.HandlerMethod;
 
@@ -74,6 +76,15 @@ public class GlobalController {
 	public GlobalController(UserService userService) {
 		this.userService = userService;
 	}
+	
+	@InitBinder
+    public void setAllowedFields(WebDataBinder dataBinder) {
+        // This code protects Spring Core from a "Remote Code Execution" attack (dubbed "Spring4Shell").
+        // By applying this mitigation, you prevent the "Class Loader Manipulation" attack vector from firing.
+        // For more details, see this post: https://www.lunasec.io/docs/blog/spring-rce-vulnerabilities/
+        String[] denylist = new String[]{"class.*", "Class.*", "*.class.*", "*.Class.*"};
+        dataBinder.setDisallowedFields(denylist);
+    }
 	
     Logger logger = LoggerFactory.getLogger(PackageController.class);
 	

@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2021 Open Analytics NV
+ * Copyright (C) 2012-2022 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -28,7 +28,6 @@ import static eu.openanalytics.rdepot.integrationtest.IntegrationTest.REPOSITORY
 import static eu.openanalytics.rdepot.integrationtest.IntegrationTest.USER_TOKEN;
 import static io.restassured.RestAssured.given;
 import static org.awaitility.Awaitility.await;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -38,7 +37,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -166,33 +164,7 @@ public class DeclarativeIntegrationTest {
 		
 		return false;
 	}
-	
-	@Test
-	public void shouldUploadPackage() throws IOException, ParseException {
-		File packageBag = new File ("src/integration-test/resources/itestPackages/A3_0.9.1.tar.gz");
 		
-		given()
-			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
-			.accept("application/json")
-			.contentType("multipart/form-data")
-			.multiPart("repository", "A")
-			.multiPart(new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
-					.fileName(packageBag.getName())
-					.mimeType("application/gzip")
-					.controlName("file")
-					.build())
-			.when()
-				.post(API_PATH + "/packages/submit")
-			.then()
-				.statusCode(200)
-				.extract();
-		
-		FileReader reader = new FileReader(JSON_PATH + "/declarative/repositories_after_uploading_package.json");
-		JsonArray expectedJSON = (JsonArray) JsonParser.parseReader(reader);
-		
-		assertRepositories(expectedJSON, false);
-	}
-	
 	private void updateMd5SumsAndVersion(List<Set<JsonObject>> packageSets) throws IOException {
 		// 1. parse file with links and names to map
 		// 2. download PACKAGES file
@@ -328,66 +300,6 @@ public class DeclarativeIntegrationTest {
 		}
 		return true;
 	}
-
-	@Test
-	public void shouldUploadPackageAndPublishRepository() throws ParseException, IOException, InterruptedException {
-		File packageBag = new File ("src/integration-test/resources/itestPackages/A3_0.9.1.tar.gz");
-		
-		given()
-			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
-			.accept("application/json")
-			.contentType("multipart/form-data")
-			.multiPart("repository", "A")
-			.multiPart(new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
-				.fileName(packageBag.getName())
-				.mimeType("application/gzip")
-				.controlName("file")
-				.build())
-		.when()
-			.post(API_PATH + "/packages/submit")
-		.then()
-			.statusCode(200)
-			.extract();
-		
-		given()
-			.headers(AUTHORIZATION, BEARER + ADMIN_TOKEN)
-			.accept(ContentType.JSON)
-		.when()
-			.patch(API_PATH + "/repositories/2/publish")
-		.then()
-			.statusCode(200)
-			.body("success", equalTo("Repository has been published successfully."));
-		
-		FileReader reader = new FileReader(JSON_PATH + "/declarative/repositories_after_publishing.json");
-		JsonArray expectedJSON = (JsonArray) JsonParser.parseReader(reader);
-		
-		List<Set<JsonObject>> expectedPackages = convertPackages(expectedJSON, false);
-		
-		String data = given()
-			.headers(AUTHORIZATION, BEARER + ADMIN_TOKEN)
-			.accept(ContentType.JSON)
-		.when()
-			.get(API_PATH + "/repositories/list")
-		.then()
-			.statusCode(200)
-			.extract()
-			.asString();
-		
-		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
-		List<Set<JsonObject>> actualPackages = convertPackages(actualJSON, false);
-	
-		assertEquals("Repository publishing caused some changes in packages", expectedPackages, actualPackages);
-		assertTrue("Repository hasn't been published", compareRepositories(expectedJSON, actualJSON));
-		
-		int exitValue = -1;
-		
-		String[] cmd = new String[] {"gradle", "checkIfSymbolicLinkWasCreated", "-b","src/integration-test/resources/build.gradle"};
-		Process process = Runtime.getRuntime().exec(cmd);
-		exitValue = process.waitFor();
-		process.destroy();
-		
-		assertTrue("Snapshot was created", exitValue != 0);
-	}
 	
 	@Test
 	public void shouldNotDeleteRepository() {
@@ -436,7 +348,29 @@ public class DeclarativeIntegrationTest {
 	}
 	
 	@Test
-	public void shouldUploadPackageToPublishedRepository() throws IOException, ParseException, InterruptedException {
+	public void shouldNotPublishRepository() {
+		given()
+			.headers(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.accept(ContentType.JSON)		
+		.when()
+			.patch(API_PATH + "/repositories/7/publish")
+		.then()
+			.statusCode(403);
+	}
+	
+	@Test
+	public void shouldNotUnpublishRepository() {
+		given()
+			.headers(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.patch(API_PATH + "/repositories/2/unpublish")
+		.then()
+			.statusCode(403);
+	}
+	
+	@Test
+	public void shouldUploadPackagesToPublishedRepository() throws IOException, ParseException, InterruptedException {
 		File packageBag = new File ("src/integration-test/resources/itestPackages/A3_0.9.1.tar.gz");
 		
 		given()
@@ -454,15 +388,6 @@ public class DeclarativeIntegrationTest {
 		.then()
 			.statusCode(200)
 			.extract();
-		
-		given()
-			.headers(AUTHORIZATION, BEARER + ADMIN_TOKEN)
-			.accept(ContentType.JSON)
-		.when()
-			.patch(API_PATH + "/repositories/2/publish")
-		.then()
-			.statusCode(200)
-			.body("success", equalTo("Repository has been published successfully."));			
 		
 		packageBag = new File ("src/integration-test/resources/itestPackages/visdat_0.1.0.tar.gz");
 		
@@ -512,17 +437,26 @@ public class DeclarativeIntegrationTest {
 		process.destroy();
 		
 		assertTrue("Snapshot was created", exitValue != 0);
+		
+		exitValue = -1;
+		
+		cmd = new String[] {"gradle", "checkServerDeclarative", "-b","src/integration-test/resources/build.gradle"};
+		process = Runtime.getRuntime().exec(cmd);
+		exitValue = process.waitFor();
+		process.destroy();
+		
+		assertTrue("Repository has not been published", exitValue == 0);
 	}
 	
 	@Test
-	public void shouldUploadPackageThenPublishAndThenUnpublishRepository() throws ParseException, IOException {
+	public void shouldUploadPackageToUnpublishedRepository() throws IOException, InterruptedException, ParseException {
 		File packageBag = new File ("src/integration-test/resources/itestPackages/A3_0.9.1.tar.gz");
 		
 		given()
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept("application/json")
 			.contentType("multipart/form-data")
-			.multiPart("repository", "A")
+			.multiPart("repository", "D")
 			.multiPart(new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
 				.fileName(packageBag.getName())
 				.mimeType("application/gzip")
@@ -534,31 +468,31 @@ public class DeclarativeIntegrationTest {
 			.statusCode(200)
 			.extract();
 		
-		given()
-			.headers(AUTHORIZATION, BEARER + ADMIN_TOKEN)
-			.accept(ContentType.JSON)
-		.when()
-			.patch(API_PATH + "/repositories/2/publish")
-		.then()
-			.statusCode(200)
-			.body("success", equalTo("Repository has been published successfully."));
+		packageBag = new File ("src/integration-test/resources/itestPackages/visdat_0.1.0.tar.gz");
 		
 		given()
-			.headers(AUTHORIZATION, BEARER + ADMIN_TOKEN)
-			.accept(ContentType.JSON)
-		.when()
-			.patch(API_PATH + "/repositories/2/unpublish")
-		.then()
-			.statusCode(200)
-			.body("success", equalTo("Repository has been unpublished successfully."));	
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.accept("application/json")
+			.contentType("multipart/form-data")
+			.multiPart("repository", "D")
+			.multiPart(new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+					.fileName(packageBag.getName())
+					.mimeType("application/gzip")
+					.controlName("file")
+					.build())
+			.when()
+				.post(API_PATH + "/packages/submit")
+			.then()
+				.statusCode(200)
+				.extract();
 		
-		FileReader reader = new FileReader(JSON_PATH + "/declarative/repositories_after_unpublishing.json");
+		FileReader reader = new FileReader(JSON_PATH + "/declarative/repositories_after_uploading_packages_to_unpublished_repo.json.json");
 		JsonArray expectedJSON = (JsonArray) JsonParser.parseReader(reader);
 		
 		List<Set<JsonObject>> expectedPackages = convertPackages(expectedJSON, false);
 		
 		String data = given()
-			.headers(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.header(AUTHORIZATION, BEARER + USER_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/repositories/list")
@@ -570,11 +504,20 @@ public class DeclarativeIntegrationTest {
 		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 		
 		List<Set<JsonObject>> actualPackages = convertPackages(actualJSON, false);
-	
-		assertEquals("Repository unpublishing caused some changes in packages", expectedPackages, actualPackages);
-		assertTrue("Repository hasn't been unpublished", compareRepositories(expectedJSON, actualJSON));
-	}
 
+		assertEquals(expectedPackages, actualPackages);
+		assertTrue(compareRepositories(expectedJSON, actualJSON));
+		
+		
+		int exitValue = -1;
+		
+		String[] cmd = new String[] {"gradle", "checkServerInDeclarativeIfNotPublished", "-b","src/integration-test/resources/build.gradle"};
+		Process process = Runtime.getRuntime().exec(cmd);
+		exitValue = process.waitFor();
+		process.destroy();
+		
+		assertTrue("Repository has been published", exitValue == 1);
+	}
 	
 	
 	private boolean compareRepositories(JsonArray expected, JsonArray actual) throws ParseException {		

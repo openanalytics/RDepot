@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2021 Open Analytics NV
+ * Copyright (C) 2012-2022 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -22,6 +22,7 @@ package eu.openanalytics.rdepot.api.v2.controller;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Objects;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -196,6 +197,11 @@ public class RRepositoryController extends ApiV2Controller<Repository, RReposito
 			throw new NotAllowedInDeclarativeMode(messageSource, locale);
 		
 		Repository repositoryEntity = repositoryDto.toEntity();
+		if(Objects.isNull(repositoryEntity.isDeleted()))
+			repositoryEntity.setDeleted(false);
+		if(Objects.isNull(repositoryEntity.isPublished()))
+			repositoryEntity.setPublished(false);
+		
 		BindingResult bindingResult = createBindingResult(repositoryEntity);
 		
 		repositoryValidator.validate(repositoryEntity, bindingResult);

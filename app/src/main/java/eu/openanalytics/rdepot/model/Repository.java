@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2021 Open Analytics NV
+ * Copyright (C) 2012-2022 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -53,8 +53,8 @@ public class Repository implements java.io.Serializable, IRepositoryProjection, 
 	private String publicationUri;
 	private String name;
 	private String serverAddress = "127.0.0.1";
-	private boolean deleted = false;
-	private boolean published = false;
+	private Boolean deleted;
+	private Boolean published;
 	private Set<Package> packages = new HashSet<Package>(0);
 	private Set<PackageMaintainer> packageMaintainers = new HashSet<PackageMaintainer>(0);
 	private Set<RepositoryMaintainer> repositoryMaintainers = new HashSet<RepositoryMaintainer>(0);
@@ -244,23 +244,23 @@ public class Repository implements java.io.Serializable, IRepositoryProjection, 
 	}
 	
 	@Column(name = "deleted", nullable = false)
-	public boolean isDeleted()
+	public Boolean isDeleted()
 	{
 		return this.deleted;
 	}
 
-	public void setDeleted(boolean deleted)
+	public void setDeleted(Boolean deleted)
 	{
 		this.deleted = deleted;
 	}
 
-	public boolean isPublished() 
+	public Boolean isPublished() 
 	{
 		return published;
 	}
 	
 	@Column(name = "published", nullable = false)
-	public void setPublished(boolean published) 
+	public void setPublished(Boolean published) 
 	{
 		this.published = published;
 	}

@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2021 Open Analytics NV
+ * Copyright (C) 2012-2022 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -104,21 +104,20 @@ public class PackageMaintainerService {
 					findByPackageAndRepositoryAndDeleted(
 							packageMaintainer.getPackage(), packageMaintainer.getRepository(), true);
 			
-			if(deletedMaintainer != null) {
+			if(deletedMaintainer != null) {				
 				deletedMaintainer.setDeleted(false);
 				for(Package packageBag : deletedMaintainer.getRepository().getPackages()) {
 					if(Objects.equals(packageBag.getName(), deletedMaintainer.getPackage())) {
 						packageService.refreshMaintainer(packageBag, creator);
 					}
-				}
-				
+				}				
 				return deletedMaintainer;
 			}
 
 			Event createEvent = eventService.getCreateEvent();
 			PackageMaintainer createdPackageMaintainer = packageMaintainer;
 			
-			createdPackageMaintainer = packageMaintainerRepository.save(createdPackageMaintainer);
+			createdPackageMaintainer = packageMaintainerRepository.save(createdPackageMaintainer);					
 			
 			for(Package p : createdPackageMaintainer.getRepository().getNonDeletedPackages()) {
 				// Choose best maintainer
@@ -130,7 +129,7 @@ public class PackageMaintainerService {
 					new PackageMaintainerEvent(0, DateProvider.now(), creator, packageMaintainer, 
 							createEvent, "created", "", "", DateProvider.now());
 			
-			packageMaintainerEventService.create(packageMaintainerEvent);
+			packageMaintainerEventService.create(packageMaintainerEvent);					
 			
 			return createdPackageMaintainer;
 		}

@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:2.5.0"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:2.5.12"
         classpath("io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE")                   	    
     }
 }
@@ -15,7 +15,7 @@ plugins {
     id 'idea'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'com.avast.gradle.docker-compose' version '0.14.3'
-    id 'org.springframework.boot' version '2.5.4'
+    id 'org.springframework.boot' version '2.5.12'
     id "org.owasp.dependencycheck" version "6.0.5"
     id 'org.liquibase.gradle' version '2.0.4'
 }
@@ -41,7 +41,7 @@ ext.buildTime = {
 }
 
 group = 'eu.openanalytics'
-ext.versionNumber = '1.6.1'
+ext.versionNumber = '1.6.2'
 ext.baseVersion = versionNumber
 version = versionNumber
 description = """rdepot"""
@@ -168,12 +168,6 @@ task setHttpProxyFromEnv {
             System.setProperty("https.nonProxyHosts", nonProxyHosts)
         }
     }
-}
-
-task download(type: MyDownload) {
-    sourceUrl = 'https://cloud.openanalytics.eu/s/js7oDsPnFiWs2jM/download'
-    target = new File('src/integration-test/resources/itestSource.tar.gz')
-    doLast { task -> println "downloaded" }
 }
 
 tasks.withType(Test) {

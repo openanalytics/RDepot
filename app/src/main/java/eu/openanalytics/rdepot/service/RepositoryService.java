@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2021 Open Analytics NV
+ * Copyright (C) 2012-2022 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -532,6 +533,10 @@ public class RepositoryService {
 					existingRepositories.remove(existingRepository);				
 					if(Boolean.valueOf(declarative)) {
 						try {
+							if(Objects.isNull(repository.isDeleted()))
+								repository.setDeleted(false);
+							if(Objects.isNull(repository.isPublished()))
+								repository.setPublished(true);
 							evaluateAndUpdate(existingRepository, repository, requester);
 						} catch (RepositoryEditException | RepositoryPublishException | RepositoryDeleteException e) {
 							logger.error("We tried to update " + existingRepository.getName() + " repository from preconfigured " 
@@ -542,7 +547,12 @@ public class RepositoryService {
 								+ "there already is such a repository with the following properties: " 
 								+ existingRepository.toString());
 					}																				
-				} else {				
+				} else {									
+					if(Objects.isNull(repository.isDeleted()))
+						repository.setDeleted(false);							
+					if(Objects.isNull(repository.isPublished()))
+						repository.setPublished(true);
+					
 					BindException bindException = new BindException(repository, repository.getName());					
 					repositoryValidator.validate(repository, bindException);
 					

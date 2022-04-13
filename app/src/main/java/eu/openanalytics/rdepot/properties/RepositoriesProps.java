@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2021 Open Analytics NV
+ * Copyright (C) 2012-2022 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -26,8 +26,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import eu.openanalytics.rdepot.model.Mirror;
-import eu.openanalytics.rdepot.model.Repository;
 import eu.openanalytics.rdepot.model.Package;
+import eu.openanalytics.rdepot.model.Repository;
 
 @Component
 @ConfigurationProperties
@@ -41,7 +41,7 @@ public class RepositoriesProps {
 
 	public void setRepositories(List<Repository> repositories) {
 		
-		for(Repository repository : repositories) {
+		for(Repository repository : repositories) {			
 			for(Mirror mirror : repository.getMirrors()) {
 				for(Package packageBag : mirror.getPackages()) {
 					if(packageBag.getGenerateManuals() == null) {

@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2021 Open Analytics NV
+ * Copyright (C) 2012-2022 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -64,6 +64,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import eu.openanalytics.rdepot.api.v2.exception.NotAllowedInDeclarativeMode;
 import eu.openanalytics.rdepot.exception.RepositoryCreateException;
 import eu.openanalytics.rdepot.exception.RepositoryDeclarativeModeException;
 import eu.openanalytics.rdepot.exception.RepositoryDeleteException;
@@ -138,7 +139,7 @@ public class RepositoryController {
 		
 		model.addAttribute("maintained", maintained);
 		model.addAttribute("repositories", repositories);
-		model.addAttribute("disabled", Boolean.valueOf(declarative)); //TODO: Give "disabled" field a more informative name
+		model.addAttribute("disabled", Boolean.valueOf(declarative));
         model.addAttribute("username", requester.getName());
 
 		return "repositories";
@@ -185,6 +186,11 @@ public class RepositoryController {
 		User requester = userService.findByLogin(principal.getName());
 		HttpStatus httpStatus = HttpStatus.OK;
 		HashMap<String, Object> result = new HashMap<>();
+		
+		if(Objects.isNull(repository.isDeleted()))
+			repository.setDeleted(false);
+		if(Objects.isNull(repository.isPublished()))
+			repository.setPublished(false);
 		
 		if(Boolean.valueOf(declarative)) {
 			throw new RepositoryDeclarativeModeException(messageSource, locale);
@@ -416,7 +422,8 @@ public class RepositoryController {
 		method=RequestMethod.PATCH, produces=MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ResponseEntity<HashMap<String, String>> publishRepository(
 			@PathVariable Integer id, Principal principal) 
-					throws UserUnauthorizedException, RepositoryNotFound, RepositoryPublishException {	
+					throws UserUnauthorizedException, RepositoryNotFound, 
+							RepositoryPublishException, RepositoryDeclarativeModeException {	
 		Locale locale = LocaleContextHolder.getLocale();
 		HashMap<String, String> response = new HashMap<String, String>();
 		User requester = userService.findByLoginWithRepositoryMaintainers(principal.getName());
@@ -425,6 +432,8 @@ public class RepositoryController {
 		
 		if(repository == null) {
 			throw new RepositoryNotFound(messageSource, locale, id);
+		} else if(Boolean.valueOf(declarative)) { 
+			throw new RepositoryDeclarativeModeException(messageSource, locale);
 		} else if(requester == null || !userService.isAuthorizedToEdit(repository, requester)) {
 			throw new UserUnauthorizedException(messageSource, locale);
 		} else {
@@ -473,7 +482,8 @@ public class RepositoryController {
 		method=RequestMethod.PATCH, produces=MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ResponseEntity<HashMap<String, String>> unpublishRepository(
 			@PathVariable Integer id, Principal principal) 
-					throws RepositoryNotFound, UserUnauthorizedException, RepositoryEditException {	
+					throws RepositoryNotFound, UserUnauthorizedException, 
+					RepositoryEditException, RepositoryDeclarativeModeException {	
 		HashMap<String, String> response = new HashMap<String, String>();
 		User requester = userService.findByLoginWithRepositoryMaintainers(principal.getName());
 		Locale locale = LocaleContextHolder.getLocale();
@@ -483,6 +493,8 @@ public class RepositoryController {
 		try {
 			if(repository == null) {
 				throw new RepositoryNotFound(messageSource, locale, id);
+			} else if(Boolean.valueOf(declarative)) {
+				throw new RepositoryDeclarativeModeException(messageSource, locale);
 			} else if(requester == null || !userService.isAuthorizedToEdit(repository, requester)) {
 				throw new UserUnauthorizedException(messageSource, locale);
 			} else {
