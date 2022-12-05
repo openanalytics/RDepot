@@ -7,7 +7,7 @@
             <header th:replace="fragments/header :: topbar (module='packages')"></header>
             <div th:replace="fragments/header :: drawer (module='packages')"></div>
             <main class="mdl-layout__content">
-                <button th:if="${role > 2}" type="button" class="add-maintainer-fab mdl-button mdl-button--fab mdl-button--primary" onclick="openAddMaintainerDialog()"><i class="material-icons">add</i></button>       
+                <button th:if="${role >= 2}" type="button" class="add-maintainer-fab mdl-button mdl-button--fab mdl-button--primary" onclick="openAddMaintainerDialog()"><i class="material-icons">add</i></button>       
                 
                 <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp full-width">
                     <thead>

@@ -20,544 +20,229 @@
  */
 package eu.openanalytics.rdepot.integrationtest.manager.v2;
 
-import static io.restassured.RestAssured.given;
-import static org.junit.Assert.assertEquals;
-
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.junit.Test;
 
-import eu.openanalytics.rdepot.integrationtest.IntegrationTest;
-import io.restassured.http.ContentType;
-
 public class UserIntegrationTest extends IntegrationTest {
+	
+	private final int GET_ENDPOINT_NEW_EVENTS_AMOUNT = 0;
+	private final int PATCH_ENDPOINT_NEW_EVENTS_AMOUNT = 1;
+	private final int FORBIDDEN_PATCH_NEW_EVENTS_AMOUNT = 0;
 	
 	public UserIntegrationTest() {
 		super("/api/v2/manager/users");
 	}
 
 	@Test
-	public void getAllUsers() throws IOException, ParseException {
-		JSONParser jsonParser = new JSONParser();
-		
-		FileReader reader = new FileReader(JSON_PATH + "/v2/user/users.json");
-		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);		
-		
-		String data = given()
-			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
-			.accept(ContentType.JSON)
-		.when()
-			.get(API_PATH)
-		.then()
-			.statusCode(200)
-			.extract()
-			.asString();
-		
-		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);		
-		assertEquals("There are some differences in users which admin sees", expectedJSON, actualJSON);
+	public void getAllUsers() throws Exception {
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET, "/v2/user/users.json", 
+				"?sort=id,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 
 	@Test
-	public void getAllUsers_Returns403_whenUserIsNotAuthorized() throws IOException, ParseException {
-		JSONParser jsonParser = new JSONParser();
-		
-		FileReader reader = new FileReader(JSON_PATH + "/v2/403.json");
-		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);		
-		
-		String data = given()
-			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
-			.accept(ContentType.JSON)
-		.when()
-			.get(API_PATH)
-		.then()
-			.statusCode(403)
-			.extract()
-			.asString();
-		
-		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);		
-		assertEquals("User should not be authorized to perform this operation", expectedJSON, actualJSON);
+	public void getAllUsers_Returns403_whenUserIsNotAuthorized() throws Exception {
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET, "/v2/403.json", 
+				"?sort=id,asc", 403, REPOSITORYMAINTAINER_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
-	public void getAllUsers_Returns401_whenUserIsNotAuthenticated() throws IOException, ParseException {
-		JSONParser jsonParser = new JSONParser();
-		
-		FileReader reader = new FileReader(JSON_PATH + "/v2/401.json");
-		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);		
-		
-		String data = given()
-			.accept(ContentType.JSON)
-		.when()
-			.get(API_PATH)
-		.then()
-			.statusCode(401)
-			.extract()
-			.asString();
-		
-		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);		
-		assertEquals("Unauthenticated user should not be able to perform this operation", expectedJSON, actualJSON);
+	public void getAllUsers_Returns401_whenUserIsNotAuthenticated() throws Exception {
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET_UNAUTHENTICATED, 
+				"?sort=id,asc", GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
-	public void getOneUserAsAdmin() throws IOException, ParseException {
-		JSONParser jsonParser = new JSONParser();
-		
-		FileReader reader = new FileReader(JSON_PATH + "/v2/user/one_user.json");
-		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);		
-		
-		String data = given()
-			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
-			.accept(ContentType.JSON)
-		.when()
-			.get(API_PATH + "/7")
-		.then()
-			.statusCode(200)
-			.extract()
-			.asString();
-		
-		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);		
-		assertEquals("There are some differences in user which admin sees", expectedJSON, actualJSON);
+	public void getOneUserAsAdmin() throws Exception {
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET, "/v2/user/one_user.json", 
+				"/7", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
-	public void getOneUserAsThisUser() throws IOException, ParseException {
-		JSONParser jsonParser = new JSONParser();
-		
-		FileReader reader = new FileReader(JSON_PATH + "/v2/user/one_user.json");
-		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);		
-		
-		String data = given()
-			.header(AUTHORIZATION, BEARER + USER_TOKEN)
-			.accept(ContentType.JSON)
-		.when()
-			.get(API_PATH + "/7")
-		.then()
-			.statusCode(200)
-			.extract()
-			.asString();
-		
-		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);		
-		assertEquals("There are some differences when user sees itself", expectedJSON, actualJSON);
+	public void getOneUserAsThisUser() throws Exception {
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET, "/v2/user/one_user.json", 
+				"/7", 200, USER_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
-	public void getOneUser_Returns403_whenUserIsNotAuthorized() throws IOException, ParseException {
-		JSONParser jsonParser = new JSONParser();
-		
-		FileReader reader = new FileReader(JSON_PATH + "/v2/403.json");
-		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);		
-		
-		String data = given()
-			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
-			.accept(ContentType.JSON)
-		.when()
-			.get(API_PATH + "/7")
-		.then()
-			.statusCode(403)
-			.extract()
-			.asString();
-		
-		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);		
-		assertEquals("Non admin should not be authorized to perform this operation", expectedJSON, actualJSON);
+	public void getOneUser_Returns403_whenUserIsNotAuthorized() throws Exception {
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET, "/v2/403.json", 
+				"/7", 403, REPOSITORYMAINTAINER_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);				
 	}
 	
 	@Test
-	public void getOneUser_Returns401_whenUserIsNotAuthenticated() throws IOException, ParseException {
-		JSONParser jsonParser = new JSONParser();
-		
-		FileReader reader = new FileReader(JSON_PATH + "/v2/401.json");
-		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);		
-		
-		String data = given()
-			.accept(ContentType.JSON)
-		.when()
-			.get(API_PATH + "/7")
-		.then()
-			.statusCode(401)
-			.extract()
-			.asString();
-		
-		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);		
-		assertEquals("Unauthenticated user should not be able to perform this operation", expectedJSON, actualJSON);
+	public void getOneUser_Returns401_whenUserIsNotAuthenticated() throws Exception {
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET_UNAUTHENTICATED, 
+				"/7", GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 		
 	@Test
-	public void getUsersTokenAsAdmin() throws IOException, ParseException {
-		JSONParser jsonParser = new JSONParser();
-		
-		FileReader reader = new FileReader(JSON_PATH + "/v2/user/user_token.json");
-		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);		
-		
-		String data = given()
-			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
-			.accept(ContentType.JSON)
-		.when()
-			.get(API_PATH + "/7/token")
-		.then()
-			.statusCode(200)
-			.extract()
-			.asString();
-		
-		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);		
-		assertEquals("There are some differences in token which admin sees", expectedJSON, actualJSON);
+	public void getUsersTokenAsAdmin() throws Exception {
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET, "/v2/user/user_token.json", 
+				"/7/token", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
-	public void getUsersTokenAsThisUser() throws IOException, ParseException {
-		JSONParser jsonParser = new JSONParser();
-		
-		FileReader reader = new FileReader(JSON_PATH + "/v2/user/user_token.json");
-		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);		
-		
-		String data = given()
-			.header(AUTHORIZATION, BEARER + USER_TOKEN)
-			.accept(ContentType.JSON)
-		.when()
-			.get(API_PATH + "/7/token")
-		.then()
-			.statusCode(200)
-			.extract()
-			.asString();
-		
-		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);		
-		assertEquals("There are some differences when user sees its token", expectedJSON, actualJSON);
+	public void getUsersTokenAsThisUser() throws Exception {
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET, "/v2/user/user_token.json", 
+				"/7/token", 200, USER_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
-	public void getUsersToken_Returns403_whenUserIsNotAuthorized() throws IOException, ParseException {
-		JSONParser jsonParser = new JSONParser();
-		
-		FileReader reader = new FileReader(JSON_PATH + "/v2/403.json");
-		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);		
-		
-		String data = given()
-			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
-			.accept(ContentType.JSON)
-		.when()
-			.get(API_PATH + "/7/token")
-		.then()
-			.statusCode(403)
-			.extract()
-			.asString();
-		
-		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);		
-		assertEquals("User should not be authorized to perform this operation", expectedJSON, actualJSON);
+	public void getUsersToken_Returns403_whenUserIsNotAuthorized() throws Exception {
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET, "/v2/403.json", 
+				"/7/token", 403, REPOSITORYMAINTAINER_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
-	public void getUsersToken_Returns401_whenUserIsNotAuthenticated() throws IOException, ParseException {
-		JSONParser jsonParser = new JSONParser();
-		
-		FileReader reader = new FileReader(JSON_PATH + "/v2/401.json");
-		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);		
-		
-		String data = given()
-			.accept(ContentType.JSON)
-		.when()
-			.get(API_PATH + "/7/token")
-		.then()
-			.statusCode(401)
-			.extract()
-			.asString();
-		
-		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);		
-		assertEquals("Unauthenticated user should not be able to perform this operation", expectedJSON, actualJSON);
+	public void getUsersToken_Returns401_whenUserIsNotAuthenticated() throws Exception {
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET_UNAUTHENTICATED, 
+				"/7/token", GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
-	public void getRoles() throws IOException, ParseException {
-		JSONParser jsonParser = new JSONParser();
-		
-		FileReader reader = new FileReader(JSON_PATH + "/v2/user/roles.json");
-		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);		
-		
-		String data = given()
-			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
-			.accept(ContentType.JSON)
-		.when()
-			.get(API_PATH + "/roles")
-		.then()
-			.statusCode(200)
-			.extract()
-			.asString();
-		
-		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);		
-		assertEquals("There are some differences in roles which admin sees", expectedJSON, actualJSON);
+	public void getRoles() throws Exception {
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET, "/v2/user/roles.json", 
+				"/roles", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 
 	@Test
-	public void getRoles_Returns403_whenUserIsNotAuthorized() throws IOException, ParseException {
-		JSONParser jsonParser = new JSONParser();
-		
-		FileReader reader = new FileReader(JSON_PATH + "/v2/403.json");
-		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);		
-		
-		String data = given()
-			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
-			.accept(ContentType.JSON)
-		.when()
-			.get(API_PATH + "/roles")
-		.then()
-			.statusCode(403)
-			.extract()
-			.asString();
-		
-		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);		
-		assertEquals("Non admin should not be authorized to perform this operation", expectedJSON, actualJSON);
+	public void getRoles_Returns403_whenUserIsNotAuthorized() throws Exception {
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET, "/v2/403.json", 
+				"/roles", 403, REPOSITORYMAINTAINER_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
-	public void getRoles_Returns401_whenUserIsNotAuthenticated() throws IOException, ParseException {
-		JSONParser jsonParser = new JSONParser();
-		
-		FileReader reader = new FileReader(JSON_PATH + "/v2/401.json");
-		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);		
-		
-		String data = given()
-			.accept(ContentType.JSON)
-		.when()
-			.get(API_PATH + "/roles")
-		.then()
-			.statusCode(401)
-			.extract()
-			.asString();
-		
-		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);		
-		assertEquals("Unauthenticated user should not be able to perform this operation", expectedJSON, actualJSON);
+	public void getRoles_Returns401_whenUserIsNotAuthenticated() throws Exception {
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET_UNAUTHENTICATED, 
+				"/roles", GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
-	public void patchUser_activate() throws IOException, ParseException {
-		JSONParser jsonParser = new JSONParser();
+	public void patchUser_activate() throws Exception {
+		final String patch = "["
+				+ "{"
+				+ "\"op\": \"replace\","
+				+ "\"path\":\"/active\","
+				+ "\"value\":true"
+				+ "}"
+				+ "]";
 		
-		FileReader reader = new FileReader(JSON_PATH + "/v2/user/activated_user.json");
-		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);		
-		
-		List<Map<String, Object>> body = new ArrayList<>();
-		Map<String, Object> first = new HashMap<>();
-		first.put("op", "replace");
-		first.put("path", "/active");
-		first.put("value", true);
-		
-		body.add(first);
-		
-		String data = given()
-			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
-			.contentType("application/json-patch+json")
-			.accept(ContentType.JSON)
-			.body(body)
-		.when()
-			.patch(API_PATH + "/9")
-		.then()
-			.statusCode(200)
-			.extract()
-			.asString();
-		
-		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);		
-		assertEquals("User has not been activated", expectedJSON, actualJSON);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.PATCH,  "/v2/user/activated_user.json", "/9", 200, 
+				ADMIN_TOKEN, PATCH_ENDPOINT_NEW_EVENTS_AMOUNT, "/v2/events/users/activate_user_event.json", patch);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
-	public void patchUser_deactivate() throws IOException, ParseException {
-		JSONParser jsonParser = new JSONParser();
+	public void patchUser_deactivate() throws Exception {
+		final String patch = "["
+				+ "{"
+				+ "\"op\": \"replace\","
+				+ "\"path\":\"/active\","
+				+ "\"value\":false"
+				+ "}"
+				+ "]";
 		
-		FileReader reader = new FileReader(JSON_PATH + "/v2/user/deactivated_user.json");
-		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);		
-		
-		List<Map<String, Object>> body = new ArrayList<>();
-		Map<String, Object> first = new HashMap<>();
-		first.put("op", "replace");
-		first.put("path", "/active");
-		first.put("value", false);
-		
-		body.add(first);
-		
-		String data = given()
-			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
-			.contentType("application/json-patch+json")
-			.accept(ContentType.JSON)
-			.body(body)
-		.when()
-			.patch(API_PATH + "/7")
-		.then()
-			.statusCode(200)
-			.extract()
-			.asString();
-		
-		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);		
-		assertEquals("User has not been deactivated", expectedJSON, actualJSON);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.PATCH,  "/v2/user/deactivated_user.json", "/7", 200, 
+				ADMIN_TOKEN, PATCH_ENDPOINT_NEW_EVENTS_AMOUNT, "/v2/events/users/deactivate_user_event.json", patch);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
-	public void patchUser_changeRole() throws IOException, ParseException {
-		JSONParser jsonParser = new JSONParser();
+	public void patchUser_changeRole() throws Exception, ParseException {
+		final String patch = "["
+				+ "{"
+				+ "\"op\": \"replace\","
+				+ "\"path\":\"/roleId\","
+				+ "\"value\":2"
+				+ "}"
+				+ "]";
 		
-		FileReader reader = new FileReader(JSON_PATH + "/v2/user/updated_role_user.json");
-		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);		
-		
-		List<Map<String, Object>> body = new ArrayList<>();
-		Map<String, Object> first = new HashMap<>();
-		first.put("op", "replace");
-		first.put("path", "/roleId");
-		first.put("value", 2);
-		
-		body.add(first);
-		
-		String data = given()
-			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
-			.contentType("application/json-patch+json")
-			.accept(ContentType.JSON)
-			.body(body)
-		.when()
-			.patch(API_PATH + "/7")
-		.then()
-			.statusCode(200)
-			.extract()
-			.asString();
-		
-		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);		
-		assertEquals("User has not been deactivated", expectedJSON, actualJSON);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.PATCH,  "/v2/user/updated_role_user.json", "/7", 200, 
+				ADMIN_TOKEN, PATCH_ENDPOINT_NEW_EVENTS_AMOUNT, "/v2/events/users/change_role_user_event.json", patch);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
-	public void patchUser_shouldNotUpdateLastLoggedInOn() throws IOException, ParseException {
-		JSONParser jsonParser = new JSONParser();
+	public void patchUser_returns422_whenValidationFails() throws Exception {
+		final String patch = "["
+				+ "{"
+				+ "\"op\": \"replace\","
+				+ "\"path\":\"/lastLoggedInOn\","
+				+ "\"value\":\"2017-12-03\""
+				+ "}"
+				+ "]";
 		
-		FileReader reader = new FileReader(JSON_PATH + "/v2/user/unchanged_user.json");
-		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);		
-
-		List<Map<String, String>> body = new ArrayList<>();
-		
-		Map<String, String> first = new HashMap<>();
-		first.put("op", "replace");
-		first.put("path", "/lastLoggedInOn");
-		first.put("value", "2017-12-03T00:00:00");
-		
-		body.add(first);
-		
-		String data = given()
-			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
-			.contentType("application/json-patch+json")
-			.accept(ContentType.JSON)
-			.body(body)
-		.when()
-			.patch(API_PATH + "/9")
-		.then()
-			.statusCode(200)
-			.extract()
-			.asString();
-		
-		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);		
-		assertEquals("User cannot be updated", expectedJSON, actualJSON);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.PATCH,  "/v2/user/user_validation_error.json", "/9", 422, 
+				ADMIN_TOKEN, FORBIDDEN_PATCH_NEW_EVENTS_AMOUNT, patch);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
-	public void patchUser_multipleOperationOnTheSameField() throws IOException, ParseException {
-		JSONParser jsonParser = new JSONParser();
+	public void patchUser_multipleOperationOnTheSameField() throws Exception {				
+		final String patch = "["
+				+ "{"
+				+ "\"op\": \"replace\","
+				+ "\"path\": \"/active\","
+				+ "\"value\": true"
+				+ "},"
+				+ "{"
+				+ "\"op\": \"replace\","
+				+ "\"path\": \"/active\","
+				+ "\"value\": false"
+				+ "},"
+				+ "{"
+				+ "\"op\": \"replace\","
+				+ "\"path\": \"/active\","
+				+ "\"value\": true"
+				+ "}"
+				+ "]";
 		
-		FileReader reader = new FileReader(JSON_PATH + "/v2/user/activated_user.json");
-		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);		
-		
-		List<Map<String, Object>> body = new ArrayList<>();
-		Map<String, Object> first = new HashMap<>();
-		first.put("op", "replace");
-		first.put("path", "/active");
-		first.put("value", true);
-		Map<String, Object> second = new HashMap<>();
-		second.put("op", "replace");
-		second.put("path", "/active");
-		second.put("value", false);
-		Map<String, Object> third = new HashMap<>();
-		third.put("op", "replace");
-		third.put("path", "/active");
-		third.put("value", true);
-		
-		body.add(first);
-		body.add(second);
-		body.add(third);
-		
-		String data = given()
-			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
-			.contentType("application/json-patch+json")
-			.accept(ContentType.JSON)
-			.body(body)
-		.when()
-			.patch(API_PATH + "/9")
-		.then()
-			.statusCode(200)
-			.extract()
-			.asString();
-		
-		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);		
-		assertEquals("User has not been activated", expectedJSON, actualJSON);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.PATCH,  "/v2/user/activated_user.json", "/9", 200, 
+				ADMIN_TOKEN, PATCH_ENDPOINT_NEW_EVENTS_AMOUNT, "/v2/events/users/activate_user_event.json", patch);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
-	public void patchUser_Returns403_whenUserIsNotAuthorized() throws IOException, ParseException {
-		JSONParser jsonParser = new JSONParser();
+	public void patchUser_Returns403_whenUserIsNotAuthorized() throws Exception {
+		final String patch = "["
+				+ "{"
+				+ "\"op\": \"replace\","
+				+ "\"path\":\"/roleId\","
+				+ "\"value\":2"
+				+ "}"
+				+ "]";
 		
-		FileReader reader = new FileReader(JSON_PATH + "/v2/403.json");
-		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);		
-		
-		List<Map<String, Object>> body = new ArrayList<>();
-		Map<String, Object> first = new HashMap<>();
-		first.put("op", "replace");
-		first.put("path", "/roleId");
-		first.put("value", 2);
-		
-		body.add(first);
-		
-		String data = given()
-			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
-			.contentType("application/json-patch+json")
-			.accept(ContentType.JSON)
-			.body(body)
-		.when()
-			.get(API_PATH + "/roles")
-		.then()
-			.statusCode(403)
-			.extract()
-			.asString();
-		
-		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);		
-		assertEquals("Non admin should not be authorized to perform this operation", expectedJSON, actualJSON);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.PATCH,  "/v2/403.json", "/9", 403, 
+				REPOSITORYMAINTAINER_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT, patch);
+		testEndpoint(requestBody);		
 	}
 	
 	@Test
-	public void patchUser_Returns401_whenUserIsNotAuthenticated() throws IOException, ParseException {
-		JSONParser jsonParser = new JSONParser();
+	public void patchUser_Returns401_whenUserIsNotAuthenticated() throws Exception {
+		final String patch = "["
+				+ "{"
+				+ "\"op\": \"replace\","
+				+ "\"path\":\"/roleId\","
+				+ "\"value\":2"
+				+ "}"
+				+ "]";
 		
-		FileReader reader = new FileReader(JSON_PATH + "/v2/401.json");
-		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);		
-		
-		List<Map<String, Object>> body = new ArrayList<>();
-		Map<String, Object> first = new HashMap<>();
-		first.put("op", "replace");
-		first.put("path", "/roleId");
-		first.put("value", 2);
-		
-		body.add(first);
-		
-		String data = given()
-			.contentType("application/json-patch+json")
-			.accept(ContentType.JSON)
-			.body(body)
-		.when()
-			.get(API_PATH + "/roles")
-		.then()
-			.statusCode(401)
-			.extract()
-			.asString();
-		
-		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);		
-		assertEquals("Unauthenticated user should not be able to perform this operation", expectedJSON, actualJSON);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.PATCH_UNAUTHENTICATED,  "/v2/403.json", "/9", 401, 
+				REPOSITORYMAINTAINER_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT, patch);
+		testEndpoint(requestBody);
 	}
 }

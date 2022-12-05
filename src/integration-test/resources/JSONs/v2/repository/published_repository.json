@@ -1,1 +1,26 @@
-{"status":"success","code":200,"message":"Your request has been processed successfully.","messageCode":"success.request.processed","data":{"id":5,"version":7,"publicationUri":"http://localhost/repo/testrepo4","name":"testrepo4","serverAddress":"http://oa-rdepot-repo:8080/testrepo4","deleted":false,"published":true,"synchronizing":false,"links":[{"rel":"self","href":"http://localhost:8017/api/v2/manager/r/repositories/5"},{"rel":"repositoryList","href":"http://localhost:8017/api/v2/manager/r/repositories"}]}}
+{
+  "code": 200,
+  "data": {
+    "deleted": false,
+    "synchronizing": false,
+    "name": "testrepo4",
+    "serverAddress": "http://oa-rdepot-repo:8080/testrepo4",
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/r/repositories/5"
+      },
+      {
+        "rel": "repositoryList",
+        "href": "http://localhost:8017/api/v2/manager/r/repositories"
+      }
+    ],
+    "id": 5,
+    "published": true,
+    "version": 7,
+    "publicationUri": "http://localhost/repo/testrepo4"
+  },
+  "messageCode": "success.request.processed",
+  "message": "Your request has been processed successfully.",
+  "status": "success"
+}

@@ -1,0 +1,2 @@
+human: models tajima.obs tajima.sim
+musigma2: par.sim post.mu post.sigma2 stat.obs stat.sim

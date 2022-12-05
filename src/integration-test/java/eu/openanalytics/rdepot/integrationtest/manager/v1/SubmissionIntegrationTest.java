@@ -37,21 +37,26 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.mail.MessagingException;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.junit.Rule;
 import org.junit.Test;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.icegreen.greenmail.configuration.GreenMailConfiguration;
+import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.util.ServerSetup;
 
 import eu.openanalytics.rdepot.integrationtest.IntegrationTest;
 import eu.openanalytics.rdepot.integrationtest.utils.JSONConverter;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.http.ContentType;
-
 
 public class SubmissionIntegrationTest extends IntegrationTest{	
 	
@@ -69,9 +74,11 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 	private final String PACKAGE_ID_TO_DOWNLOAD = "32";
 	private final String PACKAGE_NAME_TO_DOWNLOAD = "Benchmarking";
 	private final String PDF_PATH = "src/integration-test/resources/itestPdf";
-		
+	
+	private static final ServerSetup serverSetup = new ServerSetup(3925, "0.0.0.0", "smtp");	
+	
 	@Test
-	public void shouldNotPublishPackageWhenRepositoryIsUnpublished() throws IOException {
+	public void shouldNotPublishPackageWhenRepositoryIsUnpublished() throws IOException, ParseException {
 		File packageBag = new File("src/integration-test/resources/itestPackages/visdat_0.1.0.tar.gz");
 
 		given()
@@ -100,14 +107,24 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 	}
 	
 	@Test
-	public void shouldPublishPackage() throws IOException {
+	public void shouldPublishRepositoryAndUploadPackage() throws IOException, ParseException {
 		File packageBag = new File("src/integration-test/resources/itestPackages/visdat_0.1.0.tar.gz");
 		
 		given()
+		.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+		.accept(ContentType.JSON)
+		.when()
+			.patch("/api/manager/repositories/4/publish")
+		.then()
+			.statusCode(200)
+			.body("success", equalTo("Repository has been published successfully."));
+			
+		given()
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept("application/json")
 			.contentType("multipart/form-data")
-			.multiPart("repository", "testrepo1")
+			.multiPart("repository", "testrepo3")
+			.multiPart("replace", true)
 			.multiPart(new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
 					.fileName(packageBag.getName())
 					.mimeType("application/gzip")
@@ -122,16 +139,16 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 		byte[] uploadedPackage = given()
 				.accept(ContentType.BINARY)
 			.when()
-				.get(PUBLICATION_URI_PATH + "/testrepo1/src/contrib/visdat_0.1.0.tar.gz")
+				.get(PUBLICATION_URI_PATH + "/testrepo3/src/contrib/visdat_0.1.0.tar.gz")
 				.asByteArray();
 		
 		byte[] expectedPackage = Files.readAllBytes(packageBag.toPath());
-		assertTrue(Arrays.equals(uploadedPackage, expectedPackage));
+		assertTrue("expected: " + expectedPackage + " but was: " + uploadedPackage, Arrays.equals(uploadedPackage, expectedPackage));
 	}
-
+	
 	@Test
 	public void shouldPublishPackageInArchive() throws IOException {
-		File packageBag = new File ("src/integration-test/resources/itestPackages/A3_0.9.1.tar.gz");
+		File packageBag = new File ("src/integration-test/resources/itestPackages/abc_1.0.tar.gz");
 		
 		given()
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -152,11 +169,11 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 		byte[] uploadedPackage = given()
 				.accept(ContentType.BINARY)
 			.when()
-				.get(PUBLICATION_URI_PATH + "/testrepo1/src/contrib/Archive/A3/A3_0.9.1.tar.gz")
+				.get(PUBLICATION_URI_PATH + "/testrepo1/src/contrib/Archive/abc/abc_1.0.tar.gz")
 				.asByteArray();
 		
 		byte[] expectedPackage = Files.readAllBytes(packageBag.toPath());
-		assertTrue(Arrays.equals(uploadedPackage, expectedPackage));
+		assertTrue("expected: " + expectedPackage + " but was: " + uploadedPackage, Arrays.equals(uploadedPackage, expectedPackage));
 	}
 	
 	@Test
@@ -209,69 +226,72 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 				.extract()
 				.asByteArray();
 		
+		
+		
 		File file = new File(PDF_PATH + "/" + PACKAGE_NAME_TO_DOWNLOAD + ".pdf");
 		byte[] expectedpdf = readFileToByteArray(file);
 
-		assertEquals(expectedPackages, actualPackages);
-		assertTrue(compare(expectedJSON, actualJSON));
+		assertEquals("expected packages: " + expectedPackages + " but was: " + actualPackages, expectedPackages, actualPackages);
+		assertTrue("ecxpected json: " + expectedJSON + " but was: " + actualJSON, compare(expectedJSON, actualJSON));
 		assertTrue("Manual PDFs are too different", expectedpdf.length + 1000 > pdf.length);
 		assertTrue("Manual PDFs are too different", expectedpdf.length - 1000 < pdf.length);
 	}
-	
-	@Test
-	public void shouldUploadPackageAndNotCreateManual() throws ParseException, IOException {
-		File packageBag = new File ("src/integration-test/resources/itestPackages/Benchmarking_0.10.tar.gz");
-				
-		given()
-			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
-			.accept("application/json")
-			.contentType("multipart/form-data")
-			.multiPart("repository", "testrepo2")
-			.multiPart("generateManual", "false")
-			.multiPart(new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
-					.fileName(packageBag.getName())
-					.mimeType("application/gzip")
-					.controlName("file")
-					.build())
-		.when()
-			.post(API_PACKAGES_PATH + "/submit")
-		.then()
-			.statusCode(200)
-			.extract();
-		
-		FileReader reader = new FileReader(JSON_PATH + "/submission/repositories_after_uploading_package.json");
-		JsonArray expectedJSON = (JsonArray) JsonParser.parseReader(reader);
-		
-		List<Set<JsonObject>> expectedPackages = JSONConverter.convertNewPackagesFromRepo(expectedJSON);
-		
-		String data = given()
-			.header(AUTHORIZATION, BEARER + USER_TOKEN)
-			.accept(ContentType.JSON)
-		.when()
-			.get(API_REPOSITORIES_PATH + "/list")
-		.then()
-			.statusCode(200)
-			.extract()
-			.asString();
-		
-		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
-		
-		List<Set<JsonObject>> actualPackages = JSONConverter.convertNewPackagesFromRepo(actualJSON);
-		
-		given()
-				.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
-				.accept(ContentType.ANY)
-				
-			.when()
-            	.get(API_PACKAGES_PATH + "/" + PACKAGE_ID_TO_DOWNLOAD + "/download/" + PACKAGE_NAME_TO_DOWNLOAD + ".pdf")
-			.then()
-				.statusCode(404)
-				.extract()
-				.asByteArray();
 
-		assertEquals(expectedPackages, actualPackages);
-		assertTrue(compare(expectedJSON, actualJSON));
-	}
+	//TODO wait to decision about manual - if always create or only on specified conditions
+//	@Test
+//	public void shouldUploadPackageAndNotCreateManual() throws ParseException, IOException {
+//		File packageBag = new File ("src/integration-test/resources/itestPackages/Benchmarking_0.10.tar.gz");
+//				
+//		given()
+//			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+//			.accept("application/json")
+//			.contentType("multipart/form-data")
+//			.multiPart("repository", "testrepo2")
+//			.multiPart("generateManual", "false")
+//			.multiPart(new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+//					.fileName(packageBag.getName())
+//					.mimeType("application/gzip")
+//					.controlName("file")
+//					.build())
+//		.when()
+//			.post(API_PACKAGES_PATH + "/submit")
+//		.then()
+//			.statusCode(200)
+//			.extract();
+//		
+//		FileReader reader = new FileReader(JSON_PATH + "/submission/repositories_after_uploading_package.json");
+//		JsonArray expectedJSON = (JsonArray) JsonParser.parseReader(reader);
+//		
+//		List<Set<JsonObject>> expectedPackages = JSONConverter.convertNewPackagesFromRepo(expectedJSON);
+//		
+//		String data = given()
+//			.header(AUTHORIZATION, BEARER + USER_TOKEN)
+//			.accept(ContentType.JSON)
+//		.when()
+//			.get(API_REPOSITORIES_PATH + "/list")
+//		.then()
+//			.statusCode(200)
+//			.extract()
+//			.asString();
+//		
+//		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
+//		
+//		List<Set<JsonObject>> actualPackages = JSONConverter.convertNewPackagesFromRepo(actualJSON);
+//		
+//		given()
+//				.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+//				.accept(ContentType.ANY)
+//				
+//			.when()
+//            	.get(API_PACKAGES_PATH + "/" + PACKAGE_ID_TO_DOWNLOAD + "/download/" + PACKAGE_NAME_TO_DOWNLOAD + ".pdf")
+//			.then()
+//				.statusCode(404)
+//				.extract()
+//				.asByteArray();
+//
+//		assertEquals("expected packages: " + expectedPackages + " but was: " + actualPackages, expectedPackages, actualPackages);
+//		assertTrue("expected json: " + expectedJSON + "but was: " + actualJSON, compare(expectedJSON, actualJSON));
+//	}
 	
 	@Test
 	public void shouldUploadPackageWithReplaceOption() throws IOException, ParseException {
@@ -295,7 +315,7 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 			.statusCode(200)
 			.extract();
 		
-		packageBag = new File ("src/integration-test/resources/itestPackages/A3_0-9-1.tar.gz");
+		packageBag = new File ("src/integration-test/resources/itestPackages/A3_0.9.1.tar.gz");
 		
 		given()
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -319,7 +339,7 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 		
 		FileReader reader = new FileReader(JSON_PATH + "/package/packages_with_replaced_package.json");
 		JSONArray rootJSON = (JSONArray) jsonParser.parse(reader);
-		Set<JSONObject> expectedJSON = convert(rootJSON);
+		List<JSONObject> expectedJSON = convert(rootJSON);
 		
 		String data = given()
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -333,9 +353,9 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 			
 		rootJSON = (JSONArray) jsonParser.parse(data);
 
-		Set<JSONObject> actualJSON = convert(rootJSON);
+		List<JSONObject> actualJSON = convert(rootJSON);
 		
-		assertEquals("Differences in packages", expectedJSON, actualJSON);
+		assertEquals("Differences in packages, expected: " + expectedJSON + " but was: " + actualJSON, expectedJSON, actualJSON);
 	}
 	
 	@Test
@@ -360,7 +380,27 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 			.statusCode(200)
 			.extract();
 		
-		packageBag = new File ("src/integration-test/resources/itestPackages/A3_0-9-1.tar.gz");
+		JSONParser jsonParser = new JSONParser();
+		
+		FileReader reader = new FileReader(JSON_PATH + "/package/deleted_packages_with_new_one_to_be_replaced.json");
+		JSONArray rootJSON = (JSONArray) jsonParser.parse(reader);
+		List<JSONObject> expectedJSON1 = convert(rootJSON);
+		
+		String data = given()
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.get(API_PACKAGES_PATH + "/list")
+		.then()
+			.statusCode(200)
+			.extract()
+			.asString();
+			
+		rootJSON = (JSONArray) jsonParser.parse(data);
+
+		List<JSONObject> actualJSON1 = convert(rootJSON);
+		
+		packageBag = new File ("src/integration-test/resources/itestPackages/A3_0.9.1.tar.gz");
 		
 		given()
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -380,29 +420,11 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 			.statusCode(200)
 			.extract();
 		
-		JSONParser jsonParser = new JSONParser();
 		
-		FileReader reader = new FileReader(JSON_PATH + "/package/packages_with_replaced_package.json");
-		JSONArray rootJSON = (JSONArray) jsonParser.parse(reader);
-		Set<JSONObject> expectedJSON1 = convert(rootJSON);
-		
-		String data = given()
-			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
-			.accept(ContentType.JSON)
-		.when()
-			.get(API_PACKAGES_PATH + "/list")
-		.then()
-			.statusCode(200)
-			.extract()
-			.asString();
-			
-		rootJSON = (JSONArray) jsonParser.parse(data);
-
-		Set<JSONObject> actualJSON1 = convert(rootJSON);
 		
 		reader = new FileReader(JSON_PATH + "/package/package_could_not_be_replaced.json");
 		rootJSON = (JSONArray) jsonParser.parse(reader);
-		Set<JSONObject> expectedJSON2 = convert(rootJSON);
+		List<JSONObject> expectedJSON2 = convert(rootJSON);
 		
 		data = given()
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -416,14 +438,14 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 			
 		rootJSON = (JSONArray) jsonParser.parse(data);
 
-		Set<JSONObject> actualJSON2 = convert(rootJSON);
+		List<JSONObject> actualJSON2 = convert(rootJSON);
 		
-		assertNotEquals("Package was replaced", expectedJSON1, actualJSON1);						
-		assertEquals("Differences in packages", expectedJSON2, actualJSON2);
-	}
+		assertNotEquals("Package was replaced, expected: " + expectedJSON1 + " but was: " + actualJSON1, expectedJSON1, actualJSON1);						
+		assertEquals("Differences in packages, expected: " + expectedJSON2 + " but was: " + actualJSON2, expectedJSON2, actualJSON2);
+	} 
 	
 	@Test
-	public void shouldAddPackageToWaitingSubmissions() throws ParseException, IOException {
+	public void shouldAddPackageToWaitingSubmissions() throws ParseException, IOException, MessagingException {
 		File packageBag = new File ("src/integration-test/resources/itestPackages/A3_0.9.2.tar.gz");
 				
 		try {
@@ -478,14 +500,13 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 			.extract()
 			.asString();
 		
-		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
+		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);		
 		
 		List<Set<JsonObject>> actualPackages = JSONConverter.convertNewPackagesFromRepo(actualJSON);
 
-		assertEquals(expectedPackages, actualPackages);
-		assertTrue(compare(expectedJSON, actualJSON));		
-		assertTrue(compare(expectedSubmissions, actualSubmissions));
-		
+		assertEquals("expected packages: " + expectedPackages + " but was: " + actualPackages, expectedPackages, actualPackages);
+		assertTrue("expected json: " + expectedJSON + " but was: " + actualJSON, compare(expectedJSON, actualJSON));		
+		assertTrue("expected submission: " + expectedSubmissions + " but was: " + actualSubmissions, compare(expectedSubmissions, actualSubmissions));
 	}
 	
 	@Test
@@ -505,7 +526,7 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 		
 		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 		
-		assertTrue(compare(expectedJSON, actualJSON));
+		assertTrue("expected json: " + expectedJSON + " but was:" + actualJSON, compare(expectedJSON, actualJSON));
 	}
 	
 	@Test
@@ -525,7 +546,7 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 		
 		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 		
-		assertTrue(compare(expectedJSON, actualJSON));;
+		assertTrue("expected: " + expectedJSON + " but was: " + actualJSON, compare(expectedJSON, actualJSON));;
 	}
 	
 	@Test
@@ -536,7 +557,6 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 			.get(API_SUBMISSIONS_PATH + "/list")
 		.then()
 			.statusCode(401);
-
 	}
 
 	@Test
@@ -556,7 +576,7 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 		
 		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 		
-		assertTrue(compare(expectedJSON, actualJSON));
+		assertTrue("expected: " + expectedJSON + " but was: " + actualJSON, compare(expectedJSON, actualJSON));
 	}
 	
 	@Test
@@ -568,10 +588,12 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 			.get(API_SUBMISSIONS_PATH + "/deleted")
 		.then()
 			.statusCode(403);
-	}
+	}		
 
 	@Test
-	public void shouldAcceptSubmissionByRepositoryMaintainer() throws ParseException, IOException {
+	public void shouldAcceptSubmissionByRepositoryMaintainer() throws ParseException, IOException {				
+		
+		
 		JSONParser jsonParser = new JSONParser();
 		
 		given()
@@ -585,7 +607,7 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 		
 		FileReader reader = new FileReader(JSON_PATH + "/submission/accepted_submission_by_repository_maintainer_packages.json");		
 		JSONArray rootJSON = (JSONArray) jsonParser.parse(reader);
-		Set<JSONObject> expectedPackages = convert(rootJSON);
+		List<JSONObject> expectedPackages = convert(rootJSON);
 		
 		String data = given()
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -598,7 +620,7 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 			.asString();
 			
 		rootJSON = (JSONArray) jsonParser.parse(data);
-		Set<JSONObject> actualPackages = convert(rootJSON);
+		List<JSONObject> actualPackages = convert(rootJSON);
 		
 		reader = new FileReader(JSON_PATH + "/submission/accepted_submission_by_repository_maintainer_repositories.json");
 		JsonArray expectedRepositories = (JsonArray) JsonParser.parseReader(reader);
@@ -628,15 +650,15 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 			.extract()
 			.asString();
 		
-		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
+		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);		
 		
-		assertTrue("Different submissions",compare(expectedJSON, actualJSON));
-		assertTrue("Different repositories", compare(expectedRepositories, actualRepositories));
-		assertEquals("Differences in packages", expectedPackages, actualPackages);
+		assertTrue("Different submissions, expected: " + expectedJSON + " but was: " + actualJSON,compare(expectedJSON, actualJSON));
+		assertTrue("Different repositories, expected: " + expectedRepositories + " but was: " + actualRepositories, compare(expectedRepositories, actualRepositories));
+		assertEquals("Differences in packages, expected: " + expectedPackages + "but was: " + actualPackages, expectedPackages, actualPackages);
 	}
 	
 	@Test
-	public void shouldCancelSubmissionByRepositoryMaintainer() throws ParseException, IOException {		
+	public void shouldCancelSubmissionByRepositoryMaintainer() throws ParseException, IOException, MessagingException {		
 		given()
 			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
 			.accept(ContentType.JSON)
@@ -649,7 +671,7 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 		JSONParser jsonParser = new JSONParser();
 		FileReader reader = new FileReader(JSON_PATH + "/submission/rejected_submission_by_repository_maintainer_packages.json");
 		JSONArray rootJSON = (JSONArray) jsonParser.parse(reader);
-		Set<JSONObject> expectedPackages = convert(rootJSON);
+		List<JSONObject> expectedPackages = convert(rootJSON);
 		
 		String data = given()
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -662,7 +684,7 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 			.asString();
 			
 		rootJSON = (JSONArray) jsonParser.parse(data);
-		Set<JSONObject> actualPackages = convert(rootJSON);
+		List<JSONObject> actualPackages = convert(rootJSON);
 			
 		reader = new FileReader(JSON_PATH + "/submission/rejected_submission_by_repository_maintainer_repositories.json");
 		JsonArray expectedRepositories = (JsonArray) JsonParser.parseReader(reader);
@@ -695,9 +717,9 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 			
 		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 		
-		assertTrue("Different deleted submissions", compare(expectedJSON, actualJSON));
-		assertTrue("Different repositories", compare(expectedRepositories, actualRepositories));
-		assertEquals("Differences in packages", expectedPackages, actualPackages);
+		assertTrue("Different deleted submissions, expected: " + expectedJSON + " but was: " + actualJSON, compare(expectedJSON, actualJSON));
+		assertTrue("Different repositories, expected: " + expectedRepositories + " but was: " + actualRepositories, compare(expectedRepositories, actualRepositories));
+		assertEquals("Differences in packages, expected: " + expectedPackages + " but was: " + actualPackages, expectedPackages, actualPackages);
 	}
 	
 	@Test
@@ -717,7 +739,7 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 	@Test
 	public void shouldAdminShiftDeleteSubmission() throws ParseException, IOException {		
 		given()
-			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
 		.when()
 			.delete(API_SUBMISSIONS_PATH + "/" + SUBMISSION_ID_TO_REJECT + "/cancel")
@@ -737,7 +759,7 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 		JSONParser jsonParser = new JSONParser();
 		FileReader reader = new FileReader(JSON_PATH + "/submission/rejected_submission_by_repository_maintainer_packages.json");
 		JSONArray rootJSON = (JSONArray) jsonParser.parse(reader);
-		Set<JSONObject> expectedPackages = convert(rootJSON);
+		List<JSONObject> expectedPackages = convert(rootJSON);
 		
 		String data = given()
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -750,7 +772,7 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 			.asString();
 			
 		rootJSON = (JSONArray) jsonParser.parse(data);
-		Set<JSONObject> actualPackages = convert(rootJSON);
+		List<JSONObject> actualPackages = convert(rootJSON);
 			
 		reader = new FileReader(JSON_PATH + "/submission/rejected_submission_by_repository_maintainer_repositories.json");
 		JsonArray expectedRepositories = (JsonArray) JsonParser.parseReader(reader);
@@ -781,9 +803,9 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 			
 		JsonArray actualDeletedJSON = (JsonArray) JsonParser.parseString(data);
 		
-		assertFalse("'Shift deleted' submission can't be added to the list of deleted ones", compare(expectedDeletedJSON, actualDeletedJSON));
-		assertTrue("Shift deletion caused differences in repositories", compare(expectedRepositories, actualRepositories));
-		assertEquals("Shift deletion caused differences in packages", expectedPackages, actualPackages);
+		assertFalse("'Shift deleted' submission can't be added to the list of deleted ones, expected: " + expectedDeletedJSON + " but was: " + actualDeletedJSON, compare(expectedDeletedJSON, actualDeletedJSON));
+		assertTrue("Shift deletion caused differences in repositories, expected: " + expectedRepositories + " but was: " + actualRepositories, compare(expectedRepositories, actualRepositories));
+		assertEquals("Shift deletion caused differences in packages, expected: " + expectedPackages + " but was: " + actualPackages, expectedPackages, actualPackages);
 	}
 	
 	private void fixRepositories(JsonArray actualRepositories) {
@@ -831,6 +853,9 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 			expectedRepository.remove("packages");
 			actualRepository.remove("packages");
 			
+			expectedRepository.remove("uploadDate");
+			actualRepository.remove("uploadDate");
+			
 			if(!expectedRepository.equals(actualRepository))
 				return false;
 		}
@@ -852,6 +877,5 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 			JSON.add(objJSON);
 		}	
 		return JSON;
-	}
-
+	}	
 }

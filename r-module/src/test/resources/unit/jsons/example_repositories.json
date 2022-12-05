@@ -1,0 +1,82 @@
+{
+  "status": "success",
+  "code": 200,
+  "message": "Your request has been processed successfully.",
+  "messageCode": "success.request.processed",
+  "data": {
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://localhost/api/v2/manager/r/repositories/"
+      }
+    ],
+    "content": [
+      {
+        "id": 123,
+        "version": 10,
+        "publicationUri": "http://localhost/repo/testrepo123",
+        "name": "Test Repository 123",
+        "serverAddress": "http://192.168.1.100/testrepo123",
+        "deleted": false,
+        "published": true,
+        "synchronizing": false,
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost/api/v2/manager/r/repositories/123"
+          },
+          {
+            "rel": "repositoryList",
+            "href": "http://localhost/api/v2/manager/r/repositories"
+          }
+        ]
+      },
+      {
+        "id": 456,
+        "version": 5,
+        "publicationUri": "http://localhost/repo/anotherrepo",
+        "name": "Just another repository",
+        "serverAddress": "http://192.168.1.102/anotherrepo",
+        "deleted": false,
+        "published": false,
+        "synchronizing": true,
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost/api/v2/manager/r/repositories/456"
+          },
+          {
+            "rel": "repositoryList",
+            "href": "http://localhost/api/v2/manager/r/repositories"
+          }
+        ]
+      },
+      {
+        "id": 234,
+        "version": 12,
+        "publicationUri": "http://localhost/repo/testrepo234",
+        "name": "Test Repository 234",
+        "serverAddress": "http://192.168.1.101/testrepo234",
+        "deleted": true,
+        "published": false,
+        "synchronizing": false,
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost/api/v2/manager/r/repositories/234"
+          },
+          {
+            "rel": "repositoryList",
+            "href": "http://localhost/api/v2/manager/r/repositories"
+          }
+        ]
+      }
+    ],
+    "page": {
+      "size": 3,
+      "totalElements": 3,
+      "totalPages": 1,
+      "number": 0
+    }
+  }
+}

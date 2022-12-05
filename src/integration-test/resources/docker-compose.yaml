@@ -19,7 +19,7 @@ services:
       - oa-rdepot      
       
   repo:
-    image: openanalytics/rdepot-repo-it:1.6.2
+    image: openanalytics/rdepot-repo-it:1.7.0
     restart: always
     hostname: oa-rdepot-repo
     container_name: oa-rdepot-repo
@@ -80,7 +80,7 @@ services:
         ipv4_address: 192.168.49.17
  
   ldap:
-    image: openanalytics/rdepot-ldap-it:1.6.2
+    image: openanalytics/rdepot-ldap-it:1.7.0
     restart: unless-stopped
     hostname: oa-rdepot-ldap
     container_name: oa-rdepot-ldap
@@ -93,7 +93,7 @@ services:
       - oa-rdepot
       
   app:    
-    image: openanalytics/rdepot-app-it:1.6.2
+    image: openanalytics/rdepot-app-it:1.7.0
     restart: always
     hostname: oa-rdepot-app
     container_name: oa-rdepot-app
@@ -124,7 +124,7 @@ services:
         ipv4_address: 192.168.49.21      
                         
   app-openid:
-    image: openanalytics/rdepot-app-it:1.6.2
+    image: openanalytics/rdepot-app-it:1.7.0
     restart: always
     hostname: oa-rdepot-app-openid
     container_name: oa-rdepot-app-openid
@@ -151,7 +151,7 @@ services:
         ipv4_address: 192.168.49.22  
   
   app-keycloak:    
-    image: openanalytics/rdepot-app-it:1.6.2
+    image: openanalytics/rdepot-app-it:1.7.0
     restart: always
     hostname: oa-rdepot-app-keycloak
     container_name: oa-rdepot-app-keycloak
@@ -178,7 +178,7 @@ services:
         ipv4_address: 192.168.49.23   
       
   app-simple:
-    image: openanalytics/rdepot-app-it:1.6.2
+    image: openanalytics/rdepot-app-it:1.7.0
     restart: always
     hostname: oa-rdepot-app-simple
     container_name: oa-rdepot-app-simple
@@ -204,7 +204,7 @@ services:
         ipv4_address: 192.168.49.24   
           
   app-declarative:
-    image: openanalytics/rdepot-app-it:1.6.2
+    image: openanalytics/rdepot-app-it:1.7.0
     restart: always
     hostname: oa-rdepot-declarative
     container_name: oa-rdepot-declarative
@@ -223,26 +223,36 @@ services:
       timeout: 10s
       retries: 100 
     networks:
-      - oa-rdepot  
+      - oa-rdepot
+      
+  app-migrations:
+    image: openanalytics/rdepot-app-it:1.7.0
+    restart: always
+    hostname: oa-rdepot-migrations
+    container_name: oa-rdepot-migrations
+    volumes:
+      - ./docker/app/test_configs/test_migration.yml:/opt/rdepot/application.yml   
+      - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
+      - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro    
+    depends_on:
+      - db
+    environment:
+      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/migrations
+      - DB_USERNAME=postgres      
+    healthcheck:
+      test: ["CMD-SHELL", "if [ \"$$(curl -I localhost:8080 2>/dev/null | grep HTTP/1.1 | cut -d\" \" -f2)\" != \"302\" ]; then exit 1; else exit 0; fi;"]
+      interval: 10s
+      timeout: 10s
+      retries: 100 
+    networks:
+      - oa-rdepot
   
-  selenium-hub:
-    image: selenium/hub:3.141.59
-    container_name: oa-rdepot-selenium-hub
-    hostname: oa-rdepot-selenium-hub
+  selenium-chrome:
+    image: selenium/standalone-chrome
+    container_name: oa-rdepot-selenium-chrome
+    hostname: oa-rdepot-selenium-chrome
     ports:
       - 4444:4444
-    networks:
-      - oa-rdepot  
-  chrome:
-    image: selenium/node-chrome:3.141.59
-    container_name: oa-rdepot-chrome
-    hostname: oa-rdepot-chrome
-    depends_on:
-      - selenium-hub
-    environment:
-      - HUB_HOST=selenium-hub
-      - HUB_PORT=4444
-      - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
     networks:
       - oa-rdepot   
  

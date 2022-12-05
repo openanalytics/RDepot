@@ -32,10 +32,8 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -88,7 +86,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		FileReader reader = new FileReader(JSON_PATH + "/repository/created_repository.json");
 		JSONArray expectedJSON = (JSONArray) jsonParser.parse(reader);
 		
-		List<Set> expectedPackages = convertPackages(expectedJSON);
+		List<List> expectedPackages = convertPackages(expectedJSON);
 				
 		String data = given()
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -102,7 +100,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		
 		JSONArray actualJSON = (JSONArray) jsonParser.parse(data);
 		
-		List<Set> actualPackages = convertPackages(actualJSON);
+		List<List> actualPackages = convertPackages(actualJSON);
 
 		assertEquals("Repository creating caused some changes in packages", expectedPackages, actualPackages);
 		assertTrue("New repository hasn't been added", compare(expectedJSON, actualJSON));
@@ -129,10 +127,11 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 	@SuppressWarnings("rawtypes")
 	@Test
 	public void shouldEditRepository() throws IOException, ParseException {
-		Map<String, String> params = new HashMap<>();
+		Map<String, Object> params = new HashMap<>();
 		params.put("name", REPO_NAME_TO_EDIT);
 		params.put("publicationUri", "http://localhost/repo/" + REPO_NAME_TO_EDIT);
 		params.put("serverAddress", "http://oa-rdepot-repo:8080/" + REPO_NAME_TO_EDIT);
+		params.put("version", 31);
 		
 		given()
 			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
@@ -148,7 +147,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		FileReader reader = new FileReader(JSON_PATH + "/repository/edited_repository.json");
 		JSONArray expectedJSON = (JSONArray) jsonParser.parse(reader);
 		
-		List<Set> expectedPackages = convertPackages(expectedJSON);
+		List<List> expectedPackages = convertPackages(expectedJSON);
 		
 		String data = given()
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -162,7 +161,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		
 		JSONArray actualJSON = (JSONArray) jsonParser.parse(data);
 		
-		List<Set> actualPackages = convertPackages(actualJSON);
+		List<List> actualPackages = convertPackages(actualJSON);
 
 		assertEquals("Repository edition caused some changes in packages", expectedPackages, actualPackages);
 		assertTrue("Repository hasn't been edited", compare(expectedJSON, actualJSON));
@@ -193,7 +192,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		FileReader reader = new FileReader(JSON_PATH + "/repository/list_repositories.json");
 		JSONArray expectedJSON = (JSONArray) jsonParser.parse(reader);
 		
-		List<Set> expectedPackages = convertPackages(expectedJSON);
+		List<List> expectedPackages = convertPackages(expectedJSON);
 		
 		String data = given()
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -207,7 +206,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		
 		JSONArray actualJSON = (JSONArray) jsonParser.parse(data);
 		
-		List<Set> actualPackages = convertPackages(actualJSON);
+		List<List> actualPackages = convertPackages(actualJSON);
 
 		assertEquals("There are some differances in packages which admin sees", expectedPackages, actualPackages);
 		assertTrue("There are some differances in repositories which admin sees", compare(expectedJSON, actualJSON));
@@ -230,7 +229,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		FileReader reader = new FileReader(JSON_PATH + "/repository/published_repository.json");
 		JSONArray expectedJSON = (JSONArray) jsonParser.parse(reader);
 		
-		List<Set> expectedPackages = convertPackages(expectedJSON);
+		List<List> expectedPackages = convertPackages(expectedJSON);
 		
 		String data = given()
 			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
@@ -244,7 +243,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		
 		JSONArray actualJSON = (JSONArray) jsonParser.parse(data);
 		
-		List<Set> actualPackages = convertPackages(actualJSON);
+		List<List> actualPackages = convertPackages(actualJSON);
 
 		assertEquals("Repository publishing caused some changes in packages", expectedPackages, actualPackages);
 		assertTrue("Repository hasn't been published", compare(expectedJSON, actualJSON));
@@ -290,7 +289,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		FileReader reader = new FileReader(JSON_PATH + "/repository/unpublished_repository.json");
 		JSONArray expectedJSON = (JSONArray) jsonParser.parse(reader);
 		
-		List<Set> expectedPackages = convertPackages(expectedJSON);
+		List<List> expectedPackages = convertPackages(expectedJSON);
 		
 		String data = given()
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -304,10 +303,10 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		
 		JSONArray actualJSON = (JSONArray) jsonParser.parse(data);
 		
-		List<Set> actualPackages = convertPackages(actualJSON);
+		List<List> actualPackages = convertPackages(actualJSON);
 
 		assertEquals("Repository unpublishing caused some changes in packages", expectedPackages, actualPackages);
-		assertTrue("Repository hasn't been unpublished", compare(expectedJSON, actualJSON));
+		assertTrue("Repository hasn't been unpublished + expected: " + expectedJSON + " but was: " + actualJSON, compare(expectedJSON, actualJSON));
 	}
 
 	@Test
@@ -338,7 +337,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		FileReader reader = new FileReader(JSON_PATH + "/repository/repositories_without_one.json");
 		JSONArray expectedJSON = (JSONArray) jsonParser.parse(reader);
 		
-		List<Set> expectedPackages = convertPackages(expectedJSON);
+		List<List> expectedPackages = convertPackages(expectedJSON);
 		
 		String data = given()
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -352,7 +351,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		
 		JSONArray actualJSON = (JSONArray) jsonParser.parse(data);
 		
-		List<Set> actualPackages = convertPackages(actualJSON);
+		List<List> actualPackages = convertPackages(actualJSON);
 
 		assertEquals("Repository deletion caused some changes in packages in active repositories", expectedPackages, actualPackages);
 		assertTrue("Repository hasn't been removed", compare(expectedJSON, actualJSON));
@@ -382,7 +381,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		
 		FileReader reader = new FileReader(JSON_PATH + "/repository/packages_after_removing_unpublished_repository.json");
 		JSONArray expectedJSONArray = (JSONArray) jsonParser.parse(reader);
-		Set<JSONObject> expectedJSON = convert(expectedJSONArray);
+		List<JSONObject> expectedJSON = convert(expectedJSONArray);
 
 		String data = given()
 				.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -395,7 +394,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 			.asString();
 			
 		JSONArray actualJSONArray = (JSONArray) jsonParser.parse(data);
-		Set<JSONObject> actualJSON = convert(actualJSONArray);
+		List<JSONObject> actualJSON = convert(actualJSONArray);
 
 		assertEquals("Differences in packages", expectedJSON, actualJSON);
 	}
@@ -518,7 +517,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		FileReader reader = new FileReader(JSON_PATH + "/repository/repositories_without_one.json");
 		JSONArray expectedJSON = (JSONArray) jsonParser.parse(reader);
 		
-		List<Set> expectedPackages = convertPackages(expectedJSON);
+		List<List> expectedPackages = convertPackages(expectedJSON);
 		
 		String data = given()
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -532,7 +531,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		
 		JSONArray actualJSON = (JSONArray) jsonParser.parse(data);
 		
-		List<Set> actualPackages = convertPackages(actualJSON);
+		List<List> actualPackages = convertPackages(actualJSON);
 
 		assertEquals("Repository deletion caused some changes in packages in active repositories", expectedPackages, actualPackages);
 		assertTrue("Repository hasn't been removed", compare(expectedJSON, actualJSON));
@@ -557,15 +556,15 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 		.then()
 			.statusCode(403);
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private List<Set> convertPackages(JSONArray rootJSON) throws ParseException {
-		List<Set> JSON = new ArrayList<>();
+	private List<List> convertPackages(JSONArray rootJSON) throws ParseException {
+		List<List> JSON = new ArrayList<>();
 		
 		for(int i = 0; i < rootJSON.size(); i++) {
 			JSONObject repositoryJSON = (JSONObject) rootJSON.get(i);
 			JSONArray packagesJSON = (JSONArray) repositoryJSON.get("packages");
-			Set JSONSet = new HashSet<>();
+			List JSONSet = new ArrayList<>();
 			for(int k = 0; k < packagesJSON.size(); k++) {
 				JSONObject packageJSON = (JSONObject) packagesJSON.get(k);
 				JSONSet.add(packageJSON);

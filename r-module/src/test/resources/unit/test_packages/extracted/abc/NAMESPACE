@@ -1,0 +1,21 @@
+export(abc, cv4abc, postpr, cv4postpr, expected.deviance)
+importFrom(graphics, plot, points)
+importFrom(nnet, nnet, multinom)
+
+# abc S3methods
+S3method(print, abc)
+S3method(summary, abc) 
+S3method(hist, abc)
+S3method(plot, abc) 
+
+# cv4abc S3methods
+S3method(plot, cv4abc)
+S3method(summary, cv4abc)
+
+# postprob S3method
+S3method(summary, postpr)
+
+# cv4postpr S3methods
+S3method(plot, cv4postpr)
+S3method(summary, cv4postpr)
+

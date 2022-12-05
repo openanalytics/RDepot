@@ -4,6 +4,6 @@
     "message": "Validation failed for the resource.",
     "messageCode": "error.validation",
     "data": [
-        "Repository not found"
+        "could.not.resolve.related.entities: repository"
     ]
 } 

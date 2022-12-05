@@ -4,7 +4,7 @@ buildscript {
     }
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:2.5.12"
-        classpath("io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE")                   	    
+        classpath("io.spring.gradle:dependency-management-plugin:1.0.14.RELEASE")                   	    
     }
 }
 
@@ -16,12 +16,12 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'com.avast.gradle.docker-compose' version '0.14.3'
     id 'org.springframework.boot' version '2.5.12'
-    id "org.owasp.dependencycheck" version "6.0.5"
+    id "org.owasp.dependencycheck" version "7.3.2"
     id 'org.liquibase.gradle' version '2.0.4'
 }
 
 jar {
-	enabled = true
+	enabled = false
 }
 
 bootJar {
@@ -41,7 +41,7 @@ ext.buildTime = {
 }
 
 group = 'eu.openanalytics'
-ext.versionNumber = '1.6.2'
+ext.versionNumber = '1.7.0'
 ext.baseVersion = versionNumber
 version = versionNumber
 description = """rdepot"""
@@ -66,8 +66,8 @@ repositories {
 
 dependencies {
 	Map<String, String> dependencies = globalConf.commonDependencies
-	
-	testImplementation project('rdepot-app')
+	testImplementation project('rdepot-app')  	
+  	
 	testImplementation dependencies.sbStarterTest
 	testImplementation dependencies.springSecurityTest
 	testImplementation dependencies.restAssured
@@ -79,15 +79,19 @@ dependencies {
     testImplementation dependencies.testcontainers
     testImplementation dependencies.selenium
     testImplementation dependencies.chromeDriver
+    testImplementation dependencies.jacksonDatabind
+    testImplementation dependencies.jacksonCore
     
     liquibaseRuntime dependencies.liquibaseCore
 	liquibaseRuntime dependencies.postgresql
 	liquibaseRuntime dependencies.snakeYaml
 	liquibaseRuntime("ch.qos.logback:logback-core:1.2.3")
   	liquibaseRuntime("ch.qos.logback:logback-classic:1.2.3")           
-    
+
     testImplementation dependencies.awaitility
     testImplementation dependencies.commonsIO
+	testImplementation dependencies.greenmail
+	testImplementation dependencies.awaitility
 }
 
 sourceSets {
@@ -97,7 +101,6 @@ sourceSets {
 		}
 		java {
 			srcDir file('src/integration-test/java')
-			
 			compileClasspath += main.output + test.output
 			runtimeClasspath += main.output + test.output
 		}
@@ -127,7 +130,7 @@ allprojects {
 
 dependencyCheck {
     format='ALL'
-    suppressionFile='owasp-suppression.xml'
+    suppressionFile='owasp-suppression.xml'    
 }
 
 def props = new Properties()
@@ -261,6 +264,8 @@ tasks.findByName('build').dependsOn integrationTest
 tasks.findByName('build').dependsOn buildApp
 tasks.findByName('build').dependsOn buildRepo
 
+tasks.findByName('buildApp').dependsOn dependencyCheckAggregate
+
 build.dependsOn setHttpProxyFromEnv
 
 task publish {
@@ -293,5 +298,3 @@ ext.maven = {
         password = System.getenv("OA_NEXUS_PWD")
     }
 }
-
-check.dependsOn dependencyCheckAggregate

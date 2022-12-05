@@ -1,9 +1,9 @@
- {
-    "status": "error",
-    "code": 422,
-    "message": "Validation failed for the resource.",
-    "messageCode": "error.validation",
-    "data": [
-        "Repository not found"
-    ]
+{
+  "code": 422,
+  "data": [
+    "could.not.resolve.related.entities: repository"
+  ],
+  "messageCode": "error.validation",
+  "message": "Validation failed for the resource.",
+  "status": "error"
 }

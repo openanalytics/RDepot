@@ -31,8 +31,26 @@ hibernate:
   dialect: org.hibernate.dialect.PostgreSQLDialect
   show_sql: false
   
-# Enable Liquibase
+# Email related properties
 spring:
+  mail:
+    enabled: true
+    password: mysecretpassword
+    username: rdepot
+    host: 192.168.49.1
+    port: 3925
+
+# Enable Liquibase  
   liquibase:
     user: postgres
     enabled: true
+
+#logging:
+#  level:
+#    org:
+#      hibernate:
+#        SQL: DEBUG
+#      type:
+#        descriptor:
+#          sql:
+#            BasicBinder: TRACE

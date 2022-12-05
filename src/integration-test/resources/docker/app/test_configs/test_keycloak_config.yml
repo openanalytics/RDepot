@@ -31,6 +31,8 @@ hibernate:
   
 # Enable Liquibase
 spring:
+  mail:
+    enabled: false
   liquibase:
     user: postgres
     enabled: true         

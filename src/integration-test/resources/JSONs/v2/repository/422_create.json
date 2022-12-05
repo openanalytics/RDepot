@@ -1,1 +1,1 @@
-{"status":"error","code":422,"message":"Validation failed for the resource.","messageCode":"error.validation","data":["The repository already exists. Please use another name."]}
+{"code":422,"data":["duplicate.name"],"messageCode":"error.validation","message":"Validation failed for the resource.","status":"error"}

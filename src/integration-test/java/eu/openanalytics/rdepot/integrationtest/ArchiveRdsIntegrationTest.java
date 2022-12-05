@@ -54,7 +54,7 @@ private static final String API_PACKAGES_PATH = "/api/manager/packages";
     File packageBag = new File("src/integration-test/resources/itestPackages/A3_0.9.1.tar.gz");
 
     given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN).accept("application/json")
-        .contentType("multipart/form-data").multiPart("repository", "testrepo1")
+        .contentType("multipart/form-data").multiPart("repository", "testrepo1").multiPart("replace", true)
         .multiPart(new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
             .fileName(packageBag.getName()).mimeType("application/gzip").controlName("file")
             .build())

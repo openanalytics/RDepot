@@ -10,6 +10,10 @@ build/tmp
 build/publications
 app/build
 app/bin
+base/build
+base/bin
+r-module/build
+r-module/bin
 docker/proxy/logs
 repo/build
 repo/bin
@@ -27,3 +31,7 @@ src/integration-test/resources/itestServer
 src/integration-test/resources/itestSourceFiles
 src/integration-test/resources/itestPdf
 /build/
+repo/target
+app/target
+base/target
+r-module/target

@@ -24,12 +24,8 @@
                     <tbody>
                         <tr th:each="submission : ${submissions}">
                             <input type="hidden" th:id="'submission-' + ${submission.id}"/>
-                            <td class="mdl-data-table__cell--non-numeric submission-date">
-                                <div th:each="event : ${submission.getSubmissionEvents()}">
-                                    <div th:if="${event.getEvent().getValue().equals('create')}">
-                                        <span th:text="${event.getDate()}"></span>
-                                    </div>
-                                </div>
+                            <td class="mdl-data-table__cell--non-numeric submission-date">                                
+                            	<span th:text="${submission.getUploadDate()}"></span>                                
                             </td>
                             <td class="mdl-data-table__cell--non-numeric submission-package" th:text="${submission.getPackage().name} + ' ' + ${submission.getPackage().version}"></td>
                             <td class="mdl-data-table__cell--non-numeric submission-repository" th:text="${submission.getPackage().repository.name}"></td>
@@ -39,12 +35,12 @@
                             
                             <td class="mdl-data-table__cell--non-numeric">
                                 <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" th:for="'checkbox-' + ${submission.id}">
-                                    <input type="checkbox" th:id="'checkbox-' + ${submission.id}" class="mdl-checkbox__input" th:checked="${submission.isAccepted()}" disabled="disabled"/>
+                                    <input type="checkbox" th:id="'checkbox-' + ${submission.id}" class="mdl-checkbox__input" th:checked="${submission.getState().getValue().equals('accepted')}" disabled="disabled"/>
                                 </label>
                             </td>
                             <td class="mdl-data-table__cell--non-numeric">   
-                                <label class="mdl-button mdl-js-button accept-button" th:id="'accept-submission-button-' + ${submission.id}" th:if="${@userService.isAuthorizedToAccept(submission, user) && submission.isAccepted() == false}" th:onclick="'acceptSubmission(' + ${submission.id} + ')'">Accept</label>
-                                <label class="mdl-button mdl-js-button cancel-button" th:id="'cancel-submission-button-' + ${submission.id}" th:if="${@userService.isAuthorizedToCancel(submission, user) && submission.isAccepted() == false}" th:onclick="'cancelSubmission(' + ${submission.id} + ')'">Cancel</label>
+                                <label class="mdl-button mdl-js-button accept-button" th:id="'accept-submission-button-' + ${submission.id}" th:if="${@securityMediatorV1.isAuthorizedToAccept(submission, user) && submission.getState().getValue().equals('waiting')}" th:onclick="'acceptSubmission(' + ${submission.id} + ')'">Accept</label>
+                                <label class="mdl-button mdl-js-button cancel-button" th:id="'cancel-submission-button-' + ${submission.id}" th:if="${@securityMediatorV1.isAuthorizedToCancel(submission, user) && submission.getState().getValue().equals('waiting')}" th:onclick="'cancelSubmission(' + ${submission.id} + ')'">Cancel</label>
                             </td>
                             <!--th:disabled="${@userService.isAuthorizedToAccept(submission, submission.user) ? '' : 'disabled'}"-->
                         </tr>

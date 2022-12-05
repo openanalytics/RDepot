@@ -131,7 +131,7 @@ public class SimpleAuthenticationIntegrationTest {
       	
       	String errorMsg = driver.findElementById("error_message").getText();
 		
-		assertEquals("Wrong error message displayed", "doe: This account is inactive", errorMsg);
+		assertEquals("Wrong error message displayed", "User John Doe: This account is inactive.", errorMsg);
 		assertEquals("It hasn't stayed on login page", "RDepot - Login Page", title);
 	}
 }

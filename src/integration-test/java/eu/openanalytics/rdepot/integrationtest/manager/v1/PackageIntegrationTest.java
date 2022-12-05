@@ -30,7 +30,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Set;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONArray;
@@ -42,7 +42,6 @@ import org.springframework.http.MediaType;
 
 import eu.openanalytics.rdepot.integrationtest.IntegrationTest;
 import io.restassured.http.ContentType;
-import io.restassured.path.json.JsonPath;
 
 public class PackageIntegrationTest extends IntegrationTest {
 	
@@ -52,7 +51,6 @@ public class PackageIntegrationTest extends IntegrationTest {
 
 	private final String PACKAGES_PATH = "src/integration-test/resources/itestPackages";
 	private final String PDF_PATH = "src/integration-test/resources/itestPdf";
-	private final String PACKAGE_NAME = "A3";
 	
 	private final String PACKAGE_NAME_TO_DOWNLOAD = "accrued";
 	private final String PACKAGE_VERSION_TO_DOWNLOAD = "1.3";
@@ -78,7 +76,7 @@ public class PackageIntegrationTest extends IntegrationTest {
 		
 		FileReader reader = new FileReader(JSON_PATH + "/package/packages.json");
 		JSONArray rootJSON = (JSONArray) jsonParser.parse(reader);
-		Set<JSONObject> expectedJSON = convert(rootJSON);
+		List<JSONObject> expectedJSON = convert(rootJSON);
 		
 		String data = given()
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -92,7 +90,7 @@ public class PackageIntegrationTest extends IntegrationTest {
 			
 		rootJSON = (JSONArray) jsonParser.parse(data);
 
-		Set<JSONObject> actualJSON = convert(rootJSON);
+		List<JSONObject> actualJSON = convert(rootJSON);
 		
 		assertEquals("Differences in packages", expectedJSON, actualJSON);
 	}
@@ -103,7 +101,7 @@ public class PackageIntegrationTest extends IntegrationTest {
 		
 		FileReader reader = new FileReader(JSON_PATH + "/package/packages_from_one_repository.json");
 		JSONArray rootJSON = (JSONArray) jsonParser.parse(reader);
-		Set<JSONObject> expectedJSON = convert(rootJSON);
+		List<JSONObject> expectedJSON = convert(rootJSON);
 		
 		String data = given()
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -117,7 +115,7 @@ public class PackageIntegrationTest extends IntegrationTest {
 			
 		rootJSON = (JSONArray) jsonParser.parse(data);
 
-		Set<JSONObject> actualJSON = convert(rootJSON);
+		List<JSONObject> actualJSON = convert(rootJSON);
 		
 		assertEquals("Differences in packages", expectedJSON, actualJSON);
 	}
@@ -128,7 +126,7 @@ public class PackageIntegrationTest extends IntegrationTest {
 		
 		FileReader reader = new FileReader(JSON_PATH + "/package/deleted_packages.json");
 		JSONArray rootJSON = (JSONArray) jsonParser.parse(reader);
-		Set<JSONObject> expectedJSON = convert(rootJSON);
+		List<JSONObject> expectedJSON = convert(rootJSON);
 		
 		String data = given()
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -142,7 +140,7 @@ public class PackageIntegrationTest extends IntegrationTest {
 			
 		rootJSON = (JSONArray) jsonParser.parse(data);
 
-		Set<JSONObject> actualJSON = convert(rootJSON);
+		List<JSONObject> actualJSON = convert(rootJSON);
 		
 		assertEquals("Differences in deleted packages", expectedJSON, actualJSON);
 	}
@@ -154,31 +152,6 @@ public class PackageIntegrationTest extends IntegrationTest {
 			.accept(ContentType.JSON)
 		.when()
 			.get(API_PATH + "/deleted")
-		.then()
-			.statusCode(403);
-	}
-	
-	@Test
-	public void shouldReturnPackageEvents() {
-		JsonPath expectedJson = new JsonPath(new File(JSON_PATH + "/package/events_" + PACKAGE_NAME + ".json"));
-		
-		given()
-			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
-			.accept(ContentType.JSON)
-		.when()
-			.get(API_PATH + "/" + PACKAGE_OLDER_ID + "/events")
-		.then()
-			.statusCode(200)
-			.body("", equalTo(expectedJson.getMap("")));
-	}
-	
-	@Test
-	public void shouldNotReturnPackageEvents() {
-		given()
-			.header(AUTHORIZATION, BEARER + USER_TOKEN)
-			.accept(ContentType.JSON)
-		.when()
-			.get(API_PATH + "/" + PACKAGE_OLDER_ID + "/events")
 		.then()
 			.statusCode(403);
 	}
@@ -241,7 +214,7 @@ public class PackageIntegrationTest extends IntegrationTest {
 	
 		FileReader reader = new FileReader(JSON_PATH + "/package/activated_package.json");
 		JSONArray rootJSON = (JSONArray) jsonParser.parse(reader);
-		Set<JSONObject> expectedJSON = convert(rootJSON);
+		List<JSONObject> expectedJSON = convert(rootJSON);
 		
 		String data = given()
 			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
@@ -255,7 +228,7 @@ public class PackageIntegrationTest extends IntegrationTest {
 			
 		rootJSON = (JSONArray) jsonParser.parse(data);
 	
-		Set<JSONObject> actualJSON = convert(rootJSON);
+		List<JSONObject> actualJSON = convert(rootJSON);
 		
 		assertEquals("Package hasn't been activated or package maintainer can't do it", 
 				expectedJSON, actualJSON);
@@ -287,7 +260,7 @@ public class PackageIntegrationTest extends IntegrationTest {
 		
 		FileReader reader = new FileReader(JSON_PATH + "/package/deactivated_package.json");
 		JSONArray rootJSON = (JSONArray) jsonParser.parse(reader);
-		Set<JSONObject> expectedJSON = convert(rootJSON);
+		List<JSONObject> expectedJSON = convert(rootJSON);
 		
 		String data = given()
 			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
@@ -301,7 +274,7 @@ public class PackageIntegrationTest extends IntegrationTest {
 			
 		rootJSON = (JSONArray) jsonParser.parse(data);
 	
-		Set<JSONObject> actualJSON = convert(rootJSON);
+		List<JSONObject> actualJSON = convert(rootJSON);
 		
 		assertEquals("Package hasn't been activated or package maintainer hasn't got privileges to list of packages",
 				expectedJSON, actualJSON);
@@ -357,7 +330,7 @@ public class PackageIntegrationTest extends IntegrationTest {
 		.then()
 			.statusCode(403);
 	}
-
+	
 	@Test
 	public void shouldDeletePackage() throws IOException, ParseException {
 		given()
@@ -373,7 +346,7 @@ public class PackageIntegrationTest extends IntegrationTest {
 	
 		FileReader reader = new FileReader(JSON_PATH + "/package/deleted_packages_with_new_one.json");
 		JSONArray rootJSON = (JSONArray) jsonParser.parse(reader);
-		Set<JSONObject> expectedJSONDeleted = convert(rootJSON);
+		List<JSONObject> expectedJSONDeleted = convert(rootJSON);
 		
 		String data = given()
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -387,11 +360,11 @@ public class PackageIntegrationTest extends IntegrationTest {
 			
 		rootJSON = (JSONArray) jsonParser.parse(data);
 	
-		Set<JSONObject> actualJSONDeleted = convert(rootJSON);
+		List<JSONObject> actualJSONDeleted = convert(rootJSON);
 		
 		reader = new FileReader(JSON_PATH + "/package/packages_without_deleted_one.json");
 		rootJSON = (JSONArray) jsonParser.parse(reader);
-		Set<JSONObject> expectedJSON = convert(rootJSON);
+		List<JSONObject> expectedJSON = convert(rootJSON);
 		
 		data = given()
 			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
@@ -405,7 +378,7 @@ public class PackageIntegrationTest extends IntegrationTest {
 			
 		rootJSON = (JSONArray) jsonParser.parse(data);
 	
-		Set<JSONObject> actualJSON = convert(rootJSON);
+		List<JSONObject> actualJSON = convert(rootJSON);
 		
 		assertEquals("Package hasn't been added to the list of deleted packages", expectedJSONDeleted, actualJSONDeleted);
 		assertEquals("Package hasn't been removed from the list of packages", expectedJSON, actualJSON);
@@ -422,6 +395,7 @@ public class PackageIntegrationTest extends IntegrationTest {
 			.statusCode(403);
 	}	
 	
+	//TODO
 	@Test
 	public void shouldAdminShiftDeletePackage() throws IOException, ParseException {
 		given()
@@ -446,7 +420,7 @@ public class PackageIntegrationTest extends IntegrationTest {
 	
 		FileReader reader = new FileReader(JSON_PATH + "/package/deleted_packages_when_one_was_shift_deleted.json");
 		JSONArray rootJSON = (JSONArray) jsonParser.parse(reader);
-		Set<JSONObject> expectedJSONDeleted = convert(rootJSON);
+		List<JSONObject> expectedJSONDeleted = convert(rootJSON);
 		
 		String data = given()
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -460,11 +434,11 @@ public class PackageIntegrationTest extends IntegrationTest {
 			
 		rootJSON = (JSONArray) jsonParser.parse(data);
 	
-		Set<JSONObject> actualJSONDeleted = convert(rootJSON);
+		List<JSONObject> actualJSONDeleted = convert(rootJSON);
 		
 		reader = new FileReader(JSON_PATH + "/package/packages_without_deleted_one.json");
 		rootJSON = (JSONArray) jsonParser.parse(reader);
-		Set<JSONObject> expectedJSON = convert(rootJSON);
+		List<JSONObject> expectedJSON = convert(rootJSON);
 		
 		data = given()
 			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
@@ -478,7 +452,7 @@ public class PackageIntegrationTest extends IntegrationTest {
 			
 		rootJSON = (JSONArray) jsonParser.parse(data);
 	
-		Set<JSONObject> actualJSON = convert(rootJSON);
+		List<JSONObject> actualJSON = convert(rootJSON);
 		
 		assertEquals("Package hasn't been added to the list of deleted packages", expectedJSONDeleted, actualJSONDeleted);
 		assertEquals("Package hasn't been removed from the list of packages", expectedJSON, actualJSON);
@@ -523,5 +497,23 @@ public class PackageIntegrationTest extends IntegrationTest {
 			.statusCode(404);
 	}
 	
-	//TODO: negative test for shift deletion
+	@Test
+	public void nonAdminShouldNotShiftDeletePackage() {
+		given()
+			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.delete(API_PATH + "/" + PACKAGE_OLDER_ID + "/delete")
+		.then()
+			.statusCode(200)
+			.body("success", equalTo("Package deleted successfully."));
+		
+		given()
+			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.delete(API_PATH + "/" + PACKAGE_OLDER_ID + "/sdelete")
+		.then()
+			.statusCode(403);
+	}
 }

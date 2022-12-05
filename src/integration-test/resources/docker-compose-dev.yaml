@@ -18,13 +18,13 @@ services:
       - oa-rdepot
       
   app:
-    #    build: ./docker/app
-    image: openanalytics/rdepot-app-it:1.6.2
+    # build: ./docker/app
+    image: openanalytics/rdepot-app-it:1.7.0
     restart: always
     hostname: oa-rdepot-app
     container_name: oa-rdepot-app
     volumes:
-      #- ./docker/app/test_configs/test_declarative_config.yml:/opt/rdepot/application.yml #for declarative mode
+      #- ./docker/app/application.yml:/opt/rdepot/application.yml
       - ./docker/app/test_configs/test_ldap_config.yml:/opt/rdepot/application.yml #for regular mode
       - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
       - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
@@ -36,10 +36,10 @@ services:
       - 8019:8001
     depends_on:
       - db
-#      - keycloak
+      - ldap
+      #- keycloak
 #      - openid
     environment:
-      #- DB_URL=jdbc:postgresql://oa-rdepot-db:5432/declarative #for declarative mode
       - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/rdepot #for regular mode
       - DB_USERNAME=postgres
       - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8001
@@ -52,7 +52,7 @@ services:
       - oa-rdepot  
       
   repo:
-    image: openanalytics/rdepot-repo-it:1.6.2
+    image: openanalytics/rdepot-repo-it:1.7.0
     restart: always
     hostname: oa-rdepot-repo
     container_name: oa-rdepot-repo
@@ -112,13 +112,13 @@ services:
       #- PROXY_ADDRESS_FORWARDING=true
     #volumes:
     #- ./docker/keycloak/realm-rdepot.json:/opt/rdepot/realm-rdepot.json
-     #- ./docker/keycloak/test-realm-rdepot.json:/opt/rdepot/realm-rdepot.json
+     ##- ./docker/keycloak/test-realm-rdepot.json:/opt/rdepot/realm-rdepot.json
     #networks:
       #oa-rdepot:
         #ipv4_address: 192.168.49.17
  
   ldap:
-    image: openanalytics/rdepot-ldap-it:1.6.2
+    image: openanalytics/rdepot-ldap-it:1.7.0
     restart: unless-stopped
     hostname: oa-rdepot-ldap
     container_name: oa-rdepot-ldap
@@ -126,7 +126,7 @@ services:
       - LDAP_TLS=false
       - LDAP_ORGANISATION=Test Company
       - LDAP_DOMAIN=example.org
-      - LDAP_ADMIN_PASSWORD=testpassword 
+      - LDAP_ADMIN_PASSWORD=testpassword
     networks:
       - oa-rdepot
                    

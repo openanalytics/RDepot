@@ -22,52 +22,64 @@ package eu.openanalytics.rdepot.integrationtest.manager.v2;
 
 import org.junit.Test;
 
-import eu.openanalytics.rdepot.integrationtest.IntegrationTest;
-
 public class PackageMaintainerIntegrationTest extends IntegrationTest {
 	
 	public PackageMaintainerIntegrationTest() {
 		super("/api/v2/manager/r/package-maintainers");
 	}
 
+	private final int GET_ENDPOINT_NEW_EVENTS_AMOUNT = 0;
 	private final String PACKAGE_MAINTAINER_ONLY_FOR_ADMIN_ID = "3";
 	private final String PACKAGE_MAINTAINER_FOR_REPOSITORY_MAINTAINER_ID = "1";
 	
 	@Test
 	public void getAllMaintainers_asAdmin() throws Exception {
-		testGetEndpoint("/v2/package-maintainer/maintainers_asadmin.json", "?sort=id,asc", 200, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET, "/v2/package-maintainer/maintainers_asadmin.json", 
+				"?sort=id,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);		
 	}
 	
 	@Test
 	public void getAllMaintainers_asRepositoryMaintainer() throws Exception {
-		testGetEndpoint("/v2/package-maintainer/maintainers_asrepositorymaintainer.json", 
-				"?sort=id,asc", 200, REPOSITORYMAINTAINER_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET, "/v2/package-maintainer/maintainers_asrepositorymaintainer.json", 
+				"?sort=id,asc", 200, REPOSITORYMAINTAINER_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);		
 	}
 	
 	@Test
 	public void getAllMaintainers_returns401_whenUserIsNotAuthenticated() throws Exception {
-		testGetEndpointUnauthenticated("?sort=id,asc");
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET_UNAUTHENTICATED, 
+				"?sort=id,asc", GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
+	//TODO: error
 	@Test
 	public void getAllMaintainers_sortedByPackageName() throws Exception {
-		testGetEndpoint("/v2/package-maintainer/maintainers_sorted.json", "?sort=package,asc", 200, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET, "/v2/package-maintainer/maintainers_sorted.json", 
+				"?sort=packageName,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
 	public void getAllDeletedMaintainers() throws Exception {
-		testGetEndpoint("/v2/package-maintainer/maintainers_deleted.json", "?sort=id,asc&deleted=true", 200, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET, "/v2/package-maintainer/maintainers_deleted.json", 
+				"?sort=id,asc&deleted=true", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
 	public void getAllNonDeletedMaintainers() throws Exception {
-		testGetEndpoint("/v2/package-maintainer/maintainers_nondeleted.json", "?sort=id,asc&deleted=false", 200, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET, "/v2/package-maintainer/maintainers_nondeleted.json", 
+				"?sort=id,asc&deleted=false", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
 	public void getMaintainer() throws Exception {
-		testGetEndpoint("/v2/package-maintainer/maintainer_onlyadmin.json", 
-				"/" + PACKAGE_MAINTAINER_ONLY_FOR_ADMIN_ID, 200, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET, "/v2/package-maintainer/maintainer_onlyadmin.json", 
+				"/" + PACKAGE_MAINTAINER_ONLY_FOR_ADMIN_ID, 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);		
 	}
 	
 	@Test
@@ -84,7 +96,9 @@ public class PackageMaintainerIntegrationTest extends IntegrationTest {
 	
 	@Test
 	public void getMaintainer_returns401_whenUserIsNotAuthenticated() throws Exception {
-		testGetEndpointUnauthenticated("/1");
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET_UNAUTHENTICATED, 
+				"/1", GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
@@ -100,34 +114,50 @@ public class PackageMaintainerIntegrationTest extends IntegrationTest {
 	
 	@Test
 	public void shiftDeleteMaintainer_returns401_whenUserIsNotAuthenticated() throws Exception {
-		testDeleteEndpointUnauthenticated("/4");
-		testGetEndpoint("/v2/package-maintainer/maintainers_asadmin.json", "?sort=id,asc", 200, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.DELETE_UNAUTHENTICATED, 
+				"/4", GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
+		requestBody = new TestRequestBody(RequestType.GET, "/v2/package-maintainer/maintainers_asadmin.json", 
+				"?sort=id,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
 	public void shiftDeleteMaintainer_returns403_whenUserIsNotAdmin() throws Exception {
-		testDeleteEndpoint("/4", 403, REPOSITORYMAINTAINER_TOKEN);
-		testGetEndpoint("/v2/package-maintainer/maintainers_asadmin.json", "?sort=id,asc", 200, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.DELETE_UNAUTHORIZED, 
+				"/4", REPOSITORYMAINTAINER_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
+		requestBody = new TestRequestBody(RequestType.GET, "/v2/package-maintainer/maintainers_asadmin.json", 
+				"?sort=id,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
 	public void shiftDeleteMaintainer_returns404_whenMaintainerDoesNotExist() throws Exception {
-		testDeleteEndpoint("/4444", 404, ADMIN_TOKEN);
-		testGetEndpoint("/v2/package-maintainer/maintainers_asadmin.json", "?sort=id,asc", 200, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.DELETE, "/v2/403.json", 
+				"/4444", 404, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
+		requestBody = new TestRequestBody(RequestType.GET, "/v2/package-maintainer/maintainers_asadmin.json", 
+				"?sort=id,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
 	public void shiftDeleteMaintainer_returns404_whenMaintainerIsNotSetDeleted() throws Exception {
-		testDeleteEndpoint("/1", 404, ADMIN_TOKEN);
-		testGetEndpoint("/v2/package-maintainer/maintainers_asadmin.json", "?sort=id,asc", 200, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.DELETE, "/v2/403.json", 
+				"/1", 404, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
+		requestBody = new TestRequestBody(RequestType.GET, "/v2/package-maintainer/maintainers_asadmin.json", 
+				"?sort=id,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
 	public void createMaintainer() throws Exception {
-		final String body = "{\n"
-				+ "    \"userId\": 6,\n"
-				+ "    \"packageName\": \"A3\",\n"
-				+ "    \"repositoryId\": 2\n"
+		final String body = "{"				
+				+ "\"userId\": 6,"
+				+ "\"packageName\": \"A3\","
+				+ "\"repositoryId\": 2"
 				+ "}";
 		
 		testPostEndpoint(body, "/v2/package-maintainer/maintainer_created.json", 201, ADMIN_TOKEN);
@@ -136,47 +166,61 @@ public class PackageMaintainerIntegrationTest extends IntegrationTest {
 	
 	@Test
 	public void createMaintainer_returns401_whenUserIsUnauthenticated() throws Exception {
-		final String body = "{\n"
-				+ "    \"userId\": 6,\n"
-				+ "    \"packageName\": \"A3\",\n"
-				+ "    \"repositoryId\": 2\n"
+		final String body = "{"
+				+ "\"userId\": 6,"
+				+ "\"packageName\": \"A3\","
+				+ "\"repositoryId\": 2"
 				+ "}";
 		
-		testPostEndpoint_asUnauthenticated(body, "/v2/401.json", 401);
-		testGetEndpoint("/v2/package-maintainer/maintainers_asadmin.json", "?sort=id,asc", 200, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.POST_UNAUTHENTICATED, "",
+				GET_ENDPOINT_NEW_EVENTS_AMOUNT, body);
+		testEndpoint(requestBody);
+		requestBody = new TestRequestBody(RequestType.GET, "/v2/package-maintainer/maintainers_asadmin.json", 
+				"?sort=id,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
 	public void createMaintainer_returns403_whenUserIsNotAuthorized() throws Exception {
-		final String body = "{\n"
-				+ "    \"userId\": 6,\n"
-				+ "    \"packageName\": \"A3\",\n"
-				+ "    \"repositoryId\": 2\n"
+		final String body = "{"
+				+ "\"userId\": 6,"
+				+ "\"packageName\": \"A3\","
+				+ "\"repositoryId\": 2"
 				+ "}";
 		
-		testPostEndpoint(body, "/v2/403.json", 403, PACKAGEMAINTAINER_TOKEN);
-		testGetEndpoint("/v2/package-maintainer/maintainers_asadmin.json", "?sort=id,asc", 200, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.POST_UNAUTHORIZED, "", 
+				PACKAGEMAINTAINER_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT, body);
+		testEndpoint(requestBody);
+		requestBody = new TestRequestBody(RequestType.GET, "/v2/package-maintainer/maintainers_asadmin.json", 
+				"?sort=id,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
 	public void createMaintainer_returns422_whenValidationFails() throws Exception{
-		final String body = "{\n"
-				+ "    \"userId\": 6,\n"
-				+ "    \"packageName\": \"A3\",\n"
-				+ "    \"repositoryId\": 2222\n"
+		final String body = "{"
+				+ "\"userId\": 6,"
+				+ "\"packageName\": \"A3\","
+				+ "\"repositoryId\": 2222"
 				+ "}";
 		
-		testPostEndpoint(body, "/v2/package-maintainer/maintainer_validation_error.json", 422, ADMIN_TOKEN);
-		testGetEndpoint("/v2/package-maintainer/maintainers_asadmin.json", "?sort=id,asc", 200, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.POST, "/v2/package-maintainer/maintainer_validation_error.json", "", 422, 
+				ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT, body);
+		testEndpoint(requestBody);
+		requestBody = new TestRequestBody(RequestType.GET, "/v2/package-maintainer/maintainers_asadmin.json", 
+				"?sort=id,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
 	public void patchMaintainer() throws Exception {
-		final String patch = "[{\n"
-				+ "    \"op\": \"replace\",\n"
-				+ "    \"path\": \"/packageName\",\n"
-				+ "    \"value\": \"abc\"\n"
-				+ "}]";
+		final String patch = "["
+				+ "{"
+				+ "\"op\": \"replace\","
+				+ "\"path\": \"/packageName\","
+				+ "\"value\": \"abc\""
+				+ "}"
+				+ "]";
 		
 		testPatchEndpoint(patch, "/v2/package-maintainer/maintainer_patched.json", "/1", 200, ADMIN_TOKEN);
 		testGetEndpoint("/v2/package-maintainer/maintainer_after_patch.json", "/1", 200, ADMIN_TOKEN);
@@ -184,26 +228,38 @@ public class PackageMaintainerIntegrationTest extends IntegrationTest {
 	
 	@Test
 	public void patchMaintainer_returns401_whenUserIsUnauthenticated() throws Exception {
-		final String patch = "[{\n"
-				+ "    \"op\": \"replace\",\n"
-				+ "    \"path\": \"/packageName\",\n"
-				+ "    \"value\": \"abc\"\n"
-				+ "}]";
+		final String patch = "["
+				+ "{"
+				+ "\"op\": \"replace\","
+				+ "\"path\": \"/packageName\","
+				+ "\"value\": \"abc\""
+				+ "}"
+				+ "]";
 		
-		testPatchEndpointUnauthenticated(patch, "/1");
-		testGetEndpoint("/v2/package-maintainer/maintainers_asadmin.json", "?sort=id,asc", 200, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.PATCH_UNAUTHENTICATED, "/1",
+				GET_ENDPOINT_NEW_EVENTS_AMOUNT, patch);
+		testEndpoint(requestBody);
+		requestBody = new TestRequestBody(RequestType.GET, "/v2/package-maintainer/maintainers_asadmin.json", 
+				"?sort=id,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
 	public void patchMaintainer_returns403_whenUserIsNotAllowed() throws Exception {
-		final String patch = "[{\n"
-				+ "    \"op\": \"replace\",\n"
-				+ "    \"path\": \"/packageName\",\n"
-				+ "    \"value\": \"abc\"\n"
-				+ "}]";
+		final String patch = "["
+				+ "{"
+				+ "\"op\": \"replace\","
+				+ "\"path\": \"/packageName\","
+				+ "\"value\": \"abc\""
+				+ "}"
+				+ "]";
 		
-		testPatchEndpoint(patch, "/v2/403.json", "/1", 403, USER_TOKEN);
-		testGetEndpoint("/v2/package-maintainer/maintainers_asadmin.json", "?sort=id,asc", 200, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.POST_UNAUTHENTICATED, "/1", 
+				USER_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT, patch);
+		testEndpoint(requestBody);
+		requestBody = new TestRequestBody(RequestType.GET, "/v2/package-maintainer/maintainers_asadmin.json", 
+				"?sort=id,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
@@ -221,25 +277,36 @@ public class PackageMaintainerIntegrationTest extends IntegrationTest {
 	
 	@Test
 	public void patchMaintainer_returns404_whenMaintainerIsNotFound() throws Exception {
-		final String patch = "[{\n"
-				+ "    \"op\": \"replace\",\n"
-				+ "    \"path\": \"/packageName\",\n"
-				+ "    \"value\": \"abc\"\n"
-				+ "}]";
-		
-		testPatchEndpoint(patch, "/v2/package-maintainer/maintainer_notfound.json", "/11111", 404, ADMIN_TOKEN);
-		testGetEndpoint("/v2/package-maintainer/maintainers_asadmin.json", "?sort=id,asc", 200, ADMIN_TOKEN);
+		final String patch = "["
+				+ "{"
+				+ "\"op\": \"replace\","
+				+ "\"path\": \"/packageName\","
+				+ "\"value\": \"abc\""
+				+ "}"
+				+ "]";
+						
+		TestRequestBody requestBody = new TestRequestBody(RequestType.PATCH, "/v2/package-maintainer/maintainer_notfound.json", "/11111", 404, 
+				REPOSITORYMAINTAINER_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT, patch);
+		testEndpoint(requestBody);
+		requestBody = new TestRequestBody(RequestType.GET, "/v2/package-maintainer/maintainers_asadmin.json", 
+				"?sort=id,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);				
 	}
 	
 	@Test
 	public void patchMaintainer_returns422_whenValidationFails() throws Exception {
-		final String patch = "[{\n"
-				+ "    \"op\": \"replace\",\n"
-				+ "    \"path\": \"/repositoryId\",\n"
-				+ "    \"value\": \"222222\"\n"
-				+ "}]";
-		
-		testPatchEndpoint(patch, "/v2/package-maintainer/maintainer_validation_error.json", "/1", 422, ADMIN_TOKEN);
-		testGetEndpoint("/v2/package-maintainer/maintainers_asadmin.json", "?sort=id,asc", 200, ADMIN_TOKEN);
+		final String patch = "["
+				+ "{"
+				+ "\"op\": \"replace\","
+				+ "\"path\": \"/repositoryId\","
+				+ "\"value\": \"222222\""
+				+ "}"
+				+ "]";
+		TestRequestBody requestBody = new TestRequestBody(RequestType.PATCH, "/v2/package-maintainer/maintainer_validation_error.json", "/1", 422, 
+				REPOSITORYMAINTAINER_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT, patch);
+		testEndpoint(requestBody);
+		requestBody = new TestRequestBody(RequestType.GET, "/v2/package-maintainer/maintainers_asadmin.json", 
+				"?sort=id,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);	
 	}
 }

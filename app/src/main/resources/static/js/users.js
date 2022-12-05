@@ -2,7 +2,6 @@ var TOKEN = $("meta[name='_csrf']").attr("content"),
     HEADER = $("meta[name='_csrf_header']").attr("content"),
     ROLES = [];
 
-
 function showUserDialog(login) {
     var request = new XMLHttpRequest(),
         url = "/manager/users/" + login,
@@ -14,8 +13,8 @@ function showUserDialog(login) {
         if(this.readyState == 4 && this.status == 200) {
             userDetails = JSON.parse(this.responseText);
             var name = (userDetails.user.name == null ? '' : userDetails.user.name),
-                lastloginDate = (userDetails.lastloggedin == null ? '': userDetails.lastloggedin.valueAfter),
-                createdDate = (userDetails.created == null ? '' : (new Date(userDetails.created.date))),
+                lastloginDate = (userDetails.lastloggedin == null ? '': formatDateTimeFromISO(userDetails.lastloggedin)),
+                createdDate = (userDetails.created == null ? '' : formatDateTimeFromISO(userDetails.created)),
                 email = (userDetails.user == null ? '' : userDetails.user.email),
                 username = (userDetails.user == null ? '' : userDetails.user.login),
                 role = (userDetails.user == null ? '' : (userDetails.user.role == null ? '' : userDetails.user.role.description)),
@@ -63,6 +62,10 @@ function showUserDialog(login) {
     request.open("GET", url, true);
     request.setRequestHeader("Accept", "application/json");
     request.send();
+}
+
+function formatDateTimeFromISO(date){
+	return date.substr(0,16).replace("T", " ")
 }
 
 function changeActive(id) {

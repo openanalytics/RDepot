@@ -7,7 +7,7 @@ task restore {
 
         exec {
             executable "docker"
-            args "exec", "oa-rdepot-db", "su", "-", "postgres", "-c", "psql rdepot -c 'TRUNCATE public.user_event, public.package_event, public.package_maintainer_event, public.repository_event, public.repository_maintainer_event, public.submission_event, public.submission, public.repository_maintainer, public.package_maintainer, public.package, public.repository, public.api_token, public.user'; psql rdepot < /opt/sql_files/rdepot.sql"
+            args "exec", "oa-rdepot-db", "su", "-", "postgres", "-c", "psql rdepot -c 'TRUNCATE public.changed_variable, public.newsfeed_event, public.submission, public.repository_maintainer, public.package_maintainer, public.rpackage, public.package, public.rrepository, public.repository, public.api_token, public.user'; psql rdepot < /opt/sql_files/rdepot.sql"
         }		
 
         exec {
@@ -47,6 +47,27 @@ task backupDeclarative {
             args "exec", "oa-rdepot-db", "su", "-", "root", "-c", "pg_dump -U postgres declarative > /opt/declarative_ready.sql"
         }
     }	
+}
+
+task restoreDeclarativeDev {
+	doLast {	
+		exec {
+            executable "docker"
+            args "exec", "oa-rdepot-db", "su", "-", "postgres", "-c", "dropdb declarative; createdb declarative; psql declarative < /opt/declarative_ready.sql"
+        }
+        
+        exec {
+            executable "docker"
+            args "exec", "oa-rdepot-db", "su", "-", "root", "-c", "rm -f /opt/declarative_ready.sql"
+        }
+        
+        exec {
+            executable "docker"
+            args "exec", "oa-rdepot-app", "/bin/bash", "-c", "rm -rf /opt/rdepot/repositories; rm -rf /opt/rdepot/new; rm -rf /opt/rdepot/generated; mkdir -p /opt/rdepot/generated"
+        }
+        
+        println "Declarative restored"
+	}
 }
 
 task wait {
@@ -125,6 +146,15 @@ task checkIfSnapshotWasCreatedDeclarative {
 		exec {
 			executable "docker"
 			args "exec", "oa-rdepot-app-declarative", "/bin/bash", "-c", "cd /opt/rdepot/generated/2/"
+		}
+	}
+}
+
+task checkIfModulesMigrationWasSuccessful {
+	doLast {
+		exec {
+			executable "docker"
+			args "exec", "oa-rdepot-db", "/bin/bash", "-c", "psql -U postgres migrations -c 'TRUNCATE public.databasechangelog'; pg_dump -U postgres -h localhost migrations; echo ENDOFTESTCASE"
 		}
 	}
 }

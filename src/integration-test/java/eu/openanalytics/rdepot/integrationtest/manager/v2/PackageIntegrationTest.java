@@ -30,12 +30,14 @@ import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 
-import eu.openanalytics.rdepot.integrationtest.IntegrationTest;
 import io.restassured.http.ContentType;
 
 public class PackageIntegrationTest extends IntegrationTest {
 	private final String EXAMPLE_PACKAGE_ID = "17";
 	private final String DELETED_PACKAGE_ID = "14";
+	private final int GET_ENDPOINT_NEW_EVENTS_AMOUNT = 0;
+	private final int PATCH_ENDPOINT_NEW_EVENTS_AMOUNT = 1;
+	private final int DELETE_ENDPOINT_NEW_EVENTS_AMOUNT = -8;
 	
 	public PackageIntegrationTest() {
 		super("/api/v2/manager/r/packages");
@@ -43,69 +45,84 @@ public class PackageIntegrationTest extends IntegrationTest {
 	
 	@Test
 	public void getAllPackages() throws Exception {
-		testGetEndpoint("/v2/package/list_of_packages.json", 
-				"?sort=id,asc", 200, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET, "/v2/package/list_of_packages.json", 
+				"?sort=id,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
 	public void getOnlyFirstTwoPackagesFromSecondPage() throws Exception {
-		testGetEndpoint("/v2/package/list_of_two_packages.json", 
-				"?page=1&size=2&sort=id,asc", 200, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET, "/v2/package/list_of_two_packages.json", 
+				"?page=1&size=2&sort=id,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
-	public void getAllDeletedPackages_asAdmin() throws Exception {
-		testGetEndpoint("/v2/package/list_of_all_deleted_packages.json", 
-				"?deleted=true&sort=id,asc", 200, ADMIN_TOKEN);
+	public void getAllDeletedPackages_asAdmin() throws Exception {	
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET, "/v2/package/list_of_all_deleted_packages.json", 
+				"?deleted=true&sort=id,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
 	public void getAllDeletedPackages_asUser() throws Exception {
-		testGetEndpoint("/v2/package/list_of_all_deleted_packages.json", 
-				"?deleted=true&sort=id,asc", 200, USER_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET, "/v2/package/list_of_all_deleted_packages.json", 
+				"?deleted=true&sort=id,asc", 200, USER_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
 	public void getAllPackages_byRepositoryName() throws Exception {
-		testGetEndpoint("/v2/package/list_of_all_packages_testrepo3.json", 
-				"?repositoryName=testrepo3&sort=id,asc", 200, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET, "/v2/package/list_of_all_packages_testrepo3.json", 
+				"?repositoryName=testrepo3&sort=id,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
 	public void getAllDeletedPackages_byRepositoryName() throws Exception {
-		testGetEndpoint("/v2/package/empty_list.json", 
-				"?repositoryName=testrepo3&deleted=true", 200, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET, "/v2/package/empty_list.json", 
+				"?repositoryName=testrepo3&deleted=true", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
 	public void getAllPackages_asUnauthenticated() throws Exception {
-		testGetEndpointUnauthenticated("");
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET_UNAUTHENTICATED,"", GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
 	public void getPackage() throws Exception {
-		testGetEndpoint("/v2/package/example_package.json", 
-				"/" + EXAMPLE_PACKAGE_ID, 200, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET,"/v2/package/example_package.json", 
+				"/" + EXAMPLE_PACKAGE_ID, 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
 	public void getPackage_returns401_whenUserIsNotAuthenticated() throws Exception {
-		testGetEndpointUnauthenticated("/" + EXAMPLE_PACKAGE_ID);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET_UNAUTHENTICATED,"/" + EXAMPLE_PACKAGE_ID, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
 	public void getPackage_returns404_whenPackageIsNotFound() throws Exception {
-		testGetEndpoint("/v2/package/notfound.json", "/1234567", 404, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET,"/v2/package/notfound.json", "/1234567", 404, 
+				ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
 	public void getDeletedPackage_asAdmin() throws Exception {
-		testGetEndpoint("/v2/package/deleted_package.json", "/" + DELETED_PACKAGE_ID, 200, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET,"/v2/package/deleted_package.json", "/" + DELETED_PACKAGE_ID, 200, 
+				ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
 	public void getDeletedPackage_asUser() throws Exception {
-		testGetEndpoint("/v2/package/deleted_package.json", "/" + DELETED_PACKAGE_ID, 200, USER_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET,"/v2/package/deleted_package.json", "/" + DELETED_PACKAGE_ID, 200, 
+				USER_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
@@ -118,8 +135,13 @@ public class PackageIntegrationTest extends IntegrationTest {
 				+ "}"
 				+ "]";
 		
-		testPatchEndpoint(patch, "/v2/package/patched_package.json", "/" + EXAMPLE_PACKAGE_ID, 200, ADMIN_TOKEN);
-		testGetEndpoint("/v2/package/package_after_patch.json", "/" + EXAMPLE_PACKAGE_ID, 200, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.PATCH, "/v2/package/patched_package.json",  "/" + EXAMPLE_PACKAGE_ID, 200, 
+				ADMIN_TOKEN, PATCH_ENDPOINT_NEW_EVENTS_AMOUNT, "/v2/events/packages/activate_package_event.json", patch);
+		testEndpoint(requestBody);
+		
+		requestBody = new TestRequestBody(RequestType.GET,"/v2/package/package_after_patch.json", "/" + EXAMPLE_PACKAGE_ID, 200, 
+				ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
@@ -132,9 +154,13 @@ public class PackageIntegrationTest extends IntegrationTest {
 				+ "}"
 				+ "]";
 		
-		testPatchEndpoint(patch, "/v2/package/notfound.json", "/1321321321", 404, ADMIN_TOKEN);
-		testGetEndpoint("/v2/package/list_of_packages.json", 
-				"?sort=id,asc", 200, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.PATCH,  "/v2/package/notfound.json", "/1321321321", 404, 
+				ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT, patch);
+		testEndpoint(requestBody);
+		
+		requestBody = new TestRequestBody(RequestType.GET,"/v2/package/list_of_packages.json", 
+				"?sort=id,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
@@ -147,9 +173,13 @@ public class PackageIntegrationTest extends IntegrationTest {
 				+ "}"
 				+ "]";
 		
-		testPatchEndpoint(patch, "/v2/403.json", "/" + EXAMPLE_PACKAGE_ID, 403, USER_TOKEN);
-		testGetEndpoint("/v2/package/list_of_packages.json", 
-				"?sort=id,asc", 200, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.PATCH,  "/v2/403.json", "/" + EXAMPLE_PACKAGE_ID, 403, 
+				USER_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT, patch);
+		testEndpoint(requestBody);
+		
+		requestBody = new TestRequestBody(RequestType.GET,"/v2/package/list_of_packages.json", 
+				"?sort=id,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
@@ -162,9 +192,14 @@ public class PackageIntegrationTest extends IntegrationTest {
 				+ "}"
 				+ "]";
 		
-		testPatchEndpointUnauthenticated(patch, "/" + EXAMPLE_PACKAGE_ID);
-		testGetEndpoint("/v2/package/list_of_packages.json", 
-				"?sort=id,asc", 200, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.PATCH_UNAUTHENTICATED, "/" + EXAMPLE_PACKAGE_ID, 
+				GET_ENDPOINT_NEW_EVENTS_AMOUNT, patch);
+		testEndpoint(requestBody);
+		
+		requestBody = new TestRequestBody(RequestType.GET,"/v2/package/list_of_packages.json", 
+				"?sort=id,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
+		
 	}
 	
 	@Test
@@ -177,9 +212,32 @@ public class PackageIntegrationTest extends IntegrationTest {
 				+ "}"
 				+ "]";
 		
-		testPatchEndpoint(patch, "/v2/malformed_patch.json", "/" + EXAMPLE_PACKAGE_ID, 422, ADMIN_TOKEN);
-		testGetEndpoint("/v2/package/list_of_packages.json", 
-				"?sort=id,asc", 200, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.PATCH,  "/v2/malformed_patch.json", "/" + EXAMPLE_PACKAGE_ID, 422, 
+				ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT, patch);
+		testEndpoint(requestBody);
+		
+		requestBody = new TestRequestBody(RequestType.GET, "/v2/package/list_of_packages.json", 
+				"?sort=id,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
+	}
+	
+	@Test
+	public void patchPackage_returns422_whenPatchIsForbidden() throws Exception {
+		final String patch = "["
+				+ "{"
+				+ "\"op\": \"replace\","
+				+ "\"path\":\"/name\","
+				+  "\"value\":\"newName\""
+				+ "}"
+				+ "]";
+		
+		TestRequestBody requestBody = new TestRequestBody(RequestType.PATCH,  "/v2/package/forbidden_update.json", "/" + EXAMPLE_PACKAGE_ID, 422, 
+				ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT, patch);
+		testEndpoint(requestBody);
+		
+		requestBody = new TestRequestBody(RequestType.GET, "/v2/package/list_of_packages.json", 
+				"?sort=id,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
@@ -192,29 +250,46 @@ public class PackageIntegrationTest extends IntegrationTest {
 				+ "}"
 				+ "]";
 		
-		testPatchEndpoint(patch, "/v2/package/package_validation_error.json", "/" + EXAMPLE_PACKAGE_ID, 422, ADMIN_TOKEN);		
-		testGetEndpoint("/v2/package/list_of_packages.json", 
-				"?sort=id,asc", 200, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.PATCH,   "/v2/package/package_validation_error.json", "/" + EXAMPLE_PACKAGE_ID, 422, 
+				ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT, patch);
+		testEndpoint(requestBody);
+		
+		requestBody = new TestRequestBody(RequestType.GET, "/v2/package/list_of_packages.json", 
+				"?sort=id,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
 	public void shiftDeletePackage() throws Exception {
-		testDeleteEndpoint("/" + DELETED_PACKAGE_ID, 204, ADMIN_TOKEN);
-		testGetEndpoint("/v2/package/notfound.json", "/" + DELETED_PACKAGE_ID, 404, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.DELETE,   "/" + DELETED_PACKAGE_ID, 204, 
+				ADMIN_TOKEN, DELETE_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
+		
+		requestBody = new TestRequestBody(RequestType.GET, "/v2/package/notfound.json", "/" + DELETED_PACKAGE_ID, 404, 
+				ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
 	public void shiftDeletePackage_returns403_whenUserIsNotAdmin() throws Exception {
-		testDeleteEndpoint("/" + DELETED_PACKAGE_ID, 403, USER_TOKEN);
-		testGetEndpoint("/v2/package/list_of_packages.json", 
-				"?sort=id,asc", 200, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.DELETE,   "/" + DELETED_PACKAGE_ID, 403, 
+				USER_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
+		
+		requestBody = new TestRequestBody(RequestType.GET, "/v2/package/list_of_packages.json", 
+				"?sort=id,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
 	public void shiftDeletePackage_returns404_whenPackageIsNotFound() throws Exception {
-		testDeleteEndpoint("/" + EXAMPLE_PACKAGE_ID, 404, ADMIN_TOKEN);
-		testGetEndpoint("/v2/package/list_of_packages.json", 
-				"?sort=id,asc", 200, ADMIN_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.DELETE,   "/" + EXAMPLE_PACKAGE_ID, 404, 
+				ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
+		
+		requestBody = new TestRequestBody(RequestType.GET, "/v2/package/list_of_packages.json", 
+				"?sort=id,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test
@@ -223,7 +298,7 @@ public class PackageIntegrationTest extends IntegrationTest {
 				.header(AUTHORIZATION, BEARER + USER_TOKEN)
 				.accept(ContentType.BINARY)
 			.when()
-				.get(API_PATH + "/17/manual")
+				.get(apiPath + "/17/manual")
 			.then()
 				.statusCode(200)
 				.extract()
@@ -238,7 +313,7 @@ public class PackageIntegrationTest extends IntegrationTest {
 				.header(AUTHORIZATION, BEARER + USER_TOKEN)
 				.accept(MediaType.APPLICATION_PDF_VALUE)
 			.when()
-				.get(API_PATH + "/25/vignettes/usl.pdf")
+				.get(apiPath + "/25/vignettes/usl.pdf")
 			.then()
 				.statusCode(200)
 				.extract()
@@ -251,6 +326,8 @@ public class PackageIntegrationTest extends IntegrationTest {
 	
 	@Test
 	public void getVignetteLinks() throws Exception {
-		testGetEndpoint("/v2/package/vignettes.json", "/25/vignettes", 200, USER_TOKEN);
+		TestRequestBody requestBody = new TestRequestBody(RequestType.GET,  "/v2/package/vignettes.json", "/25/vignettes", 200, 
+				USER_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 }

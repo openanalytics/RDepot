@@ -13,20 +13,22 @@ declarative: false
 #    server-address: http://oa-rdepot-repo:8080/D
 
 # Email related properties
-email:
-  enabled: false
-  password:
-  username:
-  from:
-  smtp:
-    host:
-    port:
-    auth:
-    starttls:
+spring:
+  mail:
+    enabled: false
+    password: mysecretpassword
+    username: rdepot
+    host: 192.168.49.1
+    port: 3925
 
+# Enable Liquibase  
+  liquibase:
+    user: postgres
+    enabled: true    
+    
 # Authentication related properties
 app:  
-  authentication: ldap
+  authentication: simple
 # LDAP related properties 
   ldap:
     url: ldap://oa-rdepot-ldap:389
@@ -69,7 +71,7 @@ app:
     delete_cookies:
       - name: _session
       - name: _state.rdepot
-    name-mapping: "{givenName} {familyName}"  
+    name-mapping: "{fullName}"  
     
 # Simple authentication related properties
   simple:
@@ -107,9 +109,3 @@ db:
 hibernate:
   dialect: org.hibernate.dialect.PostgreSQLDialect
   show_sql: false  
-
-# Enable Liquibase  
-spring:
-  liquibase:
-    user: postgres
-    enabled: true

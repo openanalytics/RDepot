@@ -32,18 +32,11 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.web.context.WebApplicationContext;
 
-/**
- * @author jonas
- *
- */
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = {MultipartAutoConfiguration.class})
 @EnableConfigurationProperties(KeycloakSpringBootProperties.class)
 public class Application extends SpringBootServletInitializer {	
-	
-	/**
-	 * @param args
-	 */
+
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 	}

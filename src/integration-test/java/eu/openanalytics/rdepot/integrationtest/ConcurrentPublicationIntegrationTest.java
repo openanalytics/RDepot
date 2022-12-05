@@ -30,7 +30,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -55,6 +57,7 @@ public class ConcurrentPublicationIntegrationTest extends IntegrationTest {
 	private static final String PUBLICATION_URI_PATH = "/repo";
 
 	private static final Integer THREAD_COUNT = 20;
+	private static final String REPO_NAME_TO_CREATE = "newRepository";
 		
 	@Test
 	public void shouldPublishRepositoryInParallel() throws InterruptedException, ExecutionException {
@@ -108,9 +111,38 @@ public class ConcurrentPublicationIntegrationTest extends IntegrationTest {
 	@Test
 	public void shouldSubmitMultiplePackagesAtOnce() 
 			throws IOException, InterruptedException, ExecutionException {
+		
+		Map<String, String> params = new HashMap<>();
+		params.put("name", REPO_NAME_TO_CREATE);
+		params.put("publicationUri", "http://localhost/repo/" + REPO_NAME_TO_CREATE);
+		params.put("serverAddress", "http://oa-rdepot-repo:8080/" + REPO_NAME_TO_CREATE);
+		
+		given()
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.contentType(ContentType.JSON)
+			.accept(ContentType.JSON)
+			.body(params)
+		.when()
+			.post(API_PATH + "/create")
+		.then()
+			.statusCode(200);
+		
 		String[] PACKAGES = {"visdat_0.1.0.tar.gz", 
 				"npordtests_1.1.tar.gz",
-				"bipartite_2.13.tar.gz"};
+				"bipartite_2.13.tar.gz",
+				"A3_0.9.2.tar.gz",
+				"abc_1.3.tar.gz",
+				"accrued_1.4.tar.gz",
+				"usl_2.0.0.tar.gz"};
+		
+		given()
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.patch(API_PATH + "/8/publish")
+		.then()
+			.statusCode(200)
+		.body("success", equalTo("Repository has been published successfully."));
 		
 		List<Future<String>> futures = new ArrayList<>();
 		CountDownLatch latch = new CountDownLatch(1);
@@ -127,7 +159,8 @@ public class ConcurrentPublicationIntegrationTest extends IntegrationTest {
 						.headers(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 						.accept("application/json")
 						.contentType("multipart/form-data")
-						.multiPart("repository", "testrepo1")
+						.multiPart("repository", REPO_NAME_TO_CREATE)
+						.multiPart("generateManual", false)
 						.multiPart(new MultiPartSpecBuilder(Files.readAllBytes(packageFile.toPath()))
 								.fileName(packageFile.getName())
 								.mimeType("application/gzip")
@@ -142,7 +175,7 @@ public class ConcurrentPublicationIntegrationTest extends IntegrationTest {
 					byte[] uploadedPackage = given()
 							.accept(ContentType.BINARY)
 						.when()
-							.get(PUBLICATION_URI_PATH + "/testrepo1/src/contrib/" + packageName)
+							.get(PUBLICATION_URI_PATH + "/" + REPO_NAME_TO_CREATE + "/src/contrib/" + packageName)
 							.asByteArray();
 					
 					byte[] expectedPackage = Files.readAllBytes(packageFile.toPath());

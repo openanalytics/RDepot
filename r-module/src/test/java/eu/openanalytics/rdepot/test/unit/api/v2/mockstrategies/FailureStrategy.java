@@ -1,0 +1,63 @@
+/**
+ * R Depot
+ *
+ * Copyright (C) 2012-2022 Open Analytics NV
+ *
+ * ===========================================================================
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the Apache License as published by
+ * The Apache Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * Apache License for more details.
+ *
+ * You should have received a copy of the Apache License
+ * along with this program.  If not, see <http://www.apache.org/licenses/>
+ */
+package eu.openanalytics.rdepot.test.unit.api.v2.mockstrategies;
+
+import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
+import eu.openanalytics.rdepot.base.entities.Resource;
+import eu.openanalytics.rdepot.base.entities.User;
+import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
+import eu.openanalytics.rdepot.base.service.Service;
+import eu.openanalytics.rdepot.base.strategy.Strategy;
+import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
+import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure;
+
+public class FailureStrategy<T extends Resource> extends Strategy<T>{
+
+	public FailureStrategy(T resource, NewsfeedEventService eventService, Service<T> service, User requester) {
+		super(resource, service, requester, eventService);
+		// TODO Auto-generated constructor stub
+	}
+	
+	@Override
+	protected T actualStrategy() throws StrategyFailure {
+		// TODO Auto-generated method stub
+			throw new StrategyFailure(new Exception(""));
+	}
+
+	@Override
+	protected void postStrategy() throws StrategyFailure {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void revertChanges() throws StrategyReversionFailure {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	protected NewsfeedEvent generateEvent(T resource) {
+		// TODO Auto-generated method stub
+		return null;
+	}	
+}

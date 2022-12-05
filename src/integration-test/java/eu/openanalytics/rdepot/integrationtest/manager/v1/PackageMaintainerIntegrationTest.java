@@ -47,12 +47,12 @@ public class PackageMaintainerIntegrationTest extends IntegrationTest {
 	}
 
 	private final String FIRST_REPO_ID = "2";
-	private final String FOURTH_REPO_ID = "5";
+	private final String FOURTH_REPO_ID = "2";
 		
 	private final String USER_ID_TO_CREATE = "6";
-	private final String PACKAGEMAINTAINER_ID_TO_DELETE = "2";
-	private final String PACKAGEMAINTAINER_ID_TO_EDIT = "2";
-	private final String PACKAGEMAINTAINER_ID_TO_RECREATE = "5";
+	private final String PACKAGEMAINTAINER_ID_TO_DELETE = "1";
+	private final String PACKAGEMAINTAINER_ID_TO_EDIT = "5";
+	private final String PACKAGEMAINTAINER_ID_TO_RECREATE = "6";
 	
 	private final String PACKAGE_NAME_TO_CREATE = "usl";
 	private final String PACKAGE_NAME_TO_EDIT = "abc";
@@ -76,7 +76,7 @@ public class PackageMaintainerIntegrationTest extends IntegrationTest {
 		
 		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 
-		assertTrue("Differences in JSON view by Repository Maintainer", compareArrays(expectedJSON, actualJSON));
+		assertTrue("Differences in JSON view by Repository Maintainer, expected: " +  expectedJSON + " but was: " + actualJSON, compareArrays(expectedJSON, actualJSON));
 		assertFalse("Repository Maintainer can see JSON only allowed to Admin", compareArrays(wrongJSON, actualJSON));
 	}
 	
@@ -108,7 +108,7 @@ public class PackageMaintainerIntegrationTest extends IntegrationTest {
 		
 		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 
-		assertTrue("Differences in deleted package maintainers JSON", compareArrays(expectedJSON, actualJSON));
+		assertTrue("Differences in deleted package maintainers JSON, expected: " + expectedJSON + " but was: " + actualJSON, compareArrays(expectedJSON, actualJSON));
 	}
 	
 	@Test
@@ -142,7 +142,7 @@ public class PackageMaintainerIntegrationTest extends IntegrationTest {
 		
 		JsonObject actualJSON = (JsonObject) JsonParser.parseString(data);
 		
-		assertTrue("There are some differencess in the package maintainer list viewed by repository maintianer", compareListOfMaintainersFromGetMaintainers(expectedJSON, actualJSON));
+		assertTrue("There are some differencess in the package maintainer list viewed by repository maintianer, expected: " + expectedJSON + " but was: " + actualJSON , compareListOfMaintainersFromGetMaintainers(expectedJSON, actualJSON));
 		assertFalse("Probably the package maintainer list is viewed by admin", compareListOfMaintainersFromGetMaintainers(wrongJSON, actualJSON));
 	}
 	
@@ -189,7 +189,7 @@ public class PackageMaintainerIntegrationTest extends IntegrationTest {
 		
 		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 
-		assertTrue("New package maintainer hasn't been created", compareArrays(expectedJSON, actualJSON));
+		assertTrue("New package maintainer hasn't been created, expected: " + expectedJSON + " but was: " + actualJSON, compareArrays(expectedJSON, actualJSON));
 	}
 	
 	@Test
@@ -209,7 +209,7 @@ public class PackageMaintainerIntegrationTest extends IntegrationTest {
 		.then()
 			.statusCode(403);
 	}
-	
+
 	@Test
 	public void shouldEditPackageMaintainer() throws IOException, ParseException {
 		Map<String, String> params = new HashMap<>();
@@ -241,7 +241,7 @@ public class PackageMaintainerIntegrationTest extends IntegrationTest {
 			
 		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 
-		assertTrue("Package maintainer hasn't been changed", compareArrays(expectedJSON, actualJSON));
+		assertTrue("Package maintainer hasn't been changed, expected: " + expectedJSON + " but was: " + actualJSON, compareArrays(expectedJSON, actualJSON));
 	}
 	
 	@Test
@@ -301,10 +301,10 @@ public class PackageMaintainerIntegrationTest extends IntegrationTest {
 		
 		JsonArray actualDeleted = (JsonArray) JsonParser.parseString(deleted);
 
-		assertTrue("'Deleted' package maintainer still exists in the list of package maintainers", compareArrays(expectedJSON, actualJSON));
-		assertTrue("'Deleted' package maintainer hasn't been added to the list of deleted ones", compareArrays(expectedDeleted, actualDeleted));
+		assertTrue("'Deleted' package maintainer still exists in the list of package maintainers, expected: " + expectedJSON + " but was: " + actualJSON, compareArrays(expectedJSON, actualJSON));
+		assertTrue("'Deleted' package maintainer hasn't been added to the list of deleted ones, expected: " + expectedDeleted + " but was: "  + actualDeleted, compareArrays(expectedDeleted, actualDeleted));
 	}
-	
+
 	@Test
 	public void shouldAdminShiftDeletePackageMaintainer() throws IOException, ParseException {		
 		given()
@@ -323,7 +323,7 @@ public class PackageMaintainerIntegrationTest extends IntegrationTest {
 		.then()
 			.statusCode(200);
 		
-		FileReader reader = new FileReader(JSON_PATH + "/packageMaintainer/list_package_maintainers_without_one.json");
+		FileReader reader = new FileReader(JSON_PATH + "/packageMaintainer/list_package_maintainers_without_one_shift_deleted.json");
 		JsonArray expectedJSON = (JsonArray) JsonParser.parseReader(reader);
 		
 		String data = given()
@@ -338,7 +338,7 @@ public class PackageMaintainerIntegrationTest extends IntegrationTest {
 		
 		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 		
-		reader = new FileReader(JSON_PATH + "/packageMaintainer/deleted_package_maintainers.json");
+		reader = new FileReader(JSON_PATH + "/packageMaintainer/deleted_package_maintainers_with_new_one_shift_deleted.json");
 		JsonArray expectedDeleted = (JsonArray) JsonParser.parseReader(reader);
 		
 		String deleted = given()
@@ -353,8 +353,8 @@ public class PackageMaintainerIntegrationTest extends IntegrationTest {
 		
 		JsonArray actualDeleted = (JsonArray) JsonParser.parseString(deleted);
 
-		assertTrue("'Shift deleted' package maintainer still exists in the list of package maintainers", compareArrays(expectedJSON, actualJSON));
-		assertTrue("'Shift deleted' package maintainer can't be added to the list of deleted ones", compareArrays(expectedDeleted, actualDeleted));
+		assertTrue("'Shift deleted' package maintainer still exists in the list of package maintainers, expected: " + expectedJSON + " but was: " + actualJSON, compareArrays(expectedJSON, actualJSON));
+		assertTrue("'Shift deleted' package maintainer can't be added to the list of deleted ones, expected: " + expectedDeleted + " but was: " + actualDeleted, compareArrays(expectedDeleted, actualDeleted));
 	}
 	
 	@Test
@@ -371,8 +371,8 @@ public class PackageMaintainerIntegrationTest extends IntegrationTest {
 	@Test
 	public void shouldRecreatePackageMaintainer() throws FileNotFoundException, ParseException {
 		Map<String, String> params = new HashMap<>();
-		params.put("userId", USER_ID_TO_CREATE);
-		params.put("repositoryId", FIRST_REPO_ID);
+		params.put("userId", USER_ID_TO_CREATE); 
+		params.put("repositoryId", FIRST_REPO_ID); 
 		params.put("packageName", PACKAGE_NAME_TO_CREATE);
 		
 		given()
@@ -433,8 +433,8 @@ public class PackageMaintainerIntegrationTest extends IntegrationTest {
 		
 		JsonArray actualDeleted = (JsonArray) JsonParser.parseString(deleted);
 
-		assertTrue("'Reacreated' package maintainer hasn't been added to the list of package maintainers", compareArrays(expectedJSON, actualJSON));
-		assertTrue("'Reacreated' package maintainer still exists in the list of deleted ones", compareArrays(expectedDeleted, actualDeleted));
+		assertTrue("'Reacreated' package maintainer hasn't been added to the list of package maintainers, expected: " + expectedJSON + " but was: " + actualJSON, compareArrays(expectedJSON, actualJSON));
+		assertTrue("'Reacreated' package maintainer still exists in the list of deleted ones, expected: " + expectedDeleted + " but was: " + actualDeleted, compareArrays(expectedDeleted, actualDeleted));
 	}
 		
 	private boolean compareArrays(JsonArray expectedJSON, JsonArray actualJSON) throws ParseException {

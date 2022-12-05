@@ -12,4 +12,7 @@ do
 	if [ "$result" == "declarative" ]; then
         psql -U postgres -f $file
 	fi
+	if [ "$result" == "migrations" ]; then
+        psql -U postgres -f $file
+	fi
 done

@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.json.simple.parser.ParseException;
 import org.junit.Test;
@@ -49,14 +48,14 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 		super("/api/manager/repositories/maintainers");
 	}
 
-	private final String REPOSITORYMAINTAINER_ID_TO_CREATE = "5";
+	private final String REPOSITORYMAINTAINER_ID_TO_CREATE = "7";
 	
 	private final String THIRD_REPO_ID_UNPUBLISHED = "4";
 	private final String SECOND_REPO_ID_PUBLISHED = "3";	
 	
 	private final String REPOSITORYMAINTAINER_ID_TO_DELETE = "1";
 	private final String REPOSITORYMAINTAINER_ID_TO_EDIT = "1";
-	private final String REPOSITORYMAINTAINER_ID_TO_RECREATE = "2";
+	private final String REPOSITORYMAINTAINER_ID_TO_RECREATE = "4";
 	
 	private static final String REPOSITORY_ID_TO_EDIT = "3";
 		
@@ -66,7 +65,7 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 		FileReader reader = new FileReader(JSON_PATH + "/repositoryMaintainer/get_create_repository_maintainers.json");
 		JsonObject expectedJSON = (JsonObject) JsonParser.parseReader(reader);
 		
-		List<Set> expectedPackages = convertPackages((JsonArray) expectedJSON.get("repositories"));
+		List<List> expectedPackages = convertPackages((JsonArray) expectedJSON.get("repositories"));
 		
 		String data = given()
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -80,11 +79,11 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 		
 		JsonObject actualJSON = (JsonObject) JsonParser.parseString(data);
 		
-		List<Set> actualPackages = convertPackages((JsonArray) actualJSON.get("repositories"));
+		List<List> actualPackages = convertPackages((JsonArray) actualJSON.get("repositories"));
 		
 		assertEquals(expectedPackages, actualPackages);
-		assertTrue(compareArrays((JsonArray) expectedJSON.get("repositories"), (JsonArray) actualJSON.get("repositories")));
-		assertTrue(compareListOfMaintainersFromGetMaintainers(expectedJSON, actualJSON));
+		assertTrue("repository: expected: " + expectedJSON.get("repositories") + " but was: "  + (JsonArray) actualJSON.get("repositories"),compareArrays((JsonArray) expectedJSON.get("repositories"), (JsonArray) actualJSON.get("repositories")));
+		assertTrue("json: expected: " + expectedJSON + " but was: " + actualJSON,  compareListOfMaintainersFromGetMaintainers(expectedJSON, actualJSON));
 	}
 	
 	@Test
@@ -130,7 +129,7 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 		
 		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 
-		assertTrue(compareMaintainers(expectedJSON, actualJSON));
+		assertTrue("expected: " + expectedJSON + " but was: " + actualJSON ,compareMaintainers(expectedJSON, actualJSON));
 	}
 	
 	@Test
@@ -164,7 +163,7 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 		
 		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 
-		assertTrue(compareMaintainers(expectedJSON, actualJSON));
+		assertTrue("expected: " + expectedJSON + " but was: " + actualJSON, compareMaintainers(expectedJSON, actualJSON));
 	}
 	
 	@Test
@@ -215,7 +214,7 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 			
 			JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 
-			assertTrue(compareMaintainers(expectedJSON, actualJSON));
+			assertTrue("expected: " + expectedJSON + " but was: " + actualJSON, compareMaintainers(expectedJSON, actualJSON));
 	}
 	
 	@Test
@@ -251,7 +250,7 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 		
 		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 
-		assertTrue(compareMaintainers(expectedJSON, actualJSON));
+		assertTrue("expected: " + expectedJSON + " but was: " + actualJSON, compareMaintainers(expectedJSON, actualJSON));
 	}
 	
 	@Test
@@ -282,7 +281,7 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 		
 		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 
-		assertTrue(compareMaintainers(expectedJSON, actualJSON));
+		assertTrue("expected: " + expectedJSON + " but was: " + actualJSON, compareMaintainers(expectedJSON, actualJSON));
 	}
 	
 	@Test
@@ -336,8 +335,8 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 		
 		JsonArray actualDeleted = (JsonArray) JsonParser.parseString(deleted);
 	
-		assertTrue("'Deleted' repository maintainer still exists in the list of repository maintainers", compareMaintainers(expectedJSON, actualJSON));
-		assertTrue("'Deleted' repository maintainer haven't been added to the list of deleted ones", compareMaintainers(expectedDeleted, actualDeleted));
+		assertTrue("'Deleted' repository maintainer still exists in the list of repository maintainers, expected: " + expectedJSON + " but was: " + actualJSON, compareMaintainers(expectedJSON, actualJSON));
+		assertTrue("'Deleted' repository maintainer haven't been added to the list of deleted ones, expected: " + expectedDeleted + " but was: " + actualDeleted, compareMaintainers(expectedDeleted, actualDeleted));
 	}
 	
 	@Test
@@ -369,7 +368,7 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 		.then()
 			.statusCode(200);
 		
-		FileReader reader = new FileReader(JSON_PATH + "/repositoryMaintainer/repository_maintainers_without_one.json");
+		FileReader reader = new FileReader(JSON_PATH + "/repositoryMaintainer/repository_maintainers_without_one_shift_deleted.json");
 		JsonArray expectedJSON = (JsonArray) JsonParser.parseReader(reader);
 		
 		String data = given()
@@ -399,15 +398,15 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 		
 		JsonArray actualDeleted = (JsonArray) JsonParser.parseString(deleted);
 	
-		assertTrue("'Shift deleted' repository maintainer still exists in the list of repository maintainers", compareMaintainers(expectedJSON, actualJSON));
-		assertFalse("'Shift deleted' repository maintainer can't be added to the list of deleted ones", compareMaintainers(expectedDeleted, actualDeleted));
+		assertTrue("'Shift deleted' repository maintainer still exists in the list of repository maintainers, expected: " + expectedJSON + " but was: " + actualJSON, compareMaintainers(expectedJSON, actualJSON));
+		assertFalse("'Shift deleted' repository maintainer can't be added to the list of deleted ones, expected: " + expectedDeleted + " but was: " + actualDeleted, compareMaintainers(expectedDeleted, actualDeleted));
 	}
 	
 	@Test
 	public void shouldRecreateRepositoryMaintainer() throws FileNotFoundException, ParseException {
 		Map<String, String> params = new HashMap<>();
 		params.put("userId", REPOSITORYMAINTAINER_ID_TO_CREATE);
-		params.put("repositoryId", THIRD_REPO_ID_UNPUBLISHED);
+		params.put("repositoryId", SECOND_REPO_ID_PUBLISHED);
 		
 		given()
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -418,7 +417,7 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 			.post(API_PATH + "/create")
 		.then()
 			.statusCode(200);
-		
+	
 		given()
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
 			.accept(ContentType.JSON)
@@ -427,17 +426,17 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 		.then()
 			.statusCode(200);
 		
-		given()
-			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
-			.contentType(ContentType.JSON)
-			.accept(ContentType.JSON)
-			.body(params)
-		.when()
-			.post(API_PATH + "/create")
-		.then()
-			.statusCode(200);
+	given()
+	.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+	.contentType(ContentType.JSON)
+	.accept(ContentType.JSON)
+	.body(params)
+.when()
+	.post(API_PATH + "/create")
+.then()
+	.statusCode(200);
 		
-		FileReader reader = new FileReader(JSON_PATH + "/repositoryMaintainer/created_repository_maintainers_unpublished.json");
+		FileReader reader = new FileReader(JSON_PATH + "/repositoryMaintainer/created_repository_maintainers_recreated.json");
 		JsonArray expectedJSON = (JsonArray) JsonParser.parseReader(reader);
 		
 		String data = given()
@@ -452,7 +451,7 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 		
 		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 				
-		assertTrue(compareMaintainers(expectedJSON, actualJSON));
+		assertTrue("expected: " + expectedJSON + " but was: " + actualJSON, compareMaintainers(expectedJSON, actualJSON));
 	}
 	
 	private boolean compareArrays(JsonArray expected, JsonArray actual) throws ParseException {

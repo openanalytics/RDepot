@@ -1,7 +1,7 @@
- {
-    "status": "error",
-    "code": 422,
-    "message": "Validation failed for the resource.",
-    "messageCode": "error.validation",
-    "data": "Package name field is empty."
+{
+  "code": 422,
+  "data": "package.validation.error: empty.name",
+  "messageCode": "error.validation",
+  "message": "Validation failed for the resource.",
+  "status": "error"
 }

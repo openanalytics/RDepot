@@ -1,146 +1,146 @@
 {
-    "status": "success",
-    "code": 200,
-    "message": "Your request has been processed successfully.",
-    "messageCode": "success.request.processed",
-    "data": {
+  "code": 200,
+  "data": {
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/r/packages?repositoryName=testrepo3&page=0&size=20&sort=id,asc"
+      }
+    ],
+    "page": {
+      "number": 0,
+      "size": 20,
+      "totalPages": 1,
+      "totalElements": 4
+    },
+    "content": [
+      {
+        "imports": null,
+        "depends": "xtable, pbapply",
+        "author": "Scott Fortmann-Roe",
+        "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
+        "active": true,
+        "source": "/opt/rdepot/repositories/4/47098069/A3_0.9.1.tar.gz",
+        "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
+        "userId": 6,
+        "version": "0.9.1",
+        "url": null,
+        "suggests": "randomForest, e1071",
+        "license": "GPL (>= 2)",
+        "systemRequirements": null,
+        "submissionId": 9,
+        "deleted": false,
+        "md5sum": "8eb4760cd574f5489e61221dc9bb0076",
+        "repositoryId": 4,
+        "name": "A3",
         "links": [
-            {
-                "rel": "self",
-                "href": "http://localhost:8017/api/v2/manager/r/packages?repositoryName=testrepo3&page=0&size=20&sort=package.id,asc"
-            }
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/packages/9"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8017/api/v2/manager/r/packages"
+          }
         ],
-        "content": [
-            {
-                "id": 9,
-                "version": "0.9.1",
-                "repositoryId": 4,
-                "submissionId": 9,
-                "name": "A3",
-                "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-                "author": "Scott Fortmann-Roe",
-                "depends": "xtable, pbapply",
-                "imports": null,
-                "suggests": "randomForest, e1071",
-                "systemRequirements": null,
-                "license": "GPL (>= 2)",
-                "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
-                "url": null,
-                "source": "/opt/rdepot/repositories/4/47098069/A3_0.9.1.tar.gz",
-                "md5sum": "8eb4760cd574f5489e61221dc9bb0076",
-                "active": true,
-                "deleted": false,
-                "fileName": "A3_0.9.1.tar.gz",
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http://localhost:8017/api/v2/manager/r/packages/9"
-                    },
-                    {
-                        "rel": "packageList",
-                        "href": "http://localhost:8017/api/v2/manager/r/packages"
-                    }
-                ]
-            },
-            {
-                "id": 10,
-                "version": "0.9.2",
-                "repositoryId": 4,
-                "submissionId": 10,
-                "name": "A3",
-                "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-                "author": "Scott Fortmann-Roe",
-                "depends": "R (>= 2.15.0), xtable, pbapply",
-                "imports": null,
-                "suggests": "randomForest, e1071",
-                "systemRequirements": null,
-                "license": "GPL (>= 2)",
-                "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
-                "url": null,
-                "source": "/opt/rdepot/repositories/4/54491936/A3_0.9.2.tar.gz",
-                "md5sum": "76d726aee8dd7c6ed94d150d5718015b",
-                "active": true,
-                "deleted": false,
-                "fileName": "A3_0.9.2.tar.gz",
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http://localhost:8017/api/v2/manager/r/packages/10"
-                    },
-                    {
-                        "rel": "packageList",
-                        "href": "http://localhost:8017/api/v2/manager/r/packages"
-                    }
-                ]
-            },
-            {
-                "id": 11,
-                "version": "1.3",
-                "repositoryId": 4,
-                "submissionId": 11,
-                "name": "abc",
-                "description": "The package implements several ABC algorithms for performing parameter estimation and model selection. Cross-validation tools are also available for measuring the accuracy of ABC estimates, and to calculate the misclassification probabilities of different models.",
-                "author": "Katalin Csillery, Michael Blum and Olivier Francois",
-                "depends": "R (>= 2.10), nnet, quantreg, locfit",
-                "imports": null,
-                "suggests": null,
-                "systemRequirements": null,
-                "license": "GPL (>= 3)",
-                "title": "Tools for Approximate Bayesian Computation (ABC)",
-                "url": null,
-                "source": "/opt/rdepot/repositories/4/95296712/abc_1.3.tar.gz",
-                "md5sum": "c47d18b86b331a5023dcd62b74fedbb6",
-                "active": false,
-                "deleted": false,
-                "fileName": "abc_1.3.tar.gz",
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http://localhost:8017/api/v2/manager/r/packages/11"
-                    },
-                    {
-                        "rel": "packageList",
-                        "href": "http://localhost:8017/api/v2/manager/r/packages"
-                    }
-                ]
-            },
-            {
-                "id": 12,
-                "version": "1.0",
-                "repositoryId": 4,
-                "submissionId": 12,
-                "name": "abc",
-                "description": "The 'abc' package provides various functions for parameter estimation and model selection in an ABC framework. Three main",
-                "author": "Katalin Csillery, with contributions from Michael Blum and Olivier Francois",
-                "depends": "R (>= 1.8.0), nnet, quantreg, locfit, methods",
-                "imports": null,
-                "suggests": null,
-                "systemRequirements": null,
-                "license": "Unlimited",
-                "title": "Functions to perform Approximate Bayesian Computation (ABC) using simulated data",
-                "url": null,
-                "source": "/opt/rdepot/repositories/4/49426769/abc_1.0.tar.gz",
-                "md5sum": "91599204c92275ed4b36d55e8d7c144b",
-                "active": true,
-                "deleted": false,
-                "fileName": "abc_1.0.tar.gz",
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http://localhost:8017/api/v2/manager/r/packages/12"
-                    },
-                    {
-                        "rel": "packageList",
-                        "href": "http://localhost:8017/api/v2/manager/r/packages"
-                    }
-                ]
-            }
+        "id": 9
+      },
+      {
+        "imports": null,
+        "depends": "R (>= 2.15.0), xtable, pbapply",
+        "author": "Scott Fortmann-Roe",
+        "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
+        "active": true,
+        "source": "/opt/rdepot/repositories/4/54491936/A3_0.9.2.tar.gz",
+        "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
+        "userId": 6,
+        "version": "0.9.2",
+        "url": null,
+        "suggests": "randomForest, e1071",
+        "license": "GPL (>= 2)",
+        "systemRequirements": null,
+        "submissionId": 10,
+        "deleted": false,
+        "md5sum": "76d726aee8dd7c6ed94d150d5718015b",
+        "repositoryId": 4,
+        "name": "A3",
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/packages/10"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8017/api/v2/manager/r/packages"
+          }
         ],
-        "page": {
-            "size": 20,
-            "totalElements": 4,
-            "totalPages": 1,
-            "number": 0
-        }
-    }
+        "id": 10
+      },
+      {
+        "imports": null,
+        "depends": "R (>= 2.10), nnet, quantreg, locfit",
+        "author": "Katalin Csillery, Michael Blum and Olivier Francois",
+        "description": "The package implements several ABC algorithms for performing parameter estimation and model selection. Cross-validation tools are also available for measuring the accuracy of ABC estimates, and to calculate the misclassification probabilities of different models.",
+        "active": false,
+        "source": "/opt/rdepot/repositories/4/95296712/abc_1.3.tar.gz",
+        "title": "Tools for Approximate Bayesian Computation (ABC)",
+        "userId": 6,
+        "version": "1.3",
+        "url": null,
+        "suggests": null,
+        "license": "GPL (>= 3)",
+        "systemRequirements": null,
+        "submissionId": 11,
+        "deleted": false,
+        "md5sum": "c47d18b86b331a5023dcd62b74fedbb6",
+        "repositoryId": 4,
+        "name": "abc",
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/packages/11"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8017/api/v2/manager/r/packages"
+          }
+        ],
+        "id": 11
+      },
+      {
+        "imports": null,
+        "depends": "R (>= 1.8.0), nnet, quantreg, locfit, methods",
+        "author": "Katalin Csillery, with contributions from Michael Blum and Olivier Francois",
+        "description": "The 'abc' package provides various functions for parameter estimation and model selection in an ABC framework. Three main",
+        "active": true,
+        "source": "/opt/rdepot/repositories/4/49426769/abc_1.0.tar.gz",
+        "title": "Functions to perform Approximate Bayesian Computation (ABC) using simulated data",
+        "userId": 6,
+        "version": "1.0",
+        "url": null,
+        "suggests": null,
+        "license": "Unlimited",
+        "systemRequirements": null,
+        "submissionId": 12,
+        "deleted": false,
+        "md5sum": "91599204c92275ed4b36d55e8d7c144b",
+        "repositoryId": 4,
+        "name": "abc",
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/packages/12"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8017/api/v2/manager/r/packages"
+          }
+        ],
+        "id": 12
+      }
+    ]
+  },
+  "messageCode": "success.request.processed",
+  "message": "Your request has been processed successfully.",
+  "status": "success"
 }

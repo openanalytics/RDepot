@@ -1,210 +1,69 @@
 {
-    "status": "success",
-    "code": 200,
-    "message": "Your request has been processed successfully.",
-    "messageCode": "success.request.processed",
-    "data": {
+  "code": 200,
+  "data": {
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/r/submissions?state=cancelled&page=0&size=20&sort=id,asc"
+      }
+    ],
+    "page": {
+      "number": 0,
+      "size": 20,
+      "totalPages": 1,
+      "totalElements": 1
+    },
+    "content": [
+      {
+        "changes": null,
         "links": [
-            {
-                "rel": "self",
-                "href": "http://localhost:8017/api/v2/manager/r/submissions?state=cancelled&page=0&size=20&sort=id,asc"
-            }
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/submissions/23"
+          },
+          {
+            "rel": "submissionList",
+            "href": "http://localhost:8017/api/v2/manager/r/submissions"
+          }
         ],
-        "content": [
+        "id": 23,
+        "state": "CANCELLED",
+        "userId": 6,
+        "packageBag": {
+          "imports": "",
+          "depends": "R (>= 3.3.0), Rcpp (>= 0.11.3), methods",
+          "author": "Cedric Landerer [aut, cre], Gabriel Hanas [ctb], Jeremy Rogers [ctb], Alex Cope [ctb], Denizhan Pak [ctb]",
+          "description": "Is a collection of models to analyze genome scale codon data using a Bayesian framework. Provides visualization routines and checkpointing for model fittings. Currently published models to analyze gene data for selection on codon",
+          "active": false,
+          "source": "",
+          "title": "Analysis of Codon Data under Stationarity using a Bayesian Framework",
+          "userId": 4,
+          "version": "0.1.2.3",
+          "url": "https://github.com/clandere/AnaCoDa",
+          "suggests": "knitr, Hmisc, VGAM, coda, testthat, lmodel2",
+          "license": "GPL (>= 2)",
+          "systemRequirements": null,
+          "submissionId": 23,
+          "deleted": false,
+          "md5sum": "41026e4157a0b3b6d909f0c6f72fa65c",
+          "repositoryId": 2,
+          "name": "AnaCoDa",
+          "links": [
             {
-                "id": 16,
-                "userId": 7,
-                "packageBag": {
-                    "id": 16,
-                    "version": "0.9.1",
-                    "repositoryId": 2,
-                    "submissionId": 16,
-                    "name": "A3",
-                    "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-                    "author": "Scott Fortmann-Roe",
-                    "depends": "xtable, pbapply",
-                    "imports": null,
-                    "suggests": "randomForest, e1071",
-                    "systemRequirements": null,
-                    "license": "GPL (>= 2)",
-                    "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
-                    "url": null,
-                    "source": "",
-                    "md5sum": "8eb4760cd574f5489e61221dc9bb0076",
-                    "active": false,
-                    "deleted": false,
-                    "fileName": "",
-                    "links": [
-                        {
-                            "rel": "self",
-                            "href": "http://localhost:8017/api/v2/manager/r/packages/16"
-                        },
-                        {
-                            "rel": "packageList",
-                            "href": "http://localhost:8017/api/v2/manager/r/packages"
-                        }
-                    ]
-                },
-                "changes": null,
-                "state": "CANCELLED",
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http://localhost:8017/api/v2/manager/r/submissions/16"
-                    },
-                    {
-                        "rel": "submissionList",
-                        "href": "http://localhost:8017/api/v2/manager/r/submissions"
-                    }
-                ]
+              "rel": "self",
+              "href": "http://localhost:8017/api/v2/manager/r/packages/22"
             },
             {
-                "id": 22,
-                "userId": 6,
-                "packageBag": {
-                    "id": 23,
-                    "version": "0.1.0",
-                    "repositoryId": 2,
-                    "submissionId": 22,
-                    "name": "visdat",
-                    "description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
-                    "author": "Nicholas Tierney [aut, cre]",
-                    "depends": "R (>= 3.2.2)",
-                    "imports": "ggplot2, tidyr, dplyr, purrr, magrittr, stats",
-                    "suggests": "plotly (>= 4.5.6), testthat, knitr, rmarkdown, vdiffr",
-                    "systemRequirements": null,
-                    "license": "MIT + file LICENSE",
-                    "title": "Preliminary Data Visualisation",
-                    "url": "https://github.com/njtierney/visdat/",
-                    "source": "",
-                    "md5sum": "f343fa3a01dcd9546fa0947877f58f36",
-                    "active": false,
-                    "deleted": false,
-                    "fileName": "",
-                    "links": [
-                        {
-                            "rel": "self",
-                            "href": "http://localhost:8017/api/v2/manager/r/packages/23"
-                        },
-                        {
-                            "rel": "packageList",
-                            "href": "http://localhost:8017/api/v2/manager/r/packages"
-                        }
-                    ]
-                },
-                "changes": null,
-                "state": "CANCELLED",
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http://localhost:8017/api/v2/manager/r/submissions/22"
-                    },
-                    {
-                        "rel": "submissionList",
-                        "href": "http://localhost:8017/api/v2/manager/r/submissions"
-                    }
-                ]
-            },
-            {
-                "id": 23,
-                "userId": 6,
-                "packageBag": {
-                    "id": 22,
-                    "version": "0.1.2.3",
-                    "repositoryId": 2,
-                    "submissionId": 23,
-                    "name": "AnaCoDa",
-                    "description": "Is a collection of models to analyze genome scale codon data using a Bayesian framework. Provides visualization routines and checkpointing for model fittings. Currently published models to analyze gene data for selection on codon",
-                    "author": "Cedric Landerer [aut, cre], Gabriel Hanas [ctb], Jeremy Rogers [ctb], Alex Cope [ctb], Denizhan Pak [ctb]",
-                    "depends": "R (>= 3.3.0), Rcpp (>= 0.11.3), methods",
-                    "imports": "",
-                    "suggests": "knitr, Hmisc, VGAM, coda, testthat, lmodel2",
-                    "systemRequirements": null,
-                    "license": "GPL (>= 2)",
-                    "title": "Analysis of Codon Data under Stationarity using a Bayesian Framework",
-                    "url": "https://github.com/clandere/AnaCoDa",
-                    "source": "",
-                    "md5sum": "41026e4157a0b3b6d909f0c6f72fa65c",
-                    "active": false,
-                    "deleted": false,
-                    "fileName": "",
-                    "links": [
-                        {
-                            "rel": "self",
-                            "href": "http://localhost:8017/api/v2/manager/r/packages/22"
-                        },
-                        {
-                            "rel": "packageList",
-                            "href": "http://localhost:8017/api/v2/manager/r/packages"
-                        }
-                    ]
-                },
-                "changes": null,
-                "state": "CANCELLED",
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http://localhost:8017/api/v2/manager/r/submissions/23"
-                    },
-                    {
-                        "rel": "submissionList",
-                        "href": "http://localhost:8017/api/v2/manager/r/submissions"
-                    }
-                ]
-            },
-            {
-                "id": 24,
-                "userId": 6,
-                "packageBag": {
-                    "id": 24,
-                    "version": "0.10",
-                    "repositoryId": 5,
-                    "submissionId": 24,
-                    "name": "Benchmarking",
-                    "description": "Estimates and graphs deterministic (DEA) frontier models with different technology assumptions (fdh, vrs, drs, crs, irs, add). Also handles possible slacks, peers and their weights (lambdas), optimal cost, revenue and profit allocation, super--efficiency, and mergers. A comparative method for estimating SFA efficiencies is included.",
-                    "author": "Peter Bogetoft and Lars Otto",
-                    "depends": "lpSolveAPI, ucminf",
-                    "imports": null,
-                    "suggests": null,
-                    "systemRequirements": null,
-                    "license": "GPL (>= 2)",
-                    "title": "Benchmark and frontier analysis using DEA and SFA",
-                    "url": null,
-                    "source": "",
-                    "md5sum": "9a99c2ebefa6d49422ca7893c1f4ead8",
-                    "active": false,
-                    "deleted": false,
-                    "fileName": "",
-                    "links": [
-                        {
-                            "rel": "self",
-                            "href": "http://localhost:8017/api/v2/manager/r/packages/24"
-                        },
-                        {
-                            "rel": "packageList",
-                            "href": "http://localhost:8017/api/v2/manager/r/packages"
-                        }
-                    ]
-                },
-                "changes": null,
-                "state": "CANCELLED",
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http://localhost:8017/api/v2/manager/r/submissions/24"
-                    },
-                    {
-                        "rel": "submissionList",
-                        "href": "http://localhost:8017/api/v2/manager/r/submissions"
-                    }
-                ]
+              "rel": "packageList",
+              "href": "http://localhost:8017/api/v2/manager/r/packages"
             }
-        ],
-        "page": {
-            "size": 20,
-            "totalElements": 4,
-            "totalPages": 1,
-            "number": 0
+          ],
+          "id": 22
         }
-    }
+      }
+    ]
+  },
+  "messageCode": "success.request.processed",
+  "message": "Your request has been processed successfully.",
+  "status": "success"
 }

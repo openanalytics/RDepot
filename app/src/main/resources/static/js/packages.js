@@ -162,12 +162,12 @@ function updatePackageList(selectedRepository) {
 		for(var i = 0; i < repositories.length; i++) {
             var repository = repositories[i];
 			if(repositories[i].id == selectedRepository && repository.packages !== null) {
-				var packages = repository.packages;
+				var packages = CREATE_MAINTAINER_REQUEST_RESPONSE.packages[repository.name];
 				
 				for(var k = 0; k < packages.length; k++) {
-					if(!usedNames.includes(packages[k].name)) {
-						html += '<option value="' + packages[k].name + '">' + packages[k].name + '</option>';
-						usedNames.push(packages[k].name);
+					if(!usedNames.includes(packages[k])) {
+						html += '<option value="' + packages[k] + '">' + packages[k] + '</option>';
+						usedNames.push(packages[k]);
 					}
                 }
                 

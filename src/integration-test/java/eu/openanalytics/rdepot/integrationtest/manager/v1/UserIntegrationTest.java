@@ -53,13 +53,15 @@ public class UserIntegrationTest extends IntegrationTest {
 	private final String USER_TO_DEACTIVATE_ID = "6";
 	private final String REPOSITORYMAINTAINER_ID = "5";	
 	
+	
+	//missing serializers for date
 	@Test
 	public void shouldReturnUsers() throws ParseException, IOException {
 		JSONParser jsonParser = new JSONParser();
 		
 		FileReader reader = new FileReader(JSON_PATH + "/user/users.json");
 		JSONArray rootJSON = (JSONArray) jsonParser.parse(reader);
-		Set<JSONObject> expectedJSON = convert(rootJSON);
+		Set<JSONObject> expectedJSON = convertToSet(rootJSON);
 		
 		String data = given()
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -73,7 +75,7 @@ public class UserIntegrationTest extends IntegrationTest {
 		
 		rootJSON = (JSONArray) jsonParser.parse(data);
 
-		Set<JSONObject> actualJSON = convert(rootJSON);
+		Set<JSONObject> actualJSON = convertToSet(rootJSON);
 
 		assertEquals("Users haven't been returned", expectedJSON, actualJSON);
 	}
@@ -271,13 +273,11 @@ public class UserIntegrationTest extends IntegrationTest {
 				.body("error", equalTo("You are not authorized to perform this operation."));
 	}
 	
-	@Override
-	protected Set<JSONObject> convert(JSONArray rootJSON) throws ParseException {
+	protected Set<JSONObject> convertToSet(JSONArray rootJSON) throws ParseException {
 		Set<JSONObject> JSON = new HashSet<>();
 		
 		for(int i = 0; i < rootJSON.size(); i++) {
 			JSONObject objJSON = (JSONObject) rootJSON.get(i);
-			objJSON.remove("lastLoggedInOn");
 			JSON.add(objJSON);
 		}
 		

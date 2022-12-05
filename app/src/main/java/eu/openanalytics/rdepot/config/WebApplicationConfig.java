@@ -22,19 +22,29 @@ package eu.openanalytics.rdepot.config;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 
+import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.convert.converter.Converter;
@@ -71,33 +81,31 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr353.JSR353Module;
 import com.google.gson.Gson;
 
-import eu.openanalytics.rdepot.model.Repository;
-import eu.openanalytics.rdepot.model.Role;
-import eu.openanalytics.rdepot.model.User;
-import eu.openanalytics.rdepot.api.v2.dto.SubmissionState;
-import eu.openanalytics.rdepot.api.v2.resolver.NestedIdSortArgumentResolver;
-import eu.openanalytics.rdepot.formatter.RepositoryFormatter;
-import eu.openanalytics.rdepot.formatter.RoleFormatter;
-import eu.openanalytics.rdepot.formatter.StringToSubmissionStateConverter;
-import eu.openanalytics.rdepot.formatter.UserFormatter;
-import eu.openanalytics.rdepot.mapper.HibernateAwareObjectMapper;
-import eu.openanalytics.rdepot.storage.PackageStorage;
-import eu.openanalytics.rdepot.storage.PackageStorageLocalImpl;
-import eu.openanalytics.rdepot.storage.RepositoryStorage;
-import eu.openanalytics.rdepot.storage.RepositoryStorageLocalImpl;
-import eu.openanalytics.rdepot.validation.CommonsMultipartFileValidator;
-import eu.openanalytics.rdepot.validation.PackageMaintainerValidator;
-import eu.openanalytics.rdepot.validation.PackageValidator;
-import eu.openanalytics.rdepot.validation.RepositoryMaintainerValidator;
-import eu.openanalytics.rdepot.validation.RepositoryValidator;
-import eu.openanalytics.rdepot.validation.UserValidator;
+import eu.openanalytics.rdepot.base.api.v2.resolvers.NestedIdSortArgumentResolver;
+import eu.openanalytics.rdepot.base.entities.Role;
+import eu.openanalytics.rdepot.base.entities.enums.SubmissionState;
+import eu.openanalytics.rdepot.base.formatters.StringToSubmissionStateConverter;
+import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
+import eu.openanalytics.rdepot.base.security.authorization.SecurityMediatorImpl;
+import eu.openanalytics.rdepot.base.service.PackageService;
+import eu.openanalytics.rdepot.base.service.RepositoryService;
+import eu.openanalytics.rdepot.base.technology.InternalTechnology;
+import eu.openanalytics.rdepot.base.technology.ServiceResolver;
+import eu.openanalytics.rdepot.base.technology.Technology;
+import eu.openanalytics.rdepot.r.legacy.api.v1.formatters.RoleFormatter;
+import eu.openanalytics.rdepot.r.technology.ServiceResolverImpl;
 
+/**
+ * Main configuration of RDepot.
+ */
+@SuppressWarnings("deprecation")
 @Configuration
 @EnableAsync
-//@ComponentScan("eu.openanalytics.rdepot")
-//@EnableJpaRepositories("eu.openanalytics.rdepot.repository")
+@ComponentScan("eu.openanalytics.rdepot")
 public class WebApplicationConfig implements WebMvcConfigurer {
 
+	final ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+	
 	@Value("${db.driver}")
 	private String databaseDriver;
 	
@@ -122,19 +130,26 @@ public class WebApplicationConfig implements WebMvcConfigurer {
 	@Value("${repository.generation.dir}")
 	private String repositoryGenerationDir;
 	
-//	@Value("${entitymanager.packages.to.scan}")
-//	private List<String> packagesToScanProp;
-	
-	//private static final String PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN = "entitymanager.packages.to.scan";
-
 	@Resource
 	private Environment env;
 	
+	@Autowired
+	private SecurityMediatorImpl securityMediatorImpl;
+	
+	@Autowired
+	Map<String, RepositoryService<?>> repositoryServices;
+	
+	@Autowired
+	Map<String, PackageService<?>> packageServices;
+	
+	final Logger logger = LoggerFactory.getLogger(WebApplicationConfig.class);
+	
+//	@Autowired
+//	private RRepositoryDataInitializer rRepositoryDataInitializer;
+	
 	@Bean
-	public DataSource dataSource() 
-	{
+	DataSource dataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		//DataSource dataSource = new DataSourceTransactionManager().getDataSource();
 		dataSource.setDriverClassName(databaseDriver);
 		dataSource.setUrl(databaseUrl);
 		dataSource.setUsername(databaseUsername);
@@ -144,17 +159,16 @@ public class WebApplicationConfig implements WebMvcConfigurer {
 	}
 
 	@Bean
-	public LocalContainerEntityManagerFactoryBean entityManagerFactory() 
-	{
-		LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
+	LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+		LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = 
+				new LocalContainerEntityManagerFactoryBean();
 		entityManagerFactoryBean.setDataSource(dataSource());
-		//entityManagerFactoryBean.setPersistenceProviderClass(HibernatePersistenceProvider.class);
 		entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
 		
 		List<String> packagesToScanProp = new ArrayList<>();
-		
 		for (int i=0;;i++) {
-			String packageToScan = env.getProperty(String.format("entitymanager.packages.to.scan[%d]", i));
+			String packageToScan = env.getProperty(String.format(
+					"entitymanager.packages.to.scan[%d]", i));
 			if (packageToScan == null) break;
 			else packagesToScanProp.add(packageToScan);
 		}
@@ -164,14 +178,12 @@ public class WebApplicationConfig implements WebMvcConfigurer {
 			packagesToScan[i] = packagesToScanProp.get(i);
 		}
 		entityManagerFactoryBean.setPackagesToScan(packagesToScan);
-		
 		entityManagerFactoryBean.setJpaProperties(hibProperties());
 		
 		return entityManagerFactoryBean;
 	}
 
-	private Properties hibProperties() 
-	{
+	private Properties hibProperties() {
 		Properties properties = new Properties();
 		properties.put("hibernate.dialect",	hibernateDialect);
 		properties.put("hibernate.show_sql", hibernateShowSql);
@@ -179,40 +191,30 @@ public class WebApplicationConfig implements WebMvcConfigurer {
 	}
 
 	@Bean
-	public JpaTransactionManager transactionManager() 
-	{
+	JpaTransactionManager transactionManager() {
 		JpaTransactionManager transactionManager = new JpaTransactionManager();
 		transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
 		return transactionManager;
 	}
 	
     @Override
-    public void addFormatters(FormatterRegistry registry)
-    {
-        registry.addFormatter(roleFormatter());
-        registry.addFormatter(repositoryFormatter());
-        registry.addFormatter(userFormatter());
+    public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(submissionStateConverter());
+        registry.addFormatter(roleFormatter());
     }
 
     @Bean
-    public Converter<String, SubmissionState> submissionStateConverter() {
+    Converter<String, SubmissionState> submissionStateConverter() {
 		return new StringToSubmissionStateConverter();
 	}
+    
+    @Bean
+    Formatter<Role> roleFormatter() {
+    	return new RoleFormatter();
+    }
 
-//	@Bean
-//	public ViewResolver jspViewResolver() 
-//	{
-//		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-//		resolver.setPrefix("/pages/");
-//		resolver.setSuffix(".jsp");
-//		resolver.setViewClass(JstlView.class);
-//		return resolver;
-//	}
-	
 	@Bean
-	public ResourceBundleMessageSource messageSource() 
-	{
+	MessageSource messageSource() {
 		ResourceBundleMessageSource source = new ResourceBundleMessageSource();
 		source.setBasename(env.getRequiredProperty("message.source.basename"));
 		source.setUseCodeAsDefaultMessage(true);
@@ -220,79 +222,50 @@ public class WebApplicationConfig implements WebMvcConfigurer {
 	}
 	
 	@Bean
-	public CookieLocaleResolver localeResolver() 
-	{
+	CookieLocaleResolver localeResolver() {
 		CookieLocaleResolver localeResolver = new CookieLocaleResolver();
 		localeResolver.setDefaultLocale(Locale.ENGLISH);
 		return localeResolver;
 	}
 	
 	@Bean
-	public LocaleChangeInterceptor localeChangeInterceptor() 
-	{
+	LocaleChangeInterceptor localeChangeInterceptor() {
 		LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
 		localeChangeInterceptor.setParamName("lang");
 		return localeChangeInterceptor;
 	}
 	
 	@Override
-	public void addResourceHandlers(ResourceHandlerRegistry registry) 
-	{
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/static/**").addResourceLocations("/WEB-INF/static/");
 	    registry.addResourceHandler("/webjars/**").addResourceLocations("/webjars/");
 
 	}
 	
     @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters)
-    {
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
     	converters.add(jsonConverter());
     	converters.add(byteConverter());
 	}
 
 	@Override
-	public void addInterceptors(InterceptorRegistry registry) 
-	{		
+	public void addInterceptors(InterceptorRegistry registry) {		
 	    registry.addInterceptor(localeChangeInterceptor());
 	}
-	
-//	@Bean
-//	public ViewResolver jsonViewResolver()
-//	{
-//		return new JsonViewResolver();
-//	}
-	
+
 	@Bean
-	public Gson jsonParser()
-	{
+	Gson jsonParser() {
 		return new Gson();
 	}
 	
 	@Override
-	public void configureContentNegotiation(ContentNegotiationConfigurer configurer) 
-	{
+	public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
 	      configurer.ignoreAcceptHeader(false)
 	                .defaultContentType(MediaType.TEXT_HTML);
 	}
-	 
-//	@Bean
-//	public ViewResolver contentNegotiatingViewResolver(ContentNegotiationManager manager)
-//	{	 
-//	    List<ViewResolver> resolvers = new ArrayList<ViewResolver>();
-//
-//	    resolvers.add(jspViewResolver());
-//	    resolvers.add(jsonViewResolver());
-//	 
-//	    // Create the CNVR plugging in the resolvers and the content-negotiation manager
-//	    ContentNegotiatingViewResolver resolver = new ContentNegotiatingViewResolver();
-//	    resolver.setViewResolvers(resolvers);
-//	    resolver.setContentNegotiationManager(manager);
-//	    return resolver;
-//	 }
 	
     @Bean
-    public MappingJackson2HttpMessageConverter jsonConverter()
-    {
+    MappingJackson2HttpMessageConverter jsonConverter() {
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         List<MediaType> mediaTypes = new ArrayList<>(converter.getSupportedMediaTypes());
 		mediaTypes.add(MediaType.valueOf("application/json-patch+json"));
@@ -302,8 +275,7 @@ public class WebApplicationConfig implements WebMvcConfigurer {
     }
     
     @Bean
-    public ByteArrayHttpMessageConverter byteConverter()
-    {
+    ByteArrayHttpMessageConverter byteConverter() {
     	ByteArrayHttpMessageConverter converter = new ByteArrayHttpMessageConverter();
     	List<MediaType> mediaTypes = new ArrayList<MediaType>();
     	mediaTypes.add(MediaType.valueOf("application/gzip"));
@@ -312,63 +284,8 @@ public class WebApplicationConfig implements WebMvcConfigurer {
     	return converter;
     }
     
-    
     @Bean
-    public Formatter<Role> roleFormatter()
-    {
-    	return new RoleFormatter();
-    }
-    
-    @Bean
-    public Formatter<User> userFormatter()
-    {
-    	return new UserFormatter();
-    }
-    
-    @Bean
-    public UserValidator userValidator()
-    {
-    	return new UserValidator();
-    }
-    
-    @Bean
-    public Formatter<Repository> repositoryFormatter()
-    {
-    	return new RepositoryFormatter();
-    }
-    
-    @Bean
-    public RepositoryValidator repositoryValidator()
-    {
-    	return new RepositoryValidator();
-    }
-    
-    @Bean
-    public RepositoryMaintainerValidator repositoryMaintainerValidator()
-    {
-    	return new RepositoryMaintainerValidator();
-    }
-    
-    @Bean
-    public CommonsMultipartFileValidator commonsMultipartFileValidator()
-    {
-    	return new CommonsMultipartFileValidator();
-    }
-    
-    @Bean
-    public PackageValidator packageValidator()
-    {
-    	return new PackageValidator();
-    }
-    
-    @Bean
-    public PackageMaintainerValidator packageMaintainerValidator()
-    {
-    	return new PackageMaintainerValidator();
-    }
-    
-    @Bean
-    public LocalValidatorFactoryBean validator()
+    LocalValidatorFactoryBean validator()
     {
     	LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
     	bean.setValidationMessageSource(messageSource());
@@ -389,7 +306,7 @@ public class WebApplicationConfig implements WebMvcConfigurer {
     }
     
     @Bean(name="packageUploadDirectory")
-    public File packageUploadDirectory() {
+    File packageUploadDirectory() {
     	File location = new File(packageUploadDir);
     	
     	if(!location.exists()) {
@@ -406,7 +323,7 @@ public class WebApplicationConfig implements WebMvcConfigurer {
     }
 
     @Bean(name="repositoryGenerationDirectory")
-    public File repositoryGenerationDirectory() {
+    File repositoryGenerationDirectory() {
     	File location = new File(repositoryGenerationDir);
     	
     	if(!location.exists()) {
@@ -423,7 +340,7 @@ public class WebApplicationConfig implements WebMvcConfigurer {
     }
     
     @Bean
-    public CommonsMultipartResolver multipartResolver()
+    CommonsMultipartResolver multipartResolver()
     {
     	CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
     	multipartResolver.setMaxUploadSize(100000000);
@@ -431,34 +348,12 @@ public class WebApplicationConfig implements WebMvcConfigurer {
     }
         
     @Bean
-    public ServletListenerRegistrationBean<HttpSessionEventPublisher> httpSessionEventPublisher() {
+    ServletListenerRegistrationBean<HttpSessionEventPublisher> httpSessionEventPublisher() {
         return new ServletListenerRegistrationBean<HttpSessionEventPublisher>(new HttpSessionEventPublisher());
-    } 
-
-    @Bean
-    public PackageStorage packageStorage() {
-    	String implementation = env.getRequiredProperty("storage.implementation");
-    	
-    	if(implementation.equals("local")) {
-    		return new PackageStorageLocalImpl();
-    	} else {
-    		throw new BeanCreationException("Unknown storage type");
-    	}
     }
     
     @Bean
-    public RepositoryStorage repositoryStorage() {
-    	String implementation = env.getRequiredProperty("storage.implementation");
-    	
-    	if(implementation.equals("local")) {
-    		return new RepositoryStorageLocalImpl();
-    	} else {
-    		throw new BeanCreationException("Unknown storage type");
-    	}
-    }
-    
-    @Bean
-    public CommonsRequestLoggingFilter requestLoggingFilter()
+    CommonsRequestLoggingFilter requestLoggingFilter()
     {
     	CommonsRequestLoggingFilter loggingFilter = new CommonsRequestLoggingFilter();
     	loggingFilter.setIncludeClientInfo(true);
@@ -469,7 +364,7 @@ public class WebApplicationConfig implements WebMvcConfigurer {
     }
     
     @Bean
-    public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
+    ThreadPoolTaskScheduler threadPoolTaskScheduler() {
     	ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
     	
     	threadPoolTaskScheduler.setPoolSize(100); //TODO: fetch from the configuration
@@ -479,9 +374,9 @@ public class WebApplicationConfig implements WebMvcConfigurer {
     }
     
     @Bean
-    public ObjectMapper objectMapper() {
+    ObjectMapper objectMapper() {
     	ObjectMapper objectMapper = new ObjectMapper();
-    	objectMapper.registerModule(new JSR353Module());
+    	objectMapper.registerModule(new JSR353Module());    	
     	objectMapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
     	
     	return objectMapper;
@@ -492,5 +387,100 @@ public class WebApplicationConfig implements WebMvcConfigurer {
     	WebMvcConfigurer.super.addArgumentResolvers(resolvers);
     	
     	resolvers.add(new PageableHandlerMethodArgumentResolver(new NestedIdSortArgumentResolver()));
+    }
+    
+    @Bean
+    SecurityMediator securityMediator() {
+    	return securityMediatorImpl;
+    }
+    
+    @Bean
+    ServiceResolver serviceResolver() {
+    	return new ServiceResolverImpl(packageServicesByTechnology(), 
+    			repositoryServicesByTechnology());
+    }
+    
+    //TODO: make it DRY
+    @Bean
+    Map<Technology, PackageService<?>> packageServicesByTechnology() {
+    	Map<Technology, PackageService<?>> services = new HashMap<>();
+    	
+    	for(Class<?> clazz : getTechnologyClasses()) {
+    		if(Technology.class.isAssignableFrom(clazz) 
+    				&& !InternalTechnology.class.isAssignableFrom(clazz)) {
+				try {
+					final Technology technology = (Technology)clazz.getConstructor()
+							.newInstance();
+					final String fullClassName = clazz.getCanonicalName();
+	    			PackageService<?> technologySpecificService = 
+	    					packageServices
+	    					.values()
+	    					.stream()
+	    					.filter(srv -> 
+	    						technology.getPackageServiceClass()
+	    						.isAssignableFrom(srv.getClass())
+	    					)
+	    					.findFirst().orElseThrow(() -> new IllegalStateException(
+	    							"No package service implementation found "
+	    							+ "for extension class: " + fullClassName));
+	    			
+	    			services.put(technology, technologySpecificService);
+				} catch (IllegalAccessException | IllegalArgumentException 
+						| InvocationTargetException | NoSuchMethodException 
+						| SecurityException | NullPointerException | InstantiationException e) {
+					logger.error(e.getMessage(), e);
+					throw new IllegalStateException("Technology class should "
+							+ "implement a correct (returning technology instance) "
+							+ "getInstance() method.");
+				} 
+    			
+    		}
+    	}
+    	
+    	return services;    	
+    }
+    
+    @Bean
+    Map<Technology, RepositoryService<?>> repositoryServicesByTechnology() {
+    	Map<Technology, RepositoryService<?>> services = new HashMap<>();
+    	
+    	for(Class<?> clazz : getTechnologyClasses()) {
+    		if(Technology.class.isAssignableFrom(clazz) 
+    				&& !InternalTechnology.class.isAssignableFrom(clazz)) {
+				try {
+					final Technology technology = (Technology)clazz.getConstructor()
+							.newInstance();
+					final String fullClassName = clazz.getCanonicalName();
+	    			RepositoryService<?> technologySpecificService = 
+	    					repositoryServices
+	    					.values()
+	    					.stream()
+	    					.filter(srv -> 
+	    						technology.getRepositoryServiceClass()
+	    						.isAssignableFrom(srv.getClass())
+	    					)
+	    					.findFirst().orElseThrow(() -> new IllegalStateException(
+	    							"No repository service implementation found "
+	    							+ "for extension class: " + fullClassName));
+	    			
+	    			services.put(technology, technologySpecificService);
+				} catch (IllegalAccessException | IllegalArgumentException 
+						| InvocationTargetException | NoSuchMethodException 
+						| SecurityException | NullPointerException | InstantiationException e) {
+					logger.error(e.getMessage(), e);
+					throw new IllegalStateException("Technology class should "
+							+ "implement a correct (returning technology instance) "
+							+ "getInstance() method.");
+				} 
+    			
+    		}
+    	}
+    	
+    	return services;
+    }
+    
+    private Set<Class<? extends Technology>> getTechnologyClasses() {
+    	Reflections reflections = new Reflections("eu.openanalytics.rdepot");
+		return reflections.getSubTypesOf(Technology.class);
     }
 }

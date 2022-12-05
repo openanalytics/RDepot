@@ -23,14 +23,16 @@ services:
     hostname: oa-rdepot-app
     container_name: oa-rdepot-app
     volumes:
-      - ./docker/app/application.yml:/opt/rdepot/application.yml
-#      - ./docker/app/test_configs/test_declarative_config.yml:/opt/rdepot/application.yml
+#      - ./docker/app/application.yml:/opt/rdepot/application.yml
+      - ./docker/app/test_configs/test_declarative_config.yml:/opt/rdepot/application.yml
+#      - ./docker/app/test_configs/test_openid_config.yml:/opt/rdepot/application.yml   
       - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
       - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
       - ./itestSourceFiles:/opt/testSourceFiles:ro
       - ./itestGenerated:/opt/testGenerated:ro
       - ./itestNewFiles:/opt/newFiles:ro
     ports:
+      #- 3025:3025
       - 8001:8001
       - 8018:8080
       - 8019:8001
@@ -40,8 +42,9 @@ services:
 #      - keycloak
 #      - openid
     environment:
-      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/rdepot
-#      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/declarative
+#      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/rdepot
+      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/declarative
+#     - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/migrations
       - DB_USERNAME=postgres
       - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8001
     healthcheck:
@@ -72,7 +75,7 @@ services:
     container_name: oa-rdepot-db
     volumes:
       - ./docker/db/initial_scripts/:/docker-entrypoint-initdb.d/:ro
-      - ./docker/db/sql_files/:/opt/sql_files/:ro
+      - ./docker/db/sql_files/:/opt/sql_files/
     environment:
       - POSTGRES_PASSWORD=mysecretpassword
     ports:
@@ -90,7 +93,7 @@ services:
 #      - USERS_FILE=/opt/rdepot/users.json
 #    volumes:
 #      - ./docker/oidc/config.json:/opt/rdepot/config.json
-##      - ./docker/oidc/test-config.json:/opt/rdepot/config.json
+#      - ./docker/oidc/test-config.json:/opt/rdepot/config.json
 #      - ./docker/oidc/users.json:/opt/rdepot/users.json  
 #    ports:
 #      - 9000:9000
@@ -133,26 +136,27 @@ services:
 #      - ./docker/ldap/import/db:/var/lib/ldap/  
     networks:
       - oa-rdepot
+      
+#  greenmail:
+#    image: greenmail/standalone
+#    hostname: oa-rdepot-greenmail
+#    container_name: oa-rdepot-greenmail
+#    ports:
+#      - 3025:3025
+#      - 8081:8080
+#    environment:
+#      - GREENMAIL_OPTS='-Dgreenmail.setup.test.all -Dgreenmail.auth.disabled -Dgreenmail.hostname=0.0.0.0 -Dgreenmail.users=rdepot:mysecretpassword@oa-rdepot-greenmail -Dgreenmail.verbose'
+#    networks:
+#      - oa-rdepot                      
                   
 #-----------------------------------------------------------------------------------------------------------------
 # Tests related containers      
-#  selenium-hub:
-#    image: selenium/hub
-#    container_name: oa-rdepot-selenium-hub
-#    hostname: oa-rdepot-selenium-hub
+#  selenium-chrome:
+#    image: selenium/standalone-chrome
+#    container_name: oa-rdepot-selenium-chrome
+#    hostname: oa-rdepot-selenium-chrome
 #    ports:
 #      - 4444:4444
-#    networks:
-#      - oa-rdepot  
-#  chrome:
-#    image: selenium/node-chrome
-#    container_name: oa-rdepot-chrome
-#    hostname: oa-rdepot-chrome
-#    depends_on:
-#      - selenium-hub
-#    environment:
-#      - HUB_HOST=selenium-hub
-#      - HUB_PORT=4444
 #    networks:
 #      - oa-rdepot  
 #------------------------------------------------------------------------------------------------------------------  

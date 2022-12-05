@@ -441,6 +441,7 @@ function openEditRepositoryDialog(id) {
         name = $('#repository-' + id).closest('tr').find('.repository-name').html(),
         publicationUri = $('#repository-' + id).closest('tr').find('.repository-publication-uri').html(),
         serverAddress = $('#repository-' + id).closest('tr').find('.repository-server-address').html();
+		version = $('#repository-' + id).closest('tr').find('.repository-version').html();
 
     html += '<h4 class="mdl-dialog__title">Edit repository</h4>';
     html += '<div class="mdl-dialog__content">';
@@ -476,6 +477,7 @@ function openEditRepositoryDialog(id) {
             formData.set("name", name);
             formData.set("publicationUri", publicationUri);
             formData.set("serverAddress", serverAddress);
+            formData.set("version", version);
 
             request.onreadystatechange = function() {
                 if(this.readyState == 4) {

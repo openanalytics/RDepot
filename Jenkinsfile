@@ -74,6 +74,10 @@ pipeline {
                         reportName: 'Repo Test Report',
                         allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true])
                     publishHTML([
+                        reportDir: 'r-module/build/reports/tests/test', reportFiles: 'index.html',
+                        reportName: 'R Module Test Report',
+                        allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true])
+                    publishHTML([
                         reportDir: 'build/reports', reportFiles: 'dependency-check-report.html',
                         reportName: 'OWASP Dependency Analysis Report',
                         allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true])

@@ -22,6 +22,7 @@ package eu.openanalytics.rdepot.integrationtest;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -29,9 +30,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -42,6 +41,11 @@ import org.json.simple.parser.ParseException;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -180,6 +184,39 @@ public abstract class IntegrationTest {
 		assertEquals("Incorrect JSON output", expectedJSON, actualJSON);		
 	}
 	
+	protected void testPatchEndpointWithEvents(String patch, String expectedJsonPath, String urlSuffix, 
+			Integer statusCode, String token, int howManyNewEventsShouldBeCreated, String pathToExpectedNewEventsJson) throws Exception {
+		JSONParser jsonParser = new JSONParser();
+		
+		int eventsNumberAfterPatch;
+		int eventsNumberBeforePatch = getTotalEventsAmount();
+		
+		FileReader reader = new FileReader(JSON_PATH + expectedJsonPath);
+		JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
+		
+		String data = given()
+				.header(AUTHORIZATION, BEARER + token)
+				.accept(ContentType.JSON)
+				.contentType("application/json-patch+json")
+				.body(patch)
+			.when()
+				.patch(API_PATH + urlSuffix)
+			.then()
+				.statusCode(statusCode)
+				.extract()
+				.asString();
+		
+		JSONObject actualJSON = (JSONObject) jsonParser.parse(data);
+		
+		eventsNumberAfterPatch = getTotalEventsAmount();
+		int result = eventsNumberAfterPatch - eventsNumberBeforePatch;
+		
+		assertEquals("Incorrect JSON output", expectedJSON, actualJSON);		
+		assertTrue("there are different numbers of new events in database then expected, was: " + result + ", but expected: " + howManyNewEventsShouldBeCreated,
+				result == howManyNewEventsShouldBeCreated);
+		testIfNewestEventsAreCorret(howManyNewEventsShouldBeCreated, pathToExpectedNewEventsJson);
+	}
+	
 	protected void testPostEndpoint(String body, String expectedJsonPath, 
 			Integer statusCode, String token) throws Exception {
 		JSONParser jsonParser = new JSONParser();
@@ -244,9 +281,8 @@ public abstract class IntegrationTest {
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected Set<JSONObject> convert(JSONArray rootJSON) throws ParseException {
-		Set<JSONObject> JSON = new HashSet<>();
-		
+	protected List<JSONObject> convert(JSONArray rootJSON) throws ParseException {
+		List<JSONObject> JSON = new ArrayList<JSONObject>();
 		for(int i = 0; i < rootJSON.size(); i++) {
 			JSONObject objJSON = (JSONObject) rootJSON.get(i);
 			String source = objJSON.get("source").toString();
@@ -260,18 +296,18 @@ public abstract class IntegrationTest {
 	 }
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected List<Set> convertPackages(JsonArray rootJSON) throws ParseException {
-		List<Set> JSON = new ArrayList<>();
+	protected List<List> convertPackages(JsonArray rootJSON) throws ParseException {
+		List<List> JSON = new ArrayList<>();
 			
 		for(int i = 0; i < rootJSON.size(); i++) {
 			JsonObject repositoryJSON = (JsonObject) rootJSON.get(i);
 			JsonArray packagesJSON = (JsonArray) repositoryJSON.get("packages");
-			Set JSONSet = new HashSet<>();
+			List JSONList = new ArrayList<>();
 			for(int k = 0; k < packagesJSON.size(); k++) {
 				JsonObject packageJSON = (JsonObject) packagesJSON.get(k);
-				JSONSet.add(packageJSON);
+				JSONList.add(packageJSON);
 			}
-			JSON.add(JSONSet);
+			JSON.add(JSONList);
 		}
 		return JSON;
 	 }
@@ -309,5 +345,54 @@ public abstract class IntegrationTest {
         	ioExp.printStackTrace();
 	    }
 	    return bArray;
+	}
+	
+	private int getTotalEventsAmount() throws ParseException, JsonMappingException, JsonProcessingException {
+		String data = given()
+		.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+		.accept(ContentType.JSON)
+		.when()
+			.get("/api/v2/manager/events")
+		.then()
+			.statusCode(200)
+			.extract()
+			.asString();
+	
+		JsonNode eventsNode = new ObjectMapper().readTree(data);		
+		
+		JsonNode result = eventsNode.get("data")
+				.get("page")
+				.get("totalElements");
+		
+		return Integer.valueOf(result.toString());
+	}
+	
+	private void testIfNewestEventsAreCorret(int howMany, String expectedJsonPath) throws IOException, ParseException {
+		
+		String data = given()
+		.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+		.accept(ContentType.JSON)
+		.when()
+			.get("/api/v2/manager/events")
+		.then()
+			.statusCode(200)
+			.extract()
+			.asString();
+		
+		JsonNode expectedJSON = new ObjectMapper().readTree(new File(JSON_PATH + expectedJsonPath));	
+		JsonNode eventsNode = new ObjectMapper().readTree(data).get("data").get("content");
+		List<ObjectNode> eventsNodeConverted = convertEvents(eventsNode, howMany);
+		
+		assertEquals(convertEvents(expectedJSON, howMany), eventsNodeConverted);	
+	}
+
+	private List<ObjectNode> convertEvents(JsonNode events, int howMany) {
+		List<ObjectNode> result = new ArrayList<ObjectNode>();
+		for(int i = 0; i < howMany; i++) {
+			ObjectNode tmpEvent = (ObjectNode) events.get(i);
+			tmpEvent.remove("time");
+			result.add(tmpEvent);
+		}
+		return result;
 	}
 }

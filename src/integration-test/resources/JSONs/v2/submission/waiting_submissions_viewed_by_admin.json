@@ -1,210 +1,210 @@
 {
-    "status": "success",
-    "code": 200,
-    "message": "Your request has been processed successfully.",
-    "messageCode": "success.request.processed",
-    "data": {
+  "code": 200,
+  "data": {
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/r/submissions?state=waiting&page=0&size=20&sort=id,asc"
+      }
+    ],
+    "page": {
+      "number": 0,
+      "size": 20,
+      "totalPages": 1,
+      "totalElements": 4
+    },
+    "content": [
+      {
+        "changes": null,
         "links": [
-            {
-                "rel": "self",
-                "href": "http://localhost:8017/api/v2/manager/r/submissions?state=waiting&page=0&size=20&sort=id,asc"
-            }
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/submissions/19"
+          },
+          {
+            "rel": "submissionList",
+            "href": "http://localhost:8017/api/v2/manager/r/submissions"
+          }
         ],
-        "content": [
+        "id": 19,
+        "state": "WAITING",
+        "userId": 7,
+        "packageBag": {
+          "imports": "ggplot2, tidyr, dplyr, purrr, magrittr, stats",
+          "depends": "R (>= 3.2.2)",
+          "author": "Nicholas Tierney [aut, cre]",
+          "description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
+          "active": false,
+          "source": "/opt/rdepot/new/70032548/visdat_0.1.0.tar.gz",
+          "title": "Preliminary Data Visualisation",
+          "userId": 4,
+          "version": "0.1.0",
+          "url": "https://github.com/njtierney/visdat/",
+          "suggests": "plotly (>= 4.5.6), testthat, knitr, rmarkdown, vdiffr",
+          "license": "MIT + file LICENSE",
+          "systemRequirements": null,
+          "submissionId": 19,
+          "deleted": false,
+          "md5sum": "f343fa3a01dcd9546fa0947877f58f36",
+          "repositoryId": 3,
+          "name": "visdat",
+          "links": [
             {
-                "id": 19,
-                "userId": 7,
-                "packageBag": {
-                    "id": 19,
-                    "version": "0.1.0",
-                    "repositoryId": 3,
-                    "submissionId": 19,
-                    "name": "visdat",
-                    "description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
-                    "author": "Nicholas Tierney [aut, cre]",
-                    "depends": "R (>= 3.2.2)",
-                    "imports": "ggplot2, tidyr, dplyr, purrr, magrittr, stats",
-                    "suggests": "plotly (>= 4.5.6), testthat, knitr, rmarkdown, vdiffr",
-                    "systemRequirements": null,
-                    "license": "MIT + file LICENSE",
-                    "title": "Preliminary Data Visualisation",
-                    "url": "https://github.com/njtierney/visdat/",
-                    "source": "/opt/rdepot/new/70032548/visdat_0.1.0.tar.gz",
-                    "md5sum": "f343fa3a01dcd9546fa0947877f58f36",
-                    "active": false,
-                    "deleted": false,
-                    "fileName": "visdat_0.1.0.tar.gz",
-                    "links": [
-                        {
-                            "rel": "self",
-                            "href": "http://localhost:8017/api/v2/manager/r/packages/19"
-                        },
-                        {
-                            "rel": "packageList",
-                            "href": "http://localhost:8017/api/v2/manager/r/packages"
-                        }
-                    ]
-                },
-                "changes": null,
-                "state": "WAITING",
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http://localhost:8017/api/v2/manager/r/submissions/19"
-                    },
-                    {
-                        "rel": "submissionList",
-                        "href": "http://localhost:8017/api/v2/manager/r/submissions"
-                    }
-                ]
+              "rel": "self",
+              "href": "http://localhost:8017/api/v2/manager/r/packages/19"
             },
             {
-                "id": 26,
-                "userId": 5,
-                "packageBag": {
-                    "id": 26,
-                    "version": "2.0.0",
-                    "repositoryId": 3,
-                    "submissionId": 26,
-                    "name": "usl",
-                    "description": "The Universal Scalability Law (Gunther 2007)",
-                    "author": "Neil J. Gunther [aut], Stefan Moeding [aut, cre]",
-                    "depends": "R (>= 3.0), methods",
-                    "imports": "graphics, stats, nlsr",
-                    "suggests": "knitr",
-                    "systemRequirements": null,
-                    "license": "BSD_2_clause + file LICENSE",
-                    "title": "Analyze System Scalability with the Universal Scalability Law",
-                    "url": null,
-                    "source": "/opt/rdepot/new/54345476/usl_2.0.0.tar.gz",
-                    "md5sum": "868140a3c3c29327eef5d5a485aee5b6",
-                    "active": false,
-                    "deleted": false,
-                    "fileName": "usl_2.0.0.tar.gz",
-                    "links": [
-                        {
-                            "rel": "self",
-                            "href": "http://localhost:8017/api/v2/manager/r/packages/26"
-                        },
-                        {
-                            "rel": "packageList",
-                            "href": "http://localhost:8017/api/v2/manager/r/packages"
-                        }
-                    ]
-                },
-                "changes": null,
-                "state": "WAITING",
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http://localhost:8017/api/v2/manager/r/submissions/26"
-                    },
-                    {
-                        "rel": "submissionList",
-                        "href": "http://localhost:8017/api/v2/manager/r/submissions"
-                    }
-                ]
-            },
-            {
-                "id": 30,
-                "userId": 6,
-                "packageBag": {
-                    "id": 30,
-                    "version": "0.9.1",
-                    "repositoryId": 5,
-                    "submissionId": 30,
-                    "name": "A3",
-                    "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-                    "author": "Scott Fortmann-Roe",
-                    "depends": "xtable, pbapply",
-                    "imports": null,
-                    "suggests": "randomForest, e1071",
-                    "systemRequirements": null,
-                    "license": "GPL (>= 2)",
-                    "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
-                    "url": null,
-                    "source": "/opt/rdepot/new/92253304/A3_0.9.1.tar.gz",
-                    "md5sum": "8eb4760cd574f5489e61221dc9bb0076",
-                    "active": false,
-                    "deleted": false,
-                    "fileName": "A3_0.9.1.tar.gz",
-                    "links": [
-                        {
-                            "rel": "self",
-                            "href": "http://localhost:8017/api/v2/manager/r/packages/30"
-                        },
-                        {
-                            "rel": "packageList",
-                            "href": "http://localhost:8017/api/v2/manager/r/packages"
-                        }
-                    ]
-                },
-                "changes": null,
-                "state": "WAITING",
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http://localhost:8017/api/v2/manager/r/submissions/30"
-                    },
-                    {
-                        "rel": "submissionList",
-                        "href": "http://localhost:8017/api/v2/manager/r/submissions"
-                    }
-                ]
-            },
-            {
-                "id": 31,
-                "userId": 6,
-                "packageBag": {
-                    "id": 31,
-                    "version": "1.0",
-                    "repositoryId": 5,
-                    "submissionId": 31,
-                    "name": "abc",
-                    "description": "The 'abc' package provides various functions for parameter estimation and model selection in an ABC framework. Three main",
-                    "author": "Katalin Csillery, with contributions from Michael Blum and Olivier Francois",
-                    "depends": "R (>= 1.8.0), nnet, quantreg, locfit, methods",
-                    "imports": null,
-                    "suggests": null,
-                    "systemRequirements": null,
-                    "license": "Unlimited",
-                    "title": "Functions to perform Approximate Bayesian Computation (ABC) using simulated data",
-                    "url": null,
-                    "source": "/opt/rdepot/new/51328701/abc_1.0.tar.gz",
-                    "md5sum": "91599204c92275ed4b36d55e8d7c144b",
-                    "active": false,
-                    "deleted": false,
-                    "fileName": "abc_1.0.tar.gz",
-                    "links": [
-                        {
-                            "rel": "self",
-                            "href": "http://localhost:8017/api/v2/manager/r/packages/31"
-                        },
-                        {
-                            "rel": "packageList",
-                            "href": "http://localhost:8017/api/v2/manager/r/packages"
-                        }
-                    ]
-                },
-                "changes": null,
-                "state": "WAITING",
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http://localhost:8017/api/v2/manager/r/submissions/31"
-                    },
-                    {
-                        "rel": "submissionList",
-                        "href": "http://localhost:8017/api/v2/manager/r/submissions"
-                    }
-                ]
+              "rel": "packageList",
+              "href": "http://localhost:8017/api/v2/manager/r/packages"
             }
-        ],
-        "page": {
-            "size": 20,
-            "totalElements": 4,
-            "totalPages": 1,
-            "number": 0
+          ],
+          "id": 19
         }
-    }
+      },
+      {
+        "changes": null,
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/submissions/26"
+          },
+          {
+            "rel": "submissionList",
+            "href": "http://localhost:8017/api/v2/manager/r/submissions"
+          }
+        ],
+        "id": 26,
+        "state": "WAITING",
+        "userId": 5,
+        "packageBag": {
+          "imports": "graphics, stats, nlsr",
+          "depends": "R (>= 3.0), methods",
+          "author": "Neil J. Gunther [aut], Stefan Moeding [aut, cre]",
+          "description": "The Universal Scalability Law (Gunther 2007)",
+          "active": false,
+          "source": "/opt/rdepot/new/54345476/usl_2.0.0.tar.gz",
+          "title": "Analyze System Scalability with the Universal Scalability Law",
+          "userId": 4,
+          "version": "2.0.0",
+          "url": null,
+          "suggests": "knitr",
+          "license": "BSD_2_clause + file LICENSE",
+          "systemRequirements": null,
+          "submissionId": 26,
+          "deleted": false,
+          "md5sum": "868140a3c3c29327eef5d5a485aee5b6",
+          "repositoryId": 3,
+          "name": "usl",
+          "links": [
+            {
+              "rel": "self",
+              "href": "http://localhost:8017/api/v2/manager/r/packages/26"
+            },
+            {
+              "rel": "packageList",
+              "href": "http://localhost:8017/api/v2/manager/r/packages"
+            }
+          ],
+          "id": 26
+        }
+      },
+      {
+        "changes": null,
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/submissions/30"
+          },
+          {
+            "rel": "submissionList",
+            "href": "http://localhost:8017/api/v2/manager/r/submissions"
+          }
+        ],
+        "id": 30,
+        "state": "WAITING",
+        "userId": 6,
+        "packageBag": {
+          "imports": null,
+          "depends": "xtable, pbapply",
+          "author": "Scott Fortmann-Roe",
+          "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
+          "active": false,
+          "source": "/opt/rdepot/new/92253304/A3_0.9.1.tar.gz",
+          "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
+          "userId": 8,
+          "version": "0.9.1",
+          "url": null,
+          "suggests": "randomForest, e1071",
+          "license": "GPL (>= 2)",
+          "systemRequirements": null,
+          "submissionId": 30,
+          "deleted": false,
+          "md5sum": "8eb4760cd574f5489e61221dc9bb0076",
+          "repositoryId": 5,
+          "name": "A3",
+          "links": [
+            {
+              "rel": "self",
+              "href": "http://localhost:8017/api/v2/manager/r/packages/30"
+            },
+            {
+              "rel": "packageList",
+              "href": "http://localhost:8017/api/v2/manager/r/packages"
+            }
+          ],
+          "id": 30
+        }
+      },
+      {
+        "changes": null,
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/submissions/31"
+          },
+          {
+            "rel": "submissionList",
+            "href": "http://localhost:8017/api/v2/manager/r/submissions"
+          }
+        ],
+        "id": 31,
+        "state": "WAITING",
+        "userId": 6,
+        "packageBag": {
+          "imports": null,
+          "depends": "R (>= 1.8.0), nnet, quantreg, locfit, methods",
+          "author": "Katalin Csillery, with contributions from Michael Blum and Olivier Francois",
+          "description": "The 'abc' package provides various functions for parameter estimation and model selection in an ABC framework. Three main",
+          "active": false,
+          "source": "/opt/rdepot/new/51328701/abc_1.0.tar.gz",
+          "title": "Functions to perform Approximate Bayesian Computation (ABC) using simulated data",
+          "userId": 8,
+          "version": "1.0",
+          "url": null,
+          "suggests": null,
+          "license": "Unlimited",
+          "systemRequirements": null,
+          "submissionId": 31,
+          "deleted": false,
+          "md5sum": "91599204c92275ed4b36d55e8d7c144b",
+          "repositoryId": 5,
+          "name": "abc",
+          "links": [
+            {
+              "rel": "self",
+              "href": "http://localhost:8017/api/v2/manager/r/packages/31"
+            },
+            {
+              "rel": "packageList",
+              "href": "http://localhost:8017/api/v2/manager/r/packages"
+            }
+          ],
+          "id": 31
+        }
+      }
+    ]
+  },
+  "messageCode": "success.request.processed",
+  "message": "Your request has been processed successfully.",
+  "status": "success"
 }

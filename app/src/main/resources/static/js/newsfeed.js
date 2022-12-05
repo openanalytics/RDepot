@@ -124,7 +124,7 @@ function updateFeed(events) {
                 describeChange = true;
             } else {
                 eventType = eventsOfADay[k].changedVariable;
-                objectName = eventsOfADay[k].valueAfter;
+                objectName = eventsOfADay[k].repositoryName;
             }
             
             var html = '<dd class="' + newDirection + ' clearfix" style="display:none;"><div class="circ"><i class="material-icons">';

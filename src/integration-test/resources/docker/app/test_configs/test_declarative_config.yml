@@ -65,14 +65,26 @@ hibernate:
 
 # Enable Liquibase
 spring:
+  mail:
+    enabled: false
   liquibase:
     user: postgres
     enabled: true
 
 # Debug SQL queries
-#logging:
-#  level:
-#    org:
+logging:
+  level:
+    eu:
+      openanalytics:
+        rdepot: DEBUG
+    # org:
+    #   hibernate:
+    #     engine:
+    #       transaction:
+    #         internal:
+    #           TransactionImpl: DEBUG
+   # org:
+   #   springframework: DEBUG
 #      hibernate:
 #        SQL: DEBUG
 #        type:
