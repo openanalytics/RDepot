@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,11 +20,15 @@
  */
 package eu.openanalytics.rdepot.base.validation;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import eu.openanalytics.rdepot.base.entities.RepositoryMaintainer;
+import eu.openanalytics.rdepot.base.entities.Role;
+import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.messaging.RefactoredMessageCodes;
 import eu.openanalytics.rdepot.base.service.CommonRepositoryService;
 import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
@@ -53,14 +57,25 @@ public class RepositoryMaintainerValidator implements Validator {
 		return clazz.isAssignableFrom(RepositoryMaintainer.class);
 	}
 
+	protected void validateUser(RepositoryMaintainer maintainer, Errors errors) {
+		Optional<User> userOpt = Optional.empty();
+		
+		if(maintainer.getUser() != null) {
+			userOpt = userService.findById(maintainer.getUser().getId());
+		}
+		
+		if(userOpt.isEmpty()) {
+			errors.rejectValue("user", RefactoredMessageCodes.EMPTY_USER);
+		} else if(userOpt.get().getRole().getValue() < Role.VALUE.REPOSITORYMAINTAINER) {
+			errors.rejectValue("user", RefactoredMessageCodes.USER_PERMISSIONS_NOT_SUFFICIENT);
+		}
+	}
+	
 	@Override
 	public void validate(Object target, Errors errors) {
 		RepositoryMaintainer maintainer = (RepositoryMaintainer)target;
 		
-		if(maintainer.getUser() == null 
-				|| userService.findById(maintainer.getUser().getId()).isEmpty()) {
-			errors.rejectValue("user", RefactoredMessageCodes.EMPTY_USER);
-		}
+		validateUser(maintainer, errors);
 		if(maintainer.getRepository() == null 
 				|| repositoryService
 					.findById(maintainer.getRepository().getId())

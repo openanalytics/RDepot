@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -94,7 +94,7 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
 	private String snapshot;
 	
 	@Override
-	public File writeToWaitingRoom(final MultipartFile fileData, final RRepository repository) 
+	public String writeToWaitingRoom(final MultipartFile fileData, final RRepository repository) 
 			throws WriteToWaitingRoomException {
 		try {
 			final File waitingRoom = generateWaitingRoom(packageUploadDirectory, repository);
@@ -102,7 +102,7 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
 			
 			fileData.transferTo(file);
 			
-			return file;
+			return file.getAbsolutePath();
 		} catch (IOException e) {
 			logger.error(e.getMessage(), e);
 			throw new WriteToWaitingRoomException();
@@ -124,13 +124,13 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
 	}
 
 	@Override
-	public Properties getPropertiesFromExtractedFile(final File extractedFile) 
+	public Properties getPropertiesFromExtractedFile(final String extractedFile) 
 			throws ReadPackageDescriptionException {
 		try {
-			return new RDescription(new File(extractedFile.getPath() + separator + "DESCRIPTION"));
+			return new RDescription(new File(extractedFile + separator + "DESCRIPTION"));
 		} catch (IOException e) {
 			try {
-				deleteFile(extractedFile.getParentFile());
+				deleteFile(new File(extractedFile).getParentFile());
 			} catch (DeleteFileException dfe) {
 				logger.error(dfe.getMessage(), dfe);
 			}
@@ -140,7 +140,7 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
 	}
 
 	@Override
-	public File moveToMainDirectory(final RPackage packageBag) throws InvalidSourceException, MovePackageSourceException {
+	public String moveToMainDirectory(final RPackage packageBag) throws InvalidSourceException, MovePackageSourceException {
 		logger.debug("Moving package to the main directory...");
 		final RRepository repository = packageBag.getRepository();
 		File mainDir = new File(packageUploadDirectory.getAbsolutePath() + separator +
@@ -183,7 +183,7 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
 		}
 		logger.debug("Package moved to the following location: " 
 				+ newDirectory.getAbsolutePath() + separator + packageFilename);
-		return new File(newDirectory.getAbsolutePath() + separator + packageFilename);
+		return new File(newDirectory.getAbsolutePath() + separator + packageFilename).getAbsolutePath();
 	}
 
 	private void createTemporaryFoldersForLatestAndArchive(String path) throws CreateFolderStructureException {
@@ -267,7 +267,7 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
 	}
 
 	@Override
-	public File moveToTrashDirectory(RPackage packageBag) throws MovePackageSourceException {
+	public String moveToTrashDirectory(RPackage packageBag) throws MovePackageSourceException {
 		File trashDir = new File(packageUploadDirectory.getAbsolutePath() + separator 
 				+ "trash" + separator + packageBag.getRepository().getId() 
 				+ separator + (new Random()).nextInt(100000000));
@@ -281,7 +281,10 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
 		return moveSource(packageBag, trashDir.getAbsolutePath());
 	}
 
-	public File moveSource(RPackage packageBag, String destinationDir) throws MovePackageSourceException {
+	public String moveSource(RPackage packageBag, String destinationDir) throws MovePackageSourceException {
+		if(packageBag.getSource().isEmpty()) {
+			return ""; //TODO: Is it the correct behavior?		
+		}
 		File current = new File(packageBag.getSource());
 		
 		if(!current.exists()) {
@@ -314,8 +317,8 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
 			throw new MovePackageSourceException();
 			//TODO: And what about what already happened? Maybe it would be a better idea to reverse it?
 		}
-		
-		return new File(newDirectory.getAbsolutePath()+ separator + packageFilename);
+		final String newSource = newDirectory.getAbsolutePath()+ separator + packageFilename;
+		return newSource;
 	}
 
 	@Override
@@ -354,7 +357,7 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
 			List<RPackage> latestPackages, List<RPackage> archivePackages, RRepository repository) 
 					throws OrganizePackagesException {
 		try {
-			createFolderStructureForGeneration(repository, separator);
+			createFolderStructureForGeneration(repository, dateStamp);
 			populateGeneratedFolder(packages, repository, dateStamp);
 			
 			final File target = linkCurrentFolderToGeneratedFolder(repository, dateStamp);

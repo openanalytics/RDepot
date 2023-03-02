@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -85,6 +85,7 @@ import eu.openanalytics.rdepot.base.api.v2.resolvers.NestedIdSortArgumentResolve
 import eu.openanalytics.rdepot.base.entities.Role;
 import eu.openanalytics.rdepot.base.entities.enums.SubmissionState;
 import eu.openanalytics.rdepot.base.formatters.StringToSubmissionStateConverter;
+import eu.openanalytics.rdepot.base.mediator.deletion.PackageDeleter;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediatorImpl;
 import eu.openanalytics.rdepot.base.service.PackageService;
@@ -141,6 +142,9 @@ public class WebApplicationConfig implements WebMvcConfigurer {
 	
 	@Autowired
 	Map<String, PackageService<?>> packageServices;
+	
+	@Autowired
+	Map<String, PackageDeleter<?>> packageDeleters;
 	
 	final Logger logger = LoggerFactory.getLogger(WebApplicationConfig.class);
 	
@@ -397,7 +401,46 @@ public class WebApplicationConfig implements WebMvcConfigurer {
     @Bean
     ServiceResolver serviceResolver() {
     	return new ServiceResolverImpl(packageServicesByTechnology(), 
-    			repositoryServicesByTechnology());
+    			repositoryServicesByTechnology(), packageDeletersByTechnology());
+    }
+    
+    @Bean
+    Map<Technology, PackageDeleter<?>> packageDeletersByTechnology() {
+    	Map<Technology, PackageDeleter<?>> services = new HashMap<>();
+    	
+    	for(Class<?> clazz : getTechnologyClasses()) {
+    		if(Technology.class.isAssignableFrom(clazz) 
+    				&& !InternalTechnology.class.isAssignableFrom(clazz)) {
+				try {
+					final Technology technology = (Technology)clazz.getConstructor()
+							.newInstance();
+					final String fullClassName = clazz.getCanonicalName();
+	    			PackageDeleter<?> technologySpecificDeleter = 
+	    					packageDeleters
+	    					.values()
+	    					.stream()
+	    					.filter(srv -> 
+	    						technology.getPackageDeleterClass()
+	    						.isAssignableFrom(srv.getClass())
+	    					)
+	    					.findFirst().orElseThrow(() -> new IllegalStateException(
+	    							"No package deleter implementation found "
+	    							+ "for extension class: " + fullClassName));
+	    			
+	    			services.put(technology, technologySpecificDeleter);
+				} catch (IllegalAccessException | IllegalArgumentException 
+						| InvocationTargetException | NoSuchMethodException 
+						| SecurityException | NullPointerException | InstantiationException e) {
+					logger.error(e.getMessage(), e);
+					throw new IllegalStateException("Technology class should "
+							+ "implement a correct (returning technology instance) "
+							+ "getInstance() method.");
+				} 
+    			
+    		}
+    	}
+    	
+    	return services;    
     }
     
     //TODO: make it DRY

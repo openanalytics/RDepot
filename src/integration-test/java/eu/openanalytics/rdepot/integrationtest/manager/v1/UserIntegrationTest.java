@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -180,7 +180,7 @@ public class UserIntegrationTest extends IntegrationTest {
 			.patch(API_PATH + "/" + USER_TO_DEACTIVATE_ID + "/deactivate")
 		.then()
 			.statusCode(200)
-			.body("success", equalTo("User has been deleted successfully."));
+			.body("success", equalTo("User has been deactivated successfully."));
 		
 		given()
 			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)

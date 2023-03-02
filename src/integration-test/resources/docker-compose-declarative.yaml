@@ -1,7 +1,7 @@
 version: '3'
 services:
   proxy:
-    image: library/nginx:alpine
+    image: registry.openanalytics.eu/proxy/library/nginx:alpine
     container_name: oa-rdepot-proxy
     restart: always
     volumes:
@@ -61,7 +61,7 @@ services:
       - oa-rdepot 
         
   db:
-    image: library/postgres:alpine
+    image: registry.openanalytics.eu/proxy/library/postgres:alpine
     restart: always
     hostname: oa-rdepot-db
     container_name: oa-rdepot-db

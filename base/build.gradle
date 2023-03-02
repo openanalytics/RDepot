@@ -61,7 +61,6 @@ dependencies {
 	implementation dependencies.mail
     implementation platform(dependencies.awsPlatform)
     implementation dependencies.awsS3
-    
 }
 
 test {

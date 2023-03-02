@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -77,7 +77,7 @@ public class RPackageValidator extends PackageValidator<RPackage> {
 	public void validate(RPackage packageBag, boolean replace, Errors errors) throws PackageValidationException, PackageDuplicatedToSilentlyIgnore {
 		validateUploadPackage(packageBag, replace);
 		if(packageBag.getId() > 0) {
-			Optional<RPackage> exsitingPackageOptional = packageService.findById(packageBag.getId()); 
+			Optional<RPackage> exsitingPackageOptional = packageService.findOneNonDeleted(packageBag.getId()); 
 			if(exsitingPackageOptional.isEmpty()) {
 				errors.rejectValue("id", RefactoredMessageCodes.NO_SUCH_PACKAGE_ERROR);
 			} else {
@@ -132,11 +132,17 @@ public class RPackageValidator extends PackageValidator<RPackage> {
 		if(tokens.length > maxLength) {
 			throw new PackageValidationException(RefactoredMessageCodes.INVALID_VERSION);
 		}
-		if(packageBag.getId() <= 0 && !replace
-				&& !packageService.findByNameAndVersionAndRepository(name, version, repository).isEmpty()) {
-			throw new PackageDuplicatedToSilentlyIgnore(RefactoredMessageCodes.DUPLICATE_VERSION);
-		}
 		
+		Optional<RPackage> sameVersionOpt = packageService
+				.findByNameAndVersionAndRepositoryAndDeleted(name, version, repository, false);
+		
+		if(sameVersionOpt.isPresent() && packageBag.getId() <= 0) {
+			if(replace) {
+				throw new PackageDuplicatedToSilentlyIgnore(sameVersionOpt.get());
+			} else {
+				throw new PackageValidationException(RefactoredMessageCodes.DUPLICATE_VERSION);
+			}
+		}
 	}
 	
 	public void validate(MultipartFile multipartFile) throws MultipartFileValidationException {

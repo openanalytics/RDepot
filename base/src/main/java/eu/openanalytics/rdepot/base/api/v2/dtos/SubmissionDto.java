@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -22,6 +22,8 @@ package eu.openanalytics.rdepot.base.api.v2.dtos;
 
 import org.springframework.hateoas.EntityModel;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.enums.SubmissionState;
 
@@ -30,6 +32,7 @@ public class SubmissionDto implements IDto<Submission> {
 	private Integer id;
 	private Integer userId;
 	private EntityModel<PackageDto<?, ?>> packageBag;
+	private PackageDto<?,?> packageBagDto;
 	private String changes;
 	private SubmissionState state;
 	private Submission entity;
@@ -38,7 +41,8 @@ public class SubmissionDto implements IDto<Submission> {
 		this.entity = submission;
 		id = submission.getId();
 		userId = submission.getUser().getId();
-		packageBag = EntityModel.of(submission.getPackage().createDto());
+		packageBagDto = submission.getPackage().createDto();
+		packageBag = EntityModel.of(packageBagDto);
 		changes = submission.getChanges();
 		state = submission.getState();
 //		if(submission.isDeleted()) { //TODO: Change in 1.7.0 to support rejected state
@@ -60,6 +64,11 @@ public class SubmissionDto implements IDto<Submission> {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+	
+	@JsonIgnore
+	public PackageDto<?,?> getPackageBagDto() {
+		return this.packageBagDto;
 	}
 
 	public Integer getUserId() {

@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -109,5 +109,9 @@ public class PackageMaintainerService extends Service<PackageMaintainer> {
 		 = Comparator.comparing(PackageMaintainer::getId);
 	
 		return result.stream().sorted(sortPackageMaintainersById).collect(Collectors.toList());
+	}
+
+	public List<PackageMaintainer> findNonDeletedByUser(User user) {
+		return dao.findByUserAndDeleted(user, false);
 	}
 }

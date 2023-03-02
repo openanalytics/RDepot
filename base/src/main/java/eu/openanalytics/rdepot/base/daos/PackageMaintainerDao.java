@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -45,4 +45,5 @@ public interface PackageMaintainerDao extends Dao<PackageMaintainer> {
 			@Param("packageName") String packageName, 
 			@Param("repositoryId") int repositoryId, 
 			@Param("deleted") boolean deleted);
+	List<PackageMaintainer> findByUserAndDeleted(User user, boolean deleted);
 }

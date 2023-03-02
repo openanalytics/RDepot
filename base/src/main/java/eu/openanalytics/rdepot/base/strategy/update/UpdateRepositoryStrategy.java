@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -37,6 +37,7 @@ import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure;
 import eu.openanalytics.rdepot.base.synchronization.RepositorySynchronizer;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
+import eu.openanalytics.rdepot.base.time.DateProvider;
 
 public abstract class UpdateRepositoryStrategy<T extends Repository<T, ?>> extends UpdateStrategy<T> {
 
@@ -133,7 +134,8 @@ public abstract class UpdateRepositoryStrategy<T extends Repository<T, ?>> exten
 	protected void postStrategy() throws StrategyFailure {
 		if(resource.isPublished()) {
 			try {
-				repositorySynchronizer.storeRepositoryOnRemoteServer(resource, ""); //TODO: Decide what date formatting should be used.
+				repositorySynchronizer.storeRepositoryOnRemoteServer(resource, 
+						DateProvider.getCurrentDateStamp());
 			} catch (SynchronizeRepositoryException e) {
 				logger.error(e.getMessage(), e);
 				throw new StrategyFailure(e, false); //TODO: What about file-system issue in local container?

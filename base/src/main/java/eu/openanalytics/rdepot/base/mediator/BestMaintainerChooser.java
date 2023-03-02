@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -56,7 +56,6 @@ public class BestMaintainerChooser {
 	
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	
-	@Autowired
 	public BestMaintainerChooser(RepositoryMaintainerService repositoryMaintainerService,
 			PackageMaintainerService packageMaintainerService, UserService userService,
 			RoleService roleService, CommonPackageService packageService) {

@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -41,6 +41,7 @@ import eu.openanalytics.rdepot.base.mediator.BestMaintainerChooser;
 import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
+import eu.openanalytics.rdepot.r.mediator.deletion.RPackageDeleter;
 import eu.openanalytics.rdepot.r.services.RPackageService;
 import eu.openanalytics.rdepot.r.services.RRepositoryService;
 import eu.openanalytics.rdepot.r.synchronization.RRepositorySynchronizer;
@@ -63,6 +64,9 @@ public abstract class StrategyTest {
 	
 	@Mock
 	protected RPackageService packageService;
+	
+	@Mock
+	protected RPackageDeleter rPackageDeleter;
 	
 	@Mock
 	protected RRepositorySynchronizer repositorySynchronizer;

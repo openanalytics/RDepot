@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -69,8 +69,28 @@ public abstract class RepositoryService<E extends Repository<E,?>> extends Servi
 	
 	@Transactional
 	public void incrementVersion(E repository) {
-		E currentRepository = dao.findByNameAcquirePessimisticWriteLock(repository.getName())
-				.orElseThrow(IllegalStateException::new);
+		Optional<E> currentRepositoryOpt = Optional.empty();
+		int attempts = 0;
+		while(attempts < 3) {
+			currentRepositoryOpt = dao.findByNameAcquirePessimisticWriteLock(repository.getName());
+			
+			if(currentRepositoryOpt.isEmpty()) {
+				logger.warn("Could not acquire lock on repository " + repository.getName() 
+				+ "! Trying again...");
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					throw new IllegalStateException("Error while acquiring lock on repository.", e);
+				}
+				attempts++;
+			} else {
+				break;
+			}
+		}
+		
+		E currentRepository = currentRepositoryOpt.orElseThrow(() -> 
+			new IllegalStateException("Could not acquire lock on repository " 
+				+ repository.getName()));
 		logger.debug("Incrementing version from " + currentRepository.getVersion());
 		currentRepository.setVersion(currentRepository.getVersion() + 1);
 		dao.saveAndFlush(currentRepository);

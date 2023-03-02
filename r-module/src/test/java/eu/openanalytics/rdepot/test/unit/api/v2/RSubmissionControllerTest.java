@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -453,7 +453,7 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
 
 	@Test
 	@WithMockUser(authorities = "user")
-	public void patchSubmission_returns500_whenTryingToAcceptedCancelledSubmission() throws Exception {
+	public void patchSubmission_returns422_whenTryingToAcceptedCancelledSubmission() throws Exception {
 		final String patchJson = "[{\"op\": \"replace\",\"path\":\"/state\",\"value\":\"ACCEPTED\"}]";
 		final RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
 		final Submission submission = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get()).getSubmission();
@@ -475,7 +475,7 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
 
 		mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/r/submissions/" + submission.getId())
 				.content(patchJson).contentType("application/json-patch+json"))
-				.andExpect(status().isInternalServerError())
+				.andExpect(status().isUnprocessableEntity())
 				.andExpect(content().json(Files.readString(Path.of(ERROR_UPDATE_NOT_ALLOWED_SUBMISSION_PATH))));
 	}
 

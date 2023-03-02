@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -73,9 +73,7 @@ public class SecurityMediatorImpl implements SecurityMediator {
 	
 	@Override
 	public boolean isAuthorizedToCancel(Submission submission, User user) {
-		if(submission.getUser().getId() == user.getId())
-			return true;
-		return isAuthorizedToEdit(submission.getPackage(), user);
+		return submission.getUser().getId() == user.getId();
 	}
 
 	@Override
@@ -105,14 +103,20 @@ public class SecurityMediatorImpl implements SecurityMediator {
 	public boolean isAuthorizedToEdit(Submission submission, SubmissionDto submissionDto, User requester) {
 		if(!submission.getState().equals(submissionDto.getState())) {
 			if(submissionDto.getState().equals(SubmissionState.ACCEPTED) 
-					&& !isAuthorizedToAccept(submission, requester)) {
-				return false;
+					&& isAuthorizedToAccept(submission, requester)) {
+				return true;
 			} else if(submissionDto.getState().equals(SubmissionState.CANCELLED) && 
-					!isAuthorizedToCancel(submission, requester)) {
-				return false;
+					isAuthorizedToCancel(submission, requester)) {
+				return true;
+			} else if(submissionDto.getState().equals(SubmissionState.REJECTED) && 
+					isAuthorizedToReject(submission, requester)) {
+				return true;
 			}
+			
+			return false;
+		} else {
+			return isAuthorizedToEdit(submission.getPackage(), requester);
 		}
-		return isAuthorizedToEdit(submission.getPackage(), requester);
 	}
 
 	@Override
@@ -133,7 +137,7 @@ public class SecurityMediatorImpl implements SecurityMediator {
 			}
 			break;
 		case Role.VALUE.PACKAGEMAINTAINER:
-			for(PackageMaintainer maintainer : packageMaintainerService.findByUser(requester)) {
+			for(PackageMaintainer maintainer : packageMaintainerService.findNonDeletedByUser(requester)) {
 				if(maintainer.getRepository().getId() == packageBag.getRepository().getId()
 						&& maintainer.getRepository().getTechnology() == packageBag.getRepository().getTechnology()
 						&& maintainer.getPackageName().equals(packageBag.getName())) {
@@ -219,5 +223,12 @@ public class SecurityMediatorImpl implements SecurityMediator {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public boolean isAuthorizedToReject(Submission submission, User user) {
+		if(submission.getUser().getId() == user.getId())
+			return false;
+		return isAuthorizedToEdit(submission.getPackage(), user);
 	}
 }

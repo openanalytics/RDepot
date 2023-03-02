@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -65,7 +65,7 @@ import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.factory.StrategyFactory;
-import eu.openanalytics.rdepot.base.validation.PackageMaintainerValidator;
+import eu.openanalytics.rdepot.base.validation.LegacyPackageMaintainerValidator;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.legacy.api.v1.dtos.CreatePackageMaintainerRequestBody;
 import eu.openanalytics.rdepot.r.legacy.api.v1.dtos.DTOConverter;
@@ -98,7 +98,7 @@ public class PackageMaintainerController {
 	private PackageMaintainerService packageMaintainerService;
 	
 	@Autowired
-	private PackageMaintainerValidator packageMaintainerValidator;
+	private LegacyPackageMaintainerValidator legacyPackageMaintainerValidator;
 	
 	@Autowired
 	private PackageMaintainerDeleter packageMaintainerDeleter;
@@ -116,7 +116,7 @@ public class PackageMaintainerController {
 	
 	@InitBinder(value="packagemaintainer")
 	private void initBinder(WebDataBinder binder) {
-		binder.setValidator(packageMaintainerValidator);
+		binder.setValidator(legacyPackageMaintainerValidator);
 	}
 	
 	@PreAuthorize("hasAuthority('repositorymaintainer')")
@@ -231,7 +231,7 @@ public class PackageMaintainerController {
 			if(requester == null || !securityMediator.isAuthorizedToEdit(packageMaintainer, requester)) {
 				throw new UserUnauthorizedException();
 			} else {
-				packageMaintainerValidator.validate(packageMaintainer, bindingResult);
+				legacyPackageMaintainerValidator.validate(packageMaintainer, bindingResult);
 				
 				if(bindingResult.hasErrors()) {
 					String errorCode = bindingResult.getFieldError().getCode();
@@ -306,7 +306,7 @@ public class PackageMaintainerController {
 			throw new UserNotAuthorized(messageSource, locale);
 		} else {
 			try {
-				packageMaintainerValidator.validate(updatedPackageMaintainer, bindingResult);
+				legacyPackageMaintainerValidator.validate(updatedPackageMaintainer, bindingResult);
 				
 				if(bindingResult.hasErrors()) {
 					result.put("error", messageSource.getMessage(bindingResult.getFieldError().getCode(), null, 

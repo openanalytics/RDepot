@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -28,6 +28,8 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
+import eu.openanalytics.rdepot.base.entities.Role;
+import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.messaging.RefactoredMessageCodes;
 import eu.openanalytics.rdepot.base.service.CommonRepositoryService;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
@@ -52,17 +54,27 @@ public class PackageMaintainerValidator implements Validator {
 	public boolean supports(Class<?> clazz) {
 		return clazz.isAssignableFrom(PackageMaintainer.class);
 	}
+	
+	protected void validateUser(PackageMaintainer maintainer, Errors errors) {
+		Optional<User> userOpt = Optional.empty();
+		if(maintainer.getUser() != null) {
+			userOpt = userService.findById(maintainer.getUser().getId());
+		}
+		if(userOpt.isEmpty()) {
+			errors.rejectValue("user", RefactoredMessageCodes.EMPTY_USER);
+		} else if(userOpt.get().getRole().getValue() < Role.VALUE.PACKAGEMAINTAINER) {
+			errors.rejectValue("user", RefactoredMessageCodes.USER_PERMISSIONS_NOT_SUFFICIENT);
+		}
+	}
 
 	@Override
 	public void validate(Object target, Errors errors) {
 		PackageMaintainer maintainer = (PackageMaintainer)target;
 		
-		ValidationUtils.rejectIfEmpty(errors, "packageName", RefactoredMessageCodes.EMPTY_PACKAGE);
+		ValidationUtils.rejectIfEmpty(errors, "packageName", RefactoredMessageCodes.EMPTY_PACKAGE);		
 		
-		if(maintainer.getUser() == null 
-				|| userService.findById(maintainer.getUser().getId()).isEmpty()) {
-			errors.rejectValue("user", RefactoredMessageCodes.EMPTY_USER);
-		}		
+		validateUser(maintainer, errors);
+		
 		if(maintainer.getRepository() == null || 
 				repositoryService.findById(maintainer.getRepository().getId()).isEmpty()) {
 			errors.rejectValue("repository", RefactoredMessageCodes.REPOSITORY_NOT_FOUND);

@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -28,6 +28,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -48,6 +49,8 @@ import eu.openanalytics.rdepot.base.service.RoleService;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.strategy.factory.StrategyFactory;
+import eu.openanalytics.rdepot.base.validation.LegacyPackageMaintainerValidator;
+import eu.openanalytics.rdepot.base.validation.LegacyRepositoryMaintainerValidator;
 import eu.openanalytics.rdepot.base.validation.PackageMaintainerValidator;
 import eu.openanalytics.rdepot.base.validation.RepositoryMaintainerValidator;
 import eu.openanalytics.rdepot.base.validation.UserValidator;
@@ -76,7 +79,7 @@ public abstract class ApiV2ControllerUnitTest {
 	@MockBean 
 	SecurityMediator securityMediator;
 
-	@MockBean
+	@MockBean(name = "packageMaintainerValidator")
 	PackageMaintainerValidator packageMaintainerValidator;
 	
 	@MockBean
@@ -97,11 +100,17 @@ public abstract class ApiV2ControllerUnitTest {
 	@MockBean
 	RepositoryMaintainerService repositoryMaintainerService;
 	
-	@MockBean
+	@MockBean(name = "repositoryMaintainerValidator")
 	RepositoryMaintainerValidator repositoryMaintainerValidator;
 	
 	@MockBean
 	RepositoryMaintainerDeleter repositoryMaintainerDeleter;
+	
+	@MockBean(name = "legacyPackageMaintainerValidator")
+	LegacyPackageMaintainerValidator legacyPackageMaintainerValidator;
+	
+	@MockBean(name = "legacyRepositoryMaintainerValidator")
+	LegacyRepositoryMaintainerValidator legacyRepositoryMaintainerValidator;
 	
 	@MockBean
 	RRepositoryService rRepositoryService;

@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -35,6 +35,7 @@ import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
 
 import eu.openanalytics.rdepot.base.entities.RepositoryMaintainer;
+import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.messaging.RefactoredMessageCodes;
 import eu.openanalytics.rdepot.base.service.CommonRepositoryService;
 import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
@@ -43,6 +44,7 @@ import eu.openanalytics.rdepot.base.validation.RepositoryMaintainerValidator;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.test.strategy.fixture.RRepositoryTestFixture;
 import eu.openanalytics.rdepot.r.test.strategy.fixture.RepositoryMaintainerTestFixture;
+import eu.openanalytics.rdepot.test.fixture.UserTestFixture;
 
 @ExtendWith(MockitoExtension.class)
 public class RepositoryMaintainerValidatorTest {
@@ -123,5 +125,37 @@ public class RepositoryMaintainerValidatorTest {
 		verify(errors, times(0)).rejectValue("user", RefactoredMessageCodes.EMPTY_USER);
 		verify(errors, times(0)).rejectValue("repository", RefactoredMessageCodes.EMPTY_REPOSITORY);
 		verify(errors, times(1)).rejectValue("repository", RefactoredMessageCodes.REPOSITORYMAINTAINER_DUPLICATE);
+	}	
+	
+	@Test
+	public void validateRepositoryMaintainer_userPermissionsNotSufficient() throws Exception {
+		repositoryMaintainerValidator = new RepositoryMaintainerValidator(userService, repositoryService, repositoryMaintainerService);
+		
+		RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
+		RepositoryMaintainer repositoryMaintainer = RepositoryMaintainerTestFixture.GET_REPOSITORY_MAINTAINER_FOR_REPOSITORY(repository);
+		User user = UserTestFixture.GET_FIXTURE_USER_PACKAGEMAINTAINER();
+		
+		repositoryMaintainer.setId(0);
+		repositoryMaintainer.setUser(user);
+		
+		DataBinder dataBinder = new DataBinder(repositoryMaintainer);
+		dataBinder.setValidator(repositoryMaintainerValidator);
+		Errors errors = Mockito.spy(dataBinder.getBindingResult());
+		
+		when(userService.findById(repositoryMaintainer.getUser().getId()))
+			.thenReturn(Optional.ofNullable(repositoryMaintainer.getUser()));
+		
+		Mockito.doReturn(Optional.of(repository)).when(repositoryService).findById(repositoryMaintainer.getRepository().getId());
+		
+		when(repositoryMaintainerService
+					.findByRepositoryAndUserAndDeleted(repositoryMaintainer.getRepository(), repositoryMaintainer.getUser(), false))
+			.thenReturn(Optional.empty());
+		
+		repositoryMaintainerValidator.validate(repositoryMaintainer, errors);
+		verify(errors, times(0)).rejectValue("user", RefactoredMessageCodes.EMPTY_USER);
+		verify(errors, times(0)).rejectValue("repository", RefactoredMessageCodes.EMPTY_REPOSITORY);
+		verify(errors, times(0)).rejectValue("repository", RefactoredMessageCodes.REPOSITORYMAINTAINER_DUPLICATE);
+		verify(errors, times(1)).rejectValue("user", RefactoredMessageCodes.USER_PERMISSIONS_NOT_SUFFICIENT);
+	
 	}	
 }

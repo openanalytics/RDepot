@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -84,9 +84,11 @@ import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.utils.specs.SpecificationUtils;
 import eu.openanalytics.rdepot.base.utils.specs.SubmissionSpecs;
 import eu.openanalytics.rdepot.base.validation.PackageValidator;
+import eu.openanalytics.rdepot.base.validation.SubmissionPatchValidator;
 import eu.openanalytics.rdepot.base.validation.exceptions.MultipartFileValidationException;
 import eu.openanalytics.rdepot.base.validation.exceptions.PackageDuplicatedToSilentlyIgnore;
 import eu.openanalytics.rdepot.base.validation.exceptions.PackageValidationException;
+import eu.openanalytics.rdepot.base.validation.exceptions.PatchValidationException;
 import eu.openanalytics.rdepot.r.api.v2.hateoas.RSubmissionModelAssembler;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
@@ -118,6 +120,7 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
 	private final PackageValidator<RPackage> packageValidator;
 	private final SubmissionDeleter submissionDeleter;
 	private final RPackageService packageService;
+	private final SubmissionPatchValidator submissionPatchValidator;
 	
 	public RSubmissionController(MessageSource messageSource,
 			RSubmissionModelAssembler modelAssembler,
@@ -126,7 +129,8 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
 			SubmissionService submissionService, UserService userService,
 			RStrategyFactory strategyFactory, SecurityMediator securityMediator,
 			RRepositoryService repositoryService, PackageValidator<RPackage> packageValidator,
-			SubmissionDeleter submissionDeleter, RPackageService rPackageService) {
+			SubmissionDeleter submissionDeleter, RPackageService rPackageService,
+			SubmissionPatchValidator submissionPatchValidator) {
 		super(messageSource, LocaleContextHolder.getLocale(), 
 				modelAssembler, pagedModelAssembler, 
 				objectMapper, 
@@ -140,6 +144,7 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
 		this.packageValidator = packageValidator;
 		this.submissionDeleter = submissionDeleter;
 		this.packageService = rPackageService;
+		this.submissionPatchValidator = submissionPatchValidator;
 	}
 	
 	/**
@@ -289,7 +294,9 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
 			
 			if(!securityMediator.isAuthorizedToEdit(submission, submissionDto, requester))
 				throw new UserNotAuthorized(messageSource, locale);
-			//TODO: Validation
+			
+			submissionPatchValidator.validatePatch(jsonPatch, submission, submissionDto);
+			
 			Strategy<Submission> strategy = strategyFactory
 					.updateSubmissionStrategy(submission, 
 							resolveDtoToEntity(submissionDto), repository, requester);
@@ -297,7 +304,7 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
 		} catch (StrategyFailure | ResolveRelatedEntitiesException e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
 			throw new ApplyPatchException(messageSource, locale);
-		} catch (JsonProcessingException | JsonException  e) {
+		} catch (JsonProcessingException | JsonException | PatchValidationException e) {
 			throw new MalformedPatchException(messageSource, locale, e);
 		}
 		return handleSuccessForSingleEntity(submission);

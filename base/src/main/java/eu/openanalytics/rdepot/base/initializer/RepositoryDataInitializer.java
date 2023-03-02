@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -79,6 +79,7 @@ public abstract class RepositoryDataInitializer<
 	protected void createRepositoriesFromConfig(List<R> repositories, boolean declarative) {
 		List<E> existingRepositories = repositoryService.findAll(); 
 		for(R declaredRepository : repositories) {
+			logger.debug("Creating declared repository " + declaredRepository + "...");
 			E newRepository = declaredRepositoryToEntity(declaredRepository);
 			
 			Optional<E> possiblyExistingRepository = existingRepositories.stream()
@@ -126,17 +127,16 @@ public abstract class RepositoryDataInitializer<
 					logger.error(errorMessage);
 				}
 			}
-			
-			if(Boolean.valueOf(declarative)) {
-				existingRepositories.forEach(r -> {
-					try {
-						repositoryDeleter.delete(r);
-					} catch (DeleteEntityException e) {
-						logger.error(e.getMessage(), e);
-						throw new IllegalStateException();
-					}
-				});
-			}
+		}
+		if(Boolean.valueOf(declarative)) {
+			existingRepositories.forEach(r -> {
+				try {
+					repositoryDeleter.delete(r);
+				} catch (DeleteEntityException e) {
+					logger.error(e.getMessage(), e);
+					throw new IllegalStateException();
+				}
+			});
 		}
 	}
 	

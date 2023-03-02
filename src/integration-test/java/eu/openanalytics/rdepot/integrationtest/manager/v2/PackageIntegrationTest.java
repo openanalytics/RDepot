@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -175,6 +175,25 @@ public class PackageIntegrationTest extends IntegrationTest {
 		
 		TestRequestBody requestBody = new TestRequestBody(RequestType.PATCH,  "/v2/403.json", "/" + EXAMPLE_PACKAGE_ID, 403, 
 				USER_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT, patch);
+		testEndpoint(requestBody);
+		
+		requestBody = new TestRequestBody(RequestType.GET,"/v2/package/list_of_packages.json", 
+				"?sort=id,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
+	}
+	
+	@Test
+	public void activatePackage_returns403_whenMaintainerIsDeleted() throws Exception {
+		final String patch = "["
+				+ "{"
+				+ "\"op\": \"replace\","
+				+ "\"path\":\"/active\","
+				+ "\"value\":false"
+				+ "}"
+				+ "]";
+		
+		TestRequestBody requestBody = new TestRequestBody(RequestType.PATCH,  "/v2/403.json", "/" + 15, 403, 
+				PACKAGEMAINTAINER_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT, patch);
 		testEndpoint(requestBody);
 		
 		requestBody = new TestRequestBody(RequestType.GET,"/v2/package/list_of_packages.json", 

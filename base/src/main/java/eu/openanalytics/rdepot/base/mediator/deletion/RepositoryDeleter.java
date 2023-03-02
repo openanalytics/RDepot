@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,14 +20,10 @@
  */
 package eu.openanalytics.rdepot.base.mediator.deletion;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.RepositoryMaintainer;
-import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.PackageService;
@@ -35,15 +31,11 @@ import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
 import eu.openanalytics.rdepot.base.storage.Storage;
-import eu.openanalytics.rdepot.base.storage.exceptions.SourceFileDeleteException;
 
 public abstract class RepositoryDeleter<R extends Repository<R, ?>, P extends Package<P, ?>> extends ResourceDeleter<R> {
 
 	private final PackageMaintainerService packageMaintainerService;
 	private final RepositoryMaintainerService repositoryMaintainerService;
-	private final PackageService<P> packageService;
-	private final Storage<R, P> storage;
-	private final static Logger logger = LoggerFactory.getLogger(RepositoryDeleter.class);
 	private final NewsfeedEventService newsfeedEventService;
 	private final SubmissionDeleter submissionDeleter;
 	
@@ -56,15 +48,12 @@ public abstract class RepositoryDeleter<R extends Repository<R, ?>, P extends Pa
 		super(newsfeedEventService, resourceService);
 		this.packageMaintainerService = packageMaintainerService;
 		this.repositoryMaintainerService = repositoryMaintainerService;
-		this.packageService = packageService;
-		this.storage = storage;
 		this.newsfeedEventService = newsfeedEventService;
 		this.submissionDeleter = submissionDeleter;
 	}
 
 	@Override
 	public void delete(R resource) throws DeleteEntityException {
-		
 		for(PackageMaintainer maintainer : resource.getPackageMaintainers()) {			
 			newsfeedEventService.deleteRelatedEvents(maintainer);
 			packageMaintainerService.delete(maintainer);
@@ -75,18 +64,8 @@ public abstract class RepositoryDeleter<R extends Repository<R, ?>, P extends Pa
 			repositoryMaintainerService.delete(maintainer);
 		}
 		
-		try {
-			for(Package<?,?> packageBag : resource.getPackages()) {
-				Submission submission = packageBag.getSubmission();
-				newsfeedEventService.deleteRelatedEvents(submission);
-//				newsfeedEventService.deleteRelatedPackageEvents(packageBag.getId());
-				submissionDeleter.delete(submission);
-				storage.removePackageSource((P) packageBag); //TODO: Think of fail-safe way to do it
-//				packageService.delete((P) packageBag);
-			}
-		} catch(SourceFileDeleteException e) {
-			logger.error(e.getMessage(), e);
-			throw new DeleteEntityException();
+		for(Package<?,?> packageBag : resource.getPackages()) {
+			submissionDeleter.delete(packageBag.getSubmission());
 		}
 		
 		super.delete(resource);

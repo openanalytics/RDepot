@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,6 +20,7 @@
  */
 package eu.openanalytics.rdepot.base.validation.exceptions;
 
+import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.RefactoredMessageCodes;
 import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
@@ -27,11 +28,17 @@ import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
 public class PackageDuplicatedToSilentlyIgnore extends LocalizedException {
 
 	private static final long serialVersionUID = -2811800471533644657L;
-
-	public PackageDuplicatedToSilentlyIgnore(String messageCode) {
+	private final Package<?, ?> packageBag;
+	
+	public PackageDuplicatedToSilentlyIgnore(Package<?, ?> packageBag) {
 		super(
 				StaticMessageResolver.getMessage(
 						RefactoredMessageCodes.DUPLICATE_VERSION_IGNORED)
-				+ ": " + StaticMessageResolver.getMessage(messageCode));
+			);
+		this.packageBag = packageBag;
+	}
+	
+	public Package<?, ?> getPackage() {
+		return packageBag;
 	}
 }

@@ -1,4 +1,4 @@
-FROM openjdk:9
+FROM registry.openanalytics.eu/proxy/library/openjdk:9
 
 LABEL maintainer="jonas.vanmalder@openanalytics.eu"
 

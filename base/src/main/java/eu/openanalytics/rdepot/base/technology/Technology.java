@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,6 +20,7 @@
  */
 package eu.openanalytics.rdepot.base.technology;
 
+import eu.openanalytics.rdepot.base.mediator.deletion.PackageDeleter;
 import eu.openanalytics.rdepot.base.service.PackageService;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 
@@ -55,9 +56,16 @@ public interface Technology {
 	/**
 	 * Technology-specific package service implementation class.
 	 * This method is used for the extension initialization purposes.
-	 * @return Repository Service class or <code>null</code> in case of internal technology
+	 * @return Package Service class or <code>null</code> in case of internal technology
 	 */
 	Class<? extends PackageService<?>> getPackageServiceClass();
+	
+	/**
+	 * Technology-specific package service implementation class.
+	 * This method is used for the extension initialization purposes.
+	 * @return Repository Service class or <code>null</code> in case of internal technology
+	 */
+	Class<? extends PackageDeleter<?>> getPackageDeleterClass();
 	
 	@Override
 	int hashCode();

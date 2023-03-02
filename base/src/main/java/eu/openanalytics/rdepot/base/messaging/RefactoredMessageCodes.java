@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -70,7 +70,7 @@ public class RefactoredMessageCodes {
 	public static final String INVALID_PACKAGE_NAME = "invalid.package.name";
 	public static final String INVALID_VERSION = "invalid.version";
 	public static final String DUPLICATE_VERSION = "duplicate.version";
-	public static final String DUPLICATE_VERSION_IGNORED = "duplicate.version - package not uploaded becouse packe with the same verision already exists in reposiotry";
+	public static final String DUPLICATE_VERSION_IGNORED = "duplicate.version";
 	
 	//PACKAGES
 	public static final String COULD_NOT_PARSE_PACKAGES_FILE = "could.not.parse.packages.file";
@@ -83,7 +83,7 @@ public class RefactoredMessageCodes {
 	//validation - package maintainer
 	public static final String EMPTY_PACKAGE = "empty.package";
 	public static final String PACKAGE_ALREADY_MAINTAINED = "package.already.maintained";
-	
+	public static final String USER_PERMISSIONS_NOT_SUFFICIENT = "user.permissions.not.sufficient";
 	//validation - user
 	public static final String ERROR_EMPTY_EMAIL = "empty.email";
 	public static final String ERROR_EMPTY_LOGIN = "empty.login";
@@ -97,9 +97,9 @@ public class RefactoredMessageCodes {
 	//validation - repository
 	public static final String EMPTY_PUBLICATIONURI = "empty.publicationuri";
 	public static final String EMPTY_SERVERADDRESS = "empty.serveraddress";
-	public static final String ERROR_DUPLICATE_NAME = "duplicate.name";
-	public static final String ERROR_DUPLICATE_PUBLICATIONURI = "duplicate.publicationuri";
-	public static final String DUPLICATE_SERVERADDRESS = "duplicate.serveraddress";
+	public static final String ERROR_DUPLICATE_NAME = "repository.duplicate.name";
+	public static final String ERROR_DUPLICATE_PUBLICATIONURI = "repository.duplicate.publicationuri";
+	public static final String DUPLICATE_SERVERADDRESS = "repository.duplicate.serveraddress";
 	
 	
 	public static final String TECHNOLOGY_NOT_SUPPORTED = "technology.not.supported";
@@ -136,6 +136,7 @@ public class RefactoredMessageCodes {
 	public static final String UNKNOWN_ERROR = "unknown.internal.server.error";
 	
 	public static final String FORBIDDEN_UPDATE = "forbidden.update";
+	public static final String COULD_NOT_CHANGE_SUBMISSION = "could.not.change.submission";
 	
 	//email
 //	public static final String NEW_SUBMISSION_EMAIL_SUBJECT = "new.submission.email.subject";

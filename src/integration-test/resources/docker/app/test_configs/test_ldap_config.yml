@@ -45,12 +45,8 @@ spring:
     user: postgres
     enabled: true
 
-#logging:
-#  level:
-#    org:
-#      hibernate:
-#        SQL: DEBUG
-#      type:
-#        descriptor:
-#          sql:
-#            BasicBinder: TRACE
+logging:
+  level:
+    org:
+      springframework:
+        web: DEBUG

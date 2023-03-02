@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -39,6 +39,7 @@ import eu.openanalytics.rdepot.base.strategy.upload.DefaultPackageUploadStrategy
 import eu.openanalytics.rdepot.base.validation.PackageValidator;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
+import eu.openanalytics.rdepot.r.mediator.deletion.RPackageDeleter;
 import eu.openanalytics.rdepot.r.storage.RStorage;
 import eu.openanalytics.rdepot.r.storage.exceptions.GenerateManualException;
 import eu.openanalytics.rdepot.r.synchronization.RRepositorySynchronizer;
@@ -63,7 +64,8 @@ public class RPackageUploadStrategy extends DefaultPackageUploadStrategy<RReposi
 			BestMaintainerChooser bestMaintainerChooser,
 			RRepositorySynchronizer repositorySynchronizer,
 			SecurityMediator securityMediator,
-			RStorage rStorage) {
+			RStorage rStorage, 
+			RPackageDeleter packageDeleter) {
 		super(request, 
 				requester, 
 				eventService, 
@@ -75,7 +77,8 @@ public class RPackageUploadStrategy extends DefaultPackageUploadStrategy<RReposi
 				emailService, 
 				bestMaintainerChooser,
 				repositorySynchronizer,
-				securityMediator);
+				securityMediator,
+				packageDeleter);
 		this.rStorage = rStorage;
 	}
 

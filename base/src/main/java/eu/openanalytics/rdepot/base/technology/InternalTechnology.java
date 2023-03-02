@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -22,6 +22,7 @@ package eu.openanalytics.rdepot.base.technology;
 
 import java.util.Objects;
 
+import eu.openanalytics.rdepot.base.mediator.deletion.PackageDeleter;
 import eu.openanalytics.rdepot.base.service.PackageService;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 
@@ -45,7 +46,7 @@ public class InternalTechnology implements Technology {
 
 	@Override
 	public String getVersion() {
-		return "1.7.0";
+		return "1.7.1";
 	}
 
 	@Override
@@ -76,5 +77,10 @@ public class InternalTechnology implements Technology {
 		InternalTechnology that = (InternalTechnology) obj;
 		return this.getName().equals(that.getName()) 
 				&& this.getVersion().equals(that.getVersion());
+	}
+
+	@Override
+	public Class<? extends PackageDeleter<?>> getPackageDeleterClass() {
+		return null;
 	}
 }

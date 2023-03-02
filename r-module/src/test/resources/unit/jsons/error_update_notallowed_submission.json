@@ -1,7 +1,7 @@
 {
     "status": "error",
-    "code": 500,
-    "message": "Could not apply patch to requested resource.",
-    "messageCode": "error.apply.patch",
-    "data": null
+    "code": 422,
+    "message": "Your JSON Patch object is incorrect.",
+    "messageCode": "error.malformed.patch",
+    "data": "Submission properties you attempted to change, are immutable."
 }

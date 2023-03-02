@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -35,6 +35,7 @@ import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
 
 import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
+import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.messaging.RefactoredMessageCodes;
 import eu.openanalytics.rdepot.base.service.CommonRepositoryService;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
@@ -43,6 +44,7 @@ import eu.openanalytics.rdepot.base.validation.PackageMaintainerValidator;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.test.strategy.fixture.PackageMaintainerTestFixture;
 import eu.openanalytics.rdepot.r.test.strategy.fixture.RRepositoryTestFixture;
+import eu.openanalytics.rdepot.test.fixture.UserTestFixture;
 
 @ExtendWith(MockitoExtension.class)
 public class PackageMaintainerValidatorTest {
@@ -163,5 +165,37 @@ public class PackageMaintainerValidatorTest {
 		verify(errors, times(0)).rejectValue("user", RefactoredMessageCodes.EMPTY_USER);
 		verify(errors, times(0)).rejectValue("repository", RefactoredMessageCodes.REPOSITORY_NOT_FOUND);
 		verify(errors, times(1)).rejectValue("packageName", RefactoredMessageCodes.PACKAGE_ALREADY_MAINTAINED);
+	}
+	
+	@Test
+	public void validatePackageMaintainer_roleNotSufficient() throws Exception {
+		packageMaintainerValidator = new PackageMaintainerValidator(userService, repositoryService, packageMaintainerService);
+
+		RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
+		PackageMaintainer packageMaintainer = PackageMaintainerTestFixture.GET_PACKAGE_MAINTAINER_FOR_REPOSITORY(repository);
+		User user = UserTestFixture.GET_FIXTURE_USER();
+		
+		packageMaintainer.setUser(user);
+		packageMaintainer.setId(0);
+		
+		DataBinder dataBinder = new DataBinder(packageMaintainer);
+		dataBinder.setValidator(packageMaintainerValidator);
+		Errors errors = Mockito.spy(dataBinder.getBindingResult());
+
+		when(userService.findById(packageMaintainer.getUser().getId()))
+				.thenReturn(Optional.ofNullable(packageMaintainer.getUser()));
+		
+		Mockito.doReturn(Optional.of(repository)).when(repositoryService).findById(packageMaintainer.getRepository().getId());
+		
+		when(packageMaintainerService.findByPackageAndRepositoryAndNonDeleted(
+				packageMaintainer.getPackageName(), packageMaintainer.getRepository()))
+		.thenReturn(Optional.empty());
+		
+		packageMaintainerValidator.validate(packageMaintainer, errors);
+		verify(errors, times(0)).rejectValue("packageName", RefactoredMessageCodes.EMPTY_PACKAGE, null, null);
+		verify(errors, times(1)).rejectValue("user", RefactoredMessageCodes.USER_PERMISSIONS_NOT_SUFFICIENT, null, null);
+		verify(errors, times(0)).rejectValue("user", RefactoredMessageCodes.EMPTY_USER);
+		verify(errors, times(0)).rejectValue("repository", RefactoredMessageCodes.REPOSITORY_NOT_FOUND);
+		verify(errors, times(0)).rejectValue("packageName", RefactoredMessageCodes.PACKAGE_ALREADY_MAINTAINED);
 	}
 }

@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -22,9 +22,11 @@ package eu.openanalytics.rdepot.r.technology;
 
 import java.util.Objects;
 
+import eu.openanalytics.rdepot.base.mediator.deletion.PackageDeleter;
 import eu.openanalytics.rdepot.base.service.PackageService;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.base.technology.Technology;
+import eu.openanalytics.rdepot.r.mediator.deletion.RPackageDeleter;
 import eu.openanalytics.rdepot.r.services.RPackageService;
 import eu.openanalytics.rdepot.r.services.RRepositoryService;
 
@@ -65,6 +67,11 @@ public class RLanguage implements Technology {
 	@Override
 	public Class<? extends PackageService<?>> getPackageServiceClass() {
 		return RPackageService.class;
+	}
+	
+	@Override
+	public Class<? extends PackageDeleter<?>> getPackageDeleterClass() {
+		return RPackageDeleter.class;
 	}
 	
 	@Override

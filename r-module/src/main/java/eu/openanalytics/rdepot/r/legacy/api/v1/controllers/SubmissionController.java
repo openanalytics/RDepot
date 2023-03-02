@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -163,7 +163,7 @@ public class SubmissionController {
 					result.put("warning", Pair.of(multipartFile.getOriginalFilename(), e.getMessage()));
 					httpStatus = HttpStatus.OK;
 				}
-				else if(e.getCause() instanceof PackageValidationException) {
+				else if(e.getReason() instanceof PackageValidationException) {
 					result.put("error", Pair.of(multipartFile.getOriginalFilename(), e.getMessage()));
 					httpStatus = HttpStatus.UNPROCESSABLE_ENTITY;
 				} else {
@@ -284,9 +284,16 @@ public class SubmissionController {
 		Locale locale = LocaleContextHolder.getLocale();
 		HashMap<String, String> result = new HashMap<String, String>();
 		HttpStatus httpStatus = HttpStatus.OK;
+		final SubmissionState desiredState = 
+				submission.getUser().getId() == requester.getId() ? 
+						SubmissionState.CANCELLED : SubmissionState.REJECTED;	
 		
 		try {
-			if(!securityMediator.isAuthorizedToCancel(submission, requester)) {
+			if(desiredState.equals(SubmissionState.CANCELLED) 
+					&& !securityMediator.isAuthorizedToCancel(submission, requester)
+				|| 
+				desiredState.equals(SubmissionState.REJECTED) 
+					&& !securityMediator.isAuthorizedToReject(submission, requester)) {
 				throw new UserUnauthorizedException();
 			} else if(submission.getState() == SubmissionState.ACCEPTED) {
 				result.put("warning", messageSource.getMessage(MessageCodes.WARNING_SUBMISSION_ALREADY_ACCEPTED, 
@@ -302,7 +309,7 @@ public class SubmissionController {
 								+ "Repository for given submission does not exist."));
 				
 				Submission cancelled = new Submission(submission);
-				cancelled.setState(SubmissionState.CANCELLED);
+				cancelled.setState(desiredState);
 				factory.updateSubmissionStrategy(submission, cancelled, repository, requester).perform();
 				
 				result.put("success", messageSource.getMessage(MessageCodes.SUCCESS_SUBMISSION_CANCELED, null, 

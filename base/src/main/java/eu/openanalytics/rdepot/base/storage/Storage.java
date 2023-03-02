@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -50,7 +50,7 @@ public interface Storage<R extends Repository<R, ?>, P extends Package<P, ?>> {
 	 * @param repository repository where the package should be uploaded to
 	 * @return package file
 	 */
-	File writeToWaitingRoom(MultipartFile fileData, R repository) throws WriteToWaitingRoomException;
+	String writeToWaitingRoom(MultipartFile fileData, R repository) throws WriteToWaitingRoomException;
 	
 	/**
 	 * When submission is accepted, its source can be moved from waiting room to the main directory.
@@ -59,7 +59,7 @@ public interface Storage<R extends Repository<R, ?>, P extends Package<P, ?>> {
 	 * @throws InvalidSourceException 
 	 * @throws MovePackageSourceException 
 	 */
-	File moveToMainDirectory(P packageBag) throws InvalidSourceException, MovePackageSourceException;
+	String moveToMainDirectory(P packageBag) throws InvalidSourceException, MovePackageSourceException;
 	
 	/**
 	 * Extracts the package
@@ -67,7 +67,7 @@ public interface Storage<R extends Repository<R, ?>, P extends Package<P, ?>> {
 	 * @return
 	 * @throws ExtractFileException 
 	 */
-	File extractTarGzPackageFile(File storedFile) throws ExtractFileException;
+	String extractTarGzPackageFile(String storedFile) throws ExtractFileException;
 	
 	/**
 	 * Fetches properties from extracted package file.
@@ -75,7 +75,7 @@ public interface Storage<R extends Repository<R, ?>, P extends Package<P, ?>> {
 	 * @return properties
 	 * @throws ReadPackageDescriptionException 
 	 */
-	Properties getPropertiesFromExtractedFile(File extractedFile) throws ReadPackageDescriptionException;
+	Properties getPropertiesFromExtractedFile(String extractedFile) throws ReadPackageDescriptionException;
 	
 	/**
 	 * Moves cancelled/rejected submission to a trash directory.
@@ -83,7 +83,7 @@ public interface Storage<R extends Repository<R, ?>, P extends Package<P, ?>> {
 	 * @return
 	 * @throws MovePackageSourceException 
 	 */
-	File moveToTrashDirectory(P packageBag) throws MovePackageSourceException;
+	String moveToTrashDirectory(P packageBag) throws MovePackageSourceException;
 	
 //	/**
 //	 * Restores packageBag from trash directory.
@@ -103,13 +103,20 @@ public interface Storage<R extends Repository<R, ?>, P extends Package<P, ?>> {
 	void removePackageSource(P packageBag) throws SourceFileDeleteException;
 	
 	/**
+	 * Removes package source from persistent storage.
+	 * @param path
+	 * @throws SourceFileDeleteException
+	 */
+	void removePackageSource(String path) throws SourceFileDeleteException;
+	
+	/**
 	 * Removes file from persistent storage.
 	 * Can be used in case of failure during package creation.
 	 * For any other purpose, it is recommended to use dedicated
 	 * {@link #removePackageSource(Package)} method.
 	 * @param file file
 	 */
-	void removeFileIfExists(File file) throws DeleteFileException;
+	void removeFileIfExists(String path) throws DeleteFileException;
 	
 	/**
 	 * Removes repository directory from persistent storage.
@@ -132,7 +139,7 @@ public interface Storage<R extends Repository<R, ?>, P extends Package<P, ?>> {
 	 * @return
 	 * @throws MovePackageSourceException 
 	 */
-	File moveSource(P packageBag, String newSource) throws MovePackageSourceException;
+	String moveSource(P packageBag, String newSource) throws MovePackageSourceException;
 
 	/**
 	 * Reads package from storage.

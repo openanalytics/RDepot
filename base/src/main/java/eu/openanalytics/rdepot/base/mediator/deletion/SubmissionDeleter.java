@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.Service;
@@ -47,19 +46,12 @@ public class SubmissionDeleter extends ResourceDeleter<Submission> {
 		this.serviceResolver = serviceResolver;
 	}
 
-	//TODO check if we clean up the fs correctly
 	@Override
 	public void delete(Submission resource) throws DeleteEntityException {
-		super.delete(resource);
-		deletePackage(resource.getPackage());
-	}
-
-	private void deletePackage(Package<?, ?> packageBag) throws DeleteEntityException {
-		int packageId = packageBag.getId();
-		Technology technology = packageBag.getTechnology();
+		Technology technology = resource.getPackage().getTechnology();
 		
 		try {
-			serviceResolver.packageService(technology).delete(packageId);;
+			serviceResolver.packageDeleter(technology).deleteForSubmission(resource);
 		} catch(TechnologyNotSupported e) {
 			logger.error(e.getMessage(), e);
 			throw new DeleteEntityException();

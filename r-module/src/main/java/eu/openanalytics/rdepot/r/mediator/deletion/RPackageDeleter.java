@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -23,7 +23,6 @@ package eu.openanalytics.rdepot.r.mediator.deletion;
 import org.springframework.stereotype.Component;
 
 import eu.openanalytics.rdepot.base.mediator.deletion.PackageDeleter;
-import eu.openanalytics.rdepot.base.mediator.deletion.SubmissionDeleter;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
 import eu.openanalytics.rdepot.base.storage.Storage;
@@ -36,10 +35,9 @@ public class RPackageDeleter extends PackageDeleter<RPackage> {
 	public RPackageDeleter(NewsfeedEventService newsfeedEventService,
 			RPackageService resourceService, 
 			Storage<?, RPackage> storage, 
-			SubmissionService submissionService,
-			SubmissionDeleter submissionDeleter) {
+			SubmissionService submissionService, RPackageService rPackageService) {
 		super(newsfeedEventService, resourceService, storage, 
-				submissionService, submissionDeleter);
+				submissionService, rPackageService);
 	}
 
 }

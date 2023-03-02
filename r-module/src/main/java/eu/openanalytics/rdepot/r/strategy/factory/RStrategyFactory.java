@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -38,6 +38,7 @@ import eu.openanalytics.rdepot.base.strategy.update.UpdateSubmissionStrategy;
 import eu.openanalytics.rdepot.base.validation.PackageValidator;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
+import eu.openanalytics.rdepot.r.mediator.deletion.RPackageDeleter;
 import eu.openanalytics.rdepot.r.services.RPackageService;
 import eu.openanalytics.rdepot.r.services.RRepositoryService;
 import eu.openanalytics.rdepot.r.storage.RStorage;
@@ -63,6 +64,7 @@ public class RStrategyFactory {
 	private final PackageMaintainerService packageMaintainerService;
 	private final RepositoryMaintainerService repositoryMaintainerService;
 	private final RStorage rStorage;
+	private final RPackageDeleter rPackageDeleter;
 	
 	public RStrategyFactory(
 			SubmissionService submissionService,
@@ -77,7 +79,8 @@ public class RStrategyFactory {
 			SecurityMediator securityMediator,
 			PackageMaintainerService packageMaintainerService,
 			RepositoryMaintainerService repositoryMaintainerService,
-			RStorage rStorage) {		
+			RStorage rStorage,
+			RPackageDeleter rPackageDeleter) {		
 		this.submissionService = submissionService;
 		this.packageValidator = packageValidator;
 		this.repositoryService = repositoryService;
@@ -91,9 +94,12 @@ public class RStrategyFactory {
 		this.packageMaintainerService = packageMaintainerService;
 		this.repositoryMaintainerService = repositoryMaintainerService;
 		this.rStorage = rStorage;
+		this.rPackageDeleter = rPackageDeleter;
 	}
 
-	public Strategy<Submission> uploadPackageStrategy(PackageUploadRequest<RRepository> request, User requester) {
+	public Strategy<Submission> uploadPackageStrategy(
+			PackageUploadRequest<RRepository> request, 
+			User requester) {
 		RPackageUploadStrategy strategy = new RPackageUploadStrategy(
 				request, 
 				requester, 
@@ -107,7 +113,8 @@ public class RStrategyFactory {
 				bestMaintainerChooser,
 				repositorySynchronizer,
 				securityMediator, 
-				rStorage
+				rStorage,
+				rPackageDeleter
 		);
 		
 		return strategy;

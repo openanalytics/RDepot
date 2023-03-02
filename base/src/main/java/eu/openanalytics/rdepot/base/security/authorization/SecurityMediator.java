@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -52,6 +52,7 @@ public interface SecurityMediator extends LdapAuthoritiesPopulator {
 	
 	boolean isAuthorizedToAccept(Submission submission, User user);
 	boolean isAuthorizedToCancel(Submission submission, User user);
+	boolean isAuthorizedToReject(Submission submission, User user);
 	boolean canSeeEvent(NewsfeedEvent event, User user);
 	boolean isAuthorizedToSee(PackageMaintainer packageMaintainer, User user);
 	boolean isAuthorizedToEdit(PackageMaintainer packageMaintainer, User requester);

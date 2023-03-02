@@ -1,4 +1,4 @@
-FROM adoptopenjdk:11-jre-openj9
+FROM registry.openanalytics.eu/proxy/library/adoptopenjdk:11-jre-openj9
 
 LABEL MAINTAINER Jonas Van Malder "jonas.vanmalder@openanalytics.eu"
 

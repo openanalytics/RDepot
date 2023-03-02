@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -202,7 +202,7 @@ public class RPackageValidatorTest {
 		dataBinder.setValidator(packageValidator);
 		errors = Mockito.spy(dataBinder.getBindingResult());
 		
-		when(rPackageService.findById(packageBag.getId()))
+		when(rPackageService.findOneNonDeleted(packageBag.getId()))
 			.thenReturn((Optional.of(packageBag)));
 		when(env.getProperty("package.version.max-numbers", "10")).thenReturn("1");
 		

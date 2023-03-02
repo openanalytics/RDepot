@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -243,7 +243,7 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
 		} finally {
 			try {
 				if(remotePackageDir != null)
-					storage.removeFileIfExists(remotePackageDir);
+					storage.removeFileIfExists(remotePackageDir.getAbsolutePath());
 				
 			} catch (DeleteFileException ioe) {
 				logger.error(messageSource.getMessage(MessageCodes.ERROR_CLEAN_FS, null, 
@@ -268,7 +268,7 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
 		} finally {
 			if(remotePackagesFilePath != null) {
 				try {
-					storage.removeFileIfExists(remotePackagesFilePath.toFile());
+					storage.removeFileIfExists(remotePackagesFilePath.toFile().getAbsolutePath());
 				} catch (DeleteFileException e) {
 					logger.error(messageSource.getMessage(MessageCodes.ERROR_CLEAN_FS, null, 
 							MessageCodes.ERROR_CLEAN_FS, locale) 

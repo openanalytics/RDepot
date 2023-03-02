@@ -13,4 +13,4 @@ Open Source Enterprise Management of R Repositories
 
 Learn more at https://rdepot.io
 
-#### (c) Copyright Open Analytics NV, 2012-2020 - Apache License 2.0
+#### (c) Copyright Open Analytics NV, 2012-2023 - Apache License 2.0

@@ -101,7 +101,6 @@ dependencies {
 	implementation dependencies.reflections	
 	implementation dependencies.mail
 	
-	
 }
 
 publishing {

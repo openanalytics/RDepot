@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -49,6 +49,9 @@ public abstract class ResourceDeleter<T extends Resource> {
 	 */
 	@Transactional
 	public void delete(T resource) throws DeleteEntityException {
+		if(resource == null)
+			throw new NullPointerException("Tried to delete a null resource");
+		
 		newsfeedEventService.deleteRelatedEvents(resource);
 		resourceService.delete(resource);
 	}

@@ -24,6 +24,8 @@ function showMessageDialog(header, content) {
 
 function acceptSubmission(id) {
     var url = "/manager/submissions/" + id + "/accept";
+	document.getElementById("accept-submission-button-" + id).setAttribute('disabled', true);
+	document.getElementById("cancel-submission-button-" + id).setAttribute('disabled', true);
     $.ajax({
         type: "PATCH",
         dataType: "json",
@@ -43,12 +45,16 @@ function acceptSubmission(id) {
             } else {
                 showMessageDialog('Error', "Unknown error");
             }
+            document.getElementById("accept-submission-button-" + id).setAttribute('disabled', false);
+            document.getElementById("cancel-submission-button-" + id).setAttribute('disabled', false);
         }
     });
 }
 
 function cancelSubmission(id) {
     var url = "/manager/submissions/" + id + "/cancel";
+    document.getElementById("cancel-submission-button-" + id).setAttribute('disabled', true);
+    document.getElementById("accept-submission-button-" + id).setAttribute('disabled', true);
     $.ajax({
         type: "DELETE",
         dataType: 'json',
@@ -69,6 +75,8 @@ function cancelSubmission(id) {
             } else {
                 showMessageDialog("Error", "Unknown error");
             }
+            document.getElementById("accept-submission-button-" + id).setAttribute('disabled', false);
+            document.getElementById("cancel-submission-button-" + id).setAttribute('disabled', false);
         }
     });
 }

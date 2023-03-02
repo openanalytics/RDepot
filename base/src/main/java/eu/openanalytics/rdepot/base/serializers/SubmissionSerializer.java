@@ -2,7 +2,7 @@ package eu.openanalytics.rdepot.base.serializers;
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *

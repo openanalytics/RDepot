@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
+import eu.openanalytics.rdepot.base.mediator.deletion.PackageDeleter;
 import eu.openanalytics.rdepot.base.service.PackageService;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.base.technology.ServiceResolver;
@@ -39,31 +40,37 @@ public class ServiceResolverImpl implements ServiceResolver {
 
 	private final Map<Technology, PackageService<?>> packageServicesByTechnology;
 	private final Map<Technology, RepositoryService<?>> repositoryServicesByTechnology;
+	private final Map<Technology, PackageDeleter<?>> packageDeletersByTechnology;
 	
 	public ServiceResolverImpl(Map<Technology, PackageService<?>> packageServicesByTechnology, 
-			Map<Technology, RepositoryService<?>> repositoryServicesByTechnology) {
+			Map<Technology, RepositoryService<?>> repositoryServicesByTechnology,
+			Map<Technology, PackageDeleter<?>> packageDeletersByTechnology) {
 		this.packageServicesByTechnology = packageServicesByTechnology;
 		this.repositoryServicesByTechnology = repositoryServicesByTechnology;
+		this.packageDeletersByTechnology = packageDeletersByTechnology;
 	}
 	
 	@Override
 	public PackageService<?> packageService(Technology technology) throws TechnologyNotSupported {
-		PackageService<?> service = packageServicesByTechnology.get(technology);
-		
-		if(service == null)
-			throw new TechnologyNotSupported();
-		
-		return service;
+		return service(technology, packageServicesByTechnology);
 	}
 
 	@Override
 	public RepositoryService<?> repositoryService(Technology technology) throws TechnologyNotSupported {
-		RepositoryService<?> service = repositoryServicesByTechnology.get(technology);
+		return service(technology, repositoryServicesByTechnology);
+	}
+	
+	private <T> T service(Technology technology, Map<Technology, T> map) throws TechnologyNotSupported {
+		T service = map.get(technology);
 		
 		if(service == null)
 			throw new TechnologyNotSupported();
 		
 		return service;
 	}
-
+	
+	@Override
+	public PackageDeleter<?> packageDeleter(Technology technology) throws TechnologyNotSupported {
+		return service(technology, packageDeletersByTechnology);
+	}
 }

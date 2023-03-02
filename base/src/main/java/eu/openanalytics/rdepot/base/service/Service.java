@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -52,6 +52,7 @@ public abstract class Service<E extends Resource> extends SpringDataJpaCapableRe
 	 */
 	public E create(E entity) throws CreateEntityException {
 		try {
+			logger.debug("Creating resource: " + entity.toString());
 			return dao.save(entity);
 		} catch(DataAccessException e) {
 			logger.error(e.getMessage(), e);
@@ -66,6 +67,7 @@ public abstract class Service<E extends Resource> extends SpringDataJpaCapableRe
 	 */
 	public void delete(E entity) throws DeleteEntityException {
 		try {
+			logger.debug("Deleting resource: " + entity);
 			dao.delete(entity);
 		} catch(DataAccessException e) {
 			logger.error(e.getMessage(), e);

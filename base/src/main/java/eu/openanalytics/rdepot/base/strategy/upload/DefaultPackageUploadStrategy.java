@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -34,6 +34,7 @@ import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.entities.enums.SubmissionState;
 import eu.openanalytics.rdepot.base.event.NewsfeedEventType;
 import eu.openanalytics.rdepot.base.mediator.BestMaintainerChooser;
+import eu.openanalytics.rdepot.base.mediator.deletion.PackageDeleter;
 import eu.openanalytics.rdepot.base.mediator.deletion.exceptions.NoSuitableMaintainerFound;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.EmailService;
@@ -42,6 +43,7 @@ import eu.openanalytics.rdepot.base.service.PackageService;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
 import eu.openanalytics.rdepot.base.service.exceptions.CreateEntityException;
+import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
 import eu.openanalytics.rdepot.base.storage.Storage;
 import eu.openanalytics.rdepot.base.storage.exceptions.CheckSumCalculationException;
 import eu.openanalytics.rdepot.base.storage.exceptions.DeleteFileException;
@@ -58,6 +60,7 @@ import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure;
 import eu.openanalytics.rdepot.base.synchronization.RepositorySynchronizer;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
+import eu.openanalytics.rdepot.base.time.DateProvider;
 import eu.openanalytics.rdepot.base.validation.PackageValidator;
 import eu.openanalytics.rdepot.base.validation.exceptions.PackageDuplicatedToSilentlyIgnore;
 import eu.openanalytics.rdepot.base.validation.exceptions.PackageValidationException;
@@ -81,6 +84,7 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository<R, ?>, P
 	protected final EmailService emailService;
 	protected final RepositorySynchronizer<R> repositorySynchronizer;
 	protected final SecurityMediator securityMediator;
+	protected final PackageDeleter<P> packageDeleter;
 	protected Submission submission = new Submission();
 	protected P packageBag = null;
 	
@@ -96,7 +100,8 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository<R, ?>, P
 			EmailService emailService,
 			BestMaintainerChooser bestMaintainerChooser,
 			RepositorySynchronizer<R> repositorySynchronizer,
-			SecurityMediator securityMediator) {
+			SecurityMediator securityMediator,
+			PackageDeleter<P> packageDeleter) {
 		super(new Submission(), submissionService, requester, newsfeedEventService);
 		this.request = request;
 		this.packageValidator = packageValidator;
@@ -108,6 +113,7 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository<R, ?>, P
 		this.bestMaintainerChooser = bestMaintainerChooser;
 		this.repositorySynchronizer = repositorySynchronizer;
 		this.securityMediator = securityMediator;
+		this.packageDeleter = packageDeleter;
 	}
 
 	@Override
@@ -123,9 +129,9 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository<R, ?>, P
 		File extracted = null;
 		Properties packageProperties = null;
 		try {
-			stored = storage.writeToWaitingRoom(fileData, repository);
-			extracted = storage.extractTarGzPackageFile(stored);
-			packageProperties = storage.getPropertiesFromExtractedFile(extracted);
+			stored = new File(storage.writeToWaitingRoom(fileData, repository));
+			extracted = new File(storage.extractTarGzPackageFile(stored.getAbsolutePath()));
+			packageProperties = storage.getPropertiesFromExtractedFile(extracted.getAbsolutePath());
 			//TODO: What happens if it fails here, inside createPackage? Will it be reverted and storedFile removed?
 			packageBag = createPackage(name, stored, packageProperties, requester, 
 					generateManual, repository, replace);
@@ -144,21 +150,21 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository<R, ?>, P
 			
 			if (stored != null && stored.exists()) {
 				try {
-					storage.removeFileIfExists(stored);
+					storage.removeFileIfExists(stored.getAbsolutePath());
 				} catch (DeleteFileException dfe) {
 					logger.error("Could not remove created sources!", dfe);
 				}
 			}
 			if(extracted != null && extracted.exists()) {
 				try {
-					storage.removeFileIfExists(extracted);
+					storage.removeFileIfExists(extracted.getAbsolutePath());
 				} catch (DeleteFileException dfe) {
 					logger.error("Could not remove extracted sources!", dfe);
 				}
 			}
 			
 			throw new FatalStrategyFailure(e);
-		} catch (MovePackageSourceException e) {
+		} catch (MovePackageSourceException | DeleteEntityException e) {
 			logger.error(e.getMessage(), e);
 			throw new StrategyFailure(e, false);
 		} 
@@ -187,7 +193,7 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository<R, ?>, P
 
 		if(securityMediator.canUpload(packageBag.getName(), packageBag.getRepository(), requester)) {
 			logger.debug("Privileged requester - submission is being automatically accepted...");
-			packageBag.setSource(storage.moveToMainDirectory(packageBag).getAbsolutePath());
+			packageBag.setSource(storage.moveToMainDirectory(packageBag));
 			submission.setState(SubmissionState.ACCEPTED);
 			packageBag.setActive(true);
 			logger.debug("Package " + packageBag.toString() + " accepted.");
@@ -228,7 +234,9 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository<R, ?>, P
 					ReadPackageDescriptionException, 
 					CreateEntityException, 
 					ParsePackagePropertiesException,
-					CheckSumCalculationException, PackageDuplicatedToSilentlyIgnore {
+					CheckSumCalculationException, 
+					PackageDuplicatedToSilentlyIgnore,
+					DeleteEntityException {
 		logger.debug("Creating package.");
 		P packageBag = parseTechnologySpecificPackageProperties(properties);
 		packageBag = parseUniversalProperties(packageBag, properties);
@@ -243,13 +251,25 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository<R, ?>, P
 		try {
 			storage.calculateCheckSum(packageBag);
 			
-			packageValidator.validateUploadPackage(packageBag, replace);
+			try {
+				packageValidator.validateUploadPackage(packageBag, replace);
+			} catch(PackageDuplicatedToSilentlyIgnore e) {
+				packageDeleter.delete((P)e.getPackage());
+				//TODO: Casting won't be needed when we improve the entities' structure in 1.8
+			}
+			
 			packageBag = packageService.create(packageBag);
 			logger.debug("Package " + packageBag.toString() + " created.");
 		} 
-		catch (PackageValidationException | CheckSumCalculationException e) {
-			logger.warn("Invalid package uploaded. Removing sources..."); //TODO: Should we log such things?
-			storage.removePackageSource(packageBag);
+		catch (PackageValidationException | 
+				CheckSumCalculationException | 
+				DeleteEntityException e) {
+			if(e instanceof DeleteEntityException) {
+				logger.error("Could not delete replaced package.");
+			} else {
+				logger.warn("Invalid package uploaded. Removing sources..."); //TODO: Should we log such things?
+			}
+			storage.removePackageSource(storedFile.getAbsolutePath());
 			throw e;
 		}
 		return packageBag;
@@ -279,7 +299,8 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository<R, ?>, P
 	protected void postStrategy() throws StrategyFailure {								
 		if(request.getRepository().isPublished()) {
 			try {
-				repositorySynchronizer.storeRepositoryOnRemoteServer(request.getRepository(), ""); //TODO: date				
+				repositorySynchronizer.storeRepositoryOnRemoteServer(request.getRepository(), 
+						DateProvider.getCurrentDateStamp());		
 			} catch (SynchronizeRepositoryException e) {
 				logger.error(e.getMessage(), e);
 				throw new StrategyFailure(e);

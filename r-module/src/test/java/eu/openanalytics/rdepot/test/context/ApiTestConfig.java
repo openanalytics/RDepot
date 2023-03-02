@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -60,7 +60,8 @@ import eu.openanalytics.rdepot.base.security.RestAuthenticationEntryPoint;
 	"eu.openanalytics.rdepot.r.api.v2.controllers", 
 	"eu.openanalytics.rdepot.base.api.v2.controllers",
 	"eu.openanalytics.rdepot.r.api.v2", 
-	"eu.openanalytics.rdepot.base.api.v2"})
+	"eu.openanalytics.rdepot.base.api.v2",
+	"eu.openanalytics.rdepot.base.validation"})
 @EnableWebSecurity
 @EnableAutoConfiguration
 @EnableGlobalMethodSecurity(prePostEnabled = true, proxyTargetClass=true)

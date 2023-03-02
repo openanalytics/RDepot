@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -232,6 +232,10 @@ public class ApiV2PackageMaintainerController extends ApiV2Controller<PackageMai
 		} catch (ResolveRelatedEntitiesException e) {
 			return handleValidationError(e);
 		}
+		
+		if(!securityMediator.isAuthorizedToEdit(packageMaintainer, requester))
+			throw new UserNotAuthorized(messageSource, locale);
+		
 		BindingResult bindingResult = createBindingResult(packageMaintainer);
 		
 		packageMaintainerValidator.validate(packageMaintainer, bindingResult);

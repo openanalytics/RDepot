@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -63,7 +63,7 @@ import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.factory.StrategyFactory;
 import eu.openanalytics.rdepot.base.utils.specs.RepositoryMaintainerSpecs;
 import eu.openanalytics.rdepot.base.utils.specs.SpecificationUtils;
-import eu.openanalytics.rdepot.base.validation.RepositoryMaintainerValidator;
+import eu.openanalytics.rdepot.base.validation.LegacyRepositoryMaintainerValidator;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.legacy.api.v1.dtos.CreateRepositoryMaintainerRequestBody;
 import eu.openanalytics.rdepot.r.legacy.api.v1.dtos.DTOConverter;
@@ -91,7 +91,7 @@ public class RepositoryMaintainerController {
 	private RepositoryMaintainerService repositoryMaintainerService;
 	
 	@Autowired
-	private RepositoryMaintainerValidator repositoryMaintainerValidator;
+	private LegacyRepositoryMaintainerValidator legacyRepositoryMaintainerValidator;
 	
 	@Autowired
 	private MessageSource messageSource;
@@ -104,7 +104,7 @@ public class RepositoryMaintainerController {
 	
 	@InitBinder(value="repositorymaintainer")
 	private void initBinder(WebDataBinder binder) {
-		binder.setValidator(repositoryMaintainerValidator);
+		binder.setValidator(legacyRepositoryMaintainerValidator);
 	}
 	
 	private int placeholder = 9;
@@ -164,7 +164,7 @@ public class RepositoryMaintainerController {
 		BindException bindingResult = new BindException(repositoryMaintainer, "repositoryMaintainer");
 
 		try {
-			repositoryMaintainerValidator.validate(repositoryMaintainer, bindingResult);
+			legacyRepositoryMaintainerValidator.validate(repositoryMaintainer, bindingResult);
 			if(requester == null || !Objects.equals(requester.getRole().getName(), "admin")) {
 				throw new UserUnauthorizedException();
 			} else if(bindingResult.hasErrors()) {
@@ -226,7 +226,7 @@ public class RepositoryMaintainerController {
 		} else if(requester == null || !Objects.equals(requester.getRole().getName(), "admin")) {
 			throw new UserUnauthorizedException();
 		} else {	
-			repositoryMaintainerValidator.validate(repositoryMaintainer, bindingResult);
+			legacyRepositoryMaintainerValidator.validate(repositoryMaintainer, bindingResult);
 			if (bindingResult.hasErrors()) {
 				List<RRepository> repositoryEntities = repositoryService.findAll();
 				result.put("error", bindingResult.getFieldError().getCode());

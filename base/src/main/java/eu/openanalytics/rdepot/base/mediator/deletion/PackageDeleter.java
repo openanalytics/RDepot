@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -22,6 +22,7 @@ package eu.openanalytics.rdepot.base.mediator.deletion;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
 
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.Submission;
@@ -30,40 +31,59 @@ import eu.openanalytics.rdepot.base.service.PackageService;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
 import eu.openanalytics.rdepot.base.storage.Storage;
+import eu.openanalytics.rdepot.base.storage.exceptions.MovePackageSourceException;
 import eu.openanalytics.rdepot.base.storage.exceptions.SourceFileDeleteException;
 
 public abstract class PackageDeleter<P extends Package<P, ?>> extends ResourceDeleter<P> {
 
-	private final Storage<?, P> storage;
-	private final static Logger logger = LoggerFactory.getLogger(PackageDeleter.class);
-	private final SubmissionService submissionService;
-	private final SubmissionDeleter submissionDeleter;
+	protected final Storage<?, P> storage;
+	protected final static Logger logger = LoggerFactory.getLogger(PackageDeleter.class);
+	protected final SubmissionService submissionService;
+	protected final PackageService<P> packageService;
 	
 	public PackageDeleter(NewsfeedEventService newsfeedEventService, 
 			PackageService<P> resourceService, 
 			Storage<?, P> storage,
 			SubmissionService submissionService,
-			SubmissionDeleter submissionDeleter) {
+			PackageService<P> packageService) {
 		super(newsfeedEventService, resourceService);
 		this.storage = storage;
 		this.submissionService = submissionService;
-		this.submissionDeleter = submissionDeleter;
+		this.packageService = packageService;
 	}
 
 	@Override
 	public void delete(P resource) throws DeleteEntityException {
+		String recycledPackageSourcePath = null;
+		final String oldPackageSourcePath = resource.getSource();
+		
 		try {
-			storage.removePackageSource(resource);
+			recycledPackageSourcePath = storage.moveToTrashDirectory(resource);
+			resource.setSource(recycledPackageSourcePath);
+			
 			newsfeedEventService.deleteRelatedEvents(resource.getSubmission());
-//			newsfeedEventService.deleteRelatedPackageEvents(resource.getId());
-			submissionDeleter.delete(resource.getSubmission());
-//			resourceService.delete(resource);
-		} catch (SourceFileDeleteException e) {
+			newsfeedEventService.deleteRelatedEvents(resource);
+			submissionService.delete(resource.getSubmission());
+			
+			storage.removePackageSource(recycledPackageSourcePath);
+		} catch (MovePackageSourceException e) {
 			logger.error(e.getMessage(), e);
 			throw new DeleteEntityException();
+		} catch (SourceFileDeleteException e) {
+			logger.error(e.getMessage(), e);
+		} catch (DataAccessException dae) {
+			logger.error(dae.getMessage(), dae);
+			try {
+				resource.setSource(storage.moveSource(resource, oldPackageSourcePath));
+			} catch (MovePackageSourceException mpse) {
+				logger.error("Could not restore package source after failed delete!");
+				logger.error(mpse.getMessage(), mpse);
+			}
+			throw new DeleteEntityException();
 		}
-		
-		
 	}
 	
+	public void deleteForSubmission(Submission submission) throws DeleteEntityException {
+		delete(packageService.findById(submission.getPackage().getId()).orElseThrow(DeleteEntityException::new));
+	}
 }

@@ -34,6 +34,11 @@ jar {
 	from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
+    manifest {
+    	attributes (
+    		'Implementation-Version': version
+    	)
+    }
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

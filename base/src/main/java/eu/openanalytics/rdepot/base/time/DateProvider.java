@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,6 +20,8 @@
  */
 package eu.openanalytics.rdepot.base.time;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class DateProvider {
@@ -43,6 +45,12 @@ public class DateProvider {
   
   public static String nowString() {
     return now().toString();
+  }
+  
+  public static String getCurrentDateStamp() {
+	  DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+	  LocalDateTime currentDate = LocalDateTime.now();
+	  return dtf.format(currentDate);
   }
 
 }

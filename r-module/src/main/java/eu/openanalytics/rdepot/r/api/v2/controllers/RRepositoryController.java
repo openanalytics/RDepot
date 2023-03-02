@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -23,7 +23,6 @@ package eu.openanalytics.rdepot.r.api.v2.controllers;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
-import java.util.Objects;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

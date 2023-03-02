@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,6 +20,7 @@
  */
 package eu.openanalytics.rdepot.base.technology;
 
+import eu.openanalytics.rdepot.base.mediator.deletion.PackageDeleter;
 import eu.openanalytics.rdepot.base.service.PackageService;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 
@@ -43,4 +44,12 @@ public interface ServiceResolver {
 	 * @throws TechnologyNotSupported
 	 */
 	RepositoryService<?> repositoryService(Technology technology) throws TechnologyNotSupported;
+	
+	/**
+	 * Used to delegate submission deletion to a proper deleter.
+	 * @param technology
+	 * @return
+	 * @throws TechnologyNotSupported
+	 */
+	PackageDeleter<?> packageDeleter(Technology technology) throws TechnologyNotSupported;
 }

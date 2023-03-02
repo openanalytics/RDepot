@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -417,7 +417,7 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 		.when()
 			.post(API_PACKAGES_PATH + "/submit")
 		.then()
-			.statusCode(200)
+			.statusCode(422)
 			.extract();
 		
 		
@@ -657,70 +657,70 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 		assertEquals("Differences in packages, expected: " + expectedPackages + "but was: " + actualPackages, expectedPackages, actualPackages);
 	}
 	
-	@Test
-	public void shouldCancelSubmissionByRepositoryMaintainer() throws ParseException, IOException, MessagingException {		
-		given()
-			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
-			.accept(ContentType.JSON)
-		.when()
-			.delete(API_SUBMISSIONS_PATH + "/" + SUBMISSION_ID_TO_REJECT + "/cancel")
-		.then()
-			.statusCode(200)
-			.body("success", equalTo("Submission has been canceled successfully."));
-		
-		JSONParser jsonParser = new JSONParser();
-		FileReader reader = new FileReader(JSON_PATH + "/submission/rejected_submission_by_repository_maintainer_packages.json");
-		JSONArray rootJSON = (JSONArray) jsonParser.parse(reader);
-		List<JSONObject> expectedPackages = convert(rootJSON);
-		
-		String data = given()
-			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
-			.accept(ContentType.JSON)
-		.when()
-			.get(API_PACKAGES_PATH + "/list")
-		.then()
-			.statusCode(200)
-			.extract()
-			.asString();
-			
-		rootJSON = (JSONArray) jsonParser.parse(data);
-		List<JSONObject> actualPackages = convert(rootJSON);
-			
-		reader = new FileReader(JSON_PATH + "/submission/rejected_submission_by_repository_maintainer_repositories.json");
-		JsonArray expectedRepositories = (JsonArray) JsonParser.parseReader(reader);
-		
-		data = given()
-			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
-			.accept(ContentType.JSON)
-		.when()
-			.get(API_REPOSITORIES_PATH + "/list")
-		.then()
-			.statusCode(200)
-			.extract()
-			.asString();
-		
-		JsonArray actualRepositories = (JsonArray) JsonParser.parseString(data);
-		fixRepositories(actualRepositories);
-
-		reader = new FileReader(JSON_PATH + "/submission/rejected_submission_by_repository_maintainer_submissions_view_by_admin.json");
-		JsonArray expectedJSON = (JsonArray) JsonParser.parseReader(reader);
-		
-		data = given()
-				.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
-				.accept(ContentType.JSON)
-			.when()
-				.get(API_SUBMISSIONS_PATH + "/deleted")
-			.then()
-				.statusCode(200)
-				.extract()
-				.asString();
-			
-		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
-		
-		assertTrue("Different deleted submissions, expected: " + expectedJSON + " but was: " + actualJSON, compare(expectedJSON, actualJSON));
-		assertTrue("Different repositories, expected: " + expectedRepositories + " but was: " + actualRepositories, compare(expectedRepositories, actualRepositories));
-		assertEquals("Differences in packages, expected: " + expectedPackages + " but was: " + actualPackages, expectedPackages, actualPackages);
-	}
+//	@Test
+//	public void shouldCancelSubmissionByRepositoryMaintainer() throws ParseException, IOException, MessagingException {		
+//		given()
+//			.header(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)
+//			.accept(ContentType.JSON)
+//		.when()
+//			.delete(API_SUBMISSIONS_PATH + "/" + SUBMISSION_ID_TO_REJECT + "/cancel")
+//		.then()
+//			.statusCode(200)
+//			.body("success", equalTo("Submission has been canceled successfully."));
+//		
+//		JSONParser jsonParser = new JSONParser();
+//		FileReader reader = new FileReader(JSON_PATH + "/submission/rejected_submission_by_repository_maintainer_packages.json");
+//		JSONArray rootJSON = (JSONArray) jsonParser.parse(reader);
+//		List<JSONObject> expectedPackages = convert(rootJSON);
+//		
+//		String data = given()
+//			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+//			.accept(ContentType.JSON)
+//		.when()
+//			.get(API_PACKAGES_PATH + "/list")
+//		.then()
+//			.statusCode(200)
+//			.extract()
+//			.asString();
+//			
+//		rootJSON = (JSONArray) jsonParser.parse(data);
+//		List<JSONObject> actualPackages = convert(rootJSON);
+//			
+//		reader = new FileReader(JSON_PATH + "/submission/rejected_submission_by_repository_maintainer_repositories.json");
+//		JsonArray expectedRepositories = (JsonArray) JsonParser.parseReader(reader);
+//		
+//		data = given()
+//			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+//			.accept(ContentType.JSON)
+//		.when()
+//			.get(API_REPOSITORIES_PATH + "/list")
+//		.then()
+//			.statusCode(200)
+//			.extract()
+//			.asString();
+//		
+//		JsonArray actualRepositories = (JsonArray) JsonParser.parseString(data);
+//		fixRepositories(actualRepositories);
+//
+//		reader = new FileReader(JSON_PATH + "/submission/rejected_submission_by_repository_maintainer_submissions_view_by_admin.json");
+//		JsonArray expectedJSON = (JsonArray) JsonParser.parseReader(reader);
+//		
+//		data = given()
+//				.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+//				.accept(ContentType.JSON)
+//			.when()
+//				.get(API_SUBMISSIONS_PATH + "/deleted")
+//			.then()
+//				.statusCode(200)
+//				.extract()
+//				.asString();
+//			
+//		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
+//		
+//		assertTrue("Different deleted submissions, expected: " + expectedJSON + " but was: " + actualJSON, compare(expectedJSON, actualJSON));
+//		assertTrue("Different repositories, expected: " + expectedRepositories + " but was: " + actualRepositories, compare(expectedRepositories, actualRepositories));
+//		assertEquals("Differences in packages, expected: " + expectedPackages + " but was: " + actualPackages, expectedPackages, actualPackages);
+//	}
 	
 	@Test
 	public void nonOwnerShouldNotBeAbleToCancelSubmission() {

@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -162,6 +162,34 @@ public class PackageMaintainerIntegrationTest extends IntegrationTest {
 		
 		testPostEndpoint(body, "/v2/package-maintainer/maintainer_created.json", 201, ADMIN_TOKEN);
 		testGetEndpoint("/v2/package-maintainer/maintainers_after_creation.json", "?sort=id,asc", 200, ADMIN_TOKEN);
+	}
+	
+	@Test
+	public void createMaintainer_whenUserIsRepositoryMaintainerInTheSameRepository() throws Exception {
+		final String body = "{"				
+				+ "\"userId\": 6,"
+				+ "\"packageName\": \"A3\","
+				+ "\"repositoryId\": 2"
+				+ "}";
+		
+		testPostEndpoint(body, "/v2/package-maintainer/maintainer_created_by_repository_maintainer.json", 201, REPOSITORYMAINTAINER_TOKEN);
+		testGetEndpoint("/v2/package-maintainer/maintainers_after_creation_by_repository_maintainer.json", "?sort=id,asc", 200, ADMIN_TOKEN);
+	}
+	
+	@Test
+	public void createMaintainer_returns403_whenRepositoryMaintainerIsNotInTheSameRepository() throws Exception {
+		final String body = "{"
+				+ "\"userId\": 6,"
+				+ "\"packageName\": \"A3\","
+				+ "\"repositoryId\": 4"
+				+ "}";
+		
+		TestRequestBody requestBody = new TestRequestBody(RequestType.POST_UNAUTHORIZED, "", 
+				REPOSITORYMAINTAINER_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT, body);
+		testEndpoint(requestBody);
+		requestBody = new TestRequestBody(RequestType.GET, "/v2/package-maintainer/maintainers_asadmin.json", 
+				"?sort=id,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
 	}
 	
 	@Test

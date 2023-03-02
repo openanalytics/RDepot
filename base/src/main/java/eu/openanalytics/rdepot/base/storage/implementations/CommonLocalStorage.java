@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -69,8 +69,9 @@ public abstract class CommonLocalStorage<R extends Repository<R, ?>, P extends P
 	protected final String separator =  FileSystems.getDefault().getSeparator();
 	
 	@Override
-	public File extractTarGzPackageFile(File storedFile) throws ExtractFileException {
-		logger.debug("Extracting package file: " + storedFile.getAbsolutePath());
+	public String extractTarGzPackageFile(String storedFilePath) throws ExtractFileException {
+		logger.debug("Extracting package file: " + storedFilePath);
+		final File storedFile = new File(storedFilePath);
 		final File outputDir = storedFile.getParentFile();
 		File unGzippedFile = null;
 		
@@ -95,7 +96,8 @@ public abstract class CommonLocalStorage<R extends Repository<R, ?>, P extends P
 				logger.error(e.getMessage(), e);
 			}
 		}
-		return new File(storedFile.getParent() + separator + storedFile.getName().split("_")[0]);
+		return new File(storedFile.getParent() + separator + storedFile.getName().split("_")[0])
+				.getAbsolutePath();
 	}
 	
 	protected void deleteFile(File file) throws DeleteFileException {
@@ -216,15 +218,20 @@ public abstract class CommonLocalStorage<R extends Repository<R, ?>, P extends P
 	}
 
 	@Override
-	public void removeFileIfExists(final File sourceFile) throws DeleteFileException {
-		deleteFile(sourceFile);
+	public void removeFileIfExists(final String sourceFilePath) throws DeleteFileException {
+		deleteFile(new File(sourceFilePath));
 	}
 
 	@Override
 	public void removePackageSource(P packageBag) throws SourceFileDeleteException {
-		final File targzFile = new File(packageBag.getSource());
-		logger.info("Removing source for package: " + packageBag.toString()
-			+ "\nSource file: " + targzFile.getAbsolutePath());
+		logger.info("Removing source for package: " + packageBag.toString());
+		removePackageSource(packageBag.getSource());
+	}
+	
+	@Override
+	public void removePackageSource(String path) throws SourceFileDeleteException {
+		final File targzFile = new File(path);
+		logger.info("Removing source file: " + targzFile.getAbsolutePath());
 		try {
 			deleteFile(targzFile);
 		} catch (DeleteFileException e) {

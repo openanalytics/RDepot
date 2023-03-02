@@ -1,7 +1,7 @@
 version: '3'
 services:
   proxy:
-    image: library/nginx:alpine
+    image: registry.openanalytics.eu/proxy/library/nginx:alpine
     container_name: oa-rdepot-proxy
     restart: always
     volumes:
@@ -19,7 +19,7 @@ services:
       
   app:
     # build: ./docker/app
-    image: openanalytics/rdepot-app-it:1.7.0
+    image: openanalytics/rdepot-app-it:1.7.1
     restart: always
     hostname: oa-rdepot-app
     container_name: oa-rdepot-app
@@ -52,7 +52,7 @@ services:
       - oa-rdepot  
       
   repo:
-    image: openanalytics/rdepot-repo-it:1.7.0
+    image: openanalytics/rdepot-repo-it:1.7.1
     restart: always
     hostname: oa-rdepot-repo
     container_name: oa-rdepot-repo
@@ -68,7 +68,7 @@ services:
       - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8002
         
   db:
-    image: library/postgres:alpine
+    image: registry.openanalytics.eu/proxy/library/postgres:alpine
     restart: always
     hostname: oa-rdepot-db
     container_name: oa-rdepot-db
@@ -118,7 +118,7 @@ services:
         #ipv4_address: 192.168.49.17
  
   ldap:
-    image: openanalytics/rdepot-ldap-it:1.7.0
+    image: openanalytics/rdepot-ldap-it:1.7.1
     restart: unless-stopped
     hostname: oa-rdepot-ldap
     container_name: oa-rdepot-ldap

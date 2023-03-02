@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -44,6 +44,7 @@ import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure
 import eu.openanalytics.rdepot.base.strategy.exceptions.WrongServiceException;
 import eu.openanalytics.rdepot.base.synchronization.RepositorySynchronizer;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
+import eu.openanalytics.rdepot.base.time.DateProvider;
 
 /**
  * Changes submission state.
@@ -136,7 +137,7 @@ public class UpdateSubmissionStrategy
 		try {
 			P packageBag = packageService.findById(submission.getPackage().getId()) //TODO: We can cast it in the service method so that not to fetch it twice
 					.orElseThrow(() -> new WrongServiceException());
-			packageBag.setSource(storage.moveToTrashDirectory(packageBag).getAbsolutePath());
+			packageBag.setSource(storage.moveToTrashDirectory(packageBag));
 			packageBag.setActive(false);
 			packageBag.setDeleted(true);
 		} catch (WrongServiceException | MovePackageSourceException e) {
@@ -154,7 +155,7 @@ public class UpdateSubmissionStrategy
 		try {
 			P packageBag = packageService.findById(submission.getPackage().getId()) //TODO: We can cast it in the service method so that not to fetch it twice
 					.orElseThrow(() -> new WrongServiceException());
-			packageBag.setSource(storage.moveToMainDirectory(packageBag).getAbsolutePath());
+			packageBag.setSource(storage.moveToMainDirectory(packageBag));
 			packageBag.setActive(true);
 			requiresRepublishing = packageBag.getRepository().isPublished();
 			repositoryService.incrementVersion(repository);
@@ -172,7 +173,8 @@ public class UpdateSubmissionStrategy
 	protected void postStrategy() throws StrategyFailure {
 		try {
 			if(requiresRepublishing)
-				repositorySynchronizer.storeRepositoryOnRemoteServer(repository, null);
+				repositorySynchronizer.storeRepositoryOnRemoteServer(repository, 
+						DateProvider.getCurrentDateStamp());
 		} catch(SynchronizeRepositoryException e) {
 			logger.error(e.getMessage(), e);
 			throw new StrategyFailure(e, false);

@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -42,6 +42,7 @@ public class SubmissionIntegrationTest extends IntegrationTest {
 	private final String SUBMISSION_ID_USER = "19";
 	private final String SUBMISSION_ID_TO_ACCEPT = "30";
 	private final String SUBMISSION_ID_TO_CANCEL = "31";
+	private final String SUBMISSION_ID_ACCEPTED = "5";
 	
 	private final String PACKAGE_ID = "32";
 	private final String PACKAGE_NAME_TO_DOWNLOAD = "Benchmarking";
@@ -159,7 +160,7 @@ public class SubmissionIntegrationTest extends IntegrationTest {
 				.build());
 		
 		requestBody = new TestRequestBody(RequestType.POST_MULTIPART, 
-				200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT, body);
+				422, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT, body);
 		testEndpoint(requestBody);
 	}
 	
@@ -316,13 +317,82 @@ public class SubmissionIntegrationTest extends IntegrationTest {
 				+ "]";		
 		
 		TestRequestBody requestBody = new TestRequestBody(RequestType.PATCH, "/v2/submission/cancelled_submission.json", 
-				"/" + SUBMISSION_ID_TO_CANCEL, 200, ADMIN_TOKEN, 
+				"/" + SUBMISSION_ID_TO_CANCEL, 200, PACKAGEMAINTAINER_TOKEN, 
 				PATCH_ENDPOINT_NEW_EVENTS_AMOUNT, "/v2/events/submissions/cancelled_submission_events.json", patch);
 		testEndpoint(requestBody);
 		
 		requestBody = new TestRequestBody(RequestType.GET, "/v2/submission/submission_after_cancelled.json", 
 				"/" + SUBMISSION_ID_TO_CANCEL, 200, ADMIN_TOKEN, 
 				GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
+	}
+	
+	@Test
+	public void cancelSubmission_returns422_whenSubmissionIsNotWaiting() throws Exception {
+		final String patch = "["
+				+ "{"
+				+ "\"op\": \"replace\","
+				+ "\"path\":\"/state\","
+				+ "\"value\":\"cancelled\""
+				+ "}"
+				+ "]";		
+		
+		TestRequestBody requestBody = new TestRequestBody(RequestType.PATCH, "/v2/malformed_patch.json", 
+				"/" + SUBMISSION_ID_ACCEPTED, 422, ADMIN_TOKEN, 
+				GET_ENDPOINT_NEW_EVENTS_AMOUNT, patch);
+		testEndpoint(requestBody);
+	}
+	
+	@Test
+	public void rejectSubmission() throws Exception {
+		final String patch = "["
+				+ "{"
+				+ "\"op\": \"replace\","
+				+ "\"path\":\"/state\","
+				+ "\"value\":\"rejected\""
+				+ "}"
+				+ "]";		
+		
+		TestRequestBody requestBody = new TestRequestBody(RequestType.PATCH, "/v2/submission/rejected_submission.json", 
+				"/" + SUBMISSION_ID_TO_CANCEL, 200, ADMIN_TOKEN, 
+				PATCH_ENDPOINT_NEW_EVENTS_AMOUNT, "/v2/events/submissions/rejected_submission_events.json", patch);
+		testEndpoint(requestBody);
+		
+		requestBody = new TestRequestBody(RequestType.GET, "/v2/submission/submission_after_rejected.json", 
+				"/" + SUBMISSION_ID_TO_CANCEL, 200, ADMIN_TOKEN, 
+				GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
+	}
+	
+	@Test
+	public void rejectSubmission_shouldFailWhenUserIsSubmitter() throws Exception {
+		final String patch = "["
+				+ "{"
+				+ "\"op\": \"replace\","
+				+ "\"path\":\"/state\","
+				+ "\"value\":\"rejected\""
+				+ "}"
+				+ "]";		
+		
+		TestRequestBody requestBody = new TestRequestBody(RequestType.PATCH, "/v2/403.json", 
+				"/" + SUBMISSION_ID_TO_CANCEL, 403, PACKAGEMAINTAINER_TOKEN, 
+				0, "/v2/events/filtering/allEvents.json", patch);
+		testEndpoint(requestBody);
+	}
+	
+	@Test
+	public void cancelSubmission_shouldFailWhenUserIsNotSubmitter() throws Exception {
+		final String patch = "["
+				+ "{"
+				+ "\"op\": \"replace\","
+				+ "\"path\":\"/state\","
+				+ "\"value\":\"cancelled\""
+				+ "}"
+				+ "]";		
+		
+		TestRequestBody requestBody = new TestRequestBody(RequestType.PATCH, "/v2/403.json", 
+				"/" + SUBMISSION_ID_TO_CANCEL, 403, ADMIN_TOKEN, 
+				0, "/v2/events/filtering/allEvents.json", patch);
 		testEndpoint(requestBody);
 	}
 

@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -34,6 +34,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -52,6 +53,7 @@ import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
+import eu.openanalytics.rdepot.base.time.DateProvider;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.strategy.create.RRepositoryCreateStrategy;
@@ -121,14 +123,15 @@ public class RRepositoryStrategyTest extends StrategyTest {
 		User requester = UserTestFixture.GET_ADMIN();
 		RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
 		repository.setPublished(true);
-		
+		DateProvider.setTestDate(new Date());
 		RRepository updatedRepository = new RRepository(repository);
 		updatedRepository.setId(0);
 		updatedRepository.setPublicationUri("https://newuri");
 		
 		doNothing()
 		.when(repositorySynchronizer)
-			.storeRepositoryOnRemoteServer(eq(repository), anyString());
+			.storeRepositoryOnRemoteServer(eq(repository), 
+					eq(DateProvider.getCurrentDateStamp()));
 		
 		Strategy<RRepository> strategy = new RRepositoryUpdateStrategy(
 				repository,

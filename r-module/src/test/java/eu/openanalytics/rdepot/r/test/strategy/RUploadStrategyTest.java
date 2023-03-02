@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2022 Open Analytics NV
+ * Copyright (C) 2012-2023 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
@@ -116,10 +117,10 @@ public class RUploadStrategyTest extends StrategyTest {
 				multipartFile, repository, generateManual, replace);
 		
 		when(storage.writeToWaitingRoom(multipartFile, repository))
-			.thenReturn(uploadedFile);
-		when(storage.extractTarGzPackageFile(uploadedFile))
-			.thenReturn(extracted);
-		when(storage.getPropertiesFromExtractedFile(extracted))
+			.thenReturn(uploadedFile.getAbsolutePath());
+		when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath()))
+			.thenReturn(extracted.getAbsolutePath());
+		when(storage.getPropertiesFromExtractedFile(extracted.getAbsolutePath()))
 			.thenReturn(new RDescription(new File(TEST_PACKAGE_EXTRACTED + "/DESCRIPTION")));
 		doAnswer(new Answer<Submission>() {
 
@@ -130,7 +131,7 @@ public class RUploadStrategyTest extends StrategyTest {
 				return submission;
 			}}
 		).when(submissionService).create(any());
-		when(storage.moveToMainDirectory(any())).thenReturn(uploadedFile);
+		when(storage.moveToMainDirectory(any())).thenReturn(uploadedFile.getAbsolutePath());
 		when(bestMaintainerChooser.chooseBestPackageMaintainer(any())).thenReturn(requester);
 		when(securityMediator.canUpload("abc", repository, requester)).thenReturn(true);
 		doAnswer(new Answer<RPackage>() {
@@ -158,7 +159,7 @@ public class RUploadStrategyTest extends StrategyTest {
 				bestMaintainerChooser, 
 				repositorySynchronizer,
 				securityMediator,
-				storage);
+				storage, rPackageDeleter);
 		
 		Submission submission = strategy.perform();
 		RPackage packageBag = (RPackage)submission.getPackage();
@@ -211,10 +212,10 @@ public class RUploadStrategyTest extends StrategyTest {
 				multipartFile, repository, generateManual, replace);
 		
 		when(storage.writeToWaitingRoom(multipartFile, repository))
-			.thenReturn(uploadedFile);
-		when(storage.extractTarGzPackageFile(uploadedFile))
-			.thenReturn(extracted);
-		when(storage.getPropertiesFromExtractedFile(extracted))
+			.thenReturn(uploadedFile.getAbsolutePath());
+		when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath()))
+			.thenReturn(extracted.getAbsolutePath());
+		when(storage.getPropertiesFromExtractedFile(extracted.getAbsolutePath()))
 			.thenReturn(new RDescription(new File(TEST_PACKAGE_EXTRACTED + "/DESCRIPTION")));
 		doAnswer(new Answer<Submission>() {
 
@@ -252,7 +253,7 @@ public class RUploadStrategyTest extends StrategyTest {
 				bestMaintainerChooser, 
 				repositorySynchronizer,
 				securityMediator,
-				storage);
+				storage, rPackageDeleter);
 		Submission submission = strategy.perform();
 		
 //		strategy.perform();
@@ -295,7 +296,7 @@ public class RUploadStrategyTest extends StrategyTest {
 				bestMaintainerChooser, 
 				repositorySynchronizer,
 				securityMediator,
-				storage);
+				storage, rPackageDeleter);
 		
 		assertThrows(StrategyFailure.class, () -> strategy.perform(), 
 				"Exception should be thrown when storage fails to "
@@ -321,10 +322,10 @@ public class RUploadStrategyTest extends StrategyTest {
 				multipartFile, repository, generateManual, replace);
 		
 		when(storage.writeToWaitingRoom(multipartFile, repository))
-			.thenReturn(uploadedFile);
+			.thenReturn(uploadedFile.getAbsolutePath());
 		doThrow(new ExtractFileException())
-			.when(storage).extractTarGzPackageFile(uploadedFile);
-		doNothing().when(storage).removeFileIfExists(uploadedFile);
+			.when(storage).extractTarGzPackageFile(uploadedFile.getAbsolutePath());
+		doNothing().when(storage).removeFileIfExists(uploadedFile.getAbsolutePath());
 		
 		Strategy<Submission> strategy = new RPackageUploadStrategy(
 				request, 
@@ -339,11 +340,11 @@ public class RUploadStrategyTest extends StrategyTest {
 				bestMaintainerChooser, 
 				repositorySynchronizer,
 				securityMediator,
-				storage);
+				storage, rPackageDeleter);
 		
 		assertThrows(StrategyFailure.class, () -> strategy.perform(),
 				"Exception should be thrown when package extraction fails.");
-		verify(storage, times(1)).removeFileIfExists(uploadedFile);
+		verify(storage, times(1)).removeFileIfExists(uploadedFile.getAbsolutePath());
 	}
 	
 	@Test
@@ -366,13 +367,13 @@ public class RUploadStrategyTest extends StrategyTest {
 				multipartFile, repository, generateManual, replace);
 		
 		when(storage.writeToWaitingRoom(multipartFile, repository))
-			.thenReturn(uploadedFile);
-		when(storage.extractTarGzPackageFile(uploadedFile))
-			.thenReturn(extracted);
+			.thenReturn(uploadedFile.getAbsolutePath());
+		when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath()))
+			.thenReturn(extracted.getAbsolutePath());
 		doThrow(new ReadPackageDescriptionException())
-			.when(storage).getPropertiesFromExtractedFile(extracted);
-		doNothing().when(storage).removeFileIfExists(uploadedFile);
-		doNothing().when(storage).removeFileIfExists(extracted);
+			.when(storage).getPropertiesFromExtractedFile(extracted.getAbsolutePath());
+		doNothing().when(storage).removeFileIfExists(uploadedFile.getAbsolutePath());
+		doNothing().when(storage).removeFileIfExists(extracted.getAbsolutePath());
 
 		Strategy<Submission> strategy = new RPackageUploadStrategy(
 				request, 
@@ -387,12 +388,12 @@ public class RUploadStrategyTest extends StrategyTest {
 				bestMaintainerChooser, 
 				repositorySynchronizer,
 				securityMediator,
-				storage);
+				storage, rPackageDeleter);
 		
 		assertThrows(StrategyFailure.class, () -> strategy.perform(),
 				"Exception should be thrown when reading package description fails.");
-		verify(storage, times(1)).removeFileIfExists(uploadedFile);
-		verify(storage, times(1)).removeFileIfExists(extracted);
+		verify(storage, times(1)).removeFileIfExists(uploadedFile.getAbsolutePath());
+		verify(storage, times(1)).removeFileIfExists(extracted.getAbsolutePath());
 	}
 	
 	@Test
@@ -415,17 +416,17 @@ public class RUploadStrategyTest extends StrategyTest {
 				multipartFile, repository, generateManual, replace);
 		
 		when(storage.writeToWaitingRoom(multipartFile, repository))
-			.thenReturn(uploadedFile);
-		when(storage.extractTarGzPackageFile(uploadedFile))
-			.thenReturn(extracted);
-		when(storage.getPropertiesFromExtractedFile(extracted))
+			.thenReturn(uploadedFile.getAbsolutePath());
+		when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath()))
+			.thenReturn(extracted.getAbsolutePath());
+		when(storage.getPropertiesFromExtractedFile(extracted.getAbsolutePath()))
 			.thenReturn(new RDescription(new File(TEST_PACKAGE_EXTRACTED + "/DESCRIPTION")));
 		when(bestMaintainerChooser.chooseBestPackageMaintainer(any())).thenReturn(requester);
 		doThrow(new PackageValidationException("invalid.property"))
 			.when(packageValidator).validateUploadPackage(any(), eq(replace));
-		doNothing().when(storage).removeFileIfExists(uploadedFile);
-		doNothing().when(storage).removeFileIfExists(extracted);
-		doNothing().when(storage).removePackageSource(any());
+		doNothing().when(storage).removeFileIfExists(uploadedFile.getAbsolutePath());
+		doNothing().when(storage).removeFileIfExists(extracted.getAbsolutePath());
+		doNothing().when(storage).removePackageSource(anyString());
 		
 		Strategy<Submission> strategy = new RPackageUploadStrategy(
 				request, 
@@ -440,13 +441,13 @@ public class RUploadStrategyTest extends StrategyTest {
 				bestMaintainerChooser, 
 				repositorySynchronizer,
 				securityMediator,
-				storage);
+				storage, rPackageDeleter);
 		
 		assertThrows(StrategyFailure.class, () -> strategy.perform(),
 				"Exception should be thrown when package validation fails.");
-		verify(storage, times(1)).removeFileIfExists(uploadedFile);
-		verify(storage, times(1)).removeFileIfExists(extracted);
-		verify(storage, times(1)).removePackageSource(any());
+		verify(storage, times(1)).removeFileIfExists(uploadedFile.getAbsolutePath());
+		verify(storage, times(1)).removeFileIfExists(extracted.getAbsolutePath());
+		verify(storage, times(1)).removePackageSource(anyString());
 	}
 	
 	@Test
