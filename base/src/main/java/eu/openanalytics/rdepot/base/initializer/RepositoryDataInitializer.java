@@ -74,13 +74,13 @@ public abstract class RepositoryDataInitializer<
 	 * @param declaredRepository
 	 * @return
 	 */
-	protected abstract E declaredRepositoryToEntity(R declaredRepository);
+	protected abstract E declaredRepositoryToEntity(R declaredRepository, boolean declarative);
 	
 	protected void createRepositoriesFromConfig(List<R> repositories, boolean declarative) {
 		List<E> existingRepositories = repositoryService.findAll(); 
 		for(R declaredRepository : repositories) {
 			logger.debug("Creating declared repository " + declaredRepository + "...");
-			E newRepository = declaredRepositoryToEntity(declaredRepository);
+			E newRepository = declaredRepositoryToEntity(declaredRepository, declarative);
 			
 			Optional<E> possiblyExistingRepository = existingRepositories.stream()
 					.filter(r -> r.getName().equals(newRepository.getName())).findFirst();
@@ -88,13 +88,7 @@ public abstract class RepositoryDataInitializer<
 				E existingRepository = possiblyExistingRepository.get();
 				existingRepositories.remove(existingRepository);
 				
-				if(Boolean.valueOf(declarative)) {
-					if(existingRepository.isDeleted() == null) {
-						existingRepository.setDeleted(false);
-					}
-					if(existingRepository.isPublished() == null) {
-						existingRepository.setPublished(true); //TODO: Isn't it safer to set default to true?
-					}
+				if(Boolean.valueOf(declarative)) {					
 					updateRepository(newRepository, existingRepository);
 				} else {
 					logger.warn("We tried to create one of the preconfigured repositories but "					

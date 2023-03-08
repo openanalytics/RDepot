@@ -33,8 +33,8 @@ public class MirroredRRepository extends MirroredRepository<MirroredRPackage, Cr
 	}
 	
 	public MirroredRRepository(String name, String publicationUri, String serverAddress, 
-			Set<CranMirror> mirrors) {
-		super(name, publicationUri, serverAddress, mirrors, RLanguage.instance);
+			Boolean deleted, Boolean published, Set<CranMirror> mirrors) {
+		super(name, publicationUri, serverAddress, deleted, published, mirrors, RLanguage.instance);
 	}
 
 }

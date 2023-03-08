@@ -6,7 +6,7 @@
     "name": "A",
     "serverAddress": "http://oa-rdepot-repo:8080/A",
     "deleted": false,
-    "published": false,
+    "published": true,
     "packages": [
       {
         "id": 2,

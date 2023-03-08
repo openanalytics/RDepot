@@ -30,22 +30,26 @@ public abstract class MirroredRepository<P extends MirroredPackage, M extends Mi
 	protected String name;
 	protected String publicationUri;
 	protected String serverAddress;
+	protected Boolean deleted;
+	protected Boolean published;
 	protected Set<M> mirrors = new HashSet<>();
 	protected Technology technology;
 	
 	public MirroredRepository() {}
 	
-	public MirroredRepository(String name, String publicationUri, String serverAddress, 
-			Technology technology) {
-		this(name, publicationUri, serverAddress, new HashSet<>(), technology);
+	public MirroredRepository(String name, String publicationUri, String serverAddress,
+			Boolean deleted, Boolean published,	Technology technology) {
+		this(name, publicationUri, serverAddress, deleted, published, new HashSet<>(), technology);
 	}
 	
 	public MirroredRepository(String name, String publicationUri, String serverAddress, 
-			Set<M> mirrors, Technology technology) {
+			Boolean deleted, Boolean published,	Set<M> mirrors, Technology technology) {
 		super();
 		this.name = name;
 		this.publicationUri = publicationUri;
 		this.serverAddress = serverAddress;
+		this.deleted = deleted;
+		this.published = published;
 		this.mirrors = mirrors;
 		this.technology = technology;
 	}
@@ -72,6 +76,22 @@ public abstract class MirroredRepository<P extends MirroredPackage, M extends Mi
 	
 	public void setServerAddress(String serverAddress) {
 		this.serverAddress = serverAddress;
+	}
+	
+	public Boolean isDeleted() {
+		return deleted;
+	}
+	
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
+	}
+	
+	public Boolean isPublished() {
+		return published;
+	}
+	
+	public void setPublished(Boolean published) {
+		this.published = published;
 	}
 	
 	public Set<M> getMirrors() {

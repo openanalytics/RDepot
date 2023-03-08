@@ -78,11 +78,26 @@ public class RRepositoryDataInitializer extends RepositoryDataInitializer<RRepos
 	}
 
 	@Override
-	protected RRepository declaredRepositoryToEntity(MirroredRRepository declaredRepository) {
+	protected RRepository declaredRepositoryToEntity(MirroredRRepository declaredRepository, boolean declarative) {
 		RRepository repository = new RRepository();
 		repository.setName(declaredRepository.getName());
 		repository.setPublicationUri(declaredRepository.getPublicationUri());
 		repository.setServerAddress(declaredRepository.getServerAddress());
+		
+		if(declarative) {
+			boolean deleted, published;
+			if(declaredRepository.isDeleted() == null)
+				deleted = false;
+			else
+				deleted = declaredRepository.isDeleted();			
+			if(declaredRepository.isPublished() == null) 
+				published = true;
+			else
+				published = declaredRepository.isPublished();
+			
+			repository.setDeleted(deleted);
+			repository.setPublished(published);
+		}		
 		
 		return repository;
 	}
