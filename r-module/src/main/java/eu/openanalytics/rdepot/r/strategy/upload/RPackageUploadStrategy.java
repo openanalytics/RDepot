@@ -103,7 +103,8 @@ public class RPackageUploadStrategy extends DefaultPackageUploadStrategy<RReposi
 	protected Submission actualStrategy() throws StrategyFailure {
 		Submission submission = super.actualStrategy();
 		try {
-			rStorage.generateManual(packageBag);
+			if(request.getGenerateManual())
+				rStorage.generateManual(packageBag);
 		} catch (GenerateManualException e) {
 			logger.error(e.getMessage(), e);
 			throw new StrategyFailure(e);

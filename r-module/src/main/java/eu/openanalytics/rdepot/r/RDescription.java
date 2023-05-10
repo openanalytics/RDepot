@@ -267,9 +267,9 @@ public class RDescription extends Properties {
 				}
 			}
 			else
-			{
-				nextLine = scanner.next();
-				if (!nextLine.contains(":"))
+			{	
+				nextLine = scanner.hasNext() ? scanner.next() : null;
+				if (nextLine != null && !nextLine.contains(":"))
 				{
 					currentValue += " " + nextLine;
 				}

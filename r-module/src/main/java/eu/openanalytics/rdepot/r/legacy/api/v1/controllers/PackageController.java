@@ -313,7 +313,7 @@ public class PackageController {
     @RequestMapping(value="/{id}/download/{name}_{version}.tar.gz", method=RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> downloadPage(@PathVariable Integer id, 
     		@PathVariable String name, @PathVariable String version) {
-    	RPackage packageBag = packageService.findById(id).orElse(null);
+    	RPackage packageBag = packageService.findOneNonDeleted(id).orElse(null);
     	byte[] bytes = null;
     	HttpHeaders httpHeaders = new HttpHeaders();
     	HttpStatus httpStatus = HttpStatus.OK;

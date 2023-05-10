@@ -31,11 +31,10 @@ services:
     networks:
       - oa-rdepot
   app:
-    image: openanalytics/rdepot-app:1.7.2
+    image: openanalytics/rdepot-app:1.7.3
     restart: unless-stopped
     hostname: oa-rdepot-app
     container_name: oa-rdepot-app
-    entrypoint:  java -jar /opt/rdepot/rdepot.war --spring.config.additional-location=file:/opt/rdepot/application.yml
     volumes:
       - repositories:/opt/rdepot/repositories/
       - snapshots:/opt/rdepot/generated/
@@ -55,7 +54,7 @@ services:
       timeout: 10s
       retries: 10
   repo:
-    image: openanalytics/rdepot-repo:1.7.2
+    image: openanalytics/rdepot-repo:1.7.3
     restart: unless-stopped
     hostname: oa-rdepot-repo
     container_name: oa-rdepot-repo

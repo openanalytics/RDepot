@@ -43,15 +43,11 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.junit.Rule;
 import org.junit.Test;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.icegreen.greenmail.configuration.GreenMailConfiguration;
-import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.ServerSetup;
 
 import eu.openanalytics.rdepot.integrationtest.IntegrationTest;
 import eu.openanalytics.rdepot.integrationtest.utils.JSONConverter;
@@ -73,9 +69,7 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 	
 	private final String PACKAGE_ID_TO_DOWNLOAD = "32";
 	private final String PACKAGE_NAME_TO_DOWNLOAD = "Benchmarking";
-	private final String PDF_PATH = "src/integration-test/resources/itestPdf";
-	
-	private static final ServerSetup serverSetup = new ServerSetup(3925, "0.0.0.0", "smtp");	
+	private final String PDF_PATH = "src/integration-test/resources/itestPdf";		
 	
 	@Test
 	public void shouldNotPublishPackageWhenRepositoryIsUnpublished() throws IOException, ParseException {
@@ -238,60 +232,60 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 	}
 
 	//TODO wait to decision about manual - if always create or only on specified conditions
-//	@Test
-//	public void shouldUploadPackageAndNotCreateManual() throws ParseException, IOException {
-//		File packageBag = new File ("src/integration-test/resources/itestPackages/Benchmarking_0.10.tar.gz");
-//				
-//		given()
-//			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
-//			.accept("application/json")
-//			.contentType("multipart/form-data")
-//			.multiPart("repository", "testrepo2")
-//			.multiPart("generateManual", "false")
-//			.multiPart(new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
-//					.fileName(packageBag.getName())
-//					.mimeType("application/gzip")
-//					.controlName("file")
-//					.build())
-//		.when()
-//			.post(API_PACKAGES_PATH + "/submit")
-//		.then()
-//			.statusCode(200)
-//			.extract();
-//		
-//		FileReader reader = new FileReader(JSON_PATH + "/submission/repositories_after_uploading_package.json");
-//		JsonArray expectedJSON = (JsonArray) JsonParser.parseReader(reader);
-//		
-//		List<Set<JsonObject>> expectedPackages = JSONConverter.convertNewPackagesFromRepo(expectedJSON);
-//		
-//		String data = given()
-//			.header(AUTHORIZATION, BEARER + USER_TOKEN)
-//			.accept(ContentType.JSON)
-//		.when()
-//			.get(API_REPOSITORIES_PATH + "/list")
-//		.then()
-//			.statusCode(200)
-//			.extract()
-//			.asString();
-//		
-//		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
-//		
-//		List<Set<JsonObject>> actualPackages = JSONConverter.convertNewPackagesFromRepo(actualJSON);
-//		
-//		given()
-//				.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
-//				.accept(ContentType.ANY)
-//				
-//			.when()
-//            	.get(API_PACKAGES_PATH + "/" + PACKAGE_ID_TO_DOWNLOAD + "/download/" + PACKAGE_NAME_TO_DOWNLOAD + ".pdf")
-//			.then()
-//				.statusCode(404)
-//				.extract()
-//				.asByteArray();
-//
-//		assertEquals("expected packages: " + expectedPackages + " but was: " + actualPackages, expectedPackages, actualPackages);
-//		assertTrue("expected json: " + expectedJSON + "but was: " + actualJSON, compare(expectedJSON, actualJSON));
-//	}
+	@Test
+	public void shouldUploadPackageAndNotCreateManual() throws ParseException, IOException {
+		File packageBag = new File ("src/integration-test/resources/itestPackages/Benchmarking_0.10.tar.gz");
+				
+		given()
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.accept("application/json")
+			.contentType("multipart/form-data")
+			.multiPart("repository", "testrepo2")
+			.multiPart("generateManual", "false")
+			.multiPart(new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+					.fileName(packageBag.getName())
+					.mimeType("application/gzip")
+					.controlName("file")
+					.build())
+		.when()
+			.post(API_PACKAGES_PATH + "/submit")
+		.then()
+			.statusCode(200)
+			.extract();
+		
+		FileReader reader = new FileReader(JSON_PATH + "/submission/repositories_after_uploading_package.json");
+		JsonArray expectedJSON = (JsonArray) JsonParser.parseReader(reader);
+		
+		List<Set<JsonObject>> expectedPackages = JSONConverter.convertNewPackagesFromRepo(expectedJSON);
+		
+		String data = given()
+			.header(AUTHORIZATION, BEARER + USER_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.get(API_REPOSITORIES_PATH + "/list")
+		.then()
+			.statusCode(200)
+			.extract()
+			.asString();
+		
+		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
+		
+		List<Set<JsonObject>> actualPackages = JSONConverter.convertNewPackagesFromRepo(actualJSON);
+		
+		given()
+				.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+				.accept(ContentType.ANY)
+				
+			.when()
+            	.get(API_PACKAGES_PATH + "/" + PACKAGE_ID_TO_DOWNLOAD + "/download/" + PACKAGE_NAME_TO_DOWNLOAD + ".pdf")
+			.then()
+				.statusCode(404)
+				.extract()
+				.asByteArray();
+
+		assertEquals("expected packages: " + expectedPackages + " but was: " + actualPackages, expectedPackages, actualPackages);
+		assertTrue("expected json: " + expectedJSON + "but was: " + actualJSON, compare(expectedJSON, actualJSON));
+	}
 	
 	@Test
 	public void shouldUploadPackageWithReplaceOption() throws IOException, ParseException {

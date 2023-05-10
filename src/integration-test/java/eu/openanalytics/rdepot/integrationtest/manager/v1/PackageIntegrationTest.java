@@ -174,6 +174,17 @@ public class PackageIntegrationTest extends IntegrationTest {
 		
 		assertArrayEquals("Wrong package has been downloaded", expectedpkg, pkg);
 	}
+	
+	@Test
+	public void shouldNotDownloadDeletedPackage() throws IOException {
+		given()
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.accept(ContentType.ANY)
+		.when()
+	    	.get(API_PATH + "/14/download/npordtests_1.1.tar.gz")
+	    .then()
+	    	.statusCode(404);
+	}
 
 	@Test
 	public void shouldDownloadPdf() throws IOException {

@@ -23,8 +23,8 @@ services:
     hostname: oa-rdepot-app
     container_name: oa-rdepot-app
     volumes:
-#      - ./docker/app/application.yml:/opt/rdepot/application.yml
-      - ./docker/app/test_configs/test_declarative_config.yml:/opt/rdepot/application.yml
+      - ./docker/app/application.yml:/opt/rdepot/application.yml
+#      - ./docker/app/test_configs/test_declarative_config.yml:/opt/rdepot/application.yml
 #      - ./docker/app/test_configs/test_openid_config.yml:/opt/rdepot/application.yml   
       - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
       - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
@@ -42,8 +42,8 @@ services:
 #      - keycloak
 #      - openid
     environment:
-#      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/rdepot
-      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/declarative
+      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/rdepot
+#      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/declarative
 #     - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/migrations
       - DB_USERNAME=postgres
       - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8001
