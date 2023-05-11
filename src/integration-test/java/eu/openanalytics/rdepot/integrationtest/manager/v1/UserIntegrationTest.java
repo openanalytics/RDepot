@@ -273,6 +273,27 @@ public class UserIntegrationTest extends IntegrationTest {
 				.body("error", equalTo("You are not authorized to perform this operation."));
 	}
 	
+	@Test
+	public void nonActiveUserShouldNotBeAbleToPerformOperation() {
+		given()
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.patch(API_PATH + "/" + USER_TO_DEACTIVATE_ID + "/deactivate")
+		.then()
+			.statusCode(200)
+			.body("success", equalTo("User has been deactivated successfully."));
+		
+		given()
+			.header(AUTHORIZATION, BEARER + PACKAGEMAINTAINER_TOKEN)
+			.accept(ContentType.JSON)
+		.when()
+			.get(API_PATH + "/galieleo")
+		.then()
+			.statusCode(401);
+		
+	}
+	
 	protected Set<JSONObject> convertToSet(JSONArray rootJSON) throws ParseException {
 		Set<JSONObject> JSON = new HashSet<>();
 		

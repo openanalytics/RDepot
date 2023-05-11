@@ -18,17 +18,16 @@
  * You should have received a copy of the Apache License
  * along with this program.  If not, see <http://www.apache.org/licenses/>
  */
-package eu.openanalytics.rdepot.base.daos;
+package eu.openanalytics.rdepot.base.security.exceptions;
 
-import java.util.List;
-import java.util.Optional;
+import org.springframework.security.core.AuthenticationException;
 
-import eu.openanalytics.rdepot.base.entities.Role;
-import eu.openanalytics.rdepot.base.entities.User;
+public class JWTException extends AuthenticationException {
 
-public interface UserDao extends Dao<User> {
-	List<User> findByRoleAndDeletedAndActive(Role role, boolean deleted, boolean active);
-	Optional<User> findByLogin(String login);
-	Optional<User> findByEmail(String email);
-	Optional<User> findByLoginAndActive(String login, boolean active);
+	private static final long serialVersionUID = -6711367106223119820L;
+
+	public JWTException(String msg) {
+		super(msg);
+	}
+
 }

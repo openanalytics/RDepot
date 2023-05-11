@@ -100,6 +100,17 @@ public abstract class CommonLocalStorage<R extends Repository<R, ?>, P extends P
 				.getAbsolutePath();
 	}
 	
+	protected void cleanDirectory(File directory) throws DeleteFileException {
+		if(directory.exists() && directory.isDirectory()) {
+			try {
+				FileUtils.cleanDirectory(directory);
+			} catch (IOException e) {
+				logger.error(e.getMessage(), e);
+				throw new DeleteFileException();
+			}
+		}
+	}
+	
 	protected void deleteFile(File file) throws DeleteFileException {
 		if(file.exists()) {
 			try {

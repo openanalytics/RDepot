@@ -16,7 +16,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'com.avast.gradle.docker-compose' version '0.14.3'
     id 'org.springframework.boot' version '2.5.12'
-    id "org.owasp.dependencycheck" version "7.3.2"
+    id "org.owasp.dependencycheck" version "8.2.1"
     id 'org.liquibase.gradle' version '2.0.4'
 }
 
@@ -41,7 +41,7 @@ ext.buildTime = {
 }
 
 group = 'eu.openanalytics'
-ext.versionNumber = '1.7.3'
+ext.versionNumber = '1.7.4'
 ext.baseVersion = versionNumber
 version = versionNumber
 description = """rdepot"""
@@ -235,6 +235,8 @@ task removeSources(type: GradleBuild) {
 dockerCompose {    
     useComposeFiles = ['src/integration-test/resources/docker-compose.yaml']
     captureContainersOutput = true
+    waitForTcpPortsTimeout = java.time.Duration.ofMinutes(60)
+    waitForHealthyStateTimeout = java.time.Duration.ofMinutes(60)
 }
 
 tasks.findByName('test').dependsOn gradle.includedBuilds*.task(':test')

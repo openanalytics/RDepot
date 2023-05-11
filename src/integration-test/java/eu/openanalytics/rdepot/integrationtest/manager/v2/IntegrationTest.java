@@ -70,7 +70,6 @@ public abstract class IntegrationTest {
 	}
 
 	public void testEndpoint(TestRequestBody requestBody) throws Exception {
-		
 		int eventsNumberBeforeOperation = getTotalEventsAmount();
 		chooseEndpoint(requestBody);
 		int eventsNumberAfterOperation = getTotalEventsAmount();
@@ -80,6 +79,15 @@ public abstract class IntegrationTest {
 		}
 		assertTrue("there are different numbers of new events in database then expected, was: " + result + ", but expected: " + requestBody.getHowManyNewEventsShouldBeCreated(),
 				result == requestBody.getHowManyNewEventsShouldBeCreated());
+	}
+	
+	protected int runCommand(String ...args) throws IOException, InterruptedException {
+		int exitValue = -1;
+		Process process = Runtime.getRuntime().exec(args);
+		exitValue = process.waitFor();
+		process.destroy();
+		
+		return exitValue;
 	}
 	
 	private void chooseEndpoint(TestRequestBody req) throws Exception {
@@ -423,14 +431,14 @@ public abstract class IntegrationTest {
 		assertEquals("Incorrect JSON output", expectedJSON, actualJSON);
 	}
 	
-	@BeforeClass
-	public static final void configureRestAssured() throws IOException, InterruptedException {
-		RestAssured.port = 8017;
-		RestAssured.urlEncodingEnabled = false;
-	}
+//	@BeforeClass
+//	public static final void configureRestAssured() throws IOException, InterruptedException {
+//		RestAssured.port = 8017;
+//		RestAssured.urlEncodingEnabled = false;
+//	}
 	
 	@Before
-	public final void setUp() throws IOException, InterruptedException {
+	public void setUp() throws IOException, InterruptedException {
 		String[] cmd = new String[] {"gradle", "restore", "-b","src/integration-test/resources/build.gradle"};
 		Process process = Runtime.getRuntime().exec(cmd);
 		process.waitFor();

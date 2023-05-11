@@ -31,7 +31,7 @@ services:
     networks:
       - oa-rdepot
   app:
-    image: openanalytics/rdepot-app:1.7.3
+    image: openanalytics/rdepot-app:1.7.4
     restart: unless-stopped
     hostname: oa-rdepot-app
     container_name: oa-rdepot-app
@@ -54,7 +54,7 @@ services:
       timeout: 10s
       retries: 10
   repo:
-    image: openanalytics/rdepot-repo:1.7.3
+    image: openanalytics/rdepot-repo:1.7.4
     restart: unless-stopped
     hostname: oa-rdepot-repo
     container_name: oa-rdepot-repo

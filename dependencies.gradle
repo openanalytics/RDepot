@@ -47,7 +47,7 @@ ext {
         httpComponentsTest: 'org.apache.httpcomponents:httpclient:4.5.12:tests',
         httpComponents: 'org.apache.httpcomponents:httpclient:4.5.12',
         mockito: 'org.mockito:mockito-core:3.5.0',
-        commonsIO: 'commons-io:commons-io:2.7',
+        commonsIO: 'commons-io:commons-io:2.11.0',
         auth0: 'com.auth0:java-jwt:3.4.0',
         apacheCommons: 'org.apache.commons:commons-compress:1.20',
         liquibaseCore: 'org.liquibase:liquibase-core:3.8.9',

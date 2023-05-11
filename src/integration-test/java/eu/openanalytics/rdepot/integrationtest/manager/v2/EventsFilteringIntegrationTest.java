@@ -20,7 +20,12 @@
  */
 package eu.openanalytics.rdepot.integrationtest.manager.v2;
 
+import java.io.IOException;
+
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import io.restassured.RestAssured;
 
 public class EventsFilteringIntegrationTest extends IntegrationTest {
 
@@ -33,6 +38,12 @@ public class EventsFilteringIntegrationTest extends IntegrationTest {
 	
 	public EventsFilteringIntegrationTest() {
 		super("/api/v2/manager/events");
+	}
+	
+	@BeforeClass
+	public static final void configureRestAssured() throws IOException, InterruptedException {
+		RestAssured.port = 8017;
+		RestAssured.urlEncodingEnabled = false;
 	}
 	
 	@Test

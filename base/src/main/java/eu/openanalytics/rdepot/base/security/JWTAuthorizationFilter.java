@@ -23,35 +23,38 @@ package eu.openanalytics.rdepot.base.security;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 
-import eu.openanalytics.rdepot.base.daos.ApiTokenDao;
 import eu.openanalytics.rdepot.base.entities.ApiToken;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
+import eu.openanalytics.rdepot.base.security.exceptions.JWTException;
+import eu.openanalytics.rdepot.base.service.UserService;
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 	private final String TOKEN_PREFIX = "Bearer ";
 	private final String HEADER_STRING = "Authorization";
 	private final String SECRET;
 	private final String mode;
-	
-	private ApiTokenDao apiTokenRepository;	
+		
+	private UserService userService;
 	private final SecurityMediator securityMediator;
 	
-	public JWTAuthorizationFilter(AuthenticationManager authenticationManager, ApiTokenDao apiTokenRepository,
-			SecurityMediator securityMediator, String secret, String mode) {
+	public JWTAuthorizationFilter(AuthenticationManager authenticationManager, UserService userService, SecurityMediator securityMediator, String secret, String mode) {
 		super(authenticationManager);
-		this.apiTokenRepository = apiTokenRepository;
+		this.userService = userService;
 		this.SECRET = secret;
 		this.mode = mode;
 		this.securityMediator = securityMediator;
@@ -68,45 +71,46 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             return;
         }
 
-        UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
-
+        UsernamePasswordAuthenticationToken authentication;
+        try {
+        	authentication = getAuthentication(req);
+        } catch(JWTException e) {
+        	authentication = null;
+        } 		 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        chain.doFilter(req, res);
+        chain.doFilter(req, res);      
     }
 	
 	@SuppressWarnings("unchecked")
 	private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
         String token = request.getHeader(HEADER_STRING);
-        if (token != null) {
-        	token = token.replace(TOKEN_PREFIX, "");
-        	String userLogin = "";
-            // parse token
-            userLogin = JWT.require(Algorithm.HMAC512(SECRET.getBytes()))
-                    .build()
-                    .verify(token)
-                    .getSubject();
-                       
-            if (userLogin != null) {
-            	ApiToken apiToken = apiTokenRepository.findByUserLogin(userLogin);
-            	
-            	if(apiToken == null)
-            		return null;
-            	
-            	if(apiToken.getToken().equals(token)) {
-            		if(mode.equals("simple")) {
-            			List<GrantedAuthority> authorities = (List<GrantedAuthority>) securityMediator.getGrantedAuthorities(userLogin);
-            			return new UsernamePasswordAuthenticationToken(userLogin, null, authorities);
-            		} else {	
-            			Set<GrantedAuthority> authorities = (Set<GrantedAuthority>) securityMediator.getGrantedAuthorities(userLogin);
-            			return new UsernamePasswordAuthenticationToken(userLogin, null, authorities);
-            		}            		
-            	} else {
-            		return null;
-            	}
-            }
-            return null;
-        }
-        return null;
+        if (token == null)
+        	throw new JWTException("Null token");
+    	
+        token = token.replace(TOKEN_PREFIX, "");
+    	String userLogin = JWT.require(Algorithm.HMAC512(SECRET.getBytes()))
+                .build()
+                .verify(token)
+                .getSubject();
+                   
+        if (userLogin == null)
+        	throw new JWTException("Null user login");
+    	
+        ApiToken apiToken = userService.findTokenByUserLogin(userLogin).orElseThrow(() -> new JWTException("API token not found"));            	  
+    	
+    	if(!userService.isUserActive(userLogin)) 
+    		throw new JWTException("Inactive account");
+    	
+    	if(!apiToken.getToken().equals(token)) 
+    		throw new JWTException("Tokens not equal");
+    		
+		if(mode.equals("simple")) {
+			List<GrantedAuthority> authorities = (List<GrantedAuthority>) securityMediator.getGrantedAuthorities(userLogin);
+			return new UsernamePasswordAuthenticationToken(userLogin, null, authorities);
+		} else {	
+			Set<GrantedAuthority> authorities = (Set<GrantedAuthority>) securityMediator.getGrantedAuthorities(userLogin);
+			return new UsernamePasswordAuthenticationToken(userLogin, null, authorities);
+		}            		    	     		                   
     }
 
 }

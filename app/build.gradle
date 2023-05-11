@@ -31,6 +31,8 @@ war {
 		attributes( 'Implementation-Title': 'RDepot', 
 					'Implementation-Version': rootProject.version)
 	}
+	
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 bootWar {
@@ -40,6 +42,8 @@ bootWar {
 		attributes( 'Implementation-Title': 'RDepot', 
 					'Implementation-Version': rootProject.version)
 	}
+	
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 repositories {
@@ -100,6 +104,7 @@ dependencies {
     implementation dependencies.liquibaseCore    
 	implementation dependencies.reflections	
 	implementation dependencies.mail
+	
 	
 }
 

@@ -20,7 +20,12 @@
  */
 package eu.openanalytics.rdepot.integrationtest.manager.v2;
 
+import java.io.IOException;
+
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import io.restassured.RestAssured;
 
 public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 	
@@ -32,6 +37,12 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 		super("/api/v2/manager/r/repository-maintainers");
 	}
 
+	@BeforeClass
+	public static final void configureRestAssured() throws IOException, InterruptedException {
+		RestAssured.port = 8017;
+		RestAssured.urlEncodingEnabled = false;
+	}
+	
 	@Test
 	public void getAllMaintainers() throws Exception {
 		TestRequestBody requestBody = new TestRequestBody(RequestType.GET, "/v2/repository-maintainer/maintainer_list.json", 

@@ -468,7 +468,7 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
 			deleteFile(new File(populatedRepositoryContent.getArchiveDirectoryPath()));
 			
 			if(!Boolean.valueOf(snapshot)) {
-				deleteFile(repositoryGenerationDirectory);
+				cleanDirectory(repositoryGenerationDirectory);
 			}
 		} catch(DeleteFileException e) {
 			logger.error(e.getMessage(), e);

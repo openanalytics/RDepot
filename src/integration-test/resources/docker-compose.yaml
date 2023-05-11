@@ -11,6 +11,7 @@ services:
     ports:
       - 8017:80
       - 8021:90
+      - 8023:95
     depends_on:
       - app
       - repo
@@ -19,7 +20,7 @@ services:
       - oa-rdepot      
       
   repo:
-    image: registry.openanalytics.eu/openanalytics/rdepot-repo-it:1.7.3
+    image: registry.openanalytics.eu/openanalytics/rdepot-repo-it:1.7.4
     restart: always
     hostname: oa-rdepot-repo
     container_name: oa-rdepot-repo
@@ -80,7 +81,7 @@ services:
         ipv4_address: 192.168.49.17
  
   ldap:
-    image: registry.openanalytics.eu/openanalytics/rdepot-ldap-it:1.7.3
+    image: registry.openanalytics.eu/openanalytics/rdepot-ldap-it:1.7.4
     restart: unless-stopped
     hostname: oa-rdepot-ldap
     container_name: oa-rdepot-ldap
@@ -93,7 +94,7 @@ services:
       - oa-rdepot
       
   app:    
-    image: registry.openanalytics.eu/openanalytics/rdepot-app-it:1.7.3
+    image: registry.openanalytics.eu/openanalytics/rdepot-app-it:1.7.4
     restart: always
     hostname: oa-rdepot-app
     container_name: oa-rdepot-app
@@ -122,9 +123,35 @@ services:
     networks:
       oa-rdepot:
         ipv4_address: 192.168.49.21      
+  app-without-snapshots:
+    image: registry.openanalytics.eu/openanalytics/rdepot-app-it:1.7.4
+    restart: always
+    hostname: oa-rdepot-app-without-snapshots
+    container_name: oa-rdepot-app-without-snapshots
+    volumes:
+      - ./docker/app/test_configs/test_ldap_config_snapshots_off.yml:/opt/rdepot/application.yml
+      - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
+      - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
+      - ./itestSourceFiles:/opt/testSourceFiles:ro
+      - ./itestGenerated:/opt/testGenerated:ro
+      - ./itestNewFiles:/opt/newFiles:ro
+    depends_on:
+      - db
+    environment:
+      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/rdepot
+      - DB_USERNAME=postgres
+      - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8001
+    healthcheck:
+      test: ["CMD-SHELL", "if [ \"$$(curl -I localhost:8080 2>/dev/null | grep HTTP/1.1 | cut -d\" \" -f2)\" != \"302\" ]; then exit 1; else exit 0; fi;"]
+      interval: 10s
+      timeout: 10s
+      retries: 100
+    networks:
+      oa-rdepot:
+        ipv4_address: 192.168.49.26
                         
   app-openid:
-    image: registry.openanalytics.eu/openanalytics/rdepot-app-it:1.7.3
+    image: registry.openanalytics.eu/openanalytics/rdepot-app-it:1.7.4
     restart: always
     hostname: oa-rdepot-app-openid
     container_name: oa-rdepot-app-openid
@@ -151,7 +178,7 @@ services:
         ipv4_address: 192.168.49.22  
   
   app-keycloak:    
-    image: registry.openanalytics.eu/openanalytics/rdepot-app-it:1.7.3
+    image: registry.openanalytics.eu/openanalytics/rdepot-app-it:1.7.4
     restart: always
     hostname: oa-rdepot-app-keycloak
     container_name: oa-rdepot-app-keycloak
@@ -178,7 +205,7 @@ services:
         ipv4_address: 192.168.49.23   
       
   app-simple:
-    image: registry.openanalytics.eu/openanalytics/rdepot-app-it:1.7.3
+    image: registry.openanalytics.eu/openanalytics/rdepot-app-it:1.7.4
     restart: always
     hostname: oa-rdepot-app-simple
     container_name: oa-rdepot-app-simple
@@ -204,7 +231,7 @@ services:
         ipv4_address: 192.168.49.24   
           
   app-declarative:
-    image: registry.openanalytics.eu/openanalytics/rdepot-app-it:1.7.3
+    image: registry.openanalytics.eu/openanalytics/rdepot-app-it:1.7.4
     restart: always
     hostname: oa-rdepot-declarative
     container_name: oa-rdepot-declarative
@@ -226,7 +253,7 @@ services:
       - oa-rdepot
       
   app-migrations:
-    image: registry.openanalytics.eu/openanalytics/rdepot-app-it:1.7.3
+    image: registry.openanalytics.eu/openanalytics/rdepot-app-it:1.7.4
     restart: always
     hostname: oa-rdepot-migrations
     container_name: oa-rdepot-migrations
@@ -243,7 +270,7 @@ services:
       test: ["CMD-SHELL", "if [ \"$$(curl -I localhost:8080 2>/dev/null | grep HTTP/1.1 | cut -d\" \" -f2)\" != \"302\" ]; then exit 1; else exit 0; fi;"]
       interval: 10s
       timeout: 10s
-      retries: 100 
+      retries: 400 
     networks:
       - oa-rdepot
   

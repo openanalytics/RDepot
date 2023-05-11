@@ -37,7 +37,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.openanalytics.rdepot.base.daos.ApiTokenDao;
+import eu.openanalytics.rdepot.base.daos.UserDao;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
+import eu.openanalytics.rdepot.base.service.UserService;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -52,7 +54,7 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
 	private String mode;
 	
 	@Autowired
-	private ApiTokenDao apiTokenRepository;
+	private UserService userService;
 	
 	@Autowired
 	private SecurityMediator securityMediator;
@@ -73,7 +75,7 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
 			.authorizeRequests()
 				.anyRequest().hasAuthority("user")
 			.and()
-				.addFilter(new JWTAuthorizationFilter(authenticationManager(), apiTokenRepository, securityMediator, SECRET, mode))
+				.addFilter(new JWTAuthorizationFilter(authenticationManager(), userService, securityMediator, SECRET, mode))
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)	
 			.and()
 	     		.exceptionHandling().accessDeniedPage("/api/accessdenied")

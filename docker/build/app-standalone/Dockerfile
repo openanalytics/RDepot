@@ -1,4 +1,4 @@
-FROM openanalytics/rdepot-app-it:1.7.3
+FROM openanalytics/rdepot-app-it:1.7.4
 
 COPY rdepot-app-*application.war /opt/rdepot/rdepot.war
 

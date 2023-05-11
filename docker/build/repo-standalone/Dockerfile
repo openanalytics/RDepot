@@ -1,3 +1,3 @@
-FROM openanalytics/rdepot-repo-it:1.7.3
+FROM openanalytics/rdepot-repo-it:1.7.4
 
 COPY rdepot-repo-*application.jar /opt/repo/rdepot-repo.jar

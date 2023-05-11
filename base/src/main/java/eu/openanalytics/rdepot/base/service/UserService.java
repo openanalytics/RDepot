@@ -87,6 +87,10 @@ public class UserService extends Service<User> {
 		}
 	}
 	
+	public Optional<ApiToken> findTokenByUserLogin(String userLogin) {
+		return Optional.ofNullable(apiTokenDao.findByUserLogin(userLogin));
+	}
+	
 	public User findFirstAdmin() throws AdminNotFound {
 		Role role = roleService.findByValue(Role.VALUE.ADMIN).get();
 		if(role == null)
@@ -98,4 +102,7 @@ public class UserService extends Service<User> {
 			return admins.get(0);
 	}
 
+	public boolean isUserActive(String login) {
+		return dao.findByLoginAndActive(login, true).isPresent();
+	}
 }

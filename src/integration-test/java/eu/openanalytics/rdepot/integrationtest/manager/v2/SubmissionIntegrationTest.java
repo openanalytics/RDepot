@@ -24,10 +24,13 @@ import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import io.restassured.RestAssured;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.http.ContentType;
 
@@ -36,6 +39,12 @@ public class SubmissionIntegrationTest extends IntegrationTest {
 	private final String API_PACKAGES_PATH = "/api/v2/manager/r/packages";
 	protected final IntegrationTestMediator integrationTestMediator = new IntegrationTestMediator();
 
+	@BeforeClass
+	public static final void configureRestAssured() throws IOException, InterruptedException {
+		RestAssured.port = 8017;
+		RestAssured.urlEncodingEnabled = false;
+	}
+	
 	private final String SUBMISSION_ID = "5";
 	private final String SUBMISSION_ID_REPOSITORYMAINTAINER = "17";
 	private final String SUBMISSION_ID_PACKAGEMAINTAINER = "14";

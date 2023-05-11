@@ -20,8 +20,13 @@
  */
 package eu.openanalytics.rdepot.integrationtest.manager.v2;
 
+import java.io.IOException;
+
 import org.json.simple.parser.ParseException;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import io.restassured.RestAssured;
 
 public class UserIntegrationTest extends IntegrationTest {
 	
@@ -33,6 +38,12 @@ public class UserIntegrationTest extends IntegrationTest {
 		super("/api/v2/manager/users");
 	}
 
+	@BeforeClass
+	public static final void configureRestAssured() throws IOException, InterruptedException {
+		RestAssured.port = 8017;
+		RestAssured.urlEncodingEnabled = false;
+	}
+	
 	@Test
 	public void getAllUsers() throws Exception {
 		TestRequestBody requestBody = new TestRequestBody(RequestType.GET, "/v2/user/users.json", 
@@ -79,6 +90,24 @@ public class UserIntegrationTest extends IntegrationTest {
 	public void getOneUser_Returns401_whenUserIsNotAuthenticated() throws Exception {
 		TestRequestBody requestBody = new TestRequestBody(RequestType.GET_UNAUTHENTICATED, 
 				"/7", GET_ENDPOINT_NEW_EVENTS_AMOUNT);
+		testEndpoint(requestBody);
+	}
+	
+	@Test
+	public void getOneUser_Returns401_whenRequesterAccountIsInactive() throws Exception {
+		final String patch = "["
+				+ "{"
+				+ "\"op\": \"replace\","
+				+ "\"path\":\"/active\","
+				+ "\"value\":false"
+				+ "}"
+				+ "]";
+		
+		TestRequestBody requestBody = new TestRequestBody(RequestType.PATCH,  "/v2/user/deactivated_user.json", "/7", 200, 
+				ADMIN_TOKEN, PATCH_ENDPOINT_NEW_EVENTS_AMOUNT, "/v2/events/users/deactivate_user_event.json", patch);
+		testEndpoint(requestBody);
+		
+		requestBody = new TestRequestBody(RequestType.GET, "/v2/401.json", "/7", 401, USER_TOKEN, 0);
 		testEndpoint(requestBody);
 	}
 		
@@ -244,5 +273,5 @@ public class UserIntegrationTest extends IntegrationTest {
 		TestRequestBody requestBody = new TestRequestBody(RequestType.PATCH_UNAUTHENTICATED,  "/v2/403.json", "/9", 401, 
 				REPOSITORYMAINTAINER_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT, patch);
 		testEndpoint(requestBody);
-	}
+	}		
 }

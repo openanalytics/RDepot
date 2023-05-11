@@ -19,6 +19,27 @@ task restore {
     }
 }
 
+task restoreWithoutSnapshots {
+    doLast{
+        exec {
+            executable "docker"
+            args "exec", "oa-rdepot-app-without-snapshots", "/bin/bash", "-c", "rm -rf /opt/rdepot/repositories; rm -rf /opt/rdepot/generated; mkdir -p /opt/rdepot/repositories; mkdir -p /opt/rdepot/new; mkdir -p /opt/rdepot/generated; cp -fr /opt/testSourceFiles/info/* /opt/rdepot/repositories; cp -fr /opt/testGenerated/repository/* /opt/rdepot/generated; cp -fr /opt/newFiles/new/* /opt/rdepot/new"
+        }
+
+        exec {
+            executable "docker"
+            args "exec", "oa-rdepot-db", "su", "-", "postgres", "-c", "psql rdepot -c 'TRUNCATE public.changed_variable, public.newsfeed_event, public.submission, public.repository_maintainer, public.package_maintainer, public.rpackage, public.package, public.rrepository, public.repository, public.api_token, public.user'; psql rdepot < /opt/sql_files/rdepot.sql"
+        }
+
+        exec {
+            executable "docker"
+            args "exec", "oa-rdepot-repo", "/bin/sh", "-c", "rm -r /opt/rdepot/*; cp -rf /opt/testServer/* /opt/rdepot"
+        }
+
+        println "Files restored"
+    }
+}
+
 task restoreDeclarative {
 	doLast {	
 		exec {
@@ -137,6 +158,24 @@ task checkIfSnapshotWasCreated {
 		exec {
 			executable "docker"
 			args "exec", "oa-rdepot-app", "/bin/bash", "-c", "cd /opt/rdepot/generated/5/"
+		}
+	}
+}
+
+task checkIfSnapshotDirExists {
+    doLast {
+		exec {
+			executable "docker"
+			args "exec", "oa-rdepot-app-without-snapshots", "/bin/bash", "-c", "ls /opt/rdepot/generated"
+		}
+	}
+}
+
+task checkIfSnapshotDirIsEmpty {
+	doLast {
+		exec {
+			executable "docker"
+			args "exec", "oa-rdepot-app-without-snapshots", "/bin/bash", "-c", "test `ls -1A /opt/rdepot/generated | wc -l` -eq 0"
 		}
 	}
 }

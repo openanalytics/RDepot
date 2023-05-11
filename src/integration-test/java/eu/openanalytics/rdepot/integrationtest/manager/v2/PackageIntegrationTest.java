@@ -24,12 +24,15 @@ import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 
+import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 
 public class PackageIntegrationTest extends IntegrationTest {
@@ -38,6 +41,12 @@ public class PackageIntegrationTest extends IntegrationTest {
 	private final int GET_ENDPOINT_NEW_EVENTS_AMOUNT = 0;
 	private final int PATCH_ENDPOINT_NEW_EVENTS_AMOUNT = 1;
 	private final int DELETE_ENDPOINT_NEW_EVENTS_AMOUNT = -8;
+	
+	@BeforeClass
+	public static final void configureRestAssured() throws IOException, InterruptedException {
+		RestAssured.port = 8017;
+		RestAssured.urlEncodingEnabled = false;
+	}
 	
 	public PackageIntegrationTest() {
 		super("/api/v2/manager/r/packages");

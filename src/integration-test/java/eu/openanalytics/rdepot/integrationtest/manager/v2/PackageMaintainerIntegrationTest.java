@@ -20,7 +20,12 @@
  */
 package eu.openanalytics.rdepot.integrationtest.manager.v2;
 
+import java.io.IOException;
+
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import io.restassured.RestAssured;
 
 public class PackageMaintainerIntegrationTest extends IntegrationTest {
 	
@@ -31,6 +36,12 @@ public class PackageMaintainerIntegrationTest extends IntegrationTest {
 	private final int GET_ENDPOINT_NEW_EVENTS_AMOUNT = 0;
 	private final String PACKAGE_MAINTAINER_ONLY_FOR_ADMIN_ID = "3";
 	private final String PACKAGE_MAINTAINER_FOR_REPOSITORY_MAINTAINER_ID = "1";
+	
+	@BeforeClass
+	public static final void configureRestAssured() throws IOException, InterruptedException {
+		RestAssured.port = 8017;
+		RestAssured.urlEncodingEnabled = false;
+	}
 	
 	@Test
 	public void getAllMaintainers_asAdmin() throws Exception {

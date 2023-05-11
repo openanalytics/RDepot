@@ -20,7 +20,14 @@
  */
 package eu.openanalytics.rdepot.integrationtest.manager.v2;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import io.restassured.RestAssured;
 
 public class RepositoryIntegrationTest extends IntegrationTest {	
 	public RepositoryIntegrationTest() {
@@ -41,6 +48,12 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 	private final int GET_ENDPOINT_NEW_EVENTS_AMOUNT = 0;
 	private final int GET_DELETED_REPOSITORY_NEW_EVENTS_AMOUNT = -35;
 	private final int GET_CHANGED_REPOSITORY_NEW_EVENTS_AMOUNT = 1;
+	
+	@BeforeClass
+	public static final void configureRestAssured() throws IOException, InterruptedException {
+		RestAssured.port = 8017;
+		RestAssured.urlEncodingEnabled = false;
+	}
 	
 	@Test
 	public void getAllRepositories() throws Exception {
@@ -210,7 +223,6 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 	
 	@Test
 	public void patchRepository_publish() throws Exception {
-		
 		final String patch = "["
 				+ "{"
 				+ "\"op\": \"replace\","
@@ -223,6 +235,13 @@ public class RepositoryIntegrationTest extends IntegrationTest {
 				"/" + REPO_ID_TO_PUBLISH, 200, REPOSITORYMAINTAINER_TOKEN, GET_CHANGED_REPOSITORY_NEW_EVENTS_AMOUNT,
 				"/v2/events/repositories/patched_published_repository_event.json", patch);
 		testEndpoint(requestBody);	
+	}
+	
+	@Test
+	public void patchRepository_publish_keepsGeneratedContent_whenSnapshotsAreTurnedOn() throws Exception {
+		patchRepository_publish();
+		final int cmdExitValue = runCommand("gradle", "checkIfSnapshotWasCreated", "-b", "src/integration-test/resources/build.gradle");
+		assertEquals("Snapshots were not created or got deleted.", 0, cmdExitValue);
 	}
 	
 	@Test
