@@ -261,14 +261,14 @@ public class FileSystemStorageService implements StorageService {
     		String[] filesToDelete = request.getFilesToDelete();
     		String[] filesToDeleteFromArchive = request.getFilesToDeleteFromArchive();
     		
+    		if(filesToDelete != null)
+        		delete(filesToDelete, repository, request.getId());
+        	if(filesToDeleteFromArchive != null)
+        		deleteFromArchive(filesToDeleteFromArchive, repository, request.getId());
     		if(filesToUpload != null)
         		store(filesToUpload, repository, request.getId());
         	if(filesToUploadToArchive != null)
         		storeInArchive(filesToUploadToArchive, repository, request.getId());
-        	if(filesToDelete != null)
-        		delete(filesToDelete, repository, request.getId());
-        	if(filesToDeleteFromArchive != null)
-        		deleteFromArchive(filesToDeleteFromArchive, repository, request.getId());
         	        	
         	boostRepositoryVersion(repository);
 

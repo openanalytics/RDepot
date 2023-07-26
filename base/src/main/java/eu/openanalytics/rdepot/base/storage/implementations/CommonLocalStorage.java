@@ -27,7 +27,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -40,6 +39,11 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.keycloak.adapters.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
@@ -316,16 +320,40 @@ public abstract class CommonLocalStorage<R extends Repository<R, ?>, P extends P
 	 * @throws DownloadFileException
 	 */
 	public File downloadFile(String url) throws DownloadFileException {
+		File tempFile;
 		try {
-			File tempFile = Files.createTempFile(null, null).toFile();
-			FileUtils.copyURLToFile(new URL(url), tempFile);
-			return tempFile;
+			tempFile = Files.createTempFile(null, null).toFile();
 		} catch (IOException e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
 			throw new DownloadFileException(url);
 		}
+		downloadFileToDestination(url, tempFile);
+		return tempFile;
 	}
 	
+	private void downloadFileToDestination(String url, File destination) throws DownloadFileException {
+		try {
+			final HttpClient httpClient = new HttpClientBuilder().build();
+			final HttpGet httpGet = new HttpGet(url);
+			final HttpResponse response = httpClient.execute(httpGet);
+			final HttpEntity entity = response.getEntity();
+			
+			if(entity != null) {
+				final FileOutputStream os = new FileOutputStream(destination);
+				try {
+					entity.writeTo(os);
+				} catch(IOException e) {
+					throw e;
+				} finally {
+					os.close();
+				}
+			}
+		} catch(IOException e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage(), e);
+			throw new DownloadFileException(url);
+		}
+	}
+
 	/**
 	 * Downloads file from a given url.
 	 * @param url
@@ -334,63 +362,57 @@ public abstract class CommonLocalStorage<R extends Repository<R, ?>, P extends P
 	 * @throws DownloadFileException
 	 */
 	public MultipartFile downloadFile(String url, File destination) throws DownloadFileException {
-		try {
-			FileUtils.copyURLToFile(new URL(url), destination);
-
-			return new MultipartFile() {
-				
-				@Override
-				public void transferTo(File dest) throws IOException, IllegalStateException {
-					FileCopyUtils.copy(getInputStream(), Files.newOutputStream(dest.toPath()));
+		downloadFileToDestination(url, destination);
+		return new MultipartFile() {
+			
+			@Override
+			public void transferTo(File dest) throws IOException, IllegalStateException {
+				FileCopyUtils.copy(getInputStream(), Files.newOutputStream(dest.toPath()));
+			}
+			
+			@Override
+			public boolean isEmpty() {
+				return false;
+			}
+			
+			@Override
+			public long getSize() {
+				try {
+					return Files.size(destination.toPath());
+				} catch (IOException e) {
+					logger.error(e.getMessage(),e);
+					return -1;
 				}
-				
-				@Override
-				public boolean isEmpty() {
-					return false;
-				}
-				
-				@Override
-				public long getSize() {
-					try {
-						return Files.size(destination.toPath());
-					} catch (IOException e) {
-						logger.error(e.getMessage(),e);
-						return -1;
-					}
-				}
-				
-				@Override
-				public String getOriginalFilename() {
-					String[] tokens = url.split("/");
-					if(tokens.length == 0)
-						return "downloaded";
-					return tokens[tokens.length - 1];
-				}
-				
-				@Override
-				public String getName() {
-					return getOriginalFilename();
-				}
-				
-				@Override
-				public InputStream getInputStream() throws IOException {
-					return new FileInputStream(destination);
-				}
-				
-				@Override
-				public String getContentType() {
-					return "application/gzip";
-				}
-				
-				@Override
-				public byte[] getBytes() throws IOException {
-					return FileUtils.readFileToByteArray(destination);
-				}
-			};
-		} catch (IOException e) {
-			logger.error(e.getMessage(), e);
-			throw new DownloadFileException(url);
-		}
+			}
+			
+			@Override
+			public String getOriginalFilename() {
+				String[] tokens = url.split("/");
+				if(tokens.length == 0)
+					return "downloaded";
+				return tokens[tokens.length - 1];
+			}
+			
+			@Override
+			public String getName() {
+				return getOriginalFilename();
+			}
+			
+			@Override
+			public InputStream getInputStream() throws IOException {
+				return new FileInputStream(destination);
+			}
+			
+			@Override
+			public String getContentType() {
+				return "application/gzip";
+			}
+			
+			@Override
+			public byte[] getBytes() throws IOException {
+				return FileUtils.readFileToByteArray(destination);
+			}
+		};
 	}
 	
 	/**

@@ -53,6 +53,8 @@ import eu.openanalytics.rdepot.r.storage.RStorage;
 import eu.openanalytics.rdepot.r.storage.exceptions.OrganizePackagesException;
 import eu.openanalytics.rdepot.r.storage.utils.PopulatedRepositoryContent;
 import eu.openanalytics.rdepot.r.synchronization.exceptions.SendSynchronizeRequestException;
+import eu.openanalytics.rdepot.r.synchronization.pojos.Upload;
+import eu.openanalytics.rdepot.r.synchronization.pojos.VersionedRepository;
 
 @Component
 public class RRepositorySynchronizer implements RepositorySynchronizer<RRepository> {
@@ -122,11 +124,11 @@ public class RRepositorySynchronizer implements RepositorySynchronizer<RReposito
 		
 		ResponseEntity<String> response = rest.getForEntity(serverAndPort + "/" + repositoryDirectory + "/", String.class);
 
-		List<String> remoteLatestPackages = new ArrayList<>(Arrays.asList(gson.fromJson(response.getBody(), String[].class)));
+		final VersionedRepository remoteLatestPackages = gson.fromJson(response.getBody(), VersionedRepository.class);
 		response = rest.getForEntity(serverAndPort + "/" + repositoryDirectory + "/archive/", String.class);
-		List<String> remoteArchivePackages = new ArrayList<>(Arrays.asList(gson.fromJson(response.getBody(), String[].class)));
+		final VersionedRepository remoteArchivePackages = gson.fromJson(response.getBody(), VersionedRepository.class);
 		
-		String versionBefore = remoteLatestPackages.remove(0);
+		String versionBefore = remoteLatestPackages.getRepositoryVersion();
 
 		try {
 			SynchronizeRepositoryRequestBody requestBody = storage.buildSynchronizeRequestBody(

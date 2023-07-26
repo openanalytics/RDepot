@@ -22,13 +22,16 @@ package eu.openanalytics.rdepot.integrationtest.manager.v2;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.http.HttpStatus;
 
 import io.restassured.RestAssured;
 import io.restassured.builder.MultiPartSpecBuilder;
@@ -138,12 +141,77 @@ public class SubmissionIntegrationTest extends IntegrationTest {
 				.build());
 		
 		requestBody = new TestRequestBody(RequestType.POST_MULTIPART, 
-				201, ADMIN_TOKEN, GET_ENDPOINT_POST_NEW_EVENTS_AMOUNT, "/v2/events/submissions/replace_submission_events.json", body);
+				201, ADMIN_TOKEN, 0, "/v2/events/submissions/replace_submission_events.json", body);
 		testEndpoint(requestBody);
 		
 		requestBody = new TestRequestBody(RequestType.GET, "/v2/package/list_of_packages_with_replaced_package.json", 
 				"?sort=id,asc", 200, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT);
 		testEndpoint(requestBody);
+	}
+	
+	@Test
+	public void submitPackage_replaceOlderPackageInRepoApp() throws Exception {
+		// 1. Upload malformed package
+		final String PACKAGE_FILE_NAME = "A3_0.9.1.tar.gz";
+		final String PACKAGE_REPOSITORY = "testrepo2";
+		final String EXPECTED_OLD_MD5 = "0ef3672686d316eb275461f04591def8";
+		final String EXPECTED_NEW_MD5 = "8eb4760cd574f5489e61221dc9bb0076";
+		
+		File packageBag = new File("src/integration-test/resources/itestPackages/package-with-error/A3_0.9.1.tar.gz");
+		SubmissionMultipartBody body = new SubmissionMultipartBody(PACKAGE_REPOSITORY, false, true, new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+				.fileName(packageBag.getName())
+				.mimeType("application/gzip")
+				.controlName("file")
+				.build());
+		
+		TestRequestBody requestBody = new TestRequestBody(RequestType.POST_MULTIPART, 
+				201, ADMIN_TOKEN, GET_ENDPOINT_POST_NEW_EVENTS_AMOUNT, "/v2/events/submissions/new_submission_events.json", body);
+		testEndpoint(requestBody);
+		
+		
+		// 2. Check if the package was uploaded to the repo
+		byte[] uploadedPackageFile = given()
+				.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+				.accept(ContentType.ANY)
+			.when()
+            	.get(
+            			PUBLICATION_URI_PATH + "/" 
+            			+ PACKAGE_REPOSITORY 
+            			+ "/src/contrib/" 
+            			+ PACKAGE_FILE_NAME)
+			.then()
+				.statusCode(200)
+				.extract()
+				.asByteArray();
+		final String actualOldMd5 = DigestUtils.md5Hex(uploadedPackageFile);
+		assertEquals("Old package's MD5 does not match the expected one.", EXPECTED_OLD_MD5, actualOldMd5);
+		// 3. Upload corrected package 
+		packageBag = new File("src/integration-test/resources/itestPackages/A3_0.9.1.tar.gz");
+		body = new SubmissionMultipartBody(PACKAGE_REPOSITORY, false, true, new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+				.fileName(packageBag.getName())
+				.mimeType("application/gzip")
+				.controlName("file")
+				.build());
+		
+		requestBody = new TestRequestBody(RequestType.POST_MULTIPART, 
+				201, ADMIN_TOKEN, GET_ENDPOINT_POST_NEW_EVENTS_AMOUNT, "/v2/events/submissions/replace_submission_events.json", body);
+		testPostMultipartEndpoint(body, HttpStatus.CREATED.value(), ADMIN_TOKEN);
+		// 4. Check if the package was uploaded to the repo 
+		uploadedPackageFile = given()
+				.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+				.accept(ContentType.ANY)
+			.when()
+            	.get(
+            			PUBLICATION_URI_PATH + "/" 
+            			+ PACKAGE_REPOSITORY 
+            			+ "/src/contrib/" 
+            			+ PACKAGE_FILE_NAME)
+			.then()
+				.statusCode(200)
+				.extract()
+				.asByteArray();
+		String actualNewMd5 = DigestUtils.md5Hex(uploadedPackageFile);
+		assertEquals("New package's MD5 does not match the expected one.", EXPECTED_NEW_MD5, actualNewMd5);
 	}
 	
 	@Test
@@ -162,6 +230,33 @@ public class SubmissionIntegrationTest extends IntegrationTest {
 		
 		
 		packageBag = new File ("src/integration-test/resources/itestPackages/A3_0.9.1.tar.gz");
+		body = new SubmissionMultipartBody("testrepo2", false, false, new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+				.fileName(packageBag.getName())
+				.mimeType("application/gzip")
+				.controlName("file")
+				.build());
+		
+		requestBody = new TestRequestBody(RequestType.POST_MULTIPART, 
+				422, ADMIN_TOKEN, GET_ENDPOINT_NEW_EVENTS_AMOUNT, body);
+		testEndpoint(requestBody);
+	}
+	
+	@Test
+	public void submitPackage_doNotUpload_whenOnlySeparatorsAreDifferentAndReplaceIsFalse() throws Exception {
+		File packageBag = new
+				File ("src/integration-test/resources/itestPackages/A3_0.9.1.tar.gz");
+		SubmissionMultipartBody body = new SubmissionMultipartBody("testrepo2", false, true, new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+				.fileName(packageBag.getName())
+				.mimeType("application/gzip")
+				.controlName("file")
+				.build());
+		
+		TestRequestBody requestBody = new TestRequestBody(RequestType.POST_MULTIPART, 
+				201, ADMIN_TOKEN, GET_ENDPOINT_POST_NEW_EVENTS_AMOUNT, "/v2/events/submissions/new_submission_events.json", body);
+		testEndpoint(requestBody);
+		
+		
+		packageBag = new File ("src/integration-test/resources/itestPackages/A3_0-9-1.tar.gz");
 		body = new SubmissionMultipartBody("testrepo2", false, false, new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
 				.fileName(packageBag.getName())
 				.mimeType("application/gzip")

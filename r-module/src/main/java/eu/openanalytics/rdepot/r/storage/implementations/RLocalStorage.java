@@ -32,8 +32,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -75,6 +79,8 @@ import eu.openanalytics.rdepot.r.storage.exceptions.OrganizePackagesException;
 import eu.openanalytics.rdepot.r.storage.exceptions.ReadPackageVignetteException;
 import eu.openanalytics.rdepot.r.storage.utils.PopulatedRepositoryContent;
 import eu.openanalytics.rdepot.r.synchronization.SynchronizeRepositoryRequestBody;
+import eu.openanalytics.rdepot.r.synchronization.pojos.Upload;
+import eu.openanalytics.rdepot.r.synchronization.pojos.VersionedRepository;
 
 /**
  * Local storage implementation for R.
@@ -324,9 +330,9 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
 	@Override
 	public SynchronizeRepositoryRequestBody buildSynchronizeRequestBody(
 			PopulatedRepositoryContent populatedRepositoryContent, 
-			List<String> remoteLatestPackages, List<String> remoteArchivePackages,
+			VersionedRepository remoteLatestPackages, VersionedRepository remoteArchivePackages,
 			RRepository repository, String versionBefore) {
-		final List<File> latestToUpload = selectPackagesToUpload(remoteLatestPackages, populatedRepositoryContent.getLatestPackages());
+		final List<File> latestToUpload = selectPackagesToUpload(remoteLatestPackages.getUploads(), populatedRepositoryContent.getLatestPackages());
 
 		final File currentDirectory = new File(repositoryGenerationDirectory.getAbsolutePath() +
 				separator + repository.getId() 
@@ -335,8 +341,8 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
 		final File packagesFile = new File(currentDirectory.getAbsolutePath() + separator + "PACKAGES");
 		final File packagesGzFile = new File(currentDirectory.getAbsolutePath() + separator + "PACKAGES.gz");
 		
-		final List<String> latestToDelete = selectPackagesToDelete(remoteLatestPackages, populatedRepositoryContent.getLatestPackages());
-		final List<File> archiveToUpload = selectPackagesToUpload(remoteArchivePackages, populatedRepositoryContent.getArchivePackages());
+		final List<String> latestToDelete = selectPackagesToDelete(remoteLatestPackages.getUploads(), populatedRepositoryContent.getLatestPackages());
+		final List<File> archiveToUpload = selectPackagesToUpload(remoteArchivePackages.getUploads(), populatedRepositoryContent.getArchivePackages());
 
 		final File archiveDirectory = new File(repositoryGenerationDirectory.getAbsolutePath() +
 		separator + repository.getId() 
@@ -345,7 +351,7 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
 		final File packagesFileFromArchive = new File(archiveDirectory.getAbsolutePath() + separator + "PACKAGES");
 		final File packagesGzFileFromArchive = new File(archiveDirectory.getAbsolutePath() + separator + "PACKAGES.gz");
 
-		final List<String> archiveToDelete = selectPackagesToDelete(remoteArchivePackages, populatedRepositoryContent.getArchivePackages());
+		final List<String> archiveToDelete = selectPackagesToDelete(remoteArchivePackages.getUploads(), populatedRepositoryContent.getArchivePackages());
 		
 		return new SynchronizeRepositoryRequestBody(latestToUpload, archiveToUpload,
 					latestToDelete, archiveToDelete, versionBefore, packagesFile, 
@@ -428,11 +434,18 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
 		return packageString;
 	}
 
-	private List<File> selectPackagesToUpload(List<String> remotePackages, List<RPackage> localPackages) {
+	private List<File> selectPackagesToUpload(List<Upload> remotePackages, List<RPackage> localPackages) {
 		List<File> toUpload = new ArrayList<File>();
 		
+		Set<String> remotePackageFileNames = remotePackages.stream().map(p -> p.getFileName()).collect(Collectors.toSet());
+		Map<String, Upload> remotePackagesToUploads = remotePackages.stream()
+				.collect(Collectors.toMap(Upload::getFileName, Function.identity()));
 		for(RPackage packageBag : localPackages) {
-			if(!remotePackages.contains(packageBag.getFileName())) {
+			if(!remotePackageFileNames.contains(packageBag.getFileName()) 
+					|| 
+				remotePackagesToUploads.containsKey(packageBag.getFileName()) 
+				&& !remotePackagesToUploads.get(packageBag.getFileName()).getMd5Sum()
+					.equals(packageBag.getMd5sum())) {
 				toUpload.add(new File(packageBag.getSource()));
 			}
 		}
@@ -440,20 +453,21 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
 		return toUpload;
 	}
 	
-	private List<String> selectPackagesToDelete(List<String> remotePackages, List<RPackage> localPackages) {
+	private List<String> selectPackagesToDelete(List<Upload> remotePackages, List<RPackage> localPackages) {
 		List<String> toDelete = new ArrayList<String>();
 		
-		for(String packageName: remotePackages) {
+		for(Upload remotePackage: remotePackages) {
 			Boolean found = false;
 			for(RPackage packageBag: localPackages) {
-				if(packageBag.getFileName().equals(packageName)) {
+				if(packageBag.getFileName().equals(remotePackage.getFileName()) 
+						&& packageBag.getMd5sum().equals(remotePackage.getMd5Sum())) {
 					found = true;
 					break;
 				}
 			}
 			
 			if(!found) {
-				toDelete.add(packageName);
+				toDelete.add(remotePackage.getFileName());
 			}
 		}
 		

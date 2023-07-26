@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -34,10 +35,10 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -47,6 +48,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import com.google.gson.Gson;
 
 import eu.openanalytics.rdepot.repo.exception.GetRepositoryVersionException;
+import eu.openanalytics.rdepot.repo.model.Upload;
+import eu.openanalytics.rdepot.repo.model.VersionedRepository;
 import eu.openanalytics.rdepot.repo.storage.StorageService;
 
 @Controller 
@@ -56,37 +59,55 @@ public class FileListingController {
 	
 	private final Logger logger = LoggerFactory.getLogger(FileListingController.class);
 
-    @Autowired
     public FileListingController(StorageService storageService) {
         this.storageService = storageService;
     }
 	
 	@GetMapping("/{repository}/")
-	public ResponseEntity<List<String>> recentUploads(@PathVariable String repository) {
-		ArrayList<String> uploads = new ArrayList<String>();
+	public ResponseEntity<VersionedRepository> recentUploads(@PathVariable String repository) {
 		try {
-			uploads.add(storageService.getRepositoryVersion(repository));
-		} catch (GetRepositoryVersionException e) {
+			VersionedRepository repo = new VersionedRepository();
+			final String repositoryVersion = storageService.getRepositoryVersion(repository);
+			repo.setRepositoryVersion(repositoryVersion);
+			
+			List<File> files = storageService.getRecentPackagesFromRepository(repository);
+			for(File file : files) {
+				final String md5Sum = DigestUtils.md5Hex(Files.readAllBytes(file.toPath()));
+				final String filename = file.getName();
+				
+				repo.getUploads().add(new Upload(filename, md5Sum));
+			}
+			
+			return ResponseEntity.ok(repo);
+		} catch (GetRepositoryVersionException | IOException e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+		
+	
+	@GetMapping("/{repository}/archive/")
+	public ResponseEntity<VersionedRepository> archiveUploads(@PathVariable String repository) {
+		try {
+			Map<String, List<File>> files = storageService.getArchiveFromRepository(repository);
+			VersionedRepository repo = new VersionedRepository();
+			repo.setRepositoryVersion(storageService.getRepositoryVersion(repository));
+			
+			for(Entry<String, List<File>> entry : files.entrySet()) {
+				List<File> filesInEntry = entry.getValue();
+				
+				for(File file : filesInEntry) {
+					final String md5Sum = DigestUtils.md5Hex(Files.readAllBytes(file.toPath()));
+					final String filename = file.getName();
+					
+					repo.getUploads().add(new Upload(filename, md5Sum));
+				}
+			}
+			
+			return ResponseEntity.ok(repo);
+		} catch (GetRepositoryVersionException | IOException e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 		
-		List<File> files = storageService.getRecentPackagesFromRepository(repository);
-		files.forEach(file -> uploads.add(file.getName()));
-		
-		return ResponseEntity.ok(uploads);
-	}
-	
-	@GetMapping("/{repository}/archive/")
-	public ResponseEntity<List<String>> archiveUploads(@PathVariable String repository) {
-		
-		Map<String, List<File>> files = storageService.getArchiveFromRepository(repository);
-		ArrayList<String> uploads = new ArrayList<>();
-		
-		for(Entry<String, List<File>> entry : files.entrySet()) {
-			entry.getValue().forEach(file -> uploads.add(file.getName()));
-		}
-		
-		return ResponseEntity.ok(uploads);
 	}
 	
 	@GetMapping("/{repository}/checksum")

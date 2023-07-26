@@ -179,6 +179,7 @@ public abstract class ApiV2Controller<E extends IEntity<D>, D extends IDto<E>> {
 	
 	/**
 	 * This method processes and returns validation error with status 200.
+	 * Can be used for duplicate packages when replace is off.
 	 * @param messageCode
 	 * @return
 	 */

@@ -20,6 +20,7 @@
  */
 package eu.openanalytics.rdepot.base.daos;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,4 +38,5 @@ public interface PackageDao<T extends Package<?,?>> extends Dao<T> {
 			boolean deleted);
 	List<T> findByRepositoryAndDeletedAndActive(Repository<?, ?> repository, boolean deleted, boolean active);
 	List<T> findByDeletedAndSubmissionState(boolean deleted, SubmissionState state);
+	Optional<T> findByNameAndRepositoryAndDeletedAndVersionIn(String name, Repository<?,?> repository, boolean deleted, Collection<String> versions);
 }

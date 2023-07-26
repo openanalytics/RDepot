@@ -20,6 +20,8 @@
  */
 package eu.openanalytics.rdepot.base.service;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -92,8 +94,45 @@ public abstract class PackageService<E extends Package<E,?>> extends Service<E> 
 		return dao.findByNameAndVersionAndRepository(name, version, repository);
 	}
 	
+	/**
+	 * Generates all acceptable version formats.
+	 * For example, for "1.2.3" it returns ["1.2.3", "1-2-3"].
+	 * Can be overridden depending on extension's needs.
+	 * @param version
+	 * @return
+	 */
+	protected Collection<String> generateVariantsOfVersion(String version) {
+        List<String> variants = new ArrayList<>();
+        String[] splitted = version.split("-|\\.");
+        int length = splitted.length;
+
+        int numberOfVariations = 1 << (length - 1);
+
+        //0 in schema means dot
+        //1 in schema means hyphen
+        for(int i = 0; i < numberOfVariations; i++) {
+            String schema = String.format("%" + (length - 1) + "s", Integer.toBinaryString(i)).replace(' ', '0');
+            String newVersion = "";
+            for(int j = 0; j < length - 1; j++) {
+                newVersion += splitted[j];
+                char separator = schema.charAt(j);
+                if(separator == '0') {
+                    newVersion += ".";
+                } else {
+                    newVersion += "-";
+                }
+            }
+            newVersion += splitted[length - 1];
+            variants.add(newVersion);
+        }
+
+        return variants;
+    }
+	
 	public Optional<E> findByNameAndVersionAndRepositoryAndDeleted(String name, String version, Repository<?, ?> repository, Boolean deleted) {
-		return dao.findByNameAndVersionAndRepositoryAndDeleted(name, version, repository, deleted);
+		Collection<String> versions = generateVariantsOfVersion(version);
+		
+		return dao.findByNameAndRepositoryAndDeletedAndVersionIn(name, repository, false, versions);
 	}
 	
 	public Optional<E> findNonDeletedNewestByNameAndRepository(String name, Repository<?,?> repository) {

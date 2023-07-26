@@ -32,6 +32,7 @@ import eu.openanalytics.rdepot.r.storage.exceptions.OrganizePackagesException;
 import eu.openanalytics.rdepot.r.storage.exceptions.ReadPackageVignetteException;
 import eu.openanalytics.rdepot.r.storage.utils.PopulatedRepositoryContent;
 import eu.openanalytics.rdepot.r.synchronization.SynchronizeRepositoryRequestBody;
+import eu.openanalytics.rdepot.r.synchronization.pojos.VersionedRepository;
 
 /**
  * Provides features specific for R Packages storage management.
@@ -46,7 +47,7 @@ public interface RStorage {
 	 */
 	SynchronizeRepositoryRequestBody buildSynchronizeRequestBody(
 			PopulatedRepositoryContent populatedRepositoryContent, 
-			List<String> remoteLatestPackages, List<String> remoteArchivePackages,
+			VersionedRepository remoteLatestPackages, VersionedRepository remoteArchivePackages,
 			RRepository repository, String versionBefore);
 	
 	/**
