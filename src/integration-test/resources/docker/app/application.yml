@@ -3,6 +3,10 @@ api_token:
 
 repository-snapshots: true
 
+#server:
+#  servlet:
+#    context-path: /rdepot/app
+
 declarative: false
 #repositories:
 #  - name: A

@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2023 Open Analytics NV
+ * Copyright (C) 2012-2024 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -26,15 +26,21 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class RDescription extends Properties {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 356227594180997607L;
+	private static final long serialVersionUID = 356227294180997609L;
+	
+	private Pattern isKeyValue = Pattern.compile("^[a-zA-Z][a-zA-Z-/@_]*:\\ .+$");
+	private Pattern isPartOfValue = Pattern.compile("^(\\t+|\\ {2,})");
+
 	
 	public RDescription(File descriptionFile) throws FileNotFoundException, IOException
 	{
@@ -228,58 +234,40 @@ public class RDescription extends Properties {
         load0(new Scanner(inStream));
     }
 	
-	private void load0 (Scanner scanner) throws IOException 
-	{
-		scanner.useDelimiter("\\n");
-		String currentKey = null;
-		String currentValue = null;
-		String nextLine = null;
-		while (scanner.hasNext() || nextLine != null)
-		{
-			if (currentValue == null)
-			{
-				String[] splitted;
-				if (nextLine == null)
-				{
-					splitted = scanner.next().split(":");
-				}
-				else
-				{
-					splitted = nextLine.split(":");
-					nextLine = null;
-				}
-				currentKey = splitted[0].trim();
-				if (splitted.length > 1)
-				{
-					currentValue = "";
-					for(int i = 1; i < splitted.length; i++) {
-						currentValue = currentValue + (i > 1 ? ":" : "") + splitted[i];
-					}
-					currentValue = currentValue.trim();
-				}
-				else
-				{
-					currentValue = "";
-				}
-				if (!scanner.hasNext() && currentValue != null && !currentValue.trim().isEmpty())
-				{
-					put(currentKey, currentValue);
-				}
-			}
-			else
-			{	
-				nextLine = scanner.hasNext() ? scanner.next() : null;
-				if (nextLine != null && !nextLine.contains(":"))
-				{
-					currentValue += " " + nextLine;
-				}
-				else
-				{
-					currentValue = currentValue.replaceAll("\\s{2,}", " ").trim();
-					put(currentKey, new String(currentValue));
-					currentValue = null;
-				}
-			}
-		}
-	}
+  	private void load0(Scanner scanner) throws IOException 
+  	{
+  		scanner.useDelimiter("\\n");
+  		String currentKey = null;
+  		String currentValue = null;
+  		String line = null;
+  		Boolean ifMetaData = true;
+  		while (scanner.hasNext() && ifMetaData)
+  		{
+  			line = scanner.next();
+
+  			if(isKeyValue.matcher(line).find()) {
+  				saveKeyValue(currentKey, currentValue);
+  				int index = line.indexOf(':');
+  				currentKey = line.substring(0, index);
+  				currentValue = line.substring(index+1);
+  			} else if (isPartOfValue.matcher(line).find()) {
+  				currentValue += line;
+  			} else {
+  				ifMetaData = false;
+  			}
+  		}
+  		saveKeyValue(currentKey, currentValue);
+  	}
+  	
+  	private void saveKeyValue(String key, String value){
+  		if(Objects.nonNull(key) && Objects.nonNull(value)){
+  			value = value.replaceAll("\\s{2,}", " ").trim();
+  			if(containsKey(key)){
+  				value = get(key).toString() + ", " + value;
+  			}
+  			put(key, value);
+  			value = null;
+  			key = null;
+  		}	
+  	}	
 }

@@ -34,9 +34,9 @@ function cutDescriptions(maxLength) {
     }
 }
 
-function deletePackage(id)
+function deletePackage(id, prefix)
 {
-    var url = '/manager/packages/' + String(id) + '/delete';
+    var url = prefix + '/packages/' + String(id) + '/delete';
     $.ajax({
         url: url,
         type: 'DELETE',
@@ -57,7 +57,7 @@ function deletePackage(id)
     });
 }
 
-function openDeletePackageDialog(id) {
+function openDeletePackageDialog(id, prefix) {
 	var html = '',
     dialog = document.getElementsByClassName('mdl-dialog')[0],
     name = $('#package-' + id).closest('tr').find('.package-name').html();
@@ -79,14 +79,14 @@ function openDeletePackageDialog(id) {
     });
     
     document.querySelector('.confirm').addEventListener('click', function(){
-    	deletePackage(id);
+    	deletePackage(id, prefix);
     	dialog.close();
     });
     
     dialog.showModal();
 }
 
-function changeActive(id) {
+function changeActive(id, prefix) {
     var action = "",
         url = "";
     if(document.getElementById("checkbox-" + id).checked) {
@@ -94,7 +94,7 @@ function changeActive(id) {
     } else {
         action = "activate"
     }
-    url = '/manager/packages/' + String(id) + '/' + action;
+    url = prefix + '/packages/' + String(id) + '/' + action;
     $.ajax({
         url: url,
         type: 'PATCH',
@@ -179,7 +179,7 @@ function updatePackageList(selectedRepository) {
     return html;
 }
 
-function openAddMaintainerDialog() {
+function openAddMaintainerDialog(prefix) {
     var html = '',
     dialog = document.getElementsByClassName('mdl-dialog')[0];
 
@@ -285,7 +285,7 @@ function openAddMaintainerDialog() {
             }
         };
 
-        request.open("POST", '/manager/packages/maintainers/create');
+        request.open("POST", prefix + '/packages/maintainers/create');
         request.setRequestHeader("Accept", "application/json");
         request.setRequestHeader("Content-Type", "application/json");
         request.setRequestHeader(HEADER, TOKEN);
@@ -383,7 +383,7 @@ function openEditMaintainerDialog(id, name) {
         request.addEventListener("error", function(event) {
             showErrorDialog("error!");
         });
-        request.open("POST", '/manager/packages/maintainers/' + id + '/edit');
+        request.open("POST", prefix + '/packages/maintainers/' + id + '/edit');
         request.setRequestHeader("Accept", "application/json");
         request.setRequestHeader("Content-Type", "application/json");
         request.setRequestHeader(HEADER, TOKEN);
@@ -393,26 +393,26 @@ function openEditMaintainerDialog(id, name) {
     dialog.showModal();
 }
 
-function openMaintainersPage() {
-    window.location.href = '/manager/packages/maintainers';
+function openMaintainersPage(prefix) {
+    window.location.href = prefix + '/packages/maintainers';
 }
 
-function getPackageMaintainers() {
+function getPackageMaintainers(prefix) {
     var request = new XMLHttpRequest();
     request.onreadystatechange = function(data) {
         if(this.readyState == 4) {
             MAINTAINERS = JSON.parse(this.responseText);
         }
     };
-    request.open("GET", '/manager/repositories/maintainers/list');
+    request.open("GET", prefix + '/repositories/maintainers/list');
     request.setRequestHeader(HEADER, TOKEN);
     request.setRequestHeader("Accept", "application/json");
     request.send();
 }
 
-function getCreateMaintainerDialogContent() {
+function getCreateMaintainerDialogContent(prefix) {
     var request = new XMLHttpRequest(),
-        url = "/manager/packages/maintainers/create";
+        url = prefix + "/packages/maintainers/create";
 
 
     request.onreadystatechange = function() {
@@ -425,8 +425,8 @@ function getCreateMaintainerDialogContent() {
     request.send();
 }
 
-function deletePackageMaintainer(id) {
-    var url = '/manager/packages/maintainers/' + id + '/delete';
+function deletePackageMaintainer(id, prefix) {
+    var url = prefix + '/packages/maintainers/' + id + '/delete';
     $.ajax({
         url: url,
         type: 'DELETE',
@@ -447,7 +447,7 @@ function deletePackageMaintainer(id) {
     });
 }
 
-function openDeletePackageMaintainerDialog(id) {
+function openDeletePackageMaintainerDialog(id, prefix) {
 	var html = '',
     dialog = document.getElementsByClassName('mdl-dialog')[0],
     name = $('#packagemaintainer-' + id).closest('tr').find('.packagemaintainer-name').html();
@@ -469,7 +469,7 @@ function openDeletePackageMaintainerDialog(id) {
     });
     
     document.querySelector('.confirm').addEventListener('click', function(){
-    	deletePackageMaintainer(id);
+    	deletePackageMaintainer(id, prefix);
     	dialog.close();
     });
     
@@ -490,7 +490,8 @@ function displayMaintainersButton() {
 $(document).ready(function(){
     cutDescriptions(MAX_LABEL_LENGTH);
     preventBubbling();
-    getPackageMaintainers();
-    getCreateMaintainerDialogContent();
+    var prefix = window.location.href.split("/manager")[0] + "/manager";
+    getPackageMaintainers(prefix);
+    getCreateMaintainerDialogContent(prefix);
     displayMaintainersButton();
 });

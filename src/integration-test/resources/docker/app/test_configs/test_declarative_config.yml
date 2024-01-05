@@ -22,7 +22,7 @@ repositories:
           - name: plotly
             generate-manuals: false
       - name: Bioconductor-3.12
-        uri: https://bioconductor.org/packages/3.12/bioc
+        uri: http://archive.bioconductor.org.s3-website-us-east-1.amazonaws.com/packages/3.12/bioc
         sync-interval: ""
         type: tarball
         generate-manuals: false

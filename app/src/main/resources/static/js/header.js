@@ -1,6 +1,6 @@
-function showApiTokenDialog(id) {
+function showApiTokenDialog(prefix, id) {
     var request = new XMLHttpRequest(),
-        url = "/manager/users/" + id + "/token";
+    	url = prefix.concat("/users/", id, "/token");
 
     request.onreadystatechange = function() {
         if(this.readyState == 4 && this.status == 200) {
@@ -42,4 +42,8 @@ function showDialog(title, message) {
     	document.execCommand("copy");
     	alert("Api token copied");
     });
+}
+
+function goToManager(url) {
+	window.location.href = url;
 }

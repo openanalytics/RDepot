@@ -3,6 +3,10 @@ api_token:
 
 declarative: false
 
+server:
+  servlet:
+    context-path: /rdepot/app
+
 app:
   authentication: simple  
   simple:

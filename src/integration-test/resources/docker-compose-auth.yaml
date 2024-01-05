@@ -62,9 +62,12 @@ services:
     hostname: oa-rdepot-repo
     container_name: oa-rdepot-repo
     volumes:
+      - ./docker/repo/application.yml:/opt/repo/application.yml:ro
       - ./docker/repo/rdepot-repo.jar:/opt/repo/rdepot-repo.jar:ro
       - repository:/opt/rdepot/
       - ./itestServer:/opt/testServer
+    ports:
+      - 8020:8080
     networks:
       - oa-rdepot 
         
@@ -120,22 +123,22 @@ services:
 #    networks:
 #      oa-rdepot:
 #        ipv4_address: 192.168.49.17
- 
-  ldap:
-    build: ./docker/ldap
-    restart: unless-stopped
-    hostname: oa-rdepot-ldap
-    container_name: oa-rdepot-ldap
-    environment:
-      - LDAP_TLS=false
-      - LDAP_ORGANISATION=Test Company
-      - LDAP_DOMAIN=example.org
-      - LDAP_ADMIN_PASSWORD=testpassword
+# 
+#  ldap:
+#    build: ./docker/ldap
+#    restart: unless-stopped
+#    hostname: oa-rdepot-ldap
+#    container_name: oa-rdepot-ldap
+#    environment:
+#      - LDAP_TLS=false
+#      - LDAP_ORGANISATION=Test Company
+#      - LDAP_DOMAIN=example.org
+#      - LDAP_ADMIN_PASSWORD=testpassword
 #    volumes:
 #      - ./docker/ldap/import/config:/etc/ldap/slapd.d/
 #      - ./docker/ldap/import/db:/var/lib/ldap/  
-    networks:
-      - oa-rdepot
+#    networks:
+#      - oa-rdepot
       
 #  greenmail:
 #    image: greenmail/standalone

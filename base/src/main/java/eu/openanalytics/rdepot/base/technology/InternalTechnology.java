@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2023 Open Analytics NV
+ * Copyright (C) 2012-2024 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -46,7 +46,7 @@ public class InternalTechnology implements Technology {
 
 	@Override
 	public String getVersion() {
-		return "1.7.5";
+		return "1.7.6";
 	}
 
 	@Override

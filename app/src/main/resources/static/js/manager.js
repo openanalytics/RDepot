@@ -52,7 +52,8 @@ function submitFiles() {
 }
 
 function reloadPage() {
-	window.location.href = "/manager";
+	var url = window.location.href.split("/manager")[0] + "/manager"; 
+	window.location.href = url;
 }
 
 function openFileDialog() {
@@ -183,7 +184,7 @@ function handleForm(e) {
         repositories: selectedRepositories
     };
 
-    var url = "/manager/packages/submit";
+	var url = window.location.href.split("/manager")[0] + "/manager/packages/submit"
     
     hideButtons();
     

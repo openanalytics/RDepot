@@ -55,6 +55,7 @@ services:
     hostname: oa-rdepot-repo
     container_name: oa-rdepot-repo
     volumes:
+      - ./docker/repo/application.yml:/opt/repo/application.yml:ro
       - ./docker/repo/rdepot-repo.jar:/opt/repo/rdepot-repo.jar:ro
       - repository:/opt/rdepot/
       - ./itestServer:/opt/testServer

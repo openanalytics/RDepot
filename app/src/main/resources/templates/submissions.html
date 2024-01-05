@@ -39,8 +39,8 @@
                                 </label>
                             </td>
                             <td class="mdl-data-table__cell--non-numeric">   
-                                <label class="mdl-button mdl-js-button accept-button" th:id="'accept-submission-button-' + ${submission.id}" th:if="${@securityMediatorV1.isAuthorizedToAccept(submission, user) && submission.getState().getValue().equals('waiting')}" th:onclick="'acceptSubmission(' + ${submission.id} + ')'">Accept</label>
-                                <label class="mdl-button mdl-js-button cancel-button" th:id="'cancel-submission-button-' + ${submission.id}" th:if="${@securityMediatorV1.isAuthorizedToCancel(submission, user) && submission.getState().getValue().equals('waiting')}" th:onclick="'cancelSubmission(' + ${submission.id} + ')'">Cancel</label>
+                                <label class="mdl-button mdl-js-button accept-button" th:data1="${submission.id}" th:data2="@{/manager}" th:id="'accept-submission-button-' + ${submission.id}" th:if="${@securityMediatorV1.isAuthorizedToAccept(submission, user) && submission.getState().getValue().equals('waiting')}" th:onclick="acceptSubmission(this.getAttribute('data1'),this.getAttribute('data2'))">Accept</label>
+                                <label class="mdl-button mdl-js-button cancel-button" th:data1="${submission.id}" th:data2="@{/manager}" th:id="'cancel-submission-button-' + ${submission.id}" th:if="${@securityMediatorV1.isAuthorizedToCancel(submission, user) && submission.getState().getValue().equals('waiting')}" th:onclick="cancelSubmission(this.getAttribute('data1'),this.getAttribute('data2'))">Cancel</label>
                             </td>
                             <!--th:disabled="${@userService.isAuthorizedToAccept(submission, submission.user) ? '' : 'disabled'}"-->
                         </tr>

@@ -26,13 +26,13 @@ $(document).ready(function()
 
 function sendNewsfeedUpdateRequest()
 {
-
+	var prefix = window.location.href.split("/manager")[0] + "/manager"
     var request = new XMLHttpRequest();
     var url = "";
     if(CURRENT_DATE != "")
-        url = '/manager/newsfeed/update?date=' + CURRENT_DATE + '&lastPosition=' + LAST_EVENT;
+        url = prefix + '/newsfeed/update?date=' + CURRENT_DATE + '&lastPosition=' + LAST_EVENT;
     else
-        url = '/manager/newsfeed/update';
+        url = prefix + '/newsfeed/update';
     var events = {};
 
     request.onreadystatechange = function() {

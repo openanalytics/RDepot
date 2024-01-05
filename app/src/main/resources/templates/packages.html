@@ -23,15 +23,15 @@
                         <tr th:each="package : ${packages}" >
                             <input type="hidden" th:id="'package-' + ${package.id}"/>
                             <div th:id="'description-' + ${package.id}" th:text="${package.description}" style="display:none;"></div>
-                            <td class="mdl-data-table__cell--non-numeric package-name" th:text="${package.name}" th:onclick="'showDescriptionDialog(' + ${package.id} + ')'"></td>
-                            <td class="mdl-data-table__cell--non-numeric package-version" th:text="${package.version}" th:onclick="'showDescriptionDialog(' + ${package.id} + ')'"></td>
-                            <td class="mdl-data-table__cell--non-numeric package-description" th:text="${package.description}" th:onclick="'showDescriptionDialog(' + ${package.id} + ')'"></td>
-                            <td class="mdl-data-table__cell--non-numeric package-username" th:text="${package.user.name}" th:onclick="'showDescriptionDialog(' + ${package.id} + ')'"></td>
-                            <td class="mdl-data-table__cell--non-numeric package-repository" th:text="${package.repository.name}" th:onclick="'showDescriptionDialog(' + ${package.id} + ')'"></td>
+                            <td class="mdl-data-table__cell--non-numeric package-name" th:text="${package.name}" th:data1="${package.id}" th:onclick="showDescriptionDialog(this.getAttribute('data1'))"></td>
+                            <td class="mdl-data-table__cell--non-numeric package-version" th:text="${package.version}" th:data1="${package.id}" th:onclick="showDescriptionDialog(this.getAttribute('data1'))"></td>
+                            <td class="mdl-data-table__cell--non-numeric package-description" th:text="${package.description}" th:data1="${package.id}" th:onclick="showDescriptionDialog(this.getAttribute('data1'))"></td>
+                            <td class="mdl-data-table__cell--non-numeric package-username" th:text="${package.user.name}" th:data1="${package.id}" th:onclick="showDescriptionDialog(this.getAttribute('data1'))"></td>
+                            <td class="mdl-data-table__cell--non-numeric package-repository" th:text="${package.repository.name}" th:data1="${package.id}" th:onclick="showDescriptionDialog(this.getAttribute('data1'))"></td>
                             <td class="mdl-data-table__cell--non-numeric">
                                 <!--th:for="'checkbox-' + ${package.id}" th:onclick="'changeActive('+ ${package.id} + ')'"-->
                                 <div th:switch="${role > 0 && maintained.contains(package.id)}">
-                                    <label th:case="${true}" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" th:for="'checkbox-' + ${package.id}" th:onclick="'changeActive('+ ${package.id} + ')'">
+                                    <label th:case="${true}" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" th:for="'checkbox-' + ${package.id}" th:data1="${package.id}" th:data2="@{/manager}" th:onclick="changeActive(this.getAttribute('data1'),this.getAttribute('data2'))">
                                         <input type="checkbox" th:id="'checkbox-' + ${package.id}" class="mdl-checkbox__input" th:checked="${package.isActive()}"/>
                                     </label>
                                     <label th:case="${false}" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" th:for="'checkbox-' + ${package.id}">
@@ -41,7 +41,7 @@
                                 
                             </td>
                             <td class="mdl-data-table__cell--non-numeric">
-                                <button th:if="${role > 0 && maintained.contains(package.id)}"  class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" th:onclick="'openDeletePackageDialog('+ ${package.id} + ')'">
+                                <button th:if="${role > 0 && maintained.contains(package.id)}"  class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" th:data1="${package.id}" th:data2="@{/manager}" th:onclick="openDeletePackageDialog(this.getAttribute('data1'),this.getAttribute('data2'))">
                                     <i class="material-icons">delete_forever</i>
                                 </button>
                             </td>

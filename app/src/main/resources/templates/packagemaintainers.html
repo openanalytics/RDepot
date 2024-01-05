@@ -7,7 +7,7 @@
             <header th:replace="fragments/header :: topbar (module='packages')"></header>
             <div th:replace="fragments/header :: drawer (module='packages')"></div>
             <main class="mdl-layout__content">
-                <button th:if="${role >= 2}" type="button" class="add-maintainer-fab mdl-button mdl-button--fab mdl-button--primary" onclick="openAddMaintainerDialog()"><i class="material-icons">add</i></button>       
+                <button th:if="${role >= 2}" type="button" class="add-maintainer-fab mdl-button mdl-button--fab mdl-button--primary" th:data1="@{/manager}" onclick="openAddMaintainerDialog(this.getAttribute('data1'))"><i class="material-icons">add</i></button>       
                 
                 <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp full-width">
                     <thead>
@@ -25,10 +25,10 @@
                             <td class="mdl-data-table__cell--non-numeric packagemaintainer-package" th:text="${packagemaintainer.getPackage()}"></td>
                             <td class="mdl-data-table__cell--non-numeric packagemaintainer-repository" th:text="${packagemaintainer.repository.name}"></td>
                             <td class="mdl-data-table__cell--non-numeric">
-                                <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" th:onclick="'openDeletePackageMaintainerDialog('+ ${packagemaintainer.id} + ')'">
+                                <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" th:data1="${packagemaintainer.id}" th:data2="@{/manager}" th:onclick="openDeletePackageMaintainerDialog(this.getAttribute('data1'),this.getAttribute('data2'))">
                                     <i class="material-icons">delete_forever</i>
                                 </button>
-                                <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" style="color:rgb(50, 166, 211);" th:data1="${packagemaintainer.id}" th:data2="${packagemaintainer.user.name}" th:onclick="openEditMaintainerDialog(this.getAttribute('data1'),this.getAttribute('data2'))">
+                                <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" style="color:rgb(50, 166, 211);" th:data1="${packagemaintainer.id}" th:data2="${packagemaintainer.user.name}" th:data3="@{/manager}" th:onclick="openEditMaintainerDialog(this.getAttribute('data1'),this.getAttribute('data2'),this.getAttribute('data3'))">
                                     <i class="material-icons">edit</i>
                                 </button>
                             </td>

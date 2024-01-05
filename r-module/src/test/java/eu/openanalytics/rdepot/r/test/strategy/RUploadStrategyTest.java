@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2023 Open Analytics NV
+ * Copyright (C) 2012-2024 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -167,15 +167,14 @@ public class RUploadStrategyTest extends StrategyTest {
 		
 		//Assertions
 		assertEquals("R (>= 2.10), nnet, quantreg, locfit", packageBag.getDepends(), "Incorrect depends property");
-		assertEquals("The package implements several "
-				+ "ABC algorithms for performing parameter estimation "
-				+ "and model selection. "
-				+ "Cross-validation tools are also available "
-				+ "for measuring the accuracy of ABC estimates, "
-				+ "and to calculate the misclassification "
-				+ "probabilities of different models.", 
+		assertEquals("The package implements several ABC algorithms "
+				+ "for performing parameter estimation and model selection. "
+				+ "Cross-validation tools are also available for measuring the "
+				+ "accuracy of ABC estimates, and to calculate the "
+				+ "misclassification probabilities of different models.", 
 				packageBag.getDescription(), "Incorrect description"
 		);
+
 		assertEquals("GPL (>= 3)", packageBag.getLicense(), "Incorrect license");
 		assertTrue(packageBag.isActive(), "Package should be activated.");
 		assertFalse(packageBag.isDeleted(), "Package should not be deleted");

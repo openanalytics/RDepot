@@ -2,7 +2,8 @@
 <html>
 	<head>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-		<script src="/webjars/material-design-lite/1.3.0/material.js"></script>
+		<script th:src="@{/webjars/material-design-lite/1.3.0/material.js}"></script>
+		<script th:src="@{/js/header.js}"></script>
 		<script>
 			function changePosition(){
 				var height = $(window).innerHeight();
@@ -23,7 +24,7 @@
 		</script>
 		<title>RDepot - Access Denied</title>
 		<link rel="shortcut icon" th:href="@{/img/favicon.ico}"/>
-		<link rel='stylesheet' href='/webjars/material-design-lite/1.3.0/material.css'>
+		<link rel='stylesheet' th:href='@{/webjars/material-design-lite/1.3.0/material.css}'>
 		<link rel="stylesheet" th:href="@{/css/accessdenied.css}">		
 		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 	</head>
@@ -31,16 +32,16 @@
 		<hgroup>
 				<h1 th:text="#{application.name}">RDepot</h1>
 				<h3>You are not authorized to see this page.</h3>
-				<button id="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" onclick="goToManager();">Go back to main page</button>
+				<button id="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" th:data1="@{/manager}" th:onclick="goToManager(this.getAttribute('data1'))">Go back to main page</button>
 		</hgroup>
 		<footer>
-				<div id = "oa-logo"><a href="https://openanalytics.eu/" target="_blank"><img class="logo"  src = "/img/logo.png"> </a></div> 
+				<div id = "oa-logo"><a href="https://openanalytics.eu/" target="_blank"><img class="logo"  th:src = "@{/img/logo.png}"> </a></div> 
 				<div id = "text-oa-link"> <a href="https://openanalytics.eu/" target="_blank"> Powered by<div id = "blue-link"> Open Analytics </div></a></div>	
 		</footer>
 	</body>
 	<script>
-		function goToManager() {
-			window.location = '/manager';
+		function goToManager(url) {			
+			window.location = url;
 		}
 	</script>
 </html>

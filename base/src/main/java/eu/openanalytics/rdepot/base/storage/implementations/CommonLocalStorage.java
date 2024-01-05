@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2023 Open Analytics NV
+ * Copyright (C) 2012-2024 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -41,6 +41,7 @@ import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.keycloak.adapters.HttpClientBuilder;
@@ -337,6 +338,10 @@ public abstract class CommonLocalStorage<R extends Repository<R, ?>, P extends P
 			final HttpGet httpGet = new HttpGet(url);
 			final HttpResponse response = httpClient.execute(httpGet);
 			final HttpEntity entity = response.getEntity();
+			
+			if(response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+				throw new DownloadFileException(url);
+			}
 			
 			if(entity != null) {
 				final FileOutputStream os = new FileOutputStream(destination);

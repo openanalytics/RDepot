@@ -2,9 +2,9 @@ var TOKEN = $("meta[name='_csrf']").attr("content"),
     HEADER = $("meta[name='_csrf_header']").attr("content"),
     ROLES = [];
 
-function showUserDialog(login) {
+function showUserDialog(login, prefix) {
     var request = new XMLHttpRequest(),
-        url = "/manager/users/" + login,
+        url = prefix + "/users/" + login,
         userDetails = {},
         html = '',
         dialog = document.getElementsByClassName('mdl-dialog')[0];
@@ -68,7 +68,7 @@ function formatDateTimeFromISO(date){
 	return date.substr(0,16).replace("T", " ")
 }
 
-function changeActive(id) {
+function changeActive(id, prefix) {
     var action = "",
         url = "";
     if(document.getElementById("checkbox-" + id).checked) {
@@ -76,7 +76,7 @@ function changeActive(id) {
     } else {
         action = "activate"
     }
-    url = '/manager/users/' + String(id) + '/' + action;
+    url = prefix + '/users/' + String(id) + '/' + action;
     $.ajax({
         url: url,
         type: 'PATCH',
@@ -94,9 +94,9 @@ function changeActive(id) {
     });
 }
 
-function getRoles() {
+function getRoles(prefix) {
     var request = new XMLHttpRequest(),
-        url = "/manager/users/roles";
+        url = prefix + "/roles";
 
 
     request.onreadystatechange = function() {
@@ -110,7 +110,7 @@ function getRoles() {
     request.send();
 }
 
-function openEditUserDialog(id, login, currentRole, name, email, isActive) {
+function openEditUserDialog(id, login, currentRole, name, email, isActive, prefix) {
     var html = '',
         dialog = document.getElementsByClassName('mdl-dialog')[0];
 
@@ -169,7 +169,7 @@ function openEditUserDialog(id, login, currentRole, name, email, isActive) {
                 }
             }
         }
-        request.open("POST", '/manager/users/' + id + '/edit');
+        request.open("POST", prefix + '/users/' + id + '/edit');
         request.setRequestHeader(HEADER, TOKEN);
         request.setRequestHeader("Accept", "application/json");
         request.send(formData);
@@ -211,6 +211,6 @@ function preventBubbling() {
 }
 
 $(document).ready(function() {
-    getRoles();
+    getRoles(window.location.href);
     preventBubbling();
 });

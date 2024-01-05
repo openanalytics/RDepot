@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2023 Open Analytics NV
+ * Copyright (C) 2012-2024 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,12 +20,12 @@
  */
 package eu.openanalytics.rdepot.declarativetests;
 
-import static eu.openanalytics.rdepot.integrationtest.IntegrationTest.ADMIN_TOKEN;
-import static eu.openanalytics.rdepot.integrationtest.IntegrationTest.AUTHORIZATION;
-import static eu.openanalytics.rdepot.integrationtest.IntegrationTest.BEARER;
-import static eu.openanalytics.rdepot.integrationtest.IntegrationTest.JSON_PATH;
-import static eu.openanalytics.rdepot.integrationtest.IntegrationTest.REPOSITORYMAINTAINER_TOKEN;
-import static eu.openanalytics.rdepot.integrationtest.IntegrationTest.USER_TOKEN;
+import static eu.openanalytics.rdepot.declarativetests.IntegrationTest.ADMIN_TOKEN;
+import static eu.openanalytics.rdepot.declarativetests.IntegrationTest.AUTHORIZATION;
+import static eu.openanalytics.rdepot.declarativetests.IntegrationTest.BEARER;
+import static eu.openanalytics.rdepot.declarativetests.IntegrationTest.JSON_PATH;
+import static eu.openanalytics.rdepot.declarativetests.IntegrationTest.REPOSITORYMAINTAINER_TOKEN;
+import static eu.openanalytics.rdepot.declarativetests.IntegrationTest.USER_TOKEN;
 import static io.restassured.RestAssured.given;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -416,8 +416,6 @@ public class DeclarativeIntegrationTest {
 		assertEquals("Repository unpublishing caused some changes in packages", expectedPackages, actualPackages);
 		assertTrue("Repository hasn't been unpublished", compareRepositories(expectedJSON, actualJSON));
 	}
-
-	
 	
 	private boolean compareRepositories(JsonArray expected, JsonArray actual) throws ParseException {		
 		if (expected == null || actual == null)
@@ -592,10 +590,15 @@ public class DeclarativeIntegrationTest {
 		
 		JsonArray actualJSON = (JsonArray) JsonParser.parseString(data);
 		
-		List<Set<JsonObject>> actualPackages = convertPackages(actualJSON, synchronizedRepositories);
-
+		List<Set<JsonObject>> actualPackages = convertPackages(actualJSON, synchronizedRepositories);		
+		
 		if(synchronizedRepositories)
 			updateMd5SumsAndVersion(expectedPackages);
+		System.out.println("Expected =====================================================");
+		System.out.println(expectedRepositoriesJson.toString());
+		System.out.println("Actual =======================================================");
+		System.out.println(actualJSON.toString());
+		System.out.println("==============================================================");
 //		assertEquals(expectedPackages.get(1), actualPackages.get(1));
 		assertTrue(comparePackages(expectedPackages.get(1), actualPackages.get(1)));
 		assertTrue(compareRepositories(expectedRepositoriesJson, actualJSON));

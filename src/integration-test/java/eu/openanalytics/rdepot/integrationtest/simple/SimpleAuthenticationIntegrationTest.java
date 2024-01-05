@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2023 Open Analytics NV
+ * Copyright (C) 2012-2024 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -36,7 +36,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 public class SimpleAuthenticationIntegrationTest {
 	private RemoteWebDriver driver;
 	
-	private final String url = "http://192.168.49.24:8080";
+	private final String url = "http://oa-rdepot-app-simple:8080/rdepot/app";
 								
 	@Before
     public void setUp() throws InterruptedException, IOException{

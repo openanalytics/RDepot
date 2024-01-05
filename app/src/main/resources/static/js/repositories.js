@@ -3,8 +3,8 @@ var TOKEN = $("meta[name='_csrf']").attr("content"),
     CREATE_MAINTAINER_REQUEST_RESPONSE = {},
     MAINTAINERS = []
 
-function deleteRepository(id) {
-    var url = '/manager/repositories/' + id + '/delete'; 
+function deleteRepository(id, prefix) {
+    var url = prefix + '/repositories/' + id + '/delete'; 
 	$.ajax({
         url: url,
         type: 'DELETE',
@@ -28,11 +28,11 @@ function deleteRepository(id) {
 }
 
 
-function downloadPackage(packageId, packageName, packageVersion) {
-    window.location.href = "/manager/packages/" + packageId + "/download/" + packageName + "_" + packageVersion + ".tar.gz";
+function downloadPackage(packageId, packageName, packageVersion, prefix) {
+    window.location.href = prefix + "/packages/" + packageId + "/download/" + packageName + "_" + packageVersion + ".tar.gz";
 }
 
-function openDeleteRepositoryDialog(id) {
+function openDeleteRepositoryDialog(id, prefix) {
 	var html = '',
     dialog = document.getElementsByClassName('mdl-dialog')[0],
     name = $('#repository-' + id).closest('tr').find('.repository-name').html();
@@ -54,15 +54,15 @@ function openDeleteRepositoryDialog(id) {
     });
     
     document.querySelector('.confirm').addEventListener('click', function(){
-    	deleteRepository(id);
+    	deleteRepository(id, prefix);
     	dialog.close();
     });
     
     dialog.showModal();
 }
 
-function deleteRepositoryMaintainer(id) {
-    var url = '/manager/repositories/maintainers/' + String(id) + '/delete';
+function deleteRepositoryMaintainer(id, prefix) {
+    var url = prefix + '/repositories/maintainers/' + String(id) + '/delete';
     $.ajax({
         url: url,
         type: 'DELETE',
@@ -87,7 +87,7 @@ function deleteRepositoryMaintainer(id) {
     });
 }
 
-function openDeleteRepositoryMaintainerDialog(id) {
+function openDeleteRepositoryMaintainerDialog(id, prefix) {
 	var html = '',
     dialog = document.getElementsByClassName('mdl-dialog')[0],
     name = $('#repositorymaintainer-' + id).closest('tr').find('.repositorymaintainer-name').html();
@@ -109,21 +109,21 @@ function openDeleteRepositoryMaintainerDialog(id) {
     });
     
     document.querySelector('.confirm').addEventListener('click', function(){
-    	deleteRepositoryMaintainer(id);
+    	deleteRepositoryMaintainer(id, prefix);
     	dialog.close();
     });
     
     dialog.showModal();
 }
 
-function changePublished(id) {
+function changePublished(id, prefix) {
     var url = "",
         request = new XMLHttpRequest(),
         checked = document.getElementById("checkbox-" + id).checked;
     if(checked) {
-        url = "/manager/repositories/" + id + "/unpublish";
+        url = prefix + "/repositories/" + id + "/unpublish";
     } else {
-        url = "/manager/repositories/" + id + "/publish";
+        url = prefix + "/repositories/" + id + "/publish";
     }
 
     request.open("PATCH", url);
@@ -156,9 +156,14 @@ function changePublished(id) {
     request.send();
 }
 
-function getCreateMaintainerDialogContent() {
+function getCreateMaintainerDialogContent(prefix) {
     var request = new XMLHttpRequest(),
-        url = "/manager/repositories/maintainers/create";
+        url = "";
+        if(prefix.includes("maintainers")) {
+			url = prefix + "/create"; 
+		} else {
+        	url = prefix + "/maintainers/create";
+        }
 
 
     request.onreadystatechange = function() {
@@ -171,20 +176,20 @@ function getCreateMaintainerDialogContent() {
     request.send();
 }
 
-function getRepositoryMaintainers() {
+function getRepositoryMaintainers(prefix) {
     var request = new XMLHttpRequest();
     request.onreadystatechange = function(data) {
         if(this.readyState == 4) {
             MAINTAINERS = JSON.parse(this.responseText);
         }
     };
-    request.open("GET", '/manager/repositories/maintainers/list');
+    request.open("GET", prefix + '/list');
     request.setRequestHeader(HEADER, TOKEN);
     request.setRequestHeader("Accept", "application/json");
     request.send();
 }
 
-function openEditMaintainerDialog(id, name) {
+function openEditMaintainerDialog(id, name, prefix) {
     var html = '',
         dialog = document.getElementsByClassName('mdl-dialog')[0],
         repositories = CREATE_MAINTAINER_REQUEST_RESPONSE.repositories;
@@ -250,7 +255,7 @@ function openEditMaintainerDialog(id, name) {
         request.addEventListener("error", function(event) {
             showErrorDialog("error!");
         });
-        request.open("POST", '/manager/repositories/maintainers/' + id + '/edit');
+        request.open("POST", prefix + '/repositories/maintainers/' + id + '/edit');
         request.setRequestHeader("Accept", "application/json");
         request.setRequestHeader("Content-Type", "application/json");
         request.setRequestHeader(HEADER, TOKEN);
@@ -260,7 +265,7 @@ function openEditMaintainerDialog(id, name) {
     dialog.showModal();
 }
 
-function openAddMaintainerDialog() {
+function openAddMaintainerDialog(prefix) {
     var html = '',
     dialog = document.getElementsByClassName('mdl-dialog')[0];
     var users = CREATE_MAINTAINER_REQUEST_RESPONSE.users;
@@ -333,7 +338,7 @@ function openAddMaintainerDialog() {
             }
         };
 
-        request.open("POST", '/manager/repositories/maintainers/create');
+        request.open("POST", prefix + '/repositories/maintainers/create');
         request.setRequestHeader(HEADER, TOKEN);
         request.setRequestHeader("Accept", "application/json");
         request.setRequestHeader("Content-Type", "application/json");
@@ -344,7 +349,7 @@ function openAddMaintainerDialog() {
     dialog.showModal();
 }
 
-function openAddRepositoryDialog() {
+function openAddRepositoryDialog(prefix) {
     var html = '',
         dialog = document.getElementsByClassName('mdl-dialog')[0];
     html += '<h4 class="mdl-dialog__title">Create repository</h4>';
@@ -400,7 +405,7 @@ function openAddRepositoryDialog() {
                     }
                 }
             }
-            request.open("POST", '/manager/repositories/create');
+            request.open("POST", prefix + '/repositories/create');
             request.setRequestHeader(HEADER, TOKEN);
             request.setRequestHeader("Accept", "application/json");
             request.setRequestHeader("Content-Type", "application/json");
@@ -435,7 +440,7 @@ function showErrorDialog(message) {
     });
 }
 
-function openEditRepositoryDialog(id) {
+function openEditRepositoryDialog(id, prefix) {
     var html = '',
         dialog = document.getElementsByClassName('mdl-dialog')[0],
         name = $('#repository-' + id).closest('tr').find('.repository-name').html(),
@@ -496,7 +501,7 @@ function openEditRepositoryDialog(id) {
                     }
                 }
             };
-            request.open("POST", '/manager/repositories/' + id + '/edit');
+            request.open("POST", prefix + '/repositories/' + id + '/edit');
             request.setRequestHeader(HEADER, TOKEN);
             request.setRequestHeader("Accept", "application/json");
             request.send(formData);
@@ -505,21 +510,21 @@ function openEditRepositoryDialog(id) {
     dialog.showModal();
 }
 
-function openMaintainersPage() {
-    window.location.href = '/manager/repositories/maintainers';
+function openMaintainersPage(prefix) {
+    window.location.href = prefix + '/repositories/maintainers';
 }
 
-function openRepositoryPage(name) {
-    window.location.href = "/manager/repositories/" + name;
+function openRepositoryPage(name, prefix) {
+    window.location.href = prefix + "/repositories/" + name;
 }
 
-function openPackagePage(repository, packageName, packageVersion) {
-    window.location.href = "/manager/repositories/" + repository + "/packages/" + packageName;
+function openPackagePage(repository, packageName, packageVersion, prefix) {
+    window.location.href = prefix + "/repositories/" + repository + "/packages/" + packageName;
 //    without packageVersion!!!
 }
 
-function openPackagePageWithVersion(repository, packageName, packageVersion) {
-    window.location.href = "/manager/repositories/" + repository + "/packages/" + packageName + "/" + packageVersion;
+function openPackagePageWithVersion(repository, packageName, packageVersion, prefix) {
+    window.location.href = prefix + "/repositories/" + repository + "/packages/" + packageName + "/" + packageVersion;
 }
 
 function preventBubbling() {
@@ -543,8 +548,8 @@ function displayMaintainersButton() {
     }
 }
 
-function synchronizeMirrors(id) {
-	var url = '/manager/repositories/' + id + '/synchronize-mirrors'; 
+function synchronizeMirrors(id, prefix) {
+	var url = prefix + '/repositories/' + id + '/synchronize-mirrors'; 
 	const synchronizationField = document.getElementById('repository-' + id + '-row')
 		.getElementsByClassName('synchronization-field')[0];
 	const previousFieldContent = synchronizationField.innerHTML;
@@ -563,7 +568,7 @@ function synchronizeMirrors(id) {
                 showErrorDialog(result.error);
 				synchronizationField.innerHTML = previousFieldContent;
             }
-            checkSynchronization();
+            checkSynchronization(prefix);
         },
         error: function(result) {
             showErrorDialog("You cannot synchronize this repository.");
@@ -572,14 +577,14 @@ function synchronizeMirrors(id) {
     });
 }
 
-function checkSynchronization() {
+function checkSynchronization(prefix) {
     const request = new XMLHttpRequest();
-    const url = '/manager/repositories/synchronization/status';
+    const url = prefix + '/repositories/synchronization/status';
 
     request.onreadystatechange = function() {
         if(this.readyState == 4 && this.status == 200) {
             var response = JSON.parse(this.responseText);
-            updateSynchronization(response);
+            updateSynchronization(response, prefix);
         }
     }
     request.open("GET", url);
@@ -589,7 +594,7 @@ function checkSynchronization() {
     request.send();
 }
 
-function updateSynchronization(synchronizingRepositories) {
+function updateSynchronization(synchronizingRepositories, prefix) {
     const role = document.getElementsByTagName("body")[0].dataset.role;
     var rows = document.getElementsByClassName('repository-row');
     
@@ -605,9 +610,9 @@ function updateSynchronization(synchronizingRepositories) {
                 html = '<div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>';
         } else if(parseInt(role) > 2) {
             if(matchingRepositories.length === 1 && matchingRepositories[0].error !== "null") {
-                html = '<button class="mdl-button mdl-js-button mdl-button--icon synchronization-error-button" onclick="synchronizeMirrors('+ repositoryId + ')" >';
+                html = '<button class="mdl-button mdl-js-button mdl-button--icon synchronization-error-button" onclick="synchronizeMirrors('+ repositoryId + ', ' + prefix + ')" >';
             } else {
-                html = '<button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored-alternative" onclick="synchronizeMirrors('+ repositoryId + ')" >';
+                html = '<button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored-alternative" onclick="synchronizeMirrors('+ repositoryId + ', ' + prefix + ')" >';
             }
 
             html += '<i class="material-icons">update</i>';
@@ -618,49 +623,16 @@ function updateSynchronization(synchronizingRepositories) {
         componentHandler.upgradeDom();
 
     }
-
-    // for(var i = 0; i < synchronizingRepositories.length; i++) {
-    //     var id = synchronizingRepositories[i].repositoryId;
-
-    //     const synchronizationField = document.getElementById('repository-' + id + '-row')
-    //             .getElementsByClassName('synchronization-field')[0];
-
-    //     if(synchronizingRepositories[i].pending === "true") {
-    //         if(synchronizationField.getElementsByClassName('mdl-spinner').length == 0) {
-    //             synchronizationField.innerHTML = 
-    //                 '<div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>';
-    //         }
-
-    //     } else {
-    //         var html = '';
-    //         if(parseInt(role) > 2) {
-    //             if(synchronizingRepositories[i].error === "null") {
-    //                 html = '<button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored-alternative" onclick="synchronizeMirrors('+ id + ')" >';
-
-    //             } else {
-    //                 html = '<button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored-alternative synchronization-error-button" onclick="synchronizeMirrors('+ id + ')" >';
-                    
-    //             }
-
-    //             html += '<i class="material-icons">update</i>';
-    //             html += '</button>';
-    //         }
-            
-    //         synchronizationField.innerHTML = html;
-    //     }
-
-    //     componentHandler.upgradeDom();
-    // }
 }
 
-function scheduleSynchronization() {
-    checkSynchronization();
+function scheduleSynchronization(prefix) {    
+    checkSynchronization(prefix);
     var intervalId = window.setInterval(checkSynchronization, 10000);
 }
 
 $(document).ready(function() {
     preventBubbling();
-    getCreateMaintainerDialogContent();
-    getRepositoryMaintainers();
+    getCreateMaintainerDialogContent(window.location.href);
+    getRepositoryMaintainers(window.location.href);
     displayMaintainersButton();
 });

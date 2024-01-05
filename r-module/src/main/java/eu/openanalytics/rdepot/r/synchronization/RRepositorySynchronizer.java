@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2023 Open Analytics NV
+ * Copyright (C) 2012-2024 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -117,12 +117,17 @@ public class RRepositorySynchronizer implements RepositorySynchronizer<RReposito
 		}
 		
 		String serverAndPort = serverAddressComponents[0] + "//" + serverAddressComponents[2];
-		String repositoryDirectory = serverAddressComponents[3];
+		
+		String repositoryDirectory = "";
+		for(int i = 3; i < serverAddressComponents.length; i++) {
+			repositoryDirectory += serverAddressComponents[i];
+			repositoryDirectory += "/";
+		}		
 		
 		Gson gson = new Gson();
 		RestTemplate rest = new RestTemplate();
 		
-		ResponseEntity<String> response = rest.getForEntity(serverAndPort + "/" + repositoryDirectory + "/", String.class);
+		ResponseEntity<String> response = rest.getForEntity(serverAndPort + "/" + repositoryDirectory, String.class);
 
 		final VersionedRepository remoteLatestPackages = gson.fromJson(response.getBody(), VersionedRepository.class);
 		response = rest.getForEntity(serverAndPort + "/" + repositoryDirectory + "/archive/", String.class);

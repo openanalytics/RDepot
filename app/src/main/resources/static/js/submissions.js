@@ -22,8 +22,8 @@ function showMessageDialog(header, content) {
     dialog.showModal();
 }
 
-function acceptSubmission(id) {
-    var url = "/manager/submissions/" + id + "/accept";
+function acceptSubmission(id, prefix) {
+    var url = prefix + "/submissions/" + id + "/accept";
 	document.getElementById("accept-submission-button-" + id).setAttribute('disabled', true);
 	document.getElementById("cancel-submission-button-" + id).setAttribute('disabled', true);
     $.ajax({
@@ -51,8 +51,8 @@ function acceptSubmission(id) {
     });
 }
 
-function cancelSubmission(id) {
-    var url = "/manager/submissions/" + id + "/cancel";
+function cancelSubmission(id, prefix) {
+    var url = prefix + "/submissions/" + id + "/cancel";
     document.getElementById("cancel-submission-button-" + id).setAttribute('disabled', true);
     document.getElementById("accept-submission-button-" + id).setAttribute('disabled', true);
     $.ajax({
@@ -90,10 +90,15 @@ $(document).ready(function(){
     var html = '<button type="button" class="mdl-button" onclick="';
     var currentUrl = window.location.href.split('/');
     var module = currentUrl[currentUrl.length - 1];
+    var prefix = window.location.href.split('/submissions')[0];
+    var url = "";
+    
     if (module == "all") {
-        html += 'goToUrl(\'\/manager\/submissions\');">View only my submissions';
+		url = prefix + "/submissions";
+        html += 'goToUrl(\'' + url + '\');">View only my submissions';
     } else {
-        html += 'goToUrl(\'\/manager\/submissions\/all\');">View all submissions';
+		url = prefix + "/submissions/all";
+        html += 'goToUrl(\'' + url + '\');">View all submissions';
     }
     html += "</button>"
     container.innerHTML = html;

@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2023 Open Analytics NV
+ * Copyright (C) 2012-2024 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -434,8 +434,8 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 
 		List<JSONObject> actualJSON2 = convert(rootJSON);
 		
-		assertNotEquals("Package was replaced, expected: " + expectedJSON1 + " but was: " + actualJSON1, expectedJSON1, actualJSON1);						
-		assertEquals("Differences in packages, expected: " + expectedJSON2 + " but was: " + actualJSON2, expectedJSON2, actualJSON2);
+		assertNotEquals("Package was replaced", expectedJSON1, actualJSON1);						
+		assertEquals("Differences in packages", expectedJSON2, actualJSON2);
 	} 
 	
 	@Test

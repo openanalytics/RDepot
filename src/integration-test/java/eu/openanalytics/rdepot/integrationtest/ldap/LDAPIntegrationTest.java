@@ -1,7 +1,7 @@
 /**
  * R Depot
  *
- * Copyright (C) 2012-2023 Open Analytics NV
+ * Copyright (C) 2012-2024 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -35,7 +35,7 @@ public class LDAPIntegrationTest {
 	
 	private RemoteWebDriver driver;
 	
-	private final String url = "http://192.168.49.21:8080";
+	private final String url = "http://oa-rdepot-app:8080";
 								
 	@Before
     public void setUp() throws MalformedURLException{
