@@ -231,6 +231,27 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 		assertTrue("Manual PDFs are too different", expectedpdf.length - 1000 < pdf.length);
 	}
 
+	@Test
+	public void shouldUploadMatrixPackageAndCreateManualByDefault() throws ParseException, IOException {
+		File packageBag = new File ("src/integration-test/resources/itestPackages/Matrix_1.6-5.tar.gz");
+				
+		given()
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.accept("application/json")
+			.contentType("multipart/form-data")
+			.multiPart("repository", "testrepo2")
+			.multiPart(new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+					.fileName(packageBag.getName())
+					.mimeType("application/gzip")
+					.controlName("file")
+					.build())
+		.when()
+			.post(API_PACKAGES_PATH + "/submit")
+		.then()
+			.statusCode(200)
+			.extract();		
+	}
+	
 	//TODO wait to decision about manual - if always create or only on specified conditions
 	@Test
 	public void shouldUploadPackageAndNotCreateManual() throws ParseException, IOException {
@@ -285,6 +306,28 @@ public class SubmissionIntegrationTest extends IntegrationTest{
 
 		assertEquals("expected packages: " + expectedPackages + " but was: " + actualPackages, expectedPackages, actualPackages);
 		assertTrue("expected json: " + expectedJSON + "but was: " + actualJSON, compare(expectedJSON, actualJSON));
+	}
+	
+	@Test
+	public void shouldUploadGGallyPackageAndNotCreateManual() throws ParseException, IOException {
+		File packageBag = new File ("src/integration-test/resources/itestPackages/GGally_2.2.1.tar.gz");
+				
+		given()
+			.header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+			.accept("application/json")
+			.contentType("multipart/form-data")
+			.multiPart("repository", "testrepo2")
+			.multiPart("generateManual", "false")
+			.multiPart(new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+					.fileName(packageBag.getName())
+					.mimeType("application/gzip")
+					.controlName("file")
+					.build())
+		.when()
+			.post(API_PACKAGES_PATH + "/submit")
+		.then()
+			.statusCode(200)
+			.extract();	
 	}
 	
 	@Test

@@ -38,8 +38,8 @@ public class RDescription extends Properties {
 	 */
 	private static final long serialVersionUID = 356227294180997609L;
 	
-	private Pattern isKeyValue = Pattern.compile("^[a-zA-Z][a-zA-Z-/@_]*:\\ .+$");
-	private Pattern isPartOfValue = Pattern.compile("^(\\t+|\\ {2,})");
+	private Pattern isKeyValue = Pattern.compile("^[a-zA-Z][a-zA-Z-/@_]*:(.*|\\n)$");
+	private Pattern isPartOfValue = Pattern.compile("^(\\t+|\\ {1,})");
 
 	
 	public RDescription(File descriptionFile) throws FileNotFoundException, IOException

@@ -1,3 +1,4 @@
-FROM openanalytics/rdepot-repo-it:1.7.6
+FROM openanalytics/rdepot-repo-it:1.7.7
 
-COPY rdepot-repo-*application.jar /opt/repo/rdepot-repo.jar
+COPY ./repo/build/libs/rdepot-repo-*application.jar /opt/repo/rdepot-repo.jar
+COPY ./docker/repo/application.yml /opt/repo/application.yml

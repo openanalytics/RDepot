@@ -116,7 +116,7 @@ pipeline {
                       -t registry.openanalytics.eu/${env.NS}/rdepot-${MODULE}:${env.VERSION} \
                       -t registry.openanalytics.eu/${env.NS}/rdepot-${MODULE}:latest \
                       -f ./docker/build/${MODULE}-standalone/Dockerfile \
-                      ./${MODULE}/build/libs
+                      ./
                 """
               }
             }
