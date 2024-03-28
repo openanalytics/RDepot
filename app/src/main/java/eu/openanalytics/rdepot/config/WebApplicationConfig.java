@@ -127,6 +127,9 @@ public class WebApplicationConfig implements WebMvcConfigurer {
 
 	@Value("${package.upload.dir}")
 	private String packageUploadDir;
+
+	@Value("${package.upload.max-file-size:100000000}")
+	private Long packageUploadMaxFileSize;
 	
 	@Value("${repository.generation.dir}")
 	private String repositoryGenerationDir;
@@ -347,7 +350,7 @@ public class WebApplicationConfig implements WebMvcConfigurer {
     CommonsMultipartResolver multipartResolver()
     {
     	CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
-    	multipartResolver.setMaxUploadSize(100000000);
+    	multipartResolver.setMaxUploadSize(packageUploadMaxFileSize);
     	return multipartResolver;
     }
         

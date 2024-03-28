@@ -20,7 +20,7 @@ services:
       - oa-rdepot      
       
   repo:
-    image: registry.openanalytics.eu/openanalytics/rdepot-repo-it:1.7.7
+    image: registry.openanalytics.eu/openanalytics/rdepot-repo-it:1.7.8
     restart: always
     hostname: oa-rdepot-repo
     container_name: oa-rdepot-repo
@@ -82,7 +82,7 @@ services:
         ipv4_address: 192.168.49.17
  
   ldap:
-    image: registry.openanalytics.eu/openanalytics/rdepot-ldap-it:1.7.7
+    image: registry.openanalytics.eu/openanalytics/rdepot-ldap-it:1.7.8
     restart: unless-stopped
     hostname: oa-rdepot-ldap
     container_name: oa-rdepot-ldap
@@ -95,7 +95,7 @@ services:
       - oa-rdepot
       
   app:    
-    image: registry.openanalytics.eu/openanalytics/rdepot-app-it:1.7.7
+    image: registry.openanalytics.eu/openanalytics/rdepot-app-it:1.7.8
     restart: always
     hostname: oa-rdepot-app
     container_name: oa-rdepot-app
@@ -125,7 +125,7 @@ services:
       oa-rdepot:
         ipv4_address: 192.168.49.21      
   app-without-snapshots:
-    image: registry.openanalytics.eu/openanalytics/rdepot-app-it:1.7.7
+    image: registry.openanalytics.eu/openanalytics/rdepot-app-it:1.7.8
     restart: always
     hostname: oa-rdepot-app-without-snapshots
     container_name: oa-rdepot-app-without-snapshots
@@ -152,7 +152,7 @@ services:
         ipv4_address: 192.168.49.26
                         
   app-openid:
-    image: registry.openanalytics.eu/openanalytics/rdepot-app-it:1.7.7
+    image: registry.openanalytics.eu/openanalytics/rdepot-app-it:1.7.8
     restart: always
     hostname: oa-rdepot-app-openid
     container_name: oa-rdepot-app-openid
@@ -179,7 +179,7 @@ services:
         ipv4_address: 192.168.49.22  
   
   app-keycloak:    
-    image: registry.openanalytics.eu/openanalytics/rdepot-app-it:1.7.7
+    image: registry.openanalytics.eu/openanalytics/rdepot-app-it:1.7.8
     restart: always
     hostname: oa-rdepot-app-keycloak
     container_name: oa-rdepot-app-keycloak
@@ -206,7 +206,7 @@ services:
         ipv4_address: 192.168.49.23   
       
   app-simple:
-    image: registry.openanalytics.eu/openanalytics/rdepot-app-it:1.7.7
+    image: registry.openanalytics.eu/openanalytics/rdepot-app-it:1.7.8
     restart: always
     hostname: oa-rdepot-app-simple
     container_name: oa-rdepot-app-simple
@@ -232,7 +232,7 @@ services:
         ipv4_address: 192.168.49.24   
           
   app-declarative:
-    image: registry.openanalytics.eu/openanalytics/rdepot-app-it:1.7.7
+    image: registry.openanalytics.eu/openanalytics/rdepot-app-it:1.7.8
     restart: always
     hostname: oa-rdepot-declarative
     container_name: oa-rdepot-declarative
@@ -254,7 +254,7 @@ services:
       - oa-rdepot
       
   app-migrations:
-    image: registry.openanalytics.eu/openanalytics/rdepot-app-it:1.7.7
+    image: registry.openanalytics.eu/openanalytics/rdepot-app-it:1.7.8
     restart: always
     hostname: oa-rdepot-migrations
     container_name: oa-rdepot-migrations

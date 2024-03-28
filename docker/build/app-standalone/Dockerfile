@@ -1,4 +1,4 @@
-FROM openanalytics/rdepot-app-it:1.7.7
+FROM openanalytics/rdepot-app-it:1.7.8
 
 COPY ./app/build/libs/rdepot-app-*application.war /opt/rdepot/rdepot.war
 COPY ./docker/app/application.yml /opt/rdepot/application.yml
