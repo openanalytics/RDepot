@@ -122,11 +122,6 @@ public class FileUploadController {
     		logger.error(e.getClass().getCanonicalName() + ": " + e.getMessage());
     		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
     				new SynchronizeRepositoryResponseBody(id, SharedMessageCodes.RESPONSE_ERROR));
-    	} finally {
-    		if(id != null) {
-    			if(!Objects.equals(id, "") && responseMap.containsKey(id))
-    				responseMap.remove(id);
-    		}
     	}
     }
 
