@@ -1,0 +1,11 @@
+{
+  "code": 422,
+  "data": [
+    "empty.name",
+    "invalid.package.name",
+    "forbidden.update"
+  ],
+  "messageCode": "error.validation",
+  "message": "Validation failed for the resource.",
+  "status": "ERROR"
+}

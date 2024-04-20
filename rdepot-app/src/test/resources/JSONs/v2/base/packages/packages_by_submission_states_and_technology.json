@@ -1,0 +1,302 @@
+{
+  "code": 200,
+  "data": {
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/packages?submissionState=rejected,waiting&technology=R&page=0&size=20&sort=id,asc"
+      }
+    ],
+    "page": {
+      "number": 0,
+      "size": 20,
+      "totalPages": 1,
+      "totalElements": 7
+    },
+    "content": [
+      {
+        "author": "Scott Fortmann-Roe",
+        "active": false,
+        "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
+        "source": "",
+        "technology": "R",
+        "repository": {
+          "name": "testrepo1",
+          "id": 2,
+          "published": true,
+          "technology": "R",
+          "publicationUri": "http://localhost/repo/testrepo1"
+        },
+        "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
+        "version": "0.9.1",
+        "url": null,
+        "deleted": false,
+        "name": "A3",
+        "submission": {
+          "id": 16,
+          "state": "REJECTED"
+        },
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/packages/16"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8017/api/v2/manager/packages"
+          }
+        ],
+        "id": 16,
+        "user": {
+          "name": "Albert Einstein",
+          "id": 4,
+          "login": "einstein",
+          "email": "einstein@ldap.forumsys.com"
+        }
+      },
+      {
+        "author": "Nicholas Tierney [aut, cre]",
+        "active": false,
+        "description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
+        "source": "/opt/rdepot/new/70032548/visdat_0.1.0.tar.gz",
+        "technology": "R",
+        "repository": {
+          "name": "testrepo2",
+          "id": 3,
+          "published": true,
+          "technology": "R",
+          "publicationUri": "http://localhost/repo/testrepo2"
+        },
+        "title": "Preliminary Data Visualisation",
+        "version": "0.1.0",
+        "url": "https://github.com/njtierney/visdat/",
+        "deleted": false,
+        "name": "visdat",
+        "submission": {
+          "id": 19,
+          "state": "WAITING"
+        },
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/packages/19"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8017/api/v2/manager/packages"
+          }
+        ],
+        "id": 19,
+        "user": {
+          "name": "Albert Einstein",
+          "id": 4,
+          "login": "einstein",
+          "email": "einstein@ldap.forumsys.com"
+        }
+      },
+      {
+        "author": "Nicholas Tierney [aut, cre]",
+        "active": false,
+        "description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
+        "source": "",
+        "technology": "R",
+        "repository": {
+          "name": "testrepo1",
+          "id": 2,
+          "published": true,
+          "technology": "R",
+          "publicationUri": "http://localhost/repo/testrepo1"
+        },
+        "title": "Preliminary Data Visualisation",
+        "version": "0.1.0",
+        "url": "https://github.com/njtierney/visdat/",
+        "deleted": false,
+        "name": "visdat",
+        "submission": {
+          "id": 22,
+          "state": "REJECTED"
+        },
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/packages/23"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8017/api/v2/manager/packages"
+          }
+        ],
+        "id": 23,
+        "user": {
+          "name": "Albert Einstein",
+          "id": 4,
+          "login": "einstein",
+          "email": "einstein@ldap.forumsys.com"
+        }
+      },
+      {
+        "author": "Peter Bogetoft and Lars Otto",
+        "active": false,
+        "description": "Estimates and graphs deterministic (DEA) frontier models with different technology assumptions (fdh, vrs, drs, crs, irs, add). Also handles possible slacks, peers and their weights (lambdas), optimal cost, revenue and profit allocation, super--efficiency, and mergers. A comparative method for estimating SFA efficiencies is included.",
+        "source": "",
+        "technology": "R",
+        "repository": {
+          "name": "testrepo4",
+          "id": 5,
+          "published": false,
+          "technology": "R",
+          "publicationUri": "http://localhost/repo/testrepo4"
+        },
+        "title": "Benchmark and frontier analysis using DEA and SFA",
+        "version": "0.10",
+        "url": null,
+        "deleted": false,
+        "name": "Benchmarking",
+        "submission": {
+          "id": 24,
+          "state": "REJECTED"
+        },
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/packages/24"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8017/api/v2/manager/packages"
+          }
+        ],
+        "id": 24,
+        "user": {
+          "name": "Albert Einstein",
+          "id": 4,
+          "login": "einstein",
+          "email": "einstein@ldap.forumsys.com"
+        }
+      },
+      {
+        "author": "Neil J. Gunther [aut], Stefan Moeding [aut, cre]",
+        "active": false,
+        "description": "The Universal Scalability Law (Gunther 2007)",
+        "source": "/opt/rdepot/new/54345476/usl_2.0.0.tar.gz",
+        "technology": "R",
+        "repository": {
+          "name": "testrepo2",
+          "id": 3,
+          "published": true,
+          "technology": "R",
+          "publicationUri": "http://localhost/repo/testrepo2"
+        },
+        "title": "Analyze System Scalability with the Universal Scalability Law",
+        "version": "2.0.0",
+        "url": null,
+        "deleted": false,
+        "name": "usl",
+        "submission": {
+          "id": 26,
+          "state": "WAITING"
+        },
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/packages/26"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8017/api/v2/manager/packages"
+          }
+        ],
+        "id": 26,
+        "user": {
+          "name": "Albert Einstein",
+          "id": 4,
+          "login": "einstein",
+          "email": "einstein@ldap.forumsys.com"
+        }
+      },
+      {
+        "author": "Scott Fortmann-Roe",
+        "active": false,
+        "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
+        "source": "/opt/rdepot/new/92253304/A3_0.9.1.tar.gz",
+        "technology": "R",
+        "repository": {
+          "name": "testrepo4",
+          "id": 5,
+          "published": false,
+          "technology": "R",
+          "publicationUri": "http://localhost/repo/testrepo4"
+        },
+        "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
+        "version": "0.9.1",
+        "url": null,
+        "deleted": false,
+        "name": "A3",
+        "submission": {
+          "id": 30,
+          "state": "WAITING"
+        },
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/packages/30"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8017/api/v2/manager/packages"
+          }
+        ],
+        "id": 30,
+        "user": {
+          "name": "Local Admin User",
+          "id": 8,
+          "login": "admin",
+          "email": "admin@localhost"
+        }
+      },
+      {
+        "author": "Katalin Csillery, with contributions from Michael Blum and Olivier Francois",
+        "active": false,
+        "description": "The 'abc' package provides various functions for parameter estimation and model selection in an ABC framework. Three main",
+        "source": "/opt/rdepot/new/51328701/abc_1.0.tar.gz",
+        "technology": "R",
+        "repository": {
+          "name": "testrepo4",
+          "id": 5,
+          "published": false,
+          "technology": "R",
+          "publicationUri": "http://localhost/repo/testrepo4"
+        },
+        "title": "Functions to perform Approximate Bayesian Computation (ABC) using simulated data",
+        "version": "1.0",
+        "url": null,
+        "deleted": false,
+        "name": "abc",
+        "submission": {
+          "id": 31,
+          "state": "WAITING"
+        },
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/packages/31"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8017/api/v2/manager/packages"
+          }
+        ],
+        "id": 31,
+        "user": {
+          "name": "Local Admin User",
+          "id": 8,
+          "login": "admin",
+          "email": "admin@localhost"
+        }
+      }
+    ]
+  },
+  "messageCode": "success.request.processed",
+  "message": "Your request has been processed successfully.",
+  "status": "SUCCESS"
+}

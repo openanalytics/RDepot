@@ -1,0 +1,105 @@
+api-token:
+  secret: SecretKeyToGenJWTs
+  issuer: RDepot
+  audience:
+    - RDepot
+  lifetime: 10
+
+allowed-origin: http://localhost:3001
+
+repository-snapshots: true
+
+oauth2:
+  jwk-set-uri: http://192.168.49.17:8080/auth/realms/RDepot/protocol/openid-connect/certs
+  login-field: preferred_username
+
+default-user-configuration:
+  language: en-US
+  theme: light
+  page-size: 10
+  supported-languages:
+    - en-US
+    - de
+    - pl-PL
+  supported-themes:
+    - light
+    - dark
+
+declarative: false
+#repositories:
+#  - name: A
+#    publication-uri: http://localhost/repo/A13
+#    server-address: http://oa-rdepot-repo:8080/A13
+#  - name: D
+#    publication-uri: http://localhost/repo/D
+#    server-address: http://oa-rdepot-repo:8080/D
+
+# Email related properties
+spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+  mail:
+    enabled: false
+    password: mysecretpassword
+    username: rdepot
+    host: 192.168.49.1
+    port: 3925
+
+# Enable Liquibase  
+  liquibase:
+    user: postgres
+    enabled: true    
+# Logging
+#logging:
+#  level:
+#    org:
+#      springframework:
+#        web: TRACE
+#      hibernate:
+#        SQL: DEBUG
+#        type: 
+#          descriptor:
+#            sql:
+#              BasicBinder: TRACE
+   
+# Authentication related properties
+app:  
+  authentication: simple
+
+  # Simple authentication related properties
+  simple:
+    users:
+      - login: einstein
+        password: testpassword  
+        name: Albert Einstein 
+      - login: tesla
+        password: testpassword
+        name: Nicolas Tesla
+      - login: galieleo
+        password: testpassword
+        name: Galileo Galilei
+      - login: newton
+        password: testpassword
+        name: Isaac Newton
+      - login: newbie
+        password: testpassword
+        name: New User
+      - login: doe
+        password: testpassword
+        name: John Doe  
+    default:
+      admins:
+        - einstein            
+
+# Database related properties
+db:
+  driver: org.postgresql.Driver
+  url: jdbc:postgresql://oa-rdepot-db:5432/rdepot
+  username: rdepot
+  password: mysecretpassword
+
+# Hibernate related properties
+hibernate:
+  dialect: org.hibernate.dialect.PostgreSQLDialect
+  show_sql: false  
+

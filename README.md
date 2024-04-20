@@ -9,8 +9,8 @@
 
 # RDepot
 
-Open Source Enterprise Management of R Repositories
+Open Source Enterprise Management of R and Python Repositories
 
 Learn more at https://rdepot.io
 
-#### (c) Copyright Open Analytics NV, 2012-2023 - Apache License 2.0
+#### (c) Copyright Open Analytics NV, 2012-2024 - Apache License 2.0

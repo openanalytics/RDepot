@@ -1,0 +1,14 @@
+Package: accrued
+Type: Package
+Title: Data Quality Visualization Tools for Partially Accruing Data
+Version: 1.3.5
+Date: 2015-07-20
+Author: Julie Eaton and Ian Painter
+Maintainer: Julie Eaton <jreaton@uw.edu>
+Depends: R (>= 2.14.1), grid
+Description: Package for visualizing data quality of partially accruing data.
+License: GPL-3
+Packaged: 2015-07-20 18:44:41 UTC; jreaton
+NeedsCompilation: no
+Repository: CRAN
+Date/Publication: 2015-07-20 22:40:00

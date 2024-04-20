@@ -1,0 +1,7 @@
+{
+    "status": "ERROR",
+    "code": 422,
+    "message": "Your JSON Patch object is incorrect.",
+    "messageCode": "error.malformed.patch",
+    "data": "Non-existing name/value pair in the object for key repositoryyyyyyId"
+}

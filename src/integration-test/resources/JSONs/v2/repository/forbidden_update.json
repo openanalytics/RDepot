@@ -1,9 +1,0 @@
-{
-  "code": 422,
-  "data": [
-    "forbidden.update"
-  ],
-  "messageCode": "error.validation",
-  "message": "Validation failed for the resource.",
-  "status": "error"
-}

@@ -1,0 +1,22 @@
+{
+    "status": "SUCCESS",
+    "code": 201,
+    "message": "Your resource has been created successfully.",
+    "messageCode": "success.resource.created",
+	"data": {
+        "id": 100,
+        "user":{"name":"Test User111","id":111,"login":"repositorymaintainer_testusername111","email":"111test@example.org"},
+        "repository":{"name":"New R Repository","id":201,"publicationUri":"example.com"},
+        "deleted": false,
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost/api/v2/manager/repository-maintainers/100"
+            },
+            {
+                "rel": "repositoryMaintainerList",
+                "href": "http://localhost/api/v2/manager/repository-maintainers"
+            }
+        ]
+    }
+}

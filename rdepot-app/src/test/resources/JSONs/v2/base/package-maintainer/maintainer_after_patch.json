@@ -1,0 +1,44 @@
+{
+  "code": 200,
+  "data": {
+    "deleted": false,
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/package-maintainers/1"
+      },
+      {
+        "rel": "packageMaintainerList",
+        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+      },
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/package-maintainers/1",
+        "type": "PATCH"
+      },
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/package-maintainers/1",
+        "type": "DELETE"
+      }
+    ],
+    "id": 1,
+    "packageName": "abc",
+    "repository": {
+      "name": "testrepo1",
+      "id": 2,
+      "published": true,
+      "technology": "R",
+      "publicationUri": "http://localhost/repo/testrepo1"
+    },
+    "user": {
+      "name": "Galileo Galilei",
+      "id": 6,
+      "login": "galieleo",
+      "email": "galieleo@ldap.forumsys.com"
+    }
+  },
+  "messageCode": "success.request.processed",
+  "message": "Your request has been processed successfully.",
+  "status": "SUCCESS"
+}

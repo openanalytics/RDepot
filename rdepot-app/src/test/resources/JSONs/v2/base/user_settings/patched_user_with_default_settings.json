@@ -1,0 +1,33 @@
+{
+  "status": "SUCCESS",
+  "code": 200,
+  "message": "Your request has been processed successfully.",
+  "messageCode": "success.request.processed",
+  "data": {
+    "id": 3,
+    "language": "pl-PL",
+    "theme": "dark",
+    "pageSize": 10,
+    "user": {
+      "id": 6,
+      "name": "Galileo Galilei",
+      "login": "galieleo",
+      "email": "galieleo@ldap.forumsys.com"
+    },
+    "links": [
+      {
+        "href": "http://localhost:8017/api/v2/manager/user-settings/6",
+        "rel": "self"
+      },
+      {
+        "href": "http://localhost:8017/api/v2/manager/user-settings/6",
+        "rel": "self",
+        "type": "PATCH"
+      },
+      {
+        "href": "http://localhost:8017/api/v2/manager/users/6",
+        "rel": "user"
+      }
+    ]
+  }
+}

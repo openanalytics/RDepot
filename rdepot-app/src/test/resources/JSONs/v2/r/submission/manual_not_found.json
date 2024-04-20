@@ -1,0 +1,7 @@
+{
+  "code": 404,
+  "data": null,
+  "messageCode": "error.manual.not.found",
+  "message": "Could not find any manual for the given package.",
+  "status": "ERROR"
+}

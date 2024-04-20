@@ -1,0 +1,5 @@
+name: a
+publicationUri: http://localhost/repo/R
+serverAddress: http://oa-rdepot-repo:8080/R
+published: false
+technology: R

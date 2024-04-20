@@ -1,0 +1,40 @@
+{
+    "status": "SUCCESS",
+    "code": 200,
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+	"data": {
+		"links": [
+            {
+                "rel": "self",
+                "href": "http://localhost/api/v2/manager/users/roles"
+            }
+        ],
+        "content": [
+			{
+				"id": 0,
+				"value": 3,
+				"name": "admin",
+				"description": "Admin"
+			},
+			{
+				"id": 1,
+				"value": 2,
+				"name": "repositorymaintainer",
+				"description": "Repository Maintainer"
+			},
+			{
+				"id": 2,
+				"value": 1,
+				"name": "packagemaintainer",
+				"description": "Package Maintainer"
+			},
+			{
+				"id": 3,
+				"value": 0,
+				"name": "user",
+				"description": "User"
+			}
+		]
+	}
+}

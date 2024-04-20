@@ -1,0 +1,7 @@
+{
+	"status": "ERROR",
+	"code": 405,
+	"message": "Creating and editing repositories has been disabled by an administrator.",
+	"messageCode": "repository.declarative.mode",
+	"data": null
+}

@@ -1,0 +1,21 @@
+{
+	"code": 200,
+	"data": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages?repositoryName=testrepo11&deleted=true&page=0&size=20"
+			}
+		],
+		"page": {
+			"number": 0,
+			"size": 20,
+			"totalPages": 0,
+			"totalElements": 0
+		},
+		"content": []
+	},
+	"messageCode": "success.request.processed",
+	"message": "Your request has been processed successfully.",
+	"status": "SUCCESS"
+}

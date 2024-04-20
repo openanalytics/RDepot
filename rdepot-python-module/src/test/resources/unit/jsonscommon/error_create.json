@@ -1,0 +1,7 @@
+{
+	"status": "ERROR",
+	"code": 500,
+	"message": "Could not create resource due to internal server error.",
+	"messageCode": "error.create.resource",
+	"data": null
+}

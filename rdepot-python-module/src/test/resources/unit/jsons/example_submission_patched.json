@@ -1,0 +1,64 @@
+{
+	"status": "SUCCESS",
+	"code": 200,
+	"message": "Your request has been processed successfully.",
+	"messageCode": "success.request.processed",
+	"data": {
+		"id": 0,
+		"submitter": {
+			"id": 0,
+			"name": "Test User0",
+			"login": "admin_testusername0",
+			"email": "0test@example.org"
+		},
+		"packageBag": {
+			"id": 0,
+			"version": "4.5.6",
+			"user": {
+				"name": "Test User0",
+				"id": 0,
+				"login": "admin_testusername0",
+				"email": "0test@example.org"
+			},
+			"repository": {
+				"name": "Test Python Repository 123",
+				"id": 123,
+				"publicationUri": "http://localhost/repo/testrepo123"
+			},
+			"submission": {
+	             "id": 0,
+	             "state": "ACCEPTED"
+	           },
+			"name": "TestPackage0",
+			"description": "Simple test package0",
+			"author": "Albert Einstein0",
+			"title": "",
+			"url": "",
+			"source": "0test_package.tar.gz",
+			"active": true,
+			"deleted": false,
+			"links": [
+				{
+					"rel": "self",
+					"href": "http://localhost/api/v2/manager/python/packages/0"
+				},
+				{
+					"rel": "packageList",
+					"href": "http://localhost/api/v2/manager/packages"
+				}
+			]
+		},
+		"changes": "Some changes 123",
+		"state": "ACCEPTED",
+		"links": [
+			{
+				"rel": "self",
+				"href": "http://localhost/api/v2/manager/python/submissions/0"
+			},
+			{
+				"rel": "submissionList",
+				"href": "http://localhost/api/v2/manager/python/submissions"
+			}
+		]
+	}
+}

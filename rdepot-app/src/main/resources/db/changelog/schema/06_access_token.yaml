@@ -1,0 +1,104 @@
+databaseChangeLog:
+  - changeSet:
+      id: 06_01_access_token_table
+      author: dglebowska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: access_token
+                schemaName: public
+      changes:
+        - createTable:
+            schemaName: public
+            tableName: access_token
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  startWith: 1
+                  incrementBy: 1
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: user_id
+                  type: integer
+                  constraints:
+                    nullable: false
+                    unique: false      
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+                    unique: false
+              - column:
+                  name: value
+                  type: text
+                  constraints:
+                    nullable: false
+                    unique: false
+              - column:
+                  name: creation_date
+                  type: date
+                  defaultValueDate: current_date
+                  constraints:
+                    nullable: false
+                    unique: false
+              - column:
+                  name: expiration_date
+                  type: date
+                  constraints:
+                    nullable: false
+                    unique: false
+              - column:
+                  name: active
+                  type: boolean
+                  defaultValueBoolean: true
+              - column:
+                  name: deleted
+                  type: boolean
+                  defaultValueBoolean: false    
+  - changeSet:
+      id: 06_02_addForeignKeyConstraint_of_user_access_token
+      author: dglebowska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: of_user
+                schemaName: public
+                foreignKeyTableName: access_token
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: access_token
+            baseColumnNames: user_id
+            constraintName: of_user
+            referencedTableSchemaName: public
+            referencedTableName: user
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 06_03_update_newsfeed_event
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - columnExists:
+                tableName: newsfeed_event
+                schemaName: public
+                columnName: related_accesstoken_id
+      changes:
+        - addColumn:
+            tableName: newsfeed_event
+            schemaName: public
+            columns:
+              - column:
+                  name: related_accesstoken_id
+                  type: integer
+                  constraints: 
+                    nullable: true
+ 

@@ -1,0 +1,4 @@
+    name: X
+    publicationUri: http://localhost/repo/X
+    serverAddress: http://oa-rdepot-repo:8080/X
+    technology: PYTHON

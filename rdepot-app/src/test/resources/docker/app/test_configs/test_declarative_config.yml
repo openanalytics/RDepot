@@ -1,0 +1,80 @@
+api-token:
+  secret: SecretKeyToGenJWTs
+  issuer: RDepot
+  audience:
+    - RDepot
+  lifetime: 5
+
+additional-repository-configs:
+  paths:
+    - /opt/rdepot/declared_repositories
+  
+allowed-origin: http://localhost:3001
+
+default-user-configuration:
+  language: en-US
+  theme: light
+  page-size: 10
+  supported-languages:
+    - en-US
+    - de
+    - pl-PL
+  supported-themes:
+    - light
+    - dark
+
+declarative: true
+# Authentication related properties
+app:  
+  authentication: simple     
+  simple:
+    users:
+      - login: einstein
+        password: testpassword  
+        name: Albert Einstein 
+      - login: tesla
+        password: testpassword
+        name: Nicolas Tesla
+      - login: galieleo
+        password: testpassword
+        name: Galileo Galilei
+      - login: newton
+        password: testpassword
+        name: Isaac Newton
+      - login: newbie
+        password: testpassword
+        name: New User
+      - login: doe
+        password: testpassword
+        name: John Doe  
+    default:
+      admins:
+        - einstein     
+
+# Database related properties
+db:
+  driver: org.postgresql.Driver
+  url: jdbc:postgresql://oa-rdepot-db:5432/declarative
+  username: rdepot
+  password: mysecretpassword
+
+# Hibernate related properties
+hibernate:
+  dialect: org.hibernate.dialect.PostgreSQLDialect
+  show_sql: false
+
+# Enable Liquibase
+spring:
+  mail:
+    enabled: false
+  liquibase:
+    user: postgres
+    enabled: false
+    url: jdbc:postgresql://oa-rdepot-db:5432/declarative
+
+# Debug SQL queries
+logging:
+  level:
+    eu:
+      openanalytics:
+        rdepot: DEBUG

@@ -1,0 +1,88 @@
+{
+  "code": 200,
+  "data": {
+    "links": [
+      {
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories?deleted=true&page=0&size=20"
+      }
+    ],
+    "page": {
+      "number": 0,
+      "size": 20,
+      "totalPages": 1,
+      "totalElements": 2
+    },
+    "content": [
+      {
+        "hashMethod": "MD5",
+        "deleted": true,
+        "synchronizing": false,
+        "name": "testrepo11",
+        "serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo11",
+        "links": [
+          {
+            "rel": "self",
+            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/11"
+          },
+          {
+            "rel": "repositoryList",
+            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories"
+          },
+          {
+            "rel": "self",
+            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/11",
+            "type": "PATCH"
+          },
+          {
+            "rel": "self",
+            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/11",
+            "type": "DELETE"
+          }
+        ],
+        "id": 11,
+        "published": true,
+        "technology": "Python",
+        "version": 1,
+        "publicationUri": "http:\/\/localhost\/repo\/testrepo11",
+        "numberOfPackages": 0
+      },
+      {
+        "hashMethod": null,
+        "deleted": true,
+        "synchronizing": false,
+        "name": "testrepo12",
+        "serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo12",
+        "links": [
+          {
+            "rel": "self",
+            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/12"
+          },
+          {
+            "rel": "repositoryList",
+            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories"
+          },
+          {
+            "rel": "self",
+            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/12",
+            "type": "PATCH"
+          },
+          {
+            "rel": "self",
+            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/12",
+            "type": "DELETE"
+          }
+        ],
+        "id": 12,
+        "published": false,
+        "technology": "Python",
+        "version": 1,
+        "publicationUri": "http:\/\/localhost\/repo\/testrepo12",
+        "numberOfPackages": 0
+      }
+    ]
+  },
+  "messageCode": "success.request.processed",
+  "message": "Your request has been processed successfully.",
+  "status": "SUCCESS"
+}

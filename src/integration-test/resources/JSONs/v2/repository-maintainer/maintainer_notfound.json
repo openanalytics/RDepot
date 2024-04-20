@@ -1,7 +1,0 @@
-{
-    "status": "error",
-    "code": 404,
-    "message": "Could not find Repository Maintainer.",
-    "messageCode": "error.repositorymaintainer.notfound",
-    "data": null
-} 

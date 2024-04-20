@@ -1,0 +1,7 @@
+{
+    "status": "ERROR",
+    "code": 401,
+    "message": "Cannot perform this request because user is not authenticated.",
+    "messageCode": "error.user.not.authenticated",
+    "data": null
+}

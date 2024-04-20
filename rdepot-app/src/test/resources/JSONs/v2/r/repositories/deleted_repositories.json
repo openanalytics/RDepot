@@ -1,0 +1,86 @@
+{
+  "code": 200,
+  "data": {
+    "links": [
+      {
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories?deleted=true&page=0&size=20"
+      }
+    ],
+    "page": {
+      "number": 0,
+      "size": 20,
+      "totalPages": 1,
+      "totalElements": 2
+    },
+    "content": [
+      {
+        "deleted": true,
+        "synchronizing": false,
+        "name": "testrepo5",
+        "serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo5",
+        "links": [
+          {
+            "rel": "self",
+            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories\/6"
+          },
+          {
+            "rel": "repositoryList",
+            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories"
+          },
+          {
+            "rel": "self",
+            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories\/6",
+            "type": "PATCH"
+          },
+          {
+            "rel": "self",
+            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories\/6",
+            "type": "DELETE"
+          }
+        ],
+        "id": 6,
+        "published": false,
+        "technology": "R",
+        "version": 9,
+        "publicationUri": "http:\/\/localhost\/repo\/testrepo5",
+        "numberOfPackages": 0
+      },
+      {
+        "deleted": true,
+        "synchronizing": false,
+        "name": "testrepo6",
+        "serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo6",
+        "links": [
+          {
+            "rel": "self",
+            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories\/7"
+          },
+          {
+            "rel": "repositoryList",
+            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories"
+          },
+          {
+            "rel": "self",
+            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories\/7",
+            "type": "PATCH"
+          },
+          {
+            "rel": "self",
+            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories\/7",
+            "type": "DELETE"
+          }
+        ],
+        "id": 7,
+        "published": false,
+        "technology": "R",
+        "version": 6,
+        "publicationUri": "http:\/\/localhost\/repo\/testrepo6",
+        "numberOfPackages": 0
+      }
+    ]
+  },
+  "messageCode": "success.request.processed",
+  "message": "Your request has been processed successfully.",
+  "status": "SUCCESS"
+}

@@ -1,0 +1,124 @@
+version: '3'
+services:
+##
+  proxy:
+    image: registry.openanalytics.eu/proxy/library/nginx:alpine
+    restart: always
+    labels:
+      eu.openanalytics.rdepot.container.name: "oa-rdepot-proxy"
+    volumes:
+      - ./docker/proxy/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/proxy/sites-enabled/rdepot:/etc/nginx/sites-enabled/rdepot:ro
+      - repository:/opt/rdepot/repo/:ro
+    ports:
+      - 8017:80
+      - 8021:90
+      - 8023:95
+    depends_on:
+      - app
+      - repo
+      # - app-declarative
+    networks:
+      oa-rdepot:
+        aliases:
+          - oa-rdepot-proxy
+##
+  repo:
+    build: ./docker/repo
+    restart: always
+    labels:
+      eu.openanalytics.rdepot.container.name: "oa-rdepot-repo"
+    hostname: oa-rdepot-repo
+    volumes:
+      - ./docker/repo/rdepot-repo.jar:/opt/repo/rdepot-repo.jar:ro
+      - ./docker/repo/application.yml:/opt/repo/application.yml:ro
+      - repository:/opt/rdepot/
+      - ./itestServer:/opt/testServer
+    networks:
+      oa-rdepot:
+        aliases:
+          - oa-rdepot-repo
+  db:
+    image: registry.openanalytics.eu/proxy/library/postgres:alpine
+    labels:
+      eu.openanalytics.rdepot.container.name: "oa-rdepot-db"
+    restart: always
+    hostname: oa-rdepot-db
+    # container_name: oa-rdepot-db
+    volumes:
+      - ./docker/db/initial_scripts/:/docker-entrypoint-initdb.d/:ro
+      - ./docker/db/sql_files/:/opt/sql_files/:ro
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+    networks:
+      oa-rdepot:
+        aliases:
+          - oa-rdepot-db
+    ports:
+      - 5432:5432
+##
+  app:    
+    build: ./docker/app
+    restart: always
+    hostname: oa-rdepot-app
+    labels:
+      eu.openanalytics.rdepot.container.name: "oa-rdepot-app"
+    volumes:
+      - ./docker/app/test_configs/test_simple_config.yml:/opt/rdepot/application.yml
+      - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
+      - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
+      - ./itestSourceFiles:/opt/testSourceFiles:ro
+      - ./itestGenerated:/opt/testGenerated:ro
+      - ./itestNewFiles:/opt/newFiles:ro
+      - ./itestTrashFiles:/opt/trashFiles:ro
+    ports:
+      - 8001:8001
+      - 8018:8080
+      - 8019:8001
+    depends_on:
+      - db
+    environment:
+      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/rdepot
+      - DB_USERNAME=postgres
+      - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8001
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health -H 'Accept: application/json' || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 100
+    networks:
+      oa-rdepot:
+        aliases:
+          - oa-rdepot-app
+        ipv4_address: 192.168.49.21
+##
+  app-migrations:    
+    build: ./docker/app
+    hostname: oa-rdepot-app-migrations
+    labels:
+      eu.openanalytics.rdepot.container.name: "oa-rdepot-app-migrations"    
+    volumes:
+      - ./docker/app/test_configs/test_migration.yml:/opt/rdepot/application.yml
+      - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
+      - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro                   
+    depends_on:
+      - db
+    environment:
+      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/migrations
+      - DB_USERNAME=postgres
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health -H 'Accept: application/json' || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 100
+    networks:
+      oa-rdepot:
+        aliases:
+          - oa-rdepot-app-migrations
+networks:
+  oa-rdepot:
+    ipam:
+      config:
+        - subnet: 192.168.49.0/24
+volumes:
+  repository:

@@ -1,0 +1,59 @@
+{
+  "code": 200,
+  "data": {
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/repository-maintainers?deleted=true&search=NIKO&page=0&size=20&sort=id,asc"
+      }
+    ],
+    "page": {
+      "number": 0,
+      "size": 20,
+      "totalPages": 1,
+      "totalElements": 1
+    },
+    "content": [
+      {
+        "deleted": true,
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/repository-maintainers/2"
+          },
+          {
+            "rel": "repositoryMaintainerList",
+            "href": "http://localhost:8017/api/v2/manager/repository-maintainers"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/repository-maintainers/2",
+            "type": "PATCH"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/repository-maintainers/2",
+            "type": "DELETE"
+          }
+        ],
+        "id": 2,
+        "repository": {
+          "name": "testrepo3",
+          "id": 4,
+          "published": false,
+          "technology": "R",
+          "publicationUri": "http://localhost/repo/testrepo3"
+        },
+        "user": {
+          "name": "Nikola Tesla",
+          "id": 5,
+          "login": "tesla",
+          "email": "tesla@ldap.forumsys.com"
+        }
+      }
+    ]
+  },
+  "messageCode": "success.request.processed",
+  "message": "Your request has been processed successfully.",
+  "status": "SUCCESS"
+}

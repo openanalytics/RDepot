@@ -1,0 +1,39 @@
+{
+  "code": 200,
+  "data": {
+    "hashMethod": "SHA256",
+    "deleted": false,
+    "synchronizing": false,
+    "name": "newName",
+    "serverAddress": "http:\/\/oa-rdepot-repo:8080\/newName",
+    "links": [
+      {
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/9"
+      },
+      {
+        "rel": "repositoryList",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories"
+      },
+      {
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/9",
+        "type": "PATCH"
+      },
+      {
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/9",
+        "type": "DELETE"
+      }
+    ],
+    "id": 9,
+    "published": false,
+    "technology": "Python",
+    "version": 5,
+    "publicationUri": "http:\/\/localhost\/repo\/testrepo9",
+    "numberOfPackages": 3
+  },
+  "messageCode": "success.request.processed",
+  "message": "Your request has been processed successfully.",
+  "status": "SUCCESS"
+}

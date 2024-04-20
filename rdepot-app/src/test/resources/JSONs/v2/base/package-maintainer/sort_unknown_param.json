@@ -1,0 +1,9 @@
+{
+    "status": "ERROR",
+    "code": 400,
+    "message": "Unrecognized sorting query parameter.",
+    "messageCode": "unrecognized.query.parameter",
+    "data": [
+        "repositoryId"
+    ]
+}

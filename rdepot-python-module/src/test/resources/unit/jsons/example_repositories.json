@@ -1,0 +1,115 @@
+{
+	"status": "SUCCESS",
+	"code": 200,
+	"message": "Your request has been processed successfully.",
+	"messageCode": "success.request.processed",
+	"data": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "http://localhost/api/v2/manager/python/repositories"
+			}
+		],
+		"content": [
+			{
+				"id": 123,
+				"version": 10,
+				"publicationUri": "http://localhost/repo/testrepo123",
+				"name": "Test Python Repository 123",
+				"serverAddress": "http://192.168.1.100/testrepo123",
+				"deleted": false,
+				"published": true,
+				"synchronizing": false,
+				"technology": "Python",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http://localhost/api/v2/manager/python/repositories/123"
+					},
+					{
+						"rel": "repositoryList",
+						"href": "http://localhost/api/v2/manager/python/repositories"
+					},
+					{
+						"rel": "self",
+						"href": "http://localhost/api/v2/manager/python/repositories/123",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http://localhost/api/v2/manager/python/repositories/123",
+						"type": "DELETE"
+					}
+				]
+			},
+			{
+				"id": 456,
+				"version": 5,
+				"publicationUri": "http://localhost/repo/testrepo456",
+				"name": "Test Python Repository 456",
+				"serverAddress": "http://192.168.1.101/testrepo456",
+				"deleted": false,
+				"published": false,
+				"synchronizing": true,
+				"technology": "Python",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http://localhost/api/v2/manager/python/repositories/456"
+					},
+					{
+						"rel": "repositoryList",
+						"href": "http://localhost/api/v2/manager/python/repositories"
+					},
+					{
+						"rel": "self",
+						"href": "http://localhost/api/v2/manager/python/repositories/456",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http://localhost/api/v2/manager/python/repositories/456",
+						"type": "DELETE"
+					}
+				]
+			},
+			{
+				"id": 321,
+				"version": 2,
+				"publicationUri": "http://localhost/repo/testrepo321",
+				"name": "Test Python Repository 321",
+				"serverAddress": "http://192.168.1.102/testrepo321",
+				"deleted": false,
+				"published": false,
+				"synchronizing": false,
+				"technology": "Python",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http://localhost/api/v2/manager/python/repositories/321"
+					},
+					{
+						"rel": "repositoryList",
+						"href": "http://localhost/api/v2/manager/python/repositories"
+					},
+					{
+						"rel": "self",
+						"href": "http://localhost/api/v2/manager/python/repositories/321",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http://localhost/api/v2/manager/python/repositories/321",
+						"type": "DELETE"
+					}
+				]
+			}
+		],
+		"page": {
+			"size": 3,
+			"totalElements": 3,
+			"totalPages": 1,
+			"number": 0
+		}
+	}
+}

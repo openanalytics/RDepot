@@ -1,7 +1,0 @@
-{
-    "status": "error",
-    "code": 404,
-    "message": "Could not find Package Maintainer.",
-    "messageCode": "error.packagemaintainer.notfound",
-    "data": null
-} 

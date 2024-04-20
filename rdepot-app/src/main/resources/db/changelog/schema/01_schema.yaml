@@ -1,0 +1,1566 @@
+databaseChangeLog:
+  - changeSet:
+      id: 01_01_package_maintainer_table
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: package_maintainer
+                schemaName: public
+      changes:
+        - createTable:
+            tableName: package_maintainer
+            schemaName: public
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  startWith: 1
+                  incrementBy: 1
+                  constraints:
+                    primaryKey: true
+              - column:
+                 name: user_id
+                 type: integer
+                 constraints:
+                   nullable: false
+              - column:
+                 name: package
+                 type: text
+                 constraints:
+                   nullable: false
+              - column:
+                 name: repository_id
+                 type: integer
+                 constraints:
+                   nullable: false
+              - column:
+                 name: deleted
+                 type: boolean
+                 defaultValueBoolean: false
+                 constraints:
+                   nullable: false
+      rollback: empty
+  - changeSet:
+      id: 01_02_package_table
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: package
+                schemaName: public
+      changes:
+        - createTable:
+            tableName: package
+            schemaName: public
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  startWith: 1
+                  incrementBy: 1
+                  constraints:
+                    primaryKey: true
+              - column:
+                 name: name
+                 type: text
+                 constraints:
+                   nullable: false
+              - column:
+                 name: version
+                 type: text
+                 constraints:
+                   nullable: false
+              - column:
+                 name: description
+                 type: text
+                 constraints:
+                   nullable: false   
+              - column:
+                 name: author
+                 type: text
+                 constraints:
+                   nullable: false  
+              - column:
+                 name: maintainer_id
+                 type: integer
+                 constraints:
+                   nullable: false
+              - column:
+                 name: repository_id
+                 type: integer
+                 constraints:
+                   nullable: false
+              - column:
+                 name: depends
+                 type: text
+                 constraints:
+                   nullable: true
+              - column:
+                 name: imports
+                 type: text
+                 constraints:
+                   nullable: true
+              - column:
+                 name: suggests
+                 type: text
+                 constraints:
+                   nullable: true
+              - column:
+                 name: system_requirements
+                 type: text
+                 constraints:
+                   nullable: true
+              - column:
+                 name: license
+                 type: text
+                 constraints:
+                   nullable: false
+              - column:
+                 name: url
+                 type: text
+                 constraints:
+                   nullable: true
+              - column:
+                 name: source
+                 type: text
+                 constraints:
+                   nullable: false
+              - column:
+                 name: title
+                 type: text
+                 constraints:
+                   nullable: false
+              - column:
+                 name: active
+                 type: boolean
+                 defaultValueBoolean: false
+                 constraints:
+                   nullable: false
+              - column:
+                 name: deleted
+                 type: boolean
+                 defaultValueBoolean: false
+                 constraints:
+                   nullable: false
+              - column:
+                 name: md5sum
+                 type: text
+                 constraints:
+                   nullable: false
+      rollback: empty
+  - changeSet:
+      id: 01_03_repository_maintainer_table
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: repository_maintainer
+                schemaName: public
+      changes:
+        - createTable:
+            tableName: repository_maintainer
+            schemaName: public
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  startWith: 1
+                  incrementBy: 1
+                  constraints:
+                    primaryKey: true
+              - column:
+                 name: user_id
+                 type: integer
+                 constraints:
+                   nullable: false
+              - column:
+                 name: repository_id
+                 type: integer
+                 constraints:
+                   nullable: false
+              - column:
+                 name: deleted
+                 type: boolean
+                 defaultValueBoolean: false
+                 constraints:
+                   nullable: false
+      rollback: empty
+  - changeSet:
+      id: 01_04_repository_table
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: repository
+                schemaName: public
+      changes:
+        - createTable:
+            tableName: repository
+            schemaName: public
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  startWith: 1
+                  incrementBy: 1
+                  constraints:
+                    primaryKey: true
+              - column:
+                 name: version
+                 type: integer
+                 defaultValueNumeric: 0
+                 constraints:
+                   nullable: false
+              - column:
+                 name: publication_uri
+                 type: text
+                 constraints:
+                   nullable: false
+                   unique: true
+              - column:
+                 name: name
+                 type: text
+                 constraints:
+                   nullable: false
+                   unique: true
+              - column:
+                 name: server_address
+                 type: text
+                 constraints:
+                   nullable: false
+              - column:
+                 name: published
+                 type: boolean
+                 defaultValueBoolean: false
+                 constraints:
+                   nullable: false
+              - column:
+                 name: deleted
+                 type: boolean
+                 defaultValueBoolean: false
+                 constraints:
+                   nullable: false
+      rollback: empty
+  - changeSet:
+      id: 01_05_role_table
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: role
+                schemaName: public
+      changes:
+        - createTable:
+            tableName: role
+            schemaName: public
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  startWith: 1
+                  incrementBy: 1
+                  constraints:
+                    primaryKey: true
+              - column:
+                 name: value
+                 type: integer
+                 constraints:
+                   nullable: false
+                   unique: true
+              - column:
+                 name: name
+                 type: text
+                 constraints:
+                   nullable: false
+                   unique: true
+              - column:
+                 name: description
+                 type: text
+                 constraints:
+                   nullable: false
+                   unique: true
+        - insert:
+            schemaName: public
+            tableName: role
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 1
+              - column:
+                  name: value
+                  valueNumeric: 0
+              - column:
+                  name: name
+                  value: user
+              - column:
+                  name: description
+                  value: User
+        - insert:
+            schemaName: public
+            tableName: role
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 2
+              - column:
+                  name: value
+                  valueNumeric: 1
+              - column:
+                  name: name
+                  value: packagemaintainer
+              - column:
+                  name: description
+                  value: Package Maintainer
+        - insert:
+            schemaName: public
+            tableName: role
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 3
+              - column:
+                  name: value
+                  valueNumeric: 2
+              - column:
+                  name: name
+                  value: repositorymaintainer
+              - column:
+                  name: description
+                  value: Repository Maintainer
+        - insert:
+            schemaName: public
+            tableName: role
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 4
+              - column:
+                  name: value
+                  valueNumeric: 3
+              - column:
+                  name: name
+                  value: admin
+              - column:
+                  name: description
+                  value: Administrator
+        - sql:
+            dbms: postgresql
+            sql: "select setval('role_id_seq', max(id)+1) from role"
+      rollback: empty
+  - changeSet:
+      id: 01_06_submmision_table
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: submission
+                schemaName: public
+      changes:
+        - createTable:
+            tableName: submission
+            schemaName: public
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  startWith: 1
+                  incrementBy: 1
+                  constraints:
+                    primaryKey: true
+              - column:
+                 name: submitter_id
+                 type: integer
+                 constraints:
+                   nullable: false
+              - column:
+                 name: package_id
+                 type: integer
+                 constraints:
+                   nullable: false
+              - column:
+                 name: accepted
+                 type: boolean
+                 defaultValueBoolean: false
+                 constraints:
+                   nullable: false                   
+              - column:
+                 name: deleted
+                 type: boolean
+                 defaultValueBoolean: false
+                 constraints:
+                   nullable: false
+              - column:
+                  name: changes
+                  type: text
+                  constraints:
+                    nullable: true
+      rollback: empty
+  - changeSet:
+      id: 01_07_user_table
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: user
+                schemaName: public
+      changes:
+        - createTable:
+            schemaName: public
+            tableName: user
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  startWith: 1
+                  incrementBy: 1
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: role_id
+                  type: integer
+                  defaultValueNumeric: 4
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: text
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: login
+                  type: text
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: active
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_logged_in_on
+                  type: date
+                  constraints:
+                    nullable: true
+              - column:
+                  name: deleted
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false        
+        - sql:
+            dbms: postgresql
+            sql: select setval('user_id_seq', max(id)+1) from "user"
+      rollback: empty
+  - changeSet:
+      id: 01_08_event_table
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: event
+                schemaName: public
+            - tableExists:
+                tableName: newsfeed_event
+                schemaName: public
+      changes:
+        - createTable:
+            schemaName: public
+            tableName: event
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  startWith: 1
+                  incrementBy: 1
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: value
+                  type: character varying(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+        - insert:
+            schemaName: public
+            tableName: event
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 1
+              - column:
+                  name: value
+                  value: create
+        - insert:
+            schemaName: public
+            tableName: event
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 2
+              - column:
+                  name: value
+                  value: delete
+        - insert:
+            schemaName: public
+            tableName: event
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 3
+              - column:
+                  name: value
+                  value: update
+      rollback: empty
+  - changeSet:
+      id: 01_09_package_event_table
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: package_event
+                schemaName: public
+            - tableExists:
+                tableName: newsfeed_event
+                schemaName: public
+      changes:
+        - createTable:
+            schemaName: public
+            tableName: package_event
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  startWith: 1
+                  incrementBy: 1
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: date
+                  type: date
+                  defaultValueDate: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: package_id
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: event_id
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: changed_variable
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: value_before
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: value_after
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: changed_by
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: time
+                  type: time with time zone
+                  defaultValueDate: now()
+                  constraints:
+                    nullable: true
+      rollback: empty
+  - changeSet:
+      id: 01_10_package_maintainer_event_table
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: package_maintainer_event
+                schemaName: public
+            - tableExists:
+                tableName: newsfeed_event
+                schemaName: public
+      changes:
+        - createTable:
+            schemaName: public
+            tableName: package_maintainer_event
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  startWith: 1
+                  incrementBy: 1
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: date
+                  type: date
+                  defaultValueDate: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: package_maintainer_id
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: event_id
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: changed_variable
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: value_before
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: value_after
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: changed_by
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: time
+                  type: time with time zone
+                  defaultValueDate: now()
+                  constraints:
+                    nullable: true
+      rollback: empty
+  - changeSet:
+      id: 01_11_repository_event_table
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: repository_event
+                schemaName: public
+            - tableExists:
+                tableName: newsfeed_event
+                schemaName: public
+      changes:
+        - createTable:
+            schemaName: public
+            tableName: repository_event
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  startWith: 1
+                  incrementBy: 1
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: date
+                  type: date
+                  defaultValueDate: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: repository_id
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: event_id
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: changed_variable
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: value_before
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: value_after
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: changed_by
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: time
+                  type: time with time zone
+                  defaultValueDate: now()
+                  constraints:
+                    nullable: true
+      rollback: empty
+  - changeSet:
+      id: 01_12_repository_maintainer_event_table
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: repository_maintainer_event
+                schemaName: public
+            - tableExists:
+                tableName: newsfeed_event
+                schemaName: public
+      changes:
+        - createTable:
+            schemaName: public
+            tableName: repository_maintainer_event
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  startWith: 1
+                  incrementBy: 1
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: date
+                  type: date
+                  defaultValueDate: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: repository_maintainer_id
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: event_id
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: changed_variable
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: value_before
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: value_after
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: changed_by
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: time
+                  type: time with time zone
+                  defaultValueDate: now()
+                  constraints:
+                    nullable: true
+      rollback: empty
+  - changeSet:
+      id: 01_13_submission_event_table
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: submission_event
+                schemaName: public
+            - tableExists:
+                tableName: newsfeed_event
+                schemaName: public
+      changes:
+        - createTable:
+            schemaName: public
+            tableName: submission_event
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  startWith: 1
+                  incrementBy: 1
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: date
+                  type: date
+                  defaultValueDate: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: submission_id
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: event_id
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: changed_variable
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: value_before
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: value_after
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: changed_by
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: time
+                  type: time with time zone
+                  defaultValueDate: now()
+                  constraints:
+                    nullable: true
+      rollback: empty
+  - changeSet:
+      id: 01_14_user_event_table
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: user_event
+                schemaName: public
+            - tableExists:
+                tableName: newsfeed_event
+                schemaName: public
+      changes:
+        - createTable:
+            schemaName: public
+            tableName: user_event
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  startWith: 1
+                  incrementBy: 1
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: date
+                  type: date
+                  defaultValueDate: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: event_id
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: changed_variable
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: value_before
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: value_after
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: changed_by
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: time
+                  type: time with time zone
+                  defaultValueDate: now()
+                  constraints:
+                    nullable: true        
+      rollback: empty
+  - changeSet:
+      id: 01_15_addForeignKeyConstraint_by_user_package_event
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: by_user
+                schemaName: public
+                foreignKeyTableName: package_event
+            - tableExists:
+                tableName: newsfeed_event
+                schemaName: public
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: package_event
+            baseColumnNames: changed_by
+            constraintName: by_user
+            referencedTableSchemaName: public
+            referencedTableName: user
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 01_16_addForeignKeyConstraint_by_user_package_maintainer_event
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: by_user
+                schemaName: public
+                foreignKeyTableName: package_maintainer_event
+            - tableExists:
+                tableName: newsfeed_event
+                schemaName: public
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: package_maintainer_event
+            baseColumnNames: changed_by
+            constraintName: by_user
+            referencedTableSchemaName: public
+            referencedTableName: user
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 01_17_addForeignKeyConstraint_by_user_repository_event
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: by_user
+                schemaName: public
+                foreignKeyTableName: repository_event
+            - tableExists:
+                tableName: newsfeed_event
+                schemaName: public
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: repository_event
+            baseColumnNames: changed_by
+            constraintName: by_user
+            referencedTableSchemaName: public
+            referencedTableName: user
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 01_18_addForeignKeyConstraint_by_user_repository_maintainer_event
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: by_user
+                schemaName: public
+                foreignKeyTableName: repository_maintainer_event
+            - tableExists:
+                tableName: newsfeed_event
+                schemaName: public
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: repository_maintainer_event
+            baseColumnNames: changed_by
+            constraintName: by_user
+            referencedTableSchemaName: public
+            referencedTableName: user
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 01_19_addForeignKeyConstraint_by_user_submission_event
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: by_user
+                schemaName: public
+                foreignKeyTableName: submission_event
+            - tableExists:
+                tableName: newsfeed_event
+                schemaName: public
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: submission_event
+            baseColumnNames: changed_by
+            constraintName: by_user
+            referencedTableSchemaName: public
+            referencedTableName: user
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 01_20_addForeignKeyConstraint_by_user_user_event
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: by_user
+                schemaName: public
+                foreignKeyTableName: user_event
+            - tableExists:
+                tableName: newsfeed_event
+                schemaName: public
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: user_event
+            baseColumnNames: changed_by
+            constraintName: by_user
+            referencedTableSchemaName: public
+            referencedTableName: user
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 01_21_addForeignKeyConstraint_doing_event_package_event
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: doing_event
+                schemaName: public
+                foreignKeyTableName: package_event
+            - tableExists:
+                tableName: newsfeed_event
+                schemaName: public
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: package_event
+            baseColumnNames: event_id
+            constraintName: doing_event
+            referencedTableSchemaName: public
+            referencedTableName: event
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 01_22_addForeignKeyConstraint_doing_event_package_maintainer_event
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: doing_event
+                schemaName: public
+                foreignKeyTableName: package_maintainer_event
+            - tableExists:
+                tableName: newsfeed_event
+                schemaName: public
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: package_maintainer_event
+            baseColumnNames: event_id
+            constraintName: doing_event
+            referencedTableSchemaName: public
+            referencedTableName: event
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 01_23_addForeignKeyConstraint_doing_event_repository_event
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: doing_event
+                schemaName: public
+                foreignKeyTableName: repository_event
+            - tableExists:
+                tableName: newsfeed_event
+                schemaName: public
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: repository_event
+            baseColumnNames: event_id
+            constraintName: doing_event
+            referencedTableSchemaName: public
+            referencedTableName: event
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 01_24_addForeignKeyConstraint_doing_event_repository_maintainer_event
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: doing_event
+                schemaName: public
+                foreignKeyTableName: repository_maintainer_event
+            - tableExists:
+                tableName: newsfeed_event
+                schemaName: public
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: repository_maintainer_event
+            baseColumnNames: event_id
+            constraintName: doing_event
+            referencedTableSchemaName: public
+            referencedTableName: event
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 01_25_addForeignKeyConstraint_doing_event_submission_event
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: doing_event
+                schemaName: public
+                foreignKeyTableName: submission_event
+            - tableExists:
+                tableName: newsfeed_event
+                schemaName: public
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: submission_event
+            baseColumnNames: event_id
+            constraintName: doing_event
+            referencedTableSchemaName: public
+            referencedTableName: event
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 01_26_addForeignKeyConstraint_doing_event_user_event
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: doing_event
+                schemaName: public
+                foreignKeyTableName: user_event
+            - tableExists:
+                tableName: newsfeed_event
+                schemaName: public
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: user_event
+            baseColumnNames: event_id
+            constraintName: doing_event
+            referencedTableSchemaName: public
+            referencedTableName: event
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 01_27_addForeignKeyConstraint_for_package_submission
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: for_package
+                schemaName: public
+                foreignKeyTableName: submission
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: submission
+            baseColumnNames: package_id
+            constraintName: for_package
+            referencedTableSchemaName: public
+            referencedTableName: package
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 01_28_addForeignKeyConstraint_for_repository_package
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: for_repository
+                schemaName: public
+                foreignKeyTableName: package
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: package
+            baseColumnNames: repository_id
+            constraintName: for_repository
+            referencedTableSchemaName: public
+            referencedTableName: repository
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 01_29_addForeignKeyConstraint_from_user_submission
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: from_user
+                schemaName: public
+                foreignKeyTableName: submission
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: submission
+            baseColumnNames: submitter_id
+            constraintName: from_user
+            referencedTableSchemaName: public
+            referencedTableName: user
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 01_30_addForeignKeyConstraint_has_role_user
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: has_role
+                schemaName: public
+                foreignKeyTableName: user
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: user
+            baseColumnNames: role_id
+            constraintName: has_role
+            referencedTableSchemaName: public
+            referencedTableName: role
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 01_31_addForeignKeyConstraint_is_maintainer_of_package
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: is_maintainer_of
+                schemaName: public
+                foreignKeyTableName: package
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: package
+            baseColumnNames: maintainer_id
+            constraintName: is_maintainer_of
+            referencedTableSchemaName: public
+            referencedTableName: user
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 01_32_addForeignKeyConstraint_is_package_maintainer_package_maintainer
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: is_package_maintainer
+                schemaName: public
+                foreignKeyTableName: package_maintainer
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: package_maintainer
+            baseColumnNames: user_id
+            constraintName: is_package_maintainer
+            referencedTableSchemaName: public
+            referencedTableName: user
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 01_33_addForeignKeyConstraint_is_package_maintainer_of_package_maintainer
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: is_package_maintainer_of
+                schemaName: public
+                foreignKeyTableName: package_maintainer
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: package_maintainer
+            baseColumnNames: repository_id
+            constraintName: is_package_maintainer_of
+            referencedTableSchemaName: public
+            referencedTableName: repository
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 01_34_addForeignKeyConstraint_is_repository_maintainer_repository_maintainer
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: is_repository_maintainer
+                schemaName: public
+                foreignKeyTableName: repository_maintainer
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: repository_maintainer
+            baseColumnNames: user_id
+            constraintName: is_repository_maintainer
+            referencedTableSchemaName: public
+            referencedTableName: user
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 01_35_addForeignKeyConstraint_of_package_package_event
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: of_package
+                schemaName: public
+                foreignKeyTableName: package_event
+            - tableExists:
+                tableName: newsfeed_event
+                schemaName: public
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: package_event
+            baseColumnNames: package_id
+            constraintName: of_package
+            referencedTableSchemaName: public
+            referencedTableName: package
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 01_36_addForeignKeyConstraint_of_package_maintainer_package_maintainer_event
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: of_package_maintainer
+                schemaName: public
+                foreignKeyTableName: package_maintainer_event
+            - tableExists:
+                tableName: newsfeed_event
+                schemaName: public
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: package_maintainer_event
+            baseColumnNames: package_maintainer_id
+            constraintName: of_package_maintainer
+            referencedTableSchemaName: public
+            referencedTableName: package_maintainer
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 01_37_addForeignKeyConstraint_of_repository_repository_maintainer
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: of_repository
+                schemaName: public
+                foreignKeyTableName: repository_maintainer
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: repository_maintainer
+            baseColumnNames: repository_id
+            constraintName: of_repository
+            referencedTableSchemaName: public
+            referencedTableName: repository
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 01_38_addForeignKeyConstraint_of_repository_repository_event
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: of_repository
+                schemaName: public
+                foreignKeyTableName: repository_event
+            - tableExists:
+                tableName: newsfeed_event
+                schemaName: public
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: repository_event
+            baseColumnNames: repository_id
+            constraintName: of_repository
+            referencedTableSchemaName: public
+            referencedTableName: repository
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 01_39_addForeignKeyConstraint_of_repository_maintainer_repository_maintainer_event
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: of_repository_maintainer
+                schemaName: public
+                foreignKeyTableName: repository_maintainer_event
+            - tableExists:
+                tableName: newsfeed_event
+                schemaName: public
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: repository_maintainer_event
+            baseColumnNames: repository_maintainer_id
+            constraintName: of_repository_maintainer
+            referencedTableSchemaName: public
+            referencedTableName: repository_maintainer
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 01_40_addForeignKeyConstraint_of_submission_submission_event
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: of_submission
+                schemaName: public
+                foreignKeyTableName: submission_event
+            - tableExists:
+                tableName: newsfeed_event
+                schemaName: public
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: submission_event
+            baseColumnNames: submission_id
+            constraintName: of_submission
+            referencedTableSchemaName: public
+            referencedTableName: submission
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 01_41_addForeignKeyConstraint_of_user_user_event
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: of_user
+                schemaName: public
+                foreignKeyTableName: user_event
+            - tableExists:
+                tableName: newsfeed_event
+                schemaName: public
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: user_event
+            baseColumnNames: user_id
+            constraintName: of_user
+            referencedTableSchemaName: public
+            referencedTableName: user
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION

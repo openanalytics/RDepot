@@ -1,0 +1,5 @@
+name: a
+publicationUri: http://localhost/repo/Python
+serverAddress: http://oa-rdepot-repo:8080/Python
+published: false
+technology: PYTHON

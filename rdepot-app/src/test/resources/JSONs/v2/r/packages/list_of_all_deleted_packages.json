@@ -1,0 +1,302 @@
+{
+  "code": 200,
+  "data": {
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/r/packages?deleted=true&page=0&size=20&sort=id,asc"
+      }
+    ],
+    "page": {
+      "number": 0,
+      "size": 20,
+      "totalPages": 1,
+      "totalElements": 5
+    },
+    "content": [
+      {
+        "imports": null,
+        "depends": "R (>= 3.0), grid",
+        "author": "Julie Eaton and Ian Painter",
+        "active": false,
+        "description": "Package for visualizing data quality of partially accruing time series.",
+        "source": "/opt/rdepot/repositories/3/46950998/accrued_1.1.tar.gz",
+        "technology": "R",
+        "repository": {
+          "name": "testrepo2",
+          "id": 3,
+          "published": true,
+          "technology": "R",
+          "publicationUri": "http://localhost/repo/testrepo2"
+        },
+        "title": "Visualization tools for partially accruing data",
+        "version": "1.1",
+        "url": null,
+        "suggests": null,
+        "license": "GPL-3",
+        "systemRequirements": null,
+        "deleted": true,
+        "md5sum": "24b8cec280424dfc6a9e444fa57ba9f3",
+        "name": "accrued",
+        "submission": {
+          "id": 4,
+          "state": "ACCEPTED"
+        },
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/packages/6"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8017/api/v2/manager/r/packages"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/packages/6",
+            "type": "PATCH"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/packages/6",
+            "type": "DELETE"
+          }
+        ],
+        "id": 6,
+        "user": {
+          "name": "Albert Einstein",
+          "id": 4,
+          "login": "einstein",
+          "email": "einstein@ldap.forumsys.com"
+        }
+      },
+      {
+        "imports": null,
+        "depends": "R (>= 2.15.0)",
+        "author": "Bulent Altunkaynak [aut, cre], Hamza Gamgam [aut]",
+        "active": false,
+        "description": "Performs nonparametric tests for equality of location against ordered alternatives.",
+        "source": "/opt/rdepot/repositories/2/8436419/npordtests_1.1.tar.gz",
+        "technology": "R",
+        "repository": {
+          "name": "testrepo1",
+          "id": 2,
+          "published": true,
+          "technology": "R",
+          "publicationUri": "http://localhost/repo/testrepo1"
+        },
+        "title": "Nonparametric Tests for Equality of Location Against Ordered Alternatives",
+        "version": "1.1",
+        "url": null,
+        "suggests": null,
+        "license": "GPL (>= 2)",
+        "systemRequirements": null,
+        "deleted": true,
+        "md5sum": "da8be1247d3145b757bd62e01fc6eb8b",
+        "name": "npordtests",
+        "submission": {
+          "id": 15,
+          "state": "ACCEPTED"
+        },
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/packages/14"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8017/api/v2/manager/r/packages"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/packages/14",
+            "type": "PATCH"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/packages/14",
+            "type": "DELETE"
+          }
+        ],
+        "id": 14,
+        "user": {
+          "name": "Nikola Tesla",
+          "id": 5,
+          "login": "tesla",
+          "email": "tesla@ldap.forumsys.com"
+        }
+      },
+      {
+        "imports": "graphics, stats, nlsr",
+        "depends": "R (>= 3.0), methods",
+        "author": "Neil J. Gunther [aut], Stefan Moeding [aut, cre]",
+        "active": false,
+        "description": "The Universal Scalability Law (Gunther 2007)",
+        "source": "/opt/rdepot/repositories/6/21695389/usl_2.0.0.tar.gz",
+        "technology": "R",
+        "repository": {
+          "name": "testrepo5",
+          "id": 6,
+          "published": false,
+          "technology": "R",
+          "publicationUri": "http://localhost/repo/testrepo5"
+        },
+        "title": "Analyze System Scalability with the Universal Scalability Law",
+        "version": "2.0.0",
+        "url": null,
+        "suggests": "knitr",
+        "license": "BSD_2_clause + file LICENSE",
+        "systemRequirements": null,
+        "deleted": true,
+        "md5sum": "868140a3c3c29327eef5d5a485aee5b6",
+        "name": "usl",
+        "submission": {
+          "id": 27,
+          "state": "ACCEPTED"
+        },
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/packages/27"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8017/api/v2/manager/r/packages"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/packages/27",
+            "type": "PATCH"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/packages/27",
+            "type": "DELETE"
+          }
+        ],
+        "id": 27,
+        "user": {
+          "name": "Local Admin User",
+          "id": 8,
+          "login": "admin",
+          "email": "admin@localhost"
+        }
+      },
+      {
+        "imports": "ggplot2, tidyr, dplyr, purrr, magrittr, stats",
+        "depends": "R (>= 3.2.2)",
+        "author": "Nicholas Tierney [aut, cre]",
+        "active": false,
+        "description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
+        "source": "/opt/rdepot/repositories/6/70325377/visdat_0.1.0.tar.gz",
+        "technology": "R",
+        "repository": {
+          "name": "testrepo5",
+          "id": 6,
+          "published": false,
+          "technology": "R",
+          "publicationUri": "http://localhost/repo/testrepo5"
+        },
+        "title": "Preliminary Data Visualisation",
+        "version": "0.1.0",
+        "url": "https://github.com/njtierney/visdat/",
+        "suggests": "plotly (>= 4.5.6), testthat, knitr, rmarkdown, vdiffr",
+        "license": "MIT + file LICENSE",
+        "systemRequirements": null,
+        "deleted": true,
+        "md5sum": "f343fa3a01dcd9546fa0947877f58f36",
+        "name": "visdat",
+        "submission": {
+          "id": 28,
+          "state": "ACCEPTED"
+        },
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/packages/28"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8017/api/v2/manager/r/packages"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/packages/28",
+            "type": "PATCH"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/packages/28",
+            "type": "DELETE"
+          }
+        ],
+        "id": 28,
+        "user": {
+          "name": "Local Admin User",
+          "id": 8,
+          "login": "admin",
+          "email": "admin@localhost"
+        }
+      },
+      {
+        "imports": null,
+        "depends": "xtable, pbapply",
+        "author": "Scott Fortmann-Roe",
+        "active": false,
+        "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
+        "source": "/opt/rdepot/repositories/7/67484296/A3_0.9.1.tar.gz",
+        "technology": "R",
+        "repository": {
+          "name": "testrepo6",
+          "id": 7,
+          "published": false,
+          "technology": "R",
+          "publicationUri": "http://localhost/repo/testrepo6"
+        },
+        "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
+        "version": "0.9.1",
+        "url": null,
+        "suggests": "randomForest, e1071",
+        "license": "GPL (>= 2)",
+        "systemRequirements": null,
+        "deleted": true,
+        "md5sum": "8eb4760cd574f5489e61221dc9bb0076",
+        "name": "A3",
+        "submission": {
+          "id": 29,
+          "state": "ACCEPTED"
+        },
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/packages/29"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8017/api/v2/manager/r/packages"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/packages/29",
+            "type": "PATCH"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/r/packages/29",
+            "type": "DELETE"
+          }
+        ],
+        "id": 29,
+        "user": {
+          "name": "Local Admin User",
+          "id": 8,
+          "login": "admin",
+          "email": "admin@localhost"
+        }
+      }
+    ]
+  },
+  "messageCode": "success.request.processed",
+  "message": "Your request has been processed successfully.",
+  "status": "SUCCESS"
+}

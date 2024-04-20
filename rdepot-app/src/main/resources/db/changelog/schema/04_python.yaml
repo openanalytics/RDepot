@@ -1,0 +1,107 @@
+databaseChangeLog:
+  - changeSet:
+      id: 04_01_add_approver_to_submission
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - columnExists:
+                tableName: submission
+                columnName: approver_id
+                schemaName: public
+      changes:
+        - addColumn:
+            schemaName: public
+            tableName: submission
+            columns:
+              - column:
+                  name: approver_id
+                  type: integer
+        - sql:
+            sql: "UPDATE public.submission s \
+              SET approver_id = subquery.author_id \
+              FROM ( \
+                SELECT s.id, ne.author_id \
+                FROM changed_variable cv \
+                JOIN newsfeed_event ne ON cv.newsfeed_event_id = ne.id \
+                JOIN submission s ON ne.related_submission_id = s.id AND s.state='ACCEPTED' \
+              WHERE cv.changed_variable='accepted' \
+              UNION \
+                SELECT s.id, ne.author_id \
+                FROM changed_variable cv \
+                JOIN newsfeed_event ne ON cv.newsfeed_event_id = ne.id \
+                JOIN submission s ON ne.related_submission_id = s.id AND s.state='CANCELLED' \
+              WHERE cv.changed_variable='deleted' \
+              UNION \
+              SELECT s.id, ne.author_id \
+              FROM changed_variable cv \
+                JOIN newsfeed_event ne ON cv.newsfeed_event_id = ne.id \
+                JOIN submission s ON ne.related_submission_id = s.id AND s.state='REJECTED' \
+              WHERE cv.changed_variable='deleted' \
+              ) AS subquery \
+              WHERE s.id= subquery.id;"
+  - changeSet:
+      id: 04_02_addForeignKeyConstraint_approved_by_submission
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: approved_by
+                schemaName: public
+                foreignKeyTableName: submission
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: submission
+            baseColumnNames: approver_id
+            constraintName: approved_by
+            referencedTableSchemaName: public
+            referencedTableName: user
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id:  04_03_update_package
+      author:  pgleska
+      preConditions:
+        - onFail: MARK_RAN        
+        - columnExists:
+            tableName: package
+            schemaName: public
+            columnName: dtype
+      changes:
+        - renameColumn:          
+            newColumnName:  resource_technology
+            oldColumnName:  dtype            
+            schemaName:  public
+            tableName:  package
+        - update:
+            tableName: package
+            schemaName: public
+            columns:
+              - column:
+                  name: resource_technology
+                  value: R
+  - changeSet:
+      id:  04_04_update_repository
+      author:  pgleska
+      preConditions:
+        - onFail: MARK_RAN        
+        - columnExists:
+            tableName: repository
+            schemaName: public
+            columnName: dtype
+      changes:
+        - renameColumn:          
+            newColumnName:  resource_technology
+            oldColumnName:  dtype            
+            schemaName:  public
+            tableName:  repository
+        - update:
+            tableName: repository
+            schemaName: public
+            columns:
+              - column:
+                  name: resource_technology
+                  value: R

@@ -1,0 +1,35 @@
+databaseChangeLog:
+  - changeSet:
+      id: 02_01_api_token_table
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: api_token
+      changes:
+        - createTable:
+            tableName: api_token
+            schemaName: public
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  startWith: 1
+                  incrementBy: 1
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: token
+                  type: character varying(255)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: user_login
+                  type: character varying(255)
+                  constraints:
+                    unique: true
+                    nullable: false
+      rollback: empty

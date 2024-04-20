@@ -1,0 +1,7 @@
+{
+  "code": 404,
+  "data": null,
+  "messageCode": "unknown.internal.server.error",
+  "message": "Unknown internal server error.",
+  "status": "ERROR"
+}

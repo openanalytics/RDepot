@@ -1,0 +1,38 @@
+{
+  "code": 201,
+  "data": {
+    "deleted": false,
+    "synchronizing": false,
+    "name": "testrepo7",
+    "serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo7",
+    "links": [
+      {
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories\/13"
+      },
+      {
+        "rel": "repositoryList",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories"
+      },
+      {
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories\/13",
+        "type": "PATCH"
+      },
+      {
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories\/13",
+        "type": "DELETE"
+      }
+    ],
+    "id": 13,
+    "published": false,
+    "technology": "R",
+    "version": 0,
+    "publicationUri": "http:\/\/localhost\/repo\/testrepo7",
+    "numberOfPackages": 0
+  },
+  "messageCode": "success.resource.created",
+  "message": "Your resource has been created successfully.",
+  "status": "SUCCESS"
+}

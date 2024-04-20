@@ -1,0 +1,7 @@
+{
+	"status": "ERROR",
+	"code": 403,
+	"message": "You are not authorized to perform this operation.",
+	"messageCode": "user.not.authorized",
+	"data": null
+}

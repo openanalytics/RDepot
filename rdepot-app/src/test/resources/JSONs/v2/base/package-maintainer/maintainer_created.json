@@ -1,0 +1,44 @@
+{
+  "code": 201,
+  "data": {
+    "deleted": false,
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/package-maintainers/12"
+      },
+      {
+        "rel": "packageMaintainerList",
+        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+      },
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/package-maintainers/12",
+        "type": "PATCH"
+      },
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/package-maintainers/12",
+        "type": "DELETE"
+      }
+    ],
+    "id": 12,
+    "packageName": "A3",
+    "repository": {
+      "name": "testrepo1",
+      "id": 2,
+      "published": true,
+      "technology": "R",
+      "publicationUri": "http://localhost/repo/testrepo1"
+    },
+    "user": {
+      "name": "Galileo Galilei",
+      "id": 6,
+      "login": "galieleo",
+      "email": "galieleo@ldap.forumsys.com"
+    }
+  },
+  "messageCode": "success.resource.created",
+  "message": "Your resource has been created successfully.",
+  "status": "SUCCESS"
+}

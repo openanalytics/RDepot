@@ -1,0 +1,207 @@
+{
+  "code": 200,
+  "data": {
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/repository-maintainers?deleted=false&page=0&size=20&sort=repository.id,asc"
+      }
+    ],
+    "page": {
+      "number": 0,
+      "size": 20,
+      "totalPages": 1,
+      "totalElements": 5
+    },
+    "content": [
+      {
+        "deleted": false,
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/repository-maintainers/1"
+          },
+          {
+            "rel": "repositoryMaintainerList",
+            "href": "http://localhost:8017/api/v2/manager/repository-maintainers"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/repository-maintainers/1",
+            "type": "PATCH"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/repository-maintainers/1",
+            "type": "DELETE"
+          }
+        ],
+        "id": 1,
+        "repository": {
+          "name": "testrepo1",
+          "id": 2,
+          "published": true,
+          "technology": "R",
+          "publicationUri": "http://localhost/repo/testrepo1"
+        },
+        "user": {
+          "name": "Nikola Tesla",
+          "id": 5,
+          "login": "tesla",
+          "email": "tesla@ldap.forumsys.com"
+        }
+      },
+      {
+        "deleted": false,
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/repository-maintainers/3"
+          },
+          {
+            "rel": "repositoryMaintainerList",
+            "href": "http://localhost:8017/api/v2/manager/repository-maintainers"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/repository-maintainers/3",
+            "type": "PATCH"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/repository-maintainers/3",
+            "type": "DELETE"
+          }
+        ],
+        "id": 3,
+        "repository": {
+          "name": "testrepo4",
+          "id": 5,
+          "published": false,
+          "technology": "R",
+          "publicationUri": "http://localhost/repo/testrepo4"
+        },
+        "user": {
+          "name": "Nikola Tesla",
+          "id": 5,
+          "login": "tesla",
+          "email": "tesla@ldap.forumsys.com"
+        }
+      },
+      {
+        "deleted": false,
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/repository-maintainers/4"
+          },
+          {
+            "rel": "repositoryMaintainerList",
+            "href": "http://localhost:8017/api/v2/manager/repository-maintainers"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/repository-maintainers/4",
+            "type": "PATCH"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/repository-maintainers/4",
+            "type": "DELETE"
+          }
+        ],
+        "id": 4,
+        "repository": {
+          "name": "testrepo8",
+          "id": 8,
+          "published": true,
+          "technology": "Python",
+          "publicationUri": "http://localhost/repo/testrepo8"
+        },
+        "user": {
+          "name": "Nikola Tesla",
+          "id": 5,
+          "login": "tesla",
+          "email": "tesla@ldap.forumsys.com"
+        }
+      },
+      {
+        "deleted": false,
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/repository-maintainers/5"
+          },
+          {
+            "rel": "repositoryMaintainerList",
+            "href": "http://localhost:8017/api/v2/manager/repository-maintainers"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/repository-maintainers/5",
+            "type": "PATCH"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/repository-maintainers/5",
+            "type": "DELETE"
+          }
+        ],
+        "id": 5,
+        "repository": {
+          "name": "testrepo9",
+          "id": 9,
+          "published": false,
+          "technology": "Python",
+          "publicationUri": "http://localhost/repo/testrepo9"
+        },
+        "user": {
+          "name": "Nikola Tesla",
+          "id": 5,
+          "login": "tesla",
+          "email": "tesla@ldap.forumsys.com"
+        }
+      },
+      {
+        "deleted": false,
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/repository-maintainers/6"
+          },
+          {
+            "rel": "repositoryMaintainerList",
+            "href": "http://localhost:8017/api/v2/manager/repository-maintainers"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/repository-maintainers/6",
+            "type": "PATCH"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/repository-maintainers/6",
+            "type": "DELETE"
+          }
+        ],
+        "id": 6,
+        "repository": {
+          "name": "testrepo10",
+          "id": 10,
+          "published": false,
+          "technology": "Python",
+          "publicationUri": "http://localhost/repo/testrepo10"
+        },
+        "user": {
+          "name": "Albert Einstein",
+          "id": 4,
+          "login": "einstein",
+          "email": "einstein@ldap.forumsys.com"
+        }
+      }
+    ]
+  },
+  "messageCode": "success.request.processed",
+  "message": "Your request has been processed successfully.",
+  "status": "SUCCESS"
+}

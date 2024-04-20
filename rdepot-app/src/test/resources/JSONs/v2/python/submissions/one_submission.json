@@ -1,0 +1,74 @@
+{
+  "code": 200,
+  "data": {
+    "approver": {
+      "name": "Albert Einstein",
+      "id": 4,
+      "login": "einstein",
+      "email": "einstein@ldap.forumsys.com"
+    },
+    "submitter": {
+      "name": "Albert Einstein",
+      "id": 4,
+      "login": "einstein",
+      "email": "einstein@ldap.forumsys.com"
+    },
+    "created": "2023-07-10",
+    "changes": null,
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/python/submissions/40"
+      },
+      {
+        "rel": "submissionList",
+        "href": "http://localhost:8017/api/v2/manager/python/submissions"
+      }
+    ],
+    "id": 40,
+    "state": "ACCEPTED",
+    "technology": "Python",
+    "packageBag": {
+      "author": null,
+      "active": true,
+      "description": null,
+      "technology": "Python",
+      "repository": {
+        "name": "testrepo9",
+        "id": 9,
+        "published": false,
+        "technology": "Python",
+        "publicationUri": "http://localhost/repo/testrepo9"
+      },
+      "title": "Powerful data structures for data analysis, time series, and statistics",
+      "version": "2.0.1",
+      "url": "homepage, https://pandas.pydata.org, documentation, https://pandas.pydata.org/docs/, repository, https://github.com/pandas-dev/pandas",
+      "deleted": false,
+      "name": "pandas",
+      "submission": {
+        "id": 40,
+        "state": "ACCEPTED"
+      },
+      "links": [
+        {
+          "rel": "self",
+          "href": "http://localhost:8017/api/v2/manager/python/packages/40"
+        },
+        {
+          "rel": "packageList",
+          "href": "http://localhost:8017/api/v2/manager/packages"
+        }
+      ],
+      "id": 40,
+      "user": {
+        "name": "Local Admin User",
+        "id": 8,
+        "login": "admin",
+        "email": "admin@localhost"
+      }
+    }
+  },
+  "messageCode": "success.request.processed",
+  "message": "Your request has been processed successfully.",
+  "status": "SUCCESS"
+}

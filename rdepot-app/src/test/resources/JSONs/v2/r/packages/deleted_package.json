@@ -1,0 +1,62 @@
+{
+  "code": 200,
+  "data": {
+    "imports": null,
+    "depends": "R (>= 2.15.0)",
+    "author": "Bulent Altunkaynak [aut, cre], Hamza Gamgam [aut]",
+    "active": false,
+    "description": "Performs nonparametric tests for equality of location against ordered alternatives.",
+    "source": "/opt/rdepot/repositories/2/8436419/npordtests_1.1.tar.gz",
+    "technology": "R",
+    "repository": {
+      "name": "testrepo1",
+      "id": 2,
+      "published": true,
+      "technology": "R",
+      "publicationUri": "http://localhost/repo/testrepo1"
+    },
+    "title": "Nonparametric Tests for Equality of Location Against Ordered Alternatives",
+    "version": "1.1",
+    "url": null,
+    "suggests": null,
+    "license": "GPL (>= 2)",
+    "systemRequirements": null,
+    "deleted": true,
+    "md5sum": "da8be1247d3145b757bd62e01fc6eb8b",
+    "name": "npordtests",
+    "submission": {
+      "id": 15,
+      "state": "ACCEPTED"
+    },
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/r/packages/14"
+      },
+      {
+        "rel": "packageList",
+        "href": "http://localhost:8017/api/v2/manager/r/packages"
+      },
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/r/packages/14",
+        "type": "PATCH"
+      },
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/r/packages/14",
+        "type": "DELETE"
+      }
+    ],
+    "id": 14,
+    "user": {
+      "name": "Nikola Tesla",
+      "id": 5,
+      "login": "tesla",
+      "email": "tesla@ldap.forumsys.com"
+    }
+  },
+  "messageCode": "success.request.processed",
+  "message": "Your request has been processed successfully.",
+  "status": "SUCCESS"
+}

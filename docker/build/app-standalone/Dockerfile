@@ -1,6 +1,6 @@
-FROM openanalytics/rdepot-app-it:1.7.9
+FROM registry.openanalytics.eu/openanalytics/rdepot-app-it:2.0.0
 
-COPY ./app/build/libs/rdepot-app-*application.war /opt/rdepot/rdepot.war
-COPY ./docker/app/application.yml /opt/rdepot/application.yml
+COPY ./rdepot-app/target/rdepot-app-2.0.0.war /opt/rdepot/rdepot.war
+COPY ./docker/build/app-standalone/application.yml /opt/rdepot/application.yml
 
 ENTRYPOINT exec java $JAVA_OPTS -jar /opt/rdepot/rdepot.war --spring.config.location=classpath:/application.yml --spring.config.additional-location=file:/opt/rdepot/application.yml

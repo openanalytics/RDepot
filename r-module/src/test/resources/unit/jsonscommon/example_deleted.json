@@ -1,7 +1,0 @@
-{
-    "status": "success",
-    "code": 204,
-    "message": "Your request has been processed successfully.",
-    "messageCode": "success.request.processed",
-	"data": null
-}

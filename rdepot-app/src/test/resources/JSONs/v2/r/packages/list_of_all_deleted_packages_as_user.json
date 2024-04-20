@@ -1,0 +1,21 @@
+{
+  "code": 200,
+  "data": {
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/r/packages?deleted=true&sort=id,asc"
+      }
+    ],
+    "page": {
+      "number": 0,
+      "size": 0,
+      "totalPages": 1,
+      "totalElements": 0
+    },
+    "content": []
+  },
+  "messageCode": "success.request.processed",
+  "message": "Your request has been processed successfully.",
+  "status": "SUCCESS"
+}

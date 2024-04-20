@@ -1,0 +1,9 @@
+{
+  "code": 422,
+  "data": [
+    "repository.duplicate.name"
+  ],
+  "messageCode": "error.validation",
+  "message": "Validation failed for the resource.",
+  "status": "ERROR"
+}

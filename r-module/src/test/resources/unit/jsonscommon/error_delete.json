@@ -1,7 +1,0 @@
-{
-    "status": "error",
-    "code": 500,
-    "message": "Could not delete requested resource.",
-    "messageCode": "error.delete.resource",
-    "data": null
-}

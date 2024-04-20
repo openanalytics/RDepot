@@ -1,0 +1,20 @@
+version: '3'
+services:
+  proxy:
+    image: registry.openanalytics.eu/proxy/library/nginx:alpine
+    restart: always
+    ports:
+      - 8017:80
+    networks:
+      - oa-rdepot      
+    volumes:
+      #- ./docker/app/application.yml:/opt/rdepot/application.yml
+      #- ./docker/app/test_configs/test_ldap_config.yml:/opt/rdepot/application.yml #for regular mode
+      - ./docker/app/test_configs/test_ldap_config_snapshots_off.yml:/opt/rdepot/application.yml #for declarative mode
+networks:
+  oa-rdepot:
+    ipam:
+      config:
+        - subnet: 192.168.49.0/24
+volumes:
+  repository:

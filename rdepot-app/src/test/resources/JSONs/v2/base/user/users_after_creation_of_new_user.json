@@ -1,0 +1,278 @@
+{
+    "code": 200,
+    "data": {
+        "content": [
+            {
+                "active": true,
+                "deleted": false,
+                "email": "einstein@ldap.forumsys.com",
+                "id": 4,
+                "links": [
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users/4",
+                        "rel": "self"
+                    },
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users",
+                        "rel": "userList"
+                    },
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users/4",
+                        "rel": "self",
+                        "type": "PATCH"
+                    },
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users/4",
+                        "rel": "self",
+                        "type": "DELETE"
+                    }
+                ],
+                "login": "einstein",
+                "name": "Albert Einstein",
+                "role": "admin",
+                "roleId": 4,
+                "userSettings": {
+                    "language": "pl-PL",
+                    "pageSize": 20,
+                    "theme": "light"
+                }
+            },
+            {
+                "active": true,
+                "deleted": false,
+                "email": "tesla@ldap.forumsys.com",
+                "id": 5,
+                "links": [
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users/5",
+                        "rel": "self"
+                    },
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users",
+                        "rel": "userList"
+                    },
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users/5",
+                        "rel": "self",
+                        "type": "PATCH"
+                    },
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users/5",
+                        "rel": "self",
+                        "type": "DELETE"
+                    }
+                ],
+                "login": "tesla",
+                "name": "Nikola Tesla",
+                "role": "repositorymaintainer",
+                "roleId": 3,
+                "userSettings": {
+                    "language": "pl-PL",
+                    "pageSize": 10,
+                    "theme": "light"
+                }
+            },
+            {
+                "active": true,
+                "deleted": false,
+                "email": "galieleo@ldap.forumsys.com",
+                "id": 6,
+                "links": [
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users/6",
+                        "rel": "self"
+                    },
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users",
+                        "rel": "userList"
+                    },
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users/6",
+                        "rel": "self",
+                        "type": "PATCH"
+                    },
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users/6",
+                        "rel": "self",
+                        "type": "DELETE"
+                    }
+                ],
+                "login": "galieleo",
+                "name": "Galileo Galilei",
+                "role": "packagemaintainer",
+                "roleId": 2,
+                "userSettings": null
+            },
+            {
+                "active": true,
+                "deleted": false,
+                "email": "newton@ldap.forumsys.com",
+                "id": 7,
+                "links": [
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users/7",
+                        "rel": "self"
+                    },
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users",
+                        "rel": "userList"
+                    },
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users/7",
+                        "rel": "self",
+                        "type": "PATCH"
+                    },
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users/7",
+                        "rel": "self",
+                        "type": "DELETE"
+                    }
+                ],
+                "login": "newton",
+                "name": "Isaac Newton",
+                "role": "user",
+                "roleId": 1,
+                "userSettings": null
+            },
+            {
+                "active": false,
+                "deleted": false,
+                "email": "admin@localhost",
+                "id": 8,
+                "links": [
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users/8",
+                        "rel": "self"
+                    },
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users",
+                        "rel": "userList"
+                    },
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users/8",
+                        "rel": "self",
+                        "type": "PATCH"
+                    },
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users/8",
+                        "rel": "self",
+                        "type": "DELETE"
+                    }
+                ],
+                "login": "admin",
+                "name": "Local Admin User",
+                "role": "admin",
+                "roleId": 4,
+                "userSettings": null
+            },
+            {
+                "active": false,
+                "deleted": false,
+                "email": "doe@localhost",
+                "id": 9,
+                "links": [
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users/9",
+                        "rel": "self"
+                    },
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users",
+                        "rel": "userList"
+                    },
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users/9",
+                        "rel": "self",
+                        "type": "PATCH"
+                    },
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users/9",
+                        "rel": "self",
+                        "type": "DELETE"
+                    }
+                ],
+                "login": "doe",
+                "name": "John Doe",
+                "role": "user",
+                "roleId": 1,
+                "userSettings": null
+            },
+            {
+                "active": true,
+                "deleted": false,
+                "email": "tarski@localhost",
+                "id": 10,
+                "links": [
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users/10",
+                        "rel": "self"
+                    },
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users",
+                        "rel": "userList"
+                    },
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users/10",
+                        "rel": "self",
+                        "type": "PATCH"
+                    },
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users/10",
+                        "rel": "self",
+                        "type": "DELETE"
+                    }
+                ],
+                "login": "tarski",
+                "name": "Alfred Tarski",
+                "role": "user",
+                "roleId": 1,
+                "userSettings": null
+            },
+            {
+                "active": true,
+                "deleted": false,
+                "email": "newbie@localhost",
+                "id": 11,
+                "links": [
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users/11",
+                        "rel": "self"
+                    },
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users",
+                        "rel": "userList"
+                    },
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users/11",
+                        "rel": "self",
+                        "type": "PATCH"
+                    },
+                    {
+                        "href": "http://localhost:8017/api/v2/manager/users/11",
+                        "rel": "self",
+                        "type": "DELETE"
+                    }
+                ],
+                "login": "newbie",
+                "name": "New User",
+                "role": "user",
+                "roleId": 1,
+                "userSettings": null
+            }
+        ],
+        "links": [
+            {
+                "href": "http://localhost:8017/api/v2/manager/users?page=0&size=20&sort=id,asc",
+                "rel": "self"
+            }
+        ],
+        "page": {
+            "number": 0,
+            "size": 20,
+            "totalElements": 8,
+            "totalPages": 1
+        }
+    },
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "status": "SUCCESS"
+}

@@ -1,0 +1,685 @@
+databaseChangeLog:
+  - changeSet:
+      id: 03_01_update_package
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: rpackage
+                schemaName: public
+      changes:
+        - addColumn:
+            tableName: package
+            schemaName: public
+            columns:
+              - column:
+                  name: dtype
+                  type: text
+        - update:
+            tableName: package
+            schemaName: public
+            columns:
+              - column:
+                  name: dtype
+                  value: RPackage
+        - addNotNullConstraint:
+            tableName: package
+            schemaName: public
+            columnName: dtype
+  - changeSet:
+      id: 03_02_update_submission
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - columnExists:
+                tableName: submission
+                schemaName: public
+                columnName: state
+      changes:
+        - addColumn:
+            tableName: submission
+            schemaName: public
+            columns:
+              - column:
+                  name: state
+                  type: text
+        - update:
+            tableName: submission
+            schemaName: public
+            columns:
+              - column:
+                  name: state
+                  value: rejected
+        - addNotNullConstraint:
+            tableName: submission
+            schemaName: public
+            columnName: state
+        - sql:
+            sql: "UPDATE public.submission \
+              SET state = q.state \
+              FROM ( \
+                SELECT CASE WHEN sub.accepted = true THEN 'ACCEPTED' \
+                    WHEN sub.accepted = false AND sub.deleted = false THEN 'WAITING' \
+                    WHEN sub.accepted = false AND sub.deleted = true AND se.event_id = 2 AND sub.submitter_id = se.changed_by THEN 'CANCELLED' \
+                    WHEN sub.accepted = false AND sub.deleted = true AND se.event_id = 2 AND sub.submitter_id != se.changed_by THEN 'REJECTED' \
+                END as state, sub.id, sub.accepted, sub.deleted, sub.submitter_id, se.id as se_id, event_id, changed_by \
+                FROM public.submission sub \
+                JOIN (select s1.id, s1.event_id, s1.changed_by, s1.submission_id \
+                    FROM public.submission_event s1 \
+                    JOIN (select submission_id, max(id) as id from public.submission_event GROUP BY submission_id) s2 ON s1.id = s2.id) se ON sub.id = se.submission_id \
+                ) as q WHERE q.id = submission.id;"
+        - dropColumn:
+            tableName: submission
+            schemaName: public
+            columnName: accepted
+  - changeSet:
+      id: 03_03_update_role
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - columnExists:
+                tableName: role
+                schemaName: public
+                columnName: deleted
+      changes:
+        - addColumn:
+            schemaName: public
+            tableName: role
+            columns:
+              - column:
+                  name: deleted
+                  type: boolean
+                  defaultValueBoolean: false
+        - update:
+            schemaName: public
+            tableName: role
+            columns:
+              - column:
+                  name: deleted
+                  valueBoolean: false
+        - addNotNullConstraint:
+            columnName: dtype
+            schemaName: public
+            tableName: package
+  - changeSet:
+      id: 03_04_update_user
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - columnExists:
+                tableName: user
+                schemaName: public
+                columnName: created_on
+      changes:
+        - addColumn:
+            tableName: user
+            schemaName: public
+            columns:
+              - column:
+                  name: created_on
+                  type: date
+                  defaultValueDate: "now()"
+        - update:
+            tableName: user
+            schemaName: public
+            columns:
+              - column:
+                  name: created_on
+                  value: 01-01-1970
+        - addNotNullConstraint:
+            tableName: user
+            schemaName: public
+            columnName: created_on
+  - changeSet:
+      id: 03_05_rpackage
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: rpackage
+                schemaName: public
+      changes:
+        - createTable:
+            schemaName: public
+            tableName: rpackage
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: depends
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: imports
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: suggests
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: system_requirements
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: license
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: md5sum
+                  type: text
+                  constraints:
+                    nullable: true
+        - sql:
+            sql: "INSERT INTO public.rpackage(id, depends, imports, suggests,\
+              system_requirements, license, md5sum) \
+              SELECT id, depends, imports, suggests, system_requirements, license, \
+              md5sum FROM public.package;"
+  - changeSet:
+      id: 03_06_clear_package_columns
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - columnExists:
+            tableName: package
+            schemaName: public
+            columnName: depends
+      changes:
+        - dropColumn:
+            schemaName: public
+            tableName: package
+            columnName: depends
+        - dropColumn:
+            schemaName: public
+            tableName: package
+            columnName: imports
+        - dropColumn:
+            schemaName: public
+            tableName: package
+            columnName: suggests
+        - dropColumn:
+            schemaName: public
+            tableName: package
+            columnName: system_requirements
+        - dropColumn:
+            schemaName: public
+            tableName: package
+            columnName: license
+        - dropColumn:
+            schemaName: public
+            tableName: package
+            columnName: md5sum
+  - changeSet:
+      id: 03_07_update_repository
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: rrepository
+                schemaName: public
+      changes:
+        - addColumn:
+            tableName: repository
+            schemaName: public
+            columns:
+              - column:
+                  name: dtype
+                  type: text
+        - update:
+            tableName: repository
+            schemaName: public
+            columns:
+              - column:
+                  name: dtype
+                  value: RRepository
+        - addNotNullConstraint:
+            tableName: repository
+            schemaName: public
+            columnName: dtype
+  - changeSet:
+      id: 03_08_rrepository_table
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: rrepository
+                schemaName: public
+      changes:
+        - createTable:
+            schemaName: public
+            tableName: rrepository
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  constraints:
+                    primaryKey: true
+        - sql:
+            sql: "INSERT INTO public.rrepository(id) SELECT id FROM public.repository;"
+  - changeSet:
+      id: 03_09_changed_variable_table
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: changed_variable
+                schemaName: public
+      changes:
+        - createTable:
+            schemaName: public
+            tableName: changed_variable
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  startWith: 1
+                  incrementBy: 1
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: changed_variable
+                  type: character varying(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: value_before
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: value_after
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: newsfeed_event_id
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 03_10_newsfeed_event_table
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: newsfeed_event
+                schemaName: public
+      changes:
+        - createTable:
+            schemaName: public
+            tableName: newsfeed_event
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  startWith: 1
+                  incrementBy: 1
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: time
+                  type: time with time zone
+                  defaultValueDate: "now()"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date
+                  type: date
+                  defaultValueDate: "now()"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: newsfeed_event_type
+                  type: character varying(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: author_id
+                  type: integer
+                  constraints:
+                    nullable: true
+              - column:
+                  name: related_packagemaintainer_id
+                  type: integer
+                  constraints:
+                    nullable: true
+              - column:
+                  name: related_repositorymaintainer_id
+                  type: integer
+                  constraints:
+                    nullable: true
+              - column:
+                  name: related_user_id
+                  type: integer
+                  constraints:
+                    nullable: true
+              - column:
+                  name: related_submission_id
+                  type: integer
+                  constraints:
+                    nullable: true
+              - column:
+                  name: related_repository_id
+                  type: integer
+                  constraints:
+                    nullable: true
+              - column:
+                  name: related_package_id
+                  type: integer
+                  constraints:
+                    nullable: true
+              - column:
+                  name: deleted
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+        - sql:
+            sql: "CREATE SEQUENCE temporal_sequence START 100;\
+              ALTER TABLE public.submission_event ADD COLUMN temp_seq bigint;\
+              ALTER TABLE public.user_event ADD COLUMN temp_seq bigint;\
+              ALTER TABLE public.package_event ADD COLUMN temp_seq bigint;\
+              ALTER TABLE public.package_maintainer_event ADD COLUMN temp_seq bigint;\
+              ALTER TABLE public.repository_event ADD COLUMN temp_seq bigint;\
+              ALTER TABLE public.repository_maintainer_event ADD COLUMN temp_seq bigint;\
+              UPDATE public.submission_event SET temp_seq = nextval('temporal_sequence');\
+              UPDATE public.user_event SET temp_seq = nextval('temporal_sequence');\
+              UPDATE public.package_event SET temp_seq = nextval('temporal_sequence');\
+              UPDATE public.package_maintainer_event SET temp_seq = nextval('temporal_sequence');\
+              UPDATE public.repository_event SET temp_seq = nextval('temporal_sequence');\
+              UPDATE public.repository_maintainer_event SET temp_seq = nextval('temporal_sequence');\
+              ALTER TABLE public.newsfeed_event ADD COLUMN event_id integer;\
+              ALTER TABLE public.newsfeed_event ADD COLUMN temp_seq bigint;\
+              ALTER TABLE public.changed_variable ADD COLUMN temp_seq bigint;\
+              INSERT INTO \
+                public.newsfeed_event(time, date, newsfeed_event_type, author_id, related_submission_id, deleted, event_id, temp_seq) \
+              SELECT \
+                time, date, 'unknown', changed_by, submission_id, false, event_id, temp_seq \
+              FROM public.submission_event; \
+              INSERT INTO \
+                public.changed_variable (changed_variable, value_before, value_after, newsfeed_event_id, deleted, temp_seq) \
+              SELECT \
+                changed_variable, value_before, value_after, 1, false, temp_seq \
+              FROM public.submission_event;	\
+              INSERT INTO \
+                public.newsfeed_event(time, date, newsfeed_event_type, author_id, related_user_id, deleted, event_id, temp_seq) \
+              SELECT \
+                time, date, 'unknown', changed_by, user_id, false, event_id, temp_seq \
+              FROM public.user_event; \
+              INSERT INTO \
+                public.changed_variable (changed_variable, value_before, value_after, newsfeed_event_id, deleted, temp_seq) \
+              SELECT \
+                changed_variable, value_before, value_after, 1, false, temp_seq \
+              FROM public.user_event; \
+              INSERT INTO \
+                public.newsfeed_event(time, date, newsfeed_event_type, author_id, related_package_id, deleted, event_id, temp_seq) \
+              SELECT \
+                time, date, 'unknown', changed_by, package_id, false, event_id, temp_seq \
+              FROM public.package_event; \
+              INSERT INTO \
+                public.changed_variable (changed_variable, value_before, value_after, newsfeed_event_id, deleted, temp_seq) \
+              SELECT \
+                changed_variable, value_before, value_after, 1, false, temp_seq \
+              FROM public.package_event; \
+              INSERT INTO \
+                public.newsfeed_event(time, date, newsfeed_event_type, author_id, related_packagemaintainer_id, deleted, event_id, temp_seq) \
+              SELECT \
+                time, date, 'unknown', changed_by, package_maintainer_id, false, event_id, temp_seq \
+              FROM public.package_maintainer_event; \
+              INSERT INTO \
+                public.changed_variable (changed_variable, value_before, value_after, newsfeed_event_id, deleted, temp_seq) \
+              SELECT \
+                changed_variable, value_before, value_after, 1, false, temp_seq \
+              FROM public.package_maintainer_event; \
+              INSERT INTO \
+                public.newsfeed_event(time, date, newsfeed_event_type, author_id, related_repository_id, deleted, event_id, temp_seq) \
+              SELECT \
+                time, date, 'unknown', changed_by, repository_id, false, event_id, temp_seq \
+              FROM public.repository_event; \
+              INSERT INTO \
+                public.changed_variable (changed_variable, value_before, value_after, newsfeed_event_id, deleted, temp_seq) \
+              SELECT \
+                changed_variable, value_before, value_after, 1, false, temp_seq \
+              FROM public.repository_event; \
+              INSERT INTO \
+                public.newsfeed_event(time, date, newsfeed_event_type, author_id, related_repositorymaintainer_id, deleted, event_id, temp_seq) \
+              SELECT \
+                time, date, 'unknown', changed_by, repository_maintainer_id, false, event_id, temp_seq \
+              FROM public.repository_maintainer_event; \
+              INSERT INTO \
+                public.changed_variable (changed_variable, value_before, value_after, newsfeed_event_id, deleted, temp_seq) \
+              SELECT \
+                changed_variable, value_before, value_after, 1, false, temp_seq \
+              FROM public.repository_maintainer_event; \
+              UPDATE \
+                public.changed_variable cv \
+              SET \
+                newsfeed_event_id = q.id \
+              FROM ( \
+                SELECT \
+                    e.id, e.temp_seq \
+                FROM public.newsfeed_event e \
+                JOIN public.changed_variable c ON e.temp_seq = c.temp_seq \
+                ) as q \
+              WHERE cv.temp_seq = q.temp_seq; \
+              UPDATE \
+                public.newsfeed_event \
+              SET \
+                newsfeed_event_type = CASE \
+                WHEN event_id = 2 THEN 'DELETE' \
+                WHEN event_id = 3 THEN 'UPDATE' \
+                WHEN event_id = 1 AND related_package_id IS NULL THEN 'CREATE' \
+                ELSE 'UPLOAD' \
+              END; \
+              ALTER TABLE public.newsfeed_event DROP COLUMN event_id; \
+              ALTER TABLE public.newsfeed_event DROP COLUMN temp_seq; \
+              ALTER TABLE public.changed_variable DROP COLUMN temp_seq; \
+              DROP SEQUENCE temporal_sequence;"
+        - dropTable:
+            tableName: user_event
+        - dropTable:
+            tableName: submission_event
+        - dropTable:
+            tableName: package_event
+        - dropTable:
+            tableName: package_maintainer_event
+        - dropTable:
+            tableName: repository_event
+        - dropTable:
+            tableName: repository_maintainer_event
+        - dropTable:
+            tableName: event
+      rollback: empty
+  - changeSet:
+      id: 03_11_addForeignKeyConstraint_author_newsfeed_event
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: author
+                schemaName: public
+                foreignKeyTableName: newsfeed_event
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: newsfeed_event
+            baseColumnNames: author_id
+            constraintName: author
+            referencedTableSchemaName: public
+            referencedTableName: user
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 03_12_addForeignKeyConstraint_related_packagemaintainer_newsfeed_event
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: related_packagemaintainer
+                schemaName: public
+                foreignKeyTableName: newsfeed_event
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: newsfeed_event
+            baseColumnNames: related_packagemaintainer_id
+            constraintName: related_packagemaintainer
+            referencedTableSchemaName: public
+            referencedTableName: package_maintainer
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 03_13_addForeignKeyConstraint_related_repositorymaintainer_newsfeed_event
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: related_repositorymaintainer
+                schemaName: public
+                foreignKeyTableName: newsfeed_event
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: newsfeed_event
+            baseColumnNames: related_repositorymaintainer_id
+            constraintName: related_repositorymaintainer
+            referencedTableSchemaName: public
+            referencedTableName: repository_maintainer
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 03_14_addForeignKeyConstraint_related_user_newsfeed_event
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: related_user
+                schemaName: public
+                foreignKeyTableName: newsfeed_event
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: newsfeed_event
+            baseColumnNames: related_user_id
+            constraintName: related_user
+            referencedTableSchemaName: public
+            referencedTableName: user
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 03_15_addForeignKeyConstraint_related_submission_newsfeed_event
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: related_submission
+                schemaName: public
+                foreignKeyTableName: newsfeed_event
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: newsfeed_event
+            baseColumnNames: related_submission_id
+            constraintName: related_submission
+            referencedTableSchemaName: public
+            referencedTableName: submission
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 03_16_addForeignKeyConstraint_related_repository_newsfeed_event
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: related_repository
+                schemaName: public
+                foreignKeyTableName: newsfeed_event
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: newsfeed_event
+            baseColumnNames: related_repository_id
+            constraintName: related_repository
+            referencedTableSchemaName: public
+            referencedTableName: repository
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 03_17_addForeignKeyConstraint_related_package_newsfeed_event
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: related_package
+                schemaName: public
+                foreignKeyTableName: newsfeed_event
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: newsfeed_event
+            baseColumnNames: related_package_id
+            constraintName: related_package
+            referencedTableSchemaName: public
+            referencedTableName: package
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 03_18_addForeignKeyConstraint_newsfeed_event_changed_variable
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: newsfeed_event
+                schemaName: public
+                foreignKeyTableName: changed_variable
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: changed_variable
+            baseColumnNames: newsfeed_event_id
+            constraintName: newsfeed_event
+            referencedTableSchemaName: public
+            referencedTableName: newsfeed_event
+            referencedColumnNames: id
+            onDelete: CASCADE
+            onUpdate: NO ACTION

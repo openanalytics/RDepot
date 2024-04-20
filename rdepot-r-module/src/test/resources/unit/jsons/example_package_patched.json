@@ -1,0 +1,47 @@
+{
+    "status": "SUCCESS",
+    "code": 200,
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+	"data": {
+        "id": 100,
+        "version": "4.5.6",
+        "user":{"name":"Test User0","id":0,"login":"packagemaintainer_testusername0","email":"0test@example.org"},
+        "repository":{"name":"Test Repository 123","id":123,"publicationUri":"http://localhost/repo/testrepo123"},
+        "submission": {"id":  100, "state":  "ACCEPTED"},
+        "name": "TestPackage100",
+        "description": "Simple test package100",
+        "author": "Albert Einstein100",
+        "depends": "",
+        "imports": "",
+        "suggests": "",
+        "systemRequirements": "",
+        "license": "Some license100",
+        "title": "Test Package100",
+        "url": "",
+        "source": "100test_package.tar.gz",
+        "md5sum": "1234567100",
+        "active": false,
+        "deleted": false,
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost/api/v2/manager/r/packages/100"
+            },
+            {
+                "rel": "packageList",
+                "href": "http://localhost/api/v2/manager/r/packages"
+            },
+            {
+                "rel": "self",
+                "href": "http://localhost/api/v2/manager/r/packages/100",
+                "type": "PATCH"
+            },
+            {
+                "rel": "self",
+                "href": "http://localhost/api/v2/manager/r/packages/100",
+                "type": "DELETE"
+            }
+        ]
+    }
+}

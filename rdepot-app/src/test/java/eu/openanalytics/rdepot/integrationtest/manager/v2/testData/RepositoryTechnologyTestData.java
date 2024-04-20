@@ -1,0 +1,43 @@
+/*
+ * RDepot
+ *
+ * Copyright (C) 2012-2024 Open Analytics NV
+ *
+ * ===========================================================================
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the Apache License as published by
+ * The Apache Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * Apache License for more details.
+ *
+ * You should have received a copy of the Apache License
+ * along with this program. If not, see <http://www.apache.org/licenses/>
+ */
+package eu.openanalytics.rdepot.integrationtest.manager.v2.testData;
+
+import lombok.Builder;
+import lombok.Getter;
+
+@Builder
+@Getter
+public class RepositoryTechnologyTestData {
+	private String technology;
+	private String repoNameToCreate;
+	private String repoNameToDuplicate;
+	private String repoNameToEdit;
+	private String repoIdToPublish;
+	private String repoIdToUnpublish;
+	private String repoIdToDelete;
+	private String repoIdToShiftDelete;
+	private String repoIdToEdit;
+	private String repoIdToRead;
+	private String deletedRepoId;
+	private int getEndpointNewEventsAmount;
+	private int deleteEndpointNewEventsAmount;
+	private int changeEndpointNewEventsAmount;
+}

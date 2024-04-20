@@ -1,0 +1,43 @@
+{
+  "code": 201,
+  "data": {
+    "deleted": false,
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/repository-maintainers/7"
+      },
+      {
+        "rel": "repositoryMaintainerList",
+        "href": "http://localhost:8017/api/v2/manager/repository-maintainers"
+      },
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/repository-maintainers/7",
+        "type": "PATCH"
+      },
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/repository-maintainers/7",
+        "type": "DELETE"
+      }
+    ],
+    "id": 7,
+    "repository": {
+      "name": "testrepo2",
+      "id": 3,
+      "published": true,
+      "technology": "R",
+      "publicationUri": "http://localhost/repo/testrepo2"
+    },
+    "user": {
+      "name": "Nikola Tesla",
+      "id": 5,
+      "login": "tesla",
+      "email": "tesla@ldap.forumsys.com"
+    }
+  },
+  "messageCode": "success.resource.created",
+  "message": "Your resource has been created successfully.",
+  "status": "SUCCESS"
+}

@@ -1,0 +1,56 @@
+{
+  "code": 200,
+  "data": {
+    "author": "Julie Eaton and Ian Painter",
+    "active": false,
+    "description": "Package for visualizing data quality of partially accruing time series.",
+    "source": "/opt/rdepot/repositories/3/46950998/accrued_1.1.tar.gz",
+    "technology": "R",
+    "repository": {
+      "name": "testrepo2",
+      "id": 3,
+      "published": true,
+      "technology": "R",
+      "publicationUri": "http://localhost/repo/testrepo2"
+    },
+    "title": "Visualization tools for partially accruing data",
+    "version": "1.1",
+    "url": null,
+    "deleted": true,
+    "name": "accrued",
+    "submission": {
+      "id": 4,
+      "state": "ACCEPTED"
+    },
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/r/packages/6"
+      },
+      {
+        "rel": "packageList",
+        "href": "http://localhost:8017/api/v2/manager/packages"
+      },
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/r/packages/6",
+        "type": "PATCH"
+      },
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/r/packages/6",
+        "type": "DELETE"
+      }
+    ],
+    "id": 6,
+    "user": {
+      "name": "Albert Einstein",
+      "id": 4,
+      "login": "einstein",
+      "email": "einstein@ldap.forumsys.com"
+    }
+  },
+  "messageCode": "success.request.processed",
+  "message": "Your request has been processed successfully.",
+  "status": "SUCCESS"
+}

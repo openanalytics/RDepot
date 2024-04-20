@@ -1,0 +1,30 @@
+name: D
+publicationUri: http://localhost/repo/D
+serverAddress: http://oa-rdepot-repo:8080/D
+published: false
+mirrors:
+  - name: CRAN
+    uri: https://cran.r-project.org
+    syncInterval: ""
+    type: tarball
+    generateManuals: true
+    packages:
+      - name: ggplot2
+        version: 3.3.2
+      - name: plotly
+        generateManuals: false
+  - name: Bioconductor-3.12
+    uri: http://archive.bioconductor.org.s3-website-us-east-1.amazonaws.com/packages/3.12/bioc
+    syncInterval: ""
+    type: tarball
+    generateManuals: false
+    packages:
+      - name: annotate
+        version: 1.68.0
+  - name: Bioconductor-release
+    uri: https://bioconductor.org/packages/release/bioc
+    syncInterval: ""
+    type: tarball
+    packages:
+      - name: genefilter
+

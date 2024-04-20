@@ -1,0 +1,29 @@
+{
+  "code": 200,
+  "data": {
+    "hashMethod": "SHA256",
+    "deleted": true,
+    "synchronizing": false,
+    "name": "testrepo8",
+    "serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo8",
+    "links": [
+      {
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/8"
+      },
+      {
+        "rel": "repositoryList",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories"
+      }
+    ],
+    "id": 8,
+    "published": false,
+    "technology": "Python",
+    "version": 8,
+    "publicationUri": "http:\/\/localhost\/repo\/testrepo8",
+    "numberOfPackages": 0
+  },
+  "messageCode": "success.request.processed",
+  "message": "Your request has been processed successfully.",
+  "status": "SUCCESS"
+}

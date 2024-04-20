@@ -1,7 +1,0 @@
-{
-    "status": "error",
-    "code": 404,
-    "message": "User not found!",
-    "messageCode": "user.notfound",
-    "data": null
-}

@@ -1,0 +1,84 @@
+{
+    "code": 200,
+    "data": {
+        "approver": {
+            "email": "einstein@ldap.forumsys.com",
+            "id": 4,
+            "login": "einstein",
+            "name": "Albert Einstein"
+        },
+        "changes": null,
+        "created": "2020-03-28",
+        "id": 30,
+        "links": [
+            {
+                "href": "http://localhost:8017/api/v2/manager/r/submissions/30",
+                "rel": "self"
+            },
+            {
+                "href": "http://localhost:8017/api/v2/manager/r/submissions",
+                "rel": "submissionList"
+            }
+        ],
+        "packageBag": {
+            "active": true,
+            "author": "Scott Fortmann-Roe",
+            "deleted": false,
+            "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
+            "id": 30,
+            "links": [
+                {
+                    "href": "http://localhost:8017/api/v2/manager/r/packages/30",
+                    "rel": "self"
+                },
+                {
+                    "href": "http://localhost:8017/api/v2/manager/packages",
+                    "rel": "packageList"
+                },
+                {
+                    "href": "http://localhost:8017/api/v2/manager/r/packages/30",
+                    "rel": "self",
+                    "type": "PATCH"
+                },
+                {
+                    "href": "http://localhost:8017/api/v2/manager/r/packages/30",
+                    "rel": "self",
+                    "type": "DELETE"
+                }
+            ],
+            "name": "A3",
+            "repository": {
+                "id": 5,
+                "name": "testrepo4",
+                "publicationUri": "http://localhost/repo/testrepo4",
+                "published": false,
+                "technology": "R"
+            },
+            "submission": {
+                "id": 30,
+                "state": "ACCEPTED"
+            },
+            "technology": "R",
+            "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
+            "url": null,
+            "user": {
+                "email": "admin@localhost",
+                "id": 8,
+                "login": "admin",
+                "name": "Local Admin User"
+            },
+            "version": "0.9.1"
+        },
+        "state": "ACCEPTED",
+        "submitter": {
+            "email": "galieleo@ldap.forumsys.com",
+            "id": 6,
+            "login": "galieleo",
+            "name": "Galileo Galilei"
+        },
+        "technology": "R"
+    },
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "status": "SUCCESS"
+}

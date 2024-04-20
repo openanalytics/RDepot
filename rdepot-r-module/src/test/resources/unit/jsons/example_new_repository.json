@@ -1,0 +1,5 @@
+{
+	"name": "Test repository 100",
+	"publicationUri": "http://localhost/repo/testrepo100",
+	"serverAddress": "http://192.168.1.100/testrepo100"
+}

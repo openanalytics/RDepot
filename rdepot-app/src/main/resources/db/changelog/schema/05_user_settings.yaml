@@ -1,0 +1,74 @@
+databaseChangeLog:
+  - changeSet:
+      id: 05_01_user_settings_table
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: user_settings
+                schemaName: public
+      changes:
+        - createTable:
+            schemaName: public
+            tableName: user_settings
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  startWith: 1
+                  incrementBy: 1
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: deleted
+                  type: boolean
+                  constraints:
+                    nullable: false
+                    unique: false
+              - column:
+                  name: language
+                  type: character varying(16)
+                  constraints:
+                    nullable: false
+                    unique: false
+              - column:
+                  name: theme
+                  type: character varying(16)
+                  constraints:
+                    nullable: false
+                    unique: false
+              - column:
+                  name: page_size
+                  type: integer
+                  constraints:
+                    nullable: false
+                    unique: false
+              - column:
+                  name: user_id
+                  type: integer
+                  constraints:
+                    nullable: false
+                    unique: true
+  - changeSet:
+      id: 05_02_addForeignKeyConstraint_of_user_user_settings
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: of_user
+                schemaName: public
+                foreignKeyTableName: user_settings
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: user_settings
+            baseColumnNames: user_id
+            constraintName: of_user
+            referencedTableSchemaName: public
+            referencedTableName: user
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION

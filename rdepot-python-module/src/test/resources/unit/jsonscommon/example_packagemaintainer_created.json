@@ -1,0 +1,33 @@
+{
+    "status": "SUCCESS",
+    "code": 201,
+    "message": "Your resource has been created successfully.",
+    "messageCode": "success.resource.created",
+	"data": {
+        "id": 100,
+        "user":{"name":"Test User111","id":111,"login":"packagemaintainer_testusername111","email":"111test@example.org"},
+        "packageName": "TestPackage100",
+        "repository":{"name":"Test Python Repository 100","id":123,"publicationUri":"http://localhost/repo/testrepo100"},
+        "deleted": false,
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost/api/v2/manager/package-maintainers/100"
+            },
+            {
+                "rel": "packageMaintainerList",
+                "href": "http://localhost/api/v2/manager/package-maintainers"
+            },
+            {
+                "rel": "self",
+                "href": "http://localhost/api/v2/manager/package-maintainers/100",
+                "type": "PATCH"
+            },
+            {
+                "rel": "self",
+                "href": "http://localhost/api/v2/manager/package-maintainers/100",
+                "type": "DELETE"
+            }
+        ]
+    }
+}

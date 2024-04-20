@@ -1,0 +1,78 @@
+Metadata-Version: 2.1
+Name: accelerated-numpy
+Version: 0.1.0
+Summary: Faster loops for NumPy using multithreading and other tricks
+Home-page: https://github.com/Quansight/numpy-threading-extensions
+Author: Matti Picus
+Author-email: mattigit@picus.org.il
+License: MIT
+Project-URL: Changelog, https://github.com/Quansight/numpy-threading-extensions/blob/master/CHANGELOG.rst
+Project-URL: Issue Tracker, https://github.com/Quansight/numpy-threading-extensions/issues
+Description: # numpy-threading-extensions
+        Faster loops for NumPy using multithreading and other tricks. The first release
+        will target NumPy binary and unary ufuncs. Eventually we will enable overriding
+        other NumPy functions, and provide an C-based (non-Python) API for extending
+        via third-party functions.
+        
+        [![Travis CI Build Status](https://api.travis-ci.org/Quansight/numpy-threading-extensions.svg)](https://travis-ci.org/Quansight/numpy-threading-extensions)
+        
+        [![Coverage Status](https://codecov.io/gh/Quansight/numpy-threading-extensions/branch/main/graphs/badge.svg)](https://codecov.io/github/Quansight/numpy-threading-extensions)
+        
+        [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+        
+        ## Installation
+        ```
+        pip install accelerated_numpy
+        ```
+        
+        You can also install the in-development version 0.0.1 with:
+        ```
+        pip install https://github.com/Quansight/numpy-threading-extensions/archive/v0.0.1.zip
+        ```
+        or latest with
+        ```
+        pip install https://github.com/Quansight/numpy-threading-extensions/archive/main.zip
+        ```
+        
+        ## Documentation
+        
+        To use the project:
+        
+        ```python
+            import accelerated_numpy
+            accelerated_numpy.initialize()
+        ```
+        
+        ## Development
+        
+        To run all the tests run::
+        
+        ```
+            tox
+        ```
+        
+        Note, to combine the coverage data from all the tox environments run:
+        
+         OS | Command
+        ----|----
+        Windows | `set PYTEST_ADDOPTS=--cov-append`
+        |        | `tox`
+        Other   | `PYTEST_ADDOPTS=--cov-append tox`
+        
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: Unix
+Classifier: Operating System :: POSIX
+Classifier: Operating System :: Microsoft :: Windows
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: Implementation :: CPython
+Classifier: Programming Language :: Python :: Implementation :: PyPy
+Classifier: Topic :: Utilities
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown

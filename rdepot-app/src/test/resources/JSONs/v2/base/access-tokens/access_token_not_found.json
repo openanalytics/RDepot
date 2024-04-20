@@ -1,0 +1,7 @@
+{
+    "status": "ERROR",
+    "code": 404,
+    "message": "error.access.token.not.found",
+    "messageCode": "error.access.token.not.found",
+    "data": null
+}

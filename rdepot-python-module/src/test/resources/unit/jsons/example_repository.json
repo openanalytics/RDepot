@@ -1,0 +1,27 @@
+{
+	"status": "SUCCESS",
+	"code": 200,
+	"message": "Your request has been processed successfully.",
+	"messageCode": "success.request.processed",
+	"data": {
+		"id": 123,
+		"version": 10,
+		"publicationUri": "http://localhost/repo/testrepo123",
+		"name": "Test Python Repository 123",
+		"serverAddress": "http://192.168.1.100/testrepo123",
+		"deleted": false,
+		"published": true,
+		"synchronizing": false,
+		"technology": "Python",
+		"links": [
+			{
+				"rel": "self",
+				"href": "http://localhost/api/v2/manager/python/repositories/123"
+			},
+			{
+				"rel": "repositoryList",
+				"href": "http://localhost/api/v2/manager/python/repositories"
+			}
+		]
+	}
+}

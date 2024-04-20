@@ -1,0 +1,140 @@
+databaseChangeLog:
+  - changeSet:
+      id: 04a_02_pythonrepository_table
+      author: kkulesa
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: pythonrepository
+                schemaName: public
+      changes:
+        - createTable:
+            schemaName: public
+            tableName: pythonrepository
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: hash_method
+                  type: text
+                  defaultValue: SHA256
+                  constraints:
+                    nullable: true
+  - changeSet:
+      id: 04a_03_pythonpackage
+      author: kkulesa
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: pythonpackage
+                schemaName: public
+      changes:
+        - dropNotNullConstraint:
+            columnDataType: text
+            columnName: description
+            schemaName: public
+            tableName: package
+        - dropNotNullConstraint:
+            columnDataType: text
+            columnName: author
+            schemaName: public
+            tableName: package
+        - dropNotNullConstraint:
+            columnDataType: text
+            columnName: title
+            schemaName: public
+            tableName: package
+        - createTable:
+            schemaName: public
+            tableName: pythonpackage
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: license
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: author_email
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: classifier
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: description_content_type
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: home_page
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: keywords
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: maintainer
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: maintainer_email
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: platform
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: project_url
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: provides_extra
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: requires_dist
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: requires_external
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: requires_python
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: summary
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: hash
+                  type: text
+                  constraints:
+                    nullable: false

@@ -1,0 +1,7 @@
+{
+  "code": 422,
+  "data": "The submission properties you attempted to change, are immutable.",
+  "messageCode": "error.malformed.patch",
+  "message": "Your JSON Patch object is incorrect.",
+  "status": "ERROR"
+}
