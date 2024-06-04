@@ -27,4 +27,3 @@ mirrors:
     type: tarball
     packages:
       - name: genefilter
-

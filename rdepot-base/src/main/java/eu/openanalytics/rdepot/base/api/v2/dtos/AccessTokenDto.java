@@ -21,7 +21,6 @@
 package eu.openanalytics.rdepot.base.api.v2.dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import eu.openanalytics.rdepot.base.entities.AccessToken;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,31 +31,31 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class AccessTokenDto implements IDto {
-	private AccessToken entity;
-	private int id;
-	private String name;
-	private String value;
-	private String creationDate;
-	private String expirationDate;
-	private boolean active;
-	private boolean deleted;
-	private UserProjection user;
-		
-	public AccessTokenDto(AccessToken entity) {
-		this.entity = entity;
-		this.id = entity.getId();
-		this.name = entity.getName();
-		this.value = entity.getPlainValue();
-		this.creationDate = entity.getCreationDate().toString();
-		this.expirationDate = entity.getExpirationDate().toString();
-		this.active = entity.isActive();
-		this.deleted = entity.isDeleted();
-		this.user = new UserProjection(entity.getUser());
-	}
-	
-	@Override
-	@JsonIgnore
-	public AccessToken getEntity() {
-		return entity;
-	}
+    private AccessToken entity;
+    private int id;
+    private String name;
+    private String value;
+    private String creationDate;
+    private String expirationDate;
+    private boolean active;
+    private boolean deleted;
+    private UserProjection user;
+
+    public AccessTokenDto(AccessToken entity) {
+        this.entity = entity;
+        this.id = entity.getId();
+        this.name = entity.getName();
+        this.value = entity.getPlainValue();
+        this.creationDate = entity.getCreationDate().toString();
+        this.expirationDate = entity.getExpirationDate().toString();
+        this.active = entity.isActive();
+        this.deleted = entity.isDeleted();
+        this.user = new UserProjection(entity.getUser());
+    }
+
+    @Override
+    @JsonIgnore
+    public AccessToken getEntity() {
+        return entity;
+    }
 }

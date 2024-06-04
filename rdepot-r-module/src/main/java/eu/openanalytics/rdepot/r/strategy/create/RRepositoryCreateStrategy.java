@@ -28,11 +28,11 @@ import eu.openanalytics.rdepot.r.services.RRepositoryService;
 
 public class RRepositoryCreateStrategy extends CreateRepositoryStrategy<RRepository> {
 
-	public RRepositoryCreateStrategy(
-			RRepository resource, 
-			NewsfeedEventService newsfeedEventService, 
-			RRepositoryService service,
-			User requester) {
-		super(resource, service, requester, newsfeedEventService);
-	}
+    public RRepositoryCreateStrategy(
+            RRepository resource,
+            NewsfeedEventService newsfeedEventService,
+            RRepositoryService service,
+            User requester) {
+        super(resource, service, requester, newsfeedEventService);
+    }
 }

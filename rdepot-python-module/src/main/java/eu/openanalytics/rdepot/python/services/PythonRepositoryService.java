@@ -20,16 +20,15 @@
  */
 package eu.openanalytics.rdepot.python.services;
 
-import org.springframework.stereotype.Service;
-
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.python.daos.PythonRepositoryDao;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
+import org.springframework.stereotype.Service;
 
 @Service
-public class PythonRepositoryService extends RepositoryService<PythonRepository>{
+public class PythonRepositoryService extends RepositoryService<PythonRepository> {
 
-	public PythonRepositoryService(PythonRepositoryDao dao) {
-		super(dao);
-	}
+    public PythonRepositoryService(PythonRepositoryDao dao) {
+        super(dao);
+    }
 }

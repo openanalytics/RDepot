@@ -21,46 +21,25 @@
 package eu.openanalytics.rdepot.base.api.v2.resolvers;
 
 import eu.openanalytics.rdepot.base.api.v2.sorting.DtoToEntityPropertyMapping;
-import eu.openanalytics.rdepot.base.api.v2.sorting.PackageDtoToEntityPropertyMapping;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Component;
 
-@Component
 @AllArgsConstructor
 @Slf4j
-public class PageableSortResolverImpl implements PageableSortResolver {
+public abstract class PageableSortResolverImpl implements PageableSortResolver {
 
     private final DtoToEntityPropertyMapping mapping;
-    private final PackageDtoToEntityPropertyMapping packageMapping;
-    
+
     @Override
     public DtoResolvedPageable resolve(Pageable pageable) {
         log.debug("Resolving sorting arguments for pageable.");
 
         final Sort dtoSort = pageable.getSort();
-        final Sort resolvedEntitySort = Sort.by(
-                dtoSort.map(
-                        o -> o.withProperty(mapping.dtoToEntity(o.getProperty())
-                                .orElse(o.getProperty()))
-                ).toList()
-        );
-
-        return new DtoResolvedPageable(pageable, resolvedEntitySort);
-    }
-    
-    public DtoResolvedPageable resolvePackage(Pageable pageable) {
-        log.debug("Resolving sorting arguments for package pageable.");
-
-        final Sort dtoSort = pageable.getSort();
-        final Sort resolvedEntitySort = Sort.by(
-                dtoSort.map(
-                        o -> o.withProperty(packageMapping.dtoToEntity(o.getProperty())
-                                .orElse(o.getProperty()))
-                ).toList()
-        );
+        final Sort resolvedEntitySort = Sort.by(dtoSort.map(
+                        o -> o.withProperty(mapping.dtoToEntity(o.getProperty()).orElse(o.getProperty())))
+                .toList());
 
         return new DtoResolvedPageable(pageable, resolvedEntitySort);
     }

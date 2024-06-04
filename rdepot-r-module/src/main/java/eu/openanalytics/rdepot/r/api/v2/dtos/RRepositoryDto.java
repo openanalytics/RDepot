@@ -20,25 +20,24 @@
  */
 package eu.openanalytics.rdepot.r.api.v2.dtos;
 
-import org.apache.commons.lang3.builder.ToStringExclude;
-
 import eu.openanalytics.rdepot.base.api.v2.dtos.RepositoryDto;
 import eu.openanalytics.rdepot.base.entities.Resource;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.ToStringExclude;
 
 @NoArgsConstructor
 public class RRepositoryDto extends RepositoryDto {
-	@ToStringExclude 
-	private RRepository entity;
+    @ToStringExclude
+    private RRepository entity;
 
-	public RRepositoryDto(RRepository repository, int numberOfPackages) {
-		super(repository, numberOfPackages);
-		this.entity = repository;
-	}
-	
-	@Override
-	public Resource getEntity() {
-		return entity;
-	}
+    public RRepositoryDto(RRepository repository, int numberOfPackages) {
+        super(repository, numberOfPackages);
+        this.entity = repository;
+    }
+
+    @Override
+    public Resource getEntity() {
+        return entity;
+    }
 }

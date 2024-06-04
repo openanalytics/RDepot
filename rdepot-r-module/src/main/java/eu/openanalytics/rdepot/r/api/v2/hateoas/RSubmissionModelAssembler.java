@@ -32,6 +32,10 @@ import eu.openanalytics.rdepot.base.entities.enums.SubmissionState;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.r.api.v2.controllers.RPackageController;
 import eu.openanalytics.rdepot.r.api.v2.controllers.RSubmissionController;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
@@ -39,79 +43,74 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
 @Component
-public class RSubmissionModelAssembler 
-	extends AbstractRoleAwareModelAssembler<Submission, SubmissionDto>{
+public class RSubmissionModelAssembler extends AbstractRoleAwareModelAssembler<Submission, SubmissionDto> {
 
-	private final PackageModelAssembler packageModelAssembler;
-	private final SecurityMediator securityMediator;
-	
-	@Autowired
-	public RSubmissionModelAssembler(SubmissionDtoConverter dtoConverter,
-									 PackageModelAssembler packageModelAssembler, SecurityMediator securityMediator) {
-		super(dtoConverter, RSubmissionController.class, "submission", Optional.empty());
-		this.packageModelAssembler = packageModelAssembler;
-		this.securityMediator = securityMediator;
-	}
-	
-	private RSubmissionModelAssembler(DtoConverter<Submission, SubmissionDto> dtoConverter,
-			PackageModelAssembler packageModelAssembler, SecurityMediator securityMediator, User user) {
-		super(dtoConverter, RSubmissionController.class, "submission", Optional.of(user));
-		this.packageModelAssembler = packageModelAssembler;
-		this.securityMediator = securityMediator;
-	}
+    private final PackageModelAssembler packageModelAssembler;
+    private final SecurityMediator securityMediator;
 
-	@Override
-	protected List<Link> getLinksToMethodsWithLimitedAccess(Submission entity, User user, Link baseLink) {
-		final List<Link> links = new ArrayList<>();
+    @Autowired
+    public RSubmissionModelAssembler(
+            SubmissionDtoConverter dtoConverter,
+            PackageModelAssembler packageModelAssembler,
+            SecurityMediator securityMediator) {
+        super(dtoConverter, RSubmissionController.class, "submission", Optional.empty());
+        this.packageModelAssembler = packageModelAssembler;
+        this.securityMediator = securityMediator;
+    }
 
-		if(entity.getState().equals(SubmissionState.WAITING) && 
-				(securityMediator.isAuthorizedToAccept(entity, user) 
-				|| securityMediator.isAuthorizedToReject(entity, user) 
-				|| securityMediator.isAuthorizedToCancel(entity, user))
-		) {
-			LinkWithModifiableProperties link = new LinkWithModifiableProperties(
-						baseLink.withType(HTTP_METHODS.PATCH.getValue()), "state");
-			links.add(link);
-		}
-		
-		return links;
-	}
-	
-	@Override
-	public @NonNull EntityModel<SubmissionDto> toModel(@NonNull Submission entity) {
-		final EntityModel<SubmissionDto> model = super.toModel(entity);
-		Objects.requireNonNull(model.getContent()).setPackageBag(
-				packageModelAssembler.toModel(entity.getPackage(), RPackageController.class)
-		);
-		return model;
-	}
-	
-	@Override
-	public EntityModel<SubmissionDto> toModel(Submission entity, User user) {
-		final EntityModel<SubmissionDto> model = super.toModel(entity, user);
+    private RSubmissionModelAssembler(
+            DtoConverter<Submission, SubmissionDto> dtoConverter,
+            PackageModelAssembler packageModelAssembler,
+            SecurityMediator securityMediator,
+            User user) {
+        super(dtoConverter, RSubmissionController.class, "submission", Optional.of(user));
+        this.packageModelAssembler = packageModelAssembler;
+        this.securityMediator = securityMediator;
+    }
 
-		if(model.getContent() != null) {
-			model.getContent().setPackageBag(
-					packageModelAssembler.toModel(entity.getPackage(), user)
-			);
-		}
+    @Override
+    protected List<Link> getLinksToMethodsWithLimitedAccess(Submission entity, User user, Link baseLink) {
+        final List<Link> links = new ArrayList<>();
 
-		return model;
-	}
+        if (entity.getState().equals(SubmissionState.WAITING)
+                && (securityMediator.isAuthorizedToAccept(entity, user)
+                        || securityMediator.isAuthorizedToReject(entity, user)
+                        || securityMediator.isAuthorizedToCancel(entity, user))) {
+            LinkWithModifiableProperties link =
+                    new LinkWithModifiableProperties(baseLink.withType(HTTP_METHODS.PATCH.getValue()), "state");
+            links.add(link);
+        }
 
-	@Override
-	public RepresentationModelAssembler<Submission, EntityModel<SubmissionDto>> assemblerWithUser(User user) {
-		return new RSubmissionModelAssembler(dtoConverter, packageModelAssembler, securityMediator, user);
-	}
+        return links;
+    }
 
-	@Override
-	protected Class<?> getExtensionControllerClass(Submission entity) {
-		return RSubmissionController.class;
-	}
+    @Override
+    public @NonNull EntityModel<SubmissionDto> toModel(@NonNull Submission entity) {
+        final EntityModel<SubmissionDto> model = super.toModel(entity);
+        Objects.requireNonNull(model.getContent())
+                .setPackageBag(packageModelAssembler.toModel(entity.getPackage(), RPackageController.class));
+        return model;
+    }
+
+    @Override
+    public EntityModel<SubmissionDto> toModel(Submission entity, User user) {
+        final EntityModel<SubmissionDto> model = super.toModel(entity, user);
+
+        if (model.getContent() != null) {
+            model.getContent().setPackageBag(packageModelAssembler.toModel(entity.getPackage(), user));
+        }
+
+        return model;
+    }
+
+    @Override
+    public RepresentationModelAssembler<Submission, EntityModel<SubmissionDto>> assemblerWithUser(User user) {
+        return new RSubmissionModelAssembler(dtoConverter, packageModelAssembler, securityMediator, user);
+    }
+
+    @Override
+    protected Class<?> getExtensionControllerClass(Submission entity) {
+        return RSubmissionController.class;
+    }
 }

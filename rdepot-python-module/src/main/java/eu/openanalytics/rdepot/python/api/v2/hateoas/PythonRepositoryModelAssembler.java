@@ -20,16 +20,6 @@
  */
 package eu.openanalytics.rdepot.python.api.v2.hateoas;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.stereotype.Component;
-
 import eu.openanalytics.rdepot.base.api.v2.converters.DtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.hateoas.AbstractRoleAwareModelAssembler;
 import eu.openanalytics.rdepot.base.entities.User;
@@ -37,47 +27,56 @@ import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.python.api.v2.controllers.PythonRepositoryController;
 import eu.openanalytics.rdepot.python.api.v2.dtos.PythonRepositoryDto;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.stereotype.Component;
 
 @Component
-public class PythonRepositoryModelAssembler 
-	extends AbstractRoleAwareModelAssembler<PythonRepository, PythonRepositoryDto> {
+public class PythonRepositoryModelAssembler
+        extends AbstractRoleAwareModelAssembler<PythonRepository, PythonRepositoryDto> {
 
-	private final SecurityMediator securityMediator;
-	
-	@Autowired
-	public PythonRepositoryModelAssembler(DtoConverter<PythonRepository, PythonRepositoryDto> dtoConverter,
-			SecurityMediator securityMediator) {
-		super(dtoConverter, PythonRepositoryController.class, "repository", Optional.empty());
-		this.securityMediator = securityMediator;
-	}
-	
-	private PythonRepositoryModelAssembler(DtoConverter<PythonRepository, PythonRepositoryDto> dtoConverter,
-			SecurityMediator securityMediator, User user) {
-		super(dtoConverter, PythonRepositoryController.class, "repository", Optional.of(user));
-		this.securityMediator = securityMediator;
-	}
+    private final SecurityMediator securityMediator;
 
-	@Override
-	public RepresentationModelAssembler<PythonRepository, EntityModel<PythonRepositoryDto>> assemblerWithUser(
-			User user) {
-		return new PythonRepositoryModelAssembler(dtoConverter, securityMediator, user);
-	}
+    @Autowired
+    public PythonRepositoryModelAssembler(
+            DtoConverter<PythonRepository, PythonRepositoryDto> dtoConverter, SecurityMediator securityMediator) {
+        super(dtoConverter, PythonRepositoryController.class, "repository", Optional.empty());
+        this.securityMediator = securityMediator;
+    }
 
-	@Override
-	protected List<Link> getLinksToMethodsWithLimitedAccess(PythonRepository entity, User user, Link baseLink) {
-		List<Link> links = new ArrayList<>();
-		
-		if(securityMediator.isAuthorizedToEdit(entity, user)) {
-			links.add(baseLink.withType(HTTP_METHODS.PATCH.getValue()));
-			links.add(baseLink.withType(HTTP_METHODS.DELETE.getValue()));
-		}
-		
-		return links;
-	}
+    private PythonRepositoryModelAssembler(
+            DtoConverter<PythonRepository, PythonRepositoryDto> dtoConverter,
+            SecurityMediator securityMediator,
+            User user) {
+        super(dtoConverter, PythonRepositoryController.class, "repository", Optional.of(user));
+        this.securityMediator = securityMediator;
+    }
 
-	@Override
-	protected Class<?> getExtensionControllerClass(PythonRepository entity) {
-		return PythonRepositoryController.class;
-	}
+    @Override
+    public RepresentationModelAssembler<PythonRepository, EntityModel<PythonRepositoryDto>> assemblerWithUser(
+            User user) {
+        return new PythonRepositoryModelAssembler(dtoConverter, securityMediator, user);
+    }
 
+    @Override
+    protected List<Link> getLinksToMethodsWithLimitedAccess(PythonRepository entity, User user, Link baseLink) {
+        List<Link> links = new ArrayList<>();
+
+        if (securityMediator.isAuthorizedToEdit(entity, user)) {
+            links.add(baseLink.withType(HTTP_METHODS.PATCH.getValue()));
+            links.add(baseLink.withType(HTTP_METHODS.DELETE.getValue()));
+        }
+
+        return links;
+    }
+
+    @Override
+    protected Class<?> getExtensionControllerClass(PythonRepository entity) {
+        return PythonRepositoryController.class;
+    }
 }

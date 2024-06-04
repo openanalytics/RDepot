@@ -20,12 +20,6 @@
  */
 package eu.openanalytics.rdepot.base.strategy.update;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import eu.openanalytics.rdepot.base.entities.EventChangedVariable;
 import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
 import eu.openanalytics.rdepot.base.entities.Package;
@@ -40,83 +34,86 @@ import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Updates {@link RepositoryMaintainer Repository Maintainer}.
- * If situation requires it, 
+ * If situation requires it,
  * the maintainer will be updated for every {@link Package} inside.
  */
 public class UpdateRepositoryMaintainerStrategy extends UpdateStrategy<RepositoryMaintainer> {
 
-	private final BestMaintainerChooser bestMaintainerChooser;
-	private final CommonPackageService packageService;
-	
-	public UpdateRepositoryMaintainerStrategy(RepositoryMaintainer resource,
-			NewsfeedEventService eventService,
-			RepositoryMaintainerService service, User requester, 
-			RepositoryMaintainer updatedResource,
-			CommonPackageService packageService,
-			BestMaintainerChooser bestMaintainerChooser) {
-		super(resource, service, eventService, requester, updatedResource, new RepositoryMaintainer(resource));
-		this.packageService = packageService;
-		this.bestMaintainerChooser = bestMaintainerChooser;
-	}
+    private final BestMaintainerChooser bestMaintainerChooser;
+    private final CommonPackageService packageService;
 
-	@Override
-	protected RepositoryMaintainer actualStrategy() throws StrategyFailure {
-		if(resource.getRepository().getId() != updatedResource.getRepository().getId())
-			updateRepository(resource, updatedResource.getRepository());
-		if(resource.getUser().getId() != updatedResource.getUser().getId())
-			resource.setUser(updatedResource.getUser());
-		if(!resource.isDeleted() && updatedResource.isDeleted())
-			softDelete(resource);
-		
-		return resource;
-	}
+    public UpdateRepositoryMaintainerStrategy(
+            RepositoryMaintainer resource,
+            NewsfeedEventService eventService,
+            RepositoryMaintainerService service,
+            User requester,
+            RepositoryMaintainer updatedResource,
+            CommonPackageService packageService,
+            BestMaintainerChooser bestMaintainerChooser) {
+        super(resource, service, eventService, requester, updatedResource, new RepositoryMaintainer(resource));
+        this.packageService = packageService;
+        this.bestMaintainerChooser = bestMaintainerChooser;
+    }
 
-	private void softDelete(RepositoryMaintainer resource) throws StrategyFailure {
-		resource.setDeleted(true);
-		try {
-			bestMaintainerChooser.refreshMaintainerForPackages(
-                    new ArrayList<>(packageService.findAllByRepository(resource.getRepository()))
-				);
-		} catch (NoSuitableMaintainerFound e) {
-			logger.error(e.getMessage(), e);
-			throw new StrategyFailure(e);
-		}
-		
-		changedValues.add(new EventChangedVariable("deleted", "false", "true"));
-	}
+    @Override
+    protected RepositoryMaintainer actualStrategy() throws StrategyFailure {
+        if (resource.getRepository().getId() != updatedResource.getRepository().getId())
+            updateRepository(resource, updatedResource.getRepository());
+        if (resource.getUser().getId() != updatedResource.getUser().getId())
+            resource.setUser(updatedResource.getUser());
+        if (!resource.isDeleted() && updatedResource.isDeleted()) softDelete(resource);
 
-	private void updateRepository(RepositoryMaintainer resource, Repository repository) 
-			throws StrategyFailure {
-		Repository oldRepository = resource.getRepository();
-		resource.setRepository(repository);
-		List<Package> packages = Stream.of(
-				packageService.findAllByRepository(oldRepository),
-				packageService.findAllByRepository(repository))
-			.flatMap(Collection::stream).collect(Collectors.toList());
-		
-		try {
-			bestMaintainerChooser.refreshMaintainerForPackages(packages);
-		} catch(NoSuitableMaintainerFound e) {
-			logger.error(e.getMessage(), e);
-			throw new StrategyFailure(e);
-		}
-		
-		changedValues.add(new EventChangedVariable(
-				"repository", oldRepository.toString(), repository.toString()));
-	}
+        return resource;
+    }
 
-	@Override
-	protected void postStrategy() throws StrategyFailure {}
+    private void softDelete(RepositoryMaintainer resource) throws StrategyFailure {
+        resource.setDeleted(true);
+        try {
+            bestMaintainerChooser.refreshMaintainerForPackages(
+                    new ArrayList<>(packageService.findAllByRepository(resource.getRepository())));
+        } catch (NoSuitableMaintainerFound e) {
+            logger.error(e.getMessage(), e);
+            throw new StrategyFailure(e);
+        }
 
-	@Override
-	public void revertChanges() throws StrategyReversionFailure {}
+        changedValues.add(new EventChangedVariable("deleted", "false", "true"));
+    }
 
-	@Override
-	protected NewsfeedEvent generateEvent(RepositoryMaintainer resource) {
-		return new NewsfeedEvent(requester, NewsfeedEventType.UPDATE, resource);
-	}
+    private void updateRepository(RepositoryMaintainer resource, Repository repository) throws StrategyFailure {
+        Repository oldRepository = resource.getRepository();
+        resource.setRepository(repository);
+        List<Package> packages = Stream.of(
+                        packageService.findAllByRepository(oldRepository),
+                        packageService.findAllByRepository(repository))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
 
+        try {
+            bestMaintainerChooser.refreshMaintainerForPackages(packages);
+        } catch (NoSuitableMaintainerFound e) {
+            logger.error(e.getMessage(), e);
+            throw new StrategyFailure(e);
+        }
+
+        changedValues.add(new EventChangedVariable("repository", oldRepository.toString(), repository.toString()));
+    }
+
+    @Override
+    protected void postStrategy() throws StrategyFailure {}
+
+    @Override
+    public void revertChanges() throws StrategyReversionFailure {}
+
+    @Override
+    protected NewsfeedEvent generateEvent(RepositoryMaintainer resource) {
+        return new NewsfeedEvent(requester, NewsfeedEventType.UPDATE, resource);
+    }
 }

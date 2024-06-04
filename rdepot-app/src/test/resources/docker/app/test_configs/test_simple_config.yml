@@ -34,11 +34,11 @@ spring:
     host: 192.168.49.1
     port: 3925
 
-# Enable Liquibase  
+# Enable Liquibase
   liquibase:
     user: postgres
-    enabled: true    
-    
+    enabled: true
+
 # Authentication related properties
 app:
   authentication: simple
@@ -82,5 +82,4 @@ db:
 # Hibernate related properties
 hibernate:
   dialect: org.hibernate.dialect.PostgreSQLDialect
-  show_sql: false  
-
+  show_sql: false

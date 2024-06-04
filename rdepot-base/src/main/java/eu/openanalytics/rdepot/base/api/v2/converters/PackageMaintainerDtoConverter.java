@@ -20,8 +20,6 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.converters;
 
-import org.springframework.stereotype.Component;
-
 import eu.openanalytics.rdepot.base.api.v2.converters.exceptions.EntityResolutionException;
 import eu.openanalytics.rdepot.base.api.v2.dtos.PackageMaintainerDto;
 import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
@@ -30,31 +28,29 @@ import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.base.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 
 /**
  * {@link DtoConverter DTO Converter} for {@link PackageMaintainer Package Maintainers}
  */
 @Component
 @AllArgsConstructor
-public class PackageMaintainerDtoConverter 
-	implements DtoConverter<PackageMaintainer, PackageMaintainerDto> {
+public class PackageMaintainerDtoConverter implements DtoConverter<PackageMaintainer, PackageMaintainerDto> {
 
-	private final RepositoryService<Repository> repositoryService;
-	private final UserService userService;
-	
-	@Override
-	public PackageMaintainer resolveDtoToEntity(PackageMaintainerDto dto) throws EntityResolutionException {
-		Repository repository = repositoryService
-				.findById(dto.getRepository().getId())
-				.orElseThrow(() -> new EntityResolutionException(dto));
-		User user = userService.findById(dto.getUser().getId())
-				.orElseThrow(() -> new EntityResolutionException(dto));
-		return new PackageMaintainer(dto, repository, user);
-	}
+    private final RepositoryService<Repository> repositoryService;
+    private final UserService userService;
 
-	@Override
-	public PackageMaintainerDto convertEntityToDto(PackageMaintainer entity) {
-		return new PackageMaintainerDto(entity);
-	}
+    @Override
+    public PackageMaintainer resolveDtoToEntity(PackageMaintainerDto dto) throws EntityResolutionException {
+        Repository repository = repositoryService
+                .findById(dto.getRepository().getId())
+                .orElseThrow(() -> new EntityResolutionException(dto));
+        User user = userService.findById(dto.getUser().getId()).orElseThrow(() -> new EntityResolutionException(dto));
+        return new PackageMaintainer(dto, repository, user);
+    }
 
+    @Override
+    public PackageMaintainerDto convertEntityToDto(PackageMaintainer entity) {
+        return new PackageMaintainerDto(entity);
+    }
 }

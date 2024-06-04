@@ -21,10 +21,10 @@
 package eu.openanalytics.rdepot.repo.exception;
 
 public class InvalidRequestPageNumberException extends Exception {
-	
-	private static final long serialVersionUID = 2742397456258305451L;
 
-	public InvalidRequestPageNumberException(String page) {
-		super("Invalid request page number: " + page);
-	}
+    private static final long serialVersionUID = 2742397456258305451L;
+
+    public InvalidRequestPageNumberException(String page) {
+        super("Invalid request page number: " + page);
+    }
 }

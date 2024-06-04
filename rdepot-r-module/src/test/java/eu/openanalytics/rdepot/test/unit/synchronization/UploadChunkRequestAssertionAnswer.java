@@ -24,49 +24,57 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import eu.openanalytics.rdepot.base.entities.Repository;
+import eu.openanalytics.rdepot.base.synchronization.RepoResponse;
 import java.util.List;
-
+import lombok.RequiredArgsConstructor;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 
-import eu.openanalytics.rdepot.base.entities.Repository;
-import eu.openanalytics.rdepot.base.synchronization.RepoResponse;
-import lombok.RequiredArgsConstructor;
-
 @RequiredArgsConstructor
-public abstract class UploadChunkRequestAssertionAnswer 
-	implements Answer<ResponseEntity<RepoResponse>> {
-	
-	protected final int chunksToSend;
-	protected final Repository repository;
-	protected int callCount = 0;
-	
-	protected void assertChunk(MultiValueMap<String,Object> entity, 
-			UploadChunkRequestAssertion assertion) {
-		if(callCount == 0) {
-			assertTrue(List.of(assertion.getExpectedId()).equals(entity.get("id")), "For the first chunk, the id should be empty.");
-			assertEquals(List.of(assertion.getExpectedVersionBefore()), entity.get("version_before"), "Incorrect version before the request.");
-			assertEquals(List.of(assertion.getExpectedVersionAfter()), entity.get("version_after"), "Incorrect version after the request.");
-			assertEquals(assertion.getExpectedPages(), entity.get("page"), "Incorrect number of chunks.");
-			assertEquals(assertion.getExpectedToDelete(), entity.get("to_delete"), "Incorrect packages to delete.");
-			assertEquals(assertion.getExpectedToDeleteFromArchive(), 
-					entity.get("to_delete_archive"), "Incorrect packages to delete from archive.");
-		}
-		assertEquals(assertion.getFilesToUpload(), entity.get("files"), "Incorrect files uploaded.");
-		assertEquals(assertion.getFilesToUploadToArchive(), entity.get("files_archive"), "Incorrect files uploaded to archive.");
-	}
-	
-	@Override
-	public ResponseEntity<RepoResponse> answer(InvocationOnMock invocation) throws Throwable {
-		if(callCount >= chunksToSend)
-			fail("To many chunks have been sent.");
-		
-		callCount++;
-		final RepoResponse repoResponse = new RepoResponse();
-		repoResponse.setId("" + repository.getId());
-		repoResponse.setMessage("OK");
-		return ResponseEntity.ok(repoResponse);
-	}
+public abstract class UploadChunkRequestAssertionAnswer implements Answer<ResponseEntity<RepoResponse>> {
+
+    protected final int chunksToSend;
+    protected final Repository repository;
+    protected int callCount = 0;
+
+    protected void assertChunk(MultiValueMap<String, Object> entity, UploadChunkRequestAssertion assertion) {
+        if (callCount == 0) {
+            assertTrue(
+                    List.of(assertion.getExpectedId()).equals(entity.get("id")),
+                    "For the first chunk, the id should be empty.");
+            assertEquals(
+                    List.of(assertion.getExpectedVersionBefore()),
+                    entity.get("version_before"),
+                    "Incorrect version before the request.");
+            assertEquals(
+                    List.of(assertion.getExpectedVersionAfter()),
+                    entity.get("version_after"),
+                    "Incorrect version after the request.");
+            assertEquals(assertion.getExpectedPages(), entity.get("page"), "Incorrect number of chunks.");
+            assertEquals(assertion.getExpectedToDelete(), entity.get("to_delete"), "Incorrect packages to delete.");
+            assertEquals(
+                    assertion.getExpectedToDeleteFromArchive(),
+                    entity.get("to_delete_archive"),
+                    "Incorrect packages to delete from archive.");
+        }
+        assertEquals(assertion.getFilesToUpload(), entity.get("files"), "Incorrect files uploaded.");
+        assertEquals(
+                assertion.getFilesToUploadToArchive(),
+                entity.get("files_archive"),
+                "Incorrect files uploaded to archive.");
+    }
+
+    @Override
+    public ResponseEntity<RepoResponse> answer(InvocationOnMock invocation) throws Throwable {
+        if (callCount >= chunksToSend) fail("To many chunks have been sent.");
+
+        callCount++;
+        final RepoResponse repoResponse = new RepoResponse();
+        repoResponse.setId("" + repository.getId());
+        repoResponse.setMessage("OK");
+        return ResponseEntity.ok(repoResponse);
+    }
 }

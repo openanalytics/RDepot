@@ -20,11 +20,10 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.converters;
 
-import org.springframework.stereotype.Component;
-
 import eu.openanalytics.rdepot.base.api.v2.converters.exceptions.EntityResolutionException;
 import eu.openanalytics.rdepot.base.api.v2.dtos.UserSettingsDto;
 import eu.openanalytics.rdepot.base.entities.UserSettings;
+import org.springframework.stereotype.Component;
 
 /**
  * {@link DtoConverter DTO Converter} for {@link UserSettings User Settings}
@@ -32,14 +31,13 @@ import eu.openanalytics.rdepot.base.entities.UserSettings;
 @Component
 public class UserSettingsDtoConverter implements DtoConverter<UserSettings, UserSettingsDto> {
 
-	@Override
-	public UserSettings resolveDtoToEntity(UserSettingsDto dto) throws EntityResolutionException {
-		return new UserSettings(dto);
-	}
+    @Override
+    public UserSettings resolveDtoToEntity(UserSettingsDto dto) throws EntityResolutionException {
+        return new UserSettings(dto);
+    }
 
-	@Override
-	public UserSettingsDto convertEntityToDto(UserSettings entity) {
-		return new UserSettingsDto(entity);
-	}
-
+    @Override
+    public UserSettingsDto convertEntityToDto(UserSettings entity) {
+        return new UserSettingsDto(entity);
+    }
 }

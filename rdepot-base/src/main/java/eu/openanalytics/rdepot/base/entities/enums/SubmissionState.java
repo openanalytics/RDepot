@@ -32,38 +32,38 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum SubmissionState {
-	/**
-	 * Submission was either uploaded by a person with the right to accept it
-	 * or was accepted afterward.
-	 * Its corresponding package must have the accepted flag set to true.
-	 * The deleted flag does not matter here.
-	 * In this state, package files are already put in the repository storage directories
-	 * (moved from the "waiting room").
-	 */
-	ACCEPTED("accepted"), // deleted = false; accepted = true; OR deleted = true; accepted = true;
+    /**
+     * Submission was either uploaded by a person with the right to accept it
+     * or was accepted afterward.
+     * Its corresponding package must have the accepted flag set to true.
+     * The deleted flag does not matter here.
+     * In this state, package files are already put in the repository storage directories
+     * (moved from the "waiting room").
+     */
+    ACCEPTED("accepted"), // deleted = false; accepted = true; OR deleted = true; accepted = true;
 
-	/**
-	 * Submission was uploaded by a person without the right to accept it.
-	 * In this state, package files will be waiting in so-called "waiting room"
-	 * until they are accepted (or deleted) by admin or maintainer.
-	 * Package's accepted flag must be set to false as well as the deleted flag.
-	 */
-	WAITING("waiting"), // deleted = false; accepted = false;
+    /**
+     * Submission was uploaded by a person without the right to accept it.
+     * In this state, package files will be waiting in so-called "waiting room"
+     * until they are accepted (or deleted) by admin or maintainer.
+     * Package's accepted flag must be set to false as well as the deleted flag.
+     */
+    WAITING("waiting"), // deleted = false; accepted = false;
 
-	/**
-	 * Submission was uploaded by a person without the right to accept it
-	 * and was cancelled by the same person or rejected by admin or maintainer.
-	 * In this state, package files are put in the trash directory.
-	 * Package's deleted flag is set to true, accepted flag is set to false.
-	 */
-	CANCELLED("cancelled"), // deleted = true; accepted = false;
+    /**
+     * Submission was uploaded by a person without the right to accept it
+     * and was cancelled by the same person or rejected by admin or maintainer.
+     * In this state, package files are put in the trash directory.
+     * Package's deleted flag is set to true, accepted flag is set to false.
+     */
+    CANCELLED("cancelled"), // deleted = true; accepted = false;
 
-	/**
-	 * Submission was uploaded by a person without the right to accept it
-	 * and was rejected by admin or maintainer (*not* cancelled by the author!).
-	 * Currently, this state is not implemented, CANCELLED serves its purpose.
-	 */
-	REJECTED("rejected"); // deleted = true for future release
+    /**
+     * Submission was uploaded by a person without the right to accept it
+     * and was rejected by admin or maintainer (*not* cancelled by the author!).
+     * Currently, this state is not implemented, CANCELLED serves its purpose.
+     */
+    REJECTED("rejected"); // deleted = true for future release
 
-	private final String value;
+    private final String value;
 }

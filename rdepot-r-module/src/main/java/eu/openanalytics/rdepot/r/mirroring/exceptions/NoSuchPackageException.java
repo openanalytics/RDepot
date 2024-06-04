@@ -23,20 +23,17 @@ package eu.openanalytics.rdepot.r.mirroring.exceptions;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
 import eu.openanalytics.rdepot.r.entities.RPackage;
-
 import java.io.Serial;
 
 public class NoSuchPackageException extends Exception {
-	@Serial
-	private static final long serialVersionUID = 6401540221195589146L;
+    @Serial
+    private static final long serialVersionUID = 6401540221195589146L;
 
-	public NoSuchPackageException(RPackage packageBag) {
-		super(StaticMessageResolver.getMessage(MessageCodes.NO_SUCH_PACKAGE_ERROR)
-				+ ": " + packageBag.toString());
-	}
-	
-	public NoSuchPackageException(String packageName) {
-		super(StaticMessageResolver.getMessage(MessageCodes.NO_SUCH_PACKAGE_ERROR)
-				+ ": " + packageName);
-	}
+    public NoSuchPackageException(RPackage packageBag) {
+        super(StaticMessageResolver.getMessage(MessageCodes.NO_SUCH_PACKAGE_ERROR) + ": " + packageBag.toString());
+    }
+
+    public NoSuchPackageException(String packageName) {
+        super(StaticMessageResolver.getMessage(MessageCodes.NO_SUCH_PACKAGE_ERROR) + ": " + packageName);
+    }
 }

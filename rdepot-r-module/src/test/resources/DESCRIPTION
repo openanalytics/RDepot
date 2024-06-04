@@ -6,19 +6,19 @@
 	<meta http-equiv="x-ua-compatible" content="ie=edge">
 	<title>git/RDepot - src/test/resources/DESCRIPTION at master -  RDepot - OA SCM</title>
 	<link rel="manifest" href="/manifest.json" crossorigin="use-credentials">
-	
+
 	<script>
 		if ('serviceWorker' in navigator) {
 			navigator.serviceWorker.register('/serviceworker.js').then(function(registration) {
-				
+
 				console.info('ServiceWorker registration successful with scope: ', registration.scope);
 			}, function(err) {
-				
+
 				console.info('ServiceWorker registration failed: ', err);
 			});
 		}
 	</script>
-	
+
 	<meta name="theme-color" content="#6cc644">
 	<meta name="author" content="git" />
 	<meta name="description" content="RDepot" />
@@ -26,11 +26,11 @@
 	<meta name="referrer" content="no-referrer" />
 	<meta name="_csrf" content="uCwWzJvgbjpXVAs31jet-kssafE6MTU5NDAyMjIwMDg2ODY5NTc4Nw" />
 	<meta name="_suburl" content="" />
-	
+
 		<meta name="_uid" content="26" />
-	
-	
-	
+
+
+
 
 
 	<script>
@@ -77,7 +77,7 @@
 
 
 
-	
+
 	<link rel="stylesheet" href="/vendor/plugins/fomantic/semantic.min.css?v=2150802f140babb659fb7f59b121e3e9">
 	<link rel="stylesheet" href="/css/index.css?v=2150802f140babb659fb7f59b121e3e9">
 	<noscript>
@@ -100,29 +100,29 @@
 	<script src="/vendor/plugins/cssrelpreload/loadCSS.min.js"></script>
 	<script src="/vendor/plugins/cssrelpreload/cssrelpreload.min.js"></script>
 
-	
+
 		<meta property="og:title" content="RDepot" />
 		<meta property="og:url" content="https://scm.openanalytics.eu/git/RDepot" />
-		
-	
+
+
 	<meta property="og:type" content="object" />
 	<meta property="og:image" content="https://scm.openanalytics.eu/user/avatar/git/-1" />
 
 <meta property="og:site_name" content="OA SCM" />
 
-	
+
 
 
 </head>
 <body>
-	
+
 
 	<div class="full height">
 		<noscript>This website works better with JavaScript.</noscript>
 
-		
 
-		
+
+
 			<div class="ui top secondary stackable main menu following bar light">
 				<div class="ui container" id="navbar">
 	<div class="item brand" style="justify-content: space-between;">
@@ -134,30 +134,30 @@
 		</div>
 	</div>
 
-	
+
 		<a class="item " href="/">Dashboard</a>
 		<a class="item " href="/issues">Issues</a>
 		<a class="item " href="/pulls">Pull Requests</a>
 		<a class="item " href="/milestones">Milestones</a>
 		<a class="item " href="/explore/repos">Explore</a>
-	
 
-	
 
-	
 
-	
+
+
+
+
 		<div class="right stackable menu">
 			<a href="/notifications" class="item poping up" data-content='Notifications' data-variation="tiny inverted">
 				<span class="text">
 					<i class="fitted octicon octicon-bell"></i>
 					<span class="sr-mobile-only">Notifications</span>
 
-					
+
 						<span class="ui red label">
 							1
 						</span>
-					
+
 				</span>
 			</a>
 
@@ -174,7 +174,7 @@
 					<a class="item" href="/repo/migrate">
 						<i class="octicon octicon-repo-clone"></i> New Migration
 					</a>
-					
+
 				</div>
 			</div>
 
@@ -207,7 +207,7 @@
 						<i class="octicon octicon-question"></i>
 						Help
 					</a>
-					
+
 
 					<div class="divider"></div>
 					<a class="item link-action" href data-url="/user/logout" data-redirect="/">
@@ -218,11 +218,11 @@
 			</div>
 		</div>
 
-	
+
 </div>
 
 			</div>
-		
+
 
 
 <div class="repository file list">
@@ -231,20 +231,20 @@
 	<div class="ui container">
 		<div class="repo-header">
 			<div class="ui huge breadcrumb repo-title">
-				
+
 				<i class="mega-octicon octicon-lock"></i>
-				
+
 				<a href="/git">git</a>
 				<div class="divider"> / </div>
 				<a href="/git/RDepot">RDepot</a>
-				
-				
-				
-				
-				
-				
+
+
+
+
+
+
 			</div>
-			
+
 				<div class="repo-buttons">
 					<form method="post" action="/git/RDepot/action/unwatch?redirect_to=%2fgit%2fRDepot%2fsrc%2fbranch%2fmaster%2fsrc%2ftest%2fresources%2fDESCRIPTION">
 						<input type="hidden" name="_csrf" value="uCwWzJvgbjpXVAs31jet-kssafE6MTU5NDAyMjIwMDg2ODY5NTc4Nw">
@@ -268,7 +268,7 @@
 							</a>
 						</div>
 					</form>
-					
+
 						<div class="ui labeled button " tabindex="0">
 							<a class="ui compact basic button " href="/repo/fork/40" data-position="top center" data-variation="tiny">
 								<i class="octicon octicon-repo-forked"></i>Fork
@@ -277,65 +277,65 @@
 								0
 							</a>
 						</div>
-					
+
 				</div>
-			
+
 		</div>
 	</div>
 
 	<div class="ui tabs container">
-		
+
 			<div class="ui tabular stackable menu navbar">
-				
+
 				<a class="active item" href="/git/RDepot">
 					<i class="octicon octicon-code"></i> Code
 				</a>
-				
 
-				
 
-				
 
-				
+
+
+
+
 					<a class=" item" href="/git/RDepot/pulls">
 						<i class="octicon octicon-git-pull-request"></i> Pull Requests <span class="ui gray small label">0</span>
 					</a>
-				
 
-				
+
+
 				<a class=" item" href="/git/RDepot/releases">
 					<i class="octicon octicon-tag"></i> Releases <span class="ui gray small label">0</span>
 				</a>
-				
 
-				
 
-				
+
+
+
 					<a class=" item" href="/git/RDepot/activity">
 						<i class="octicon octicon-pulse"></i> Activity
 					</a>
-				
 
-				
 
-				
+
+
+
 			</div>
-		
+
 	</div>
 	<div class="ui tabs divider"></div>
 </div>
 
 	<div class="ui container">
-		
+
 
 
 
 		<div class="ui repo-description">
 			<div id="repo-desc">
-				
+
 				<a class="link" href=""></a>
 			</div>
-			
+
 				<div class="ui repo-search">
 					<form class="ui form ignore-dirty" action="/git/RDepot/search" method="get">
 						<div class="field">
@@ -348,33 +348,33 @@
 						</div>
 					</form>
 				</div>
-			
+
 		</div>
 		<div class="ui" id="repo-topics">
-		
-		
+
+
 		</div>
-		
+
 		<div class="hide" id="validate_prompt">
 			<span id="count_prompt">You can not select more than 25 topics</span>
 			<span id="format_prompt">Topics must start with a letter or number, can include dashes (&#39;-&#39;) and can be up to 35 characters long.</span>
 		</div>
-		
+
 		<div class="ui segment sub-menu">
 	<div class="ui two horizontal center link list">
-		
+
 			<div class="item">
 				<a class="ui" href="/git/RDepot/commits/branch/master"><i class="octicon octicon-history"></i> <b>43</b> Commits</a>
 			</div>
-		
-		
+
+
 			<div class="item">
 				<a class="ui" href="/git/RDepot/branches/"><i class="octicon octicon-git-branch"></i> <b>4</b> Branches</a>
 			</div>
 			<div class="item">
 				<a class="ui" href="#"><i class="octicon octicon-database"></i> <b>255MB</b></a>
 			</div>
-		
+
 	</div>
 </div>
 
@@ -390,16 +390,16 @@
 			<i class="dropdown icon"></i>
 		</div>
 		<div class="data" style="display: none" data-mode="branches">
-			
+
 				<div class="item branch " data-url="/git/RDepot/src/branch/develop/src/test/resources/DESCRIPTION">develop</div>
-			
+
 				<div class="item branch " data-url="/git/RDepot/src/branch/gradle/src/test/resources/DESCRIPTION">gradle</div>
-			
+
 				<div class="item branch selected" data-url="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION">master</div>
-			
+
 				<div class="item branch " data-url="/git/RDepot/src/branch/refactoring/src/test/resources/DESCRIPTION">refactoring</div>
-			
-			
+
+
 		</div>
 		<div class="menu transition" :class="{visible: menuVisible}" v-if="menuVisible" v-cloak>
 			<div class="ui icon search input">
@@ -431,9 +431,9 @@
 							Create branch <strong>${ searchTerm }</strong>
 						</div>
 						<div class="text small">
-							
+
 								from &#39;master&#39;
-							
+
 						</div>
 					</a>
 					<form ref="newBranchForm" action="/git/RDepot/branches/_new/branch/master" method="post">
@@ -447,83 +447,83 @@
 	</div>
 </div>
 
-			
-			
-			
-			
+
+
+
+
 				<div class="fitted item"><span class="ui breadcrumb repo-path"><a class="section" href="/git/RDepot/src/branch/master" title="RDepot">RDepot</a><span class="divider">/</span><span class="section"><a href="/git/RDepot/src/branch/master/src" title="src">src</a></span><span class="divider">/</span><span class="section"><a href="/git/RDepot/src/branch/master/src/test" title="test">test</a></span><span class="divider">/</span><span class="section"><a href="/git/RDepot/src/branch/master/src/test/resources" title="resources">resources</a></span><span class="divider">/</span><span class="active section" title="DESCRIPTION">DESCRIPTION</span></span></div>
-			
+
 			<div class="right fitted item" id="file-buttons">
 				<div class="ui tiny blue buttons">
-					
-						
-						
-					
-					
+
+
+
+
+
 				</div>
 
 			</div>
 			<div class="fitted item">
-				
+
 			</div>
 			<div class="fitted item">
 
-				
-				
+
+
 			</div>
 		</div>
-		
+
 			<div class="tab-size-8 non-diff-file-content">
 	<h4 class="file-header ui top attached header">
 		<div class="file-header-left">
-			
+
 				<div class="file-info text grey normal mono">
-					
+
 						<div class="file-info-entry">
 							16 lines
 						</div>
-					
-					
+
+
 						<div class="file-info-entry">
 							614B
 						</div>
-					
-					
+
+
 				</div>
-			
+
 		</div>
-		
+
 		<div class="file-header-right">
 			<div class="ui right file-actions">
 				<div class="ui buttons">
 					<a class="ui button" href="/git/RDepot/raw/branch/master/src/test/resources/DESCRIPTION">Raw</a>
-					
+
 						<a class="ui button" href="/git/RDepot/src/commit/de462ebe7fa6a5780ae21eacd638992299051cd5/src/test/resources/DESCRIPTION">Permalink</a>
-					
-					
+
+
 						<a class="ui button" href="/git/RDepot/blame/branch/master/src/test/resources/DESCRIPTION">Blame</a>
-					
+
 					<a class="ui button" href="/git/RDepot/commits/branch/master/src/test/resources/DESCRIPTION">History</a>
 				</div>
-				
-					
+
+
 						<a href="/git/RDepot/_edit/master/src/test/resources/DESCRIPTION"><i class="octicon octicon-pencil btn-octicon poping up"  data-content="Edit File" data-position="bottom center" data-variation="tiny inverted"></i></a>
-					
-					
+
+
 						<a href="/git/RDepot/_delete/master/src/test/resources/DESCRIPTION"><i class="octicon octicon-trashcan btn-octicon btn-octicon-danger poping up"  data-content="Delete File" data-position="bottom center" data-variation="tiny inverted"></i></a>
-					
-				
+
+
 			</div>
 		</div>
-		
+
 	</h4>
 	<div class="ui attached table unstackable segment">
 		<div class="file-view code-view has-emoji">
-			
+
 				<table>
 					<tbody>
 						<tr>
-						
+
 							<td class="lines-num"><span id="L1" data-line-number="1"></span><span id="L2" data-line-number="2"></span><span id="L3" data-line-number="3"></span><span id="L4" data-line-number="4"></span><span id="L5" data-line-number="5"></span><span id="L6" data-line-number="6"></span><span id="L7" data-line-number="7"></span><span id="L8" data-line-number="8"></span><span id="L9" data-line-number="9"></span><span id="L10" data-line-number="10"></span><span id="L11" data-line-number="11"></span><span id="L12" data-line-number="12"></span><span id="L13" data-line-number="13"></span><span id="L14" data-line-number="14"></span><span id="L15" data-line-number="15"></span></td>
 							<td class="lines-code"><pre><code class=""><ol class="linenums"><li class="L1" rel="L1">Package: riPodMT
 </li><li class="L2" rel="L2">Type: Package
@@ -540,11 +540,11 @@
 </li><li class="L13" rel="L13">VignetteBuilder: knitr
 </li><li class="L14" rel="L14">NeedsCompilation: no
 </li><li class="L15" rel="L15">LazyData: true</li></ol></code></pre></td>
-						
+
 						</tr>
 					</tbody>
 				</table>
-			
+
 		</div>
 	</div>
 </div>
@@ -559,80 +559,80 @@ function submitDeleteForm() {
 }
 </script>
 
-		
+
 	</div>
 </div>
 
 
-	
+
 
 	</div>
 
-	
+
 
 	<footer>
 	<div class="ui container">
 		<div class="ui left">
-			Powered by Gitea  
+			Powered by Gitea
 		</div>
 		<div class="ui right links">
-			
+
 			<div class="ui language bottom floating slide up dropdown link item">
 				<i class="world icon"></i>
 				<div class="text">English</div>
 				<div class="menu">
-					
+
 						<a lang="en-US" class="item active selected" href="#">English</a>
-					
+
 						<a lang="zh-CN" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION?lang=zh-CN">简体中文</a>
-					
+
 						<a lang="zh-HK" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION?lang=zh-HK">繁體中文（香港）</a>
-					
+
 						<a lang="zh-TW" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION?lang=zh-TW">繁體中文（台灣）</a>
-					
+
 						<a lang="de-DE" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION?lang=de-DE">Deutsch</a>
-					
+
 						<a lang="fr-FR" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION?lang=fr-FR">français</a>
-					
+
 						<a lang="nl-NL" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION?lang=nl-NL">Nederlands</a>
-					
+
 						<a lang="lv-LV" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION?lang=lv-LV">latviešu</a>
-					
+
 						<a lang="ru-RU" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION?lang=ru-RU">русский</a>
-					
+
 						<a lang="uk-UA" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION?lang=uk-UA">Українська</a>
-					
+
 						<a lang="ja-JP" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION?lang=ja-JP">日本語</a>
-					
+
 						<a lang="es-ES" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION?lang=es-ES">español</a>
-					
+
 						<a lang="pt-BR" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION?lang=pt-BR">português do Brasil</a>
-					
+
 						<a lang="pl-PL" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION?lang=pl-PL">polski</a>
-					
+
 						<a lang="bg-BG" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION?lang=bg-BG">български</a>
-					
+
 						<a lang="it-IT" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION?lang=it-IT">italiano</a>
-					
+
 						<a lang="fi-FI" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION?lang=fi-FI">suomi</a>
-					
+
 						<a lang="tr-TR" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION?lang=tr-TR">Türkçe</a>
-					
+
 						<a lang="cs-CZ" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION?lang=cs-CZ">čeština</a>
-					
+
 						<a lang="sr-SP" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION?lang=sr-SP">српски</a>
-					
+
 						<a lang="sv-SE" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION?lang=sv-SE">svenska</a>
-					
+
 						<a lang="ko-KR" class="item " href="/git/RDepot/src/branch/master/src/test/resources/DESCRIPTION?lang=ko-KR">한국어</a>
-					
+
 				</div>
 			</div>
 			<a href="/vendor/librejs.html" data-jslicense="1">JavaScript licenses</a>
 			<a href="/api/swagger">API</a>
 			<a target="_blank" rel="noopener noreferrer" href="https://gitea.io">Website</a>
-			
-			
+
+
 		</div>
 	</div>
 </footer>
@@ -657,11 +657,10 @@ function submitDeleteForm() {
 	<script src="/vendor/plugins/clipboard/clipboard.min.js"></script>
 	<script src="/vendor/plugins/vue/vue.min.js"></script>
 
-	
+
 	<script src="/vendor/plugins/fomantic/semantic.min.js?v=2150802f140babb659fb7f59b121e3e9"></script>
 	<script src="/js/index.js?v=2150802f140babb659fb7f59b121e3e9"></script>
 
 
 </body>
 </html>
-

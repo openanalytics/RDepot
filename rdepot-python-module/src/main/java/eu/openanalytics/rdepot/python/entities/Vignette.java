@@ -30,6 +30,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Vignette {
-	private String title;
-	private String fileName;
+    private String title;
+    private String fileName;
 }

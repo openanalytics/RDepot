@@ -7,6 +7,6 @@ vers <- paste("R package version", desc$Version)
 citEntry(entry="Manual",
          title = "abc: parameter inference and model selection with Approximate Bayesian Computation (ABC)",
          author = personList(as.person("Katalin Csillery"),
-                             as.person("Olivier Francois"),	
+                             as.person("Olivier Francois"),
                              as.person("Michael G. B. Blum")),
          year = 2011)

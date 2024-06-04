@@ -41,7 +41,7 @@ olcAttributeTypes: {11}( 1.3.6.1.4.1.26278.1.1.2.4 NAME 'zarafaSendAsPrivile
  IgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.12
  1.1.15 )
 olcAttributeTypes: {12}( 1.3.6.1.4.1.26278.1.1.2.5 NAME 'zarafaMrAccept' DES
- C 'ZARAFA: user should auto-accept meeting requests' EQUALITY integerMatch 
+ C 'ZARAFA: user should auto-accept meeting requests' EQUALITY integerMatch
  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
 olcAttributeTypes: {13}( 1.3.6.1.4.1.26278.1.1.2.6 NAME 'zarafaMrDeclineConf
  lict' DESC 'ZARAFA: user should automatically decline conflicting meeting r
@@ -81,7 +81,7 @@ olcAttributeTypes: {23}( 1.3.6.1.4.1.26278.1.3.2.5 NAME 'zarafaAdminPrivileg
  e' DESC 'ZARAFA: Users from different companies which are administrator ove
  r selected company' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMat
  ch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
-olcAttributeTypes: {24}( 1.3.6.1.4.1.26278.1.3.2.6 NAME 'zarafaSystemAdmin' 
+olcAttributeTypes: {24}( 1.3.6.1.4.1.26278.1.3.2.6 NAME 'zarafaSystemAdmin'
  DESC 'ZARAFA: The user who is the system administrator for this company' EQ
  UALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.
  1466.115.121.1.15 SINGLE-VALUE )
@@ -95,7 +95,7 @@ olcAttributeTypes: {26}( 1.3.6.1.4.1.26278.1.3.1.6 NAME 'zarafaQuotaCompanyW
  reSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 olcAttributeTypes: {27}( 1.3.6.1.4.1.26278.1.3.4.1 NAME 'zarafaCompanyServer
  ' DESC 'ZARAFA: Home server for the user' EQUALITY caseIgnoreMatch SUBSTR c
- aseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE 
+ aseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE
  )
 olcAttributeTypes: {28}( 1.3.6.1.4.1.26278.1.4.4.1 NAME 'zarafaHttpPort' DES
  C 'ZARAFA: Port for the http connection' EQUALITY integerMatch SYNTAX 1.3.6
@@ -110,7 +110,7 @@ olcAttributeTypes: {30}( 1.3.6.1.4.1.26278.1.4.4.3 NAME 'zarafaFilePath' DES
 olcAttributeTypes: {31}( 1.3.6.1.4.1.26278.1.4.4.4 NAME 'zarafaContainsPubli
  c' DESC 'ZARAFA: This server contains the public store' EQUALITY integerMat
  ch SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
-olcAttributeTypes: {32}( 1.3.6.1.4.1.26278.1.5.5.1 NAME 'zarafaFilter' DESC 
+olcAttributeTypes: {32}( 1.3.6.1.4.1.26278.1.5.5.1 NAME 'zarafaFilter' DESC
  'ZARAFA: LDAP Filter to apply' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSu
  bstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
 olcAttributeTypes: {33}( 1.3.6.1.4.1.26278.1.5.5.2 NAME 'zarafaBase' DESC 'Z
@@ -122,13 +122,13 @@ olcObjectClasses: {0}( 1.3.6.1.4.1.26278.1.1.0.0 NAME 'zarafa-user' DESC 'Za
  Hard $ zarafaAdmin $ zarafaSharedStoreOnly $ zarafaResourceType $ zarafaRes
  ourceCapacity $ zarafaAccount $ zarafaHidden $ zarafaAliases $ zarafaUserSe
  rver ) )
-olcObjectClasses: {1}( 1.3.6.1.4.1.26278.1.6.0.0 NAME 'zarafa-contact' DESC 
+olcObjectClasses: {1}( 1.3.6.1.4.1.26278.1.6.0.0 NAME 'zarafa-contact' DESC
  'Zarafa: a contact of Zarafa' SUP top AUXILIARY MUST ( cn $ uidNumber ) MAY
   ( zarafaSendAsPrivilege $ zarafaHidden $ zarafaAliases ) )
 olcObjectClasses: {2}( 1.3.6.1.4.1.26278.1.2.0.0 NAME 'zarafa-group' DESC 'Z
  arafa: a group of Zarafa' SUP top AUXILIARY MUST cn MAY ( zarafaAccount $ z
  arafaHidden $ mail $ zarafaAliases $ zarafaSecurityGroup ) )
-olcObjectClasses: {3}( 1.3.6.1.4.1.26278.1.3.0.0 NAME 'zarafa-company' DESC 
+olcObjectClasses: {3}( 1.3.6.1.4.1.26278.1.3.0.0 NAME 'zarafa-company' DESC
  'ZARAFA: a company of Zarafa' SUP top AUXILIARY MUST cn MAY ( zarafaAccount
   $ zarafaHidden $ zarafaViewPrivilege $ zarafaAdminPrivilege $ zarafaSystem
  Admin $ zarafaQuotaOverride $ zarafaQuotaWarn $ zarafaUserDefaultQuotaOverr
@@ -142,7 +142,7 @@ olcObjectClasses: {4}( 1.3.6.1.4.1.26278.1.4.0.0 NAME 'zarafa-server' DESC '
 olcObjectClasses: {5}( 1.3.6.1.4.1.26278.1.5.0.0 NAME 'zarafa-addresslist' D
  ESC 'ZARAFA: a Zarafa Addresslist' SUP top STRUCTURAL MUST cn MAY ( zarafaA
  ccount $ zarafaHidden $ zarafaFilter $ zarafaBase ) )
-olcObjectClasses: {6}( 1.3.6.1.4.1.26278.1.7.0.0 NAME 'zarafa-dynamicgroup' 
+olcObjectClasses: {6}( 1.3.6.1.4.1.26278.1.7.0.0 NAME 'zarafa-dynamicgroup'
  DESC 'ZARAFA: a Zarafa dynamic group' SUP top STRUCTURAL MUST cn MAY ( zara
  faAccount $ zarafaHidden $ mail $ zarafaAliases $ zarafaFilter $ zarafaBase
   ) )

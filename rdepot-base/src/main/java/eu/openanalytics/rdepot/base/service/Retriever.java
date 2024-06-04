@@ -21,50 +21,49 @@
 package eu.openanalytics.rdepot.base.service;
 
 import eu.openanalytics.rdepot.base.entities.Resource;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Used to fetch resources from the database.
  * @param <E>
  */
 public interface Retriever<E extends Resource> {
-	/**
-	 * Fetches a single resource using given ID.
-	 */
-	Optional<E> findById(int id);
-	
-	/**
-	 * Fetches a single not soft-deleted resource using given ID.
-	 */
-	Optional<E> findOneNonDeleted(int id);
-	
-	/**
-	 * Fetches a single soft-deleted resource using given ID.
-	 */
-	Optional<E> findOneDeleted(int id);
-	
-	/**
-	 * Fetches all elements from a database.
-	 */
-	Page<E> findAll(Pageable pageable);
-	
-	/**
-	 * Fetches all paginated elements using given specification.
-	 */
-	Page<E> findAllBySpecification(Specification<E> specification, Pageable pageable);
-	
-	/**
-	 * Fetches all elements using given specification.
-	 */
-	List<E> findAllBySpecification(Specification<E> specification);
-	
-	/**
-	 * Fetches all elements from a database.
-	 */
-	List<E> findAll();
+    /**
+     * Fetches a single resource using given ID.
+     */
+    Optional<E> findById(int id);
+
+    /**
+     * Fetches a single not soft-deleted resource using given ID.
+     */
+    Optional<E> findOneNonDeleted(int id);
+
+    /**
+     * Fetches a single soft-deleted resource using given ID.
+     */
+    Optional<E> findOneDeleted(int id);
+
+    /**
+     * Fetches all elements from a database.
+     */
+    Page<E> findAll(Pageable pageable);
+
+    /**
+     * Fetches all paginated elements using given specification.
+     */
+    Page<E> findAllBySpecification(Specification<E> specification, Pageable pageable);
+
+    /**
+     * Fetches all elements using given specification.
+     */
+    List<E> findAllBySpecification(Specification<E> specification);
+
+    /**
+     * Fetches all elements from a database.
+     */
+    List<E> findAll();
 }

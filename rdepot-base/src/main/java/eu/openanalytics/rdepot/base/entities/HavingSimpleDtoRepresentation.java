@@ -25,22 +25,22 @@ import eu.openanalytics.rdepot.base.api.v2.dtos.IDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.NewsfeedEventDto;
 
 /**
- * Resource that can be converted to a {@link IDto DTO} 
- * that will represent a simple overview of the object 
- * as related to another resource. 
- * For any more sophisticated representations 
- * a {@link DtoConverter} should be used 
+ * Resource that can be converted to a {@link IDto DTO}
+ * that will represent a simple overview of the object
+ * as related to another resource.
+ * For any more sophisticated representations
+ * a {@link DtoConverter} should be used
  * as it allows to fetch additional information from the database.
  * For example, it is used for {@link NewsfeedEventDto}
  * to create a nested related resource's DTO.
  */
 public interface HavingSimpleDtoRepresentation {
-	
-	/**
-	 * Creates a simple representation of the entity.
-	 * For any more sophisticated representations 
-	 * (e.g. those that require fetching additional information from the database)
-	 * a {@link DtoConverter} should be used.
+
+    /**
+     * Creates a simple representation of the entity.
+     * For any more sophisticated representations
+     * (e.g. those that require fetching additional information from the database)
+     * a {@link DtoConverter} should be used.
      */
-	IDto createSimpleDto();
+    IDto createSimpleDto();
 }

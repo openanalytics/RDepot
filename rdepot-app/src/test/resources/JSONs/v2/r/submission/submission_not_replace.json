@@ -1,0 +1,84 @@
+{
+  "code": 200,
+  "data": {
+    "approver": {
+      "name": "Albert Einstein",
+      "id": 4,
+      "login": "einstein",
+      "email": "einstein@ldap.forumsys.com"
+    },
+    "submitter": {
+      "name": "Albert Einstein",
+      "id": 4,
+      "login": "einstein",
+      "email": "einstein@ldap.forumsys.com"
+    },
+    "created": "2024-05-21",
+    "changes": null,
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/r/submissions/47"
+      },
+      {
+        "rel": "submissionList",
+        "href": "http://localhost:8017/api/v2/manager/r/submissions"
+      }
+    ],
+    "id": 47,
+    "state": "ACCEPTED",
+    "technology": "R",
+    "packageBag": {
+      "author": "Scott Fortmann-Roe",
+      "active": true,
+      "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are\\n applicable to virtually any predictive model and make\\n comparisons between different methodologies straightforward.\\n",
+      "technology": "R",
+      "repository": {
+        "name": "testrepo2",
+        "id": 3,
+        "published": true,
+        "technology": "R",
+        "publicationUri": "http://localhost/repo/testrepo2"
+      },
+      "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models\\n",
+      "version": "0.9.1",
+      "url": null,
+      "deleted": false,
+      "name": "A3",
+      "submission": {
+        "id": 47,
+        "state": "ACCEPTED"
+      },
+      "links": [
+        {
+          "rel": "self",
+          "href": "http://localhost:8017/api/v2/manager/r/packages/47"
+        },
+        {
+          "rel": "packageList",
+          "href": "http://localhost:8017/api/v2/manager/packages"
+        },
+        {
+          "rel": "self",
+          "href": "http://localhost:8017/api/v2/manager/r/packages/47",
+          "type": "PATCH"
+        },
+        {
+          "rel": "self",
+          "href": "http://localhost:8017/api/v2/manager/r/packages/47",
+          "type": "DELETE"
+        }
+      ],
+      "id": 47,
+      "user": {
+        "name": "Albert Einstein",
+        "id": 4,
+        "login": "einstein",
+        "email": "einstein@ldap.forumsys.com"
+      }
+    }
+  },
+  "messageCode": "warning.package.duplicate",
+  "message": "There already is such a package in this repository.",
+  "status": "WARNING"
+}

@@ -34,11 +34,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SubmissionProjection {
 
-	private Integer id;
-	private SubmissionState state;
+    private Integer id;
+    private SubmissionState state;
 
-	public SubmissionProjection(Submission submission) {
-		this.id = submission.getId();
-		this.state = submission.getState();
-	}
+    public SubmissionProjection(Submission submission) {
+        this.id = submission.getId();
+        this.state = submission.getState();
+    }
 }

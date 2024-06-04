@@ -16,13 +16,13 @@ services:
       - repo
     networks:
       - oa-rdepot
-      
+
   app:
     build: ./docker/app
     restart: always
     hostname: oa-rdepot-app
     volumes:
-      - ./docker/app/test_configs/test_declarative_config.yml:/opt/rdepot/application.yml  
+      - ./docker/app/test_configs/test_declarative_config.yml:/opt/rdepot/application.yml
       - ./docker/app/test_configs/declared_repositories:/opt/rdepot/declared_repositories
       - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
       - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
@@ -44,11 +44,11 @@ services:
       test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health -H 'Accept: application/json' || exit 1"]
       interval: 10s
       timeout: 10s
-      retries: 50 
+      retries: 50
     networks:
       oa-rdepot:
-        ipv4_address: 192.168.49.23  
-      
+        ipv4_address: 192.168.49.23
+
   repo:
     build: ./docker/repo
     restart: always
@@ -59,8 +59,8 @@ services:
       - repository:/opt/rdepot/
       - ./itestServer:/opt/testServer
     networks:
-      - oa-rdepot 
-        
+      - oa-rdepot
+
   db:
     image: registry.openanalytics.eu/proxy/library/postgres:alpine
 #    image: postgres:alpine
@@ -72,10 +72,10 @@ services:
     environment:
       - POSTGRES_PASSWORD=mysecretpassword
     ports:
-      - 54321:5432  
+      - 54321:5432
     networks:
       - oa-rdepot
-                            
+
   ldap:
     build: ./docker/ldap
     restart: unless-stopped
@@ -84,10 +84,10 @@ services:
       - LDAP_TLS=false
       - LDAP_ORGANISATION=Test Company
       - LDAP_DOMAIN=example.org
-      - LDAP_ADMIN_PASSWORD=testpassword 
+      - LDAP_ADMIN_PASSWORD=testpassword
     networks:
-      - oa-rdepot                      
-                  
+      - oa-rdepot
+
 networks:
   oa-rdepot:
     ipam:
@@ -95,4 +95,3 @@ networks:
         - subnet: 192.168.49.0/24
 volumes:
   repository:
-

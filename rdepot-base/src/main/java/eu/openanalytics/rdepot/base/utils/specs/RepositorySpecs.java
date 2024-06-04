@@ -20,46 +20,44 @@
  */
 package eu.openanalytics.rdepot.base.utils.specs;
 
-import java.util.List;
-
-import org.springframework.data.jpa.domain.Specification;
-
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.utils.TechnologyResolver;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
+import java.util.List;
+import org.springframework.data.jpa.domain.Specification;
 
 public class RepositorySpecs {
 
-	public static <P extends Repository> Specification<P> isDeleted(boolean deleted) {
-		return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("deleted"), deleted);
-	}
+    public static <P extends Repository> Specification<P> isDeleted(boolean deleted) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("deleted"), deleted);
+    }
 
-	public static <P extends Repository> Specification<P> ofNameSearching(String name) {
-		return (root, query, criteriaBuilder) -> 
-			criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + name.toLowerCase() + "%");
-	}
-	
-	public static <P extends Repository> Specification<P> ofName(String name) {
-		return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("name"), name);
-	}
-	
-	public static <P extends Repository> Specification<P> ofMaintainer(List<String> maintainers) {
-		return (root, query, criteriaBuilder) -> {
-			Join<Object, Object> rootMaintainer = root.join("repositoryMaintainers", JoinType.LEFT);
-			return criteriaBuilder.in(rootMaintainer.get("user").get("name")).value(maintainers);
-		};
-	}
-	
-	public static <P extends Repository> Specification<P> ofTechnology(List<String> technologies) {
-		return (root, query, criteriaBuilder) -> {
-			TechnologyResolver technologyResolver = new TechnologyResolver();
-			List<String> updatedTechnologies = technologyResolver.getTechnologies(technologies);
-			return criteriaBuilder.in(root.get("resourceTechnology")).value(updatedTechnologies);
-		};
-	}
-	
-	public static <P extends Repository> Specification<P> isPublished(boolean published) {
-		return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("published"), published);
-	}
+    public static <P extends Repository> Specification<P> ofNameSearching(String name) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + name.toLowerCase() + "%");
+    }
+
+    public static <P extends Repository> Specification<P> ofName(String name) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("name"), name);
+    }
+
+    public static <P extends Repository> Specification<P> ofMaintainer(List<String> maintainers) {
+        return (root, query, criteriaBuilder) -> {
+            Join<Object, Object> rootMaintainer = root.join("repositoryMaintainers", JoinType.LEFT);
+            return criteriaBuilder.in(rootMaintainer.get("user").get("name")).value(maintainers);
+        };
+    }
+
+    public static <P extends Repository> Specification<P> ofTechnology(List<String> technologies) {
+        return (root, query, criteriaBuilder) -> {
+            TechnologyResolver technologyResolver = new TechnologyResolver();
+            List<String> updatedTechnologies = technologyResolver.getTechnologies(technologies);
+            return criteriaBuilder.in(root.get("resourceTechnology")).value(updatedTechnologies);
+        };
+    }
+
+    public static <P extends Repository> Specification<P> isPublished(boolean published) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("published"), published);
+    }
 }

@@ -24,15 +24,16 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public enum HashMethod {
-	MD5("md5"),
-	SHA1("sha1"),
-	SHA224("sha224"),
-	SHA256("sha256"),
-	SHA384("sha384"),
-	SHA512("sha512"); 
-	
-	private final String hash;
-	public String getValue() {
-		return hash;
-	}
+    MD5("MD5"),
+    SHA1("SHA1"),
+    SHA224("SHA224"),
+    SHA256("SHA256"),
+    SHA384("SHA384"),
+    SHA512("SHA512");
+
+    private final String hash;
+
+    public String getValue() {
+        return hash;
+    }
 }

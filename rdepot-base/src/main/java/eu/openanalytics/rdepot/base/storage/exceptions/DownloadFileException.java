@@ -22,20 +22,18 @@ package eu.openanalytics.rdepot.base.storage.exceptions;
 
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
-
 import java.io.Serial;
 
 /**
- * Thrown when a file cannot be downloaded 
+ * Thrown when a file cannot be downloaded
  * or saved in the destination directory.
  */
 public class DownloadFileException extends Exception {
 
-	@Serial
-	private static final long serialVersionUID = -2410858161724074910L;
+    @Serial
+    private static final long serialVersionUID = -2410858161724074910L;
 
-	public DownloadFileException(String url) {
-		super(StaticMessageResolver.getMessage(MessageCodes.ERROR_DOWNLOAD_FILE)
-				+ ": " + url);
-	}
+    public DownloadFileException(String url) {
+        super(StaticMessageResolver.getMessage(MessageCodes.ERROR_DOWNLOAD_FILE) + ": " + url);
+    }
 }

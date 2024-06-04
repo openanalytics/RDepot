@@ -20,27 +20,24 @@
  */
 package eu.openanalytics.rdepot.base.utils;
 
+import eu.openanalytics.rdepot.base.technology.Technology;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.NoArgsConstructor;
-
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
-import eu.openanalytics.rdepot.base.technology.Technology;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
 /**
- * Used to format {@link Technology} objects 
+ * Used to format {@link Technology} objects
  * for building {@link Specification Specifications}.
  */
 @Component
 @NoArgsConstructor
 public class TechnologyResolver {
-    public List<String> getTechnologies(List<String> technologies){
+    public List<String> getTechnologies(List<String> technologies) {
         return technologies.stream()
-                .map(technology -> technology.substring(0, 1).toUpperCase() +
-                        technology.substring(1).toLowerCase())
+                .map(technology -> technology.substring(0, 1).toUpperCase()
+                        + technology.substring(1).toLowerCase())
                 .collect(Collectors.toList());
     }
 }

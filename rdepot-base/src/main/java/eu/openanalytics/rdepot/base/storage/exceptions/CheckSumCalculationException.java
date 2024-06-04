@@ -22,7 +22,6 @@ package eu.openanalytics.rdepot.base.storage.exceptions;
 
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 /**
@@ -30,11 +29,10 @@ import java.io.Serial;
  */
 public class CheckSumCalculationException extends LocalizedException {
 
-	@Serial
-	private static final long serialVersionUID = 464757001996027284L;
+    @Serial
+    private static final long serialVersionUID = 464757001996027284L;
 
-	public CheckSumCalculationException() {
-		super(MessageCodes.COULD_NOT_CALCULATE_CHECKSUM);
-	}
-
+    public CheckSumCalculationException() {
+        super(MessageCodes.COULD_NOT_CALCULATE_CHECKSUM);
+    }
 }

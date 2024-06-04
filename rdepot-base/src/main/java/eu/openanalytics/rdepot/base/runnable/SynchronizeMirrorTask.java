@@ -42,18 +42,16 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @AllArgsConstructor
-public class SynchronizeMirrorTask<R extends MirroredRepository<P,M>,
-		P extends MirroredPackage, M extends Mirror<P>>
-	implements Runnable {
+public class SynchronizeMirrorTask<R extends MirroredRepository<P, M>, P extends MirroredPackage, M extends Mirror<P>>
+        implements Runnable {
 
-	MirrorSynchronizer<R, P, M> mirrorService;
-	R repository;
-	M mirror;
-	
-	@Override
-	public void run() {
-		log.info("Synchronizing repository " + repository.getName() 
-			+ " with mirror " + mirror.getUri());
-		mirrorService.synchronize(repository, mirror);
-	}
+    MirrorSynchronizer<R, P, M> mirrorService;
+    R repository;
+    M mirror;
+
+    @Override
+    public void run() {
+        log.info("Synchronizing repository " + repository.getName() + " with mirror " + mirror.getUri());
+        mirrorService.synchronize(repository, mirror);
+    }
 }

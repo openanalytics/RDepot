@@ -20,22 +20,20 @@
  */
 package eu.openanalytics.rdepot.base.formatters;
 
-import org.springframework.core.convert.converter.Converter;
-
 import eu.openanalytics.rdepot.base.entities.enums.SubmissionState;
+import org.springframework.core.convert.converter.Converter;
 
 /**
  * Converts string values to {@link SubmissionState} enumerators.
  */
 public class StringToSubmissionStateConverter implements Converter<String, SubmissionState> {
 
-	@Override
-	public SubmissionState convert(String source) {
-		try {
-			return SubmissionState.valueOf(source.toUpperCase());
-		} catch(IllegalArgumentException e) {
-			return null;
-		}
-	}
-
+    @Override
+    public SubmissionState convert(String source) {
+        try {
+            return SubmissionState.valueOf(source.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
 }

@@ -20,15 +20,14 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.converters;
 
-import org.apache.commons.lang3.NotImplementedException;
-import org.springframework.stereotype.Component;
-
 import eu.openanalytics.rdepot.base.api.v2.converters.exceptions.EntityResolutionException;
 import eu.openanalytics.rdepot.base.api.v2.dtos.RepositoryDto;
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.service.PackageService;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.NotImplementedException;
+import org.springframework.stereotype.Component;
 
 /**
  * {@link DtoConverter DTO Converter} for {@link Repository Repositories}
@@ -37,15 +36,15 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class RepositoryDtoConverter implements DtoConverter<Repository, RepositoryDto> {
 
-	private final PackageService<Package> packageService;
+    private final PackageService<Package> packageService;
 
-	@Override
-	public Repository resolveDtoToEntity(RepositoryDto dto) throws EntityResolutionException {
-		throw new NotImplementedException();
-	}
+    @Override
+    public Repository resolveDtoToEntity(RepositoryDto dto) throws EntityResolutionException {
+        throw new NotImplementedException();
+    }
 
-	@Override
-	public RepositoryDto convertEntityToDto(Repository entity) {
-		return new RepositoryDto(entity, packageService.countByRepository(entity));
-	}
+    @Override
+    public RepositoryDto convertEntityToDto(Repository entity) {
+        return new RepositoryDto(entity, packageService.countByRepository(entity));
+    }
 }

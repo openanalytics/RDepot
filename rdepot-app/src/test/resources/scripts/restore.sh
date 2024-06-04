@@ -18,7 +18,7 @@ done
 
 echo "RESTORING $CONTAINER...";
 
-docker exec $CONTAINER /bin/sh -c "rm -rvf /opt/rdepot/repositories; rm -rf /opt/rdepot/generated; mkdir -vp /opt/rdepot/repositories; mkdir -vp /opt/rdepot/new; mkdir -vp /opt/rdepot/generated; mkdir -vp /opt/rdepot/trash; cp -fvr /opt/testSourceFiles/info/* /opt/rdepot/repositories; cp -fvr /opt/testGenerated/repository/* /opt/rdepot/generated; cp -fvr /opt/newFiles/new/* /opt/rdepot/new; cp -fvr /opt/trashFiles/trash/* /opt/rdepot/trash";
+docker exec $CONTAINER /bin/sh -c "rm -rf /opt/rdepot/repositories; rm -rf /opt/rdepot/generated; mkdir -p /opt/rdepot/repositories; mkdir -p /opt/rdepot/new; mkdir -p /opt/rdepot/generated; mkdir -p /opt/rdepot/trash; cp -fr /opt/testSourceFiles/info/* /opt/rdepot/repositories; cp -fr /opt/testGenerated/repository/* /opt/rdepot/generated; cp -fr /opt/newFiles/new/* /opt/rdepot/new; cp -fr /opt/trashFiles/trash/* /opt/rdepot/trash";
 
 echo "RESTORING $CONTAINER_DB";
 

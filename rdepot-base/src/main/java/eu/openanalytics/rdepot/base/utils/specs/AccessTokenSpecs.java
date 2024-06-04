@@ -20,40 +20,36 @@
  */
 package eu.openanalytics.rdepot.base.utils.specs;
 
-import java.time.LocalDate;
-import java.util.List;
-
-import org.springframework.data.jpa.domain.Specification;
-
 import eu.openanalytics.rdepot.base.entities.AccessToken;
 import eu.openanalytics.rdepot.base.entities.User;
+import java.time.LocalDate;
+import java.util.List;
+import org.springframework.data.jpa.domain.Specification;
 
 public class AccessTokenSpecs {
-	public static Specification<AccessToken> ofName(String name) {
-		return (root, query, criteriaBuilder) -> 
-			criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + name.toLowerCase() + "%");
-	}
-	
-	public static Specification<AccessToken> ofUser(User user) {
-		return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("user"), user);
-	}
-	
-	public static Specification<AccessToken> ofLogin(List<String> logins) {
-		return (root, query, criteriaBuilder) -> 
-			criteriaBuilder.in(root.get("user").get("login")).value(logins);
-	}
-	
-	public static Specification<AccessToken> isActive(boolean active) {
-		return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("active"), active);
-	}
-	
-	public static Specification<AccessToken> hasExpired(boolean expired) {
-		return (root, query, criteriaBuilder) -> {
-			LocalDate date = LocalDate.now();
-			if(expired)
-				return criteriaBuilder.lessThan(root.get("expirationDate"), date);
-			else
-				return criteriaBuilder.greaterThanOrEqualTo(root.get("expirationDate"), date);
-		};
-	}
+    public static Specification<AccessToken> ofName(String name) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + name.toLowerCase() + "%");
+    }
+
+    public static Specification<AccessToken> ofUser(User user) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("user"), user);
+    }
+
+    public static Specification<AccessToken> ofLogin(List<String> logins) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.in(root.get("user").get("login")).value(logins);
+    }
+
+    public static Specification<AccessToken> isActive(boolean active) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("active"), active);
+    }
+
+    public static Specification<AccessToken> hasExpired(boolean expired) {
+        return (root, query, criteriaBuilder) -> {
+            LocalDate date = LocalDate.now();
+            if (expired) return criteriaBuilder.lessThan(root.get("expirationDate"), date);
+            else return criteriaBuilder.greaterThanOrEqualTo(root.get("expirationDate"), date);
+        };
+    }
 }

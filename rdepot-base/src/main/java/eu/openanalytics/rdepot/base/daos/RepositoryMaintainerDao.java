@@ -20,22 +20,26 @@
  */
 package eu.openanalytics.rdepot.base.daos;
 
-import java.util.List;
-import java.util.Optional;
-
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.RepositoryMaintainer;
 import eu.openanalytics.rdepot.base.entities.User;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * {@link org.springframework.data.jpa.repository.JpaRepository JPA Repository}
  * for {@link RepositoryMaintainer Repository Maintainers}.
  */
 public interface RepositoryMaintainerDao extends Dao<RepositoryMaintainer> {
-	List<RepositoryMaintainer> findByRepository(Repository repository);
-	List<RepositoryMaintainer> findByRepositoryAndDeleted(Repository repository, boolean deleted);
-	List<RepositoryMaintainer> findByUserAndDeleted(User user, boolean deleted);
-	List<RepositoryMaintainer> findByUserAndRepository(User user, Repository repository);
-	Optional<RepositoryMaintainer> findByRepositoryAndUserAndDeleted(Repository repository, User user, boolean deleted);
-	boolean existsByRepositoryAndUserAndDeleted(Repository repository, User user, boolean deleted);
+    List<RepositoryMaintainer> findByRepository(Repository repository);
+
+    List<RepositoryMaintainer> findByRepositoryAndDeleted(Repository repository, boolean deleted);
+
+    List<RepositoryMaintainer> findByUserAndDeleted(User user, boolean deleted);
+
+    List<RepositoryMaintainer> findByUserAndRepository(User user, Repository repository);
+
+    Optional<RepositoryMaintainer> findByRepositoryAndUserAndDeleted(Repository repository, User user, boolean deleted);
+
+    boolean existsByRepositoryAndUserAndDeleted(Repository repository, User user, boolean deleted);
 }

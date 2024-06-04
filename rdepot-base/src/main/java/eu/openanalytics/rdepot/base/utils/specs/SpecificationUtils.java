@@ -25,46 +25,40 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.lang.Nullable;
 
 /**
- * Methods declared in this class are used to build 
+ * Methods declared in this class are used to build
  * {@link Specification Specifications} for {@link JpaRepository DAOs}.
  */
 public class SpecificationUtils {
-	
-	/**
-	 * Makes an AND statement out of two {@link Specification Specifications}.
-	 * This method does not modify the existing statements but only creates a new one.
-	 * @param root left side of AND statement, if null then only right sight is taken into account
-	 * @param component right side of AND statement
-	 * @return "root AND component"
-	 */
-	public static <T> Specification<T> andComponent(@Nullable Specification<T> root, 
-			Specification<T> component) {
-		if(root == null)
-			return component(component);
-		else
-			return root.and(component);
-	}
 
-	/**
-	 * Makes a WHERE statement out of the given component.
-	 * @return "where component"
-	 */
-	public static <T> Specification<T> component(Specification<T> component) {
-		return Specification.where(component);
-	}
+    /**
+     * Makes an AND statement out of two {@link Specification Specifications}.
+     * This method does not modify the existing statements but only creates a new one.
+     * @param root left side of AND statement, if null then only right sight is taken into account
+     * @param component right side of AND statement
+     * @return "root AND component"
+     */
+    public static <T> Specification<T> andComponent(@Nullable Specification<T> root, Specification<T> component) {
+        if (root == null) return component(component);
+        else return root.and(component);
+    }
 
-	/**
-	 * Makes an OR statement out of two {@link Specification Specifications}.
-	 * This method does not modify the existing statements but only creates a new one.
-	 * @param root left side of the OR statement, if null then only right side is taken into account.
-	 * @param component right side of the OR statement
-	 * @return "root OR component"
-	 */
-	public static <T> Specification<T> orComponent(@Nullable Specification<T> root, 
-			Specification<T> component) {
-		if(root == null)
-			return component(component);
-		else
-			return root.or(component);
-	}
+    /**
+     * Makes a WHERE statement out of the given component.
+     * @return "where component"
+     */
+    public static <T> Specification<T> component(Specification<T> component) {
+        return Specification.where(component);
+    }
+
+    /**
+     * Makes an OR statement out of two {@link Specification Specifications}.
+     * This method does not modify the existing statements but only creates a new one.
+     * @param root left side of the OR statement, if null then only right side is taken into account.
+     * @param component right side of the OR statement
+     * @return "root OR component"
+     */
+    public static <T> Specification<T> orComponent(@Nullable Specification<T> root, Specification<T> component) {
+        if (root == null) return component(component);
+        else return root.or(component);
+    }
 }

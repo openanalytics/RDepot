@@ -20,12 +20,11 @@
  */
 package eu.openanalytics.rdepot.base.daos;
 
-import java.util.List;
-import java.util.Optional;
-
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.Repository;
-import eu.openanalytics.rdepot.base.entities.enums.SubmissionState;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * {@link org.springframework.data.jpa.repository.JpaRepository JPA Repository}
@@ -33,15 +32,19 @@ import eu.openanalytics.rdepot.base.entities.enums.SubmissionState;
  * @param <T> technology-specific Package class
  */
 public interface PackageDao<T extends Package> extends Dao<T> {
-	List<T> findByRepositoryGenericAndDeleted(Repository repositoryGeneric, boolean deleted);
-	List<T> findByNameAndRepositoryGenericAndDeleted(String name, Repository repositoryGeneric, boolean deleted);
-	List<T> findByNameAndVersionAndRepositoryGeneric(String name, String version, Repository repositoryGeneric);
-	Optional<T> findByNameAndVersionAndRepositoryGenericAndDeleted(String name, String version, Repository repositoryGeneric, Boolean deleted);
-	List<T> findAllByNameAndVersionAndRepositoryGenericAndDeleted(String name, String version, Repository repositoryGeneric,
-			boolean deleted);
-	List<T> findByDeletedAndSubmissionState(boolean deleted, SubmissionState state);
-	List<T> findByRepositoryGenericAndDeletedAndActive(Repository repositoryGeneric, boolean deleted, boolean active);
-	List<T> findByRepositoryGeneric(Repository repositoryGeneric);
+    List<T> findByRepositoryGenericAndDeleted(Repository repositoryGeneric, boolean deleted);
 
-	int countByRepositoryGenericAndDeleted(Repository repository, boolean deleted);
+    List<T> findByNameAndRepositoryGenericAndDeleted(String name, Repository repositoryGeneric, boolean deleted);
+
+    Optional<T> findByNameAndRepositoryGenericAndDeletedAndVersionIn(
+            String name, Repository repositoryGeneric, Boolean deleted, Collection<String> versions);
+
+    List<T> findAllByNameAndRepositoryGenericAndDeletedAndVersionIn(
+            String name, Repository repositoryGeneric, boolean deleted, Collection<String> versions);
+
+    List<T> findByRepositoryGenericAndDeletedAndActive(Repository repositoryGeneric, boolean deleted, boolean active);
+
+    List<T> findByRepositoryGeneric(Repository repositoryGeneric);
+
+    int countByRepositoryGenericAndDeleted(Repository repository, boolean deleted);
 }

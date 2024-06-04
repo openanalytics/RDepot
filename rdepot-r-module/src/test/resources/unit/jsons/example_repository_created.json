@@ -5,12 +5,12 @@
     "messageCode": "success.resource.created",
 	"data": {
         "id": 100,
-        "version": 0,
-        "publicationUri": "http://localhost/repo/testrepo100",
-        "name": "Test Repository 100",
-        "serverAddress": "http://192.168.1.100/testrepo100",
+        "version": 10,
+        "publicationUri": "http://localhost/repo/testrepo123",
+        "name": "Test R Repository",
+        "serverAddress": "http://192.168.1.100/testrepo123",
         "deleted": false,
-        "published": false,
+        "published": true,
         "synchronizing": false,
         "technology": "R",
         "links": [

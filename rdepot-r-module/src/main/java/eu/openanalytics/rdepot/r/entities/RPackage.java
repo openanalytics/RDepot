@@ -26,11 +26,10 @@ import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.r.api.v2.dtos.RPackageDto;
 import eu.openanalytics.rdepot.r.technology.RLanguage;
 import jakarta.persistence.*;
+import java.io.Serial;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.io.Serial;
 
 @Entity
 @Getter
@@ -40,102 +39,137 @@ import java.io.Serial;
 @SecondaryTable(name = "rpackage", pkJoinColumns = @PrimaryKeyJoinColumn(name = "id"))
 public class RPackage extends Package {
 
-	@Serial
-	private static final long serialVersionUID = -3373259770906796151L;
+    @Serial
+    private static final long serialVersionUID = -3373259770906796151L;
 
-	/**
-	 * 
-	 */
-	@Column(name = "depends", table = "rpackage")
-	private String depends = "";
-	
-	@Column(name = "imports", table = "rpackage")
-	private String imports = "";
-	
-	@Column(name = "suggests", table = "rpackage")
-	private String suggests = "";
-	
-	@Column(name = "system_requirements", table = "rpackage")
-	private String systemRequirements = "";
-	
-	@Column(name = "license", nullable = false, table = "rpackage")
-	private String license;
-	
-	@Column(name = "md5sum", nullable = false, table = "rpackage")
-	private String md5sum;
-	
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "repository_id", nullable = false)
-	private RRepository repository;
-	
-	@Transient
-	private Boolean generateManuals;
+    /**
+     *
+     */
+    @Column(name = "depends", table = "rpackage")
+    private String depends = "";
 
-	@Transient
-	public Boolean getGenerateManuals() {
-		return generateManuals;
-	}
+    @Column(name = "imports", table = "rpackage")
+    private String imports = "";
 
-	@Transient
-	public void setGenerateManuals(Boolean generateManuals) {
-		this.generateManuals = generateManuals;
-	}
+    @Column(name = "suggests", table = "rpackage")
+    private String suggests = "";
 
-	public void setRepository(RRepository repository) {
-		this.repository = repository;
-		super.setRepositoryGeneric(repository);
-	}
+    @Column(name = "system_requirements", table = "rpackage")
+    private String systemRequirements = "";
 
-	public RPackage(RPackage packageBag) {
-		super(packageBag);
-		this.depends = packageBag.depends;
-		this.imports = packageBag.imports;
-		this.suggests = packageBag.suggests;
-		this.systemRequirements = packageBag.systemRequirements;
-		this.license = packageBag.license;
-		this.md5sum = packageBag.md5sum;
-		this.repository = packageBag.repository;
-		this.generateManuals = packageBag.generateManuals;
-	}
+    @Column(name = "license", nullable = false, table = "rpackage")
+    private String license;
 
-	public RPackage() {
-		super(RLanguage.instance);
-	}
-	
-	public RPackage(RPackageDto dto, RRepository repository, Submission submission, User user) {
-		super(RLanguage.instance, dto, submission, user);
-		this.repository = repository;
-		this.suggests = dto.getSuggests();
-		this.systemRequirements = dto.getSystemRequirements();
-		this.md5sum = dto.getMd5sum();
-		this.license = dto.getLicense();
-		this.depends = dto.getDepends();
-		this.imports = dto.getImports();
-	}
+    @Column(name = "md5sum", nullable = false, table = "rpackage")
+    private String md5sum;
 
-	public RPackage(int id, RRepository repository, User user, String name,
-			String description, String author, String license, String source,
-			String title, String md5sum, boolean active, boolean deleted) {
-		super(RLanguage.instance, id, repository, user, name, description, author, source, title, active,deleted);
-		this.license = license;
-		this.md5sum = md5sum;
-		this.repository = repository;
-	}
-	
-	public RPackage(int id, RRepository repository, User user, String name,
-			String description, String author, String depends, String imports,
-			String suggests, String systemRequirements, String license,
-			String url, String source, String title, String md5sum, boolean active, boolean deleted,
-			Submission submission)
-	{
-		super(RLanguage.instance, id, repository, user, name, description, author, 
-				url, source, title, active, deleted, submission);
-		this.depends = depends;
-		this.imports = imports;
-		this.suggests = suggests;
-		this.systemRequirements = systemRequirements;
-		this.license = license;
-		this.md5sum = md5sum;
-		this.repository = repository;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "repository_id", nullable = false)
+    private RRepository repository;
+
+    @Transient
+    private Boolean generateManuals;
+
+    @Transient
+    public Boolean getGenerateManuals() {
+        return generateManuals;
+    }
+
+    @Transient
+    public void setGenerateManuals(Boolean generateManuals) {
+        this.generateManuals = generateManuals;
+    }
+
+    public void setRepository(RRepository repository) {
+        this.repository = repository;
+        super.setRepositoryGeneric(repository);
+    }
+
+    public RPackage(RPackage packageBag) {
+        super(packageBag);
+        this.depends = packageBag.depends;
+        this.imports = packageBag.imports;
+        this.suggests = packageBag.suggests;
+        this.systemRequirements = packageBag.systemRequirements;
+        this.license = packageBag.license;
+        this.md5sum = packageBag.md5sum;
+        this.repository = packageBag.repository;
+        this.generateManuals = packageBag.generateManuals;
+    }
+
+    public RPackage() {
+        super(RLanguage.instance);
+    }
+
+    public RPackage(RPackageDto dto, RRepository repository, Submission submission, User user) {
+        super(RLanguage.instance, dto, submission, user);
+        this.repository = repository;
+        this.suggests = dto.getSuggests();
+        this.systemRequirements = dto.getSystemRequirements();
+        this.md5sum = dto.getMd5sum();
+        this.license = dto.getLicense();
+        this.depends = dto.getDepends();
+        this.imports = dto.getImports();
+    }
+
+    public RPackage(
+            int id,
+            RRepository repository,
+            User user,
+            String name,
+            String description,
+            String author,
+            String license,
+            String source,
+            String title,
+            String md5sum,
+            boolean active,
+            boolean deleted) {
+        super(RLanguage.instance, id, repository, user, name, description, author, source, title, active, deleted);
+        this.license = license;
+        this.md5sum = md5sum;
+        this.repository = repository;
+    }
+
+    public RPackage(
+            int id,
+            RRepository repository,
+            User user,
+            String name,
+            String description,
+            String author,
+            String depends,
+            String imports,
+            String suggests,
+            String systemRequirements,
+            String license,
+            String url,
+            String source,
+            String title,
+            String md5sum,
+            boolean active,
+            boolean deleted,
+            Submission submission) {
+        super(
+                RLanguage.instance,
+                id,
+                repository,
+                user,
+                name,
+                description,
+                author,
+                url,
+                source,
+                title,
+                active,
+                deleted,
+                submission);
+        this.depends = depends;
+        this.imports = imports;
+        this.suggests = suggests;
+        this.systemRequirements = systemRequirements;
+        this.license = license;
+        this.md5sum = md5sum;
+        this.repository = repository;
+    }
 }

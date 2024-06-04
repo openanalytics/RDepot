@@ -20,12 +20,6 @@
  */
 package eu.openanalytics.rdepot.base.mediator;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
 import eu.openanalytics.rdepot.base.entities.RepositoryMaintainer;
@@ -37,8 +31,12 @@ import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
 import eu.openanalytics.rdepot.base.service.RoleService;
 import eu.openanalytics.rdepot.base.service.UserService;
+import java.util.List;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Mediator used to choose the best maintainer for a {@link Package}.
@@ -48,67 +46,65 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 @AllArgsConstructor
 public class BestMaintainerChooser {
-	
-	private final RepositoryMaintainerService repositoryMaintainerService;
-	private final PackageMaintainerService packageMaintainerService;
-	private final UserService userService;
-	private final RoleService roleService;	
-	
-	/**
-	 * Finds the best package maintainer for a given package.
-	 */
-	public User chooseBestPackageMaintainer(Package packageBag) throws NoSuitableMaintainerFound {
-		final List<PackageMaintainer> packageMaintainers = 
-				packageMaintainerService.findAllByPackageAndRepositoryAndNonDeleted(
-						packageBag.getName(), packageBag.getRepository());
-		
-		if(!packageMaintainers.isEmpty()) {
-			return packageMaintainers.get(0).getUser();
-		}
-		
-		final List<RepositoryMaintainer> repositoryMaintainers = 
-				repositoryMaintainerService.findByRepositoryNonDeleted(packageBag.getRepository());
-		if(!repositoryMaintainers.isEmpty()) {
-			return repositoryMaintainers.get(0).getUser();
-		} else {
-			try {
-				return findFirstAdmin();
-			} catch (AdminNotFound e) {
-				log.error(e.getMessage(), e);
-			}
-		}
-		throw new NoSuitableMaintainerFound();
-	}
-	
-	/**
-	 * Updates all packages in the list with the most suitable maintainer.
-	 */
-	public void refreshMaintainerForPackages(List<Package> packages) throws NoSuitableMaintainerFound {
-		for(Package packageBag : packages) {
-			packageBag.setUser(chooseBestPackageMaintainer(packageBag));
-		}	
-	}
-	
-	/**
-	 * Finds any administrator in the system.
-	 */
-	public User findFirstAdmin() throws AdminNotFound {
-		final List<User> admins = findAllAdmins();
-		
-		if(admins.isEmpty())
-			throw new AdminNotFound();
-		
-		return admins.get(0);
-	}
-	
-	/**
-	 * Finds all administrators in the systems.
-	 */
-	public List<User> findAllAdmins() {
-		final Optional<Role> adminRole = roleService.findByValue(Role.VALUE.ADMIN);
-		if(adminRole.isEmpty())
-			return List.of();
-		
-		return userService.findByRole(adminRole.get());
-	}
+
+    private final RepositoryMaintainerService repositoryMaintainerService;
+    private final PackageMaintainerService packageMaintainerService;
+    private final UserService userService;
+    private final RoleService roleService;
+
+    /**
+     * Finds the best package maintainer for a given package.
+     */
+    public User chooseBestPackageMaintainer(Package packageBag) throws NoSuitableMaintainerFound {
+        final List<PackageMaintainer> packageMaintainers =
+                packageMaintainerService.findAllByPackageAndRepositoryAndNonDeleted(
+                        packageBag.getName(), packageBag.getRepository());
+
+        if (!packageMaintainers.isEmpty()) {
+            return packageMaintainers.get(0).getUser();
+        }
+
+        final List<RepositoryMaintainer> repositoryMaintainers =
+                repositoryMaintainerService.findByRepositoryNonDeleted(packageBag.getRepository());
+        if (!repositoryMaintainers.isEmpty()) {
+            return repositoryMaintainers.get(0).getUser();
+        } else {
+            try {
+                return findFirstAdmin();
+            } catch (AdminNotFound e) {
+                log.error(e.getMessage(), e);
+            }
+        }
+        throw new NoSuitableMaintainerFound();
+    }
+
+    /**
+     * Updates all packages in the list with the most suitable maintainer.
+     */
+    public void refreshMaintainerForPackages(List<Package> packages) throws NoSuitableMaintainerFound {
+        for (Package packageBag : packages) {
+            packageBag.setUser(chooseBestPackageMaintainer(packageBag));
+        }
+    }
+
+    /**
+     * Finds any administrator in the system.
+     */
+    public User findFirstAdmin() throws AdminNotFound {
+        final List<User> admins = findAllAdmins();
+
+        if (admins.isEmpty()) throw new AdminNotFound();
+
+        return admins.get(0);
+    }
+
+    /**
+     * Finds all administrators in the systems.
+     */
+    public List<User> findAllAdmins() {
+        final Optional<Role> adminRole = roleService.findByValue(Role.VALUE.ADMIN);
+        if (adminRole.isEmpty()) return List.of();
+
+        return userService.findByRole(adminRole.get());
+    }
 }

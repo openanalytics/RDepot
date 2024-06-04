@@ -20,45 +20,45 @@
  */
 package eu.openanalytics.rdepot.base.service;
 
-import java.util.List;
-import java.util.Optional;
-
 import eu.openanalytics.rdepot.base.daos.RepositoryMaintainerDao;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.RepositoryMaintainer;
 import eu.openanalytics.rdepot.base.entities.User;
+import java.util.List;
+import java.util.Optional;
 
 @org.springframework.stereotype.Service
-public class RepositoryMaintainerService extends Service<RepositoryMaintainer>{
+public class RepositoryMaintainerService extends Service<RepositoryMaintainer> {
 
-	private final RepositoryMaintainerDao dao;
-	
-	public RepositoryMaintainerService(RepositoryMaintainerDao dao) {
-		super(dao);
-		this.dao = dao;
-	}
+    private final RepositoryMaintainerDao dao;
 
-	public List<RepositoryMaintainer> findByRepository(Repository repository) {			
-		return dao.findByRepository(repository);
-	}
-	
-	public Optional<RepositoryMaintainer> findByRepositoryAndUserAndDeleted(Repository repository, User user, boolean deleted) {
-		return dao.findByRepositoryAndUserAndDeleted(repository, user, deleted);
-	}
+    public RepositoryMaintainerService(RepositoryMaintainerDao dao) {
+        super(dao);
+        this.dao = dao;
+    }
 
-	public boolean existsByRepositoryAndUserAndDeleted(Repository repository, User user, boolean deleted) {
-		return dao.existsByRepositoryAndUserAndDeleted(repository, user, deleted);
-	}
-	
-	public List<RepositoryMaintainer> findByUserWithoutDeleted(User user) {
-		return dao.findByUserAndDeleted(user, false);
-	}
-	
-	public List<RepositoryMaintainer> findByUserAndRepository(User user, Repository repository) {				
-		return dao.findByUserAndRepository(user, repository);
-	}
-	
-	public List<RepositoryMaintainer> findByRepositoryNonDeleted(Repository repository) {
-		return dao.findByRepositoryAndDeleted(repository, false);
-	}
+    public List<RepositoryMaintainer> findByRepository(Repository repository) {
+        return dao.findByRepository(repository);
+    }
+
+    public Optional<RepositoryMaintainer> findByRepositoryAndUserAndDeleted(
+            Repository repository, User user, boolean deleted) {
+        return dao.findByRepositoryAndUserAndDeleted(repository, user, deleted);
+    }
+
+    public boolean existsByRepositoryAndUserAndDeleted(Repository repository, User user, boolean deleted) {
+        return dao.existsByRepositoryAndUserAndDeleted(repository, user, deleted);
+    }
+
+    public List<RepositoryMaintainer> findByUserWithoutDeleted(User user) {
+        return dao.findByUserAndDeleted(user, false);
+    }
+
+    public List<RepositoryMaintainer> findByUserAndRepository(User user, Repository repository) {
+        return dao.findByUserAndRepository(user, repository);
+    }
+
+    public List<RepositoryMaintainer> findByRepositoryNonDeleted(Repository repository) {
+        return dao.findByRepositoryAndDeleted(repository, false);
+    }
 }

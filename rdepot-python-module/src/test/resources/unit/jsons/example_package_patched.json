@@ -6,15 +6,15 @@
 	"data": {
 		"id": 100,
 		"user": {
-			"id": 0,
-			"name": "Test User0",
-			"login": "packagemaintainer_testusername0",
-			"email": "0test@example.org"
-		},
+          "id": 123,
+          "name": "Test Package Maintainer",
+          "login": "testpackagemaintainer",
+          "email": "packagemaintainer@example.org"
+        },
 		"repository": {
 			"id": 123,
-			"name": "Test Python Repository 123",
-			"publicationUri": "http://localhost/repo/testrepo123",
+			"name": "Test Python Repository",
+			"publicationUri": "http://localhost/repo/testrepo",
 			"technology": "Python"
 		},
 		"submission": {

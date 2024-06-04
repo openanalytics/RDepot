@@ -20,15 +20,14 @@
  */
 package eu.openanalytics.rdepot.python.storage.utils;
 
-import java.util.List;
-
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
 public class PopulatedRepositoryContent {
-	private final List<PythonPackage> packages;
-	private final String directoryPath;
+    private final List<PythonPackage> packages;
+    private final String directoryPath;
 }

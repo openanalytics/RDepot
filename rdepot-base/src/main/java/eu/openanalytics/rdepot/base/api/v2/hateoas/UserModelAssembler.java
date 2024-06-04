@@ -22,65 +22,61 @@ package eu.openanalytics.rdepot.base.api.v2.hateoas;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
+import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2UserController;
+import eu.openanalytics.rdepot.base.api.v2.converters.DtoConverter;
+import eu.openanalytics.rdepot.base.api.v2.dtos.UserDto;
+import eu.openanalytics.rdepot.base.entities.User;
+import eu.openanalytics.rdepot.base.service.UserService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
-import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2UserController;
-import eu.openanalytics.rdepot.base.api.v2.converters.DtoConverter;
-import eu.openanalytics.rdepot.base.api.v2.dtos.UserDto;
-import eu.openanalytics.rdepot.base.entities.User;
-import eu.openanalytics.rdepot.base.service.UserService;
-
 @Component
-public class UserModelAssembler 
-	extends AbstractRoleAwareModelAssembler<User, UserDto> {
+public class UserModelAssembler extends AbstractRoleAwareModelAssembler<User, UserDto> {
 
-	private final UserService userService;
-	
-	@Autowired
-	public UserModelAssembler(DtoConverter<User, UserDto> dtoConverter, UserService userService) {
-		super(dtoConverter, ApiV2UserController.class, "user", Optional.empty());
-		this.userService = userService;
-	}
-	
-	private UserModelAssembler(DtoConverter<User, UserDto> dtoConverter, UserService userService, User user) {
-		super(dtoConverter, ApiV2UserController.class, "user", Optional.of(user));
-		this.userService = userService;
-	}
+    private final UserService userService;
 
-	@Override
-	protected List<Link> getLinksToMethodsWithLimitedAccess(User entity, User user, Link baseLink) {
-		List<Link> links = new ArrayList<>();
-		
-		if(userService.isAdmin(user)) {
-			links.add(linkTo(baseControllerClass).withRel("userList"));
-			links.add(baseLink.withType(HTTP_METHODS.PATCH.getValue()));
-			links.add(baseLink.withType(HTTP_METHODS.DELETE.getValue()));
-		}
-		
-		return links;
-	}
-	
-	@Override
-	protected List<Link> generateAvailableLinksForEntity(User entity, 
-			Class<?> extensionControllerClass) {
-		return List.of(linkTo(baseControllerClass).slash(entity.getId()).withSelfRel());
-	}
-	
-	@Override
-	public RepresentationModelAssembler<User, EntityModel<UserDto>> assemblerWithUser(User user) {
-		return new UserModelAssembler(dtoConverter, userService, user);
-	}
+    @Autowired
+    public UserModelAssembler(DtoConverter<User, UserDto> dtoConverter, UserService userService) {
+        super(dtoConverter, ApiV2UserController.class, "user", Optional.empty());
+        this.userService = userService;
+    }
 
-	@Override
-	protected Class<?> getExtensionControllerClass(User entity) {
-		return ApiV2UserController.class;
-	}
+    private UserModelAssembler(DtoConverter<User, UserDto> dtoConverter, UserService userService, User user) {
+        super(dtoConverter, ApiV2UserController.class, "user", Optional.of(user));
+        this.userService = userService;
+    }
+
+    @Override
+    protected List<Link> getLinksToMethodsWithLimitedAccess(User entity, User user, Link baseLink) {
+        List<Link> links = new ArrayList<>();
+
+        if (userService.isAdmin(user)) {
+            links.add(linkTo(baseControllerClass).withRel("userList"));
+            links.add(baseLink.withType(HTTP_METHODS.PATCH.getValue()));
+            links.add(baseLink.withType(HTTP_METHODS.DELETE.getValue()));
+        }
+
+        return links;
+    }
+
+    @Override
+    protected List<Link> generateAvailableLinksForEntity(User entity, Class<?> extensionControllerClass) {
+        return List.of(linkTo(baseControllerClass).slash(entity.getId()).withSelfRel());
+    }
+
+    @Override
+    public RepresentationModelAssembler<User, EntityModel<UserDto>> assemblerWithUser(User user) {
+        return new UserModelAssembler(dtoConverter, userService, user);
+    }
+
+    @Override
+    protected Class<?> getExtensionControllerClass(User entity) {
+        return ApiV2UserController.class;
+    }
 }

@@ -18,7 +18,7 @@ logit.bounds, subset = NULL, kernel = "epanechnikov", numnet =
 500, \dots)
 }
 \arguments{
-  \item{target}{  
+  \item{target}{
     a vector of the observed summary statistics.}
   \item{param}{
     a vector, matrix or data frame of the simulated parameter values,
@@ -45,9 +45,9 @@ logit.bounds, subset = NULL, kernel = "epanechnikov", numnet =
     \code{"log"}, \code{"logit"}, and \code{"none"} (default), when no
     is transformation applied. See also \code{Details}.}
   \item{logit.bounds}{
-    a matrix of bounds if \code{transf} is \code{"logit"}. 
-    The matrix has as many lines as parameters (including the ones 
-    that are not \code{"logit"} transformed) and 2 columns. First column is the 
+    a matrix of bounds if \code{transf} is \code{"logit"}.
+    The matrix has as many lines as parameters (including the ones
+    that are not \code{"logit"} transformed) and 2 columns. First column is the
     minimum bound and second column is the maximum bound.}
   \item{subset}{
     a logical expression indicating elements or rows to keep. Missing
@@ -84,7 +84,7 @@ logit.bounds, subset = NULL, kernel = "epanechnikov", numnet =
 \value{
   The returned value is an object of class \code{"abc"}, containing the
   following components:
-  
+
   \item{adj.values}{The regression adjusted values, when \code{method} is
     \code{"loclinear"} or \code{"neuralnet"}.}
   \item{unadj.values}{The unadjusted values that correspond to
@@ -121,7 +121,7 @@ logit.bounds, subset = NULL, kernel = "epanechnikov", numnet =
 }
 
 \details{
-  
+
   These ABC algorithms generate random samples from the posterior
   distributions of one or more parameters of interest, \eqn{\theta_1,
   \theta_2, \dots, \theta_n}. To apply any of these algorithms, (i) data
@@ -150,7 +150,7 @@ logit.bounds, subset = NULL, kernel = "epanechnikov", numnet =
   using the function \code{\link{nnet}}. The posterior samples of
   parameters based on the rejection algorithm are returned as well, even
   when one of the regression algorithms is used.
-  
+
   Several additional arguments can be specified when \code{method} is
   \code{"neuralnet"}. The method is based on the function
   \code{\link{nnet}} from the library \code{\link{nnet}}, which fits
@@ -185,34 +185,34 @@ logit.bounds, subset = NULL, kernel = "epanechnikov", numnet =
   used, the parameters are back-transformed to their original scale
   after the regression estimation. No transformations can be applied
   when \code{method} is \code{"rejection"}.
-  
+
   Using names for the parameters and summary statistics is strongly
   recommended. Names can be supplied as \code{\link{names}} or
   \code{\link{colnames}} to \code{param} and \code{sumstat} (and
   \code{target}). If no names are supplied, P1, P2, \dots is assigned to
   parameters and S1, S2, \dots to summary statistics and the user is
   warned.
-  
+
 }
 \references{
-  
+
   Pritchard, J.K., and M.T. Seielstad and A. Perez-Lezaun and
   M.W. Feldman (1999) Population growth of human Y chromosomes: a study
   of Y chromosome microsatellites. \emph{Molecular Biology and
   Evolution}, \bold{16}, 1791--1798.
-  
+
   Beaumont, M.A., Zhang, W., and Balding, D.J. (2002) Approximate
   Bayesian Computation in Population Genetics, \emph{Genetics},
   \bold{162}, 2025-2035.
-  
+
   Blum, M.G.B. and Francois, O. (2010) Non-linear regression models
   for Approximate Bayesian Computation. \emph{Statistics and Computing}
   \bold{20}, 63-73.
-  
+
   Csillery, K., M.G.B. Blum, O.E. Gaggiotti and O. Francois (2010)
   Approximate Bayesian Computation (ABC) in practice. \emph{Trends in
   Ecology and Evolution}, \bold{25}, 410-418.
-  
+
 }
 \author{
   Katalin Csillery, Olivier Francois and Michael Blum with some
@@ -232,20 +232,20 @@ data(musigma2)
 ## The rejection algorithm
 ##
 rej <- abc(target=stat.obs, param=par.sim, sumstat=stat.sim, tol=.1, method =
-"rejection") 
+"rejection")
 
 ## ABC with local linear regression correction without/with correction
-## for heteroscedasticity 
+## for heteroscedasticity
 ##
 lin <- abc(target=stat.obs, param=par.sim, sumstat=stat.sim, tol=.1, hcorr =
 FALSE, method = "loclinear", transf=c("none","log"))
 linhc <- abc(target=stat.obs, param=par.sim, sumstat=stat.sim, tol=.1, method =
-"loclinear", transf=c("none","log")) 
+"loclinear", transf=c("none","log"))
 
 ## ABC with neural networks with correction for heteroscedasticity
 ##
 net <- abc(target=stat.obs, param=par.sim, sumstat=stat.sim,
-tol=.2, method="neuralnet", transf=c("none","log")) 
+tol=.2, method="neuralnet", transf=c("none","log"))
 
 ## posterior summaries
 ##
@@ -257,7 +257,7 @@ summary(linhc, unadj = TRUE, intvl = .9)
 ## posterior histograms
 ##
 hist(linhc, breaks=30, caption=c(expression(mu),
-expression(sigma^2))) 
+expression(sigma^2)))
 
 ## or send histograms to a pdf file
 hist(linhc, file="linhc", breaks=30, caption=c(expression(mu),

@@ -22,7 +22,6 @@ package eu.openanalytics.rdepot.base.config.declarative.exceptions;
 
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
-
 import java.io.IOException;
 
 /**
@@ -31,10 +30,7 @@ import java.io.IOException;
  */
 public class DeclaredRepositoryTechnologyMismatch extends IOException {
 
-	public DeclaredRepositoryTechnologyMismatch(String repositoryName) {
-		super(StaticMessageResolver.getMessage(MessageCodes.DECLARED_REPOSITORY_TECHNOLOGY_MISMATCH)
-				+ repositoryName);
-	}
-
-
+    public DeclaredRepositoryTechnologyMismatch(String repositoryName) {
+        super(StaticMessageResolver.getMessage(MessageCodes.DECLARED_REPOSITORY_TECHNOLOGY_MISMATCH) + repositoryName);
+    }
 }

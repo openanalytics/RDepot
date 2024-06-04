@@ -22,49 +22,49 @@ package eu.openanalytics.rdepot.python.technology;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import eu.openanalytics.rdepot.base.config.declarative.exceptions.DeclaredRepositoryTechnologyMismatch;
 import eu.openanalytics.rdepot.base.technology.Technology;
-import lombok.EqualsAndHashCode;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import org.apache.commons.lang3.StringUtils;
-
 import java.io.IOException;
+import lombok.EqualsAndHashCode;
+import org.apache.commons.lang3.StringUtils;
 
 @EqualsAndHashCode(callSuper = true)
 public class PythonLanguage extends JsonDeserializer<Technology> implements Technology {
-	
-	public static PythonLanguage instance;
-	
-	static {
-		instance = new PythonLanguage();
-	}
 
-	@Override
-	public Technology getInstance() {
-		return instance;
-	}
+    public static PythonLanguage instance;
 
-	@Override
-	public String getName() {
-		return "Python";
-	}
+    static {
+        instance = new PythonLanguage();
+    }
 
-	@Override
-	public String getVersion() {
-		return "1.0.0";
-	}
+    @Override
+    public Technology getInstance() {
+        return instance;
+    }
 
-	@Override
-	public Boolean isCompatible(String version) {
-		return true;
-	}
+    @Override
+    public String getName() {
+        return "Python";
+    }
 
-	@Override
-	public Technology deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
-		String value = deserializationContext.readValue(jsonParser, String.class);
-		if (StringUtils.isBlank(value) || !value.equalsIgnoreCase(instance.getName())) {
-			throw new DeclaredRepositoryTechnologyMismatch(value);
-		}
-		return instance;
-	}
+    @Override
+    public String getVersion() {
+        return "1.0.0";
+    }
+
+    @Override
+    public Boolean isCompatible(String version) {
+        return true;
+    }
+
+    @Override
+    public Technology deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
+            throws IOException {
+        String value = deserializationContext.readValue(jsonParser, String.class);
+        if (StringUtils.isBlank(value) || !value.equalsIgnoreCase(instance.getName())) {
+            throw new DeclaredRepositoryTechnologyMismatch(value);
+        }
+        return instance;
+    }
 }

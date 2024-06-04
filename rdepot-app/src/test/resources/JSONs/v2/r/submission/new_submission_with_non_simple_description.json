@@ -1,0 +1,84 @@
+{
+  "code": 201,
+  "data": {
+    "approver": {
+      "name": "Albert Einstein",
+      "id": 4,
+      "login": "einstein",
+      "email": "einstein@ldap.forumsys.com"
+    },
+    "submitter": {
+      "name": "Albert Einstein",
+      "id": 4,
+      "login": "einstein",
+      "email": "einstein@ldap.forumsys.com"
+    },
+    "created": "2024-05-21",
+    "changes": null,
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/r/submissions/47"
+      },
+      {
+        "rel": "submissionList",
+        "href": "http://localhost:8017/api/v2/manager/r/submissions"
+      }
+    ],
+    "id": 47,
+    "state": "ACCEPTED",
+    "technology": "R",
+    "packageBag": {
+      "author": "Douglas Bates [aut] (<https://orcid.org/0000-0001-8316-9503>), Martin Maechler [aut, cre] (<https://orcid.org/0000-0002-8685-9910>),\\n Mikael Jagan [aut] (<https://orcid.org/0000-0002-3542-2938>),\\n Timothy A. Davis [ctb] (<https://orcid.org/0000-0001-7614-6899>,\\n SuiteSparse libraries, notably CHOLMOD and AMD, collaborators\\n listed in dir(pattern=\"^[A-Z]+[.]txt$\", full.names=TRUE,\\n system.file(\"doc\", \"SuiteSparse\", package=\"Matrix\"))),\\n Jens Oehlschlägel [ctb] (initial nearPD()),\\n Jason Riedy [ctb] (<https://orcid.org/0000-0002-4345-4200>, GNU\\n Octave's condest() and onenormest(), Copyright: Regents of the\\n University of California),\\n R Core Team [ctb] (base R's matrix implementation)\\n",
+      "active": true,
+      "description": "A rich hierarchy of sparse and dense matrix classes,\tincluding general, symmetric, triangular, and diagonal matrices\\n\twith numeric, logical, or pattern entries. Efficient methods for\\n\toperating on such matrices, often wrapping the 'BLAS', 'LAPACK',\\n\tand 'SuiteSparse' libraries.\\n",
+      "technology": "R",
+      "repository": {
+        "name": "testrepo2",
+        "id": 3,
+        "published": true,
+        "technology": "R",
+        "publicationUri": "http://localhost/repo/testrepo2"
+      },
+      "title": "Sparse and Dense Matrix Classes and Methods",
+      "version": "1.6-5",
+      "url": "https://Matrix.R-forge.R-project.org",
+      "deleted": false,
+      "name": "Matrix",
+      "submission": {
+        "id": 47,
+        "state": "ACCEPTED"
+      },
+      "links": [
+        {
+          "rel": "self",
+          "href": "http://localhost:8017/api/v2/manager/r/packages/47"
+        },
+        {
+          "rel": "packageList",
+          "href": "http://localhost:8017/api/v2/manager/packages"
+        },
+        {
+          "rel": "self",
+          "href": "http://localhost:8017/api/v2/manager/r/packages/47",
+          "type": "PATCH"
+        },
+        {
+          "rel": "self",
+          "href": "http://localhost:8017/api/v2/manager/r/packages/47",
+          "type": "DELETE"
+        }
+      ],
+      "id": 47,
+      "user": {
+        "name": "Albert Einstein",
+        "id": 4,
+        "login": "einstein",
+        "email": "einstein@ldap.forumsys.com"
+      }
+    }
+  },
+  "messageCode": "success.resource.created",
+  "message": "Your resource has been created successfully.",
+  "status": "SUCCESS"
+}

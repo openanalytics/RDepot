@@ -25,7 +25,7 @@ services:
 ##
   repo:
     build: ./docker/repo
-    # image: registry.openanalytics.eu/openanalytics/rdepot-repo-it:2.0.0
+    # image: registry.openanalytics.eu/openanalytics/rdepot-repo-it:2.1.0
     restart: always
     labels:
       eu.openanalytics.rdepot.container.name: "oa-rdepot-repo"
@@ -59,9 +59,9 @@ services:
       - 5432:5432
 
 ##
-  app:    
+  app:
     build: ./docker/app
-    # image: registry.openanalytics.eu/openanalytics/rdepot-app-it:2.0.0
+    # image: registry.openanalytics.eu/openanalytics/rdepot-app-it:2.1.0
     restart: always
     hostname: oa-rdepot-app
     labels:
@@ -72,7 +72,7 @@ services:
       - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
       - ./itestSourceFiles:/opt/testSourceFiles:ro
       - ./itestGenerated:/opt/testGenerated:ro
-      - ./itestNewFiles:/opt/newFiles:ro    
+      - ./itestNewFiles:/opt/newFiles:ro
     ports:
       - 8001:8001
       - 8018:8080

@@ -23,7 +23,6 @@ package eu.openanalytics.rdepot.base.storage.exceptions;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 /**
@@ -31,10 +30,10 @@ import java.io.Serial;
  */
 public class RepositoryDirectoryDeleteException extends LocalizedException {
 
-	@Serial
-	private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
-	public RepositoryDirectoryDeleteException() {
-		super(MessageCodes.COULD_NOT_DELETE_REPOSITORY_DIRECTORY);
-	}
+    public RepositoryDirectoryDeleteException() {
+        super(MessageCodes.COULD_NOT_DELETE_REPOSITORY_DIRECTORY);
+    }
 }

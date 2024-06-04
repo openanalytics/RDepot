@@ -20,91 +20,90 @@
  */
 package eu.openanalytics.rdepot.base.service;
 
-import java.nio.CharBuffer;
-import java.security.SecureRandom;
-import java.time.LocalDate;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import eu.openanalytics.rdepot.base.api.v2.dtos.CreateAccessTokenDto;
 import eu.openanalytics.rdepot.base.daos.AccessTokenDao;
 import eu.openanalytics.rdepot.base.entities.AccessToken;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.service.exceptions.CreateEntityException;
+import java.nio.CharBuffer;
+import java.security.SecureRandom;
+import java.time.LocalDate;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @org.springframework.stereotype.Service
 public class AccessTokenService extends Service<AccessToken> {
-	  
-	private final AccessTokenDao dao;
-	private final PasswordEncoder encoder;
-		
-	@Value("${access-token.length}")
-	private String lengthOfAccessToken;
-	
-	@Value("${access-token.allowed-characters}")
-	private String allowedCharacters;
-	
-	@Value("${access-token.lifetime-default}")
-	private String lifetimeOfToken;
-	
-	@Value("${access-token.lifetime-configurable}")
-	private Boolean lifetimeConfigurable;
-	
+
+    private final AccessTokenDao dao;
+    private final PasswordEncoder encoder;
+
+    @Value("${access-token.length}")
+    private String lengthOfAccessToken;
+
+    @Value("${access-token.allowed-characters}")
+    private String allowedCharacters;
+
+    @Value("${access-token.lifetime-default}")
+    private String lifetimeOfToken;
+
+    @Value("${access-token.lifetime-configurable}")
+    private Boolean lifetimeConfigurable;
+
     public AccessTokenService(AccessTokenDao dao, PasswordEncoder encoder) {
         super(dao);
         this.dao = dao;
         this.encoder = encoder;
     }
-    
-    public AccessToken convertRequestBody(CreateAccessTokenDto dto, User requester) throws NumberFormatException {    	    	
-    	int lifetime = Integer.parseInt(lifetimeOfToken);
-    	
-    	if(lifetimeConfigurable && dto.getLifetime() != null && !dto.getLifetime().isEmpty())
-    		lifetime = Integer.parseInt(dto.getLifetime().split("\\.")[0]);
-    	
-    	AccessToken accessToken =  new AccessToken();
-		accessToken.setName(dto.getName());
-		accessToken.setCreationDate(LocalDate.now());
-		accessToken.setExpirationDate(LocalDate.now().plusDays(lifetime));
-		accessToken.setUser(requester);
-		accessToken.setActive(true);
-    	
-    	return accessToken;
+
+    public AccessToken convertRequestBody(CreateAccessTokenDto dto, User requester) throws NumberFormatException {
+        int lifetime = Integer.parseInt(lifetimeOfToken);
+
+        if (lifetimeConfigurable
+                && dto.getLifetime() != null
+                && !dto.getLifetime().isEmpty())
+            lifetime = Integer.parseInt(dto.getLifetime().split("\\.")[0]);
+
+        AccessToken accessToken = new AccessToken();
+        accessToken.setName(dto.getName());
+        accessToken.setCreationDate(LocalDate.now());
+        accessToken.setExpirationDate(LocalDate.now().plusDays(lifetime));
+        accessToken.setUser(requester);
+        accessToken.setActive(true);
+
+        return accessToken;
     }
-    
+
     @Override
-    public AccessToken create(AccessToken token) throws CreateEntityException {    
-    	int size = Integer.parseInt(lengthOfAccessToken);
-    	final char[] allAllowed = allowedCharacters.toCharArray();
-    	
-    	char[] plainToken = new char[size];
-    	
-    	SecureRandom random = new SecureRandom();
-    	for(int i = 0; i < size; i++) {
-    		plainToken[i] = allAllowed[random.nextInt(Integer.MAX_VALUE) % allAllowed.length];
-    	}
-    	
-    	token.setValue(encoder.encode(CharBuffer.wrap(plainToken)));
-    	AccessToken accessToken = super.create(token);
-    	
-    	accessToken.setPlainValue(CharBuffer.wrap(plainToken).toString());
-    	
-    	return accessToken;
+    public AccessToken create(AccessToken token) throws CreateEntityException {
+        int size = Integer.parseInt(lengthOfAccessToken);
+        final char[] allAllowed = allowedCharacters.toCharArray();
+
+        char[] plainToken = new char[size];
+
+        SecureRandom random = new SecureRandom();
+        for (int i = 0; i < size; i++) {
+            plainToken[i] = allAllowed[random.nextInt(Integer.MAX_VALUE) % allAllowed.length];
+        }
+
+        token.setValue(encoder.encode(CharBuffer.wrap(plainToken)));
+        AccessToken accessToken = super.create(token);
+
+        accessToken.setPlainValue(CharBuffer.wrap(plainToken).toString());
+
+        return accessToken;
     }
-    
+
     public boolean verifyToken(CharSequence token, int userId) {
-    	List<AccessToken> userTokens = dao.findByUserId(userId);
-    	for(AccessToken userToken : userTokens) {
-    		if(encoder.matches(token, userToken.getValue()) 
-    				&& (LocalDate.now().isBefore(userToken.getExpirationDate()) 
-    						|| LocalDate.now().isEqual(userToken.getExpirationDate()))
-    				&& userToken.isActive()) {
-    			return true;
-    		}
-    	}
-		return false;
+        List<AccessToken> userTokens = dao.findByUserId(userId);
+        for (AccessToken userToken : userTokens) {
+            if (encoder.matches(token, userToken.getValue())
+                    && (LocalDate.now().isBefore(userToken.getExpirationDate())
+                            || LocalDate.now().isEqual(userToken.getExpirationDate()))
+                    && userToken.isActive()) {
+                return true;
+            }
+        }
+        return false;
     }
-    
 }

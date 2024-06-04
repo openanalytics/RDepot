@@ -22,7 +22,6 @@ package eu.openanalytics.rdepot.base.storage.exceptions;
 
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
-
 import java.io.Serial;
 
 /**
@@ -30,12 +29,10 @@ import java.io.Serial;
  */
 public class CreateTemporaryFolderException extends Exception {
 
-	@Serial
-	private static final long serialVersionUID = -6845318358203441406L;
+    @Serial
+    private static final long serialVersionUID = -6845318358203441406L;
 
-	public CreateTemporaryFolderException(String prefix) {
-		super(StaticMessageResolver.getMessage(MessageCodes.COULD_NOT_CREATE_TEMPORARY_FOLDER)
-				+ ": " + prefix);
-	}
-
+    public CreateTemporaryFolderException(String prefix) {
+        super(StaticMessageResolver.getMessage(MessageCodes.COULD_NOT_CREATE_TEMPORARY_FOLDER) + ": " + prefix);
+    }
 }

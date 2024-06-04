@@ -35,13 +35,13 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class UserSettingsProjection {
-	private String language;
-	private String theme;
-	private int pageSize;
-	
-	public UserSettingsProjection(UserSettings userSettings) {
-		this.language = userSettings.getLanguage();
-		this.theme = userSettings.getTheme();
-		this.pageSize = userSettings.getPageSize();
-	}
+    private String language;
+    private String theme;
+    private int pageSize;
+
+    public UserSettingsProjection(UserSettings userSettings) {
+        this.language = userSettings.getLanguage();
+        this.theme = userSettings.getTheme();
+        this.pageSize = userSettings.getPageSize();
+    }
 }

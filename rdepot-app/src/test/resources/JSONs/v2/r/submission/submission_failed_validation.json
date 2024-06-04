@@ -1,0 +1,9 @@
+{
+  "code": 422,
+  "data": [
+    "could.not.generate.manual: Package [id: 47, technology: \"R 1.0.0\", name: \"A3broken\", version: \"0.9.1\"]"
+  ],
+  "messageCode": "error.validation",
+  "message": "Validation failed for the resource.",
+  "status": "ERROR"
+}

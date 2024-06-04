@@ -12,7 +12,7 @@ expected.deviance(target, postsumstat, kernel = "gaussian", subset=NULL,
 print=TRUE)
 }
 \arguments{
-  \item{target}{  
+  \item{target}{
     a vector of the observed summary statistics.}
   \item{postsumstat}{
     a vector, matrix or data frame of summary statistics simulated
@@ -23,7 +23,7 @@ print=TRUE)
   \item{subset}{ a logical expression indicating elements or rows to
     keep. Missing values in \code{postsumstat} are taken as
     \code{FALSE}.}
-  \item{print}{    
+  \item{print}{
     prints out what percent of the distances have been zero.}
 }
 \details{
@@ -61,13 +61,13 @@ skewness <- function(x) {
 sk <- mean((x-mean(x))^3)/(sd(x)^3)
 return(sk)
 }
-kurtosis <- function(x) {  
-k <- mean((x-mean(x))^4)/(sd(x)^4) - 3  
+kurtosis <- function(x) {
+k <- mean((x-mean(x))^4)/(sd(x)^4) - 3
 return(k)
 }
 
 ## Observed summary statistics
-obs.sumstat <- c(2.004821, 3.110915, -0.7831861, 0.1440266) 
+obs.sumstat <- c(2.004821, 3.110915, -0.7831861, 0.1440266)
 
 ## Model 1 (Gaussian)
 ## ##################

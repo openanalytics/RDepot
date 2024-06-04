@@ -24,8 +24,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import eu.openanalytics.rdepot.base.messaging.MessageCodes;
+import eu.openanalytics.rdepot.base.validation.RepositoryValidator;
+import eu.openanalytics.rdepot.python.entities.PythonRepository;
+import eu.openanalytics.rdepot.python.services.PythonRepositoryService;
+import eu.openanalytics.rdepot.python.validation.PythonRepositoryValidator;
+import eu.openanalytics.rdepot.test.fixture.PythonRepositoryTestFixture;
 import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -34,37 +39,28 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
 
-import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-import eu.openanalytics.rdepot.base.validation.RepositoryValidator;
-import eu.openanalytics.rdepot.python.entities.PythonRepository;
-import eu.openanalytics.rdepot.python.services.PythonRepositoryService;
-import eu.openanalytics.rdepot.python.test.strategy.fixture.PythonRepositoryTestFixture;
-import eu.openanalytics.rdepot.python.validation.PythonRepositoryValidator;
-
 @ExtendWith(MockitoExtension.class)
 public class PythonRepositoryValidatorTest {
-	
-	@Mock
-	PythonRepositoryService pythonRepositoryService; 
-	
-	private RepositoryValidator<PythonRepository> repositoryValidator;
-	
-	@Test
-	public void updateRepository_shouldNotAllowChangingRepositoryVersion() throws Exception {
-		repositoryValidator = new PythonRepositoryValidator(pythonRepositoryService);
-		PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-		PythonRepository updatedRepository = new PythonRepository(repository);
-		updatedRepository.setVersion(100);
-		
-		DataBinder dataBinder = new DataBinder(updatedRepository);
-		dataBinder.setValidator(repositoryValidator);
-		Errors errors = Mockito.spy(dataBinder.getBindingResult());
-		
-		when(pythonRepositoryService.findById(repository.getId()))
-				.thenReturn((Optional.of(repository)));
-		
-		repositoryValidator.validate(updatedRepository, errors);
-		verify(errors, times(1)).rejectValue("version", MessageCodes.FORBIDDEN_UPDATE);
-		
-	}
+
+    @Mock
+    PythonRepositoryService pythonRepositoryService;
+
+    private RepositoryValidator<PythonRepository> repositoryValidator;
+
+    @Test
+    public void updateRepository_shouldNotAllowChangingRepositoryVersion() throws Exception {
+        repositoryValidator = new PythonRepositoryValidator(pythonRepositoryService);
+        PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
+        PythonRepository updatedRepository = new PythonRepository(repository);
+        updatedRepository.setVersion(100);
+
+        DataBinder dataBinder = new DataBinder(updatedRepository);
+        dataBinder.setValidator(repositoryValidator);
+        Errors errors = Mockito.spy(dataBinder.getBindingResult());
+
+        when(pythonRepositoryService.findById(repository.getId())).thenReturn((Optional.of(repository)));
+
+        repositoryValidator.validate(updatedRepository, errors);
+        verify(errors, times(1)).rejectValue("version", MessageCodes.FORBIDDEN_UPDATE);
+    }
 }

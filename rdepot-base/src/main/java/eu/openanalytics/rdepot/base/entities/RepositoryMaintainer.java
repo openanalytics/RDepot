@@ -20,24 +20,22 @@
  */
 package eu.openanalytics.rdepot.base.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-
 import eu.openanalytics.rdepot.base.api.v2.dtos.IDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.RepositoryMaintainerDto;
 import eu.openanalytics.rdepot.base.entities.enums.ResourceType;
 import eu.openanalytics.rdepot.base.event.EventableResource;
 import eu.openanalytics.rdepot.base.technology.InternalTechnology;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import java.io.Serial;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serial;
-
 /**
- * This object represents the relationship between a {@link User user} 
+ * This object represents the relationship between a {@link User user}
  * and a {@link Repository repository}.
  * It allows user to have control over a particular kind of repository
  * and packages within.
@@ -46,56 +44,55 @@ import java.io.Serial;
 @Setter
 @Entity
 @Table(name = "repository_maintainer", schema = "public")
-public class RepositoryMaintainer extends EventableResource
-	implements java.io.Serializable {
+public class RepositoryMaintainer extends EventableResource implements java.io.Serializable {
 
-	@Serial
-	private static final long serialVersionUID = 8173718643254959397L;
+    @Serial
+    private static final long serialVersionUID = 8173718643254959397L;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "user_id", nullable = false)
-	private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "repository_id", nullable = false)
-	private Repository repository;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "repository_id", nullable = false)
+    private Repository repository;
 
-	public RepositoryMaintainer() {
-		super(InternalTechnology.instance, ResourceType.REPOSITORY_MAINTAINER);
-	}
-	
-	public RepositoryMaintainer(RepositoryMaintainerDto dto, Repository repository, User user) {
-		this();
-		this.id = dto.getId();
-		this.deleted = dto.getDeleted();
-		this.repository = repository;
-		this.user = user;
-	}
+    public RepositoryMaintainer() {
+        super(InternalTechnology.instance, ResourceType.REPOSITORY_MAINTAINER);
+    }
 
-	public RepositoryMaintainer(int id, User user, Repository repository, boolean deleted) {
-		this();
-		this.id = id;
-		this.user = user;
-		this.repository = repository;
-		this.deleted = deleted;
-	}
+    public RepositoryMaintainer(RepositoryMaintainerDto dto, Repository repository, User user) {
+        this();
+        this.id = dto.getId();
+        this.deleted = dto.getDeleted();
+        this.repository = repository;
+        this.user = user;
+    }
 
-	public RepositoryMaintainer(RepositoryMaintainer that) {
-		this();
-		this.id = that.id;
-		this.deleted = that.isDeleted();
-		this.repository = that.getRepository();
-		this.user = that.getUser();
-	}
+    public RepositoryMaintainer(int id, User user, Repository repository, boolean deleted) {
+        this();
+        this.id = id;
+        this.user = user;
+        this.repository = repository;
+        this.deleted = deleted;
+    }
 
+    public RepositoryMaintainer(RepositoryMaintainer that) {
+        this();
+        this.id = that.id;
+        this.deleted = that.isDeleted();
+        this.repository = that.getRepository();
+        this.user = that.getUser();
+    }
 
-	@Override
-	public String toString() {
-		return "Repository Maintainer (id: " + id + ", repository: \"" + repository.getName() + "\", user: \"" + user.getLogin() + "\")";
-	}
+    @Override
+    public String toString() {
+        return "Repository Maintainer (id: " + id + ", repository: \"" + repository.getName() + "\", user: \""
+                + user.getLogin() + "\")";
+    }
 
-	@Override
-	public IDto createSimpleDto() {
-		return new RepositoryMaintainerDto(this);
-	}
+    @Override
+    public IDto createSimpleDto() {
+        return new RepositoryMaintainerDto(this);
+    }
 }

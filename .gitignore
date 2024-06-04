@@ -33,6 +33,7 @@ rdepot-app/src/test/resources/itestServer
 rdepot-app/src/test/resources/itestSourceFiles
 rdepot-app/src/test/resources/itestPdf
 rdepot-app/src/test/resources/itestTrashFiles
+rdepot-app/src/test/resources/itestRepo
 rdepot-repo/target
 rdepot-app/target
 rdepot-base/target

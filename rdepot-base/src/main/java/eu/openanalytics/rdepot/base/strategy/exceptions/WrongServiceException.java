@@ -23,22 +23,20 @@ package eu.openanalytics.rdepot.base.strategy.exceptions;
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.service.Service;
-
 import java.io.Serial;
 
 /**
- * Thrown when one attempts to use a {@link Service} 
+ * Thrown when one attempts to use a {@link Service}
  * that mismatches the technology-specific implementation.
  * For example, it will happen when one tries to fetch Package object
  * of R Submission using Python Package Service.
  */
 public class WrongServiceException extends LocalizedException {
 
-	@Serial
-	private static final long serialVersionUID = -4374826886373972582L;
+    @Serial
+    private static final long serialVersionUID = -4374826886373972582L;
 
-	public WrongServiceException() {
-		super(MessageCodes.WRONG_SERVICE_EXCEPTION);
-	}
-
+    public WrongServiceException() {
+        super(MessageCodes.WRONG_SERVICE_EXCEPTION);
+    }
 }

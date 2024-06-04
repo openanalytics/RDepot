@@ -20,13 +20,11 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.dtos;
 
-import org.apache.commons.lang3.builder.ToStringExclude;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import eu.openanalytics.rdepot.base.entities.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.ToStringExclude;
 
 /**
  * Data Transfer Object for {@link User Users}
@@ -36,49 +34,48 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserDto implements IDto {
 
-	private Integer id;
-	private String name;
-	private String email;
-	private String login;
-	private Boolean active;
-	private String lastLoggedInOn;
-	private String createdOn;
-	private Boolean deleted;
-	private Integer roleId;
-	private String role;
-	@ToStringExclude 
-	private User entity;
-	private UserSettingsProjection userSettings;
-	
-	public UserDto(User user) {
-		this.entity = user;		
-		this.id = user.getId();
-		this.name = user.getName();
-		this.email = user.getEmail();
-		this.login = user.getLogin();
-		this.active = user.isActive();
-		this.lastLoggedInOn = user.getLastLoggedInOn() != null 
-				? user.getLastLoggedInOn().toString()
-				: "";
-		this.createdOn = user.getCreatedOn().toString();
-		this.roleId = user.getRole().getId();
-		this.role = user.getRole().getName();
-		this.deleted = user.isDeleted();
-		this.userSettings = user.getUserSettings() != null
-				? new UserSettingsProjection(user.getUserSettings())
-				: null;
-	}
-	
-	public Boolean isActive() {
-		return active;
-	}
+    private Integer id;
+    private String name;
+    private String email;
+    private String login;
+    private Boolean active;
+    private String lastLoggedInOn;
+    private String createdOn;
+    private Boolean deleted;
+    private Integer roleId;
+    private String role;
 
-	public Boolean isDeleted() {
-		return deleted;
-	}
-	
-	@Override
-	public User getEntity() {
-		return entity;
-	}
+    @ToStringExclude
+    private User entity;
+
+    private UserSettingsProjection userSettings;
+
+    public UserDto(User user) {
+        this.entity = user;
+        this.id = user.getId();
+        this.name = user.getName();
+        this.email = user.getEmail();
+        this.login = user.getLogin();
+        this.active = user.isActive();
+        this.lastLoggedInOn =
+                user.getLastLoggedInOn() != null ? user.getLastLoggedInOn().toString() : "";
+        this.createdOn = user.getCreatedOn().toString();
+        this.roleId = user.getRole().getId();
+        this.role = user.getRole().getName();
+        this.deleted = user.isDeleted();
+        this.userSettings = user.getUserSettings() != null ? new UserSettingsProjection(user.getUserSettings()) : null;
+    }
+
+    public Boolean isActive() {
+        return active;
+    }
+
+    public Boolean isDeleted() {
+        return deleted;
+    }
+
+    @Override
+    public User getEntity() {
+        return entity;
+    }
 }

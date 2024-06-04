@@ -20,26 +20,19 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.sorting;
 
-import java.util.Optional;
-
-import org.springframework.stereotype.Component;
-
 import eu.openanalytics.rdepot.base.utils.BidirectionalMap;
 
-@Component
-public class PackageDtoToEntityPropertyMapping {
-	private static final BidirectionalMap<String> PROPERTIES = new BidirectionalMap<>();
+public class PackageDtoToEntityPropertyMapping extends AbstractPropertyMapping {
+
+    static final BidirectionalMap<String> PROPERTIES = new BidirectionalMap<>();
 
     static {
         PROPERTIES.put("technology", "resourceTechnology");
-        PROPERTIES.put("repository", "repositoryGeneric.name"); 
+        PROPERTIES.put("repository", "repositoryGeneric.name");
     }
 
-    public Optional<String> dtoToEntity(String property) {
-        return Optional.ofNullable(PROPERTIES.get(property));
-    }
-
-    public Optional<String> entityToDto(String property) {
-        return Optional.ofNullable(PROPERTIES.getInverted().get(property));
+    @Override
+    protected BidirectionalMap<String> getProperties() {
+        return PROPERTIES;
     }
 }

@@ -8,17 +8,17 @@
 #     This program is free software; you can redistribute it and/or
 #     modify it under the terms of the GNU General Public License,
 #     version 3, as published by the Free Software Foundation.
-# 
+#
 #     This program is distributed in the hope that it will be useful,
 #     but without any warranty; without even the implied warranty of
 #     merchantability or fitness for a particular purpose.  See the GNU
 #     General Public License, version 3, for more details.
-# 
+#
 #     A copy of the GNU General Public License, version 3, is available
 #     at http://www.r-project.org/Licenses/GPL-3
-# 
+#
 # Part of the R/abc package
-# Contains: cv4postpr, is.cv4postpr, summary.cv4postpr, plot.cv4postpr 
+# Contains: cv4postpr, is.cv4postpr, summary.cv4postpr, plot.cv4postpr
 #
 ######################################################################
 
@@ -34,21 +34,21 @@ cv4postpr <- function(index, sumstat, postpr.out = NULL, nval, tols,
   if(length(index)!=na.omit(length(index))) stop("'index' contains missing values. Models must be specified for each simulation.", call.=F)
 
   if(!prod(table(index)>nval)) stop("'nval' has to be smaller or equal to number of simulations for any of the models. Choose a smaller 'nval'.", call.=F)
-  
+
   ## set random seeds
   ## ################
   if(!exists(".Random.seed", envir=.GlobalEnv, inherits = FALSE)) runif(1)
   seed <- get(".Random.seed", envir=.GlobalEnv, inherits = FALSE)
-  
+
   ## define defaults:
   ## #################
-  
+
   if(!is.null(postpr.out)){
     subset <- postpr.out$na.action
     method <- postpr.out$method
     kernel <- "epanechnikov"
   }
-  
+
   ## checks, numbers of stats, params, sims
   if(is.vector(sumstat)){
       numstat <- 1
@@ -56,7 +56,7 @@ cv4postpr <- function(index, sumstat, postpr.out = NULL, nval, tols,
   }
   else numstat <- dim(sumstat)[2]
   numsim <- length(index)
-  
+
   ## names
   if(!is.null(postpr.out)){ # indexnames & statnames from postpr.out
     if(numstat != postpr.out$numstat || numsim != length(postpr.out$na.action)){
@@ -88,7 +88,7 @@ cv4postpr <- function(index, sumstat, postpr.out = NULL, nval, tols,
   ## index <- factor(index)
   ## sumstat <- sumstat[order(index), ]
   ## index <- index[order(index)]
-  
+
   ## indices for the CV sample and check that the sample is not actually an NA
   gwt <- rep(TRUE,length(sumstat[,1]))
   gwt[attributes(na.omit(sumstat))$na.action] <- FALSE
@@ -121,7 +121,7 @@ cv4postpr <- function(index, sumstat, postpr.out = NULL, nval, tols,
       rownames(res) <- index[cvsamp]
       allprobs[[paste("tol", mytol, sep="")]] <- res
       allnames <- lapply(allprobs, apply, 1, function(xx) mymodels[which(xx==max(xx))])
-      
+
       mycall[[paste("tol", mytol, sep="")]] <-
         call("postpr", target = quote(target), index = quote(index), sumstat = quote(sumstat), tol= mytol,
              subset = quote(subset), method = subres$method, kernel = subres$kernel)
@@ -132,10 +132,10 @@ cv4postpr <- function(index, sumstat, postpr.out = NULL, nval, tols,
          estim = allnames,
          model.probs = allprobs,
          method = method, names = list(models = mymodels, statistics.names = statnames), seed = seed)
-  
+
   class(cv4postpr.out) <- "cv4postpr"
   invisible(cv4postpr.out)
-  
+
 }
 
 is.cv4postpr <- function(x){
@@ -145,9 +145,9 @@ is.cv4postpr <- function(x){
 
 summary.cv4postpr <- function(object, probs=TRUE, print = TRUE, digits = max(3, getOption("digits")-3), ...){
 
-  if (!inherits(object, "cv4postpr")) 
+  if (!inherits(object, "cv4postpr"))
     stop("Use only with objects of class \"cv4postpr\".", call.=F)
-  
+
   cv4postpr.out <- object
   tols <- cv4postpr.out$tols
   numtols <- length(tols)
@@ -164,21 +164,21 @@ summary.cv4postpr <- function(object, probs=TRUE, print = TRUE, digits = max(3, 
   if(print) print(cm); cat("\n")
 
   if(probs){
-      if(print) cat(paste("Mean model posterior probabilities (", method ,")\n\n", sep="")) 
+      if(print) cat(paste("Mean model posterior probabilities (", method ,")\n\n", sep=""))
       myprs <- lapply(model.probs, apply, 2, tapply, true, mean)
       if(print) print(lapply(myprs, round, digits=digits))
       out <- list(conf.matrix=cm, probs=myprs)
   }
   else out <- cm
-  
+
   invisible(out)
 }
 
 plot.cv4postpr <- function(x, probs=FALSE, file = NULL, postscript = FALSE, onefile = TRUE, ask = !is.null(deviceIsInteractive()), caption = NULL, ...){
 
-  if (!inherits(x, "cv4postpr")) 
+  if (!inherits(x, "cv4postpr"))
     stop("Use only with objects of class \"cv4postpr\".", call.=F)
-  
+
   cv4postpr.out <- x
   tols <- cv4postpr.out$tols
   numtols <- length(tols)
@@ -188,9 +188,9 @@ plot.cv4postpr <- function(x, probs=FALSE, file = NULL, postscript = FALSE, onef
   model.probs <- cv4postpr.out$model.probs
   nmodels <- length(cv4postpr.out$names$models)
   nval <- length(true)/nmodels
-  
+
   if(is.null(caption)) caption <- "Misclassification of models"
-  
+
   ## Devices
   save.devAskNewPage <- devAskNewPage()
   if(!is.null(file)){
@@ -203,7 +203,7 @@ plot.cv4postpr <- function(x, probs=FALSE, file = NULL, postscript = FALSE, onef
           devAskNewPage(TRUE)
       }
   }
-  
+
   par(cex = 1, cex.main = 1.2, cex.lab = 1.1)
   for(i in 1:numtols){
       if(probs){
@@ -216,11 +216,11 @@ plot.cv4postpr <- function(x, probs=FALSE, file = NULL, postscript = FALSE, onef
       }
       title(caption, sub=paste("Tolerance rate = ", tols[i], sep=""))
   }
-  
+
   if(!is.null(file)){
       dev.off()
   }
   else devAskNewPage(save.devAskNewPage)
   invisible()
-  
+
 }

@@ -24,8 +24,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import eu.openanalytics.rdepot.base.messaging.MessageCodes;
+import eu.openanalytics.rdepot.base.validation.RepositoryValidator;
+import eu.openanalytics.rdepot.r.entities.RRepository;
+import eu.openanalytics.rdepot.r.services.RRepositoryService;
+import eu.openanalytics.rdepot.r.validation.RRepositoryValidator;
+import eu.openanalytics.rdepot.test.fixture.RRepositoryTestFixture;
 import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -34,36 +39,28 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
 
-import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-import eu.openanalytics.rdepot.base.validation.RepositoryValidator;
-import eu.openanalytics.rdepot.r.entities.RRepository;
-import eu.openanalytics.rdepot.r.services.RRepositoryService;
-import eu.openanalytics.rdepot.r.test.strategy.fixture.RRepositoryTestFixture;
-import eu.openanalytics.rdepot.r.validation.RRepositoryValidator;
-
 @ExtendWith(MockitoExtension.class)
 public class RRepositoryValidatorTest {
-	
-	@Mock
-	RRepositoryService rRepositoryService; 
-	
-	private RepositoryValidator<RRepository> repositoryValidator;
-	
-	@Test
-	public void updateRepository_shouldNotAllowChangingRepositoryVersion() throws Exception {
-		repositoryValidator = new RRepositoryValidator(rRepositoryService);
-		RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-		RRepository updatedRepository = new RRepository(repository);
-		updatedRepository.setVersion(100);
-		
-		DataBinder dataBinder = new DataBinder(updatedRepository);
-		dataBinder.setValidator(repositoryValidator);
-		Errors errors = Mockito.spy(dataBinder.getBindingResult());
-		
-		when(rRepositoryService.findById(repository.getId()))
-				.thenReturn((Optional.of(repository)));
-		
-		repositoryValidator.validate(updatedRepository, errors);
-		verify(errors, times(1)).rejectValue("version", MessageCodes.FORBIDDEN_UPDATE);
-	}
+
+    @Mock
+    RRepositoryService rRepositoryService;
+
+    private RepositoryValidator<RRepository> repositoryValidator;
+
+    @Test
+    public void updateRepository_shouldNotAllowChangingRepositoryVersion() throws Exception {
+        repositoryValidator = new RRepositoryValidator(rRepositoryService);
+        RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
+        RRepository updatedRepository = new RRepository(repository);
+        updatedRepository.setVersion(100);
+
+        DataBinder dataBinder = new DataBinder(updatedRepository);
+        dataBinder.setValidator(repositoryValidator);
+        Errors errors = Mockito.spy(dataBinder.getBindingResult());
+
+        when(rRepositoryService.findById(repository.getId())).thenReturn((Optional.of(repository)));
+
+        repositoryValidator.validate(updatedRepository, errors);
+        verify(errors, times(1)).rejectValue("version", MessageCodes.FORBIDDEN_UPDATE);
+    }
 }

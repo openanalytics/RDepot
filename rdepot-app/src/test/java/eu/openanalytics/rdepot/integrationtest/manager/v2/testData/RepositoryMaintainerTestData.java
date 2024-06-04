@@ -21,17 +21,16 @@
 package eu.openanalytics.rdepot.integrationtest.manager.v2.testData;
 
 import java.util.List;
-
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
 public class RepositoryMaintainerTestData {
-	private int getEndpointNewEventsAmount;
-	private int deleteEndpointNewEventsAmount;
-	private int changeEndpointNewEventsAmount;
-	private List<String> technologies;
-	private String search;
-	private boolean deleted;
+    private int getEndpointNewEventsAmount;
+    private int deleteEndpointNewEventsAmount;
+    private int changeEndpointNewEventsAmount;
+    private List<String> technologies;
+    private String search;
+    private boolean deleted;
 }

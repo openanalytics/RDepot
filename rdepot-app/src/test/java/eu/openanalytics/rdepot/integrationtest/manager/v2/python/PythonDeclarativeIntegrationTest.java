@@ -20,6 +20,8 @@
  */
 package eu.openanalytics.rdepot.integrationtest.manager.v2.python;
 
+import static io.restassured.RestAssured.given;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -29,39 +31,38 @@ import eu.openanalytics.rdepot.integrationtest.manager.v2.declarative.Declarativ
 import io.restassured.RestAssured;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.http.ContentType;
-import org.json.simple.parser.ParseException;
-import org.junit.jupiter.api.*;
-import org.testcontainers.containers.DockerComposeContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.Duration;
 import java.util.Collections;
+import org.json.simple.parser.ParseException;
+import org.junit.jupiter.api.*;
+import org.testcontainers.containers.DockerComposeContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
 
-import static io.restassured.RestAssured.given;
-
-public class PythonDeclarativeIntegrationTest  extends DeclarativeIntegrationTest {
+public class PythonDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
     private static final String API_PATH = "/api/v2/manager/python";
     public static final TestEnvironmentConfigurator testEnv = TestEnvironmentConfigurator.getDefaultInstance();
     public static final String AUTHORIZATION = "Authorization";
     public static final String BEARER = "Bearer ";
-    public static final String ADMIN_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJlaW5zdGVpbiIsIm5hbWUiOiJBbGJlcnQgRWluc3RlaW4iLCJlbWFpbCI6ImVpbnN0ZWluQGxkYXAuZm9ydW1zeXMuY29tIiwiYXVkIjoiUkRlcG90Iiwicm9sZXMiOlsidXNlciIsInBhY2thZ2VtYWludGFpbmVyIiwicmVwb3NpdG9yeW1haW50YWluZXIiLCJhZG1pbiJdLCJpc3MiOiJSRGVwb3QiLCJleHAiOjIwMDcwMjcyNDgsImlhdCI6MTY5MTY2NzI0OH0.SycsCWDmEFZfWV7cMpc05KareRXQ3iKfM9iprBa-j6M27D0hg0uKS1eGEPIuAHXEdqyUSD6yv7WMeXNY9BuYdw";
+    public static final String ADMIN_TOKEN =
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJlaW5zdGVpbiIsIm5hbWUiOiJBbGJlcnQgRWluc3RlaW4iLCJlbWFpbCI6ImVpbnN0ZWluQGxkYXAuZm9ydW1zeXMuY29tIiwiYXVkIjoiUkRlcG90Iiwicm9sZXMiOlsidXNlciIsInBhY2thZ2VtYWludGFpbmVyIiwicmVwb3NpdG9yeW1haW50YWluZXIiLCJhZG1pbiJdLCJpc3MiOiJSRGVwb3QiLCJleHAiOjIwMDcwMjcyNDgsImlhdCI6MTY5MTY2NzI0OH0.SycsCWDmEFZfWV7cMpc05KareRXQ3iKfM9iprBa-j6M27D0hg0uKS1eGEPIuAHXEdqyUSD6yv7WMeXNY9BuYdw";
     public static final String JSON_PATH = "src/test/resources/JSONs/v2/python-declarative";
-    public static final String USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJuZXd0b24iLCJuYW1lIjoiSXNhYWMgTmV3dG9uIiwiZW1haWwiOiJuZXd0b25AbGRhcC5mb3J1bXN5cy5jb20iLCJhdWQiOiJSRGVwb3QiLCJyb2xlcyI6WyJ1c2VyIl0sImlzcyI6IlJEZXBvdCIsImV4cCI6MjAwNzAyNzUwOSwiaWF0IjoxNjkxNjY3NTA5fQ.waNTEOoLL0jkDpvihngEg_O6_W91wvIcSdtcXIBYiTeE5SbyLL60FFztYwuUwo-aEghzqnQlfVj4NATZMWgA-g";
+    public static final String USER_TOKEN =
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJuZXd0b24iLCJuYW1lIjoiSXNhYWMgTmV3dG9uIiwiZW1haWwiOiJuZXd0b25AbGRhcC5mb3J1bXN5cy5jb20iLCJhdWQiOiJSRGVwb3QiLCJyb2xlcyI6WyJ1c2VyIl0sImlzcyI6IlJEZXBvdCIsImV4cCI6MjAwNzAyNzUwOSwiaWF0IjoxNjkxNjY3NTA5fQ.waNTEOoLL0jkDpvihngEg_O6_W91wvIcSdtcXIBYiTeE5SbyLL60FFztYwuUwo-aEghzqnQlfVj4NATZMWgA-g";
 
     public static DockerComposeContainer<?> container = new DockerComposeContainer<>(
-            new File("src/test/resources/docker-compose-declarative.yaml"))
+                    new File("src/test/resources/docker-compose-declarative.yaml"))
             .withLocalCompose(true)
             .withOptions("--compatibility")
-            .waitingFor("proxy",
+            .waitingFor(
+                    "proxy",
                     Wait.forHttp("/actuator/health")
                             .forStatusCode(200)
                             .withHeaders(Collections.singletonMap("Accept", "application/json"))
-                            .withStartupTimeout(Duration.ofMinutes(5))
-            );
+                            .withStartupTimeout(Duration.ofMinutes(5)));
 
     public PythonDeclarativeIntegrationTest() {
         super(AUTHORIZATION, BEARER, USER_TOKEN, API_PATH);
@@ -93,10 +94,10 @@ public class PythonDeclarativeIntegrationTest  extends DeclarativeIntegrationTes
     public final void cleanUp() throws Exception {
         testEnv.restoreDeclarative();
     }
+
     @Test
     public void shouldNotDeletePythonRepository() {
-        given()
-                .headers(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+        given().headers(AUTHORIZATION, BEARER + ADMIN_TOKEN)
                 .accept(ContentType.JSON)
                 .when()
                 .delete(API_PATH + "/repositories/13")
@@ -105,11 +106,11 @@ public class PythonDeclarativeIntegrationTest  extends DeclarativeIntegrationTes
     }
 
     @Test
-    public void shouldUploadPackageToPublishedPythonRepository() throws IOException, ParseException, InterruptedException {
-        File packageBag = new File ("src/test/resources/itestPackages/coconutpy-2.2.1.tar.gz");
+    public void shouldUploadPackageToPublishedPythonRepository()
+            throws IOException, ParseException, InterruptedException {
+        File packageBag = new File("src/test/resources/itestPackages/coconutpy-2.2.1.tar.gz");
 
-        given()
-                .header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+        given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
                 .accept("application/json")
                 .contentType("multipart/form-data")
                 .multiPart("repository", "X")
@@ -134,10 +135,9 @@ public class PythonDeclarativeIntegrationTest  extends DeclarativeIntegrationTes
 
     @Test
     public void shouldUploadPackageToUnublishedRRepository() throws IOException, ParseException, InterruptedException {
-        File packageBag = new File ("src/test/resources/itestPackages/coconutpy-2.2.1.tar.gz");
+        File packageBag = new File("src/test/resources/itestPackages/coconutpy-2.2.1.tar.gz");
 
-        given()
-                .header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+        given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
                 .accept("application/json")
                 .contentType("multipart/form-data")
                 .multiPart("repository", "Y")
@@ -151,7 +151,8 @@ public class PythonDeclarativeIntegrationTest  extends DeclarativeIntegrationTes
                 .then()
                 .statusCode(201);
 
-        FileReader reader = new FileReader(JSON_PATH + "/repositories_after_uploading_package_to_unpublished_repository.json");
+        FileReader reader =
+                new FileReader(JSON_PATH + "/repositories_after_uploading_package_to_unpublished_repository.json");
         JsonObject expectedRepositories = (JsonObject) JsonParser.parseReader(reader);
         reader = new FileReader(JSON_PATH + "/packages_after_uploading_package_to_unpublished_repository.json");
         JsonObject expectedPackages = (JsonObject) JsonParser.parseReader(reader);
@@ -161,7 +162,5 @@ public class PythonDeclarativeIntegrationTest  extends DeclarativeIntegrationTes
     }
 
     @Override
-    protected void updateMd5SumsAndVersion(JsonArray expectedContent) throws IOException {
-
-    }
+    protected void updateMd5SumsAndVersion(JsonArray expectedContent) throws IOException {}
 }

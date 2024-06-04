@@ -21,7 +21,6 @@
 package eu.openanalytics.rdepot.base.api.v2.dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import eu.openanalytics.rdepot.base.entities.UserSettings;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,28 +31,30 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class UserSettingsDto implements IDto {
-	private UserSettings entity;
-	private int id;
-	private String language;
-	private String theme;
-	private int pageSize;
-	@JsonIgnore
-	private boolean deleted;
-	private UserProjection user;
-	
-	public UserSettingsDto(UserSettings entity) {
-		this.entity = entity;
-		this.id = entity.getId();
-		this.language = entity.getLanguage();
-		this.theme = entity.getTheme();
-		this.pageSize = entity.getPageSize();
-		this.deleted = entity.isDeleted();
-		this.user = new UserProjection(entity.getUser());
-	}
-	
-	@Override
-	@JsonIgnore
-	public UserSettings getEntity() {
-		return entity;
-	}
+    private UserSettings entity;
+    private int id;
+    private String language;
+    private String theme;
+    private int pageSize;
+
+    @JsonIgnore
+    private boolean deleted;
+
+    private UserProjection user;
+
+    public UserSettingsDto(UserSettings entity) {
+        this.entity = entity;
+        this.id = entity.getId();
+        this.language = entity.getLanguage();
+        this.theme = entity.getTheme();
+        this.pageSize = entity.getPageSize();
+        this.deleted = entity.isDeleted();
+        this.user = new UserProjection(entity.getUser());
+    }
+
+    @Override
+    @JsonIgnore
+    public UserSettings getEntity() {
+        return entity;
+    }
 }

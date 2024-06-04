@@ -21,7 +21,6 @@
 package eu.openanalytics.rdepot.base.validation.exceptions;
 
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
-
 import java.io.Serial;
 
 /**
@@ -31,11 +30,10 @@ import java.io.Serial;
  */
 public class PatchValidationException extends LocalizedException {
 
-	@Serial
-	private static final long serialVersionUID = -8858509190487589756L;
+    @Serial
+    private static final long serialVersionUID = -8858509190487589756L;
 
-	public PatchValidationException(String messageCode) {
-		super(messageCode);
-	}
-
+    public PatchValidationException(String messageCode) {
+        super(messageCode);
+    }
 }

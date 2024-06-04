@@ -24,9 +24,9 @@ import java.io.File;
 
 public class MoveToTrashException extends Exception {
 
-	private static final long serialVersionUID = -4858067042675508423L;
-	
-	public MoveToTrashException(String id, File packageFile) {
-		super("Error while moving file " + packageFile.getAbsolutePath() + " to trash folder of transaction " + id);
-	}
+    private static final long serialVersionUID = -4858067042675508423L;
+
+    public MoveToTrashException(String id, File packageFile) {
+        super("Error while moving file " + packageFile.getAbsolutePath() + " to trash folder of transaction " + id);
+    }
 }

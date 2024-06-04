@@ -23,16 +23,6 @@ package eu.openanalytics.rdepot.test.unit.api.v2;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.security.Principal;
-import java.util.Optional;
-
-import org.eclipse.parsson.JsonProviderImpl;
-import org.junit.jupiter.api.BeforeEach;
-import org.mockito.Mock;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-
 import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2NewsfeedEventController;
 import eu.openanalytics.rdepot.base.api.v2.converters.PackageDtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.converters.SubmissionDtoConverter;
@@ -73,202 +63,200 @@ import eu.openanalytics.rdepot.r.strategy.factory.RStrategyFactory;
 import eu.openanalytics.rdepot.r.validation.RPackageValidator;
 import eu.openanalytics.rdepot.r.validation.RRepositoryValidator;
 import eu.openanalytics.rdepot.test.fixture.UserTestFixture;
+import java.security.Principal;
+import java.util.Optional;
+import org.eclipse.parsson.JsonProviderImpl;
+import org.junit.jupiter.api.BeforeEach;
+import org.mockito.Mock;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 public abstract class ApiV2ControllerUnitTest {
-	
-	/**
-	 * JsonProvider issue fix; For some reason, 
-	 * Glassfish's JsonProvider implementation is not resolved properly in the test environment.
-	 * Setting this property forces Spring to use this particular class as implementation.
-	 */
-	static {
-		System.setProperty("jakarta.json.provider", JsonProviderImpl.class.getCanonicalName());
-	}
-		
-	@MockBean
-	AccessTokenService accessTokenService;
-	
-	@MockBean
-	AccessTokenPatchValidator accessTokenPatchValidator;
-	
-	@MockBean
-	AccessTokenDeleter accessTokenDeleter;
-	
-	@MockBean
-	NewsfeedEventService newsfeedEventService;
-	
-	@MockBean
-	ApiV2NewsfeedEventController apiV2NewsfeedEventController;
-	
-	@MockBean
-	UserService userService;
-	
-	@MockBean 
-	SecurityMediator securityMediator;
 
-	@MockBean(name = "packageMaintainerValidator")
-	PackageMaintainerValidator packageMaintainerValidator;
-	
-	@MockBean
-	PackageMaintainerService packageMaintainerService;
-	
-	@MockBean
-	StrategyFactory strategyFactory;
-	
-	@MockBean
-	PackageMaintainerDeleter packageMaintainerDeleter;
-	
-	@MockBean
-	RepositoryService<Repository> commonRepositoryService;
-	
-	@MockBean
-	CommonPackageService commonPackageService;
-	
-	@MockBean
-	RepositoryMaintainerService repositoryMaintainerService;
-	
-	@MockBean(name = "repositoryMaintainerValidator")
-	RepositoryMaintainerValidator repositoryMaintainerValidator;
-	
-	@MockBean
-	RepositoryMaintainerDeleter repositoryMaintainerDeleter;	
-	
-	@MockBean
-	RRepositoryService rRepositoryService;
-	
-	@MockBean
-	RoleService roleService;
-	
-	@MockBean
-	UserSettingsService userSettingsService;
-	
-	@MockBean
-	UserValidator userValidator;
-	
-	@MockBean
-	SubmissionService submissionService;
-	
-	@MockBean
-	RStrategyFactory rStrategyFactory;
-	
-	@MockBean
-	SubmissionDeleter submissionDeleter;
-	
-	@MockBean
-	RSubmissionDeleter rSubmissionDeleter;
-	
-	@MockBean
-	RPackageService rPackageService;
-	
-	@MockBean
-	RPackageDeleter rPackageDeleter;
-	
-	@MockBean
-	RStorage rStorage;
-	
-	@MockBean
-	RRepositoryValidator rRepositoryValidator;
-	
-	@MockBean
-	RPackageValidator rPackageValidator;
-	
-	@MockBean
-	CranMirrorSynchronizer cranMirrorSynchronizer;
-	
-	@MockBean
-	RRepositoryDeleter rRepositoryDeleter;
-	
-	@MockBean
-	SubmissionDtoConverter submissionDtoConverter;
+    /**
+     * JsonProvider issue fix; For some reason,
+     * Glassfish's JsonProvider implementation is not resolved properly in the test environment.
+     * Setting this property forces Spring to use this particular class as implementation.
+     */
+    static {
+        System.setProperty("jakarta.json.provider", JsonProviderImpl.class.getCanonicalName());
+    }
 
-	@MockBean
-	PackageDtoConverter commonPackageDtoConverter;
-	
-	@MockBean
-	UserSettingsDtoConverter userSettingsDtoConverter;
-	
-	@MockBean
-	UserSettingsValidator userSettingsValidator;
-	
-	@MockBean
-	PageableValidator pageableValidator;
-	
-	@Mock
-	protected BestMaintainerChooser bestMaintainerChooser;
-	
-	@BeforeEach
-	public void clearContext() {
-		SecurityContextHolder.clearContext();
-	}
-	
-	public static final String JSON_PATH_COMMON = ClassLoader.getSystemClassLoader().getResource("unit/jsonscommon").getPath();
-	
-	public static final String ERROR_NOT_AUTHENTICATED_PATH = JSON_PATH_COMMON + "/error_not_authenticated.json";
-	public static final String ERROR_NOT_AUTHORIZED_PATH = JSON_PATH_COMMON + "/error_not_authorized.json";
-	public static final String ERROR_CREATE_PATH = JSON_PATH_COMMON + "/error_create.json";
-	public static final String EXAMPLE_DELETED_PATH = JSON_PATH_COMMON + "/example_deleted.json";
-	public static final String ERROR_DELETE_PATH = JSON_PATH_COMMON + "/error_delete.json";
-	public static final String ERROR_PATCH_PATH = JSON_PATH_COMMON + "/error_patch.json";
-	public static final String EXAMPLE_USERS_PATH = JSON_PATH_COMMON + "/example_users.json";
-	public static final String EXAMPLE_USER_PATH = JSON_PATH_COMMON + "/example_user.json";
-	public static final String ERROR_USER_NOT_FOUND_PATH = JSON_PATH_COMMON + "/error_user_notfound.json";
-	public static final String EXAMPLE_USER_PATCHED_PATH = JSON_PATH_COMMON + "/example_user_patched.json";
-	public static final String EXAMPLE_ROLES_PATH = JSON_PATH_COMMON + "/example_roles.json";
-	public static final String EXAMPLE_TOKEN_PATH = JSON_PATH_COMMON + "/example_token.json";
-	public static final String ERROR_UPDATE_NOT_ALLOWED_PATH = JSON_PATH_COMMON + "/error_update_notallowed.json";
+    @MockBean
+    AccessTokenService accessTokenService;
 
-	@Deprecated
-	protected Authentication getMockAuthentication(User user) {
-		Authentication authentication = mock(Authentication.class);
-		
-		when(authentication.getPrincipal()).thenReturn(null);
-		when(authentication.getName()).thenReturn(user.getLogin());
-		
-		return authentication;
-	}
-	
-	@Deprecated
-	protected Principal getMockPrincipal(User user) {
-		Principal mockPrincipal = mock(Principal.class);
-		
-		when(mockPrincipal.getName()).thenReturn(user.getLogin());
-		
-		return mockPrincipal;
-	}
-	
-	@Deprecated
-	protected Optional<User> getAdminAndAuthenticate(UserService userService) {
-		Optional<User> user = UserTestFixture.GET_FIXTURE_ADMIN();
-		when(userService.isAdmin(user.get())).thenReturn(true);
+    @MockBean
+    AccessTokenPatchValidator accessTokenPatchValidator;
 
-		authenticate(user.get());
-		
-		return user;
-	}
-	
-	@Deprecated
-	protected Optional<User> getUserAndAuthenticate(UserService userService) {
-		User userTmp = UserTestFixture.GET_FIXTURE_USER();
-		Optional<User> user = Optional.of(userTmp);
-		when(userService.isAdmin(user.get())).thenReturn(false);
-		
-		authenticate(user.get());
-		
-		return user;
-	}
-	
-	@Deprecated
-	protected User getRepositoryMaintainerAndAuthenticate(UserService userService) {
-		User user = UserTestFixture.GET_FIXTURE_USER_REPOSITORYMAINTAINER();
-		when(userService.isAdmin(user)).thenReturn(false);
-		
-		authenticate(user);
-		
-		return user;
-	}
-	
-	@Deprecated
-	protected void authenticate(User user) {
-		SecurityContextHolder.getContext().setAuthentication(getMockAuthentication(user));
-	}
+    @MockBean
+    AccessTokenDeleter accessTokenDeleter;
+
+    @MockBean
+    NewsfeedEventService newsfeedEventService;
+
+    @MockBean
+    ApiV2NewsfeedEventController apiV2NewsfeedEventController;
+
+    @MockBean
+    UserService userService;
+
+    @MockBean
+    SecurityMediator securityMediator;
+
+    @MockBean(name = "packageMaintainerValidator")
+    PackageMaintainerValidator packageMaintainerValidator;
+
+    @MockBean
+    PackageMaintainerService packageMaintainerService;
+
+    @MockBean
+    StrategyFactory strategyFactory;
+
+    @MockBean
+    PackageMaintainerDeleter packageMaintainerDeleter;
+
+    @MockBean
+    RepositoryService<Repository> commonRepositoryService;
+
+    @MockBean
+    CommonPackageService commonPackageService;
+
+    @MockBean
+    RepositoryMaintainerService repositoryMaintainerService;
+
+    @MockBean(name = "repositoryMaintainerValidator")
+    RepositoryMaintainerValidator repositoryMaintainerValidator;
+
+    @MockBean
+    RepositoryMaintainerDeleter repositoryMaintainerDeleter;
+
+    @MockBean
+    RRepositoryService rRepositoryService;
+
+    @MockBean
+    RoleService roleService;
+
+    @MockBean
+    UserSettingsService userSettingsService;
+
+    @MockBean
+    UserValidator userValidator;
+
+    @MockBean
+    SubmissionService submissionService;
+
+    @MockBean
+    RStrategyFactory rStrategyFactory;
+
+    @MockBean
+    SubmissionDeleter submissionDeleter;
+
+    @MockBean
+    RSubmissionDeleter rSubmissionDeleter;
+
+    @MockBean
+    RPackageService rPackageService;
+
+    @MockBean
+    RPackageDeleter rPackageDeleter;
+
+    @MockBean
+    RStorage rStorage;
+
+    @MockBean
+    RRepositoryValidator rRepositoryValidator;
+
+    @MockBean
+    RPackageValidator rPackageValidator;
+
+    @MockBean
+    CranMirrorSynchronizer cranMirrorSynchronizer;
+
+    @MockBean
+    RRepositoryDeleter rRepositoryDeleter;
+
+    @MockBean
+    SubmissionDtoConverter submissionDtoConverter;
+
+    @MockBean
+    PackageDtoConverter commonPackageDtoConverter;
+
+    @MockBean
+    UserSettingsDtoConverter userSettingsDtoConverter;
+
+    @MockBean
+    UserSettingsValidator userSettingsValidator;
+
+    @MockBean
+    PageableValidator pageableValidator;
+
+    @Mock
+    protected BestMaintainerChooser bestMaintainerChooser;
+
+    @BeforeEach
+    public void clearContext() {
+        SecurityContextHolder.clearContext();
+    }
+
+    public static final String JSON_PATH_COMMON =
+            ClassLoader.getSystemClassLoader().getResource("unit/jsonscommon").getPath();
+
+    public static final String ERROR_NOT_AUTHENTICATED_PATH = JSON_PATH_COMMON + "/error_not_authenticated.json";
+    public static final String ERROR_NOT_AUTHORIZED_PATH = JSON_PATH_COMMON + "/error_not_authorized.json";
+
+    @Deprecated
+    protected Authentication getMockAuthentication(User user) {
+        Authentication authentication = mock(Authentication.class);
+
+        when(authentication.getPrincipal()).thenReturn(null);
+        when(authentication.getName()).thenReturn(user.getLogin());
+
+        return authentication;
+    }
+
+    @Deprecated
+    protected Principal getMockPrincipal(User user) {
+        Principal mockPrincipal = mock(Principal.class);
+
+        when(mockPrincipal.getName()).thenReturn(user.getLogin());
+
+        return mockPrincipal;
+    }
+
+    @Deprecated
+    protected Optional<User> getAdminAndAuthenticate(UserService userService) {
+        Optional<User> user = Optional.of(UserTestFixture.GET_ADMIN());
+        when(userService.isAdmin(user.get())).thenReturn(true);
+
+        authenticate(user.get());
+
+        return user;
+    }
+
+    @Deprecated
+    protected Optional<User> getUserAndAuthenticate(UserService userService) {
+        User userTmp = UserTestFixture.GET_REGULAR_USER();
+        Optional<User> user = Optional.of(userTmp);
+        when(userService.isAdmin(user.get())).thenReturn(false);
+
+        authenticate(user.get());
+
+        return user;
+    }
+
+    @Deprecated
+    protected User getRepositoryMaintainerAndAuthenticate(UserService userService) {
+        User user = UserTestFixture.GET_REPOSITORY_MAINTAINER();
+        when(userService.isAdmin(user)).thenReturn(false);
+
+        authenticate(user);
+
+        return user;
+    }
+
+    @Deprecated
+    protected void authenticate(User user) {
+        SecurityContextHolder.getContext().setAuthentication(getMockAuthentication(user));
+    }
 }

@@ -20,14 +20,12 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.dtos;
 
-import org.apache.commons.lang3.builder.ToStringExclude;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
 import eu.openanalytics.rdepot.base.entities.Resource;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.ToStringExclude;
 
 /**
  * Data Transfer Object for {@link PackageMaintainer Package Maintainer}
@@ -37,25 +35,26 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PackageMaintainerDto implements IDto {
 
-	private Integer id = 0;
-	private UserProjection user;
-	private String packageName = "";
-	private RepositoryProjection repository;
-	private Boolean deleted = false;
-	@ToStringExclude 
-	private PackageMaintainer entity = new PackageMaintainer();
-	
-	public PackageMaintainerDto(PackageMaintainer packageMaintainer) {
-		this.entity = packageMaintainer;
-		this.id = packageMaintainer.getId();
-		this.user = new UserProjection(packageMaintainer.getUser());
-		this.packageName = packageMaintainer.getPackageName();
-		this.repository = new RepositoryProjection(packageMaintainer.getRepository());
-		this.deleted = packageMaintainer.isDeleted();
-	}
-	
-	@Override
-	public Resource getEntity() {
-		return entity;
-	}
+    private Integer id = 0;
+    private UserProjection user;
+    private String packageName = "";
+    private RepositoryProjection repository;
+    private Boolean deleted = false;
+
+    @ToStringExclude
+    private PackageMaintainer entity = new PackageMaintainer();
+
+    public PackageMaintainerDto(PackageMaintainer packageMaintainer) {
+        this.entity = packageMaintainer;
+        this.id = packageMaintainer.getId();
+        this.user = new UserProjection(packageMaintainer.getUser());
+        this.packageName = packageMaintainer.getPackageName();
+        this.repository = new RepositoryProjection(packageMaintainer.getRepository());
+        this.deleted = packageMaintainer.isDeleted();
+    }
+
+    @Override
+    public Resource getEntity() {
+        return entity;
+    }
 }

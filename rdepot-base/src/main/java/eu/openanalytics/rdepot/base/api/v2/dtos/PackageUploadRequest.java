@@ -20,12 +20,11 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.dtos;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import eu.openanalytics.rdepot.base.entities.Repository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Package Upload Request body
@@ -35,8 +34,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PackageUploadRequest<T extends Repository> {
-	private MultipartFile fileData;
-	private T repository;
-	private boolean generateManual = true;
-	private boolean replace = false;
+    private MultipartFile fileData;
+    private T repository;
+    private boolean generateManual = true;
+    private boolean replace = false;
 }

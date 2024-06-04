@@ -20,8 +20,8 @@
  */
 package eu.openanalytics.rdepot.base.utils;
 
-import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.Package;
+import eu.openanalytics.rdepot.base.entities.Repository;
 
 /**
  * Resolves technology-specific {@link Repository} for technology-specific {@link Package}.
@@ -29,14 +29,14 @@ import eu.openanalytics.rdepot.base.entities.Package;
  * @param <P> Technology-specific Package type
  */
 public interface PackageRepositoryResolver<R extends Repository, P extends Package> {
-	
-	/**
-	 * Resolves technology-specific {@link Repository} for technology-specific {@link Package}.
-	 * It has to be implemented by technology extension in order 
-	 * to enable the use of technology-specific properties in child component classes.
-	 * It allows it without requiring the {@link Package} abstract entity
-	 * to include generic {@link Repository} type in its definition,
-	 * therefore de-coupling these two elements.
-	 */
-	R getRepositoryForPackage(P packageBag);
+
+    /**
+     * Resolves technology-specific {@link Repository} for technology-specific {@link Package}.
+     * It has to be implemented by technology extension in order
+     * to enable the use of technology-specific properties in child component classes.
+     * It allows it without requiring the {@link Package} abstract entity
+     * to include generic {@link Repository} type in its definition,
+     * therefore de-coupling these two elements.
+     */
+    R getRepositoryForPackage(P packageBag);
 }

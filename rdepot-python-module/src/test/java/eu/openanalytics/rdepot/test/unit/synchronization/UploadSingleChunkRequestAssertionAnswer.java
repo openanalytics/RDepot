@@ -20,62 +20,59 @@
  */
 package eu.openanalytics.rdepot.test.unit.synchronization;
 
+import eu.openanalytics.rdepot.base.entities.Repository;
+import eu.openanalytics.rdepot.base.synchronization.RepoResponse;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.mockito.invocation.InvocationOnMock;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 
-import eu.openanalytics.rdepot.base.entities.Repository;
-import eu.openanalytics.rdepot.base.synchronization.RepoResponse;
-
 public class UploadSingleChunkRequestAssertionAnswer extends UploadChunkRequestAssertionAnswer {
-	
-	private final String expectedId;
-	private final String expectedVersionBefore;
-	private final String expectedVersionAfter;
-	private final List<String> expectedToDelete;
-	private final List<File> packagesToUpload;
 
-	public UploadSingleChunkRequestAssertionAnswer(
-			Repository repository,
-			final String expectedId,
-			final String expectedVersionBefore,
-			final String expectedVersionAfter,
-			final List<String> expectedToDelete,
-			final List<File> packagesToUpload
-			) {
-		super(1, repository);
-		this.expectedId = expectedId;
-		this.expectedVersionBefore = expectedVersionBefore;
-		this.expectedVersionAfter = expectedVersionAfter;
-		this.expectedToDelete = expectedToDelete;
-		this.packagesToUpload = packagesToUpload;
-	}
-	
-	@Override
-	public ResponseEntity<RepoResponse> answer(InvocationOnMock invocation) throws Throwable {
-		List<FileSystemResource> files = new ArrayList<>();
-		files.addAll(packagesToUpload.stream().map(f -> new FileSystemResource(f)).toList());
-		
-		@SuppressWarnings("unchecked")
-		MultiValueMap<String, Object> entity = 
-				((HttpEntity<MultiValueMap<String, Object>>)invocation.getArgument(1)).getBody();
-		assertChunk(entity, new UploadChunkRequestAssertion(
-				expectedId, 
-				expectedVersionBefore, 
-				expectedVersionAfter, 
-				List.of("1/1"), 
-				expectedToDelete, 
-				files
-			)
-		);
-		
-		return super.answer(invocation);
-	}
+    private final String expectedId;
+    private final String expectedVersionBefore;
+    private final String expectedVersionAfter;
+    private final List<String> expectedToDelete;
+    private final List<File> packagesToUpload;
 
+    public UploadSingleChunkRequestAssertionAnswer(
+            Repository repository,
+            final String expectedId,
+            final String expectedVersionBefore,
+            final String expectedVersionAfter,
+            final List<String> expectedToDelete,
+            final List<File> packagesToUpload) {
+        super(1, repository);
+        this.expectedId = expectedId;
+        this.expectedVersionBefore = expectedVersionBefore;
+        this.expectedVersionAfter = expectedVersionAfter;
+        this.expectedToDelete = expectedToDelete;
+        this.packagesToUpload = packagesToUpload;
+    }
+
+    @Override
+    public ResponseEntity<RepoResponse> answer(InvocationOnMock invocation) throws Throwable {
+        List<FileSystemResource> files = new ArrayList<>();
+        files.addAll(
+                packagesToUpload.stream().map(f -> new FileSystemResource(f)).toList());
+
+        @SuppressWarnings("unchecked")
+        MultiValueMap<String, Object> entity =
+                ((HttpEntity<MultiValueMap<String, Object>>) invocation.getArgument(1)).getBody();
+        assertChunk(
+                entity,
+                new UploadChunkRequestAssertion(
+                        expectedId,
+                        expectedVersionBefore,
+                        expectedVersionAfter,
+                        List.of("1/1"),
+                        expectedToDelete,
+                        files));
+
+        return super.answer(invocation);
+    }
 }

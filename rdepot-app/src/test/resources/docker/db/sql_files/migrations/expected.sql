@@ -889,7 +889,7 @@ SET row_security = off; SET default_tablespace = ''; SET default_table_access_me
 363 20:04:41.499+00 2020-03-28 DELETE 4 \N 2 \N \N \N \N f \N
 \. --
 -- Data for Name: package; Type: TABLE DATA; Schema: public; Owner: postgres
--- COPY public.package (id, name, version, description, author, maintainer_id, repository_id, url, source, title, active, deleted, resource_technology) FROM stdin;
+-- COPY public.package (id, name, version, description, author, user_maintainer_id, repository_id, url, source, title, active, deleted, resource_technology) FROM stdin;
 8 accrued 1.2 Package for visualizing data quality of partially accruing time series. Julie Eaton and Ian Painter 4 3 \N /opt/rdepot/repositories/3/83118397/accrued_1.2.tar.gz Visualization tools for partially accruing data t f RPackage
 4 accrued 1.3.5 Package for visualizing data quality of partially accruing data. Julie Eaton and Ian Painter 4 3 \N /opt/rdepot/repositories/3/99077116/accrued_1.3.5.tar.gz Data Quality Visualization Tools for Partially Accruing Data t f RPackage
 10 A3 0.9.2 This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward. Scott Fortmann-Roe 6 4 \N /opt/rdepot/repositories/4/54491936/A3_0.9.2.tar.gz A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models t f RPackage
@@ -1143,7 +1143,7 @@ SET row_security = off; SET default_tablespace = ''; SET default_table_access_me
 -- Name: user has_role; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 -- ALTER TABLE ONLY public."user" ADD CONSTRAINT has_role FOREIGN KEY (role_id) REFERENCES public.role(id); --
 -- Name: package is_maintainer_of; Type: FK CONSTRAINT; Schema: public; Owner: postgres
--- ALTER TABLE ONLY public.package ADD CONSTRAINT is_maintainer_of FOREIGN KEY (maintainer_id) REFERENCES public."user"(id); --
+-- ALTER TABLE ONLY public.package ADD CONSTRAINT is_maintainer_of FOREIGN KEY (user_maintainer_id) REFERENCES public."user"(id); --
 -- Name: package_maintainer is_package_maintainer; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 -- ALTER TABLE ONLY public.package_maintainer ADD CONSTRAINT is_package_maintainer FOREIGN KEY (user_id) REFERENCES public."user"(id); --
 -- Name: package_maintainer is_package_maintainer_of; Type: FK CONSTRAINT; Schema: public; Owner: postgres

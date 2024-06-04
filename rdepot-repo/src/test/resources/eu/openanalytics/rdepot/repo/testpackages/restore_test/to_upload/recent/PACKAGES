@@ -12,4 +12,3 @@ Imports: graphics, stats, nlsr
 License: BSD_2_clause + file LICENSE
 MD5Sum: 868140a3c3c29327eef5d5a485aee5b6
 NeedsCompilation: no
-

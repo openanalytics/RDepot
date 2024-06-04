@@ -21,7 +21,6 @@
 package eu.openanalytics.rdepot.base.service.exceptions;
 
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 /**
@@ -29,11 +28,10 @@ import java.io.Serial;
  */
 public class DeleteEntityException extends Exception {
 
-	@Serial
-	private static final long serialVersionUID = 7806769555168053559L;
+    @Serial
+    private static final long serialVersionUID = 7806769555168053559L;
 
-	public DeleteEntityException() {
-		super(MessageCodes.COULD_NOT_DELETE_ENTITY);
-	}
-
+    public DeleteEntityException() {
+        super(MessageCodes.COULD_NOT_DELETE_ENTITY);
+    }
 }

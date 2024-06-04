@@ -20,21 +20,20 @@
  */
 package eu.openanalytics.rdepot.base.validation;
 
-import org.springframework.validation.Errors;
-
 import eu.openanalytics.rdepot.base.entities.Resource;
 import lombok.Setter;
+import org.springframework.validation.Errors;
 
 @Setter
-public abstract class ChainValidator<R extends Resource>{
-	public ChainValidator<R> next = null;
-	
-	protected abstract void validateField(R resource, Errors errors);
-	
-	public void validate(R resource, Errors errors) {
-		validateField(resource, errors);
-		if(next != null) {
-			next.validate(resource, errors);
-		}
-	}
+public abstract class ChainValidator<R extends Resource> {
+    public ChainValidator<R> next = null;
+
+    protected abstract void validateField(R resource, Errors errors);
+
+    public void validate(R resource, Errors errors) {
+        validateField(resource, errors);
+        if (next != null) {
+            next.validate(resource, errors);
+        }
+    }
 }

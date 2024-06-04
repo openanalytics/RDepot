@@ -1,0 +1,74 @@
+{
+  "code": 201,
+  "data": {
+    "approver": {
+      "name": "Albert Einstein",
+      "id": 4,
+      "login": "einstein",
+      "email": "einstein@ldap.forumsys.com"
+    },
+    "submitter": {
+      "name": "Albert Einstein",
+      "id": 4,
+      "login": "einstein",
+      "email": "einstein@ldap.forumsys.com"
+    },
+    "created": "2024-05-21",
+    "changes": null,
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/python/submissions/47"
+      },
+      {
+        "rel": "submissionList",
+        "href": "http://localhost:8017/api/v2/manager/python/submissions"
+      }
+    ],
+    "id": 47,
+    "state": "ACCEPTED",
+    "technology": "Python",
+    "packageBag": {
+      "author": null,
+      "active": true,
+      "description": null,
+      "technology": "Python",
+      "repository": {
+        "name": "testrepo9",
+        "id": 9,
+        "published": false,
+        "technology": "Python",
+        "publicationUri": "http://localhost/repo/testrepo9"
+      },
+      "title": "A built-package format for Python",
+      "version": "0.40.0",
+      "url": "Changelog, https://wheel.readthedocs.io/en/stable/news.html, Documentation, https://wheel.readthedocs.io/, Issue Tracker, https://github.com/pypa/wheel/issues",
+      "deleted": false,
+      "name": "wheel",
+      "submission": {
+        "id": 47,
+        "state": "ACCEPTED"
+      },
+      "links": [
+        {
+          "rel": "self",
+          "href": "http://localhost:8017/api/v2/manager/python/packages/47"
+        },
+        {
+          "rel": "packageList",
+          "href": "http://localhost:8017/api/v2/manager/packages"
+        }
+      ],
+      "id": 47,
+      "user": {
+        "name": "Nikola Tesla",
+        "id": 5,
+        "login": "tesla",
+        "email": "tesla@ldap.forumsys.com"
+      }
+    }
+  },
+  "messageCode": "success.resource.created",
+  "message": "Your resource has been created successfully.",
+  "status": "SUCCESS"
+}

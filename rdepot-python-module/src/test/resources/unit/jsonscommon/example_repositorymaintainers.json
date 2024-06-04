@@ -13,8 +13,8 @@
         "content": [
             {
                 "id": 100,
-                "user":{"name":"Test User111","id":111,"login":"repositorymaintainer_testusername111","email":"111test@example.org"},
-                "repository":{"name":"Test Python Repository 100","id":100,"publicationUri":"http://localhost/repo/testrepo100"},
+                "user":{"name":"Test Repo Maintainer","id":111,"login":"testrepomaintainer","email":"repomaintainer@example.org"},
+                "repository":{"name":"Test Python Repository 123","id":100,"publicationUri":"http://localhost/repo/testrepo123"},
                 "deleted": false,
                 "links": [
                     {
@@ -29,8 +29,8 @@
             },
             {
                 "id": 101,
-                "user":{"name":"Test User111","id":111,"login":"repositorymaintainer_testusername111","email":"111test@example.org"},
-		"repository":{"name":"Test Python Repository 100","id":100,"publicationUri":"http://localhost/repo/testrepo100"},
+                "user":{"name":"Test Repo Maintainer","id":111,"login":"testrepomaintainer","email":"repomaintainer@example.org"},
+		"repository":{"name":"Test Python Repository 123","id":100,"publicationUri":"http://localhost/repo/testrepo123"},
                 "deleted": false,
                 "links": [
                     {
@@ -45,8 +45,8 @@
             },
             {
                 "id": 102,
-                "user":{"name":"Test User111","id":111,"login":"repositorymaintainer_testusername111","email":"111test@example.org"},
-                "repository":{"name":"Test Python Repository 100","id":100,"publicationUri":"http://localhost/repo/testrepo100"},
+                "user":{"name":"Test Repo Maintainer","id":111,"login":"testrepomaintainer","email":"repomaintainer@example.org"},
+                "repository":{"name":"Test Python Repository 123","id":100,"publicationUri":"http://localhost/repo/testrepo123"},
                 "links": [
                     {
                         "rel": "self",

@@ -27,11 +27,10 @@ import java.io.Serial;
  */
 public class FatalStrategyFailure extends StrategyFailure {
 
-	@Serial
-	private static final long serialVersionUID = -3064878431446505975L;
+    @Serial
+    private static final long serialVersionUID = -3064878431446505975L;
 
-	public FatalStrategyFailure(Exception reason) {
-		super(reason, true);
-	}
-
+    public FatalStrategyFailure(Exception reason) {
+        super(reason, true);
+    }
 }

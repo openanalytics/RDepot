@@ -19,6 +19,7 @@
  * along with this program. If not, see <http://www.apache.org/licenses/>
  */
 package eu.openanalytics.rdepot.base.api.v2.dtos;
+
 import eu.openanalytics.rdepot.base.entities.Repository;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,17 +34,17 @@ import lombok.ToString;
 @NoArgsConstructor
 public class RepositoryProjection {
 
-	private Integer id;
-	private String name;
-	private String publicationUri;
-	private boolean published;
-	private String technology;
-	
-	public RepositoryProjection(Repository repository) {
-		this.id = repository.getId();
-		this.name = repository.getName();
-		this.publicationUri = repository.getPublicationUri();
-		this.technology = repository.getTechnology().getName();
-		this.published = repository.getPublished();
-	}
+    private Integer id;
+    private String name;
+    private String publicationUri;
+    private boolean published;
+    private String technology;
+
+    public RepositoryProjection(Repository repository) {
+        this.id = repository.getId();
+        this.name = repository.getName();
+        this.publicationUri = repository.getPublicationUri();
+        this.technology = repository.getTechnology().getName();
+        this.published = repository.getPublished();
+    }
 }

@@ -83,9 +83,9 @@ For every technology version, there is a separate singleton object. For example:
 package eu.openanalytics.rdepot.r.technology;
 
 public class RLanguage implements Technology {
-	
+
 	public static RLanguage instance;
-	
+
 	static {
 		instance = new RLanguage();
 	}
@@ -115,13 +115,13 @@ public class RLanguage implements Technology {
 	public int hashCode() {
 		return Objects.hash(getName(), getVersion());
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if(obj == null) return false;
 		if(!obj.getClass().isAssignableFrom(RLanguage.class)) return false;
 		RLanguage that = (RLanguage) obj;
-		return this.getName().equals(that.getName()) 
+		return this.getName().equals(that.getName())
 				&& this.getVersion().equals(that.getVersion());
 	}
 }
@@ -171,26 +171,26 @@ public class RPackage extends Package {
 
 	@Column(name = "depends", table = "rpackage")
 	private String depends = "";
-	
+
 	@Column(name = "imports", table = "rpackage")
 	private String imports = "";
-	
+
 	@Column(name = "suggests", table = "rpackage")
 	private String suggests = "";
-	
+
 	@Column(name = "system_requirements", table = "rpackage")
 	private String systemRequirements = "";
-	
+
 	@Column(name = "license", nullable = false, table = "rpackage")
 	private String license;
-	
+
 	@Column(name = "md5sum", nullable = false, table = "rpackage")
 	private String md5sum;
-	
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "repository_id", nullable = false)
 	private RRepository repository;
-	
+
 	@Transient
 	private Boolean generateManuals;
 
@@ -208,7 +208,7 @@ public class RPackage extends Package {
 		this.repository = repository;
 		super.setRepositoryGeneric(repository);
 	}
-	
+
 	//...
 	// A couple of different constructors skipped in this listing for better readability
 }
@@ -233,15 +233,15 @@ public class RRepository extends Repository implements Serializable {
 
 	@Serial
 	private static final long serialVersionUID = 3346101145064616895L;
-	
+
 	public RRepository() {
 		super(RLanguage.instance);
 	}
-	
+
 	public RRepository(RRepositoryDto dto) {
 		super(RLanguage.instance, dto);
 	}
-	
+
 	public RRepository(RRepository that) {
 		super(that);
 	}
@@ -255,7 +255,7 @@ public class RRepository extends Repository implements Serializable {
 
 ## Data Access Layer
 
-After the data structures are defined, the persistence layer can be implemented. This corresponds with the two layers at the bottom, on the [diagram above](#abstractions-to-extend). 
+After the data structures are defined, the persistence layer can be implemented. This corresponds with the two layers at the bottom, on the [diagram above](#abstractions-to-extend).
 
 ### JPA Repositories and Services
 
@@ -301,13 +301,13 @@ Services may seem redundant in the context of JPA Repositories but they really a
 
 ## Database
 
-The database will also require additional implementation. 
+The database will also require additional implementation.
 
 First of all, a new `technology repository table` has to be added. This table reflects the new Repository resource. Usually it will just contain an `id` column. Extra columns related to a particular technology can be added as well.
 
 Secondly, a new `technology package table` has to be introduced. This table will store all properties that are required by the Packages of the new technology.
 
-The best way to extend the database is by adding Liquibase scripts in `rdepot-app/src/main/resources/db/changelog/schema/`. 
+The best way to extend the database is by adding Liquibase scripts in `rdepot-app/src/main/resources/db/changelog/schema/`.
 
 An example script for Python can be found below:
 ```yaml
@@ -374,10 +374,10 @@ databaseChangeLog:
                   name: description_content_type
                   type: text
                   constraints:
-                    nullable: true              
+                    nullable: true
 ```
 
-For brevity, some of the columns in the `pythonpackage` table were omitted. 
+For brevity, some of the columns in the `pythonpackage` table were omitted.
 
 > Please note that there are no sequences to generate IDs. IDs are shared with the technology-agnostic `package` and `repository` tables.
 
@@ -400,7 +400,7 @@ The Storage components can be characterized by two elements:
 
 - Back-end technology used for storage (e.g. AWS S3, local file system)
 - Technology which the storage supports (e.g. Python, R)
-  
+
 The main interface that exposes the basic Storage features is `Storage` in the base module. There is also an abstract back-end implementation `CommonLocalStorage` which can be used as a backbone for extension storage, if storing packages on the file system is needed. There are plans to implement AWS S3 support (and possibly other cloud storage services) in the future. It is therefore important not to couple the logic in the extension code with any specific back-end in order to allow users' choice in the future. In order to achieve that, please stick to these best practices:
 
 - Always inject Storage as an interface, not a specific implementation
@@ -418,7 +418,7 @@ public interface RStorage extends Storage<RRepository, RPackage> {
 	 * @return
 	 */
 	byte[] getReferenceManual(RPackage packageBag) throws GetReferenceManualException;
-	
+
 	/**
 	 * Fetches links to available vignettes for a given package.
 	 * @param packageBag
@@ -433,7 +433,7 @@ public interface RStorage extends Storage<RRepository, RPackage> {
 	 * @return
 	 */
 	byte[] readVignette(RPackage packageBag, String filename) throws ReadPackageVignetteException;
-	
+
 	/**
 	 * Creates manual for a package and puts it in the local storage.
 	 * @param packageBag
@@ -455,21 +455,21 @@ package eu.openanalytics.rdepot.r.storage.implementations;
  */
 @Slf4j
 @Component
-public class RLocalStorage 
-	extends CommonLocalStorage<RRepository, RPackage> // we want to use the file system 
+public class RLocalStorage
+	extends CommonLocalStorage<RRepository, RPackage> // we want to use the file system
 	implements RStorage { // we want to support R
-	
+
 	@Resource(name = "packageUploadDirectory")
 	private File packageUploadDirectory;
-	
+
 	@Resource(name="repositoryGenerationDirectory")
 	private File repositoryGenerationDirectory;
-	
+
 	@Value("${repository-snapshots}")
 	private String snapshot;
 
 	@Override
-	public Properties getPropertiesFromExtractedFile(final String extractedFile) 
+	public Properties getPropertiesFromExtractedFile(final String extractedFile)
 			throws ReadPackageDescriptionException {
 		try {
 			return new PropertiesParser(new File(extractedFile + separator + "DESCRIPTION"));
@@ -486,11 +486,11 @@ public class RLocalStorage
 
 	@Override
 	public byte[] getReferenceManual(RPackage packageBag) throws GetReferenceManualException {
-		final String manualPath = new File(packageBag.getSource()).getParent() 
-				+ separator + packageBag.getName() 
+		final String manualPath = new File(packageBag.getSource()).getParent()
+				+ separator + packageBag.getName()
 				+ separator + packageBag.getName() + ".pdf";
 		final File manualFile = new File(manualPath);
-		
+
 		try {
 			return readFile(manualFile);
 		} catch(IOException e) {
@@ -501,12 +501,12 @@ public class RLocalStorage
 
 	@Override
 	public byte[] readVignette(RPackage packageBag, String filename) throws ReadPackageVignetteException {
-		final String vignetteFilename = new File(packageBag.getSource()).getParent() 
-				+ separator + packageBag.getName() 
-				+ separator + "inst" + separator + "doc" 
+		final String vignetteFilename = new File(packageBag.getSource()).getParent()
+				+ separator + packageBag.getName()
+				+ separator + "inst" + separator + "doc"
 				+ separator + filename;
 		final File file = new File(vignetteFilename);
-		
+
 		try {
 			return readFile(file);
 		} catch (IOException e) {
@@ -555,8 +555,8 @@ package eu.openanalytics.rdepot.r.strategy.create;
 public class RRepositoryCreateStrategy extends CreateRepositoryStrategy<RRepository> {
 
 	public RRepositoryCreateStrategy(
-			RRepository resource, 
-			NewsfeedEventService newsfeedEventService, 
+			RRepository resource,
+			NewsfeedEventService newsfeedEventService,
 			RRepositoryService service,
 			User requester) {
 		super(resource, service, requester, newsfeedEventService);
@@ -568,35 +568,35 @@ public class RRepositoryCreateStrategy extends CreateRepositoryStrategy<RReposit
 It is a little bit different when it comes to package uploads:
 
 ```java
-public class RPackageUploadStrategy 
+public class RPackageUploadStrategy
 	extends DefaultPackageUploadStrategy<RRepository, RPackage> {
 
 	private final RStorage rStorage;
-	
+
 	public RPackageUploadStrategy(
-			PackageUploadRequest<RRepository> request, 
-			User requester, 
+			PackageUploadRequest<RRepository> request,
+			User requester,
 			NewsfeedEventService eventService,
-			SubmissionService service, 
-			PackageValidator<RPackage> packageValidator, 
+			SubmissionService service,
+			PackageValidator<RPackage> packageValidator,
 			RepositoryService<RRepository> repositoryService,
-			Storage<RRepository, RPackage> storage, 
-			PackageService<RPackage> packageService, 
-			EmailService emailService, 
+			Storage<RRepository, RPackage> storage,
+			PackageService<RPackage> packageService,
+			EmailService emailService,
 			BestMaintainerChooser bestMaintainerChooser,
 			RRepositorySynchronizer repositorySynchronizer,
 			SecurityMediator securityMediator,
-			RStorage rStorage, 
+			RStorage rStorage,
 			RPackageDeleter packageDeleter) {
-		super(request, 
-				requester, 
-				eventService, 
-				packageValidator, 
-				repositoryService, 
+		super(request,
+				requester,
+				eventService,
+				packageValidator,
+				repositoryService,
 				storage,
-				packageService, 
-				service, 
-				emailService, 
+				packageService,
+				service,
+				emailService,
 				bestMaintainerChooser,
 				repositorySynchronizer,
 				securityMediator,
@@ -607,7 +607,7 @@ public class RPackageUploadStrategy
 	@Override
 	protected RPackage parseTechnologySpecificPackageProperties(Properties properties) throws ParsePackagePropertiesException {
 		RPackage packageBag = new RPackage();
-		
+
 		packageBag.setDescription(properties.getProperty("Description"));
 		packageBag.setDepends(properties.getProperty("Depends"));
 		packageBag.setImports(properties.getProperty("Imports"));
@@ -616,7 +616,7 @@ public class RPackageUploadStrategy
 		packageBag.setLicense(properties.getProperty("License"));
 		packageBag.setUrl(properties.getProperty("URL"));
 		packageBag.setTitle(properties.getProperty("Title"));
-		
+
 		return packageBag;
 	}
 
@@ -665,10 +665,10 @@ package eu.openanalytics.rdepot.r.strategy.factory;
 @Component
 @AllArgsConstructor
 public class RStrategyFactory {
-	
+
 	// Autowired dependencies
 	private final SubmissionService submissionService;
-	private final PackageValidator<RPackage> packageValidator;	
+	private final PackageValidator<RPackage> packageValidator;
 	private final RRepositoryService repositoryService;
 	private final Storage<RRepository, RPackage> storage;
 	private final RPackageService packageService;
@@ -681,7 +681,7 @@ public class RStrategyFactory {
 	private final RepositoryMaintainerService repositoryMaintainerService;
 	private final RStorage rStorage;
     private final RPackageDeleter rPackageDeleter;
-	
+
 	public Strategy<RPackage> updatePackageStrategy(RPackage resource, User requester, RPackage updatedPackage) {
 		return new RPackageUpdateStrategy(
 				resource,
@@ -693,12 +693,12 @@ public class RStrategyFactory {
 				bestMaintainerChooser,
 				repositorySynchronizer);
 	}
-	
+
 	public Strategy<RRepository> createRepositoryStrategy(RRepository resource, User requester) {
 		return new RRepositoryCreateStrategy(
-					resource, 
-					newsfeedEventService, 
-					repositoryService, 
+					resource,
+					newsfeedEventService,
+					repositoryService,
 					requester
 				);
 	}
@@ -726,27 +726,27 @@ package eu.openanalytics.rdepot.base.mediator;
 @Transactional
 @AllArgsConstructor
 public class BestMaintainerChooser {
-	
+
 	private final RepositoryMaintainerService repositoryMaintainerService;
 	private final PackageMaintainerService packageMaintainerService;
 	private final UserService userService;
-	private final RoleService roleService;	
-	
+	private final RoleService roleService;
+
 	/**
 	 * Finds the best package maintainer for a given package.
 	 * @param packageBag
 	 * @return
-	 */	
+	 */
 	public User chooseBestPackageMaintainer(Package packageBag) throws NoSuitableMaintainerFound {
-		final Optional<PackageMaintainer> packageMaintainer = 
+		final Optional<PackageMaintainer> packageMaintainer =
 				packageMaintainerService.findByPackageAndRepositoryAndNonDeleted(
 						packageBag.getName(), packageBag.getRepository());
-		
+
 		if(packageMaintainer.isPresent()) {
 			return packageMaintainer.get().getUser();
 		}
-		
-		final List<RepositoryMaintainer> repositoryMaintainers = 
+
+		final List<RepositoryMaintainer> repositoryMaintainers =
 				repositoryMaintainerService.findByRepositoryNonDeleted(packageBag.getRepository());
 		if(!repositoryMaintainers.isEmpty()) {
 			return repositoryMaintainers.get(0).getUser();
@@ -759,7 +759,7 @@ public class BestMaintainerChooser {
 		}
 		throw new NoSuitableMaintainerFound();
 	}
-	
+
 	/**
 	 * Updates all packages in the list with the most suitable maintainer.
 	 * @param packages
@@ -768,9 +768,9 @@ public class BestMaintainerChooser {
 	public void refreshMaintainerForPackages(List<Package> packages) throws NoSuitableMaintainerFound {
 		for(Package packageBag : packages) {
 			packageBag.setUser(chooseBestPackageMaintainer(packageBag));
-		}	
+		}
 	}
-	
+
 	/**
 	 * Finds any administrator in the system.
 	 * @return
@@ -778,13 +778,13 @@ public class BestMaintainerChooser {
 	 */
 	public User findFirstAdmin() throws AdminNotFound {
 		final List<User> admins = findAllAdmins();
-		
+
 		if(admins.isEmpty())
 			throw new AdminNotFound();
-		
+
 		return admins.get(0);
 	}
-	
+
 	/**
 	 * Finds all administrators in the systems.
 	 * @return
@@ -793,7 +793,7 @@ public class BestMaintainerChooser {
 		final Optional<Role> adminRole = roleService.findByValue(Role.VALUE.ADMIN);
 		if(adminRole.isEmpty())
 			return List.of();
-		
+
 		return userService.findByRole(adminRole.get());
 	}
 }
@@ -833,7 +833,7 @@ public interface RepositorySynchronizer<T extends Repository> {
 	 * @param dateStamp in the format "yyyyMMdd"
 	 * @throws SynchronizeRepositoryException
 	 */
-	void storeRepositoryOnRemoteServer(T repository, String dateStamp) 
+	void storeRepositoryOnRemoteServer(T repository, String dateStamp)
 			throws SynchronizeRepositoryException;
 }
 ```
@@ -876,7 +876,7 @@ public class RepositorySimpleDto implements IDto {
 	private Boolean published = false;
 	private Boolean synchronizing = false;
 	private String technology;
-	@ToStringExclude 
+	@ToStringExclude
 	private Repository entity;
 
 	public RepositorySimpleDto(Repository repository) {
@@ -895,11 +895,11 @@ public class RepositorySimpleDto implements IDto {
 	public Boolean isDeleted() {
 		return deleted;
 	}
-	
+
 	public Boolean isPublished() {
 		return published;
 	}
-	
+
 	public Boolean isSynchronizing() {
 		return synchronizing;
 	}
@@ -920,14 +920,14 @@ package eu.openanalytics.rdepot.r.api.v2.dtos;
 
 @NoArgsConstructor
 public class RRepositoryDto extends RepositoryDto {
-	@ToStringExclude 
+	@ToStringExclude
 	private RRepository entity;
 
 	public RRepositoryDto(RRepository repository, int numberOfPackages) {
 		super(repository, numberOfPackages);
 		this.entity = repository;
 	}
-	
+
 	@Override
 	public Resource getEntity() {
 		return entity;
@@ -1002,10 +1002,10 @@ public abstract class AbstractSubmissionDto<T extends IDto> implements IDto {
 	protected UserProjection approver;
 	protected String changes;
 	protected SubmissionState state;
-	@ToStringExclude 
+	@ToStringExclude
 	protected Submission entity;
 	protected String technology;
-	
+
 	public AbstractSubmissionDto(Submission submission, T packageDto) {
 		this.entity = submission;
 		this.id = submission.getId();
@@ -1025,7 +1025,7 @@ public abstract class AbstractSubmissionDto<T extends IDto> implements IDto {
 			this.approver = null;
 		}
 	}
-	
+
 	@Override
 	@JsonIgnore
 	public Submission getEntity() {
@@ -1138,14 +1138,14 @@ For `GET` controllers it is slightly different:
 		// 2. Digest request parameters
 		pageableValidator.validate(pageable);
 		Specification<RRepository> specs = null;
-				 		
+
 		specs = SpecificationUtils.andComponent(specs, RepositorySpecs.isDeleted(deleted));
 		if(name.isPresent())
 			specs = SpecificationUtils.andComponent(specs, RepositorySpecs.ofName(name.get()));
 
 		// 3. Execute business logic to fetch data & 4. Generate response
 		return handleSuccessForPagedCollection(repositoryService
-			.findAllBySpecification(specs, pageable), 
+			.findAllBySpecification(specs, pageable),
 			requester);
 	}
 ```
@@ -1160,30 +1160,30 @@ Creating a new repository may look as follows:
 			operationId = "createRRepository"
 	)
 	public @ResponseBody ResponseEntity<?> createRepository(
-			Principal principal, @RequestBody RRepositoryDto repositoryDto) 
+			Principal principal, @RequestBody RRepositoryDto repositoryDto)
 					throws NotAllowedInDeclarativeMode, UserNotAuthorized, CreateException {
 		// 1. Authorize
 		User requester = userService.findByLogin(principal.getName())
 				.orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
 		if(!userService.isAdmin(requester))
 			throw new UserNotAuthorized(messageSource, locale);
-		
+
 		if(Boolean.parseBoolean(declarative))
 			throw new NotAllowedInDeclarativeMode(messageSource, locale);
-		
+
 		try {
 			// 2. Validate
 			RRepository repositoryEntity = dtoConverter.resolveDtoToEntity(repositoryDto);
 			BindingResult bindingResult = createBindingResult(repositoryEntity);
-			
+
 			repositoryValidator.validate(repositoryEntity, bindingResult);
-			
+
 			if(bindingResult.hasErrors())
 				return handleValidationError(bindingResult);
-			
+
 			// 3. Execute business logic
 			Strategy<RRepository> strategy = factory.createRepositoryStrategy(repositoryEntity, requester);
-			
+
 			RRepository repository = strategy.perform();
 
 			// 4. Generate response
@@ -1193,7 +1193,7 @@ Creating a new repository may look as follows:
 			throw new CreateException(messageSource, locale);
 		} catch (EntityResolutionException e) {
 			return handleValidationError(e);
-		}			
+		}
 	}
 ```
 
@@ -1208,7 +1208,7 @@ Errors can be handled either by calling a dedicated method manually like `handle
 			throw new CreateException(messageSource, locale); // API Exception intercepted by ApiV2ErrorController
 		} catch (EntityResolutionException e) {
 			return handleValidationError(e); // handler method from parent class
-		}	
+		}
 //
 ```
 
@@ -1222,19 +1222,19 @@ Here is the example *R* implementation for packages:
 package eu.openanalytics.rdepot.r.api.v2.hateoas;
 
 @Component
-public class RPackageModelAssembler 
+public class RPackageModelAssembler
 	extends AbstractRoleAwareModelAssembler<RPackage, RPackageDto> {
 
 	private final SecurityMediator securityMediator;
-	
+
 	@Autowired
-	public RPackageModelAssembler(DtoConverter<RPackage, RPackageDto> dtoConverter, 
+	public RPackageModelAssembler(DtoConverter<RPackage, RPackageDto> dtoConverter,
 			SecurityMediator securityMediator) {
 		super(dtoConverter, RPackageController.class, "package", Optional.empty());
 		this.securityMediator = securityMediator;
 	}
-	
-	private RPackageModelAssembler(DtoConverter<RPackage, RPackageDto> dtoConverter, 
+
+	private RPackageModelAssembler(DtoConverter<RPackage, RPackageDto> dtoConverter,
 			SecurityMediator securityMediator, User user) {
 		super(dtoConverter, RPackageController.class, "package", Optional.of(user));
 		this.securityMediator = securityMediator;
@@ -1243,12 +1243,12 @@ public class RPackageModelAssembler
 	@Override
 	protected List<Link> getLinksToMethodsWithLimitedAccess(RPackage entity, User user, Link baseLink) {
 		List<Link> links = new ArrayList<>();
-		
+
 		if(securityMediator.isAuthorizedToEdit(entity, user)) {
 			links.add(baseLink.withType(HTTP_METHODS.PATCH.getValue()));
 			links.add(baseLink.withType(HTTP_METHODS.DELETE.getValue()));
 		}
-		
+
 		return links;
 	}
 
@@ -1310,7 +1310,7 @@ To validate repositories or packages, custom validators need to be implemented. 
 
 ```java
 @Component
-public class RRepositoryValidator extends 
+public class RRepositoryValidator extends
 	RepositoryValidator<RRepository> {
 
 	public RRepositoryValidator(RRepositoryService repositoryService) {
@@ -1357,7 +1357,7 @@ public interface PackageValidator<T extends Package> {
 	 * @param replace if the package is supposed to replace another one
 	 */
 	void validate(T packageBag, boolean replace, DataSpecificValidationResult<Submission> errors);
-	
+
 	void validateUploadPackage(
 			T packageBag, boolean replace,
 			DataSpecificValidationResult<Submission> validationResult
@@ -1372,7 +1372,7 @@ public interface PackageValidator<T extends Package> {
 
 Here, no exceptions are thrown for validation failure (unless it is caused by some kind of internal error, then unchecked exceptions may be thrown). Also, no `Errors` objects are used here since these were too limited for the use-case with warnings.
 
-The `ValidationResult` object can be created with `ValidationResultImpl.createResult()` or `ValidationResultImpl.createDataSpecificResult(Class<T> clazz)`. The former may be used for simple cases when only string data needs to be attached, the latter when a validated (or related) object reference may also be useful. 
+The `ValidationResult` object can be created with `ValidationResultImpl.createResult()` or `ValidationResultImpl.createDataSpecificResult(Class<T> clazz)`. The former may be used for simple cases when only string data needs to be attached, the latter when a validated (or related) object reference may also be useful.
 
 ## Error Handling and Messaging
 

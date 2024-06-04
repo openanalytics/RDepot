@@ -6,9 +6,9 @@
 	"data": {
 		"id": 123,
 		"version": 10,
-		"publicationUri": "http://localhost/repo/testrepo123",
-		"name": "Test Python Repository 123",
-		"serverAddress": "http://192.168.1.100/testrepo123",
+		"publicationUri": "http://localhost/repo/testrepo",
+		"name": "Test Python Repository",
+		"serverAddress": "http://192.168.1.100/testrepo",
 		"deleted": false,
 		"published": true,
 		"synchronizing": false,

@@ -23,7 +23,6 @@ package eu.openanalytics.rdepot.base.storage.exceptions;
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 /**
@@ -31,11 +30,10 @@ import java.io.Serial;
  */
 public class SourceNotFoundException extends LocalizedException {
 
-	@Serial
-	private static final long serialVersionUID = -7106951004217535670L;
+    @Serial
+    private static final long serialVersionUID = -7106951004217535670L;
 
-	public SourceNotFoundException() {
-		super(MessageCodes.COULD_NOT_FIND_SOURCE);
-	}
-
+    public SourceNotFoundException() {
+        super(MessageCodes.COULD_NOT_FIND_SOURCE);
+    }
 }

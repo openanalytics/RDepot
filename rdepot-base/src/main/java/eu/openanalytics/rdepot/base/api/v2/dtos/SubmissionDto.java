@@ -27,12 +27,11 @@ import eu.openanalytics.rdepot.base.entities.Submission;
  */
 public class SubmissionDto extends AbstractSubmissionDto<PackageDto> {
 
-	public SubmissionDto() {
-		super();
-	}
-	
-	public SubmissionDto(Submission submission, PackageDto packageDto) {
-		super(submission, packageDto);
-	}
+    public SubmissionDto() {
+        super();
+    }
 
+    public SubmissionDto(Submission submission, PackageDto packageDto) {
+        super(submission, packageDto);
+    }
 }

@@ -20,20 +20,18 @@
  */
 package eu.openanalytics.rdepot.base.mediator.deletion;
 
-import org.springframework.stereotype.Component;
-
 import eu.openanalytics.rdepot.base.entities.AccessToken;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.Service;
+import org.springframework.stereotype.Component;
 
 /**
  * Permanently deletes {@link AccessToken Access Tokens}.
  */
 @Component
-public class AccessTokenDeleter extends ResourceDeleter<AccessToken>{
-	
-	public AccessTokenDeleter(NewsfeedEventService newsfeedEventService,
-			Service<AccessToken> resourceService) {
-		super(newsfeedEventService, resourceService);
-	}
+public class AccessTokenDeleter extends ResourceDeleter<AccessToken> {
+
+    public AccessTokenDeleter(NewsfeedEventService newsfeedEventService, Service<AccessToken> resourceService) {
+        super(newsfeedEventService, resourceService);
+    }
 }

@@ -23,10 +23,10 @@ package eu.openanalytics.rdepot.base.security.exceptions;
 import java.io.Serial;
 
 public class JWTException extends AuthException {
-	@Serial
-	private static final long serialVersionUID = -6711367106223119820L;
+    @Serial
+    private static final long serialVersionUID = -6711367106223119820L;
 
-	public JWTException(String msg) {
-		super(msg);
-	}
+    public JWTException(String msg) {
+        super(msg);
+    }
 }

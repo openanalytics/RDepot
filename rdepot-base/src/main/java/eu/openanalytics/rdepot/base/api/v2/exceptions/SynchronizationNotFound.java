@@ -21,11 +21,10 @@
 package eu.openanalytics.rdepot.base.api.v2.exceptions;
 
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
-
 import java.io.Serial;
 import java.util.Locale;
+import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 
 /**
  * Thrown when Synchronization Status for a given repository cannot be found.
@@ -36,12 +35,10 @@ import java.util.Locale;
  */
 public class SynchronizationNotFound extends ApiException {
 
-	@Serial
-	private static final long serialVersionUID = -1017075107795046059L;
+    @Serial
+    private static final long serialVersionUID = -1017075107795046059L;
 
-	public SynchronizationNotFound(MessageSource messageSource, Locale locale) {
-		super(messageSource, locale, MessageCodes.ERROR_GET_SYNCHRONIZATION_STATUS,
-				HttpStatus.NOT_FOUND);
-	}
-
+    public SynchronizationNotFound(MessageSource messageSource, Locale locale) {
+        super(messageSource, locale, MessageCodes.ERROR_GET_SYNCHRONIZATION_STATUS, HttpStatus.NOT_FOUND);
+    }
 }

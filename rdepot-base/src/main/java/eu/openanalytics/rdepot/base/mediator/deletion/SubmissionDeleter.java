@@ -31,17 +31,18 @@ import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
  */
 public abstract class SubmissionDeleter extends ResourceDeleter<Submission> {
 
-	protected final PackageDeleter<?,?> packageDeleter;
-	
-	public SubmissionDeleter(NewsfeedEventService newsfeedEventService,
-			Service<Submission> resourceService,
-			PackageDeleter<?,?> packageDeleter) {
-		super(newsfeedEventService, resourceService);
-		this.packageDeleter = packageDeleter;
-	}
+    protected final PackageDeleter<?, ?> packageDeleter;
 
-	@Override
-	public void delete(Submission resource) throws DeleteEntityException {
-		packageDeleter.deleteForSubmission(resource);
-	}
+    public SubmissionDeleter(
+            NewsfeedEventService newsfeedEventService,
+            Service<Submission> resourceService,
+            PackageDeleter<?, ?> packageDeleter) {
+        super(newsfeedEventService, resourceService);
+        this.packageDeleter = packageDeleter;
+    }
+
+    @Override
+    public void delete(Submission resource) throws DeleteEntityException {
+        packageDeleter.deleteForSubmission(resource);
+    }
 }

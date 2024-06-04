@@ -21,37 +21,36 @@
 package eu.openanalytics.rdepot.base.api.v2.dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.Resource;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
 /**
  * Data Transfer Object for {@link Package Packages}.
  */
-
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class PackageDto extends PackageSimpleDto {
 
-	protected String description;
-	protected String author;
-	protected String title;
-	protected String url;
-	
-	public PackageDto(Package packageBag) {
-		super(packageBag);
-		this.description = packageBag.getDescription();
-		this.author = packageBag.getAuthor();
-		this.title = packageBag.getTitle();
-		this.url = packageBag.getUrl();
-	}
-	
-	@Override
-	@JsonIgnore
-	public Resource getEntity() {
-		return this.entity;
-	}
+    protected String description;
+    protected String author;
+    protected String title;
+    protected String url;
+
+    public PackageDto(Package packageBag) {
+        super(packageBag);
+        this.description = packageBag.getDescription();
+        this.author = packageBag.getAuthor();
+        this.title = packageBag.getTitle();
+        this.url = packageBag.getUrl();
+    }
+
+    @Override
+    @JsonIgnore
+    public Resource getEntity() {
+        return this.entity;
+    }
 }

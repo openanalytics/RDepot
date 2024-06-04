@@ -25,27 +25,29 @@ import eu.openanalytics.rdepot.python.config.declarative.DeclarativePythonReposi
 import eu.openanalytics.rdepot.python.config.declarative.PythonYamlDeclarativeConfigurationSource;
 import eu.openanalytics.rdepot.python.technology.PythonLanguage;
 import eu.openanalytics.rdepot.test.unit.UnitTest;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class DeclarativePythonRepositoryTest extends UnitTest {
 
     private static final String TEST_RESOURCES_PATH = "src/test/resources/unit";
-    private static final String GOOD_REPOSITORIES = TEST_RESOURCES_PATH +  "/test_files/declarative_repository_files/good";
-    private static final String MISSING_TECHNOLOGY_REPOSITORIES = TEST_RESOURCES_PATH +  "/test_files/declarative_repository_files/missing_technology";
-    private static final String TECHNOLOGY_MISMATCH_REPOSITORIES = TEST_RESOURCES_PATH +  "/test_files/declarative_repository_files/technology_mismatch";
+    private static final String GOOD_REPOSITORIES =
+            TEST_RESOURCES_PATH + "/test_files/declarative_repository_files/good";
+    private static final String MISSING_TECHNOLOGY_REPOSITORIES =
+            TEST_RESOURCES_PATH + "/test_files/declarative_repository_files/missing_technology";
+    private static final String TECHNOLOGY_MISMATCH_REPOSITORIES =
+            TEST_RESOURCES_PATH + "/test_files/declarative_repository_files/technology_mismatch";
 
     @Test
     public void successfullyInitializeDeclarativePythonRepository() throws Exception {
         DeclaredRepositoryDirectoriesProps directories = new DeclaredRepositoryDirectoriesProps();
         directories.setPaths(List.of(GOOD_REPOSITORIES));
-        PythonYamlDeclarativeConfigurationSource configurationSource = new PythonYamlDeclarativeConfigurationSource(directories);
+        PythonYamlDeclarativeConfigurationSource configurationSource =
+                new PythonYamlDeclarativeConfigurationSource(directories);
         List<DeclarativePythonRepository> repositories = configurationSource.retrieveDeclaredRepositories();
         Assertions.assertEquals(3, repositories.size());
-        for(DeclarativePythonRepository repository : repositories) {
+        for (DeclarativePythonRepository repository : repositories) {
             Assertions.assertEquals("a", repository.getName());
             Assertions.assertEquals("http://localhost/repo/Python", repository.getPublicationUri());
             Assertions.assertEquals("http://oa-rdepot-repo:8080/Python", repository.getServerAddress());
@@ -58,7 +60,8 @@ public class DeclarativePythonRepositoryTest extends UnitTest {
     public void handleMissingTechnologyForDeclarativePythonRepository() throws Exception {
         DeclaredRepositoryDirectoriesProps directories = new DeclaredRepositoryDirectoriesProps();
         directories.setPaths(List.of(MISSING_TECHNOLOGY_REPOSITORIES));
-        PythonYamlDeclarativeConfigurationSource configurationSource = new PythonYamlDeclarativeConfigurationSource(directories);
+        PythonYamlDeclarativeConfigurationSource configurationSource =
+                new PythonYamlDeclarativeConfigurationSource(directories);
         List<DeclarativePythonRepository> repositories = configurationSource.retrieveDeclaredRepositories();
         Assertions.assertEquals(0, repositories.size());
     }
@@ -67,7 +70,8 @@ public class DeclarativePythonRepositoryTest extends UnitTest {
     public void handleTechnologyMismatchForDeclarativePythonRepository() throws Exception {
         DeclaredRepositoryDirectoriesProps directories = new DeclaredRepositoryDirectoriesProps();
         directories.setPaths(List.of(TECHNOLOGY_MISMATCH_REPOSITORIES));
-        PythonYamlDeclarativeConfigurationSource configurationSource = new PythonYamlDeclarativeConfigurationSource(directories);
+        PythonYamlDeclarativeConfigurationSource configurationSource =
+                new PythonYamlDeclarativeConfigurationSource(directories);
         List<DeclarativePythonRepository> repositories = configurationSource.retrieveDeclaredRepositories();
         Assertions.assertEquals(0, repositories.size());
     }

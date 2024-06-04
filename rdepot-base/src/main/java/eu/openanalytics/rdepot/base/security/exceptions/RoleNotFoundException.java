@@ -21,15 +21,13 @@
 package eu.openanalytics.rdepot.base.security.exceptions;
 
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 public class RoleNotFoundException extends AuthException {
-	@Serial
-	private static final long serialVersionUID = -4475246579793074466L;
+    @Serial
+    private static final long serialVersionUID = -4475246579793074466L;
 
-	public RoleNotFoundException() {
-		super(MessageCodes.ROLE_NOT_FOUND);
-	}
-
+    public RoleNotFoundException() {
+        super(MessageCodes.ROLE_NOT_FOUND);
+    }
 }

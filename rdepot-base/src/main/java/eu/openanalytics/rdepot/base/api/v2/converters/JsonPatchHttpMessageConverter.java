@@ -38,36 +38,35 @@ import org.springframework.stereotype.Component;
  * @see <a href="https://datatracker.ietf.org/doc/html/rfc6902">JSON Patch specification</a>
  */
 @Component
-public class JsonPatchHttpMessageConverter extends AbstractHttpMessageConverter<JsonPatch>{
+public class JsonPatchHttpMessageConverter extends AbstractHttpMessageConverter<JsonPatch> {
 
-	@Override
-	protected boolean supports(@NonNull Class<?> clazz) {
-		return JsonPatch.class.isAssignableFrom(clazz);
-	}
+    @Override
+    protected boolean supports(@NonNull Class<?> clazz) {
+        return JsonPatch.class.isAssignableFrom(clazz);
+    }
 
-	@Override
-	protected @NonNull JsonPatch readInternal(@NonNull Class<? extends JsonPatch> clazz,
-											  @NonNull HttpInputMessage inputMessage)
-			throws HttpMessageNotReadableException {
-		JsonPatch patch;
-		
-		try(JsonReader reader = Json.createReader(inputMessage.getBody())) {
-			patch = Json.createPatch(reader.readArray());
-		} catch(Exception e) {
-			throw new HttpMessageNotReadableException(e.getMessage(), inputMessage);
-		}
-		
-		return patch;
-	}
+    @Override
+    protected @NonNull JsonPatch readInternal(
+            @NonNull Class<? extends JsonPatch> clazz, @NonNull HttpInputMessage inputMessage)
+            throws HttpMessageNotReadableException {
+        JsonPatch patch;
 
-	@Override
-	protected void writeInternal(@NonNull JsonPatch t, @NonNull HttpOutputMessage outputMessage)
-			throws HttpMessageNotWritableException {
-		throw new NotImplementedException();
-	}
-	
-	public JsonPatchHttpMessageConverter() {
-		super(MediaType.valueOf("application/json-patch+json"));
-	}
+        try (JsonReader reader = Json.createReader(inputMessage.getBody())) {
+            patch = Json.createPatch(reader.readArray());
+        } catch (Exception e) {
+            throw new HttpMessageNotReadableException(e.getMessage(), inputMessage);
+        }
 
+        return patch;
+    }
+
+    @Override
+    protected void writeInternal(@NonNull JsonPatch t, @NonNull HttpOutputMessage outputMessage)
+            throws HttpMessageNotWritableException {
+        throw new NotImplementedException();
+    }
+
+    public JsonPatchHttpMessageConverter() {
+        super(MediaType.valueOf("application/json-patch+json"));
+    }
 }

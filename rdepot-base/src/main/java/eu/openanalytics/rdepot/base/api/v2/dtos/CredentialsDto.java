@@ -26,7 +26,7 @@ import lombok.Data;
  * Data Transfer Object for basic authentication credentials.
  */
 @Data
-public class CredentialsDto {	
-	private String login;
-	private String password;
+public class CredentialsDto {
+    private String login;
+    private String password;
 }

@@ -22,9 +22,9 @@ package eu.openanalytics.rdepot.repo.exception;
 
 public class EmptyTrashException extends Exception {
 
-	private static final long serialVersionUID = -8209226581417782341L;
+    private static final long serialVersionUID = -8209226581417782341L;
 
-	public EmptyTrashException(String repository) {
-		super("Could not delete trash directory of repository " + repository);
-	}
+    public EmptyTrashException(String repository) {
+        super("Could not delete trash directory of repository " + repository);
+    }
 }

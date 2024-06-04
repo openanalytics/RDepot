@@ -20,82 +20,70 @@
  */
 package eu.openanalytics.rdepot.repo.model;
 
-import java.util.Objects;
-
 import eu.openanalytics.rdepot.repo.exception.InvalidRequestPageNumberException;
+import eu.openanalytics.rdepot.repo.hash.model.HashMethod;
+import java.util.Map;
+import java.util.Objects;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * DTO of Synchronization request retrieved from the client
+ */
+@Getter
 public abstract class SynchronizeRepositoryRequestBody {
-	String page;
-	String repository;
-	String id;
-	String versionBefore;
-	String versionAfter;
-	
-	public SynchronizeRepositoryRequestBody(String page, String repository, String id,
-			String versionBefore, String versionAfter) {
-		this.page = page;
-		this.repository = repository;
-		this.id = id;
-		this.versionAfter = versionAfter;
-		this.versionBefore = versionBefore;
-	}
-	
-	public String getPage() {
-		return page;
-	}
-	
-	public void setPage(String page) {
-		this.page = page;
-	}
-	
-	public String getRepository() {
-		return repository;
-	}
-	
-	public void setRepository(String repository) {
-		this.repository = repository;
-	}
-	
-	public String getId() {
-		return id;
-	}
-	
-	public void setId(String id) {
-		this.id = id;
-	}
-	
-	public String getVersionAfter() {
-		return versionAfter;
-	}
-	
-	public String getVersionBefore() {
-		return versionBefore;
-	}
-	
-	public void setVersionAfter(String versionAfter) {
-		this.versionAfter = versionAfter;
-	}
-	
-	public void setVersionBefore(String versionBefore) {
-		this.versionBefore = versionBefore;
-	}
-	
-	public boolean isFirstChunk() throws InvalidRequestPageNumberException {
-    	String[] pageStr = getPage().split("/");
-    	if(pageStr.length == 2) {
-    		return Objects.equals(pageStr[0], "1");
-    	} else {
-    		throw new InvalidRequestPageNumberException(getPage());
-    	}
+    String page;
+    String repository;
+
+    @Setter
+    String id;
+
+    String versionBefore;
+    String versionAfter;
+    Map<String, String> checksums;
+    HashMethod hashMethod;
+    MultipartFile[] filesToUpload;
+    String[] filesToDelete;
+
+    public abstract Technology getTechnology();
+
+    public SynchronizeRepositoryRequestBody(
+            String page,
+            String repository,
+            String id,
+            String versionBefore,
+            String versionAfter,
+            Map<String, String> checksums,
+            HashMethod hashMethod,
+            MultipartFile[] filesToUpload,
+            String[] filesToDelete) {
+        this.page = page;
+        this.repository = repository;
+        this.id = id;
+        this.versionAfter = versionAfter;
+        this.versionBefore = versionBefore;
+        this.checksums = checksums;
+        this.hashMethod = hashMethod;
+        this.filesToDelete = filesToDelete == null ? new String[0] : filesToDelete;
+        this.filesToUpload = filesToUpload == null ? new MultipartFile[0] : filesToUpload;
     }
-    
+
+    public boolean isFirstChunk() throws InvalidRequestPageNumberException {
+        String[] pageStr = getPage().split("/");
+        if (pageStr.length == 2) {
+            return Objects.equals(pageStr[0], "1");
+        } else {
+            throw new InvalidRequestPageNumberException(getPage());
+        }
+    }
+
     public boolean isLastChunk() throws InvalidRequestPageNumberException {
-    	String[] pageStr = getPage().split("/");
-    	if(pageStr.length == 2) {
-    		return Objects.equals(pageStr[0], pageStr[1]);
-    	} else {
-    		throw new InvalidRequestPageNumberException(getPage());
-    	}
-    	
+        String[] pageStr = getPage().split("/");
+        if (pageStr.length == 2) {
+            return Objects.equals(pageStr[0], pageStr[1]);
+        } else {
+            throw new InvalidRequestPageNumberException(getPage());
+        }
     }
 }

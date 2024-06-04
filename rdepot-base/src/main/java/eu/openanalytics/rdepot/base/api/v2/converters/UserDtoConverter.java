@@ -20,13 +20,12 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.converters;
 
-import org.springframework.stereotype.Component;
-
 import eu.openanalytics.rdepot.base.api.v2.converters.exceptions.EntityResolutionException;
 import eu.openanalytics.rdepot.base.api.v2.dtos.UserDto;
 import eu.openanalytics.rdepot.base.entities.Role;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.service.RoleService;
+import org.springframework.stereotype.Component;
 
 /**
  * {@link DtoConverter DTO Converter} for {@link User Users}
@@ -34,22 +33,20 @@ import eu.openanalytics.rdepot.base.service.RoleService;
 @Component
 public class UserDtoConverter implements DtoConverter<User, UserDto> {
 
-	private final RoleService roleService;
-	
-	public UserDtoConverter(RoleService roleService) {
-		this.roleService = roleService;
-	}
-	
-	@Override
-	public User resolveDtoToEntity(UserDto dto) throws EntityResolutionException {
-		Role role = roleService.findById(dto.getRoleId())
-				.orElseThrow(() -> new EntityResolutionException(dto));
-		return new User(dto, role);
-	}
+    private final RoleService roleService;
 
-	@Override
-	public UserDto convertEntityToDto(User entity) {
-		return new UserDto(entity);
-	}
+    public UserDtoConverter(RoleService roleService) {
+        this.roleService = roleService;
+    }
 
+    @Override
+    public User resolveDtoToEntity(UserDto dto) throws EntityResolutionException {
+        Role role = roleService.findById(dto.getRoleId()).orElseThrow(() -> new EntityResolutionException(dto));
+        return new User(dto, role);
+    }
+
+    @Override
+    public UserDto convertEntityToDto(User entity) {
+        return new UserDto(entity);
+    }
 }

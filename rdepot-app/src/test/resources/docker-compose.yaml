@@ -4,6 +4,7 @@ services:
   proxy:
     image: registry.openanalytics.eu/proxy/library/nginx:alpine
     restart: always
+    hostname: oa-rdepot-proxy
     labels:
       eu.openanalytics.rdepot.container.name: "oa-rdepot-proxy"
     volumes:
@@ -34,6 +35,10 @@ services:
       - ./docker/repo/application.yml:/opt/repo/application.yml:ro
       - repository:/opt/rdepot/
       - ./itestServer:/opt/testServer
+    environment:
+      - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8001
+    ports:
+      - 8020:8001
     networks:
       oa-rdepot:
         aliases:
@@ -57,7 +62,7 @@ services:
     ports:
       - 5432:5432
 ##
-  app:    
+  app:
     build: ./docker/app
     restart: always
     hostname: oa-rdepot-app
@@ -92,15 +97,15 @@ services:
           - oa-rdepot-app
         ipv4_address: 192.168.49.21
 ##
-  app-migrations:    
+  app-migrations:
     build: ./docker/app
     hostname: oa-rdepot-app-migrations
     labels:
-      eu.openanalytics.rdepot.container.name: "oa-rdepot-app-migrations"    
+      eu.openanalytics.rdepot.container.name: "oa-rdepot-app-migrations"
     volumes:
       - ./docker/app/test_configs/test_migration.yml:/opt/rdepot/application.yml
       - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
-      - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro                   
+      - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
     depends_on:
       - db
     environment:
@@ -115,6 +120,31 @@ services:
       oa-rdepot:
         aliases:
           - oa-rdepot-app-migrations
+  r-test-container:
+    build: ./docker/r
+    stdin_open: true
+    hostname: oa-rdepot-r-test-container
+    labels:
+      eu.openanalytics.rdepot.container.name: "oa-rdepot-r-test-container"
+    networks:
+      oa-rdepot:
+        aliases:
+          - oa-rdepot-r-test-container
+    volumes:
+      - ./itestRepo:/opt/itestRepo:ro
+  python-test-container:
+    image: registry.openanalytics.eu/proxy/python:3.9.19
+    working_dir: /opt/itestRepo
+    stdin_open: true
+    hostname: oa-rdepot-python-test-container
+    labels:
+      eu.openanalytics.rdepot.container.name: "oa-rdepot-python-test-container"
+    networks:
+      oa-rdepot:
+        aliases:
+          - oa-rdepot-python-test-container
+    volumes:
+      - ./itestRepo:/opt/itestRepo:ro
 networks:
   oa-rdepot:
     ipam:

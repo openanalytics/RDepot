@@ -25,16 +25,16 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class AccessTokenTestData{
-	private String search;
-	private String tokenId;
-	private String days;
-	private String userLogin;
-	private String tokenIdNotActive;
-	private boolean active;
-	private boolean deleted;
-	private boolean expired;
-	private int getEndpointNewEventsAmount;
-	private int deleteEndpointNewEventsAmount;
-	private int changeEndpointNewEventsAmount;
+public class AccessTokenTestData {
+    private String search;
+    private String tokenId;
+    private String days;
+    private String userLogin;
+    private String tokenIdNotActive;
+    private boolean active;
+    private boolean deleted;
+    private boolean expired;
+    private int getEndpointNewEventsAmount;
+    private int deleteEndpointNewEventsAmount;
+    private int changeEndpointNewEventsAmount;
 }

@@ -20,29 +20,27 @@
  */
 package eu.openanalytics.rdepot.base.service;
 
+import eu.openanalytics.rdepot.base.daos.RoleDao;
+import eu.openanalytics.rdepot.base.entities.Role;
 import java.util.Optional;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import eu.openanalytics.rdepot.base.daos.RoleDao;
-import eu.openanalytics.rdepot.base.entities.Role;
-
 @Service
 @Transactional(readOnly = true)
-@Scope( proxyMode = ScopedProxyMode.TARGET_CLASS )
+@Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class RoleService extends SpringDataJpaCapableRetriever<Role> {
 
-	private final RoleDao roleDao;
-	
-	public RoleService(RoleDao roleDao) {
-		super(roleDao);
-		this.roleDao = roleDao;
-	}	
-	
-	public Optional<Role> findByValue(int value) {
-		return roleDao.findByValue(value);
-	}
+    private final RoleDao roleDao;
+
+    public RoleService(RoleDao roleDao) {
+        super(roleDao);
+        this.roleDao = roleDao;
+    }
+
+    public Optional<Role> findByValue(int value) {
+        return roleDao.findByValue(value);
+    }
 }

@@ -20,15 +20,14 @@
  */
 package eu.openanalytics.rdepot.r.services;
 
-import org.springframework.stereotype.Service;
-
 import eu.openanalytics.rdepot.base.service.PackageService;
 import eu.openanalytics.rdepot.r.daos.RPackageDao;
 import eu.openanalytics.rdepot.r.entities.RPackage;
+import org.springframework.stereotype.Service;
 
 @Service
 public class RPackageService extends PackageService<RPackage> {
-	public RPackageService(RPackageDao dao) {
-		super(dao);
-	}
+    public RPackageService(RPackageDao dao) {
+        super(dao);
+    }
 }

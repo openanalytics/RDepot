@@ -22,20 +22,18 @@ package eu.openanalytics.rdepot.base.storage.exceptions;
 
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 /**
- * Thrown when temporary files 
+ * Thrown when temporary files
  * remaining after synchronization cannot be removed.
  */
 public class CleanUpAfterSynchronizationException extends LocalizedException {
 
-	@Serial
-	private static final long serialVersionUID = -7676327304163108652L;
+    @Serial
+    private static final long serialVersionUID = -7676327304163108652L;
 
-	public CleanUpAfterSynchronizationException() {
-		super(MessageCodes.COULD_NOT_CLEAN_UP_AFTER_SYNCHRONIZATION);
-	}
-
+    public CleanUpAfterSynchronizationException() {
+        super(MessageCodes.COULD_NOT_CLEAN_UP_AFTER_SYNCHRONIZATION);
+    }
 }

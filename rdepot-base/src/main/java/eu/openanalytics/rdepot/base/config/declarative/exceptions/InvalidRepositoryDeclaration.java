@@ -22,7 +22,6 @@ package eu.openanalytics.rdepot.base.config.declarative.exceptions;
 
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
-
 import java.io.Serial;
 
 /**
@@ -30,13 +29,10 @@ import java.io.Serial;
  */
 public class InvalidRepositoryDeclaration extends Exception {
 
-	@Serial
-	private static final long serialVersionUID = -17711120427820435L;
+    @Serial
+    private static final long serialVersionUID = -17711120427820435L;
 
-	public InvalidRepositoryDeclaration(String fileName) {
-		super(StaticMessageResolver.getMessage(MessageCodes.INVALID_REPOSITORY_DECLARATION)
-				+ fileName);
-	}
-
-
+    public InvalidRepositoryDeclaration(String fileName) {
+        super(StaticMessageResolver.getMessage(MessageCodes.INVALID_REPOSITORY_DECLARATION) + fileName);
+    }
 }

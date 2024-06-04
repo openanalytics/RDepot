@@ -20,28 +20,28 @@
  */
 package eu.openanalytics.rdepot.python.api.v2.converters;
 
-import eu.openanalytics.rdepot.base.entities.Package;
-import eu.openanalytics.rdepot.base.service.PackageService;
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Component;
-
 import eu.openanalytics.rdepot.base.api.v2.converters.DtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.converters.exceptions.EntityResolutionException;
+import eu.openanalytics.rdepot.base.entities.Package;
+import eu.openanalytics.rdepot.base.service.PackageService;
 import eu.openanalytics.rdepot.python.api.v2.dtos.PythonRepositoryDto;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
 public class PythonRepositoryDtoConverter implements DtoConverter<PythonRepository, PythonRepositoryDto> {
 
-	private final PackageService<Package> packageService;
-	@Override
-	public PythonRepository resolveDtoToEntity(PythonRepositoryDto dto) throws EntityResolutionException {
-		return new PythonRepository(dto);
-	}
+    private final PackageService<Package> packageService;
 
-	@Override
-	public PythonRepositoryDto convertEntityToDto(PythonRepository entity) {
-		return new PythonRepositoryDto(entity, packageService.countByRepository(entity));
-	}
+    @Override
+    public PythonRepository resolveDtoToEntity(PythonRepositoryDto dto) throws EntityResolutionException {
+        return new PythonRepository(dto);
+    }
+
+    @Override
+    public PythonRepositoryDto convertEntityToDto(PythonRepository entity) {
+        return new PythonRepositoryDto(entity, packageService.countByRepository(entity));
+    }
 }

@@ -20,20 +20,16 @@
  */
 package eu.openanalytics.rdepot.base.validation;
 
-public record ValidationResultItem<T>(
-       String property,
-       String messageCode,
-       T data
-) {
+public record ValidationResultItem<T>(String property, String messageCode, T data) {
     public ValidationResultItem(String property, String messageCode) {
         this(property, messageCode, null);
     }
+
     @Override
     public String toString() {
-        return "ValidationResultItem{" +
-                "property='" + property + '\'' +
-                ", messageCode='" + messageCode + '\'' +
-                (data == null ? "" : ", data='" + data + '\'') +
-                '}';
+        return "ValidationResultItem{" + "property='"
+                + property + '\'' + ", messageCode='"
+                + messageCode + '\'' + (data == null ? "" : ", data='" + data + '\'')
+                + '}';
     }
 }

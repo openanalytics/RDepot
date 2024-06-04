@@ -20,40 +20,8 @@
  */
 package eu.openanalytics.rdepot.r.api.v2.controllers;
 
-import java.io.FileNotFoundException;
-import java.security.Principal;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
-
-import org.springdoc.core.annotations.ParameterObject;
-import org.springdoc.core.converters.models.PageableAsQueryParam;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2Controller;
 import eu.openanalytics.rdepot.base.api.v2.converters.exceptions.EntityResolutionException;
 import eu.openanalytics.rdepot.base.api.v2.dtos.PackageDto;
@@ -65,11 +33,12 @@ import eu.openanalytics.rdepot.base.api.v2.exceptions.DownloadReferenceManualExc
 import eu.openanalytics.rdepot.base.api.v2.exceptions.DownloadVignetteException;
 import eu.openanalytics.rdepot.base.api.v2.exceptions.MalformedPatchException;
 import eu.openanalytics.rdepot.base.api.v2.exceptions.ManualNotFound;
+import eu.openanalytics.rdepot.base.api.v2.exceptions.PackageDeletionException;
 import eu.openanalytics.rdepot.base.api.v2.exceptions.PackageNotFound;
 import eu.openanalytics.rdepot.base.api.v2.exceptions.UserNotAuthorized;
 import eu.openanalytics.rdepot.base.api.v2.exceptions.VignetteNotFound;
 import eu.openanalytics.rdepot.base.api.v2.resolvers.DtoResolvedPageable;
-import eu.openanalytics.rdepot.base.api.v2.resolvers.PageableSortResolver;
+import eu.openanalytics.rdepot.base.api.v2.resolvers.PackagePageableSortResolver;
 import eu.openanalytics.rdepot.base.api.v2.validation.PageableValidator;
 import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.User;
@@ -99,7 +68,37 @@ import eu.openanalytics.rdepot.r.validation.RPackageValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.json.JsonException;
 import jakarta.json.JsonPatch;
+import java.io.FileNotFoundException;
+import java.security.Principal;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springdoc.core.converters.models.PageableAsQueryParam;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * REST controller implementation for R packages.
@@ -107,311 +106,327 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequestMapping(value = "/api/v2/manager/r/packages")
-public class RPackageController extends ApiV2Controller<RPackage, RPackageDto>  {
-	
-	private final Locale locale = LocaleContextHolder.getLocale();
-	private final MessageSource messageSource;
-	private final RPackageService packageService;
-	private final UserService userService;
-	private final RPackageValidator packageValidator;
-	private final RStrategyFactory strategyFactory;
-	private final RPackageDeleter deleter;
-	private final SecurityMediator securityMediator;
-	private final RStorage storage;
-	private final PageableValidator pageableValidator;
-	private final PageableSortResolver pageableSortResolver;
+public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
 
-	public RPackageController(MessageSource messageSource,
-			RPackageService packageService,
-			RPackageModelAssembler packageModelAssembler,
-			PagedResourcesAssembler<RPackage> pagedResourcesAssembler,
-			ObjectMapper objectMapper,
-			UserService userService,
-			RPackageValidator packageValidator,
-			RStrategyFactory strategyFactory,
-			RPackageDeleter rPackageDeleter,
-			SecurityMediator securityMediator,
-			RStorage storage, 
-			PageableValidator pageableValidator,
-			PageableSortResolver pageableSortResolver,
-			RPackageDtoConverter rPackageDtoConverter) {
-		super(messageSource, LocaleContextHolder.getLocale(), 
-				packageModelAssembler, pagedResourcesAssembler, objectMapper,
-				RPackageDto.class, Optional.empty(), rPackageDtoConverter
-				);
-		this.packageService = packageService;
-		this.messageSource = messageSource;
-		this.userService = userService;
-		this.packageValidator = packageValidator;
-		this.strategyFactory = strategyFactory;
-		this.deleter = rPackageDeleter;
-		this.securityMediator = securityMediator;
-		this.storage = storage;
-		this.pageableValidator = pageableValidator;
-		this.pageableSortResolver = pageableSortResolver;
-	}
-	
-	/**
-	 * Fetches all packages available for a user.
-	 * @param principal used for authorization
-	 * @param pageable carries parameters required for pagination
-	 * @param repositories show only packages from given repositories
-	 * @param deleted show only deleted packages, requires admin privileges
-	 * @param submissionStates show only submissions with one of these states
-	 */
-	@PreAuthorize("hasAuthority('user')")
-	@GetMapping
-	@ResponseStatus(HttpStatus.OK)
-	@PageableAsQueryParam
-	@Operation(operationId = "getAllRPackages")
-	public @ResponseBody ResponseDto<?> getAllPackages(
-			Principal principal, @ParameterObject Pageable pageable,
-			@RequestParam(name="repository", required=false) List<String> repositories,
-			@RequestParam(name="deleted", required=false) Optional<Boolean> deleted,
-			@RequestParam(name="submissionState", required=false, defaultValue="ACCEPTED") List<SubmissionState> submissionStates,
-			@RequestParam(name="name", required=false) Optional<String> name) 
-					throws ApiException {
-		final User requester = userService.findByLogin(principal.getName())
-				.orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
-		
-		final DtoResolvedPageable resolvedPageable = pageableSortResolver.resolvePackage(pageable);		
-		pageableValidator.validate(PackageDto.class, resolvedPageable);
-		
-		Specification<RPackage> specification = null;
-		
-		if(Objects.nonNull(repositories)) {
-			specification = SpecificationUtils.andComponent(specification, PackageSpecs.ofRepository(repositories));
-		}
-		
-		if(deleted.isPresent()) {
-			Specification<RPackage> component = PackageSpecs.isDeleted(deleted.get());
-			specification = SpecificationUtils.andComponent(specification, component);
+    @Value("${deleting.packages.enabled}")
+    private Boolean packagesDeletionEnabled;
 
-			// TODO: #32882 This is a temporary fix for 2.0; We should think of better solution.
-			if(deleted.get().equals(true) && !userService.isAdmin(requester)) {
-				return emptyPage();
-			}
-		}
-		
-		if(name.isPresent()) {
-			Specification<RPackage> component = PackageSpecs.ofName(name.get());
-			specification = SpecificationUtils.andComponent(specification, component);
-		}
-		
-		if(Objects.nonNull(submissionStates)) {
-			Specification<RPackage> component = PackageSpecs.ofSubmissionState(submissionStates);
-			specification = SpecificationUtils.andComponent(specification, component);
-		}
-		
-		if(specification == null) {
-			return handleSuccessForPagedCollection(packageService.findAll(resolvedPageable), requester);
-		} else {
-			return handleSuccessForPagedCollection(
-					packageService.findAllBySpecification(specification, resolvedPageable), requester);
-		}
-	}
-	
-	/**
-	 * Find a package of given id. 
-	 * If user is not an admin, package marked as deleted will not be found.
-	 */
-	@PreAuthorize("hasAuthority('user')")
-	@GetMapping("/{id}")
-	@ResponseStatus(HttpStatus.OK)
-	@Operation(operationId = "getRPackageById")
-	public @ResponseBody ResponseEntity<ResponseDto<EntityModel<RPackageDto>>> getPackageById(
-			Principal principal, @PathVariable("id") Integer id) 
-			throws PackageNotFound, UserNotAuthorized {
-		User requester = userService.findByLogin(principal.getName())
-				.orElseThrow(() -> new UserNotAuthorized(messageSource, locale));			
-		RPackage packageBag = packageService.findById(id)
-				.orElseThrow(() -> new PackageNotFound(messageSource, locale));
-		if((!userService.isAdmin(requester) && packageBag.isDeleted()))
-			throw new PackageNotFound(messageSource, locale);
+    private final Locale locale = LocaleContextHolder.getLocale();
+    private final MessageSource messageSource;
+    private final RPackageService packageService;
+    private final UserService userService;
+    private final RPackageValidator packageValidator;
+    private final RStrategyFactory strategyFactory;
+    private final RPackageDeleter deleter;
+    private final SecurityMediator securityMediator;
+    private final RStorage storage;
+    private final PageableValidator pageableValidator;
+    private final PackagePageableSortResolver pageableSortResolver;
 
-		return handleSuccessForSingleEntity(packageBag, requester);
-	}
-	
-	/**
-	 * Updates a package.
-	 * The method follows JSON Patch standard
-	 * (see <a href="https://datatracker.ietf.org/doc/html/rfc6902">RFC 6902</a>).
-	 * @param principal used for authorization
-	 * @param id package id
-	 * @param patch JsonPatch object
-	 */
-	@PreAuthorize("hasAuthority('packagemaintainer')")
-	@PatchMapping(path = "/{id}", consumes="application/json-patch+json")
-	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody ResponseEntity<?> updatePackage(
-				Principal principal, 
-				@PathVariable("id") Integer id, 
-				@RequestBody JsonPatch patch) 
-			throws ApiException {			
-		RPackage packageBag = packageService.findById(id)
-				.orElseThrow(() -> new PackageNotFound(messageSource, locale)); 
-		final User requester = userService.findByLogin(principal.getName())
-				.orElseThrow(() -> new UserNotAuthorized(messageSource, locale));				
-		
-		if(!securityMediator.isAuthorizedToEdit(packageBag, requester))
-			throw new UserNotAuthorized(messageSource, locale);
-		
-		try {
-			final RPackageDto packageDto = applyPatchToEntity(patch, packageBag);
-			final RPackage updatedPackage = dtoConverter.resolveDtoToEntity(packageDto);
-			
-			final DataSpecificValidationResult<Submission> validationResult = ValidationResultImpl.createDataSpecificResult(Submission.class);
-			packageValidator.validate(updatedPackage, true, validationResult);
-			
-			if(validationResult.hasErrors())
-				return handleValidationError(validationResult);
-			
-			Strategy<RPackage> strategy = strategyFactory.updatePackageStrategy(packageBag, requester, updatedPackage);
-			
-			packageBag = strategy.perform();					
-		} catch(EntityResolutionException e) {
-			log.error(e.getClass().getName() + ": " + e.getMessage(), e);
-			return handleValidationError(e.getMessage());
-		} catch(JsonProcessingException | JsonException e) {
-			throw new MalformedPatchException(messageSource, locale, e);
-		} catch (StrategyFailure e) {
-			log.error(e.getClass().getName() + ": " + e.getMessage(), e);
-			throw new ApplyPatchException(messageSource, locale);
-		}
-		
-		return handleSuccessForSingleEntity(packageBag, requester);
-	}
-	
-	/**
-	 * Erases package from database and file system. Requires admin privileges.
-	 */
-	@PreAuthorize("hasAuthority('admin')")
-	@DeleteMapping("/{id}")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void shiftDeletePackage(Principal principal, @PathVariable("id") Integer id) 
-			throws PackageNotFound, DeleteException, UserNotAuthorized {		
-		final RPackage packageBag = packageService.findOneDeleted(id)
-				.orElseThrow(() -> new PackageNotFound(messageSource, locale)); 
-		userService.findByLogin(principal.getName())
-			.orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
-		
-		try {			
-			deleter.delete(packageBag);
-		} catch (DeleteEntityException e) {
-			log.error(e.getClass().getName() + ": " + e.getMessage(), e);
-			throw new DeleteException(messageSource, locale);
-		}
-	}
-	
-	/**
-	 * Fetches links to package's Vignettes.
-	 */
-	@GetMapping("/{id}/vignettes")
-	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody ResponseDto<List<Vignette>> getVignetteLinks(@PathVariable("id") Integer id) throws PackageNotFound {
-		final RPackage packageBag = packageService.findOneNonDeleted(id).orElseThrow(() -> new PackageNotFound(messageSource, locale));
-		
-		return ResponseDto.generateSuccessBody(messageSource, locale, 
-				storage.getAvailableVignettes(packageBag));
-	}
-	
+    public RPackageController(
+            MessageSource messageSource,
+            RPackageService packageService,
+            RPackageModelAssembler packageModelAssembler,
+            PagedResourcesAssembler<RPackage> pagedResourcesAssembler,
+            ObjectMapper objectMapper,
+            UserService userService,
+            RPackageValidator packageValidator,
+            RStrategyFactory strategyFactory,
+            RPackageDeleter rPackageDeleter,
+            SecurityMediator securityMediator,
+            RStorage storage,
+            PageableValidator pageableValidator,
+            PackagePageableSortResolver pageableSortResolver,
+            RPackageDtoConverter rPackageDtoConverter) {
+        super(
+                messageSource,
+                LocaleContextHolder.getLocale(),
+                packageModelAssembler,
+                pagedResourcesAssembler,
+                objectMapper,
+                RPackageDto.class,
+                Optional.empty(),
+                rPackageDtoConverter);
+        this.packageService = packageService;
+        this.messageSource = messageSource;
+        this.userService = userService;
+        this.packageValidator = packageValidator;
+        this.strategyFactory = strategyFactory;
+        this.deleter = rPackageDeleter;
+        this.securityMediator = securityMediator;
+        this.storage = storage;
+        this.pageableValidator = pageableValidator;
+        this.pageableSortResolver = pageableSortResolver;
+    }
+
+    /**
+     * Fetches all packages available for a user.
+     * @param principal used for authorization
+     * @param pageable carries parameters required for pagination
+     * @param repositories show only packages from given repositories
+     * @param deleted show only deleted packages, requires admin privileges
+     * @param submissionStates show only submissions with one of these states
+     */
+    @PreAuthorize("hasAuthority('user')")
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    @PageableAsQueryParam
+    @Operation(operationId = "getAllRPackages")
+    public @ResponseBody ResponseDto<?> getAllPackages(
+            Principal principal,
+            @ParameterObject Pageable pageable,
+            @RequestParam(name = "repository", required = false) List<String> repositories,
+            @RequestParam(name = "deleted", required = false) Optional<Boolean> deleted,
+            @RequestParam(name = "submissionState", required = false, defaultValue = "ACCEPTED")
+                    List<SubmissionState> submissionStates,
+            @RequestParam(name = "name", required = false) Optional<String> name)
+            throws ApiException {
+        final User requester = userService
+                .findByLogin(principal.getName())
+                .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
+
+        final DtoResolvedPageable resolvedPageable = pageableSortResolver.resolve(pageable);
+        pageableValidator.validate(PackageDto.class, resolvedPageable);
+
+        Specification<RPackage> specification = null;
+
+        if (Objects.nonNull(repositories)) {
+            specification = SpecificationUtils.andComponent(specification, PackageSpecs.ofRepository(repositories));
+        }
+
+        if (deleted.isPresent()) {
+            Specification<RPackage> component = PackageSpecs.isDeleted(deleted.get());
+            specification = SpecificationUtils.andComponent(specification, component);
+
+            // TODO: #32882 This is a temporary fix for 2.0; We should think of better solution.
+            if (deleted.get().equals(true) && !userService.isAdmin(requester)) {
+                return emptyPage();
+            }
+        }
+
+        if (name.isPresent()) {
+            Specification<RPackage> component = PackageSpecs.ofName(name.get());
+            specification = SpecificationUtils.andComponent(specification, component);
+        }
+
+        if (Objects.nonNull(submissionStates)) {
+            Specification<RPackage> component = PackageSpecs.ofSubmissionState(submissionStates);
+            specification = SpecificationUtils.andComponent(specification, component);
+        }
+
+        if (specification == null) {
+            return handleSuccessForPagedCollection(packageService.findAll(resolvedPageable), requester);
+        } else {
+            return handleSuccessForPagedCollection(
+                    packageService.findAllBySpecification(specification, resolvedPageable), requester);
+        }
+    }
+
+    /**
+     * Find a package of given id.
+     * If user is not an admin, package marked as deleted will not be found.
+     */
+    @PreAuthorize("hasAuthority('user')")
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(operationId = "getRPackageById")
+    public @ResponseBody ResponseEntity<ResponseDto<EntityModel<RPackageDto>>> getPackageById(
+            Principal principal, @PathVariable("id") Integer id) throws PackageNotFound, UserNotAuthorized {
+        User requester = userService
+                .findByLogin(principal.getName())
+                .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
+        RPackage packageBag = packageService.findById(id).orElseThrow(() -> new PackageNotFound(messageSource, locale));
+        if ((!userService.isAdmin(requester) && packageBag.isDeleted()))
+            throw new PackageNotFound(messageSource, locale);
+
+        return handleSuccessForSingleEntity(packageBag, requester);
+    }
+
+    /**
+     * Updates a package.
+     * The method follows JSON Patch standard
+     * (see <a href="https://datatracker.ietf.org/doc/html/rfc6902">RFC 6902</a>).
+     * @param principal used for authorization
+     * @param id package id
+     * @param patch JsonPatch object
+     */
+    @PreAuthorize("hasAuthority('packagemaintainer')")
+    @PatchMapping(path = "/{id}", consumes = "application/json-patch+json")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody ResponseEntity<?> updatePackage(
+            Principal principal, @PathVariable("id") Integer id, @RequestBody JsonPatch patch) throws ApiException {
+        RPackage packageBag = packageService.findById(id).orElseThrow(() -> new PackageNotFound(messageSource, locale));
+        final User requester = userService
+                .findByLogin(principal.getName())
+                .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
+
+        if (!securityMediator.isAuthorizedToEdit(packageBag, requester))
+            throw new UserNotAuthorized(messageSource, locale);
+
+        try {
+            final RPackageDto packageDto = applyPatchToEntity(patch, packageBag);
+            final RPackage updatedPackage = dtoConverter.resolveDtoToEntity(packageDto);
+
+            if (!packagesDeletionEnabled)
+                if (updatedPackage.getDeleted() && !packageBag.getDeleted())
+                    throw new PackageDeletionException(messageSource, locale);
+
+            final DataSpecificValidationResult<Submission> validationResult =
+                    ValidationResultImpl.createDataSpecificResult(Submission.class);
+            packageValidator.validate(updatedPackage, true, validationResult);
+
+            if (validationResult.hasErrors()) return handleValidationError(validationResult);
+
+            Strategy<RPackage> strategy = strategyFactory.updatePackageStrategy(packageBag, requester, updatedPackage);
+
+            packageBag = strategy.perform();
+        } catch (EntityResolutionException e) {
+            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            return handleValidationError(e.getMessage());
+        } catch (JsonProcessingException | JsonException e) {
+            throw new MalformedPatchException(messageSource, locale, e);
+        } catch (StrategyFailure e) {
+            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            throw new ApplyPatchException(messageSource, locale);
+        }
+
+        return handleSuccessForSingleEntity(packageBag, requester);
+    }
+
+    /**
+     * Erases package from database and file system. Requires admin privileges.
+     */
+    @PreAuthorize("hasAuthority('admin')")
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void shiftDeletePackage(Principal principal, @PathVariable("id") Integer id) throws ApiException {
+        final RPackage packageBag =
+                packageService.findOneDeleted(id).orElseThrow(() -> new PackageNotFound(messageSource, locale));
+        if (!userService.findByLogin(principal.getName()).isPresent()) {
+            throw new UserNotAuthorized(messageSource, locale);
+        }
+
+        if (!packagesDeletionEnabled) throw new PackageDeletionException(messageSource, locale);
+
+        try {
+            deleter.delete(packageBag);
+        } catch (DeleteEntityException e) {
+            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            throw new DeleteException(messageSource, locale);
+        }
+    }
+
+    /**
+     * Fetches links to package's Vignettes.
+     */
+    @GetMapping("/{id}/vignettes")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody ResponseDto<List<Vignette>> getVignetteLinks(@PathVariable("id") Integer id)
+            throws PackageNotFound {
+        final RPackage packageBag =
+                packageService.findOneNonDeleted(id).orElseThrow(() -> new PackageNotFound(messageSource, locale));
+
+        return ResponseDto.generateSuccessBody(messageSource, locale, storage.getAvailableVignettes(packageBag));
+    }
+
     /**
      * This method provides a package binary file to download.
      * @param id package ID
      * @param name package name
      * @param version package version
      */
-    @GetMapping(value="/{id}/download/{name}_{version}.tar.gz")
-	@Operation(operationId = "downloadRPackage")
-    public @ResponseBody ResponseEntity<byte[]> downloadPackage(@PathVariable("id") Integer id, 
-    		@PathVariable("name") String name, @PathVariable("version") String version)
-			throws ApiException {
-    	RPackage packageBag = packageService.findOneNonDeleted(id).orElseThrow(()-> new PackageNotFound(messageSource, locale));
-    	byte[] bytes = null;
-    	HttpHeaders httpHeaders = new HttpHeaders();
-    	HttpStatus httpStatus = HttpStatus.OK;
-    	    	    	
-		try {
-			bytes = storage.getPackageInBytes(packageBag);
-		} catch (SourceNotFoundException e) {
-    		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		}
-		httpHeaders.set("Content-Type", "application/gzip");
-		httpHeaders.set("Content-Disposition", "attachment; filename= \""
-        		+ name + "_" + version + ".tar.gz\"");
-		
-		return new ResponseEntity<>(bytes, httpHeaders, httpStatus);    	    	
+    @GetMapping(value = "/{id}/download/{name}_{version}.tar.gz")
+    @Operation(operationId = "downloadRPackage")
+    public @ResponseBody ResponseEntity<byte[]> downloadPackage(
+            @PathVariable("id") Integer id, @PathVariable("name") String name, @PathVariable("version") String version)
+            throws ApiException {
+        RPackage packageBag =
+                packageService.findOneNonDeleted(id).orElseThrow(() -> new PackageNotFound(messageSource, locale));
+        byte[] bytes = null;
+        HttpHeaders httpHeaders = new HttpHeaders();
+        HttpStatus httpStatus = HttpStatus.OK;
+
+        try {
+            bytes = storage.getPackageInBytes(packageBag);
+        } catch (SourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        httpHeaders.set("Content-Type", "application/gzip");
+        httpHeaders.set("Content-Disposition", "attachment; filename= \"" + name + "_" + version + ".tar.gz\"");
+
+        return new ResponseEntity<>(bytes, httpHeaders, httpStatus);
     }
 
-	
-	/**
-	 * Fetches package PDF manual.
-	 */
-	@GetMapping("/{id}/manual")
-	public @ResponseBody ResponseEntity<byte[]> downloadReferenceManual(@PathVariable("id") Integer id) 
-			throws PackageNotFound, ManualNotFound, DownloadReferenceManualException {
-		final RPackage packageBag = packageService.findOneNonDeleted(id).orElseThrow(() -> new PackageNotFound(messageSource, locale)); 
+    /**
+     * Fetches package PDF manual.
+     */
+    @GetMapping("/{id}/manual")
+    public @ResponseBody ResponseEntity<byte[]> downloadReferenceManual(@PathVariable("id") Integer id)
+            throws PackageNotFound, ManualNotFound, DownloadReferenceManualException {
+        final RPackage packageBag =
+                packageService.findOneNonDeleted(id).orElseThrow(() -> new PackageNotFound(messageSource, locale));
 
-		final HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_PDF);
-		headers.set("Content-Disposition", 
-				"attachment; filename=\"" + packageBag.getName() 
-				+ "_" + packageBag.getVersion() + "_manual.pdf\"");
-		
-		try {
-			byte[] manualRaw = storage.getReferenceManual(packageBag);
-			
-			return new ResponseEntity<>(manualRaw, headers, HttpStatus.OK);
-		} catch(GetReferenceManualException e) {
-			if(e.getReason() instanceof FileNotFoundException) {
-				throw new ManualNotFound(messageSource, locale);
-			}
-			log.error(e.getClass().getName() + ": " + e.getMessage(), e);
-			throw new DownloadReferenceManualException(messageSource, locale);
-		}
-	}
-	
-	/**
-	 * Fetches a PDF vignette.
-	 * @param id package id
-	 * @param name vignette's name
-	 */
-	@GetMapping("/{id}/vignettes/{name}.pdf")
-	public @ResponseBody ResponseEntity<byte[]> downloadVignettePdf(@PathVariable("id") Integer id,
-			@PathVariable("name") String name) 
-					throws PackageNotFound, VignetteNotFound, DownloadVignetteException {
-		return downloadVignette(id, name + ".pdf", MediaType.APPLICATION_PDF);
-	}
-	
-	/**
-	 * Fetches an HTML vignette.
-	 * @param id
-	 * @param name vignette's name
-	 */
-	@GetMapping("/{id}/vignettes/{name}.html")
-	public @ResponseBody ResponseEntity<byte[]> downloadVignetteHtml(@PathVariable("id") Integer id,		
-			@PathVariable("name") String name)
-					throws PackageNotFound, VignetteNotFound, DownloadVignetteException {
-		return downloadVignette(id, name + ".html", MediaType.TEXT_HTML);
-	}
-	
-	private ResponseEntity<byte[]> downloadVignette(Integer id, String filename, 
-			MediaType mediaType) throws PackageNotFound, VignetteNotFound, DownloadVignetteException {
-		final RPackage packageBag = packageService.findOneNonDeleted(id).orElseThrow(() -> new PackageNotFound(messageSource, locale));		
-		
-		final HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(mediaType);
-		headers.set("Content-Disposition", "attachment; filename= \""+filename+"\"");
-		
-		try {
-			byte[] vignetteRaw = storage.readVignette(packageBag, filename);
-			
-			return new ResponseEntity<byte[]>(vignetteRaw, headers, HttpStatus.OK);
-		} catch (ReadPackageVignetteException e) {
-			if(e.getReason() instanceof FileNotFoundException) {
-				throw new VignetteNotFound(messageSource, locale);
-			}
-			throw new DownloadVignetteException(messageSource, locale);
-		} 
-	}
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.set(
+                "Content-Disposition",
+                "attachment; filename=\"" + packageBag.getName() + "_" + packageBag.getVersion() + "_manual.pdf\"");
+
+        try {
+            byte[] manualRaw = storage.getReferenceManual(packageBag);
+
+            return new ResponseEntity<>(manualRaw, headers, HttpStatus.OK);
+        } catch (GetReferenceManualException e) {
+            if (e.getReason() instanceof FileNotFoundException) {
+                throw new ManualNotFound(messageSource, locale);
+            }
+            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            throw new DownloadReferenceManualException(messageSource, locale);
+        }
+    }
+
+    /**
+     * Fetches a PDF vignette.
+     * @param id package id
+     * @param name vignette's name
+     */
+    @GetMapping("/{id}/vignettes/{name}.pdf")
+    public @ResponseBody ResponseEntity<byte[]> downloadVignettePdf(
+            @PathVariable("id") Integer id, @PathVariable("name") String name)
+            throws PackageNotFound, VignetteNotFound, DownloadVignetteException {
+        return downloadVignette(id, name + ".pdf", MediaType.APPLICATION_PDF);
+    }
+
+    /**
+     * Fetches an HTML vignette.
+     * @param id
+     * @param name vignette's name
+     */
+    @GetMapping("/{id}/vignettes/{name}.html")
+    public @ResponseBody ResponseEntity<byte[]> downloadVignetteHtml(
+            @PathVariable("id") Integer id, @PathVariable("name") String name)
+            throws PackageNotFound, VignetteNotFound, DownloadVignetteException {
+        return downloadVignette(id, name + ".html", MediaType.TEXT_HTML);
+    }
+
+    private ResponseEntity<byte[]> downloadVignette(Integer id, String filename, MediaType mediaType)
+            throws PackageNotFound, VignetteNotFound, DownloadVignetteException {
+        final RPackage packageBag =
+                packageService.findOneNonDeleted(id).orElseThrow(() -> new PackageNotFound(messageSource, locale));
+
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(mediaType);
+        headers.set("Content-Disposition", "attachment; filename= \"" + filename + "\"");
+
+        try {
+            byte[] vignetteRaw = storage.readVignette(packageBag, filename);
+
+            return new ResponseEntity<byte[]>(vignetteRaw, headers, HttpStatus.OK);
+        } catch (ReadPackageVignetteException e) {
+            if (e.getReason() instanceof FileNotFoundException) {
+                throw new VignetteNotFound(messageSource, locale);
+            }
+            throw new DownloadVignetteException(messageSource, locale);
+        }
+    }
 }

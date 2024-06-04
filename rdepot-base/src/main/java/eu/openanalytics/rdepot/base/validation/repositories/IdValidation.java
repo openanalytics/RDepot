@@ -20,38 +20,36 @@
  */
 package eu.openanalytics.rdepot.base.validation.repositories;
 
-import java.util.Objects;
-import java.util.Optional;
-
-import org.springframework.validation.Errors;
-
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.base.validation.ChainValidator;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
+import org.springframework.validation.Errors;
 
 /**
  * Validates ID of {@link Repository}.
- * Should be 0 (when new Repository is created) 
+ * Should be 0 (when new Repository is created)
  * or represent an existing Repository.
  * @param <R> technology-specific repository
  */
 @AllArgsConstructor
-public class IdValidation<R extends Repository> extends ChainValidator<R>{
-	
-	private final RepositoryService<R> service;
-	
-	public void validateField(R repository, Errors errors){
-		if(repository.getId() > 0) {
-			Optional<R> existingRepository = service.findById(repository.getId()); 
-			if(existingRepository.isEmpty()) {
-				errors.rejectValue("id", MessageCodes.REPOSITORY_NOT_FOUND);
-			} else {
-				R repositoryEntity = existingRepository.get();
-				if(!Objects.equals(repositoryEntity.getVersion(), repository.getVersion()))
-					errors.rejectValue("version", MessageCodes.FORBIDDEN_UPDATE);
-			}
-		}
-	}
+public class IdValidation<R extends Repository> extends ChainValidator<R> {
+
+    private final RepositoryService<R> service;
+
+    public void validateField(R repository, Errors errors) {
+        if (repository.getId() > 0) {
+            Optional<R> existingRepository = service.findById(repository.getId());
+            if (existingRepository.isEmpty()) {
+                errors.rejectValue("id", MessageCodes.REPOSITORY_NOT_FOUND);
+            } else {
+                R repositoryEntity = existingRepository.get();
+                if (!Objects.equals(repositoryEntity.getVersion(), repository.getVersion()))
+                    errors.rejectValue("version", MessageCodes.FORBIDDEN_UPDATE);
+            }
+        }
+    }
 }

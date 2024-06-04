@@ -21,19 +21,17 @@
 package eu.openanalytics.rdepot.test.unit.synchronization;
 
 import java.util.List;
-
-import org.springframework.core.io.FileSystemResource;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.core.io.FileSystemResource;
 
 @AllArgsConstructor
 @Getter
 public class UploadChunkRequestAssertion {
-	public final String expectedId;
-	public final String expectedVersionBefore;
-	public final String expectedVersionAfter;
-	public final List<String> expectedPages;
-	public final List<String> expectedToDelete;
-	public final List<FileSystemResource> filesToUpload;
+    public final String expectedId;
+    public final String expectedVersionBefore;
+    public final String expectedVersionAfter;
+    public final List<String> expectedPages;
+    public final List<String> expectedToDelete;
+    public final List<FileSystemResource> filesToUpload;
 }

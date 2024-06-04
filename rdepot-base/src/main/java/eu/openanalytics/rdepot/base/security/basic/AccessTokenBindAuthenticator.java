@@ -20,14 +20,6 @@
  */
 package eu.openanalytics.rdepot.base.security.basic;
 
-import java.util.Collection;
-
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.core.env.Environment;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.security.authenticators.CustomBindAuthenticator;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
@@ -35,30 +27,37 @@ import eu.openanalytics.rdepot.base.security.exceptions.AuthException;
 import eu.openanalytics.rdepot.base.service.AccessTokenService;
 import eu.openanalytics.rdepot.base.service.RoleService;
 import eu.openanalytics.rdepot.base.service.UserService;
+import java.util.Collection;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.env.Environment;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @ComponentScan("eu.openanalytics.rdepot")
 @Service
 @Transactional
 public class AccessTokenBindAuthenticator extends CustomBindAuthenticator {
-	
-	private final AccessTokenService accessTokenService;
-	
-	public AccessTokenBindAuthenticator(Environment environment, 
-			UserService userService, RoleService roleService,
-			AccessTokenService accessTokenService,
-			SecurityMediator securityMediator) {
-		super(environment, userService, roleService, securityMediator);
-		this.accessTokenService = accessTokenService;
-	}
- 	
-	public Collection<? extends GrantedAuthority> authenticate(String username, String accessToken, String type) 
-			throws AuthException {
-		User user = userService.findByLogin(username)
-				.orElseThrow(() -> new AuthException("user.notfound"));
-		
-		if(accessTokenService.verifyToken(accessToken, user.getId())) {
-			return super.authenticate(user.getLogin(), user.getEmail(), user.getName(), type);
-		}
-		throw new AuthException("invalid.access.token");
-	}
+
+    private final AccessTokenService accessTokenService;
+
+    public AccessTokenBindAuthenticator(
+            Environment environment,
+            UserService userService,
+            RoleService roleService,
+            AccessTokenService accessTokenService,
+            SecurityMediator securityMediator) {
+        super(environment, userService, roleService, securityMediator);
+        this.accessTokenService = accessTokenService;
+    }
+
+    public Collection<? extends GrantedAuthority> authenticate(String username, String accessToken, String type)
+            throws AuthException {
+        User user = userService.findByLogin(username).orElseThrow(() -> new AuthException("user.notfound"));
+
+        if (accessTokenService.verifyToken(accessToken, user.getId())) {
+            return super.authenticate(user.getLogin(), user.getEmail(), user.getName(), type);
+        }
+        throw new AuthException("invalid.access.token");
+    }
 }

@@ -22,7 +22,6 @@ package eu.openanalytics.rdepot.base.synchronization.exceptions;
 
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 /**
@@ -31,10 +30,10 @@ import java.io.Serial;
  */
 public class SendSynchronizeRequestException extends LocalizedException {
 
-	@Serial
-	private static final long serialVersionUID = 8540097203034743183L;
+    @Serial
+    private static final long serialVersionUID = 8540097203034743183L;
 
-	public SendSynchronizeRequestException() {
-		super(MessageCodes.COULD_NOT_SEND_SYNCHRONIZE_REQUEST);
-	}
+    public SendSynchronizeRequestException() {
+        super(MessageCodes.COULD_NOT_SEND_SYNCHRONIZE_REQUEST);
+    }
 }

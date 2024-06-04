@@ -5,9 +5,9 @@
     "messageCode": "success.request.processed",
 	"data": {
         "id": 100,
-        "user":{"name":"Test User111","id":111,"login":"packagemaintainer_testusername111","email":"111test@example.org"},
+        "user":{"name":"Test Package Maintainer","id":111,"login":"testpackagemaintainer","email":"packagemaintainer@example.org"},
         "packageName": "neeeeeew_package",
-        "repository":{"name":"Test Python Repository 100","id":123,"publicationUri":"http://localhost/repo/testrepo100","technology": "Python"},
+        "repository":{"name":"Test Python Repository 123","id":123,"publicationUri":"http://localhost/repo/testrepo123","technology": "Python"},
         "deleted": false,
         "links": [
             {

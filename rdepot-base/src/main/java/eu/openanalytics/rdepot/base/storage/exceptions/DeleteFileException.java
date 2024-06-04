@@ -22,7 +22,6 @@ package eu.openanalytics.rdepot.base.storage.exceptions;
 
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 /**
@@ -30,11 +29,10 @@ import java.io.Serial;
  */
 public class DeleteFileException extends LocalizedException {
 
-	@Serial
-	private static final long serialVersionUID = 4057500496101596061L;
+    @Serial
+    private static final long serialVersionUID = 4057500496101596061L;
 
-	public DeleteFileException() {
-		super(MessageCodes.COULD_NOT_DELETE_FILE);
-	}
-
+    public DeleteFileException() {
+        super(MessageCodes.COULD_NOT_DELETE_FILE);
+    }
 }

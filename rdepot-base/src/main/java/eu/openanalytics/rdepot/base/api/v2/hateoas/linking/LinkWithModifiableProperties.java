@@ -20,15 +20,13 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.hateoas.linking;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serial;
 import java.util.Arrays;
 import java.util.List;
-
 import lombok.NonNull;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.LinkRelation;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * {@link Link} extended with a list of modifiable properties.
@@ -36,42 +34,43 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * that also specifies which properties can be changed by the requester.
  */
 public class LinkWithModifiableProperties extends Link {
-	
-	@Serial
-	private static final long serialVersionUID = -6116942776233062885L;
-	final private List<String> modifiableProperties;
-	final private String href;
-	final private LinkRelation rel;
-	final private String type;
-	
-	public LinkWithModifiableProperties(Link baseLink, String... modifiableProperties) {
-		super();
-		this.href = baseLink.getHref();
-		this.rel = baseLink.getRel();
-		this.type = baseLink.getType();
-		this.modifiableProperties = Arrays.asList(modifiableProperties);
-	}
-	
-	@JsonProperty
-	public List<String> getModifiableProperties() {
-		return modifiableProperties;
-	}
-	
-	@JsonProperty
-	@Override
-	public @NonNull String getHref() {
-		return this.href;
-	}
-	
-	@JsonProperty
-	@Override
-	public @NonNull LinkRelation getRel() {
-		return this.rel;
-	}
-	
-	@JsonProperty
-	@Override
-	public String getType() {
-		return this.type;
-	}
+
+    @Serial
+    private static final long serialVersionUID = -6116942776233062885L;
+
+    private final List<String> modifiableProperties;
+    private final String href;
+    private final LinkRelation rel;
+    private final String type;
+
+    public LinkWithModifiableProperties(Link baseLink, String... modifiableProperties) {
+        super();
+        this.href = baseLink.getHref();
+        this.rel = baseLink.getRel();
+        this.type = baseLink.getType();
+        this.modifiableProperties = Arrays.asList(modifiableProperties);
+    }
+
+    @JsonProperty
+    public List<String> getModifiableProperties() {
+        return modifiableProperties;
+    }
+
+    @JsonProperty
+    @Override
+    public @NonNull String getHref() {
+        return this.href;
+    }
+
+    @JsonProperty
+    @Override
+    public @NonNull LinkRelation getRel() {
+        return this.rel;
+    }
+
+    @JsonProperty
+    @Override
+    public String getType() {
+        return this.type;
+    }
 }

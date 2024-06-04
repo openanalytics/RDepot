@@ -26,21 +26,21 @@ import lombok.Getter;
 /**
  * Provides information about type of given
  * {@link eu.openanalytics.rdepot.base.entities.Resource Resource}
- * without the need to use reflection or down-casting. 
+ * without the need to use reflection or down-casting.
  */
 @Getter
 @AllArgsConstructor
 public enum ResourceType {
-	PACKAGE("PCK"),
-	REPOSITORY("REP"),
-	SUBMISSION("SUB"),
-	REPOSITORY_MAINTAINER("RPM"),
-	PACKAGE_MAINTAINER("PKM"),
-	USER("USR"),
-	EVENT("EVN"),
-	ROLE("ROL"),
-	USER_SETTINGS("SET"),
-	ACCESS_TOKEN("ACT");
+    PACKAGE("PCK"),
+    REPOSITORY("REP"),
+    SUBMISSION("SUB"),
+    REPOSITORY_MAINTAINER("RPM"),
+    PACKAGE_MAINTAINER("PKM"),
+    USER("USR"),
+    EVENT("EVN"),
+    ROLE("ROL"),
+    USER_SETTINGS("SET"),
+    ACCESS_TOKEN("ACT");
 
-	private final String value;
+    private final String value;
 }

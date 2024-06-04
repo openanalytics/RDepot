@@ -4,6 +4,9 @@
   "message": "Your request has been processed successfully.",
   "messageCode": "success.request.processed",
   "data": {
-    "declarativeModeEnabled": true
+    "declarativeModeEnabled": true,
+    "deletingPackagesEnabled":true,
+    "deletingRepositoriesEnabled":true,
+    "replacingPackagesEnabled":true
   }
 }

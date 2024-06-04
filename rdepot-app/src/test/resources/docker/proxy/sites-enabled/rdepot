@@ -2,26 +2,12 @@ server {
   listen                80;
   server_name           _;
 
-    location ~* /repo/(?:.+)/src/ {
-      root 		/opt/rdepot;
-      access_log          /var/log/nginx/repo.access.log;
-      error_log           /var/log/nginx/repo.error.log;
-      autoindex on;
-    }
-
     location /repo/ {
       root 		/opt/rdepot;
       access_log          /var/log/nginx/repo.access.log;
       error_log           /var/log/nginx/repo.error.log;
       autoindex on;
-      try_files $uri $uri/index.html @pypi;
-    }
-
-    location @pypi {
-      rewrite    repo/(.*)/(.*)/ /simple/$2/ break;
-      proxy_pass https://pypi.org;
-      proxy_set_header  Host             pypi.org;
-      proxy_ssl_server_name on;
+      proxy_set_header  Host             $http_host;
     }
 
   location / {

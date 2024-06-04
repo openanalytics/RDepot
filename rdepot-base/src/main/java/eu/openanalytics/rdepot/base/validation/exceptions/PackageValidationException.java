@@ -22,7 +22,6 @@ package eu.openanalytics.rdepot.base.validation.exceptions;
 
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.validation.ValidationResultItem;
-
 import java.io.Serial;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,15 +31,14 @@ import java.util.stream.Collectors;
  */
 public class PackageValidationException extends Exception {
 
-	@Serial
-	private static final long serialVersionUID = -7473495079948527879L;
+    @Serial
+    private static final long serialVersionUID = -7473495079948527879L;
 
-	public PackageValidationException(String messageCode) {
-		super(messageCode);
-	}
+    public PackageValidationException(String messageCode) {
+        super(messageCode);
+    }
 
-	public PackageValidationException(List<ValidationResultItem<?>> messageCodes) {
-		super(messageCodes.stream().map(i -> "\"" + i.messageCode() + "\"")
-				.collect(Collectors.joining(", ")));
-	}
+    public PackageValidationException(List<ValidationResultItem<?>> messageCodes) {
+        super(messageCodes.stream().map(i -> "\"" + i.messageCode() + "\"").collect(Collectors.joining(", ")));
+    }
 }

@@ -25,22 +25,28 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import org.junit.jupiter.api.Test;
 
 public class MigrationTests {
-	
-	@Test
-	public void migrationModulesTest() throws IOException, InterruptedException {			
-		String expected = Files.readString(Path.of("src/test/resources/docker/db/sql_files/migrations/expected.sql")).trim().replaceAll("\\t", " ").replaceAll("\\s{2,}", " ");
-									
-		String[] cmd = new String[] {"bash", "src/test/resources/scripts/checkIfModulesMigrationWasSuccessful.sh"};
-		Process process = Runtime.getRuntime().exec(cmd);
-		
-		String output = new String(process.getInputStream().readAllBytes());
-		String actual = output.split("TRUNCATE TABLE\n")[1].split("ENDOFTESTCASE")[0].trim().replaceAll("\\t", " ").replaceAll("\\s{2,}", " ");
-				
-		process.destroy();
-		assertEquals(expected, actual, "Migration failed");
-	}
+
+    @Test
+    public void migrationModulesTest() throws IOException, InterruptedException {
+        String expected = Files.readString(Path.of("src/test/resources/docker/db/sql_files/migrations/expected.sql"))
+                .trim()
+                .replaceAll("\\t", " ")
+                .replaceAll("\\s{2,}", " ");
+
+        String[] cmd = new String[] {"bash", "src/test/resources/scripts/checkIfModulesMigrationWasSuccessful.sh"};
+        Process process = Runtime.getRuntime().exec(cmd);
+
+        String output = new String(process.getInputStream().readAllBytes());
+        String actual = output.split("TRUNCATE TABLE\n")[1]
+                .split("ENDOFTESTCASE")[0]
+                .trim()
+                .replaceAll("\\t", " ")
+                .replaceAll("\\s{2,}", " ");
+
+        process.destroy();
+        assertEquals(expected, actual, "Migration failed");
+    }
 }

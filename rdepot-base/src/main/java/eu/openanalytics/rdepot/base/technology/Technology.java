@@ -25,29 +25,29 @@ package eu.openanalytics.rdepot.base.technology;
  */
 public interface Technology {
 
-	/**
-	 * @return current instance of technology class used by a resource
-	 */
-	Technology getInstance();
-	
-	/**
-	 * @return name of the technology
-	 */
-	String getName();
-	
-	/**
-	 * @return version of the technology
-	 */
-	String getVersion();
-	
-	/**
-	 * Checks if current technology version is compatible with the given one.
-	 */
-	Boolean isCompatible(String version);
-	
-	@Override
-	int hashCode();
-	
-	@Override
-	boolean equals(Object obj);
+    /**
+     * @return current instance of technology class used by a resource
+     */
+    Technology getInstance();
+
+    /**
+     * @return name of the technology
+     */
+    String getName();
+
+    /**
+     * @return version of the technology
+     */
+    String getVersion();
+
+    /**
+     * Checks if current technology version is compatible with the given one.
+     */
+    Boolean isCompatible(String version);
+
+    @Override
+    int hashCode();
+
+    @Override
+    boolean equals(Object obj);
 }

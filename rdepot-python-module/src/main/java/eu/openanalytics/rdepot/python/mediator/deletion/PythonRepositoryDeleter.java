@@ -20,35 +20,35 @@
  */
 package eu.openanalytics.rdepot.python.mediator.deletion;
 
-import eu.openanalytics.rdepot.base.storage.Storage;
-import org.springframework.stereotype.Component;
-
 import eu.openanalytics.rdepot.base.mediator.deletion.RepositoryDeleter;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
+import eu.openanalytics.rdepot.base.storage.Storage;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.services.PythonPackageService;
 import eu.openanalytics.rdepot.python.services.PythonRepositoryService;
+import org.springframework.stereotype.Component;
 
 @Component
 public class PythonRepositoryDeleter extends RepositoryDeleter<PythonRepository, PythonPackage> {
-	
-	public PythonRepositoryDeleter(NewsfeedEventService newsfeedEventService,
-			PythonRepositoryService resourceService, 
-			PackageMaintainerService packageMaintainerService,
-			RepositoryMaintainerService repositoryMaintainerService,
-		   	Storage<PythonRepository, PythonPackage> storage,
-			PythonSubmissionDeleter submissionDeleter,
-			PythonPackageService pythonPackageService
-	) {
-		super(newsfeedEventService, 
-				resourceService, 
-				packageMaintainerService, 
-				repositoryMaintainerService,
-				storage,
-				submissionDeleter,
-				pythonPackageService);
-	}
+
+    public PythonRepositoryDeleter(
+            NewsfeedEventService newsfeedEventService,
+            PythonRepositoryService resourceService,
+            PackageMaintainerService packageMaintainerService,
+            RepositoryMaintainerService repositoryMaintainerService,
+            Storage<PythonRepository, PythonPackage> storage,
+            PythonSubmissionDeleter submissionDeleter,
+            PythonPackageService pythonPackageService) {
+        super(
+                newsfeedEventService,
+                resourceService,
+                packageMaintainerService,
+                repositoryMaintainerService,
+                storage,
+                submissionDeleter,
+                pythonPackageService);
+    }
 }

@@ -3,13 +3,13 @@
 dn: cn={2}nis
 objectClass: olcSchemaConfig
 cn: {2}nis
-olcAttributeTypes: {0}( 1.3.6.1.1.1.1.2 NAME 'gecos' DESC 'The GECOS field; 
+olcAttributeTypes: {0}( 1.3.6.1.1.1.1.2 NAME 'gecos' DESC 'The GECOS field;
  the common name' EQUALITY caseIgnoreIA5Match SUBSTR caseIgnoreIA5Substrings
  Match SYNTAX 1.3.6.1.4.1.1466.115.121.1.26 SINGLE-VALUE )
 olcAttributeTypes: {1}( 1.3.6.1.1.1.1.3 NAME 'homeDirectory' DESC 'The absol
  ute path to the home directory' EQUALITY caseExactIA5Match SYNTAX 1.3.6.1.4
  .1.1466.115.121.1.26 SINGLE-VALUE )
-olcAttributeTypes: {2}( 1.3.6.1.1.1.1.4 NAME 'loginShell' DESC 'The path to 
+olcAttributeTypes: {2}( 1.3.6.1.1.1.1.4 NAME 'loginShell' DESC 'The path to
  the login shell' EQUALITY caseExactIA5Match SYNTAX 1.3.6.1.4.1.1466.115.121
  .1.26 SINGLE-VALUE )
 olcAttributeTypes: {3}( 1.3.6.1.1.1.1.5 NAME 'shadowLastChange' EQUALITY int
@@ -29,14 +29,14 @@ olcAttributeTypes: {9}( 1.3.6.1.1.1.1.11 NAME 'shadowFlag' EQUALITY integerM
 olcAttributeTypes: {10}( 1.3.6.1.1.1.1.12 NAME 'memberUid' EQUALITY caseExac
  tIA5Match SUBSTR caseExactIA5SubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.12
  1.1.26 )
-olcAttributeTypes: {11}( 1.3.6.1.1.1.1.13 NAME 'memberNisNetgroup' EQUALITY 
+olcAttributeTypes: {11}( 1.3.6.1.1.1.1.13 NAME 'memberNisNetgroup' EQUALITY
  caseExactIA5Match SUBSTR caseExactIA5SubstringsMatch SYNTAX 1.3.6.1.4.1.146
  6.115.121.1.26 )
 olcAttributeTypes: {12}( 1.3.6.1.1.1.1.14 NAME 'nisNetgroupTriple' DESC 'Net
  group triple' SYNTAX 1.3.6.1.1.1.0.0 )
 olcAttributeTypes: {13}( 1.3.6.1.1.1.1.15 NAME 'ipServicePort' EQUALITY inte
  gerMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
-olcAttributeTypes: {14}( 1.3.6.1.1.1.1.16 NAME 'ipServiceProtocol' SUP name 
+olcAttributeTypes: {14}( 1.3.6.1.1.1.1.16 NAME 'ipServiceProtocol' SUP name
  )
 olcAttributeTypes: {15}( 1.3.6.1.1.1.1.17 NAME 'ipProtocolNumber' EQUALITY i
  ntegerMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
@@ -72,7 +72,7 @@ olcObjectClasses: {2}( 1.3.6.1.1.1.2.2 NAME 'posixGroup' DESC 'Abstraction o
  f a group of accounts' SUP top STRUCTURAL MUST ( cn $ gidNumber ) MAY ( use
  rPassword $ memberUid $ description ) )
 olcObjectClasses: {3}( 1.3.6.1.1.1.2.3 NAME 'ipService' DESC 'Abstraction an
-  Internet Protocol service' SUP top STRUCTURAL MUST ( cn $ ipServicePort $ 
+  Internet Protocol service' SUP top STRUCTURAL MUST ( cn $ ipServicePort $
  ipServiceProtocol ) MAY description )
 olcObjectClasses: {4}( 1.3.6.1.1.1.2.4 NAME 'ipProtocol' DESC 'Abstraction o
  f an IP protocol' SUP top STRUCTURAL MUST ( cn $ ipProtocolNumber $ descrip
@@ -80,24 +80,24 @@ olcObjectClasses: {4}( 1.3.6.1.1.1.2.4 NAME 'ipProtocol' DESC 'Abstraction o
 olcObjectClasses: {5}( 1.3.6.1.1.1.2.5 NAME 'oncRpc' DESC 'Abstraction of an
   ONC/RPC binding' SUP top STRUCTURAL MUST ( cn $ oncRpcNumber $ description
   ) MAY description )
-olcObjectClasses: {6}( 1.3.6.1.1.1.2.6 NAME 'ipHost' DESC 'Abstraction of a 
- host, an IP device' SUP top AUXILIARY MUST ( cn $ ipHostNumber ) MAY ( l $ 
+olcObjectClasses: {6}( 1.3.6.1.1.1.2.6 NAME 'ipHost' DESC 'Abstraction of a
+ host, an IP device' SUP top AUXILIARY MUST ( cn $ ipHostNumber ) MAY ( l $
  description $ manager ) )
 olcObjectClasses: {7}( 1.3.6.1.1.1.2.7 NAME 'ipNetwork' DESC 'Abstraction of
   an IP network' SUP top STRUCTURAL MUST ( cn $ ipNetworkNumber ) MAY ( ipNe
  tmaskNumber $ l $ description $ manager ) )
-olcObjectClasses: {8}( 1.3.6.1.1.1.2.8 NAME 'nisNetgroup' DESC 'Abstraction 
+olcObjectClasses: {8}( 1.3.6.1.1.1.2.8 NAME 'nisNetgroup' DESC 'Abstraction
  of a netgroup' SUP top STRUCTURAL MUST cn MAY ( nisNetgroupTriple $ memberN
  isNetgroup $ description ) )
 olcObjectClasses: {9}( 1.3.6.1.1.1.2.9 NAME 'nisMap' DESC 'A generic abstrac
  tion of a NIS map' SUP top STRUCTURAL MUST nisMapName MAY description )
-olcObjectClasses: {10}( 1.3.6.1.1.1.2.10 NAME 'nisObject' DESC 'An entry in 
+olcObjectClasses: {10}( 1.3.6.1.1.1.2.10 NAME 'nisObject' DESC 'An entry in
  a NIS map' SUP top STRUCTURAL MUST ( cn $ nisMapEntry $ nisMapName ) MAY de
  scription )
 olcObjectClasses: {11}( 1.3.6.1.1.1.2.11 NAME 'ieee802Device' DESC 'A device
   with a MAC address' SUP top AUXILIARY MAY macAddress )
 olcObjectClasses: {12}( 1.3.6.1.1.1.2.12 NAME 'bootableDevice' DESC 'A devic
- e with boot parameters' SUP top AUXILIARY MAY ( bootFile $ bootParameter ) 
+ e with boot parameters' SUP top AUXILIARY MAY ( bootFile $ bootParameter )
  )
 structuralObjectClass: olcSchemaConfig
 entryUUID: a101b0c4-69b7-103a-9b35-5121559ce52b

@@ -31,13 +31,13 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 public class MirroredRPackage extends MirroredPackage {
 
-	private Boolean generateManuals;
-	
-	public RPackage toPackageEntity() {
-		RPackage entity = new RPackage();
-		entity.setName(name);
-		entity.setVersion(version);
-		entity.setGenerateManuals(generateManuals);
-		return entity;
-	}
+    private Boolean generateManuals;
+
+    public RPackage toPackageEntity() {
+        RPackage entity = new RPackage();
+        entity.setName(name);
+        entity.setVersion(version);
+        entity.setGenerateManuals(generateManuals);
+        return entity;
+    }
 }

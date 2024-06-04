@@ -23,12 +23,10 @@ package eu.openanalytics.rdepot.base.api.v2.exceptions;
 import java.io.Serial;
 import java.util.Locale;
 import java.util.Optional;
-
+import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
-
-import lombok.Getter;
 
 /**
  * Thrown for API requests when something goes wrong.
@@ -40,32 +38,27 @@ import lombok.Getter;
  */
 @Getter
 public class ApiException extends Exception {
-	
-	@Serial
-	private static final long serialVersionUID = 7207340302826282335L;
-	private final String messageCode;
-	private final HttpStatus httpStatus;
 
-	@Setter
-	private Optional<String> details = Optional.empty();
+    @Serial
+    private static final long serialVersionUID = 7207340302826282335L;
 
-	public ApiException(MessageSource messageSource, 
-			Locale locale, String messageCode,
-			HttpStatus httpStatus) {
-		super(messageSource.getMessage(
-						messageCode, 
-						null, 
-						messageCode, 
-						locale));
-		
-		this.messageCode = messageCode;
-		this.httpStatus = httpStatus;
-	}
-	
-	public ApiException(MessageSource messageSource, Locale locale, 
-			String messageCode, HttpStatus httpStatus, String details) {
-		this(messageSource, locale, messageCode, httpStatus);
-		
-		this.setDetails(Optional.of(details));
-	}
+    private final String messageCode;
+    private final HttpStatus httpStatus;
+
+    @Setter
+    private Optional<String> details = Optional.empty();
+
+    public ApiException(MessageSource messageSource, Locale locale, String messageCode, HttpStatus httpStatus) {
+        super(messageSource.getMessage(messageCode, null, messageCode, locale));
+
+        this.messageCode = messageCode;
+        this.httpStatus = httpStatus;
+    }
+
+    public ApiException(
+            MessageSource messageSource, Locale locale, String messageCode, HttpStatus httpStatus, String details) {
+        this(messageSource, locale, messageCode, httpStatus);
+
+        this.setDetails(Optional.of(details));
+    }
 }

@@ -20,7 +20,7 @@
  */
 /**
  * JPA Repository interfaces for the entities.
- * It is encouraged to access them only from the 
+ * It is encouraged to access them only from the
  * {@link eu.openanalytics.rdepot.base.service.Service services}.
  * It is a preferred, though not only way to fetch or save data in the database.
  * Extended interfaces should support pagination.

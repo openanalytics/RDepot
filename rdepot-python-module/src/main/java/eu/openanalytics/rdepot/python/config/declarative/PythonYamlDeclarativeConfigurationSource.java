@@ -20,96 +20,92 @@
  */
 package eu.openanalytics.rdepot.python.config.declarative;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import eu.openanalytics.rdepot.base.config.declarative.DeclaredRepositoryDirectoriesProps;
+import eu.openanalytics.rdepot.base.config.declarative.exceptions.DeclaredRepositoryTechnologyMismatch;
+import eu.openanalytics.rdepot.base.config.declarative.exceptions.InvalidRepositoryDeclaration;
+import eu.openanalytics.rdepot.python.technology.PythonLanguage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import eu.openanalytics.rdepot.base.config.declarative.exceptions.DeclaredRepositoryTechnologyMismatch;
-import eu.openanalytics.rdepot.python.technology.PythonLanguage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-
-import eu.openanalytics.rdepot.base.config.declarative.DeclaredRepositoryDirectoriesProps;
-import eu.openanalytics.rdepot.base.config.declarative.exceptions.InvalidRepositoryDeclaration;
 
 @Slf4j
 @Component
 public class PythonYamlDeclarativeConfigurationSource {
 
-	protected final DeclaredRepositoryDirectoriesProps declaredRepositoryDirectoriesProps;
-	protected final Class<DeclarativePythonRepository> repositoryClass = DeclarativePythonRepository.class;
-	protected final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-	
-	public PythonYamlDeclarativeConfigurationSource(DeclaredRepositoryDirectoriesProps declaredRepositoryDirectoriesProps) {
-		this.declaredRepositoryDirectoriesProps = declaredRepositoryDirectoriesProps;
-		mapper.findAndRegisterModules();
-	}
+    protected final DeclaredRepositoryDirectoriesProps declaredRepositoryDirectoriesProps;
+    protected final Class<DeclarativePythonRepository> repositoryClass = DeclarativePythonRepository.class;
+    protected final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 
-	public List<DeclarativePythonRepository> retrieveDeclaredRepositories() {
-		final List<DeclarativePythonRepository> declaredRepositories = new ArrayList<>();
-		
-		for(String directoryPath : declaredRepositoryDirectoriesProps.getPaths()) {
-			declaredRepositories.addAll(retrieveRepositoriesFromDirectory(directoryPath));
-		}
-		
-		return declaredRepositories;
-	}
+    public PythonYamlDeclarativeConfigurationSource(
+            DeclaredRepositoryDirectoriesProps declaredRepositoryDirectoriesProps) {
+        this.declaredRepositoryDirectoriesProps = declaredRepositoryDirectoriesProps;
+        mapper.findAndRegisterModules();
+    }
 
-	/**
-	 * Parses YAML repository declarations from provided directory.
-	 */
-	protected List<DeclarativePythonRepository> retrieveRepositoriesFromDirectory(String directoryPath) {
-		final List<DeclarativePythonRepository> declaredRepositories = new ArrayList<>();
-		final File dir = new File(directoryPath);
-		
-		if(!dir.exists()) {
+    public List<DeclarativePythonRepository> retrieveDeclaredRepositories() {
+        final List<DeclarativePythonRepository> declaredRepositories = new ArrayList<>();
+
+        for (String directoryPath : declaredRepositoryDirectoriesProps.getPaths()) {
+            declaredRepositories.addAll(retrieveRepositoriesFromDirectory(directoryPath));
+        }
+
+        return declaredRepositories;
+    }
+
+    /**
+     * Parses YAML repository declarations from provided directory.
+     */
+    protected List<DeclarativePythonRepository> retrieveRepositoriesFromDirectory(String directoryPath) {
+        final List<DeclarativePythonRepository> declaredRepositories = new ArrayList<>();
+        final File dir = new File(directoryPath);
+
+        if (!dir.exists()) {
             log.error("Directory with repository declarations: {} does not exist.", directoryPath);
-			return declaredRepositories;
-		}
+            return declaredRepositories;
+        }
 
-		File[] filesInDir = dir.listFiles();
-		if(filesInDir == null) return declaredRepositories;
+        File[] filesInDir = dir.listFiles();
+        if (filesInDir == null) return declaredRepositories;
 
-		for(File configFile : filesInDir) {
-			if(configFile.getName().endsWith("repository.yaml") 
-					|| configFile.getName().endsWith("repository.yml")) {
-				try {
-					declaredRepositories.add(
-							retrieveDeclaredRepositoryFromFile(configFile)
-					);
-				} catch(DeclaredRepositoryTechnologyMismatch e) {
-					log.debug(e.getMessage(), e);
-				} catch(InvalidRepositoryDeclaration e) {
-					log.error(e.getMessage(), e);
-				}
-			}
-		}
-		
-		return declaredRepositories;
-	}
+        for (File configFile : filesInDir) {
+            if (configFile.getName().endsWith("repository.yaml")
+                    || configFile.getName().endsWith("repository.yml")) {
+                try {
+                    declaredRepositories.add(retrieveDeclaredRepositoryFromFile(configFile));
+                } catch (DeclaredRepositoryTechnologyMismatch e) {
+                    log.debug(e.getMessage(), e);
+                } catch (InvalidRepositoryDeclaration e) {
+                    log.error(e.getMessage(), e);
+                }
+            }
+        }
 
-	/**
-	 * Parses provided YAML file into repository declaration.
-	 * @throws InvalidRepositoryDeclaration when YAML could not be parsed into repository
-	 */
-	protected DeclarativePythonRepository retrieveDeclaredRepositoryFromFile(File configFile)
+        return declaredRepositories;
+    }
+
+    /**
+     * Parses provided YAML file into repository declaration.
+     * @throws InvalidRepositoryDeclaration when YAML could not be parsed into repository
+     */
+    protected DeclarativePythonRepository retrieveDeclaredRepositoryFromFile(File configFile)
             throws InvalidRepositoryDeclaration, DeclaredRepositoryTechnologyMismatch {
-		try {
-			DeclarativePythonRepository repository = mapper.readValue(configFile, repositoryClass);
-			if (repository.technology == null || !repository.technology.equals(PythonLanguage.instance)) {
-				throw new DeclaredRepositoryTechnologyMismatch(repository.name);
-			}
-			return repository;
-		} catch(DeclaredRepositoryTechnologyMismatch e) {
-			log.debug(e.getMessage(), e);
-			throw new DeclaredRepositoryTechnologyMismatch(configFile.getAbsolutePath());
-		} catch(IOException e) {
-			log.error(e.getMessage(), e);
-			throw new InvalidRepositoryDeclaration(configFile.getAbsolutePath());
-		}
-	}
+        try {
+            DeclarativePythonRepository repository = mapper.readValue(configFile, repositoryClass);
+            if (repository.technology == null || !repository.technology.equals(PythonLanguage.instance)) {
+                throw new DeclaredRepositoryTechnologyMismatch(repository.name);
+            }
+            return repository;
+        } catch (DeclaredRepositoryTechnologyMismatch e) {
+            log.debug(e.getMessage(), e);
+            throw new DeclaredRepositoryTechnologyMismatch(configFile.getAbsolutePath());
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            throw new InvalidRepositoryDeclaration(configFile.getAbsolutePath());
+        }
+    }
 }

@@ -6,7 +6,7 @@ services:
     ports:
       - 8017:80
     networks:
-      - oa-rdepot      
+      - oa-rdepot
     volumes:
       #- ./docker/app/application.yml:/opt/rdepot/application.yml
       #- ./docker/app/test_configs/test_ldap_config.yml:/opt/rdepot/application.yml #for regular mode

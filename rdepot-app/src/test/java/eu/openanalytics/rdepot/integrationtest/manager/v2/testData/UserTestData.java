@@ -21,16 +21,15 @@
 package eu.openanalytics.rdepot.integrationtest.manager.v2.testData;
 
 import java.util.List;
-
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
 public class UserTestData {
-	private int getEndpointNewEventsAmount;
-	private int changeEndpointNewEventsAmount;
-	private boolean active;
-	private List<String> roles;	
-	private String search;
+    private int getEndpointNewEventsAmount;
+    private int changeEndpointNewEventsAmount;
+    private boolean active;
+    private List<String> roles;
+    private String search;
 }

@@ -22,7 +22,6 @@ package eu.openanalytics.rdepot.base.storage.exceptions;
 
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 /**
@@ -30,11 +29,10 @@ import java.io.Serial;
  */
 public class Md5MismatchException extends LocalizedException {
 
-	@Serial
-	private static final long serialVersionUID = 4492838768941381599L;
+    @Serial
+    private static final long serialVersionUID = 4492838768941381599L;
 
-	public Md5MismatchException() {
-		super(MessageCodes.MD5_MISMATCH_EXCEPTION);
-	}
-
+    public Md5MismatchException() {
+        super(MessageCodes.MD5_MISMATCH_EXCEPTION);
+    }
 }

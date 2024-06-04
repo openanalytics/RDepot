@@ -22,7 +22,6 @@ package eu.openanalytics.rdepot.base.service.exceptions;
 
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 /**
@@ -30,10 +29,10 @@ import java.io.Serial;
  */
 public class CreateEntityException extends LocalizedException {
 
-	@Serial
-	private static final long serialVersionUID = 4547492086926950920L;
+    @Serial
+    private static final long serialVersionUID = 4547492086926950920L;
 
-	public CreateEntityException() {
-		super(MessageCodes.COULD_NOT_CREATE_ENTITY);
-	}
+    public CreateEntityException() {
+        super(MessageCodes.COULD_NOT_CREATE_ENTITY);
+    }
 }

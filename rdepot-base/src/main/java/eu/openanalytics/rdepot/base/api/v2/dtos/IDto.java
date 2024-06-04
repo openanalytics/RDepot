@@ -21,7 +21,6 @@
 package eu.openanalytics.rdepot.base.api.v2.dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import eu.openanalytics.rdepot.base.entities.Resource;
 
 /**
@@ -30,6 +29,6 @@ import eu.openanalytics.rdepot.base.entities.Resource;
  * It is used to convert a DTO to entity.
  */
 public interface IDto {
-	@JsonIgnore
-	Resource getEntity();
+    @JsonIgnore
+    Resource getEntity();
 }

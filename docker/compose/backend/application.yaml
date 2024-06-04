@@ -4,7 +4,7 @@ api-token:
   audience:
   - RDepot
   lifetime: 5
-  
+
 allowed-origin: http://localhost
 
 server:
@@ -48,8 +48,8 @@ app:
   simple:
     users:
     - login: einstein
-      password: testpassword  
-      name: Albert Einstein 
+      password: testpassword
+      name: Albert Einstein
     - login: tesla
       password: testpassword
       name: Nicolas Tesla
@@ -64,7 +64,7 @@ app:
       name: New User
     - login: doe
       password: testpassword
-      name: John Doe 
+      name: John Doe
     default:
       admins:
       - einstein
@@ -80,7 +80,7 @@ db:
 hibernate:
   dialect: org.hibernate.dialect.PostgreSQLDialect
   show_sql: false
-  
+
 # Liquibase related properties
 spring:
   liquibase:

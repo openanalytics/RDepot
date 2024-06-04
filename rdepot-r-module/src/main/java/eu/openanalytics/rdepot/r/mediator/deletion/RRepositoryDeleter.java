@@ -20,8 +20,6 @@
  */
 package eu.openanalytics.rdepot.r.mediator.deletion;
 
-import org.springframework.stereotype.Component;
-
 import eu.openanalytics.rdepot.base.mediator.deletion.RepositoryDeleter;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
@@ -31,25 +29,26 @@ import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.services.RPackageService;
 import eu.openanalytics.rdepot.r.services.RRepositoryService;
+import org.springframework.stereotype.Component;
 
 @Component
 public class RRepositoryDeleter extends RepositoryDeleter<RRepository, RPackage> {
 
-	public RRepositoryDeleter(NewsfeedEventService newsfeedEventService,
-			RRepositoryService resourceService, 
-			PackageMaintainerService packageMaintainerService,
-			RepositoryMaintainerService repositoryMaintainerService, 
-			Storage<RRepository, RPackage> storage,
-			RSubmissionDeleter submissionDeleter,
-			RPackageService rPackageService
-	) {
-		super(newsfeedEventService, 
-				resourceService, 
-				packageMaintainerService, 
-				repositoryMaintainerService, 
-				storage,
-				submissionDeleter,
-				rPackageService);
-	}
-
+    public RRepositoryDeleter(
+            NewsfeedEventService newsfeedEventService,
+            RRepositoryService resourceService,
+            PackageMaintainerService packageMaintainerService,
+            RepositoryMaintainerService repositoryMaintainerService,
+            Storage<RRepository, RPackage> storage,
+            RSubmissionDeleter submissionDeleter,
+            RPackageService rPackageService) {
+        super(
+                newsfeedEventService,
+                resourceService,
+                packageMaintainerService,
+                repositoryMaintainerService,
+                storage,
+                submissionDeleter,
+                rPackageService);
+    }
 }

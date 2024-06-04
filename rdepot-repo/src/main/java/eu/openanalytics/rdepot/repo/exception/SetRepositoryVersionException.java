@@ -22,12 +22,12 @@ package eu.openanalytics.rdepot.repo.exception;
 
 public class SetRepositoryVersionException extends StorageException {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 4027446123893718113L;
-	
-	public SetRepositoryVersionException(String repository) {
-		super("Could not boost version of repository " + repository);
-	}
+    /**
+     *
+     */
+    private static final long serialVersionUID = 4027446123893718113L;
+
+    public SetRepositoryVersionException(String repository) {
+        super("Could not boost version of repository " + repository);
+    }
 }

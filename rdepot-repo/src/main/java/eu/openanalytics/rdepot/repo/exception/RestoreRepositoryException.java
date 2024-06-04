@@ -20,11 +20,17 @@
  */
 package eu.openanalytics.rdepot.repo.exception;
 
+import java.io.File;
+
 public class RestoreRepositoryException extends Exception {
 
-	private static final long serialVersionUID = -1957175283780724741L;
+    private static final long serialVersionUID = -1957175283780724741L;
 
-	public RestoreRepositoryException(String repository) {
-		super("Could not restore files from trash folder of repository " + repository);
-	}
+    public RestoreRepositoryException(String repository) {
+        super("Could not restore files from trash folder of repository " + repository);
+    }
+
+    public RestoreRepositoryException(File trashDirectory) {
+        super("Could not restore files from trash folder " + trashDirectory.getAbsolutePath());
+    }
 }

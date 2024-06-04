@@ -38,10 +38,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreateAccessTokenDto {
 
-	@NotBlank(message = MessageCodes.TOKEN_NAME_MUST_BE_NOT_BLANK)
-	private String name;
-	
-	@DecimalMin(value = "1", message = MessageCodes.TOKEN_NUMBER_OF_DAYS_MUST_BE_GREATER_THAN_0)
-	@DecimalMax(value = "365", message = MessageCodes.TOKEN_NUMBER_OF_DAYS_MUST_BE_LESS_THAN_366)
-	private String lifetime;
+    @NotBlank(message = MessageCodes.TOKEN_NAME_MUST_BE_NOT_BLANK)
+    private String name;
+
+    @DecimalMin(value = "1", message = MessageCodes.TOKEN_NUMBER_OF_DAYS_MUST_BE_GREATER_THAN_0)
+    @DecimalMax(value = "365", message = MessageCodes.TOKEN_NUMBER_OF_DAYS_MUST_BE_LESS_THAN_366)
+    private String lifetime;
 }

@@ -26,5 +26,5 @@ import eu.openanalytics.rdepot.base.validation.exceptions.PatchValidationExcepti
 import jakarta.json.JsonPatch;
 
 public interface PatchValidator<E extends Resource, D extends IDto> {
-	void validatePatch(JsonPatch patch, E currentEntity, D patchedDto) throws PatchValidationException;
+    void validatePatch(JsonPatch patch, E currentEntity, D patchedDto) throws PatchValidationException;
 }

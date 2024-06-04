@@ -20,8 +20,6 @@
  */
 package eu.openanalytics.rdepot.r.storage;
 
-import java.util.List;
-
 import eu.openanalytics.rdepot.base.storage.Storage;
 import eu.openanalytics.rdepot.base.storage.exceptions.CleanUpAfterSynchronizationException;
 import eu.openanalytics.rdepot.base.storage.exceptions.GenerateManualException;
@@ -33,55 +31,63 @@ import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.entities.Vignette;
 import eu.openanalytics.rdepot.r.storage.utils.PopulatedRepositoryContent;
 import eu.openanalytics.rdepot.r.synchronization.SynchronizeRepositoryRequestBody;
+import java.util.List;
 
 /**
  * Provides features specific for R Packages storage management.
  */
 public interface RStorage extends Storage<RRepository, RPackage> {
-	/**
-	 * Builds request body with objects ready to be uploaded to the remote server.
-	 * @param populatedRepositoryContent content
-	 * @param repository repository to synchronized
-	 * @param versionBefore version of the repository before synchronization
-	 * @return request body
-	 */
-	SynchronizeRepositoryRequestBody buildSynchronizeRequestBody(
-			PopulatedRepositoryContent populatedRepositoryContent, 
-			List<String> remoteLatestPackages, List<String> remoteArchivePackages,
-			RRepository repository, String versionBefore);
-	
-	/**
-	 * Populates packages and generates directory structure ready for synchronization
-	 * @param packages all packages
-	 * @param latestPackages only latest packages
-	 * @param archivePackages only packages going to archive
-	 */
-	PopulatedRepositoryContent organizePackagesInStorage(String dateStamp, List<RPackage> packages, 
-			List<RPackage> latestPackages, List<RPackage> archivePackages, RRepository repository) throws OrganizePackagesException;
-	
-	/**
-	 * Cleans temporary directories after synchronization.
-	 */
-	void cleanUpAfterSynchronization(PopulatedRepositoryContent populatedRepositoryContent) 
-			throws CleanUpAfterSynchronizationException;
-	
-	/**
-	 * Fetches reference manual file from the storage.
-	 */
-	byte[] getReferenceManual(RPackage packageBag) throws GetReferenceManualException;
-	
-	/**
-	 * Fetches links to available vignettes for a given package.
-	 */
-	List<Vignette> getAvailableVignettes(RPackage packageBag);
+    /**
+     * Builds request body with objects ready to be uploaded to the remote server.
+     * @param populatedRepositoryContent content
+     * @param repository repository to synchronized
+     * @param versionBefore version of the repository before synchronization
+     * @return request body
+     */
+    SynchronizeRepositoryRequestBody buildSynchronizeRequestBody(
+            PopulatedRepositoryContent populatedRepositoryContent,
+            List<String> remoteLatestPackages,
+            List<String> remoteArchivePackages,
+            RRepository repository,
+            String versionBefore);
 
-	/**
-	 * Reads vignette from storage.
-	 */
-	byte[] readVignette(RPackage packageBag, String filename) throws ReadPackageVignetteException;
-	
-	/**
-	 * Creates manual for a package and puts it in the local storage.
-	 */
-	void generateManual(RPackage packageBag) throws GenerateManualException;
+    /**
+     * Populates packages and generates directory structure ready for synchronization
+     * @param packages all packages
+     * @param latestPackages only latest packages
+     * @param archivePackages only packages going to archive
+     */
+    PopulatedRepositoryContent organizePackagesInStorage(
+            String dateStamp,
+            List<RPackage> packages,
+            List<RPackage> latestPackages,
+            List<RPackage> archivePackages,
+            RRepository repository)
+            throws OrganizePackagesException;
+
+    /**
+     * Cleans temporary directories after synchronization.
+     */
+    void cleanUpAfterSynchronization(PopulatedRepositoryContent populatedRepositoryContent)
+            throws CleanUpAfterSynchronizationException;
+
+    /**
+     * Fetches reference manual file from the storage.
+     */
+    byte[] getReferenceManual(RPackage packageBag) throws GetReferenceManualException;
+
+    /**
+     * Fetches links to available vignettes for a given package.
+     */
+    List<Vignette> getAvailableVignettes(RPackage packageBag);
+
+    /**
+     * Reads vignette from storage.
+     */
+    byte[] readVignette(RPackage packageBag, String filename) throws ReadPackageVignetteException;
+
+    /**
+     * Creates manual for a package and puts it in the local storage.
+     */
+    void generateManual(RPackage packageBag) throws GenerateManualException;
 }

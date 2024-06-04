@@ -22,34 +22,36 @@ package eu.openanalytics.rdepot.base.utils.specs;
 
 import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
 import eu.openanalytics.rdepot.base.utils.TechnologyResolver;
+import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.util.List;
-
 public class PackageMaintainerSpecs {
-	public static Specification<PackageMaintainer> ofRepository(List<String> repositories) {
-		return (root, query, criteriaBuilder) -> criteriaBuilder.in(root.get("repository").get("name")).value(repositories);
-	}
-	
-	public static Specification<PackageMaintainer> isDeleted(boolean deleted) {
-		return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("deleted"), deleted);
-	}
-	
-	public static Specification<PackageMaintainer> ofTechnology(List<String> technologies) {
-		return (root, query, criteriaBuilder) -> {
-			TechnologyResolver technologyResolver = new TechnologyResolver();
-			List<String> updatedTechnologies = technologyResolver.getTechnologies(technologies);
-			return criteriaBuilder.in(root.get("repository").get("resourceTechnology")).value(updatedTechnologies);
-		};
-	}
-	
-	public static Specification<PackageMaintainer> byMaintainer(String maintainer) {
-		return (root, query, criteriaBuilder) -> 
-			criteriaBuilder.like(criteriaBuilder.lower(root.get("user").get("name")), "%" + maintainer.toLowerCase() + "%");
-	}
-	
-	public static Specification<PackageMaintainer> ofPackageName(String packageName) {
-		return (root, query, criteriaBuilder) -> 
-			criteriaBuilder.like(criteriaBuilder.lower(root.get("packageName")), "%" + packageName.toLowerCase() + "%");
-	}
+    public static Specification<PackageMaintainer> ofRepository(List<String> repositories) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.in(root.get("repository").get("name")).value(repositories);
+    }
+
+    public static Specification<PackageMaintainer> isDeleted(boolean deleted) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("deleted"), deleted);
+    }
+
+    public static Specification<PackageMaintainer> ofTechnology(List<String> technologies) {
+        return (root, query, criteriaBuilder) -> {
+            TechnologyResolver technologyResolver = new TechnologyResolver();
+            List<String> updatedTechnologies = technologyResolver.getTechnologies(technologies);
+            return criteriaBuilder
+                    .in(root.get("repository").get("resourceTechnology"))
+                    .value(updatedTechnologies);
+        };
+    }
+
+    public static Specification<PackageMaintainer> byMaintainer(String maintainer) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.like(
+                criteriaBuilder.lower(root.get("user").get("name")), "%" + maintainer.toLowerCase() + "%");
+    }
+
+    public static Specification<PackageMaintainer> ofPackageName(String packageName) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.like(
+                criteriaBuilder.lower(root.get("packageName")), "%" + packageName.toLowerCase() + "%");
+    }
 }

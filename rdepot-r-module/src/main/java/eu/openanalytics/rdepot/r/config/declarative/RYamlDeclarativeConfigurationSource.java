@@ -20,21 +20,18 @@
  */
 package eu.openanalytics.rdepot.r.config.declarative;
 
-import org.springframework.stereotype.Component;
-
 import eu.openanalytics.rdepot.base.config.declarative.DeclaredRepositoryDirectoriesProps;
 import eu.openanalytics.rdepot.base.config.declarative.YamlDeclarativeConfigurationSource;
 import eu.openanalytics.rdepot.r.mirroring.CranMirror;
 import eu.openanalytics.rdepot.r.mirroring.pojos.MirroredRPackage;
 import eu.openanalytics.rdepot.r.mirroring.pojos.MirroredRRepository;
+import org.springframework.stereotype.Component;
 
 @Component
-public class RYamlDeclarativeConfigurationSource 
-	extends YamlDeclarativeConfigurationSource
-		<MirroredRRepository, MirroredRPackage, CranMirror> {
+public class RYamlDeclarativeConfigurationSource
+        extends YamlDeclarativeConfigurationSource<MirroredRRepository, MirroredRPackage, CranMirror> {
 
-	public RYamlDeclarativeConfigurationSource(
-			DeclaredRepositoryDirectoriesProps declaredRepositoryDirectoriesProps) {
-		super(declaredRepositoryDirectoriesProps, MirroredRRepository.class);
-	}
+    public RYamlDeclarativeConfigurationSource(DeclaredRepositoryDirectoriesProps declaredRepositoryDirectoriesProps) {
+        super(declaredRepositoryDirectoriesProps, MirroredRRepository.class);
+    }
 }

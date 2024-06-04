@@ -30,14 +30,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-
 import eu.openanalytics.rdepot.base.entities.EventChangedVariable;
 import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
 import eu.openanalytics.rdepot.base.entities.User;
@@ -52,354 +44,333 @@ import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.services.RPackageService;
 import eu.openanalytics.rdepot.r.strategy.update.RPackageUpdateStrategy;
 import eu.openanalytics.rdepot.r.test.strategy.answer.AssertEventChangedValuesAnswer;
-import eu.openanalytics.rdepot.r.test.strategy.fixture.RPackageTestFixture;
-import eu.openanalytics.rdepot.r.test.strategy.fixture.RRepositoryTestFixture;
-import eu.openanalytics.rdepot.r.test.strategy.fixture.UserTestFixture;
+import eu.openanalytics.rdepot.test.fixture.RPackageTestFixture;
+import eu.openanalytics.rdepot.test.fixture.RRepositoryTestFixture;
+import eu.openanalytics.rdepot.test.fixture.UserTestFixture;
 import eu.openanalytics.rdepot.test.strategy.StrategyTest;
+import java.util.HashSet;
+import java.util.Set;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 public class RPackageStrategyTest extends StrategyTest {
-	
-	@Mock
-	NewsfeedEventService eventService;
-	
-	@Mock
-	RPackageService service;
-	
-	@Mock
-	Storage<RRepository, RPackage> storage;
-	
-	@Test
-	public void updatePackage_shouldRepublishRepository_whenRepositoryIsPublished()
-			throws Exception {
-		RRepository repository = RRepositoryTestFixture
-				.GET_EXAMPLE_REPOSITORY();
-		User user = UserTestFixture.GET_PACKAGE_MAINTAINER();
-		RPackage packageBag = RPackageTestFixture
-				.GET_PACKAGE_FOR_REPOSITORY_AND_USER(repository, user);
-		
-		packageBag.setActive(true);
-		repository.setPublished(true);
-		
-		RPackage updatedPackageBag = new RPackage(packageBag);
-		updatedPackageBag.setId(0);
-		updatedPackageBag.setActive(false);
-		
-		when(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag))
-			.thenReturn(user);
-		doAnswer(new Answer<NewsfeedEvent>() {
 
-			@Override
-			public NewsfeedEvent answer(InvocationOnMock invocation) 
-					throws Throwable {
-				NewsfeedEvent event = invocation.getArgument(0);
-				return event;
-			}
-		}).when(eventService).create(any());	
-		doNothing().when(repositorySynchronizer)
-			.storeRepositoryOnRemoteServer(eq(repository), any());
-		doNothing().when(eventService).attachVariables(any(), any());
-		
-		Strategy<RPackage> strategy = new RPackageUpdateStrategy(
-				packageBag, 
-				eventService, 
-				service, 
-				user, 
-				updatedPackageBag, 
-				storage, 
-				bestMaintainerChooser, 
-				repositorySynchronizer
-			);
-		
-		strategy.perform();
-		
-		verify(repositorySynchronizer, times(1)).storeRepositoryOnRemoteServer(eq(repository), any());
-	}
-	
-	@Test
-	public void updatePackage_shouldNotRepublishRepository_whenRepositoryIsNotPublished() throws Exception {
-		RRepository repository = RRepositoryTestFixture
-				.GET_EXAMPLE_REPOSITORY();
-		User user = UserTestFixture.GET_PACKAGE_MAINTAINER();
-		RPackage packageBag = RPackageTestFixture
-				.GET_PACKAGE_FOR_REPOSITORY_AND_USER(repository, user);
-		
-		packageBag.setActive(true);
-		repository.setPublished(false);
-		
-		RPackage updatedPackageBag = new RPackage(packageBag);
-		updatedPackageBag.setId(0);
-		updatedPackageBag.setActive(false);
-		
-		when(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag))
-			.thenReturn(user);
-		doAnswer(new Answer<NewsfeedEvent>() {
+    @Mock
+    NewsfeedEventService eventService;
 
-			@Override
-			public NewsfeedEvent answer(InvocationOnMock invocation) 
-					throws Throwable {
-				NewsfeedEvent event = invocation.getArgument(0);
-				return event;
-			}
-		}).when(eventService).create(any());	
-		doNothing().when(eventService).attachVariables(any(), any());
-		
-		Strategy<RPackage> strategy = new RPackageUpdateStrategy(
-				packageBag, 
-				eventService, 
-				service, 
-				user, 
-				updatedPackageBag, 
-				storage, 
-				bestMaintainerChooser, 
-				repositorySynchronizer
-			);
-		
-		strategy.perform();
-		
-		verify(repositorySynchronizer, times(0)).storeRepositoryOnRemoteServer(eq(repository), any());
-	}
+    @Mock
+    RPackageService service;
 
-	@Test
-	public void updatePackage_shouldNotUndelete() throws Exception {
-		RRepository repository = RRepositoryTestFixture
-				.GET_EXAMPLE_REPOSITORY();
-		User user = UserTestFixture.GET_PACKAGE_MAINTAINER();
-		RPackage packageBag = RPackageTestFixture
-				.GET_PACKAGE_FOR_REPOSITORY_AND_USER(repository, user);
-		packageBag.setDeleted(true);
+    @Mock
+    Storage<RRepository, RPackage> storage;
 
-		RPackage updatedPackageBag = new RPackage(packageBag);
-		updatedPackageBag.setDeleted(false);
+    @Test
+    public void updatePackage_shouldRepublishRepository_whenRepositoryIsPublished() throws Exception {
+        RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
+        User user = UserTestFixture.GET_PACKAGE_MAINTAINER();
+        RPackage packageBag = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
 
-		Strategy<RPackage> strategy = new RPackageUpdateStrategy(
-				packageBag,
-				eventService,
-				service,
-				user,
-				updatedPackageBag,
-				storage,
-				bestMaintainerChooser,
-				repositorySynchronizer
-		);
+        packageBag.setActive(true);
+        repository.setPublished(true);
 
-		assertTrue(strategy.perform().isDeleted(), "Package should not be undeleted.");
-	}
-	
-	@Test
-	public void updatePackage_shouldRefreshMaintainer_whenActiveStateIsChanged() throws Exception {
-		RRepository repository = RRepositoryTestFixture
-				.GET_EXAMPLE_REPOSITORY();
-		User user = UserTestFixture.GET_PACKAGE_MAINTAINER();
-		RPackage packageBag = RPackageTestFixture
-				.GET_PACKAGE_FOR_REPOSITORY_AND_USER(repository, user);
-		User newMaintainer = UserTestFixture.GET_ADMIN();
-		
-		packageBag.setActive(true);
-		repository.setPublished(true);
-		
-		RPackage updatedPackageBag = new RPackage(packageBag);
-		updatedPackageBag.setId(0);
-		updatedPackageBag.setActive(false);
-		
-		when(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag))
-			.thenReturn(newMaintainer);
-		doAnswer(new Answer<NewsfeedEvent>() {
+        RPackage updatedPackageBag = new RPackage(packageBag);
+        updatedPackageBag.setId(0);
+        updatedPackageBag.setActive(false);
 
-			@Override
-			public NewsfeedEvent answer(InvocationOnMock invocation) 
-					throws Throwable {
-				NewsfeedEvent event = invocation.getArgument(0);
-				return event;
-			}
-		}).when(eventService).create(any());	
-		doNothing().when(repositorySynchronizer)
-			.storeRepositoryOnRemoteServer(eq(repository), any());
-		doNothing().when(eventService).attachVariables(any(), any());
-		
-		Strategy<RPackage> strategy = new RPackageUpdateStrategy(
-				packageBag, 
-				eventService, 
-				service, 
-				user, 
-				updatedPackageBag, 
-				storage, 
-				bestMaintainerChooser, 
-				repositorySynchronizer
-			);
-		
-		strategy.perform();
-		
-		verify(bestMaintainerChooser, times(1)).chooseBestPackageMaintainer(packageBag);
-		assertEquals(newMaintainer, packageBag.getUser(), "Maintainer has not been updated for the package.");
-	}
-	
-	@Test
-	public void updatePackage_shouldNotRefreshMaintainer_whenOtherPropertyIsChanged() throws Exception {
-		RRepository repository = RRepositoryTestFixture
-				.GET_EXAMPLE_REPOSITORY();
-		User user = UserTestFixture.GET_PACKAGE_MAINTAINER();
-		RPackage packageBag = RPackageTestFixture
-				.GET_PACKAGE_FOR_REPOSITORY_AND_USER(repository, user);
-		
-		packageBag.setDeleted(false);
-		repository.setPublished(true);
-		
-		RPackage updatedPackageBag = new RPackage(packageBag);
-		updatedPackageBag.setId(0);
-		updatedPackageBag.setDeleted(true);
-		
-		doAnswer(new Answer<NewsfeedEvent>() {
+        when(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag)).thenReturn(user);
+        doAnswer(new Answer<NewsfeedEvent>() {
 
-			@Override
-			public NewsfeedEvent answer(InvocationOnMock invocation) 
-					throws Throwable {
-				NewsfeedEvent event = invocation.getArgument(0);
-				return event;
-			}
-		}).when(eventService).create(any());	
-		doNothing().when(repositorySynchronizer)
-			.storeRepositoryOnRemoteServer(eq(repository), any());
-		doNothing().when(eventService).attachVariables(any(), any());
-		
-		Strategy<RPackage> strategy = new RPackageUpdateStrategy(
-				packageBag, 
-				eventService, 
-				service, 
-				user, 
-				updatedPackageBag, 
-				storage, 
-				bestMaintainerChooser, 
-				repositorySynchronizer
-			);
-		
-		strategy.perform();
-		
-		verify(bestMaintainerChooser, times(0)).chooseBestPackageMaintainer(packageBag);
-	}
-	
-	@Test
-	public void updatePackage_whenRepositoryPublicationFails() throws Exception {
-		RRepository repository = RRepositoryTestFixture
-				.GET_EXAMPLE_REPOSITORY();
-		User user = UserTestFixture.GET_PACKAGE_MAINTAINER();
-		RPackage packageBag = RPackageTestFixture
-				.GET_PACKAGE_FOR_REPOSITORY_AND_USER(repository, user);
-		
-		packageBag.setActive(true);
-		repository.setPublished(true);
-		
-		RPackage updatedPackageBag = new RPackage(packageBag);
-		updatedPackageBag.setId(0);
-		updatedPackageBag.setActive(false);
-		
-		when(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag))
-			.thenReturn(user);
-		doAnswer(new Answer<NewsfeedEvent>() {
+                    @Override
+                    public NewsfeedEvent answer(InvocationOnMock invocation) throws Throwable {
+                        NewsfeedEvent event = invocation.getArgument(0);
+                        return event;
+                    }
+                })
+                .when(eventService)
+                .create(any());
+        doNothing().when(repositorySynchronizer).storeRepositoryOnRemoteServer(eq(repository), any());
+        doNothing().when(eventService).attachVariables(any(), any());
 
-			@Override
-			public NewsfeedEvent answer(InvocationOnMock invocation) 
-					throws Throwable {
-				NewsfeedEvent event = invocation.getArgument(0);
-				return event;
-			}
-		}).when(eventService).create(any());	
-		doThrow(new SynchronizeRepositoryException()).when(repositorySynchronizer)
-			.storeRepositoryOnRemoteServer(eq(repository), any());
-		doNothing().when(eventService).attachVariables(any(), any());
-		
-		Strategy<RPackage> strategy = new RPackageUpdateStrategy(
-				packageBag, 
-				eventService, 
-				service, 
-				user, 
-				updatedPackageBag, 
-				storage, 
-				bestMaintainerChooser, 
-				repositorySynchronizer
-			);
-		
-		assertThrows(StrategyFailure.class, () -> strategy.perform());
-	}
-	
-	@Test
-	public void updatePackage_whenNoMaintainerCanBeFound() throws Exception {
-		RRepository repository = RRepositoryTestFixture
-				.GET_EXAMPLE_REPOSITORY();
-		User user = UserTestFixture.GET_PACKAGE_MAINTAINER();
-		RPackage packageBag = RPackageTestFixture
-				.GET_PACKAGE_FOR_REPOSITORY_AND_USER(repository, user);
-		
-		packageBag.setActive(true);
-		repository.setPublished(true);
-		
-		RPackage updatedPackageBag = new RPackage(packageBag);
-		updatedPackageBag.setId(0);
-		updatedPackageBag.setActive(false);
-			
-		doThrow(new NoSuitableMaintainerFound()).when(bestMaintainerChooser)
-			.chooseBestPackageMaintainer(packageBag);
-		
-		Strategy<RPackage> strategy = new RPackageUpdateStrategy(
-				packageBag, 
-				eventService, 
-				service, 
-				user, 
-				updatedPackageBag, 
-				storage, 
-				bestMaintainerChooser, 
-				repositorySynchronizer
-			);
-		
-		assertThrows(StrategyFailure.class, () -> strategy.perform());
-	}
-	
-	@Test
-	public void updatePackage_shouldCreateChangedVariables_whenPropertiesAreUpdated() 
-			throws Exception {
-		RRepository repository = RRepositoryTestFixture
-				.GET_EXAMPLE_REPOSITORY();
-		User user = UserTestFixture.GET_PACKAGE_MAINTAINER();
-		RPackage packageBag = RPackageTestFixture
-				.GET_PACKAGE_FOR_REPOSITORY_AND_USER(repository, user);
-		
-		packageBag.setActive(true);
-		packageBag.setDeleted(false);
-		repository.setPublished(false);
-		
-		RPackage updatedPackageBag = new RPackage(packageBag);
-		updatedPackageBag.setId(0);
-		updatedPackageBag.setActive(false);
-		updatedPackageBag.setDeleted(true);
-		
-		Set<EventChangedVariable> expectedValues = new HashSet<>();
-		expectedValues.add(new EventChangedVariable("active", "true", "false"));
-		expectedValues.add(new EventChangedVariable("deleted", "false", "true"));
-		
-		when(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag))
-			.thenReturn(user);
-		doAnswer(new Answer<NewsfeedEvent>() {
+        Strategy<RPackage> strategy = new RPackageUpdateStrategy(
+                packageBag,
+                eventService,
+                service,
+                user,
+                updatedPackageBag,
+                storage,
+                bestMaintainerChooser,
+                repositorySynchronizer);
 
-			@Override
-			public NewsfeedEvent answer(InvocationOnMock invocation) 
-					throws Throwable {
-				NewsfeedEvent event = invocation.getArgument(0);
-				return event;
-			}
-		}).when(eventService).create(any());	
-		doAnswer(new AssertEventChangedValuesAnswer(expectedValues))
-			.when(eventService).attachVariables(any(), any());
-		
-		Strategy<RPackage> strategy = new RPackageUpdateStrategy(
-				packageBag, 
-				eventService, 
-				service, 
-				user, 
-				updatedPackageBag, 
-				storage, 
-				bestMaintainerChooser, 
-				repositorySynchronizer
-			);
-		
-		strategy.perform();
-	}
+        strategy.perform();
+
+        verify(repositorySynchronizer, times(1)).storeRepositoryOnRemoteServer(eq(repository), any());
+    }
+
+    @Test
+    public void updatePackage_shouldNotRepublishRepository_whenRepositoryIsNotPublished() throws Exception {
+        RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
+        User user = UserTestFixture.GET_PACKAGE_MAINTAINER();
+        RPackage packageBag = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
+
+        packageBag.setActive(true);
+        repository.setPublished(false);
+
+        RPackage updatedPackageBag = new RPackage(packageBag);
+        updatedPackageBag.setId(0);
+        updatedPackageBag.setActive(false);
+
+        when(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag)).thenReturn(user);
+        doAnswer(new Answer<NewsfeedEvent>() {
+
+                    @Override
+                    public NewsfeedEvent answer(InvocationOnMock invocation) throws Throwable {
+                        NewsfeedEvent event = invocation.getArgument(0);
+                        return event;
+                    }
+                })
+                .when(eventService)
+                .create(any());
+        doNothing().when(eventService).attachVariables(any(), any());
+
+        Strategy<RPackage> strategy = new RPackageUpdateStrategy(
+                packageBag,
+                eventService,
+                service,
+                user,
+                updatedPackageBag,
+                storage,
+                bestMaintainerChooser,
+                repositorySynchronizer);
+
+        strategy.perform();
+
+        verify(repositorySynchronizer, times(0)).storeRepositoryOnRemoteServer(eq(repository), any());
+    }
+
+    @Test
+    public void updatePackage_shouldNotUndelete() throws Exception {
+        RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
+        User user = UserTestFixture.GET_PACKAGE_MAINTAINER();
+        RPackage packageBag = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
+        packageBag.setDeleted(true);
+
+        RPackage updatedPackageBag = new RPackage(packageBag);
+        updatedPackageBag.setDeleted(false);
+
+        Strategy<RPackage> strategy = new RPackageUpdateStrategy(
+                packageBag,
+                eventService,
+                service,
+                user,
+                updatedPackageBag,
+                storage,
+                bestMaintainerChooser,
+                repositorySynchronizer);
+
+        assertTrue(strategy.perform().isDeleted(), "Package should not be undeleted.");
+    }
+
+    @Test
+    public void updatePackage_shouldRefreshMaintainer_whenActiveStateIsChanged() throws Exception {
+        RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
+        User user = UserTestFixture.GET_PACKAGE_MAINTAINER();
+        RPackage packageBag = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
+        User newMaintainer = UserTestFixture.GET_ADMIN();
+
+        packageBag.setActive(true);
+        repository.setPublished(true);
+
+        RPackage updatedPackageBag = new RPackage(packageBag);
+        updatedPackageBag.setId(0);
+        updatedPackageBag.setActive(false);
+
+        when(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag)).thenReturn(newMaintainer);
+        doAnswer(new Answer<NewsfeedEvent>() {
+
+                    @Override
+                    public NewsfeedEvent answer(InvocationOnMock invocation) throws Throwable {
+                        NewsfeedEvent event = invocation.getArgument(0);
+                        return event;
+                    }
+                })
+                .when(eventService)
+                .create(any());
+        doNothing().when(repositorySynchronizer).storeRepositoryOnRemoteServer(eq(repository), any());
+        doNothing().when(eventService).attachVariables(any(), any());
+
+        Strategy<RPackage> strategy = new RPackageUpdateStrategy(
+                packageBag,
+                eventService,
+                service,
+                user,
+                updatedPackageBag,
+                storage,
+                bestMaintainerChooser,
+                repositorySynchronizer);
+
+        strategy.perform();
+
+        verify(bestMaintainerChooser, times(1)).chooseBestPackageMaintainer(packageBag);
+        assertEquals(newMaintainer, packageBag.getUser(), "Maintainer has not been updated for the package.");
+    }
+
+    @Test
+    public void updatePackage_shouldNotRefreshMaintainer_whenOtherPropertyIsChanged() throws Exception {
+        RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
+        User user = UserTestFixture.GET_PACKAGE_MAINTAINER();
+        RPackage packageBag = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
+
+        packageBag.setDeleted(false);
+        repository.setPublished(true);
+
+        RPackage updatedPackageBag = new RPackage(packageBag);
+        updatedPackageBag.setId(0);
+        updatedPackageBag.setDeleted(true);
+
+        doAnswer(new Answer<NewsfeedEvent>() {
+
+                    @Override
+                    public NewsfeedEvent answer(InvocationOnMock invocation) throws Throwable {
+                        NewsfeedEvent event = invocation.getArgument(0);
+                        return event;
+                    }
+                })
+                .when(eventService)
+                .create(any());
+        doNothing().when(repositorySynchronizer).storeRepositoryOnRemoteServer(eq(repository), any());
+        doNothing().when(eventService).attachVariables(any(), any());
+
+        Strategy<RPackage> strategy = new RPackageUpdateStrategy(
+                packageBag,
+                eventService,
+                service,
+                user,
+                updatedPackageBag,
+                storage,
+                bestMaintainerChooser,
+                repositorySynchronizer);
+
+        strategy.perform();
+
+        verify(bestMaintainerChooser, times(0)).chooseBestPackageMaintainer(packageBag);
+    }
+
+    @Test
+    public void updatePackage_whenRepositoryPublicationFails() throws Exception {
+        RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
+        User user = UserTestFixture.GET_PACKAGE_MAINTAINER();
+        RPackage packageBag = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
+
+        packageBag.setActive(true);
+        repository.setPublished(true);
+
+        RPackage updatedPackageBag = new RPackage(packageBag);
+        updatedPackageBag.setId(0);
+        updatedPackageBag.setActive(false);
+
+        when(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag)).thenReturn(user);
+        doAnswer(new Answer<NewsfeedEvent>() {
+
+                    @Override
+                    public NewsfeedEvent answer(InvocationOnMock invocation) throws Throwable {
+                        NewsfeedEvent event = invocation.getArgument(0);
+                        return event;
+                    }
+                })
+                .when(eventService)
+                .create(any());
+        doThrow(new SynchronizeRepositoryException())
+                .when(repositorySynchronizer)
+                .storeRepositoryOnRemoteServer(eq(repository), any());
+        doNothing().when(eventService).attachVariables(any(), any());
+
+        Strategy<RPackage> strategy = new RPackageUpdateStrategy(
+                packageBag,
+                eventService,
+                service,
+                user,
+                updatedPackageBag,
+                storage,
+                bestMaintainerChooser,
+                repositorySynchronizer);
+
+        assertThrows(StrategyFailure.class, () -> strategy.perform());
+    }
+
+    @Test
+    public void updatePackage_whenNoMaintainerCanBeFound() throws Exception {
+        RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
+        User user = UserTestFixture.GET_PACKAGE_MAINTAINER();
+        RPackage packageBag = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
+
+        packageBag.setActive(true);
+        repository.setPublished(true);
+
+        RPackage updatedPackageBag = new RPackage(packageBag);
+        updatedPackageBag.setId(0);
+        updatedPackageBag.setActive(false);
+
+        doThrow(new NoSuitableMaintainerFound()).when(bestMaintainerChooser).chooseBestPackageMaintainer(packageBag);
+
+        Strategy<RPackage> strategy = new RPackageUpdateStrategy(
+                packageBag,
+                eventService,
+                service,
+                user,
+                updatedPackageBag,
+                storage,
+                bestMaintainerChooser,
+                repositorySynchronizer);
+
+        assertThrows(StrategyFailure.class, () -> strategy.perform());
+    }
+
+    @Test
+    public void updatePackage_shouldCreateChangedVariables_whenPropertiesAreUpdated() throws Exception {
+        RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
+        User user = UserTestFixture.GET_PACKAGE_MAINTAINER();
+        RPackage packageBag = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
+
+        packageBag.setActive(true);
+        packageBag.setDeleted(false);
+        repository.setPublished(false);
+
+        RPackage updatedPackageBag = new RPackage(packageBag);
+        updatedPackageBag.setId(0);
+        updatedPackageBag.setActive(false);
+        updatedPackageBag.setDeleted(true);
+
+        Set<EventChangedVariable> expectedValues = new HashSet<>();
+        expectedValues.add(new EventChangedVariable("active", "true", "false"));
+        expectedValues.add(new EventChangedVariable("deleted", "false", "true"));
+
+        when(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag)).thenReturn(user);
+        doAnswer(new Answer<NewsfeedEvent>() {
+
+                    @Override
+                    public NewsfeedEvent answer(InvocationOnMock invocation) throws Throwable {
+                        NewsfeedEvent event = invocation.getArgument(0);
+                        return event;
+                    }
+                })
+                .when(eventService)
+                .create(any());
+        doAnswer(new AssertEventChangedValuesAnswer(expectedValues))
+                .when(eventService)
+                .attachVariables(any(), any());
+
+        Strategy<RPackage> strategy = new RPackageUpdateStrategy(
+                packageBag,
+                eventService,
+                service,
+                user,
+                updatedPackageBag,
+                storage,
+                bestMaintainerChooser,
+                repositorySynchronizer);
+
+        strategy.perform();
+    }
 }

@@ -23,25 +23,23 @@ package eu.openanalytics.rdepot.base.storage.exceptions;
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
+import java.io.Serial;
 import lombok.Getter;
 
-import java.io.Serial;
-
 /**
- * Thrown when {@link Package Package's} 
+ * Thrown when {@link Package Package's}
  * vignette file is invalid or cannot be read for another reason.
  */
 @Getter
 public class ReadPackageVignetteException extends Exception {
 
-	@Serial
-	private static final long serialVersionUID = 620016799696468192L;
-	private final Exception reason;
-	
-	public ReadPackageVignetteException(Exception reason) {
-		super(StaticMessageResolver.getMessage(MessageCodes.COULD_NOT_GET_VIGNETTE)
-				+ ": " + reason.getMessage());
-		this.reason = reason;
-	}
+    @Serial
+    private static final long serialVersionUID = 620016799696468192L;
 
+    private final Exception reason;
+
+    public ReadPackageVignetteException(Exception reason) {
+        super(StaticMessageResolver.getMessage(MessageCodes.COULD_NOT_GET_VIGNETTE) + ": " + reason.getMessage());
+        this.reason = reason;
+    }
 }

@@ -8,7 +8,7 @@ api-token:
 additional-repository-configs:
   paths:
     - /opt/rdepot/declared_repositories
-  
+
 allowed-origin: http://localhost:3001
 
 default-user-configuration:
@@ -25,13 +25,13 @@ default-user-configuration:
 
 declarative: true
 # Authentication related properties
-app:  
-  authentication: simple     
+app:
+  authentication: simple
   simple:
     users:
       - login: einstein
-        password: testpassword  
-        name: Albert Einstein 
+        password: testpassword
+        name: Albert Einstein
       - login: tesla
         password: testpassword
         name: Nicolas Tesla
@@ -46,10 +46,10 @@ app:
         name: New User
       - login: doe
         password: testpassword
-        name: John Doe  
+        name: John Doe
     default:
       admins:
-        - einstein     
+        - einstein
 
 # Database related properties
 db:

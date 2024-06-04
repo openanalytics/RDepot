@@ -32,20 +32,18 @@ import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
  * Creates {@link Repository}.
  * @param <T>
  */
-public abstract class CreateRepositoryStrategy<T extends Repository> 
-	extends CreateStrategy<T> {
+public abstract class CreateRepositoryStrategy<T extends Repository> extends CreateStrategy<T> {
 
-	protected CreateRepositoryStrategy(T resource,
-			RepositoryService<T> service, User requester, NewsfeedEventService newsfeedEventService) {
-		super(resource, service, requester, newsfeedEventService);
-	}
+    protected CreateRepositoryStrategy(
+            T resource, RepositoryService<T> service, User requester, NewsfeedEventService newsfeedEventService) {
+        super(resource, service, requester, newsfeedEventService);
+    }
 
-	@Override
-	protected void postStrategy() throws StrategyFailure {}
-	
-	@Override
-	protected NewsfeedEvent generateEvent(T resource) {
-		return new NewsfeedEvent(requester, NewsfeedEventType.CREATE, resource);
-	}
+    @Override
+    protected void postStrategy() throws StrategyFailure {}
 
+    @Override
+    protected NewsfeedEvent generateEvent(T resource) {
+        return new NewsfeedEvent(requester, NewsfeedEventType.CREATE, resource);
+    }
 }

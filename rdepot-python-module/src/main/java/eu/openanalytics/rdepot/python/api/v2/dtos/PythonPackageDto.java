@@ -21,7 +21,6 @@
 package eu.openanalytics.rdepot.python.api.v2.dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import eu.openanalytics.rdepot.base.api.v2.dtos.PackageDto;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import lombok.Getter;
@@ -32,47 +31,47 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class PythonPackageDto extends PackageDto {
-	
-	private String authorEmail;
-	private String classifiers;
-	private String descriptionContentType;
-	private String homePage;
-	private String keywords;
-	private String license;
-	private String maintainer;
-	private String maintainerEmail;
-	private String platform;
-	private String projectUrl;
-	private String providesExtra;
-	private String requiresDist;
-	private String requiresExternal;
-	private String requiresPython;
-	private String summary;
-	private String hash;
-	
-	public PythonPackageDto(PythonPackage packageBag) {
-		super(packageBag);
-		this.authorEmail = packageBag.getAuthorEmail();
-		this.classifiers = packageBag.getClassifiers();
-		this.descriptionContentType = packageBag.getDescriptionContentType();
-		this.homePage = packageBag.getHomePage();
-		this.keywords = packageBag.getKeywords();
-		this.license = packageBag.getLicense();
-		this.maintainer = packageBag.getMaintainer();
-		this.maintainerEmail = packageBag.getMaintainerEmail();
-		this.platform = packageBag.getPlatform();
-		this.projectUrl = packageBag.getProjectUrl();
-		this.providesExtra = packageBag.getProvidesExtra();
-		this.requiresDist = packageBag.getRequiresDist();
-		this.requiresPython = packageBag.getRequiresPython();
-		this.summary = packageBag.getSummary();
-		this.summary = packageBag.getSummary();
-		this.hash = packageBag.getHash();
-	}
-	
-	@Override
-	@JsonIgnore
-	public PythonPackage getEntity() {
-		return (PythonPackage) entity;
-	}
+
+    private String authorEmail;
+    private String classifiers;
+    private String descriptionContentType;
+    private String homePage;
+    private String keywords;
+    private String license;
+    private String maintainer;
+    private String maintainerEmail;
+    private String platform;
+    private String projectUrl;
+    private String providesExtra;
+    private String requiresDist;
+    private String requiresExternal;
+    private String requiresPython;
+    private String summary;
+    private String hash;
+
+    public PythonPackageDto(PythonPackage packageBag) {
+        super(packageBag);
+        this.authorEmail = packageBag.getAuthorEmail();
+        this.classifiers = packageBag.getClassifiers();
+        this.descriptionContentType = packageBag.getDescriptionContentType();
+        this.homePage = packageBag.getHomePage();
+        this.keywords = packageBag.getKeywords();
+        this.license = packageBag.getLicense();
+        this.maintainer = packageBag.getMaintainer();
+        this.maintainerEmail = packageBag.getMaintainerEmail();
+        this.platform = packageBag.getPlatform();
+        this.projectUrl = packageBag.getProjectUrl();
+        this.providesExtra = packageBag.getProvidesExtra();
+        this.requiresDist = packageBag.getRequiresDist();
+        this.requiresPython = packageBag.getRequiresPython();
+        this.summary = packageBag.getSummary();
+        this.summary = packageBag.getSummary();
+        this.hash = packageBag.getHash();
+    }
+
+    @Override
+    @JsonIgnore
+    public PythonPackage getEntity() {
+        return (PythonPackage) entity;
+    }
 }

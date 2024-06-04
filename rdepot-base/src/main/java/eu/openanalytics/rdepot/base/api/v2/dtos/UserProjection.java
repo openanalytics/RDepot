@@ -36,15 +36,15 @@ import lombok.ToString;
 @Setter
 public class UserProjection {
 
-	private int id;
-	private String name;
-	private String login;
-	private String email;
-	
-	public UserProjection(User user) {
-		this.id = user.getId();
-		this.name = user.getName();
-		this.login = user.getLogin();
-		this.email = user.getEmail();
-	}
+    private int id;
+    private String name;
+    private String login;
+    private String email;
+
+    public UserProjection(User user) {
+        this.id = user.getId();
+        this.name = user.getName();
+        this.login = user.getLogin();
+        this.email = user.getEmail();
+    }
 }

@@ -1,0 +1,77 @@
+{
+  "code": 201,
+  "data": {
+    "approver": null,
+    "submitter": {
+      "name": "Galileo Galilei",
+      "id": 6,
+      "login": "galieleo",
+      "email": "galieleo@ldap.forumsys.com"
+    },
+    "created": "2024-05-21",
+    "changes": null,
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/r/submissions/47"
+      },
+      {
+        "rel": "submissionList",
+        "href": "http://localhost:8017/api/v2/manager/r/submissions"
+      },
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/r/submissions/47",
+        "type": "PATCH",
+        "modifiableProperties": [
+          "state"
+        ]
+      }
+    ],
+    "id": 47,
+    "state": "WAITING",
+    "technology": "R",
+    "packageBag": {
+      "author": "Carsten F. Dormann, Jochen Fruend and Bernd Gruber, with additional code from Stephen Beckett, Mariano Devoto, Jose Iriondo, Tove Opsahl, Rouven Strauss and Diego Vazquez, also based on C-code developed by Nils Bluethgen, Aaron Clauset/Rouven Strauss and Miguel Rodriguez-Girones",
+      "active": false,
+      "description": "Functions to visualise webs and calculate a series of indices commonly used to describe pattern in (ecological) webs. It focuses on webs consisting of only two levels (bipartite), e.g. pollination webs or predator-prey-webs. Visualisation is important to get an idea of what we are actually looking at, while the indices summarise different aspects of the web's topology.",
+      "technology": "R",
+      "repository": {
+        "name": "testrepo3",
+        "id": 4,
+        "published": false,
+        "technology": "R",
+        "publicationUri": "http://localhost/repo/testrepo3"
+      },
+      "title": "Visualising Bipartite Networks and Calculating Some (Ecological) Indices\\n",
+      "version": "2.13",
+      "url": "https://github.com/biometry/bipartite",
+      "deleted": false,
+      "name": "bipartite",
+      "submission": {
+        "id": 47,
+        "state": "WAITING"
+      },
+      "links": [
+        {
+          "rel": "self",
+          "href": "http://localhost:8017/api/v2/manager/r/packages/47"
+        },
+        {
+          "rel": "packageList",
+          "href": "http://localhost:8017/api/v2/manager/packages"
+        }
+      ],
+      "id": 47,
+      "user": {
+        "name": "Albert Einstein",
+        "id": 4,
+        "login": "einstein",
+        "email": "einstein@ldap.forumsys.com"
+      }
+    }
+  },
+  "messageCode": "success.resource.created",
+  "message": "Your resource has been created successfully.",
+  "status": "SUCCESS"
+}

@@ -20,42 +20,8 @@
  */
 package eu.openanalytics.rdepot.python.api.v2.controllers;
 
-import java.security.Principal;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import org.springdoc.core.annotations.ParameterObject;
-import org.springdoc.core.converters.models.PageableAsQueryParam;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.util.Pair;
-import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.PagedModel;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2Controller;
 import eu.openanalytics.rdepot.base.api.v2.converters.SubmissionDtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.converters.exceptions.EntityResolutionException;
@@ -71,8 +37,8 @@ import eu.openanalytics.rdepot.base.api.v2.exceptions.MalformedPatchException;
 import eu.openanalytics.rdepot.base.api.v2.exceptions.RepositoryNotFound;
 import eu.openanalytics.rdepot.base.api.v2.exceptions.SubmissionNotFound;
 import eu.openanalytics.rdepot.base.api.v2.exceptions.UserNotAuthorized;
+import eu.openanalytics.rdepot.base.api.v2.resolvers.CommonPageableSortResolver;
 import eu.openanalytics.rdepot.base.api.v2.resolvers.DtoResolvedPageable;
-import eu.openanalytics.rdepot.base.api.v2.resolvers.PageableSortResolver;
 import eu.openanalytics.rdepot.base.api.v2.validation.PageableValidator;
 import eu.openanalytics.rdepot.base.entities.Role;
 import eu.openanalytics.rdepot.base.entities.Submission;
@@ -110,7 +76,39 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonPatch;
 import jakarta.json.spi.JsonProvider;
+import java.security.Principal;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springdoc.core.converters.models.PageableAsQueryParam;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.util.Pair;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * REST controller implementation for Python submissions.
@@ -120,319 +118,351 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping(value = "/api/v2/manager/python/submissions")
 public class PythonSubmissionController extends ApiV2Controller<Submission, SubmissionDto> {
 
-	private SubmissionService submissionService;
-	private UserService userService;
-	private final PythonStrategyFactory strategyFactory;
-	private final SecurityMediator securityMediator;
-	private final PythonRepositoryService repositoryService;
-	private final PythonPackageValidator packageValidator;
-	private final PythonSubmissionDeleter submissionDeleter;
-	private final SubmissionPatchValidator submissionPatchValidator;
-	private final PageableValidator pageableValidator;
-	private final PageableSortResolver pageableSortResolver;
+    private SubmissionService submissionService;
+    private UserService userService;
+    private final PythonStrategyFactory strategyFactory;
+    private final SecurityMediator securityMediator;
+    private final PythonRepositoryService repositoryService;
+    private final PythonPackageValidator packageValidator;
+    private final PythonSubmissionDeleter submissionDeleter;
+    private final SubmissionPatchValidator submissionPatchValidator;
+    private final PageableValidator pageableValidator;
+    private final CommonPageableSortResolver pageableSortResolver;
 
-	public PythonSubmissionController(MessageSource messageSource, PythonSubmissionModelAssembler modelAssembler,
-			PagedResourcesAssembler<Submission> pagedModelAssembler, ObjectMapper objectMapper,
-			SubmissionService submissionService, UserService userService, SecurityMediator securityMediator,
-			PythonRepositoryService repositoryService, PythonPackageValidator packageValidator,
-			PythonSubmissionDeleter submissionDeleter,
-			SubmissionDtoConverter submissionDtoConverter, PythonStrategyFactory strategyFactory,
-			SubmissionPatchValidator submissionPatchValidator,
-			PageableValidator pageableValidator,
-			PageableSortResolver pageableSortResolver
-			) {
-		super(messageSource, 
-				LocaleContextHolder.getLocale(), 
-				modelAssembler, 
-				pagedModelAssembler, 
-				objectMapper,
-				SubmissionDto.class, 
-				Optional.empty(), 
-				submissionDtoConverter 
-				);
-		this.repositoryService = repositoryService;
-		this.submissionService = submissionService;
-		this.userService = userService;
-		this.strategyFactory = strategyFactory;
-		this.securityMediator = securityMediator;
-		this.packageValidator = packageValidator;
-		this.submissionDeleter = submissionDeleter;
-		this.submissionPatchValidator = submissionPatchValidator;
-		this.pageableValidator = pageableValidator;
-		this.pageableSortResolver = pageableSortResolver;
-	}
+    @Value("${replacing.packages.enabled}")
+    private boolean replacingPackagesEnabled;
 
-	/**
-	 * Submits package archive and creates submission.
-	 * 
-	 * @param multipartFile  package file
-	 * @param repository     name of the destination repository
-	 * @param generateManual specifies if manuals should be generated for the
-	 *                       package
-	 * @param replace        specified if previous version should be replaced
-	 * @param principal      used for authorization
-	 * @return DTO with created submission
-	 * @throws UserNotAuthorized
-	 * @throws CreateException    if there was an error on the server side
-	 * @throws InvalidSubmission  if user provided invalid file or parameters
-	 * @throws RepositoryNotFound
-	 */
-	@PreAuthorize("hasAuthority('user')")
-	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	@ResponseStatus(HttpStatus.CREATED)
-	@Operation(operationId = "submitPythonPackage")
-	public @ResponseBody ResponseEntity<?> submitPackage(@RequestParam("file") MultipartFile multipartFile,
-			@RequestParam("repository") String repository,
-			@RequestParam(name = "generateManual", defaultValue = "${generate-manuals}") Boolean generateManual,
-			@RequestParam(name = "replace", defaultValue = "false") Boolean replace, Principal principal)
-			throws UserNotAuthorized, CreateException, InvalidSubmission, RepositoryNotFound {
+    public PythonSubmissionController(
+            MessageSource messageSource,
+            PythonSubmissionModelAssembler modelAssembler,
+            PagedResourcesAssembler<Submission> pagedModelAssembler,
+            ObjectMapper objectMapper,
+            SubmissionService submissionService,
+            UserService userService,
+            SecurityMediator securityMediator,
+            PythonRepositoryService repositoryService,
+            PythonPackageValidator packageValidator,
+            PythonSubmissionDeleter submissionDeleter,
+            SubmissionDtoConverter submissionDtoConverter,
+            PythonStrategyFactory strategyFactory,
+            SubmissionPatchValidator submissionPatchValidator,
+            PageableValidator pageableValidator,
+            CommonPageableSortResolver pageableSortResolver) {
+        super(
+                messageSource,
+                LocaleContextHolder.getLocale(),
+                modelAssembler,
+                pagedModelAssembler,
+                objectMapper,
+                SubmissionDto.class,
+                Optional.empty(),
+                submissionDtoConverter);
+        this.repositoryService = repositoryService;
+        this.submissionService = submissionService;
+        this.userService = userService;
+        this.strategyFactory = strategyFactory;
+        this.securityMediator = securityMediator;
+        this.packageValidator = packageValidator;
+        this.submissionDeleter = submissionDeleter;
+        this.submissionPatchValidator = submissionPatchValidator;
+        this.pageableValidator = pageableValidator;
+        this.pageableSortResolver = pageableSortResolver;
+    }
 
-		User uploader = userService.findByLogin(principal.getName())
-				.orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
-		PythonRepository repositoryEntity = repositoryService.findByNameAndDeleted(repository, false)
-				.orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
+    /**
+     * Submits package archive and creates submission.
+     *
+     * @param multipartFile  package file
+     * @param repository     name of the destination repository
+     * @param generateManual specifies if manuals should be generated for the
+     *                       package
+     * @param replace        specified if previous version should be replaced
+     * @param principal      used for authorization
+     * @return DTO with created submission
+     * @throws UserNotAuthorized
+     * @throws CreateException    if there was an error on the server side
+     * @throws InvalidSubmission  if user provided invalid file or parameters
+     * @throws RepositoryNotFound
+     */
+    @PreAuthorize("hasAuthority('user')")
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(operationId = "submitPythonPackage")
+    public @ResponseBody ResponseEntity<?> submitPackage(
+            @RequestParam("file") MultipartFile multipartFile,
+            @RequestParam("repository") final String repository,
+            @RequestParam(name = "generateManual", defaultValue = "${generate-manuals}") final Boolean generateManual,
+            @RequestParam(name = "replace", defaultValue = "false") final Boolean replaceRequestParam,
+            Principal principal)
+            throws UserNotAuthorized, CreateException, InvalidSubmission, RepositoryNotFound {
 
-		final ValidationResult validationResult = ValidationResultImpl.createResult();
-		packageValidator.validate(multipartFile, validationResult);
-		if(validationResult.hasErrors()) {
-			return handleValidationError(validationResult);
-		}
+        boolean replace = replaceRequestParam;
 
-		PackageUploadRequest<PythonRepository> request = new PackageUploadRequest<>(multipartFile, repositoryEntity,
-				generateManual, replace);
+        User uploader = userService
+                .findByLogin(principal.getName())
+                .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
+        PythonRepository repositoryEntity = repositoryService
+                .findByNameAndDeleted(repository, false)
+                .orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
 
-		Strategy<Submission> strategy = strategyFactory.uploadPackageStrategy(request, uploader);
+        final ValidationResult validationResult = ValidationResultImpl.createResult();
+        packageValidator.validate(multipartFile, validationResult);
+        if (validationResult.hasErrors()) {
+            return handleValidationError(validationResult);
+        }
 
-		try {
-			final Submission submission = strategy.perform();
-			return handleCreatedForSingleEntity(submission);
-		}
-		catch(NonFatalSubmissionStrategyFailure e) {
-			if(e.getReason() instanceof SynchronizeRepositoryException w) {
-				log.debug(e.getMessage(), e);
-				return handleWarningForSingleEntity(e.getSubmission(),
-						MessageCodes.WARNING_SYNCHRONIZATION_FAILURE, uploader, true);
-			} else {
-				log.warn(e.getMessage(), e);
-				return handleWarningForSingleEntity(e.getSubmission(),
-						MessageCodes.WARNING_UNKNOWN, uploader, true);
-			}
-		}
-		catch (StrategyFailure e) {
-			log.error(e.getMessage(), e);
-			if (e.getReason() instanceof PackageDuplicateWithReplaceOff replaceOffWarning) {
-				log.debug("warning", Pair.of(Objects.requireNonNull(multipartFile.getOriginalFilename()), e.getMessage()));
-				return handleWarningForSingleEntity(replaceOffWarning.getSubmission(),
-						MessageCodes.WARNING_PACKAGE_DUPLICATE, uploader, false);
-			}
-			if (e.getReason() instanceof PackageValidationException) {
-				return handleValidationError(e.getReason());
-			}
+        if (!replacingPackagesEnabled) replace = false;
 
-			throw new CreateException(messageSource, locale);
-		}
-	}
+        PackageUploadRequest<PythonRepository> request =
+                new PackageUploadRequest<>(multipartFile, repositoryEntity, generateManual, replace);
 
-	/**
-	 * Updates a submission.
-	 * 
-	 * @param principal used for authorization
-	 * @param id
-	 * @param jsonPatch JsonPatch object
-	 * @return
-	 * @throws SubmissionNotFound
-	 * @throws UserNotAuthorized
-	 * @throws ApplyPatchException     when some internal server errors occurs
-	 * @throws MalformedPatchException when provided JSON Patch object is incorrect
-	 *                                 (e.g. alters non-existing fields)
-	 */
-	@PreAuthorize("hasAuthority('user')")
-	@PatchMapping(value = "/{id}", consumes = "application/json-patch+json")
-	@ResponseStatus(HttpStatus.OK)
-	@Operation(operationId = "updatePythonSubmission")
-	public @ResponseBody ResponseEntity<?> updateSubmission(Principal principal, @PathVariable("id") Integer id,
-			@RequestBody JsonPatch jsonPatch)
-			throws SubmissionNotFound, UserNotAuthorized, ApplyPatchException, MalformedPatchException {
-		Submission submission = submissionService.findById(id)
-				.orElseThrow(() -> new SubmissionNotFound(messageSource, locale));
+        Strategy<Submission> strategy = strategyFactory.uploadPackageStrategy(request, uploader);
 
-		jsonPatch = fixPatch(jsonPatch);
+        try {
+            final Submission submission = strategy.perform();
+            return handleCreatedForSingleEntity(submission);
+        } catch (NonFatalSubmissionStrategyFailure e) {
+            if (e.getReason() instanceof SynchronizeRepositoryException w) {
+                log.debug(e.getMessage(), e);
+                return handleWarningForSingleEntity(
+                        e.getSubmission(), MessageCodes.WARNING_SYNCHRONIZATION_FAILURE, uploader, true);
+            } else {
+                log.warn(e.getMessage(), e);
+                return handleWarningForSingleEntity(e.getSubmission(), MessageCodes.WARNING_UNKNOWN, uploader, true);
+            }
+        } catch (StrategyFailure e) {
+            log.error(e.getMessage(), e);
+            if (e.getReason() instanceof PackageDuplicateWithReplaceOff replaceOffWarning) {
+                log.debug(
+                        "warning",
+                        Pair.of(Objects.requireNonNull(multipartFile.getOriginalFilename()), e.getMessage()));
+                if (!replacingPackagesEnabled && replaceRequestParam)
+                    return handleWarningForSingleEntity(
+                            replaceOffWarning.getSubmission(),
+                            MessageCodes.WARNING_REPLACING_PACKAGES_DISABLED,
+                            uploader,
+                            false);
+                else
+                    return handleWarningForSingleEntity(
+                            replaceOffWarning.getSubmission(), MessageCodes.WARNING_PACKAGE_DUPLICATE, uploader, false);
+            }
+            if (e.getReason() instanceof PackageValidationException) {
+                return handleValidationError(e.getReason());
+            }
 
-		User requester = userService.findByLogin(principal.getName())
-				.orElseThrow(() -> new SubmissionNotFound(messageSource, locale));
-		PythonRepository repository = repositoryService.findById(submission.getPackage().getRepository().getId())
-				.orElseThrow(() -> new SubmissionNotFound(messageSource, locale));
+            throw new CreateException(messageSource, locale);
+        }
+    }
 
-		try {
-			SubmissionDto submissionDto = applyPatchToEntity(jsonPatch, submission);
+    /**
+     * Updates a submission.
+     *
+     * @param principal used for authorization
+     * @param id
+     * @param jsonPatch JsonPatch object
+     * @return
+     * @throws SubmissionNotFound
+     * @throws UserNotAuthorized
+     * @throws ApplyPatchException     when some internal server errors occurs
+     * @throws MalformedPatchException when provided JSON Patch object is incorrect
+     *                                 (e.g. alters non-existing fields)
+     */
+    @PreAuthorize("hasAuthority('user')")
+    @PatchMapping(value = "/{id}", consumes = "application/json-patch+json")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(operationId = "updatePythonSubmission")
+    public @ResponseBody ResponseEntity<?> updateSubmission(
+            Principal principal, @PathVariable("id") Integer id, @RequestBody JsonPatch jsonPatch)
+            throws SubmissionNotFound, UserNotAuthorized, ApplyPatchException, MalformedPatchException {
+        Submission submission =
+                submissionService.findById(id).orElseThrow(() -> new SubmissionNotFound(messageSource, locale));
 
-			if (!securityMediator.isAuthorizedToEdit(submission, submissionDto, requester))
-				throw new UserNotAuthorized(messageSource, locale);
+        jsonPatch = fixPatch(jsonPatch);
 
-			submissionPatchValidator.validatePatch(jsonPatch, submission, submissionDto);
+        User requester = userService
+                .findByLogin(principal.getName())
+                .orElseThrow(() -> new SubmissionNotFound(messageSource, locale));
+        PythonRepository repository = repositoryService
+                .findById(submission.getPackage().getRepository().getId())
+                .orElseThrow(() -> new SubmissionNotFound(messageSource, locale));
 
-			Strategy<Submission> strategy = strategyFactory.updateSubmissionStrategy(submission,
-					dtoConverter.resolveDtoToEntity(submissionDto), repository, requester);
-			submission = strategy.perform();
-		} catch (StrategyFailure | EntityResolutionException e) {
-			log.error(e.getClass().getName() + ": " + e.getMessage(), e);
-			throw new ApplyPatchException(messageSource, locale);
-		} catch (JsonProcessingException | JsonException | PatchValidationException e) {
-			throw new MalformedPatchException(messageSource, locale, e);
-		}
+        try {
+            SubmissionDto submissionDto = applyPatchToEntity(jsonPatch, submission);
 
-		return handleSuccessForSingleEntity(submission);
-	}
+            if (!securityMediator.isAuthorizedToEdit(submission, submissionDto, requester))
+                throw new UserNotAuthorized(messageSource, locale);
 
-	/**
-	 * This method is supposed to make state field case insensitive.
-	 * 
-	 * @param jsonPatch to fix
-	 * @return fixed patch
-	 */
-	private JsonPatch fixPatch(JsonPatch jsonPatch) {
-		JsonArray jsonArray = jsonPatch.toJsonArray();
-		JsonArrayBuilder arrBuilder = Json.createArrayBuilder();
+            submissionPatchValidator.validatePatch(jsonPatch, submission, submissionDto);
 
-		for (int i = 0; i < jsonArray.size(); i++) {
-			JsonObject obj = jsonArray.getJsonObject(i);
+            Strategy<Submission> strategy = strategyFactory.updateSubmissionStrategy(
+                    submission, dtoConverter.resolveDtoToEntity(submissionDto), repository, requester);
+            submission = strategy.perform();
+        } catch (StrategyFailure | EntityResolutionException e) {
+            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            throw new ApplyPatchException(messageSource, locale);
+        } catch (JsonProcessingException | JsonException | PatchValidationException e) {
+            throw new MalformedPatchException(messageSource, locale, e);
+        }
 
-			if (obj.containsKey("op") && obj.containsKey("path") && obj.getString("op").equals("replace")
-					&& obj.getString("path").equals("/state") && obj.containsKey("value")) {
+        return handleSuccessForSingleEntity(submission);
+    }
 
-				JsonObjectBuilder builder = Json.createObjectBuilder().add("value",
-						obj.getString("value").toUpperCase());
+    /**
+     * This method is supposed to make state field case insensitive.
+     *
+     * @param jsonPatch to fix
+     * @return fixed patch
+     */
+    private JsonPatch fixPatch(JsonPatch jsonPatch) {
+        JsonArray jsonArray = jsonPatch.toJsonArray();
+        JsonArrayBuilder arrBuilder = Json.createArrayBuilder();
 
-				obj.entrySet().stream().filter(e -> !e.getKey().equals("value"))
-						.forEach(e -> builder.add(e.getKey(), e.getValue()));
-				obj = builder.build();
-			}
-			arrBuilder.add(obj);
-		}
-		return JsonProvider.provider().createPatch(arrBuilder.build());
-	}
+        for (int i = 0; i < jsonArray.size(); i++) {
+            JsonObject obj = jsonArray.getJsonObject(i);
 
-	/**
-	 * Fetches all submissions.
-	 * 
-	 * @param principal   used for authorization
-	 * @param pageable    carries parameters required for pagination
-	 * @param states       show only submissions of particular states (waiting,
-	 *                    accepted, cancelled, rejected)
-	 * @return collection of submissions
-	 */
-	@PreAuthorize("hasAuthority('user')")
-	@GetMapping
-	@ResponseStatus(HttpStatus.OK)
-	@PageableAsQueryParam
-	@Operation(operationId = "getAllPythonSubmissions")
-	public @ResponseBody ResponseDto<PagedModel<EntityModel<SubmissionDto>>> getAllSubmissions(Principal principal,
-			@ParameterObject Pageable pageable,
-			@RequestParam(name = "state", required = false) List<SubmissionState> states,
-			@RequestParam(name = "technology", required = false) List<String> technologies,
-			@RequestParam(name = "repository", required = false) List<String> repositories,
-			@RequestParam(name = "fromDate", required = false) Optional<String> fromDate,
-			@RequestParam(name = "toDate", required = false) Optional<String> toDate,
-			@RequestParam(name = "search", required = false) Optional<String> search
-			)
-			throws ApiException {
-		userService.findByLogin(principal.getName()).orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
+            if (obj.containsKey("op")
+                    && obj.containsKey("path")
+                    && obj.getString("op").equals("replace")
+                    && obj.getString("path").equals("/state")
+                    && obj.containsKey("value")) {
 
-		final DtoResolvedPageable resolvedPageable = pageableSortResolver.resolve(pageable);
-		pageableValidator.validate(SubmissionDto.class, resolvedPageable);
-		
-		Specification<Submission> specification = Specification.where(SubmissionSpecs.ofTechnology(Arrays.asList("Python")));
-		
-		if(Objects.nonNull(states)) {
-			specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.ofState(states));
-		}
-		
-		if(Objects.nonNull(technologies)) {
-			specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.ofTechnology(technologies));
-		}
-		
-		if(Objects.nonNull(repositories)) {
-			specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.ofRepository(repositories));
-		}
-		
-		if(fromDate.isPresent()) {
-			specification = SpecificationUtils
-					.andComponent(specification, SubmissionSpecs.fromDate(fromDate.get()));
-		}
-		
-		if(toDate.isPresent()) {
-			specification = SpecificationUtils
-					.andComponent(specification, SubmissionSpecs.toDate(toDate.get()));		
-		}
-		
-		if(search.isPresent()) {
-			specification = SpecificationUtils
-					.andComponent(specification, SubmissionSpecs.ofPackage(search.get()))
-					.or(SubmissionSpecs.ofSubmitter(search.get()))
-					.or(SubmissionSpecs.ofApprover(search.get()));
-		}
+                JsonObjectBuilder builder = Json.createObjectBuilder()
+                        .add("value", obj.getString("value").toUpperCase());
 
-		if (specification != null) {
-			return handleSuccessForPagedCollection(submissionService.findAllBySpecification(specification, resolvedPageable));
-		} else {
-			return handleSuccessForPagedCollection(submissionService.findAll(resolvedPageable));
-		}
-	}
+                obj.entrySet().stream()
+                        .filter(e -> !e.getKey().equals("value"))
+                        .forEach(e -> builder.add(e.getKey(), e.getValue()));
+                obj = builder.build();
+            }
+            arrBuilder.add(obj);
+        }
+        return JsonProvider.provider().createPatch(arrBuilder.build());
+    }
 
-	/**
-	 * Find a submission of given id
-	 * 
-	 * @param principal used for authorization
-	 * @param id
-	 * @return Submission DTO
-	 * @throws SubmissionNotFound
-	 * @throws UserNotAuthorized
-	 */
-	@PreAuthorize("hasAuthority('user')")
-	@GetMapping("/{id}")
-	@ResponseStatus(HttpStatus.OK)
-	@Operation(operationId = "getPythonSubmissionById")
-	public @ResponseBody ResponseEntity<ResponseDto<EntityModel<SubmissionDto>>> getSubmissionById(Principal principal,
-			@PathVariable("id") Integer id) throws SubmissionNotFound, UserNotAuthorized {
-		userService.findByLogin(principal.getName()).orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
-		Submission submission = submissionService.findById(id)
-				.orElseThrow(() -> new SubmissionNotFound(messageSource, locale));
-		if (submission.getPackage().getTechnology().getName().equals("Python")) {
-			return handleSuccessForSingleEntity(submission);
-		} else {
-			throw new SubmissionNotFound(messageSource, locale);
-		}
-	}
+    /**
+     * Fetches all submissions.
+     *
+     * @param principal   used for authorization
+     * @param pageable    carries parameters required for pagination
+     * @param states       show only submissions of particular states (waiting,
+     *                    accepted, cancelled, rejected)
+     * @return collection of submissions
+     */
+    @PreAuthorize("hasAuthority('user')")
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    @PageableAsQueryParam
+    @Operation(operationId = "getAllPythonSubmissions")
+    public @ResponseBody ResponseDto<PagedModel<EntityModel<SubmissionDto>>> getAllSubmissions(
+            Principal principal,
+            @ParameterObject Pageable pageable,
+            @RequestParam(name = "state", required = false) List<SubmissionState> states,
+            @RequestParam(name = "technology", required = false) List<String> technologies,
+            @RequestParam(name = "repository", required = false) List<String> repositories,
+            @RequestParam(name = "fromDate", required = false) Optional<String> fromDate,
+            @RequestParam(name = "toDate", required = false) Optional<String> toDate,
+            @RequestParam(name = "search", required = false) Optional<String> search)
+            throws ApiException {
+        if (!userService.findByLogin(principal.getName()).isPresent()) {
+            throw new UserNotAuthorized(messageSource, locale);
+        }
 
-	/**
-	 * Erases submission from database and file system. Requires admin privileges.
-	 * 
-	 * @param principal used for authorization
-	 * @param id
-	 * @return
-	 * @throws SubmissionNotFound
-	 * @throws UserNotAuthorized
-	 * @throws DeleteException
-	 */
-	@PreAuthorize("hasAuthority('admin')")
-	@DeleteMapping("/{id}")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@Operation(operationId = "deletePythonSubmission")
-	public void deleteSubmission(Principal principal, @PathVariable("id") Integer id)
-			throws SubmissionNotFound, UserNotAuthorized, DeleteException {
-		Optional<User> requester = userService.findByLogin(principal.getName());
+        final DtoResolvedPageable resolvedPageable = pageableSortResolver.resolve(pageable);
+        pageableValidator.validate(SubmissionDto.class, resolvedPageable);
 
-		if (requester.isEmpty() || requester.get().getRole().getValue() != Role.VALUE.ADMIN)
-			throw new UserNotAuthorized(messageSource, locale);
+        Specification<Submission> specification =
+                Specification.where(SubmissionSpecs.ofTechnology(Arrays.asList("Python")));
 
-		Submission submission = submissionService.findById(id)
-				.orElseThrow(() -> new SubmissionNotFound(messageSource, locale));
+        if (Objects.nonNull(states)) {
+            specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.ofState(states));
+        }
 
-		try {
-			submissionDeleter.delete(submission);
-		} catch (DeleteEntityException e) {
-			log.error(e.getClass().getName() + ": " + e.getMessage(), e);
-			throw new DeleteException(messageSource, locale);
-		}
-	}
+        if (Objects.nonNull(technologies)) {
+            specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.ofTechnology(technologies));
+        }
+
+        if (Objects.nonNull(repositories)) {
+            specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.ofRepository(repositories));
+        }
+
+        if (fromDate.isPresent()) {
+            specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.fromDate(fromDate.get()));
+        }
+
+        if (toDate.isPresent()) {
+            specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.toDate(toDate.get()));
+        }
+
+        if (search.isPresent()) {
+            specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.ofPackage(search.get()))
+                    .or(SubmissionSpecs.ofSubmitter(search.get()))
+                    .or(SubmissionSpecs.ofApprover(search.get()));
+        }
+
+        if (specification != null) {
+            return handleSuccessForPagedCollection(
+                    submissionService.findAllBySpecification(specification, resolvedPageable));
+        } else {
+            return handleSuccessForPagedCollection(submissionService.findAll(resolvedPageable));
+        }
+    }
+
+    /**
+     * Find a submission of given id
+     *
+     * @param principal used for authorization
+     * @param id
+     * @return Submission DTO
+     * @throws SubmissionNotFound
+     * @throws UserNotAuthorized
+     */
+    @PreAuthorize("hasAuthority('user')")
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(operationId = "getPythonSubmissionById")
+    public @ResponseBody ResponseEntity<ResponseDto<EntityModel<SubmissionDto>>> getSubmissionById(
+            Principal principal, @PathVariable("id") Integer id) throws SubmissionNotFound, UserNotAuthorized {
+        if (!userService.findByLogin(principal.getName()).isPresent()) {
+            throw new UserNotAuthorized(messageSource, locale);
+        }
+        Submission submission =
+                submissionService.findById(id).orElseThrow(() -> new SubmissionNotFound(messageSource, locale));
+        if (submission.getPackage().getTechnology().getName().equals("Python")) {
+            return handleSuccessForSingleEntity(submission);
+        } else {
+            throw new SubmissionNotFound(messageSource, locale);
+        }
+    }
+
+    /**
+     * Erases submission from database and file system. Requires admin privileges.
+     *
+     * @param principal used for authorization
+     * @param id
+     * @return
+     * @throws SubmissionNotFound
+     * @throws UserNotAuthorized
+     * @throws DeleteException
+     */
+    @PreAuthorize("hasAuthority('admin')")
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(operationId = "deletePythonSubmission")
+    public void deleteSubmission(Principal principal, @PathVariable("id") Integer id)
+            throws SubmissionNotFound, UserNotAuthorized, DeleteException {
+        Optional<User> requester = userService.findByLogin(principal.getName());
+
+        if (requester.isEmpty() || requester.get().getRole().getValue() != Role.VALUE.ADMIN)
+            throw new UserNotAuthorized(messageSource, locale);
+
+        Submission submission =
+                submissionService.findById(id).orElseThrow(() -> new SubmissionNotFound(messageSource, locale));
+
+        try {
+            submissionDeleter.delete(submission);
+        } catch (DeleteEntityException e) {
+            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            throw new DeleteException(messageSource, locale);
+        }
+    }
 }

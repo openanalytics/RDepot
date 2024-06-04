@@ -31,31 +31,29 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Collection;
 import lombok.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-import java.util.Collection;
-
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
-	private final String TOKEN_PREFIX = "Bearer ";
-	private final String HEADER_STRING = "Authorization";	
-	private final ApiTokenProperties apiTokenProperties;	
-	private final SimpleCustomBindAuthenticator authenticator;
-	
-	public JWTAuthorizationFilter(ApiTokenProperties apiTokenProperties,
-                                  SimpleCustomBindAuthenticator authenticator) {
-		this.apiTokenProperties = apiTokenProperties;
-		this.authenticator = authenticator;
-	}
-	
-	@Override
-    protected void doFilterInternal(HttpServletRequest req,
-                                    @NonNull HttpServletResponse res,
-                                    @NonNull FilterChain chain) throws IOException, ServletException {
+    private final String TOKEN_PREFIX = "Bearer ";
+    private final String HEADER_STRING = "Authorization";
+    private final ApiTokenProperties apiTokenProperties;
+    private final SimpleCustomBindAuthenticator authenticator;
+
+    public JWTAuthorizationFilter(ApiTokenProperties apiTokenProperties, SimpleCustomBindAuthenticator authenticator) {
+        this.apiTokenProperties = apiTokenProperties;
+        this.authenticator = authenticator;
+    }
+
+    @Override
+    protected void doFilterInternal(
+            HttpServletRequest req, @NonNull HttpServletResponse res, @NonNull FilterChain chain)
+            throws IOException, ServletException {
         String header = req.getHeader(HEADER_STRING);
 
         if (header == null || !header.startsWith(TOKEN_PREFIX)) {
@@ -65,42 +63,40 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
         UsernamePasswordAuthenticationToken authentication;
         try {
-        	authentication = getAuthentication(req);
-        } catch(AuthException e) {
-        	authentication = null;
+            authentication = getAuthentication(req);
+        } catch (AuthException e) {
+            authentication = null;
         }
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         chain.doFilter(req, res);
     }
-		
-	private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) throws AuthException {
+
+    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) throws AuthException {
         String token = request.getHeader(HEADER_STRING);
-        if (token == null)
-        	throw new JWTException("Null token");
-    	
+        if (token == null) throw new JWTException("Null token");
+
         token = token.replace(TOKEN_PREFIX, "");
-    	        
+
         DecodedJWT decodedToken;
         try {
-        	decodedToken = JWT.require(Algorithm.HMAC512(apiTokenProperties.getSecret().getBytes()))
-        			.withAudience(apiTokenProperties.getAudience())
-        			.withIssuer(apiTokenProperties.getIssuer())
+            decodedToken = JWT.require(
+                            Algorithm.HMAC512(apiTokenProperties.getSecret().getBytes()))
+                    .withAudience(apiTokenProperties.getAudience())
+                    .withIssuer(apiTokenProperties.getIssuer())
                     .build()
                     .verify(token);
-		} catch (JWTVerificationException e) {
-			throw new JWTException(e.getMessage());
-		}        
+        } catch (JWTVerificationException e) {
+            throw new JWTException(e.getMessage());
+        }
 
         String userLogin = decodedToken.getSubject();
         String userEmail = decodedToken.getClaim("email").asString();
         String fullName = decodedToken.getClaim("name").asString();
 
-        if (userLogin == null)
-        	throw new JWTException("Null user login");
+        if (userLogin == null) throw new JWTException("Null user login");
 
-		Collection<? extends GrantedAuthority> authorities = authenticator.authenticate(userLogin, userEmail, fullName);
-		return new UsernamePasswordAuthenticationToken(userLogin, null, authorities);
+        Collection<? extends GrantedAuthority> authorities = authenticator.authenticate(userLogin, userEmail, fullName);
+        return new UsernamePasswordAuthenticationToken(userLogin, null, authorities);
     }
-
 }

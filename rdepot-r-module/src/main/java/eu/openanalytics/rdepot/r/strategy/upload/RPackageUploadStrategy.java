@@ -40,7 +40,6 @@ import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.mediator.deletion.RPackageDeleter;
 import eu.openanalytics.rdepot.r.storage.RStorage;
 import eu.openanalytics.rdepot.r.synchronization.RRepositorySynchronizer;
-
 import java.util.Properties;
 
 /**
@@ -48,71 +47,73 @@ import java.util.Properties;
  */
 public class RPackageUploadStrategy extends DefaultPackageUploadStrategy<RRepository, RPackage> {
 
-	private final RStorage rStorage;
-	
-	public RPackageUploadStrategy(
-			PackageUploadRequest<RRepository> request, 
-			User requester, 
-			NewsfeedEventService eventService,
-			SubmissionService service, 
-			PackageValidator<RPackage> packageValidator, 
-			RepositoryService<RRepository> repositoryService,
-			Storage<RRepository, RPackage> storage, 
-			PackageService<RPackage> packageService, 
-			EmailService emailService, 
-			BestMaintainerChooser bestMaintainerChooser,
-			RRepositorySynchronizer repositorySynchronizer,
-			SecurityMediator securityMediator,
-			RStorage rStorage, 
-			RPackageDeleter packageDeleter) {
-		super(request, 
-				requester, 
-				eventService, 
-				packageValidator, 
-				repositoryService, 
-				storage,
-				packageService, 
-				service, 
-				emailService, 
-				bestMaintainerChooser,
-				repositorySynchronizer,
-				securityMediator,
-				packageDeleter);
-		this.rStorage = rStorage;
-	}
+    private final RStorage rStorage;
 
-	@Override
-	protected RPackage parseTechnologySpecificPackageProperties(Properties properties) {
-		RPackage packageBag = new RPackage();
-		
-		packageBag.setDescription(properties.getProperty("Description"));
-		packageBag.setDepends(properties.getProperty("Depends"));
-		packageBag.setImports(properties.getProperty("Imports"));
-		packageBag.setSuggests(properties.getProperty("Suggests"));
-		packageBag.setSystemRequirements(properties.getProperty("System Requirements"));
-		packageBag.setLicense(properties.getProperty("License"));
-		packageBag.setUrl(properties.getProperty("URL"));
-		packageBag.setTitle(properties.getProperty("Title"));
-		
-		return packageBag;
-	}
+    public RPackageUploadStrategy(
+            PackageUploadRequest<RRepository> request,
+            User requester,
+            NewsfeedEventService eventService,
+            SubmissionService service,
+            PackageValidator<RPackage> packageValidator,
+            RepositoryService<RRepository> repositoryService,
+            Storage<RRepository, RPackage> storage,
+            PackageService<RPackage> packageService,
+            EmailService emailService,
+            BestMaintainerChooser bestMaintainerChooser,
+            RRepositorySynchronizer repositorySynchronizer,
+            SecurityMediator securityMediator,
+            RStorage rStorage,
+            RPackageDeleter packageDeleter) {
+        super(
+                request,
+                requester,
+                eventService,
+                packageValidator,
+                repositoryService,
+                storage,
+                packageService,
+                service,
+                emailService,
+                bestMaintainerChooser,
+                repositorySynchronizer,
+                securityMediator,
+                packageDeleter);
+        this.rStorage = rStorage;
+    }
 
-	@Override
-	protected Submission actualStrategy() throws StrategyFailure {
-		Submission submission = super.actualStrategy();
-		try {
-			if(request.isGenerateManual())
-				rStorage.generateManual(packageBag);
-		} catch (GenerateManualException e) {
-			logger.error(e.getMessage(), e);
-			throw new StrategyFailure(e);
-		}
-		return submission;
-	}
+    @Override
+    protected RPackage parseTechnologySpecificPackageProperties(Properties properties) {
+        RPackage packageBag = new RPackage();
 
-	@Override
-	protected void assignRepositoryToPackage(RRepository repository, RPackage packageBag) {
-		packageBag.setRepository(repository);
-	}
+        packageBag.setDescription(properties.getProperty("Description"));
+        packageBag.setDepends(properties.getProperty("Depends"));
+        packageBag.setImports(properties.getProperty("Imports"));
+        packageBag.setSuggests(properties.getProperty("Suggests"));
+        packageBag.setSystemRequirements(properties.getProperty("System Requirements"));
+        packageBag.setLicense(properties.getProperty("License"));
+        packageBag.setUrl(properties.getProperty("URL"));
+        packageBag.setTitle(properties.getProperty("Title"));
 
+        return packageBag;
+    }
+
+    @Override
+    protected Submission actualStrategy() throws StrategyFailure {
+        Submission submission = super.actualStrategy();
+        try {
+            if (request.isGenerateManual()) {
+                rStorage.generateManual(packageBag);
+            }
+        } catch (GenerateManualException e) {
+            logger.error(e.getMessage(), e);
+            super.revertChanges();
+            throw new StrategyFailure(e);
+        }
+        return submission;
+    }
+
+    @Override
+    protected void assignRepositoryToPackage(RRepository repository, RPackage packageBag) {
+        packageBag.setRepository(repository);
+    }
 }

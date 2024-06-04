@@ -28,7 +28,6 @@ import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.Service;
 import eu.openanalytics.rdepot.base.service.exceptions.CreateEntityException;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,25 +36,30 @@ import java.util.Set;
  * @param <T> Resource entity
  */
 public abstract class UpdateStrategy<T extends Resource> extends Strategy<T> {
-	
-	protected final Set<EventChangedVariable> changedValues = new HashSet<>();
-	protected final T updatedResource;
-	protected final T oldResourceCopy;
-	private final NewsfeedEventService newsfeedEventService;
-	
-	protected UpdateStrategy(T resource, Service<T> service, NewsfeedEventService newsfeedEventService,
-			User requester, T updatedResource, T oldResourceCopy) {
-		super(resource, service, requester, newsfeedEventService);
-		this.updatedResource = updatedResource;
-		this.oldResourceCopy = oldResourceCopy;
-		this.newsfeedEventService = newsfeedEventService;
-	}
 
-	@Override
-	protected void registerEvent(NewsfeedEvent event) throws CreateEntityException {
-		if(!changedValues.isEmpty()) {
-			NewsfeedEvent registered = newsfeedEventService.create(event);
-			newsfeedEventService.attachVariables(registered, changedValues);
-		}
-	}
+    protected final Set<EventChangedVariable> changedValues = new HashSet<>();
+    protected final T updatedResource;
+    protected final T oldResourceCopy;
+    private final NewsfeedEventService newsfeedEventService;
+
+    protected UpdateStrategy(
+            T resource,
+            Service<T> service,
+            NewsfeedEventService newsfeedEventService,
+            User requester,
+            T updatedResource,
+            T oldResourceCopy) {
+        super(resource, service, requester, newsfeedEventService);
+        this.updatedResource = updatedResource;
+        this.oldResourceCopy = oldResourceCopy;
+        this.newsfeedEventService = newsfeedEventService;
+    }
+
+    @Override
+    protected void registerEvent(NewsfeedEvent event) throws CreateEntityException {
+        if (!changedValues.isEmpty()) {
+            NewsfeedEvent registered = newsfeedEventService.create(event);
+            newsfeedEventService.attachVariables(registered, changedValues);
+        }
+    }
 }

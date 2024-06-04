@@ -20,8 +20,6 @@
  */
 package eu.openanalytics.rdepot.python.api.v2.converters;
 
-import org.springframework.stereotype.Component;
-
 import eu.openanalytics.rdepot.base.api.v2.converters.DtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.converters.exceptions.EntityResolutionException;
 import eu.openanalytics.rdepot.base.entities.Submission;
@@ -33,29 +31,30 @@ import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.services.PythonRepositoryService;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
 public class PythonPackageDtoConverter implements DtoConverter<PythonPackage, PythonPackageDto> {
 
-	private final PythonRepositoryService repositoryService;
-	private final UserService userService;
-	private final SubmissionService submissionService;
+    private final PythonRepositoryService repositoryService;
+    private final UserService userService;
+    private final SubmissionService submissionService;
 
-	@Override
-	public PythonPackage resolveDtoToEntity(PythonPackageDto dto) throws EntityResolutionException {
-		PythonRepository repository = repositoryService.findById(dto.getRepository().getId())
-				.orElseThrow(() -> new EntityResolutionException(dto));
-		User user = userService.findById(dto.getUser().getId())
-				.orElseThrow(() -> new EntityResolutionException(dto));
-		Submission submission = submissionService.findById(dto.getSubmission().getId())
-				.orElseThrow(() -> new EntityResolutionException(dto));
-		return new PythonPackage(dto, repository, submission, user);
-	}
+    @Override
+    public PythonPackage resolveDtoToEntity(PythonPackageDto dto) throws EntityResolutionException {
+        PythonRepository repository = repositoryService
+                .findById(dto.getRepository().getId())
+                .orElseThrow(() -> new EntityResolutionException(dto));
+        User user = userService.findById(dto.getUser().getId()).orElseThrow(() -> new EntityResolutionException(dto));
+        Submission submission = submissionService
+                .findById(dto.getSubmission().getId())
+                .orElseThrow(() -> new EntityResolutionException(dto));
+        return new PythonPackage(dto, repository, submission, user);
+    }
 
-	@Override
-	public PythonPackageDto convertEntityToDto(PythonPackage entity) {
-		return new PythonPackageDto(entity);
-	}
-
+    @Override
+    public PythonPackageDto convertEntityToDto(PythonPackage entity) {
+        return new PythonPackageDto(entity);
+    }
 }

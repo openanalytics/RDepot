@@ -20,127 +20,102 @@
  */
 package eu.openanalytics.rdepot.test.fixture;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import eu.openanalytics.rdepot.base.entities.Role;
 import eu.openanalytics.rdepot.base.entities.User;
+import java.time.LocalDate;
 
 public class UserTestFixture {
 
-	public static final class ROLE {
-		public static Role ADMIN = new Role(0, 3, "admin", "Admin");
-		public static Role REPOSITORY_MAINTAINER = new Role(1, 2, "repositorymaintainer", "RepositoryMaintainer");
-		public static Role PACKAGE_MAINTAINER = new Role(2, 1, "packagemaintainer", "Package");
-		public static Role USER = new Role(3, 0, "user", "User");
-	};
-	
-	public static final String LOGIN = "testusername";
-	public static final String EMAIL = "test@example.org";
-	public static final String NAME = "Test User";
-	public static final Boolean ACTIVE = true;
-	public static final Boolean DELETED = false;
-	
-	public static Optional<User> GET_FIXTURE_ADMIN() {
-		User adminTmp = new User(
-				0, 
-				ROLE.ADMIN,
-				NAME + "0",
-				"0" + EMAIL,
-				"admin_" + LOGIN + "0",
-				ACTIVE,
-				DELETED);
-//		adminTmp.setLastLoggedInOn(Date.from(lastLoggedInOn));
-		
-		Optional<User> admin = Optional.of(adminTmp);
-//		Instant lastLoggedInOn = LocalDateTime.of(2017, 7, 3, 7, 0).atZone(ZoneId.of("Etc/UTC")).toInstant();
-		
-		return admin;
-	}
-	
-	public static List<User> GET_FIXTURE_USERS(int repositoryMaintainerCount, int packageMaintainerCount, int userCount, int shift) {
-		List<User> users = new ArrayList<>();
-		//users.add(GET_FIXTURE_ADMIN());
-		
-		for(int i = shift; i < repositoryMaintainerCount + shift; i++) {
-			User user = new User(
-					i,
-					ROLE.REPOSITORY_MAINTAINER,
-					NAME + Integer.toString(i),
-					Integer.toString(i) + EMAIL,
-					"repositorymaintainer_" + LOGIN + Integer.toString(i),
-					ACTIVE,
-					DELETED);
-			
-			Instant lastLoggedInOn = LocalDateTime.of(2017, 8, 11, 15, 30).atZone(ZoneId.of("Etc/UTC")).toInstant();
-			user.setLastLoggedInOn(LocalDate.ofInstant(lastLoggedInOn, ZoneId.of("Etc/UTC")));
-			
-			users.add(user);
-		}
-		
-		int localShift = users.size() + shift;
-		for(int i = localShift; i < packageMaintainerCount + localShift; i++) {
-			User user = new User(
-					i,
-					ROLE.PACKAGE_MAINTAINER,
-					NAME + Integer.toString(i),
-					Integer.toString(i) + EMAIL,
-					"packagemaintainer_" + LOGIN + Integer.toString(i),
-					ACTIVE,
-					DELETED);
-			
-			Instant lastLoggedInOn = LocalDateTime.of(2018, 7, 2, 7, 0).atZone(ZoneId.of("Etc/UTC")).toInstant();
-			user.setLastLoggedInOn(LocalDate.ofInstant(lastLoggedInOn, ZoneId.of("Etc/UTC")));
-			
-			users.add(user);
-		}
-		
-		localShift = users.size() + shift;
-		for(int i = localShift; i < userCount + localShift; i++) {
-			User user = new User(
-					i,
-					ROLE.USER,
-					NAME + Integer.toString(i),
-					Integer.toString(i) + EMAIL,
-					"user_" + LOGIN + Integer.toString(i),
-					ACTIVE,
-					DELETED);
-			
-			Instant lastLoggedInOn = LocalDateTime.of(2018, 8, 30, 15, 30).atZone(ZoneId.of("Etc/UTC")).toInstant();
-			user.setLastLoggedInOn(LocalDate.ofInstant(lastLoggedInOn, ZoneId.of("Etc/UTC")));
-			
-			users.add(user);
-		}
-		
-		return users;
-	}
-	
-	public static List<User> GET_FIXTURE_USERS(int repositoryMaintainerCount, int packageMaintainerCount, int userCount) {
-		return GET_FIXTURE_USERS(repositoryMaintainerCount, packageMaintainerCount, userCount, 0);
-	}
-	
-	public static User GET_FIXTURE_USER_REPOSITORYMAINTAINER() {
-		return GET_FIXTURE_USERS(1, 0, 0).get(0);
-	}
-	
-	public static User GET_FIXTURE_USER_REPOSITORYMAINTAINER(int shift) {
-		return GET_FIXTURE_USERS(1, 0, 0, shift).get(0);
-	}
-	
-	public static User GET_FIXTURE_USER_PACKAGEMAINTAINER() {
-		return GET_FIXTURE_PACKAGEMAINTAINER(0);
-	}
-	
-	public static User GET_FIXTURE_USER() {
-		return GET_FIXTURE_USERS(0, 0, 1).get(0);
-	}
-	
-	public static User GET_FIXTURE_PACKAGEMAINTAINER(int shift) {
-		return GET_FIXTURE_USERS(0, 1, 0, shift).get(0);
-	}
+    public static final String LOGIN = "test";
+    public static final String EMAIL = "@example.org";
+    public static final String NAME = "Test ";
+    public static final Boolean ACTIVE = true;
+    public static final Boolean DELETED = false;
+
+    public static User GET_REGULAR_USER() {
+        User user = new User(
+                123,
+                RoleTestFixture.ROLE.USER,
+                NAME + "User",
+                "testuser" + EMAIL,
+                LOGIN + "user",
+                ACTIVE,
+                DELETED,
+                LocalDate.of(2022, 06, 06),
+                LocalDate.of(1970, 1, 1));
+
+        return user;
+    }
+
+    public static User GET_REGULAR_USER(int id) {
+        User user = GET_REGULAR_USER();
+        user.setId(id);
+
+        return user;
+    }
+
+    public static User GET_PACKAGE_MAINTAINER() {
+        User maintainer = new User(
+                123,
+                RoleTestFixture.ROLE.PACKAGE_MAINTAINER,
+                NAME + "Package Maintainer",
+                "packagemaintainer" + EMAIL,
+                LOGIN + "packagemaintainer",
+                ACTIVE,
+                DELETED,
+                LocalDate.of(2022, 06, 06),
+                LocalDate.of(1970, 1, 1));
+
+        return maintainer;
+    }
+
+    public static User GET_PACKAGE_MAINTAINER(int id) {
+        User maintainer = GET_PACKAGE_MAINTAINER();
+        maintainer.setId(id);
+
+        return maintainer;
+    }
+
+    public static User GET_REPOSITORY_MAINTAINER() {
+        User maintainer = new User(
+                123,
+                RoleTestFixture.ROLE.REPOSITORY_MAINTAINER,
+                NAME + "Repo Maintainer",
+                "repomaintainer" + EMAIL,
+                LOGIN + "repomaintainer",
+                ACTIVE,
+                DELETED,
+                LocalDate.of(2022, 06, 06),
+                LocalDate.of(1970, 1, 1));
+
+        return maintainer;
+    }
+
+    public static User GET_REPOSITORY_MAINTAINER(int id) {
+        User maintainer = GET_REPOSITORY_MAINTAINER();
+        maintainer.setId(id);
+
+        return maintainer;
+    }
+
+    public static User GET_ADMIN() {
+        User admin = new User(
+                123,
+                RoleTestFixture.ROLE.ADMIN,
+                NAME + "Admin",
+                "admin" + EMAIL,
+                LOGIN + "admin",
+                ACTIVE,
+                DELETED,
+                LocalDate.of(2022, 06, 06),
+                LocalDate.of(1970, 1, 1));
+
+        return admin;
+    }
+
+    public static User GET_ADMIN(int id) {
+        User admin = GET_ADMIN();
+        admin.setId(id);
+
+        return admin;
+    }
 }

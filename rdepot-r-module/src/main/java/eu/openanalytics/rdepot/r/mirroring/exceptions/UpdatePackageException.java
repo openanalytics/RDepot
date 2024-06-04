@@ -23,17 +23,16 @@ package eu.openanalytics.rdepot.r.mirroring.exceptions;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
 import eu.openanalytics.rdepot.base.mirroring.Mirror;
-
 import java.io.Serial;
 
 public class UpdatePackageException extends Exception {
 
-	@Serial
-	private static final long serialVersionUID = 6799693422535662386L;
+    @Serial
+    private static final long serialVersionUID = 6799693422535662386L;
 
-	public UpdatePackageException(String name, String version, Mirror<?> mirror) {
-		super(StaticMessageResolver.getMessage(MessageCodes.UPDATE_PACKAGE_EXCEPTION)
-				+ ": {name: \"" + name + "\", version:\"" 
-				+ version + "\", mirror: \"" + mirror.toString() + "\"}");
-	}
+    public UpdatePackageException(String name, String version, Mirror<?> mirror) {
+        super(StaticMessageResolver.getMessage(MessageCodes.UPDATE_PACKAGE_EXCEPTION)
+                + ": {name: \"" + name + "\", version:\""
+                + version + "\", mirror: \"" + mirror.toString() + "\"}");
+    }
 }

@@ -20,13 +20,12 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.converters;
 
-import org.apache.commons.lang3.NotImplementedException;
-import org.springframework.stereotype.Component;
-
 import eu.openanalytics.rdepot.base.api.v2.converters.exceptions.EntityResolutionException;
 import eu.openanalytics.rdepot.base.api.v2.dtos.PackageDto;
 import eu.openanalytics.rdepot.base.entities.Package;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.NotImplementedException;
+import org.springframework.stereotype.Component;
 
 /**
  * {@link DtoConverter DTO Converter} for {@link Package Packages}
@@ -35,13 +34,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PackageDtoConverter implements DtoConverter<Package, PackageDto> {
 
-	@Override
-	public Package resolveDtoToEntity(PackageDto dto) throws EntityResolutionException {
-		throw new NotImplementedException();
-	}
+    @Override
+    public Package resolveDtoToEntity(PackageDto dto) throws EntityResolutionException {
+        throw new NotImplementedException();
+    }
 
-	@Override
-	public PackageDto convertEntityToDto(Package entity) {
-		return new PackageDto(entity);
-	}
+    @Override
+    public PackageDto convertEntityToDto(Package entity) {
+        return new PackageDto(entity);
+    }
 }

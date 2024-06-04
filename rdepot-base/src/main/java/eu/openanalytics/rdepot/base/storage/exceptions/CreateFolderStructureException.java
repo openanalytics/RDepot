@@ -22,7 +22,6 @@ package eu.openanalytics.rdepot.base.storage.exceptions;
 
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 /**
@@ -30,11 +29,10 @@ import java.io.Serial;
  */
 public class CreateFolderStructureException extends LocalizedException {
 
-	@Serial
-	private static final long serialVersionUID = 2779218096268841173L;
+    @Serial
+    private static final long serialVersionUID = 2779218096268841173L;
 
-	public CreateFolderStructureException() {
-		super(MessageCodes.COULD_NOT_CREATE_FOLDER_STRUCTURE);
-	}
-
+    public CreateFolderStructureException() {
+        super(MessageCodes.COULD_NOT_CREATE_FOLDER_STRUCTURE);
+    }
 }

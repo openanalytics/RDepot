@@ -20,39 +20,37 @@
  */
 package eu.openanalytics.rdepot.base.utils;
 
-import lombok.Getter;
-
 import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
 
 /**
- * Elements put into this {@link Map} 
+ * Elements put into this {@link Map}
  * are also put to an "inverted" map where key is a value and vice-versa.
  * @param <V> type of both keys and values - must be the same since the same element is used both as key and value
  */
 @Getter
 public class BidirectionalMap<V> extends HashMap<V, V> {
-	@Serial
-	private static final long serialVersionUID = -3262286821725572695L;
+    @Serial
+    private static final long serialVersionUID = -3262286821725572695L;
 
-	/**
-	 * -- GETTER --
-	 *  Returns inverted version of this map.
-	 *  Since the inverted map is maintained alongside this one,
-	 *  it is not built while calling this method,
-	 *  therefore not having any performance implications.
-	 */
-	private final HashMap<V,V> inverted = new HashMap<>();
-	
-	@Override
-	public V put(V key, V value) {
-		if(this.containsKey(key) || inverted.containsKey(key)) {
-			throw new IllegalArgumentException("Bidirectional map cannot be used "
-					+ "with duplicate value on any end: " + value);
-		}
-		inverted.put(value, key);
-		return super.put(key, value);
-	}
+    /**
+     * -- GETTER --
+     *  Returns inverted version of this map.
+     *  Since the inverted map is maintained alongside this one,
+     *  it is not built while calling this method,
+     *  therefore not having any performance implications.
+     */
+    private final HashMap<V, V> inverted = new HashMap<>();
 
+    @Override
+    public V put(V key, V value) {
+        if (this.containsKey(key) || inverted.containsKey(key)) {
+            throw new IllegalArgumentException(
+                    "Bidirectional map cannot be used " + "with duplicate value on any end: " + value);
+        }
+        inverted.put(value, key);
+        return super.put(key, value);
+    }
 }

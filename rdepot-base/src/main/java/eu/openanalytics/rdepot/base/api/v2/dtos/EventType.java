@@ -29,8 +29,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum EventType {
-	CREATE("create"),
-	UPDATE("update");
-	
-	private final String type;
+    CREATE("create"),
+    UPDATE("update");
+
+    private final String type;
 }

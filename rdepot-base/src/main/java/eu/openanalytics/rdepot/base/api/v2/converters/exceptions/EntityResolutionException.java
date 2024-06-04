@@ -23,7 +23,6 @@ package eu.openanalytics.rdepot.base.api.v2.converters.exceptions;
 import eu.openanalytics.rdepot.base.api.v2.dtos.IDto;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
-
 import java.io.Serial;
 
 /**
@@ -32,11 +31,11 @@ import java.io.Serial;
  */
 public class EntityResolutionException extends Exception {
 
-	@Serial
-	private static final long serialVersionUID = 5861884979279129715L;
+    @Serial
+    private static final long serialVersionUID = 5861884979279129715L;
 
-	public EntityResolutionException(IDto dto) {
-		super(StaticMessageResolver.getMessage(
-				MessageCodes.RESOLVE_RELATED_ENTITIES_EXCEPTION) + ": " + dto.toString());
-	}
+    public EntityResolutionException(IDto dto) {
+        super(StaticMessageResolver.getMessage(MessageCodes.RESOLVE_RELATED_ENTITIES_EXCEPTION) + ": "
+                + dto.toString());
+    }
 }

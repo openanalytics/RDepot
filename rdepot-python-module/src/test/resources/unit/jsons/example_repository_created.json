@@ -5,12 +5,12 @@
 	"messageCode": "success.resource.created",
 	"data": {
 		"id": 100,
-		"version": 0,
-		"publicationUri": "http://localhost/repo/testrepo100",
-		"name": "Test Python Repository 100",
-		"serverAddress": "http://192.168.1.100/testrepo100",
+		"version": 10,
+		"publicationUri": "http://localhost/repo/testrepo",
+		"name": "Test Python Repository",
+		"serverAddress": "http://192.168.1.100/testrepo",
 		"deleted": false,
-		"published": false,
+		"published": true,
 		"synchronizing": false,
 		"technology": "Python",
 		"links": [

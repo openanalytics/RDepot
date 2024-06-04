@@ -26,7 +26,7 @@ import eu.openanalytics.rdepot.base.entities.Submission;
  * Simplified Data Transfer Object for {@link Submission Submissions}
  */
 public class SubmissionSimpleDto extends AbstractSubmissionDto<PackageSimpleDto> {
-	public SubmissionSimpleDto(Submission submission, PackageSimpleDto packageDto) {
-		super(submission, packageDto);
-	}
+    public SubmissionSimpleDto(Submission submission, PackageSimpleDto packageDto) {
+        super(submission, packageDto);
+    }
 }

@@ -22,7 +22,6 @@ package eu.openanalytics.rdepot.base.daos;
 
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -36,7 +35,9 @@ import org.springframework.data.repository.NoRepositoryBean;
  */
 @NoRepositoryBean
 public interface Dao<T> extends JpaRepository<T, Integer>, JpaSpecificationExecutor<T> {
-	Optional<T> findByIdAndDeleted(Integer id, Boolean deleted);
-	Page<T> findByDeleted(boolean deleted, Pageable pageable);
-	List<T> findByDeleted(boolean deleted);
+    Optional<T> findByIdAndDeleted(Integer id, Boolean deleted);
+
+    Page<T> findByDeleted(boolean deleted, Pageable pageable);
+
+    List<T> findByDeleted(boolean deleted);
 }

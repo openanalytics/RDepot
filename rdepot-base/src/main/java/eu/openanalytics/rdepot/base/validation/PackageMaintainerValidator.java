@@ -28,65 +28,65 @@ import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.base.service.UserService;
+import java.util.Optional;
 import lombok.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import java.util.Optional;
-
 @Component
 public class PackageMaintainerValidator implements Validator {
 
-	private final UserService userService;
-	private final RepositoryService<Repository> repositoryService;
-	private final PackageMaintainerService packageMaintainerService;
-	
-	public PackageMaintainerValidator(UserService userService,
-			RepositoryService<Repository> repositoryService, 
-			PackageMaintainerService packageMaintainerService) {
-		this.userService = userService;
-		this.repositoryService = repositoryService;
-		this.packageMaintainerService = packageMaintainerService;
-	}
-	
-	@Override
-	public boolean supports(Class<?> clazz) {
-		return clazz.isAssignableFrom(PackageMaintainer.class);
-	}
-	
-	protected void validateUser(PackageMaintainer maintainer, Errors errors) {
-		Optional<User> userOpt = Optional.empty();
-		if(maintainer.getUser() != null) {
-			userOpt = userService.findById(maintainer.getUser().getId());
-		}
-		if(userOpt.isEmpty()) {
-			errors.rejectValue("user", MessageCodes.EMPTY_USER);
-		} else if(userOpt.get().getRole().getValue() < Role.VALUE.PACKAGEMAINTAINER) {
-			errors.rejectValue("user", MessageCodes.USER_PERMISSIONS_NOT_SUFFICIENT);
-		}
-	}
+    private final UserService userService;
+    private final RepositoryService<Repository> repositoryService;
+    private final PackageMaintainerService packageMaintainerService;
 
-	@Override
-	public void validate(@NonNull Object target, @NonNull Errors errors) {
-		PackageMaintainer maintainer = (PackageMaintainer)target;
-		
-		ValidationUtils.rejectIfEmpty(errors, "packageName", MessageCodes.EMPTY_PACKAGE);
-		
-		validateUser(maintainer, errors);
-		
-		if(maintainer.getRepository() == null || 
-				repositoryService.findById(maintainer.getRepository().getId()).isEmpty()) {
-			errors.rejectValue("repository", MessageCodes.REPOSITORY_NOT_FOUND);
-		}
+    public PackageMaintainerValidator(
+            UserService userService,
+            RepositoryService<Repository> repositoryService,
+            PackageMaintainerService packageMaintainerService) {
+        this.userService = userService;
+        this.repositoryService = repositoryService;
+        this.packageMaintainerService = packageMaintainerService;
+    }
 
-		if(maintainer.getId() <= 0 &&
-				packageMaintainerService.existsByUserAndPackageNameAndRepositoryAndNonDeleted(
-						maintainer.getUser(),
-						maintainer.getPackageName(),
-						maintainer.getRepository())) {
-			errors.rejectValue("packageName", MessageCodes.PACKAGE_ALREADY_MAINTAINED);
-		}
-	}
+    @Override
+    public boolean supports(Class<?> clazz) {
+        return clazz.isAssignableFrom(PackageMaintainer.class);
+    }
+
+    protected void validateUser(PackageMaintainer maintainer, Errors errors) {
+        Optional<User> userOpt = Optional.empty();
+        if (maintainer.getUser() != null) {
+            userOpt = userService.findById(maintainer.getUser().getId());
+        }
+        if (userOpt.isEmpty()) {
+            errors.rejectValue("user", MessageCodes.EMPTY_USER);
+        } else if (userOpt.get().getRole().getValue() < Role.VALUE.PACKAGEMAINTAINER) {
+            errors.rejectValue("user", MessageCodes.USER_PERMISSIONS_NOT_SUFFICIENT);
+        }
+    }
+
+    @Override
+    public void validate(@NonNull Object target, @NonNull Errors errors) {
+        PackageMaintainer maintainer = (PackageMaintainer) target;
+
+        ValidationUtils.rejectIfEmpty(errors, "packageName", MessageCodes.EMPTY_PACKAGE);
+
+        validateUser(maintainer, errors);
+
+        if (maintainer.getRepository() == null
+                || repositoryService
+                        .findById(maintainer.getRepository().getId())
+                        .isEmpty()) {
+            errors.rejectValue("repository", MessageCodes.REPOSITORY_NOT_FOUND);
+        }
+
+        if (maintainer.getId() <= 0
+                && packageMaintainerService.existsByUserAndPackageNameAndRepositoryAndNonDeleted(
+                        maintainer.getUser(), maintainer.getPackageName(), maintainer.getRepository())) {
+            errors.rejectValue("packageName", MessageCodes.PACKAGE_ALREADY_MAINTAINED);
+        }
+    }
 }

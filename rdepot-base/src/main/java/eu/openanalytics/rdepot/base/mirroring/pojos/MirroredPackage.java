@@ -31,6 +31,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public abstract class MirroredPackage {
-	protected String name = "";
-	protected String version;
+    protected String name = "";
+    protected String version;
 }

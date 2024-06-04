@@ -21,23 +21,20 @@
 package eu.openanalytics.rdepot.base.api.v2.exceptions;
 
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
-
 import java.io.Serial;
 import java.util.Locale;
+import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 
 /**
  * Thrown when user is recognized but not allowed to perform a request.
  */
 public class UserNotAuthorized extends ApiException {
 
-	@Serial
-	private static final long serialVersionUID = 7095928428130170188L;
+    @Serial
+    private static final long serialVersionUID = 7095928428130170188L;
 
-	public UserNotAuthorized(MessageSource messageSource, Locale locale) {
-		super(messageSource, locale, MessageCodes.ERROR_USER_NOT_AUTHORIZED,
-				HttpStatus.FORBIDDEN);
-	}
-
+    public UserNotAuthorized(MessageSource messageSource, Locale locale) {
+        super(messageSource, locale, MessageCodes.ERROR_USER_NOT_AUTHORIZED, HttpStatus.FORBIDDEN);
+    }
 }

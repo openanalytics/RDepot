@@ -378,7 +378,7 @@ CREATE SEQUENCE public."User_id_seq"
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-    
+
 ALTER TABLE public."User_id_seq" OWNER TO postgres;
 
 --
@@ -388,7 +388,7 @@ ALTER TABLE public."User_id_seq" OWNER TO postgres;
 ALTER SEQUENCE public."User_id_seq" OWNED BY public."user".id;
 
 ---------------------------------------------------------------
-    
+
 CREATE TABLE public.api_token (
 	id integer NOT NULL,
 	token character varying(255) NOT NULL,
@@ -402,11 +402,11 @@ CREATE SEQUENCE public."Api_token_id_seq"
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
-    CACHE 1;   
-    
-ALTER SEQUENCE public."Api_token_id_seq" OWNED BY public.api_token.id;  
- 
---------------------------------------------------------------- 
+    CACHE 1;
+
+ALTER SEQUENCE public."Api_token_id_seq" OWNED BY public.api_token.id;
+
+---------------------------------------------------------------
 
 --
 -- Name: event; Type: TABLE; Schema: public; Owner: postgres
@@ -1012,7 +1012,7 @@ ALTER TABLE ONLY public."user"
     ADD CONSTRAINT "User_pkey" PRIMARY KEY (id);
 
 
-    
+
 ALTER TABLE ONLY public.api_token
     ADD CONSTRAINT "Api_token_token_key" UNIQUE (token);
 
@@ -1020,8 +1020,8 @@ ALTER TABLE ONLY public.api_token
     ADD CONSTRAINT "Api_token_user_login_key" UNIQUE (user_login);
 
 ALTER TABLE ONLY public.api_token
-    ADD CONSTRAINT "Api_token_pkey" PRIMARY KEY (id);        
-    
+    ADD CONSTRAINT "Api_token_pkey" PRIMARY KEY (id);
+
 
 --
 -- Name: package_event by_user; Type: FK CONSTRAINT; Schema: public; Owner: postgres
@@ -1242,4 +1242,3 @@ ALTER TABLE ONLY public.user_event
 --
 -- PostgreSQL database dump complete
 --
-

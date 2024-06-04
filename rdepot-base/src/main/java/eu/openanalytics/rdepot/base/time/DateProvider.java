@@ -32,27 +32,25 @@ import java.util.Date;
 public class DateProvider {
 
     private static Date testDate = null;
-    
+
     /**
      *  This method should only be used in Unit Tests.
      *  It makes the test date "current".
      */
     public static void setTestDate(Date date) {
-    	testDate = date;
+        testDate = date;
     }
-    
+
     /**
      *  This method should only be used in Unit Tests.
      *  It makes the test date "current".
      */
     public static void setTestDate(LocalDateTime localDateTime) {
-	   testDate = Date
-	      .from(localDateTime.atZone(ZoneId.systemDefault())
-	      .toInstant());
+        testDate = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
     /**
-     * Current date or mocked test date if specified earlier 
+     * Current date or mocked test date if specified earlier
      * using {@link #setTestDate(Date)} method.
      */
     public static Date now() {
@@ -61,24 +59,24 @@ public class DateProvider {
         }
         return new Date();
     }
-    
+
     /**
      * Current date or mocked test date if specified earlier
      * using {@link #setTestDate(Date)} method, in "yyyyMMdd" format.
      */
     public static String getCurrentDateStamp() {
-  	    final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
-  	    final LocalDateTime currentDate = getCurrentDateTime();
-	    return dtf.format(currentDate);
-    }
-    
-    public static LocalDate getCurrentDate() {
-    	return getCurrentDateTime().toLocalDate();
-    }
-    
-    private static LocalDateTime getCurrentDateTime() {
-    	return testDate == null ? LocalDateTime.now() 
-  	    		: testDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+        final LocalDateTime currentDate = getCurrentDateTime();
+        return dtf.format(currentDate);
     }
 
+    public static LocalDate getCurrentDate() {
+        return getCurrentDateTime().toLocalDate();
+    }
+
+    private static LocalDateTime getCurrentDateTime() {
+        return testDate == null
+                ? LocalDateTime.now()
+                : testDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+    }
 }

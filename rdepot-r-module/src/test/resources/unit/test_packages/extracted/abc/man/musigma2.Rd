@@ -61,7 +61,7 @@ Gaussian model with ABC.
 \source{
   The observed statistics are the mean and variance of the sepal of
   \emph{Iris setosa}, estimated from part of the \code{iris} data.
-  
+
   The data were collected by Anderson, Edgar.
 }
 \references{

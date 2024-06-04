@@ -14,7 +14,18 @@ pipeline {
     DOCKER_BUILDKIT = '1'
   }
   stages {
-    stage('build IT images and publish') {
+    stage('license check') {
+      steps {
+        sh "mvn com.mycila:license-maven-plugin:check"
+      }
+    }
+    stage('static code analysis') {
+      steps {
+        sh "mvn clean install -DskipTests -Ddependency-check.skip=true -Perrorprone com.github.spotbugs:spotbugs-maven-plugin:check"
+        sh "mvn pmd:pmd"
+      }
+    }
+    stage('build test images and publish') {
       matrix {
         axes {
           axis {
@@ -49,7 +60,7 @@ pipeline {
         }
       }
     }
-    stage('build and test') {
+    stage('tests') {
       steps {
         withDockerRegistry([
             credentialsId: "oa-sa-jenkins-registry",
@@ -57,7 +68,7 @@ pipeline {
 
 
 	      configFileProvider([configFile(fileId: 'maven-settings-rsb', variable: 'MAVEN_SETTINGS_RSB')]) {
-	        sh "mvn -s $MAVEN_SETTINGS_RSB clean deploy com.mycila:license-maven-plugin:check -Ddependency-check.skip=true"
+	        sh "mvn -s $MAVEN_SETTINGS_RSB clean deploy -Ddependency-check.skip=true"
 	      }
 	      publishHTML([
 	        reportDir: 'rdepot-app/target/site/', reportFiles: 'failsafe-report.html',
@@ -75,15 +86,15 @@ pipeline {
 	        reportDir: 'rdepot-python-module/target/site/', reportFiles: 'surefire-report.html',
 	        reportName: 'Python Module Test Report',
 	        allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true])
-	      publishHTML([
-	        reportDir: 'target/', reportFiles: 'dependency-check-report.html',
-	        reportName: 'OWASP Dependency Analysis Report',
-	        allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true])
+	      // publishHTML([
+	      //   reportDir: 'target/', reportFiles: 'dependency-check-report.html',
+	      //   reportName: 'OWASP Dependency Analysis Report',
+	      //   allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true])
         }
       }
-      
+
     }
-    stage('build app images and publish') {
+    stage('build images and publish') {
       matrix {
         axes {
           axis {

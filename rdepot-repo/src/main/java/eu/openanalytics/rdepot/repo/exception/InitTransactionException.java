@@ -26,9 +26,9 @@ package eu.openanalytics.rdepot.repo.exception;
  */
 public class InitTransactionException extends Exception {
 
-	private static final long serialVersionUID = 2646203454906790194L;
+    private static final long serialVersionUID = 2646203454906790194L;
 
-	public InitTransactionException(String id) {
-		super("Could not initialize transaction " + id);
-	}
+    public InitTransactionException(String id) {
+        super("Could not initialize transaction " + id);
+    }
 }

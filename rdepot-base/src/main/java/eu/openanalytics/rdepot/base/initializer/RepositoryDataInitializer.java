@@ -20,14 +20,6 @@
  */
 package eu.openanalytics.rdepot.base.initializer;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-import org.springframework.scheduling.support.CronTrigger;
-import org.springframework.validation.BindException;
-import org.springframework.validation.ObjectError;
-
 import eu.openanalytics.rdepot.base.config.declarative.DeclarativeConfigurationSource;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.mediator.deletion.RepositoryDeleter;
@@ -42,116 +34,128 @@ import eu.openanalytics.rdepot.base.service.exceptions.CreateEntityException;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
 import eu.openanalytics.rdepot.base.technology.Technology;
 import eu.openanalytics.rdepot.base.validation.RepositoryValidator;
+import java.util.List;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.scheduling.support.CronTrigger;
+import org.springframework.validation.BindException;
+import org.springframework.validation.ObjectError;
 
 @Slf4j
 @AllArgsConstructor
 public abstract class RepositoryDataInitializer<
-	E extends Repository,
-	R extends MirroredRepository<P,M>, 
-	P extends MirroredPackage, 
-	M extends Mirror<P>> 
-	implements IRepositoryDataInitializer {
-	
-	private final RepositoryService<E> repositoryService;
-	private final RepositoryValidator<E> repositoryValidator;
-	private final RepositoryDeleter<E, ?> repositoryDeleter;
-	private final ThreadPoolTaskScheduler taskScheduler;
-	private final MirrorSynchronizer<R, P, M> mirrorService;
-	private final DeclarativeConfigurationSource<R, P, M> declarativeConfigurationSource;
-	private final Technology technology;
-	
-	/**
-	 * Creates an entity from repository declared in the configuration.
-	 */
-	protected abstract E declaredRepositoryToEntity(R declaredRepository, boolean declarative);
-	
-	@Override
-	public void createRepositoriesFromConfig(boolean declarative) {
-		final List<R> repositories =
-				declarativeConfigurationSource.retrieveDeclaredRepositories();
-		if(repositories == null || repositories.isEmpty()) {
-			log.info("There are no declared repositories for technology: " 
-					+ technology.getName() + " " + technology.getVersion());
-			return;
-		}
-		
-		List<E> existingRepositories = repositoryService.findAll(); 
-		for(R declaredRepository : repositories) {
-			E newRepository = declaredRepositoryToEntity(declaredRepository, declarative);
-			
-			Optional<E> possiblyExistingRepository = existingRepositories.stream()
-					.filter(r -> r.getName().equals(newRepository.getName())).findFirst();
-			if(possiblyExistingRepository.isPresent()) {
-				E existingRepository = possiblyExistingRepository.get();
-				existingRepositories.remove(existingRepository);
-				
-				if(declarative) {
-					updateRepository(newRepository, existingRepository);
-				} else {
-					log.warn("We tried to create one of the preconfigured repositories but "					
-							+ "there already is such a repository with the following properties: " 
-							+ existingRepository);
-				}
-			} else {
-				if(newRepository.isDeleted() == null) {
-					newRepository.setDeleted(false);
-				}
-				if(newRepository.getPublished() == null) {
-					newRepository.setPublished(true);
-				}
-				
-				BindException bindException = new BindException(newRepository, newRepository.getName());
-				repositoryValidator.validate(newRepository, bindException);
-				
-				if(!bindException.hasErrors()) {
-					try {
-						log.debug("Creating R repository {}", newRepository.toString());
-						E created = repositoryService.create(newRepository);
-						log.debug("Created R repository {}", created.toString());
-					} catch (CreateEntityException e) {
-						log.error(e.getMessage(), e);
-					}
-				} else {
-					String errorMessage = "Creating a preconfigured repository failed: ";
-					for(ObjectError error : bindException.getAllErrors()) {
-						errorMessage += StaticMessageResolver.getMessage(error.getCode());
-					}
-					
-					log.error(errorMessage);
-				}
-			}
-		}
-		if(declarative) {
-			existingRepositories.forEach(r -> {
-				log.info("Declarative mode enabled - deleting {} repository...", r.getTechnology().getName());
-				try {
-					repositoryDeleter.delete(r);
-				} catch (DeleteEntityException e) {
-					log.error(e.getMessage(), e);
-					throw new IllegalStateException();
-				}
-			});
-		}
-		scheduleMirroring(repositories);
-	}
-	
-	protected void scheduleMirroring(List<R> repositories) {
-		for(R declaredRepository : repositories) {
-			for(M mirror : declaredRepository.getMirrors()) {
-				if(!mirror.getSyncInterval().isEmpty()) {
-					log.info("Scheduling mirroring for {} with sync interval: {}", declaredRepository.getName(),
-					mirror.getSyncInterval());
-					
-					CronTrigger cronTrigger = new CronTrigger(mirror.getSyncInterval());
-					taskScheduler.schedule(
-							new SynchronizeMirrorTask<>(mirrorService,
-									declaredRepository, mirror), cronTrigger);
-				}
-			}
-		}
-	}
-	
-	protected abstract void updateRepository(E newRepository, E existingRepository);
+                E extends Repository,
+                R extends MirroredRepository<P, M>,
+                P extends MirroredPackage,
+                M extends Mirror<P>>
+        implements IRepositoryDataInitializer {
+
+    private final RepositoryService<E> repositoryService;
+    private final RepositoryValidator<E> repositoryValidator;
+    private final RepositoryDeleter<E, ?> repositoryDeleter;
+    private final ThreadPoolTaskScheduler taskScheduler;
+    private final MirrorSynchronizer<R, P, M> mirrorService;
+    private final DeclarativeConfigurationSource<R, P, M> declarativeConfigurationSource;
+    private final Technology technology;
+
+    /**
+     * Creates an entity from repository declared in the configuration.
+     */
+    protected abstract E declaredRepositoryToEntity(R declaredRepository, boolean declarative);
+
+    @Override
+    public void createRepositoriesFromConfig(boolean declarative) {
+        final List<R> repositories = declarativeConfigurationSource.retrieveDeclaredRepositories();
+        if (repositories == null || repositories.isEmpty()) {
+            log.info("There are no declared repositories for technology: " + technology.getName() + " "
+                    + technology.getVersion());
+            return;
+        }
+
+        List<E> existingRepositories = repositoryService.findAll();
+        for (R declaredRepository : repositories) {
+            E newRepository = declaredRepositoryToEntity(declaredRepository, declarative);
+
+            Optional<E> possiblyExistingRepository = existingRepositories.stream()
+                    .filter(r -> r.getName().equals(newRepository.getName()))
+                    .findFirst();
+            if (possiblyExistingRepository.isPresent()) {
+                E existingRepository = possiblyExistingRepository.get();
+                existingRepositories.remove(existingRepository);
+
+                if (declarative) {
+                    updateRepository(newRepository, existingRepository);
+                } else {
+                    log.warn("We tried to create one of the preconfigured repositories but "
+                            + "there already is such a repository with the following properties: "
+                            + existingRepository);
+                }
+            } else {
+                if (newRepository.isDeleted() == null) {
+                    newRepository.setDeleted(false);
+                }
+                if (newRepository.getPublished() == null) {
+                    newRepository.setPublished(true);
+                }
+
+                BindException bindException = new BindException(newRepository, newRepository.getName());
+                repositoryValidator.validate(newRepository, bindException);
+
+                if (!bindException.hasErrors()) {
+                    try {
+                        log.debug("Creating R repository {}", newRepository.toString());
+                        E created = repositoryService.create(newRepository);
+                        log.debug("Created R repository {}", created.toString());
+                    } catch (CreateEntityException e) {
+                        log.error(e.getMessage(), e);
+                    }
+                } else {
+                    String errorMessage = "Creating a preconfigured repository failed: ";
+                    for (ObjectError error : bindException.getAllErrors()) {
+                        errorMessage += StaticMessageResolver.getMessage(error.getCode());
+                    }
+
+                    log.error(errorMessage);
+                }
+            }
+        }
+        if (declarative) {
+            existingRepositories.forEach(r -> {
+                log.info(
+                        "Declarative mode enabled - deleting {} repository...",
+                        r.getTechnology().getName());
+                try {
+                    repositoryDeleter.delete(r);
+                } catch (DeleteEntityException e) {
+                    log.error(e.getMessage(), e);
+                    throw new IllegalStateException();
+                }
+            });
+            log.info("All non-declared repositories deleted successfully.");
+        }
+        scheduleMirroring(repositories);
+    }
+
+    protected void scheduleMirroring(List<R> repositories) {
+        log.info("Scheduling mirroring for declared repositories...");
+        for (R declaredRepository : repositories) {
+            for (M mirror : declaredRepository.getMirrors()) {
+                if (!mirror.getSyncInterval().isEmpty()) {
+                    log.info(
+                            "Scheduling mirroring for {} with sync interval: {}",
+                            declaredRepository.getName(),
+                            mirror.getSyncInterval());
+
+                    CronTrigger cronTrigger = new CronTrigger(mirror.getSyncInterval());
+                    taskScheduler.schedule(
+                            new SynchronizeMirrorTask<>(mirrorService, declaredRepository, mirror), cronTrigger);
+                }
+            }
+        }
+        log.info("Mirroring scheduled for all repositories.");
+    }
+
+    protected abstract void updateRepository(E newRepository, E existingRepository);
 }

@@ -1,0 +1,86 @@
+{
+  "status": "WARNING",
+  "code": 200,
+  "message": "Replacing packages has been disabled by the system administrator.",
+  "messageCode": "warning.replacing.packages.disabled",
+  "data": {
+    "id": 1,
+    "packageBag": {
+      "id": 1,
+      "user": {
+        "id": 123,
+        "name": "Test Admin",
+        "login": "testadmin",
+        "email": "admin@example.org"
+      },
+      "repository": {
+        "id": 123,
+        "name": "Test Python Repository",
+        "publicationUri": "http://localhost/repo/testrepo",
+        "published": true,
+        "technology": "Python"
+      },
+      "submission": {
+        "id": 1,
+        "state": "WAITING"
+      },
+      "name": "TestPackage1",
+      "version": "4.5.6",
+      "source": "1test_package.tar.gz",
+      "active": true,
+      "deleted": false,
+      "technology": "Python",
+      "description": "Simple test package1",
+      "author": "Albert Einstein1",
+      "title": "",
+      "url": "",
+      "authorEmail": "",
+      "classifiers": "",
+      "descriptionContentType": "",
+      "homePage": "",
+      "keywords": "",
+      "license": "Some license1",
+      "maintainer": "",
+      "maintainerEmail": "",
+      "platform": "",
+      "projectUrl": "",
+      "providesExtra": "",
+      "requiresDist": "",
+      "requiresExternal": null,
+      "requiresPython": "",
+      "summary": "",
+      "hash": "12345671",
+      "links": [
+        {
+          "rel": "self",
+          "href": "http://localhost/api/v2/manager/python/packages/1"
+        },
+        {
+          "rel": "packageList",
+          "href": "http://localhost/api/v2/manager/packages"
+        }
+      ]
+    },
+    "submitter": {
+      	"id": 123,
+	    "name": "Test Admin",
+	    "login": "testadmin",
+	    "email": "admin@example.org"
+    },
+    "approver": null,
+    "changes": "Some changes 123",
+    "state": "WAITING",
+    "created": "2024-04-12",
+    "technology": "Python",
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://localhost/api/v2/manager/python/submissions/1"
+      },
+      {
+        "rel": "submissionList",
+        "href": "http://localhost/api/v2/manager/python/submissions"
+      }
+    ]
+  }
+}

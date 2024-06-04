@@ -20,22 +20,21 @@
  */
 package eu.openanalytics.rdepot.base.strategy.exceptions;
 
-import java.io.Serial;
-import java.util.Properties;
-
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
+import java.io.Serial;
+import java.util.Properties;
 
 /**
- * Thrown when {@link Properties} object of certain {@link Package} 
+ * Thrown when {@link Properties} object of certain {@link Package}
  * lacks a required key or there is one with an invalid value.
  */
 public class ParsePackagePropertiesException extends LocalizedException {
-	@Serial
-	private static final long serialVersionUID = -2867675359668519565L;
+    @Serial
+    private static final long serialVersionUID = -2867675359668519565L;
 
-	public ParsePackagePropertiesException() {
-		super(MessageCodes.COULD_NOT_PARSE_PACKAGE_PROPERTIES);
-	}
+    public ParsePackagePropertiesException() {
+        super(MessageCodes.COULD_NOT_PARSE_PACKAGE_PROPERTIES);
+    }
 }

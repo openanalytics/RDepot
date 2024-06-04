@@ -20,6 +20,7 @@
  */
 package eu.openanalytics.rdepot.python.storage.indexes;
 
+import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -28,17 +29,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-
 import org.springframework.core.io.Resource;
 import org.springframework.util.StreamUtils;
-
-import eu.openanalytics.rdepot.python.entities.PythonPackage;
 
 public abstract class IndexesGenerator {
 
     protected final String separator = FileSystems.getDefault().getSeparator();
     private final String lineSeparator = System.lineSeparator();
-    
+
     protected abstract String getPackageAnchor(PythonPackage packageBag);
 
     private Path getIndexPath(String path) {
@@ -51,8 +49,15 @@ public abstract class IndexesGenerator {
         String packageString = getPackageAnchor(packageBag) + lineSeparator;
         int index = packagesIndexContent.indexOf("</body>");
         if (!packagesIndexContent.contains(packageString)) {
-            packagesIndexContent = new StringBuilder(packagesIndexContent).insert(index - 1, packageString).toString();
-            Files.writeString(indexPath, packagesIndexContent, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            packagesIndexContent = new StringBuilder(packagesIndexContent)
+                    .insert(index - 1, packageString)
+                    .toString();
+            Files.writeString(
+                    indexPath,
+                    packagesIndexContent,
+                    StandardCharsets.UTF_8,
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING);
         }
     }
 
@@ -61,6 +66,11 @@ public abstract class IndexesGenerator {
     }
 
     protected void writeTemplateStringToFile(String path, String template) throws IOException {
-        Files.writeString(getIndexPath(path), template, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        Files.writeString(
+                getIndexPath(path),
+                template,
+                StandardCharsets.UTF_8,
+                StandardOpenOption.CREATE,
+                StandardOpenOption.TRUNCATE_EXISTING);
     }
 }

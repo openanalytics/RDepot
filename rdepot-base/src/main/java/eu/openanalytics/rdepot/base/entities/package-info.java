@@ -22,7 +22,7 @@
  * Java objects representing the actual data in the database.
  * They are used to access and modify data.
  * It is important to note that they should <b>not</b> be used to communicate via the API.
- * For this purpose, one should use DTOs that are much simpler and 
+ * For this purpose, one should use DTOs that are much simpler and
  * do not impact the application state in any way.
  * @see eu.openanalytics.rdepot.base.api.v2.dtos.IDto
  * @see eu.openanalytics.rdepot.base.entities.IEntity

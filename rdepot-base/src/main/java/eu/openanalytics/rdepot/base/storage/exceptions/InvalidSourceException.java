@@ -23,7 +23,6 @@ package eu.openanalytics.rdepot.base.storage.exceptions;
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 /**
@@ -31,11 +30,10 @@ import java.io.Serial;
  */
 public class InvalidSourceException extends LocalizedException {
 
-	@Serial
-	private static final long serialVersionUID = -7591703343707691451L;
+    @Serial
+    private static final long serialVersionUID = -7591703343707691451L;
 
-	public InvalidSourceException() {
-		super(MessageCodes.INVALID_SOURCE);
-	}
-
+    public InvalidSourceException() {
+        super(MessageCodes.INVALID_SOURCE);
+    }
 }

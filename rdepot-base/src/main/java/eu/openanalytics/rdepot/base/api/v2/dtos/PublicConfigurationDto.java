@@ -21,5 +21,7 @@
 package eu.openanalytics.rdepot.base.api.v2.dtos;
 
 public record PublicConfigurationDto(
-        boolean declarativeModeEnabled
-) {}
+        boolean declarativeModeEnabled,
+        boolean deletingPackagesEnabled,
+        boolean deletingRepositoriesEnabled,
+        boolean replacingPackagesEnabled) {}

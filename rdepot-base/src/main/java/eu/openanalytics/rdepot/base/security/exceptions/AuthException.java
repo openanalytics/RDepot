@@ -20,25 +20,23 @@
  */
 package eu.openanalytics.rdepot.base.security.exceptions;
 
+import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
+import java.io.Serial;
 import org.springframework.security.core.AuthenticationException;
 
-import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
-
-import java.io.Serial;
-
 public class AuthException extends AuthenticationException {
-	@Serial
-	private static final long serialVersionUID = -5327755255269766824L;
+    @Serial
+    private static final long serialVersionUID = -5327755255269766824L;
 
-	public AuthException(String userLogin, String messageCode) {
-		super("User " + userLogin + ": " + StaticMessageResolver.getMessage(messageCode));
-	}
-	
-	public AuthException(int userId, String messageCode) {
-		super("User " + userId + ": " + StaticMessageResolver.getMessage(messageCode));
-	}
-	
-	public AuthException(String messageCode) {
-		super("Authentication error: " + StaticMessageResolver.getMessage(messageCode));
-	}
+    public AuthException(String userLogin, String messageCode) {
+        super("User " + userLogin + ": " + StaticMessageResolver.getMessage(messageCode));
+    }
+
+    public AuthException(int userId, String messageCode) {
+        super("User " + userId + ": " + StaticMessageResolver.getMessage(messageCode));
+    }
+
+    public AuthException(String messageCode) {
+        super("Authentication error: " + StaticMessageResolver.getMessage(messageCode));
+    }
 }

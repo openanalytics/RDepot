@@ -20,8 +20,6 @@
  */
 package eu.openanalytics.rdepot.test.strategy;
 
-import org.mockito.Mock;
-
 import eu.openanalytics.rdepot.base.mediator.BestMaintainerChooser;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
@@ -30,27 +28,28 @@ import eu.openanalytics.rdepot.r.services.RPackageService;
 import eu.openanalytics.rdepot.r.services.RRepositoryService;
 import eu.openanalytics.rdepot.r.synchronization.RRepositorySynchronizer;
 import eu.openanalytics.rdepot.test.unit.UnitTest;
+import org.mockito.Mock;
 
 public abstract class StrategyTest extends UnitTest {
-		
-	@Mock
-	protected RRepositoryService service;
-	
-	@Mock
-	protected RepositoryMaintainerService repositoryMaintainerService;
-	
-	@Mock
-	protected PackageMaintainerService packageMaintainerService;
-	
-	@Mock
-	protected BestMaintainerChooser bestMaintainerChooser;
-	
-	@Mock
-	protected RPackageService packageService;
-	
-	@Mock
-	protected RPackageDeleter rPackageDeleter;
-	
-	@Mock
-	protected RRepositorySynchronizer repositorySynchronizer;
+
+    @Mock
+    protected RRepositoryService service;
+
+    @Mock
+    protected RepositoryMaintainerService repositoryMaintainerService;
+
+    @Mock
+    protected PackageMaintainerService packageMaintainerService;
+
+    @Mock
+    protected BestMaintainerChooser bestMaintainerChooser;
+
+    @Mock
+    protected RPackageService packageService;
+
+    @Mock
+    protected RPackageDeleter rPackageDeleter;
+
+    @Mock
+    protected RRepositorySynchronizer repositorySynchronizer;
 }

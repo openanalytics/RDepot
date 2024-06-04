@@ -20,39 +20,38 @@
  */
 package eu.openanalytics.rdepot.python.api.v2.dtos;
 
-import org.apache.commons.lang3.builder.ToStringExclude;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import eu.openanalytics.rdepot.base.api.v2.dtos.RepositoryDto;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.entities.enums.HashMethod;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.ToStringExclude;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class PythonRepositoryDto extends RepositoryDto { 
+public class PythonRepositoryDto extends RepositoryDto {
 
-	private HashMethod hashMethod;
-	@ToStringExclude 
-	@JsonIgnore
-	private PythonRepository pythonRepository;
+    private HashMethod hashMethod;
 
-	public PythonRepositoryDto(PythonRepository repository,  int numberOfPackages) {
-		super(repository, numberOfPackages);
-		this.hashMethod = repository.getHashMethod();
-		this.pythonRepository = repository;
-	}
+    @ToStringExclude
+    @JsonIgnore
+    private PythonRepository pythonRepository;
 
-	@Override
-	public PythonRepository getEntity() {
-		return pythonRepository;
-	}
+    public PythonRepositoryDto(PythonRepository repository, int numberOfPackages) {
+        super(repository, numberOfPackages);
+        this.hashMethod = repository.getHashMethod();
+        this.pythonRepository = repository;
+    }
 
-	public PythonRepository toEntity() {
-		return new PythonRepository(this);
-	}
+    @Override
+    public PythonRepository getEntity() {
+        return pythonRepository;
+    }
+
+    public PythonRepository toEntity() {
+        return new PythonRepository(this);
+    }
 }

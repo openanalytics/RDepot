@@ -20,15 +20,13 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.exceptions;
 
+import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import java.io.Serial;
 import java.util.List;
 import java.util.Locale;
-
+import lombok.Getter;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
-
-import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-import lombok.Getter;
 
 /**
  * Thrown when one attempts to sort or filter by a property that does not exist.
@@ -36,15 +34,13 @@ import lombok.Getter;
 @Getter
 public class UnrecognizedQueryParameterException extends ApiException {
 
-	private final List<String> parameters;
-	
-	@Serial
-	private static final long serialVersionUID = 8495178122692802534L;
+    private final List<String> parameters;
 
-	public UnrecognizedQueryParameterException(List<String> parameters, MessageSource messageSource, Locale locale) {
-		super(messageSource, locale, 
-				MessageCodes.UNRECOGNIZED_QUERY_PARAMETER, HttpStatus.BAD_REQUEST);
-		this.parameters = parameters;
-	}
+    @Serial
+    private static final long serialVersionUID = 8495178122692802534L;
 
+    public UnrecognizedQueryParameterException(List<String> parameters, MessageSource messageSource, Locale locale) {
+        super(messageSource, locale, MessageCodes.UNRECOGNIZED_QUERY_PARAMETER, HttpStatus.BAD_REQUEST);
+        this.parameters = parameters;
+    }
 }

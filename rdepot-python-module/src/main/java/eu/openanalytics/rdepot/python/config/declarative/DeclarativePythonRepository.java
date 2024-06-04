@@ -23,7 +23,6 @@ package eu.openanalytics.rdepot.python.config.declarative;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import eu.openanalytics.rdepot.base.technology.Technology;
 import eu.openanalytics.rdepot.python.technology.PythonLanguage;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,11 +31,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DeclarativePythonRepository {
-	protected String name;
-	protected String publicationUri;
-	protected String serverAddress;
-	protected Boolean deleted = false;
-	protected Boolean published = true;
-	@JsonDeserialize(using = PythonLanguage.class)
-	protected Technology technology;
+    protected String name;
+    protected String publicationUri;
+    protected String serverAddress;
+    protected Boolean deleted = false;
+    protected Boolean published = true;
+
+    @JsonDeserialize(using = PythonLanguage.class)
+    protected Technology technology;
 }

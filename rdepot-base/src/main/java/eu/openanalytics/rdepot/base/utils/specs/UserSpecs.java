@@ -20,38 +20,37 @@
  */
 package eu.openanalytics.rdepot.base.utils.specs;
 
+import eu.openanalytics.rdepot.base.entities.User;
 import java.util.List;
-
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import eu.openanalytics.rdepot.base.entities.User;
-
 /**
- * Used to build {@link Specification} to fetch 
+ * Used to build {@link Specification} to fetch
  * {@link User Users} from {@link JpaRepository DAOs}.
  */
 public class UserSpecs {
-	public static Specification<User> ofRole(List<String> role) {
-		return (root, query, criteriaBuilder) -> criteriaBuilder.in(root.get("role").get("name")).value(role);
-	}
-	
-	public static Specification<User> isActive(boolean active) {
-		return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("active"), active);
-	}
-	
-	public static Specification<User> byName(String name) {
-		return (root, query, criteriaBuilder) -> 
-			criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + name.toLowerCase() + "%");
-	}
-	
-	public static Specification<User> byLogin(String login) {
-		return (root, query, criteriaBuilder) -> 
-			criteriaBuilder.like(criteriaBuilder.lower(root.get("login")), "%" + login.toLowerCase() + "%");
-	}
-	
-	public static Specification<User> byEmail(String email) {
-		return (root, query, criteriaBuilder) -> 
-			criteriaBuilder.like(criteriaBuilder.lower(root.get("email")), "%" + email.toLowerCase() + "%");
-	}
+    public static Specification<User> ofRole(List<String> role) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.in(root.get("role").get("name")).value(role);
+    }
+
+    public static Specification<User> isActive(boolean active) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("active"), active);
+    }
+
+    public static Specification<User> byName(String name) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + name.toLowerCase() + "%");
+    }
+
+    public static Specification<User> byLogin(String login) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.like(criteriaBuilder.lower(root.get("login")), "%" + login.toLowerCase() + "%");
+    }
+
+    public static Specification<User> byEmail(String email) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.like(criteriaBuilder.lower(root.get("email")), "%" + email.toLowerCase() + "%");
+    }
 }

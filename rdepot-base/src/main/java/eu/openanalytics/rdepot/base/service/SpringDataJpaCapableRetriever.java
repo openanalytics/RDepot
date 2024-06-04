@@ -22,13 +22,12 @@ package eu.openanalytics.rdepot.base.service;
 
 import eu.openanalytics.rdepot.base.daos.Dao;
 import eu.openanalytics.rdepot.base.entities.Resource;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Default service, used to fetch resources from the database.
@@ -36,47 +35,47 @@ import java.util.Optional;
  * @param <E> Entity class related to the resource.
  */
 public abstract class SpringDataJpaCapableRetriever<E extends Resource> implements Retriever<E> {
-	protected Dao<E> dao;
-	
-	/**
-	 * @param dao Data Access Object to interact with external data source.
-	 */
-	public SpringDataJpaCapableRetriever(Dao<E> dao) {
-		this.dao = dao;
-	}
-	
-	@Override
-	public Optional<E> findById(int id) {
-		return dao.findById(id);
-	}
+    protected Dao<E> dao;
 
-	@Override
-	public Page<E> findAll(Pageable pageable) {
-		return dao.findAll(pageable);
-	}
+    /**
+     * @param dao Data Access Object to interact with external data source.
+     */
+    public SpringDataJpaCapableRetriever(Dao<E> dao) {
+        this.dao = dao;
+    }
 
-	@Override
-	public Page<E> findAllBySpecification(Specification<E> specification, Pageable pageable) {
-		return dao.findAll(specification, pageable);
-	}
+    @Override
+    public Optional<E> findById(int id) {
+        return dao.findById(id);
+    }
 
-	@Override
-	public List<E> findAllBySpecification(Specification<E> specification) {
-		return dao.findAll(specification);
-	}
+    @Override
+    public Page<E> findAll(Pageable pageable) {
+        return dao.findAll(pageable);
+    }
 
-	@Override
-	public List<E> findAll() {
-		return dao.findAll();
-	}
+    @Override
+    public Page<E> findAllBySpecification(Specification<E> specification, Pageable pageable) {
+        return dao.findAll(specification, pageable);
+    }
 
-	@Override
-	public Optional<E> findOneNonDeleted(int id) {
-		return dao.findByIdAndDeleted(id, false);
-	}
-	
-	@Override
-	public Optional<E> findOneDeleted(int id) {
-		return dao.findByIdAndDeleted(id, true);
-	}
+    @Override
+    public List<E> findAllBySpecification(Specification<E> specification) {
+        return dao.findAll(specification);
+    }
+
+    @Override
+    public List<E> findAll() {
+        return dao.findAll();
+    }
+
+    @Override
+    public Optional<E> findOneNonDeleted(int id) {
+        return dao.findByIdAndDeleted(id, false);
+    }
+
+    @Override
+    public Optional<E> findOneDeleted(int id) {
+        return dao.findByIdAndDeleted(id, true);
+    }
 }

@@ -20,15 +20,13 @@
  */
 package eu.openanalytics.rdepot.base.validation.repositories;
 
-import java.util.Optional;
-
-import org.springframework.validation.Errors;
-
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.base.validation.ChainValidator;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
+import org.springframework.validation.Errors;
 
 /**
  * Validates name of {@link Repository}.
@@ -37,17 +35,17 @@ import lombok.AllArgsConstructor;
  */
 @AllArgsConstructor
 public class NameValidation<R extends Repository> extends ChainValidator<R> {
-	
-	private final RepositoryService<R> repositoryService;
 
-	public void validateField(R repository, Errors errors){
-		if(repository.getName() == null || repository.getName().isBlank()) {
-			errors.rejectValue("name", MessageCodes.EMPTY_NAME);
-		} else {
-			Optional<R> duplicateName = repositoryService.findByName(repository.getName());
-			if(duplicateName.isPresent() && duplicateName.get().getId() != repository.getId()) {
-				errors.rejectValue("name", MessageCodes.ERROR_DUPLICATE_NAME);
-			}
-		}
-	}
+    private final RepositoryService<R> repositoryService;
+
+    public void validateField(R repository, Errors errors) {
+        if (repository.getName() == null || repository.getName().isBlank()) {
+            errors.rejectValue("name", MessageCodes.EMPTY_NAME);
+        } else {
+            Optional<R> duplicateName = repositoryService.findByName(repository.getName());
+            if (duplicateName.isPresent() && duplicateName.get().getId() != repository.getId()) {
+                errors.rejectValue("name", MessageCodes.ERROR_DUPLICATE_NAME);
+            }
+        }
+    }
 }

@@ -31,22 +31,21 @@ import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 /**
  * Creates {@link AccessToken Access Token} for a certain {@link User}.
  */
-public class CreateAccessTokenStrategy 
-	extends CreateStrategy<AccessToken> {
-	
-	public CreateAccessTokenStrategy(
-			AccessToken resource, 
-			User requester,
-			NewsfeedEventService newsfeedEventService,
-			AccessTokenService accessTokenService) {
-		super(resource, accessTokenService, requester, newsfeedEventService);
-	}
-	
-	@Override
-	protected NewsfeedEvent generateEvent(AccessToken resource) {
-		return new NewsfeedEvent(requester, NewsfeedEventType.CREATE, resource);
-	}
+public class CreateAccessTokenStrategy extends CreateStrategy<AccessToken> {
 
-	@Override
-	protected void postStrategy() throws StrategyFailure {}
+    public CreateAccessTokenStrategy(
+            AccessToken resource,
+            User requester,
+            NewsfeedEventService newsfeedEventService,
+            AccessTokenService accessTokenService) {
+        super(resource, accessTokenService, requester, newsfeedEventService);
+    }
+
+    @Override
+    protected NewsfeedEvent generateEvent(AccessToken resource) {
+        return new NewsfeedEvent(requester, NewsfeedEventType.CREATE, resource);
+    }
+
+    @Override
+    protected void postStrategy() throws StrategyFailure {}
 }

@@ -21,21 +21,20 @@
 package eu.openanalytics.rdepot.integrationtest.manager.v2.testData;
 
 import java.util.List;
-
 import lombok.Builder;
 import lombok.Getter;
 
 @Builder
 @Getter
 public class RepositoryTestData {
-	private String repoIdToRead;
-	private String repoIdDeleted;
-	private String repoIdNotExists;
-	private List<String> technologies;
-	private List<String> maintainers;
-	private String search;
-	private String name;
-	private int getEndpointNewEventsAmount;
-	private boolean deleted;
-	private boolean published;
+    private String repoIdToRead;
+    private String repoIdDeleted;
+    private String repoIdNotExists;
+    private List<String> technologies;
+    private List<String> maintainers;
+    private String search;
+    private String name;
+    private int getEndpointNewEventsAmount;
+    private boolean deleted;
+    private boolean published;
 }

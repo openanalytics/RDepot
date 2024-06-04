@@ -24,30 +24,30 @@ package eu.openanalytics.rdepot.integrationtest.environment;
  * Creates conditions for integration tests in the build environment.
  */
 public interface TestEnvironmentConfigurator {
-	/**
-	 * Restores container's file system and database to example state.
-	 * Has to be executed before every test to ensure that the conditions
-	 * under which every test is executed are exactly the same.
-	 */
-	void restoreEnvironment() throws Exception;
-	
-	/**
-	 * Creates a backup of current database state for declarative mode testing.
-	 */
-	void backupEnvironment() throws Exception;
-	
-	/**
-	 * Restores a clean declarative state after a test is performed.
-	 */
-	void restoreDeclarative() throws Exception;
-	
-	static TestEnvironmentConfigurator getDefaultInstance() {
-		return BashTestEnvironmentConfigurator.getInstance();
-	}
+    /**
+     * Restores container's file system and database to example state.
+     * Has to be executed before every test to ensure that the conditions
+     * under which every test is executed are exactly the same.
+     */
+    void restoreEnvironment() throws Exception;
 
-	/**
-	 * Blocks connection between app and repo containers
-	 * to test submission with republication failure warning.
-	 */
-	void blockRepoContainer(Runnable testMethod) throws Exception;
+    /**
+     * Creates a backup of current database state for declarative mode testing.
+     */
+    void backupEnvironment() throws Exception;
+
+    /**
+     * Restores a clean declarative state after a test is performed.
+     */
+    void restoreDeclarative() throws Exception;
+
+    static TestEnvironmentConfigurator getDefaultInstance() {
+        return BashTestEnvironmentConfigurator.getInstance();
+    }
+
+    /**
+     * Blocks connection between app and repo containers
+     * to test submission with republication failure warning.
+     */
+    void blockRepoContainer(Runnable testMethod) throws Exception;
 }

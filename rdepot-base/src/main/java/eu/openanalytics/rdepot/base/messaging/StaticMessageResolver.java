@@ -20,11 +20,10 @@
  */
 package eu.openanalytics.rdepot.base.messaging;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Used to dynamically resolve messages without having to autowire message source.
@@ -32,21 +31,21 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class StaticMessageResolver {
-	
-	private static MessageSource ms;
-	
-	public StaticMessageResolver(MessageSource messageSource) {
-		ms = messageSource;
-	}
-	/**
-	 * Resolves localized message using the message source loaded from the context.
-	 */
-	public static String getMessage(String messageCode) {
-		try {
-			return ms.getMessage(messageCode, null, messageCode, LocaleContextHolder.getLocale());
-		} catch(ClassCastException | NullPointerException e) {
-			log.error(e.getMessage(), e);
-			throw new IllegalStateException("Could not properly resolve message source bean!");
-		}
-	}
+
+    private static MessageSource ms;
+
+    public StaticMessageResolver(MessageSource messageSource) {
+        ms = messageSource;
+    }
+    /**
+     * Resolves localized message using the message source loaded from the context.
+     */
+    public static String getMessage(String messageCode) {
+        try {
+            return ms.getMessage(messageCode, null, messageCode, LocaleContextHolder.getLocale());
+        } catch (ClassCastException | NullPointerException e) {
+            log.error(e.getMessage(), e);
+            throw new IllegalStateException("Could not properly resolve message source bean!");
+        }
+    }
 }

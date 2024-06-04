@@ -20,12 +20,10 @@
  */
 package eu.openanalytics.rdepot.base.validation;
 
-import lombok.NonNull;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.NonNull;
 
 /**
  * Default implementation of {@link ValidationResult}
@@ -35,9 +33,11 @@ public class ValidationResultImpl<T> implements DataSpecificValidationResult<T> 
     public static ValidationResult createResult() {
         return new ValidationResultImpl<>();
     }
+
     public static <T> DataSpecificValidationResult<T> createDataSpecificResult(Class<T> clazz) {
         return new ValidationResultImpl<>();
     }
+
     private ValidationResultImpl() {}
 
     private final List<ValidationResultItem<T>> errors = new ArrayList<>();

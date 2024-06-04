@@ -24,7 +24,6 @@ import eu.openanalytics.rdepot.base.daos.SubmissionDao;
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.Submission;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -33,19 +32,19 @@ import java.util.Optional;
  */
 @org.springframework.stereotype.Service
 public class SubmissionService extends Service<Submission> {
-	
-	private final SubmissionDao submissionDao;
-	
-	public SubmissionService(SubmissionDao dao) {
-		super(dao);
-		this.submissionDao = dao;
-	}
 
-	public List<Submission> findAllByRepository(Repository repository) {
-		return submissionDao.findByPackageBag_RepositoryGeneric(repository);
-	}
-	
-	public Optional<Submission> findByPackage(Package packageBag) {
-		return submissionDao.findByPackageBag(packageBag);
-	}
+    private final SubmissionDao submissionDao;
+
+    public SubmissionService(SubmissionDao dao) {
+        super(dao);
+        this.submissionDao = dao;
+    }
+
+    public List<Submission> findAllByRepository(Repository repository) {
+        return submissionDao.findByPackageBag_RepositoryGeneric(repository);
+    }
+
+    public Optional<Submission> findByPackage(Package packageBag) {
+        return submissionDao.findByPackageBag(packageBag);
+    }
 }

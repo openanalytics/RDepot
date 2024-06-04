@@ -43,7 +43,7 @@ c(0.0001,0.001,0.01), trace = TRUE, maxit = 500, ...)
     "epanechnikov". See \code{\link{density}} for details.}
   \item{numnet}{
     the number of neural networks when method is \code{"neuralnet"}. It
-    corresponds to the number of times the function \code{nnet} is called.}  
+    corresponds to the number of times the function \code{nnet} is called.}
   \item{sizenet}{
     the number of units in the hidden layer. Can be zero if there are
     no skip-layer units.}
@@ -65,7 +65,7 @@ c(0.0001,0.001,0.01), trace = TRUE, maxit = 500, ...)
 \value{
   An object of \code{class} \code{"postpr"}, containing the following
   components:
-  
+
   \item{pred}{a vector of model probabilities when method is
   \code{"mnlogistic"} or \code{"neuralnet"}.}
   \item{values}{the vector of model indices in the accepted region using
@@ -104,12 +104,12 @@ c(0.0001,0.001,0.01), trace = TRUE, maxit = 500, ...)
   are used to predict the probabilities of models based on the observed
   statistics using \code{\link{nnet}}. This method can be useful if many
   summary statistics are used.
-  
+
   Names for the summary statistics are strongly recommended. Names can
   be supplied as colnames to \code{sumstat} (and target). If no names are
   supplied S1, S2, \dots to summary statistics will be assigned to
   parameters and the user will be warned.
-  
+
 }
 \references{
 
@@ -117,7 +117,7 @@ c(0.0001,0.001,0.01), trace = TRUE, maxit = 500, ...)
   time, and immigration in population trees. In \emph{Simulation,
   Genetics, and Human Prehistory} (Matsumura, S., Forster, P. and
   Renfrew, C., eds) McDonald Institute for Archaeological Research
-  
+
 }
 \author{
   Katalin Csillery, Olivier Francois and Michael Blum with some

@@ -20,45 +20,53 @@
  */
 package eu.openanalytics.rdepot.python.storage.indexes;
 
+import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
+import eu.openanalytics.rdepot.python.utils.PublicationURIUtils;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
-import eu.openanalytics.rdepot.python.entities.PythonPackage;
-
-import java.io.IOException;
-
 @Component
+@Slf4j
 public class RepositoryIndexGenerator extends IndexesGenerator {
 
-	private final Resource indexTemplate;
+    private final Resource indexTemplate;
 
-	@Autowired
-	public RepositoryIndexGenerator(@Value("classpath:templates/index_template.html") Resource indexTemplate) {
-		this.indexTemplate = indexTemplate;
-	}
+    @Autowired
+    public RepositoryIndexGenerator(@Value("classpath:templates/index_template.html") Resource indexTemplate) {
+        this.indexTemplate = indexTemplate;
+    }
 
-	protected String getPackageAnchor(PythonPackage packageBag) {
-		String anchor = "<a href=\"%s\">%s</a> ";
-		return String.format(anchor,
-				packageBag.getRepository().getPublicationUri() + separator + packageBag.getName(), 
-				packageBag.getName());
-	}
+    protected String getPackageAnchor(PythonPackage packageBag) {
+        String anchor = "<a href=\"%s\">%s</a> ";
+        String publicationUri;
+        try {
+            publicationUri = PublicationURIUtils.resolveToRelativeURL(
+                    packageBag.getRepository().getPublicationUri());
+        } catch (MalformedURLException | URISyntaxException e) {
+            log.debug(e.getMessage(), e);
+            publicationUri = packageBag.getRepository().getPublicationUri();
+        }
 
-	protected String prepareTemplateString(String template, PythonRepository repository) {
-		return template
-				.replace("$document_title", repository.getName())
-				.replace("$title", "")
-				.replace("$meta_name", String.format("%s:repository-version", repository.getName()))
-				.replace("$meta_content", repository.getVersion().toString());
-	}
+        return String.format(anchor, publicationUri + separator + packageBag.getName(), packageBag.getName());
+    }
 
-	public void createIndexFile(PythonRepository repository, String path) throws IOException {
-		String initialTemplate = getTemplateString(indexTemplate);
-		String finalTemplate = prepareTemplateString(initialTemplate, repository);
-		writeTemplateStringToFile(path, finalTemplate);
-	}
+    protected String prepareTemplateString(String template, PythonRepository repository) {
+        return template.replace("$document_title", repository.getName())
+                .replace("$title", "")
+                .replace("$meta_name", String.format("%s:repository-version", repository.getName()))
+                .replace("$meta_content", repository.getVersion().toString());
+    }
 
+    public void createIndexFile(PythonRepository repository, String path) throws IOException {
+        String initialTemplate = getTemplateString(indexTemplate);
+        String finalTemplate = prepareTemplateString(initialTemplate, repository);
+        writeTemplateStringToFile(path, finalTemplate);
+    }
 }

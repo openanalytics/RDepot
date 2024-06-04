@@ -28,16 +28,16 @@ package eu.openanalytics.rdepot.base.initializer;
  */
 public interface IRepositoryDataInitializer {
 
-	/**
-	 * Creates repositories from provided configuration files (e.g. YAML),
-	 * usually at the start of application.<br/>
-	 * If declarative mode is enabled, it means that repositories themselves
-	 * (not their content) are read-only and the administrator is not able to
-	 * e.g. create one other than by editing config files.
-	 * Therefore, in such a case the implementation should make sure
-	 * that all other repositories that happened to be created in a different way,
-	 * are removed before the application is ready.
-	 * @param declarative true if declarative mode is enabled
-	 */
-	void createRepositoriesFromConfig(boolean declarative);
+    /**
+     * Creates repositories from provided configuration files (e.g. YAML),
+     * usually at the start of application.<br/>
+     * If declarative mode is enabled, it means that repositories themselves
+     * (not their content) are read-only and the administrator is not able to
+     * e.g. create one other than by editing config files.
+     * Therefore, in such a case the implementation should make sure
+     * that all other repositories that happened to be created in a different way,
+     * are removed before the application is ready.
+     * @param declarative true if declarative mode is enabled
+     */
+    void createRepositoriesFromConfig(boolean declarative);
 }

@@ -29,9 +29,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Status {
-	SUCCESS("success"),
-	ERROR("error"),
-	WARNING("warning");
-	
-	private final String status;
+    SUCCESS("success"),
+    ERROR("error"),
+    WARNING("warning");
+
+    private final String status;
 }

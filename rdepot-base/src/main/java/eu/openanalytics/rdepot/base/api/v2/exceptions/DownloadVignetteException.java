@@ -21,23 +21,20 @@
 package eu.openanalytics.rdepot.base.api.v2.exceptions;
 
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
-
 import java.io.Serial;
 import java.util.Locale;
+import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 
 /**
  * Thrown when Vignette cannot be downloaded due to an internal error.
  */
 public class DownloadVignetteException extends ApiException {
 
-	@Serial
-	private static final long serialVersionUID = -1457310015553128214L;
+    @Serial
+    private static final long serialVersionUID = -1457310015553128214L;
 
-	public DownloadVignetteException(MessageSource messageSource, Locale locale) {
-		super(messageSource, locale, MessageCodes.ERROR_DOWNLOAD_VIGNETTE,
-				HttpStatus.INTERNAL_SERVER_ERROR);
-	}
-
+    public DownloadVignetteException(MessageSource messageSource, Locale locale) {
+        super(messageSource, locale, MessageCodes.ERROR_DOWNLOAD_VIGNETTE, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

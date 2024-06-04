@@ -21,22 +21,20 @@
 package eu.openanalytics.rdepot.base.api.v2.exceptions;
 
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
-
 import java.io.Serial;
 import java.util.Locale;
+import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 
 /**
  * Thrown when Vignette for a given package cannot be found.
  */
 public class VignetteNotFound extends ApiException {
 
-	@Serial
-	private static final long serialVersionUID = -3411999590125717969L;
+    @Serial
+    private static final long serialVersionUID = -3411999590125717969L;
 
-	public VignetteNotFound(MessageSource messageSource, Locale locale) {
-		super(messageSource, locale, MessageCodes.ERROR_VIGNETTE_NOT_FOUND, HttpStatus.NOT_FOUND);
-	}
-
+    public VignetteNotFound(MessageSource messageSource, Locale locale) {
+        super(messageSource, locale, MessageCodes.ERROR_VIGNETTE_NOT_FOUND, HttpStatus.NOT_FOUND);
+    }
 }

@@ -24,14 +24,14 @@ import eu.openanalytics.rdepot.repo.model.SynchronizeRepositoryRequestBody;
 
 public class RepositoryVersionMismatchException extends Exception {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -6950465626649080331L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -6950465626649080331L;
 
-	public RepositoryVersionMismatchException(SynchronizeRepositoryRequestBody requestBody) {
-		super("Repository has been altered since the request was sent. Try again.\n"
-				+ "Expected version: " + requestBody.getVersionBefore()
-				+ "\nPage: " + requestBody.getPage());
-	}
+    public RepositoryVersionMismatchException(SynchronizeRepositoryRequestBody requestBody) {
+        super("Repository has been altered since the request was sent. Try again.\n"
+                + "Expected version: " + requestBody.getVersionBefore()
+                + "\nPage: " + requestBody.getPage());
+    }
 }

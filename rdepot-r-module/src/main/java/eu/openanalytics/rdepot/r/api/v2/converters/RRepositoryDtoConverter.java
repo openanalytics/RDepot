@@ -31,16 +31,15 @@ import org.springframework.stereotype.Component;
 @Component
 @AllArgsConstructor
 public class RRepositoryDtoConverter implements DtoConverter<RRepository, RRepositoryDto> {
-	private final PackageService<Package> packageService;
+    private final PackageService<Package> packageService;
 
-	@Override
-	public RRepository resolveDtoToEntity(RRepositoryDto dto) {
-		return new RRepository(dto);
-	}
+    @Override
+    public RRepository resolveDtoToEntity(RRepositoryDto dto) {
+        return new RRepository(dto);
+    }
 
-	@Override
-	public RRepositoryDto convertEntityToDto(RRepository entity) {
-		return new RRepositoryDto(entity, packageService.countByRepository(entity));
-	}
-
+    @Override
+    public RRepositoryDto convertEntityToDto(RRepository entity) {
+        return new RRepositoryDto(entity, packageService.countByRepository(entity));
+    }
 }

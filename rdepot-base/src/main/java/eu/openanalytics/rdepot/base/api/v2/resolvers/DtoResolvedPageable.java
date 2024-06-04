@@ -20,6 +20,7 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.resolvers;
 
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.springframework.data.domain.Limit;
@@ -27,13 +28,10 @@ import org.springframework.data.domain.OffsetScrollPosition;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import java.util.Optional;
-
 @AllArgsConstructor
 public class DtoResolvedPageable implements Pageable {
     private final Pageable basePageable;
     private final Sort resolvedEntitySort;
-
 
     public Sort getDtoSort() {
         return basePageable.getSort();

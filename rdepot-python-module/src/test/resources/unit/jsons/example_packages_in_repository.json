@@ -14,15 +14,15 @@
       {
         "id": 100,
         "user": {
-          "id": 0,
-          "name": "Test User0",
-          "login": "admin_testusername0",
-          "email": "0test@example.org"
+          "id": 123,
+          "name": "Test Admin",
+          "login": "testadmin",
+          "email": "admin@example.org"
         },
         "repository": {
           "id": 123,
-          "name": "Test Python Repository 123",
-          "publicationUri": "http://localhost/repo/testrepo123",
+          "name": "Test Python Repository",
+          "publicationUri": "http://localhost/repo/testrepo",
           "technology": "Python"
         },
         "submission": {
@@ -56,15 +56,15 @@
       {
         "id": 101,
         "user": {
-          "id": 0,
-          "name": "Test User0",
-          "login": "admin_testusername0",
-          "email": "0test@example.org"
+          "id": 123,
+          "name": "Test Admin",
+          "login": "testadmin",
+          "email": "admin@example.org"
         },
         "repository": {
           "id": 123,
-          "name": "Test Python Repository 123",
-          "publicationUri": "http://localhost/repo/testrepo123",
+          "name": "Test Python Repository",
+          "publicationUri": "http://localhost/repo/testrepo",
           "technology": "Python"
         },
         "submission": {
@@ -98,15 +98,15 @@
       {
         "id": 102,
         "user": {
-          "id": 0,
-          "name": "Test User0",
-          "login": "admin_testusername0",
-          "email": "0test@example.org"
+          "id": 123,
+          "name": "Test Admin",
+          "login": "testadmin",
+          "email": "admin@example.org"
         },
         "repository": {
           "id": 123,
-          "name": "Test Python Repository 123",
-          "publicationUri": "http://localhost/repo/testrepo123",
+          "name": "Test Python Repository",
+          "publicationUri": "http://localhost/repo/testrepo",
           "technology": "Python"
         },
         "submission": {

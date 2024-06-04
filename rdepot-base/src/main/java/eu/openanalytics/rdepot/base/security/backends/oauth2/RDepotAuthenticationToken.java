@@ -22,29 +22,29 @@ package eu.openanalytics.rdepot.base.security.backends.oauth2;
 
 import java.io.Serial;
 import java.util.Collection;
-
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
 public class RDepotAuthenticationToken extends AbstractAuthenticationToken {
 
-	@Serial
-	private static final long serialVersionUID = 9166146980914094009L;
-	private final Object principal;
-	
-	public RDepotAuthenticationToken(Object principal, Collection<? extends GrantedAuthority> authorities) {
-		super(authorities);
-		this.principal = principal;
-		super.setAuthenticated(true);
-	}
+    @Serial
+    private static final long serialVersionUID = 9166146980914094009L;
 
-	@Override
-	public Object getCredentials() {
-		return null;
-	}
+    private final Object principal;
 
-	@Override
-	public Object getPrincipal() {
-		return principal;
-	}
+    public RDepotAuthenticationToken(Object principal, Collection<? extends GrantedAuthority> authorities) {
+        super(authorities);
+        this.principal = principal;
+        super.setAuthenticated(true);
+    }
+
+    @Override
+    public Object getCredentials() {
+        return null;
+    }
+
+    @Override
+    public Object getPrincipal() {
+        return principal;
+    }
 }

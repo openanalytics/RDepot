@@ -21,7 +21,6 @@
 package eu.openanalytics.rdepot.base.exception;
 
 import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
-
 import java.io.Serial;
 
 /**
@@ -29,17 +28,17 @@ import java.io.Serial;
  */
 public abstract class LocalizedException extends Exception {
 
-	@Serial
-	private static final long serialVersionUID = 7657136302339131415L;
+    @Serial
+    private static final long serialVersionUID = 7657136302339131415L;
 
-	private final String messageCode;
-	
-	public LocalizedException(String messageCode) {
-		super(StaticMessageResolver.getMessage(messageCode));
-		this.messageCode = messageCode;
-	}
-	
-	public String getMessageCode() {
-		return messageCode;
-	}
+    private final String messageCode;
+
+    public LocalizedException(String messageCode) {
+        super(StaticMessageResolver.getMessage(messageCode));
+        this.messageCode = messageCode;
+    }
+
+    public String getMessageCode() {
+        return messageCode;
+    }
 }

@@ -21,5 +21,5 @@
 package eu.openanalytics.rdepot.repo.storage;
 
 public interface InitializableStorageService {
-	void init();
+    void init();
 }

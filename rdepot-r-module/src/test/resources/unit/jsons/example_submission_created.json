@@ -4,35 +4,35 @@
 	"message": "Your resource has been created successfully.",
 	"messageCode": "success.resource.created",
 	"data": {
-		"id": 0,
+		"id": 1,
 		"submitter": {
-			"id": 0,
-			"name": "Test User0",
-			"login": "admin_testusername0",
-			"email": "0test@example.org"
+			"id": 123,
+			"name": "Test Admin",
+			"login": "testadmin",
+			"email": "admin@example.org"
 		},
 		"approver": null,
 		"packageBag": {
-			"id": 0,
+			"id": 1,
 			"version": "4.5.6",
 			"repository": {
-				"name": "Test Repository 123",
+				"name": "Test R Repository",
 				"id": 123,
 				"publicationUri": "http://localhost/repo/testrepo123"
 			},
-			"submission": {"id": 0, "state":  "WAITING"},
-			"name": "TestPackage0",
-			"description": "Simple test package0",
-			"author": "Albert Einstein0",
-			"title": "Test Package0",
+			"submission": {"id": 1, "state":  "WAITING"},
+			"name": "TestPackage1",
+			"description": "Simple test package1",
+			"author": "Albert Einstein1",
+			"title": "Test Package1",
 			"url": "",
-			"source": "0test_package.tar.gz",
+			"source": "1test_package.tar.gz",
 			"active": true,
 			"deleted": false,
 			"links": [
 				{
 					"rel": "self",
-					"href": "http://localhost/api/v2/manager/r/packages/0"
+					"href": "http://localhost/api/v2/manager/r/packages/1"
 				},
 				{
 					"rel": "packageList",
@@ -46,7 +46,7 @@
 		"links": [
 			{
 				"rel": "self",
-				"href": "http://localhost/api/v2/manager/r/submissions/0"
+				"href": "http://localhost/api/v2/manager/r/submissions/1"
 			},
 			{
 				"rel": "submissionList",

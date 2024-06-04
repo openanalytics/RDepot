@@ -13,9 +13,9 @@
         "content": [
             {
                 "id": 100,
-                "user":{"name":"Test User111","id":111,"login":"packagemaintainer_testusername111","email":"111test@example.org"},
+                "user":{"name":"Test Package Maintainer","id":111,"login":"testpackagemaintainer","email":"packagemaintainer@example.org"},
                 "packageName": "TestPackage100",
-                "repository":{"name":"Test Python Repository 100","id":123,"publicationUri":"http://localhost/repo/testrepo100"},
+                "repository":{"name":"Test Python Repository 123","id":123,"publicationUri":"http://localhost/repo/testrepo123"},
                 "deleted": false,
                 "links": [
                     {
@@ -30,9 +30,9 @@
             },
             {
                 "id": 101,
-                "user":{"name":"Test User111","id":111,"login":"packagemaintainer_testusername111","email":"111test@example.org"},
+                "user":{"name":"Test Package Maintainer","id":111,"login":"testpackagemaintainer","email":"packagemaintainer@example.org"},
                 "packageName": "TestPackage101",
-                "repository":{"name":"Test Python Repository 100","id":123,"publicationUri":"http://localhost/repo/testrepo100"},
+                "repository":{"name":"Test Python Repository 123","id":123,"publicationUri":"http://localhost/repo/testrepo123"},
                 "deleted": false,
                 "links": [
                     {
@@ -47,9 +47,9 @@
             },
             {
                 "id": 102,
-                "user":{"name":"Test User111","id":111,"login":"packagemaintainer_testusername111","email":"111test@example.org"},
+                "user":{"name":"Test Package Maintainer","id":111,"login":"testpackagemaintainer","email":"packagemaintainer@example.org"},
                 "packageName": "TestPackage102",
-                "repository":{"name":"Test Python Repository 100","id":123,"publicationUri":"http://localhost/repo/testrepo100"},
+                "repository":{"name":"Test Python Repository 123","id":123,"publicationUri":"http://localhost/repo/testrepo123"},
                 "deleted": true,
                 "links": [
                     {

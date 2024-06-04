@@ -20,15 +20,13 @@
  */
 package eu.openanalytics.rdepot.base.validation.repositories;
 
-import java.util.Optional;
-
-import org.springframework.validation.Errors;
-
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.base.validation.ChainValidator;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
+import org.springframework.validation.Errors;
 
 /**
  * Validates {@link Repository Repository's} server address.
@@ -36,20 +34,20 @@ import lombok.AllArgsConstructor;
  * @param <R> technology-specific repository class
  */
 @AllArgsConstructor
-public class ServerAddressValidation<R extends Repository>  extends ChainValidator<R>{
-	
-	private final RepositoryService<R> service;
-	
-	public void validateField(R repository, Errors errors){
-		if(repository.getServerAddress() == null || repository.getServerAddress().isBlank()) {
-			errors.rejectValue("serverAddress", MessageCodes.EMPTY_SERVERADDRESS);
-		} else {
-			Optional<R> duplicateServerAddress = 
-					service.findByServerAddress(repository.getServerAddress());
-			if(duplicateServerAddress.isPresent() 
-					&& duplicateServerAddress.get().getId() != repository.getId()) {
-				errors.rejectValue("serverAddress", MessageCodes.DUPLICATE_SERVERADDRESS);
-			}
-		}
-	}
+public class ServerAddressValidation<R extends Repository> extends ChainValidator<R> {
+
+    private final RepositoryService<R> service;
+
+    public void validateField(R repository, Errors errors) {
+        if (repository.getServerAddress() == null
+                || repository.getServerAddress().isBlank()) {
+            errors.rejectValue("serverAddress", MessageCodes.EMPTY_SERVERADDRESS);
+        } else {
+            Optional<R> duplicateServerAddress = service.findByServerAddress(repository.getServerAddress());
+            if (duplicateServerAddress.isPresent()
+                    && duplicateServerAddress.get().getId() != repository.getId()) {
+                errors.rejectValue("serverAddress", MessageCodes.DUPLICATE_SERVERADDRESS);
+            }
+        }
+    }
 }

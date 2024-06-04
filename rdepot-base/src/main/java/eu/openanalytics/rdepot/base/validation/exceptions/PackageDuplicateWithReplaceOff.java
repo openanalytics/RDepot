@@ -26,9 +26,8 @@ import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
-import lombok.Getter;
-
 import java.io.Serial;
+import lombok.Getter;
 
 /**
  * Thrown when there already is such a {@link Package} in a given {@link Repository}.
@@ -37,15 +36,13 @@ import java.io.Serial;
 @Getter
 public class PackageDuplicateWithReplaceOff extends LocalizedException {
 
-	@Serial
-	private static final long serialVersionUID = -2811800471533644657L;
-	private final Submission submission;
-	
-	public PackageDuplicateWithReplaceOff(Submission submission) {
-		super(
-				StaticMessageResolver.getMessage(
-						MessageCodes.DUPLICATE_VERSION_REPLACE_OFF)
-			);
-		this.submission = submission;
-	}
+    @Serial
+    private static final long serialVersionUID = -2811800471533644657L;
+
+    private final Submission submission;
+
+    public PackageDuplicateWithReplaceOff(Submission submission) {
+        super(StaticMessageResolver.getMessage(MessageCodes.DUPLICATE_VERSION_REPLACE_OFF));
+        this.submission = submission;
+    }
 }

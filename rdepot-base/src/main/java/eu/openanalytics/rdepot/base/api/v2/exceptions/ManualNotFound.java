@@ -21,23 +21,20 @@
 package eu.openanalytics.rdepot.base.api.v2.exceptions;
 
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
-
 import java.io.Serial;
 import java.util.Locale;
+import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 
 /**
  * Thrown when Manual cannot be found for a package.
  */
 public class ManualNotFound extends ApiException {
 
-	@Serial
-	private static final long serialVersionUID = -5029063649042550825L;
+    @Serial
+    private static final long serialVersionUID = -5029063649042550825L;
 
-	public ManualNotFound(MessageSource messageSource, Locale locale) {
-		super(messageSource, locale, MessageCodes.ERROR_MANUAL_NOT_FOUND,
-				HttpStatus.NOT_FOUND);
-	}
-
+    public ManualNotFound(MessageSource messageSource, Locale locale) {
+        super(messageSource, locale, MessageCodes.ERROR_MANUAL_NOT_FOUND, HttpStatus.NOT_FOUND);
+    }
 }

@@ -32,7 +32,7 @@ services:
     build:
       dockerfile: docker/build/app-standalone/Dockerfile
       cache_from:
-      - openanalytics/rdepot-app:2.0.0
+      - openanalytics/rdepot-app:2.1.0
     restart: unless-stopped
     hostname: oa-rdepot-backend
     container_name: oa-rdepot-backend
@@ -58,7 +58,7 @@ services:
     build:
       dockerfile: docker/build/repo-standalone/Dockerfile
       cache_from:
-      - openanalytics/rdepot-repo:2.0.0
+      - openanalytics/rdepot-repo:2.1.0
     restart: unless-stopped
     hostname: oa-rdepot-repo
     container_name: oa-rdepot-repo
@@ -69,7 +69,7 @@ services:
     - oa-rdepot
   frontend:
     container_name: oa-rdepot-frontend
-    image: openanalytics/rdepot-client:2.0.0
+    image: openanalytics/rdepot-client:2.1.0
     restart: unless-stopped
     networks:
     - oa-rdepot

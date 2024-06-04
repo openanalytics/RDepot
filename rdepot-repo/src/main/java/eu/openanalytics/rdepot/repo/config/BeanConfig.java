@@ -20,29 +20,56 @@
  */
 package eu.openanalytics.rdepot.repo.config;
 
+import eu.openanalytics.rdepot.repo.python.transaction.backup.PythonRepositoryBackup;
+import eu.openanalytics.rdepot.repo.r.storage.implementations.CranFileSystemStorageService;
+import eu.openanalytics.rdepot.repo.r.transaction.backup.CranRepositoryBackup;
+import eu.openanalytics.rdepot.repo.repository.Repository;
+import eu.openanalytics.rdepot.repo.storage.InitializableStorageService;
+import eu.openanalytics.rdepot.repo.transaction.Transaction;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-
-import eu.openanalytics.rdepot.repo.r.storage.CranFileSystemStorageService;
-import eu.openanalytics.rdepot.repo.storage.InitializableStorageService;
+import org.springframework.context.annotation.Profile;
 
 @Configuration
+@Profile({"production"})
 public class BeanConfig {
-	
-	@Autowired
-	CranFileSystemStorageService cranFileSystemStorageService;
-	
-	@Bean
-	@Primary
-	InitializableStorageService initializableStorageService() {
-		return new InitializableStorageService() {
-			
-			@Override
-			public void init() {
-				cranFileSystemStorageService.init();
-			}
-		};
-	}
+
+    @Autowired
+    CranFileSystemStorageService cranFileSystemStorageService;
+
+    @Bean
+    @Primary
+    InitializableStorageService initializableStorageService() {
+        return new InitializableStorageService() {
+
+            @Override
+            public void init() {
+                cranFileSystemStorageService.init();
+            }
+        };
+    }
+
+    @Bean
+    ConcurrentMap<String, Transaction> activeTransactionsById() {
+        return new ConcurrentHashMap<>();
+    }
+
+    @Bean
+    ConcurrentMap<Repository, Transaction> activeTransactionsByRepo() {
+        return new ConcurrentHashMap<>();
+    }
+
+    @Bean
+    ConcurrentMap<Transaction, PythonRepositoryBackup> pythonBackups() {
+        return new ConcurrentHashMap<>();
+    }
+
+    @Bean
+    ConcurrentMap<Transaction, CranRepositoryBackup> cranBackups() {
+        return new ConcurrentHashMap<>();
+    }
 }

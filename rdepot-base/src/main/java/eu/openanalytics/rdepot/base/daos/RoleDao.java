@@ -20,15 +20,15 @@
  */
 package eu.openanalytics.rdepot.base.daos;
 
-import java.util.Optional;
-
 import eu.openanalytics.rdepot.base.entities.Role;
+import java.util.Optional;
 
 /**
  * {@link org.springframework.data.jpa.repository.JpaRepository JPA Repository}
  * for {@link Role User Roles}.
  */
 public interface RoleDao extends Dao<Role> {
-	Optional<Role> findByValue(int value);
-	Optional<Role> findByDescription(String description);
+    Optional<Role> findByValue(int value);
+
+    Optional<Role> findByDescription(String description);
 }

@@ -22,21 +22,18 @@ package eu.openanalytics.rdepot.base.storage.exceptions;
 
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
-import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 /**
- * Thrown when {@link Package Package's} 
+ * Thrown when {@link Package Package's}
  * description file is invalid or cannot be read for another reason.
  */
 public class ReadPackageDescriptionException extends LocalizedException {
 
-	@Serial
-	private static final long serialVersionUID = -6188971167836393077L;
+    @Serial
+    private static final long serialVersionUID = -6188971167836393077L;
 
-	public ReadPackageDescriptionException(String messageCode) {
-		super(messageCode);
-	}
-
+    public ReadPackageDescriptionException(String messageCode) {
+        super(messageCode);
+    }
 }

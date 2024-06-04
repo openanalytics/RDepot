@@ -21,33 +21,32 @@
 package eu.openanalytics.rdepot.integrationtest.manager.v2.testData;
 
 import java.util.List;
-
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
 public class SubmissionTestData {
-	private String apiPackagesPath;
-	private String submissionId;
-	private String submissionIdRepositoryMaintainer;
-	private String submissionIdPackageMaintainer;
-	private String submissionIdUser;
-	private String submissionIdToAccept;
-	private String submissionIdAccepted;
-	private String submissionIdToCancel;
-	private final String packageId;
-	private final String packageNameToDownload;
-	private final String pdfPath;	
-	private int getEndpointNewEventsAmount;
-	private int deleteEndpointNewEventsAmount;
-	private int changeEndpointNewEventsAmount;
-	private int postEndpointNewEventsAmount;
-	private List<String> states;
-	private int packageIdInt;
-	private List<String> technologies;
-	private List<String> repositories;
-	private String fromDate;
-	private String toDate;
-	private String search;
+    private String apiPackagesPath;
+    private String submissionId;
+    private String submissionIdRepositoryMaintainer;
+    private String submissionIdPackageMaintainer;
+    private String submissionIdUser;
+    private String submissionIdToAccept;
+    private String submissionIdAccepted;
+    private String submissionIdToCancel;
+    private final String packageId;
+    private final String packageNameToDownload;
+    private final String pdfPath;
+    private int getEndpointNewEventsAmount;
+    private int deleteEndpointNewEventsAmount;
+    private int changeEndpointNewEventsAmount;
+    private int postEndpointNewEventsAmount;
+    private List<String> states;
+    private int packageIdInt;
+    private List<String> technologies;
+    private List<String> repositories;
+    private String fromDate;
+    private String toDate;
+    private String search;
 }

@@ -20,34 +20,32 @@
  */
 package eu.openanalytics.rdepot.base.mediator.deletion;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import eu.openanalytics.rdepot.base.entities.Resource;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.Service;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
 import lombok.AllArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Mediator that deletes resource of a specific type, 
+ * Mediator that deletes resource of a specific type,
  * resources related to it and all related events.
  * @param <T> Resource type
  */
 @AllArgsConstructor
 public abstract class ResourceDeleter<T extends Resource> {
-	
-	protected final NewsfeedEventService newsfeedEventService;
-	protected final Service<T> resourceService;
 
-	/**
-	 * Deletes resource together with its related events.
-	 */
-	@Transactional
-	public void delete(T resource) throws DeleteEntityException {
-		if(resource == null)
-			throw new NullPointerException("Tried to delete a null resource");
-		
-		newsfeedEventService.deleteRelatedEvents(resource);
-		resourceService.delete(resource);
-	}
+    protected final NewsfeedEventService newsfeedEventService;
+    protected final Service<T> resourceService;
+
+    /**
+     * Deletes resource together with its related events.
+     */
+    @Transactional
+    public void delete(T resource) throws DeleteEntityException {
+        if (resource == null) throw new NullPointerException("Tried to delete a null resource");
+
+        newsfeedEventService.deleteRelatedEvents(resource);
+        resourceService.delete(resource);
+    }
 }

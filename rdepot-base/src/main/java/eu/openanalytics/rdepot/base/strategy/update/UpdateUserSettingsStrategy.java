@@ -20,8 +20,6 @@
  */
 package eu.openanalytics.rdepot.base.strategy.update;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.entities.UserSettings;
@@ -31,6 +29,7 @@ import eu.openanalytics.rdepot.base.service.exceptions.CreateEntityException;
 import eu.openanalytics.rdepot.base.strategy.exceptions.FatalStrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Updates {@link UserSettings}.
@@ -38,53 +37,52 @@ import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure
  */
 public class UpdateUserSettingsStrategy extends UpdateStrategy<UserSettings> {
 
-	private final boolean toCreate;
-	
-	public UpdateUserSettingsStrategy(
-			UserSettings resource, UserSettingsService service,
-			NewsfeedEventService newsfeedEventService, 
-			User requester, UserSettings updatedResource,
-			boolean toCreate) {
-		super(resource, service, 
-				newsfeedEventService, requester, 
-				updatedResource, new UserSettings(resource));
-		this.toCreate = toCreate;
-	}
+    private final boolean toCreate;
 
-	@Override
-	protected void registerEvent(NewsfeedEvent event) {}
-	
-	@Override
-	@Transactional(rollbackFor = FatalStrategyFailure.class)
-	protected UserSettings actualStrategy() throws StrategyFailure {
-		if(!resource.getLanguage().equals(updatedResource.getLanguage())) {
-			resource.setLanguage(updatedResource.getLanguage());			
-		}
-		if(!resource.getTheme().equals(updatedResource.getTheme())) {
-			resource.setTheme(updatedResource.getTheme());
-		}
-		if(resource.getPageSize() != updatedResource.getPageSize()) {
-			resource.setPageSize(updatedResource.getPageSize());	
-		}
-		if(toCreate) {
-			try {
-				return service.create(resource);
-			} catch (CreateEntityException e) {
-				throw new FatalStrategyFailure(e);
-			}
-		}
-		return resource;
-	}
+    public UpdateUserSettingsStrategy(
+            UserSettings resource,
+            UserSettingsService service,
+            NewsfeedEventService newsfeedEventService,
+            User requester,
+            UserSettings updatedResource,
+            boolean toCreate) {
+        super(resource, service, newsfeedEventService, requester, updatedResource, new UserSettings(resource));
+        this.toCreate = toCreate;
+    }
 
-	@Override
-	protected NewsfeedEvent generateEvent(UserSettings resource) {		
-		return null;
-	}
+    @Override
+    protected void registerEvent(NewsfeedEvent event) {}
 
-	@Override
-	protected void postStrategy() throws StrategyFailure {}
+    @Override
+    @Transactional(rollbackFor = FatalStrategyFailure.class)
+    protected UserSettings actualStrategy() throws StrategyFailure {
+        if (!resource.getLanguage().equals(updatedResource.getLanguage())) {
+            resource.setLanguage(updatedResource.getLanguage());
+        }
+        if (!resource.getTheme().equals(updatedResource.getTheme())) {
+            resource.setTheme(updatedResource.getTheme());
+        }
+        if (resource.getPageSize() != updatedResource.getPageSize()) {
+            resource.setPageSize(updatedResource.getPageSize());
+        }
+        if (toCreate) {
+            try {
+                return service.create(resource);
+            } catch (CreateEntityException e) {
+                throw new FatalStrategyFailure(e);
+            }
+        }
+        return resource;
+    }
 
-	@Override
-	public void revertChanges() throws StrategyReversionFailure {}
+    @Override
+    protected NewsfeedEvent generateEvent(UserSettings resource) {
+        return null;
+    }
 
+    @Override
+    protected void postStrategy() throws StrategyFailure {}
+
+    @Override
+    public void revertChanges() throws StrategyReversionFailure {}
 }

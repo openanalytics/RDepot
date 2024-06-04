@@ -20,21 +20,16 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.dtos;
 
-import java.time.LocalDate;
-import java.util.Objects;
-
-import org.apache.commons.lang3.builder.ToStringExclude;
-import org.springframework.hateoas.EntityModel;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.enums.SubmissionState;
-import eu.openanalytics.rdepot.base.event.NewsfeedEventType;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.ToStringExclude;
+import org.springframework.hateoas.EntityModel;
 
 /**
  * DTO class that should be extended by technology-specific Submission DTO
@@ -47,44 +42,47 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class AbstractSubmissionDto<T extends PackageSimpleDto> implements IDto {
 
-	protected Integer id;
-	protected EntityModel<T> packageBag;
+    protected Integer id;
+    protected EntityModel<T> packageBag;
 
-	@JsonIgnore
-	protected T packageBagDto;
-	protected UserProjection submitter;
-	protected UserProjection approver;
-	protected String changes;
-	protected SubmissionState state;
-	protected String created;
-	@ToStringExclude 
-	protected Submission entity;
-	protected String technology;
-	
-	public AbstractSubmissionDto(Submission submission, T packageDto) {
-		this.entity = submission;
-		this.id = submission.getId();
-		this.packageBagDto = packageDto;
-		this.packageBag = EntityModel.of(packageDto);
-		this.changes = submission.getChanges();
-		this.state = submission.getState();
-		this.technology = submission.getTechnology().getName();
-		if(Objects.nonNull(submission.getSubmitter())) {
-			this.submitter = new UserProjection(submission.getSubmitter());
-		} else {
-			this.submitter = null;
-		}
-		if(Objects.nonNull(submission.getApprover())) {
-			this.approver = new UserProjection(submission.getApprover());
-		} else {
-			this.approver = null;
-		}
-		this.created = submission.getCreatedDate().toString();
-	}
-	
-	@Override
-	@JsonIgnore
-	public Submission getEntity() {
-		return entity;
-	}
+    @JsonIgnore
+    protected T packageBagDto;
+
+    protected UserProjection submitter;
+    protected UserProjection approver;
+    protected String changes;
+    protected SubmissionState state;
+    protected String created;
+
+    @ToStringExclude
+    protected Submission entity;
+
+    protected String technology;
+
+    public AbstractSubmissionDto(Submission submission, T packageDto) {
+        this.entity = submission;
+        this.id = submission.getId();
+        this.packageBagDto = packageDto;
+        this.packageBag = EntityModel.of(packageDto);
+        this.changes = submission.getChanges();
+        this.state = submission.getState();
+        this.technology = submission.getTechnology().getName();
+        if (Objects.nonNull(submission.getSubmitter())) {
+            this.submitter = new UserProjection(submission.getSubmitter());
+        } else {
+            this.submitter = null;
+        }
+        if (Objects.nonNull(submission.getApprover())) {
+            this.approver = new UserProjection(submission.getApprover());
+        } else {
+            this.approver = null;
+        }
+        this.created = submission.getCreatedDate().toString();
+    }
+
+    @Override
+    @JsonIgnore
+    public Submission getEntity() {
+        return entity;
+    }
 }

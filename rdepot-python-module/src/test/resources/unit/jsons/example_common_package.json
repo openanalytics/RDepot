@@ -6,7 +6,7 @@
 	"data": {
 		"id": 100,
 		"version": "4.5.6",
-		"user":{"name":"Test User0","id":0,"login":"packagemaintainer_testusername0","email":"0test@example.org"},
+		"user":{"name":"Test Package Maintainer","id":123,"login":"testpackagemaintainer","email":"packagemaintainer@example.org"},
         	"repository":{"name":"Test Python Repository 123","id":123,"publicationUri":"http://localhost/repo/testrepo123"},
 		"submission": {"id":  100, "state":  "ACCEPTED"},
 		"name": "TestPackage100",

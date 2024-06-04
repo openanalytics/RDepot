@@ -23,116 +23,121 @@ package eu.openanalytics.rdepot.integrationtest.environment;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.List;
-import java.util.concurrent.*;
-
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.tomcat.util.buf.StringUtils;
 
 @Slf4j
 public class BashTestEnvironmentConfigurator implements TestEnvironmentConfigurator {
 
-	private final static int TIMEOUT = 10;
-	private final static int MAX_RETRIES = 3;
-	private static BashTestEnvironmentConfigurator instance;
-	private BashTestEnvironmentConfigurator() {}
-	
-	public static BashTestEnvironmentConfigurator getInstance() {
-		if(instance == null) {
-			instance = new BashTestEnvironmentConfigurator();
-		}
-		
-		return instance;
-	}
-	
-	@Override
-	public void restoreEnvironment() throws Exception {
-		executeWithRetries(() -> {
+    private static final int TIMEOUT = 10;
+    private static final int MAX_RETRIES = 3;
+    private static BashTestEnvironmentConfigurator instance;
+
+    private BashTestEnvironmentConfigurator() {}
+
+    public static BashTestEnvironmentConfigurator getInstance() {
+        if (instance == null) {
+            instance = new BashTestEnvironmentConfigurator();
+        }
+
+        return instance;
+    }
+
+    @Override
+    public void restoreEnvironment() throws Exception {
+        executeWithRetries(() -> {
             try {
                 executeBashScript("src/test/resources/scripts/restore.sh");
             } catch (Exception e) {
-				throw new RuntimeException(e);
-			}
+                throw new RuntimeException(e);
+            }
         });
-	}
-	
-	@Override
-	public void backupEnvironment() throws Exception {
-		executeWithRetries(() -> {
+    }
+
+    @Override
+    public void backupEnvironment() throws Exception {
+        executeWithRetries(() -> {
             try {
                 executeBashScript("src/test/resources/scripts/backupDeclarative.sh");
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });
-	}
-	
-	protected void executeBashScript(String ...args) {
-		String[] cmd = ArrayUtils.addAll(new String[]{"/bin/bash"}, args);
-		execute(cmd);
-	}
+    }
 
-	protected void executeBashCommand(@NonNull final String bashCmd) {
-		String[] cmd = ArrayUtils.addAll(new String[]{"/bin/bash", "-c"},"\"" + bashCmd + "\"");
-		execute(cmd);
-	}
+    protected void executeBashScript(String... args) {
+        String[] cmd = ArrayUtils.addAll(new String[] {"/bin/bash"}, args);
+        execute(cmd);
+    }
 
-	protected void execute(String... args) {
-		try {
-			Process process = new ProcessBuilder(args).redirectErrorStream(true).start();
-			final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-			String msg;
-			while((msg = reader.readLine()) != null) {}
-			process.waitFor();
-			process.destroy();
-		} catch(InterruptedException | IOException e) {
-			log.error(e.getMessage(), e);
-		}
-	}
+    protected void executeBashCommand(@NonNull final String bashCmd) {
+        String[] cmd = ArrayUtils.addAll(new String[] {"/bin/bash", "-c"}, "\"" + bashCmd + "\"");
+        execute(cmd);
+    }
 
-	@Override
-	public void restoreDeclarative() throws Exception {
-		executeWithRetries(() -> {
+    protected void execute(String... args) {
+        try {
+            Process process = new ProcessBuilder(args).redirectErrorStream(true).start();
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String msg;
+            while ((msg = reader.readLine()) != null) {}
+            process.waitFor();
+            process.destroy();
+        } catch (InterruptedException | IOException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void restoreDeclarative() throws Exception {
+        executeWithRetries(() -> {
             try {
                 executeBashScript("src/test/resources/scripts/restoreDeclarative.sh");
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });
-	}
+    }
 
-	@Override
-	public void blockRepoContainer(Runnable testMethod) throws Exception {
-		executeWithRetries(() -> {
-			executeBashScript("src/test/resources/scripts/blockRepo.sh");
-		});
-		testMethod.run();
-		executeWithRetries(() -> {
-			executeBashScript("src/test/resources/scripts/unblockRepo.sh");
-		});
-	}
+    @Override
+    public void blockRepoContainer(Runnable testMethod) throws Exception {
+        executeWithRetries(() -> {
+            executeBashScript("src/test/resources/scripts/blockRepo.sh");
+        });
+        try {
+            testMethod.run();
+        } finally {
+            executeWithRetries(() -> {
+                executeBashScript("src/test/resources/scripts/unblockRepo.sh");
+            });
+        }
+    }
 
-	private void executeWithRetries(Runnable method) throws Exception {
-		int remainingAttempts = MAX_RETRIES;
+    private void executeWithRetries(Runnable method) throws Exception {
+        int remainingAttempts = MAX_RETRIES;
 
-		while(remainingAttempts > 0) {
-			ExecutorService executor = Executors.newSingleThreadExecutor();
-			Future<?> future = executor.submit(method);
-			try {
-				future.get(TIMEOUT, TimeUnit.SECONDS);
-				executor.shutdownNow();
-				break;
-			} catch(TimeoutException e) {
-				future.cancel(true);
-				executeBashCommand("pkill -9 -f 'docker exec'");
+        while (remainingAttempts > 0) {
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            Future<?> future = executor.submit(method);
+            try {
+                future.get(TIMEOUT, TimeUnit.SECONDS);
+                executor.shutdownNow();
+                break;
+            } catch (TimeoutException e) {
+                future.cancel(true);
+                executeBashCommand("pkill -9 -f 'docker exec'");
 
-				log.warn("Restore timeout! [ATTEMPT "
-						+ (MAX_RETRIES - remainingAttempts + 1) + "/" + MAX_RETRIES + "]");
-				remainingAttempts--;
-				executor.shutdownNow();
-			}
-		}
-	}
+                log.warn(
+                        "Restore timeout! [ATTEMPT " + (MAX_RETRIES - remainingAttempts + 1) + "/" + MAX_RETRIES + "]");
+                remainingAttempts--;
+                executor.shutdownNow();
+            }
+        }
+    }
 }

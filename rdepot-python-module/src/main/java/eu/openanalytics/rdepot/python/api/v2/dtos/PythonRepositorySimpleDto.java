@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class PythonRepositorySimpleDto extends RepositorySimpleDto {
-	public PythonRepositorySimpleDto(PythonRepository repository) {
-		super(repository);
-	}
+    public PythonRepositorySimpleDto(PythonRepository repository) {
+        super(repository);
+    }
 }

@@ -20,19 +20,16 @@
  */
 package eu.openanalytics.rdepot.test.context;
 
+import eu.openanalytics.rdepot.base.entities.Role;
+import eu.openanalytics.rdepot.test.fixture.RoleTestFixture;
+import eu.openanalytics.rdepot.test.fixture.RoleTestFixture.ROLE;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
-import eu.openanalytics.rdepot.base.entities.Role;
-import eu.openanalytics.rdepot.test.fixture.RoleFixture;
-import eu.openanalytics.rdepot.test.fixture.RoleFixture.ROLE;
-
 
 /**
  * Dummy authentication provider used for test purposes.
@@ -41,25 +38,24 @@ import eu.openanalytics.rdepot.test.fixture.RoleFixture.ROLE;
  */
 public class TestAuthenticationProvider implements AuthenticationProvider {
 
-	@Override
-	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-		String login = authentication.getName();
-		String password = authentication.toString();
-		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-		
-		String roleName = login.split("_")[0];
-		Role role = RoleFixture.GET_BY_NAME(roleName);
-		
-		ROLE.ROLES.stream()
-			.filter(r -> r.getValue() <= role.getValue())
-			.forEach(r -> authorities.add(new SimpleGrantedAuthority(r.getName())));
-		
-		return new UsernamePasswordAuthenticationToken(login, password, authorities);
-	}
+    @Override
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+        String login = authentication.getName();
+        String password = authentication.toString();
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 
-	@Override
-	public boolean supports(Class<?> authentication) {
-		return true;
-	}
+        String roleName = login.split("_")[0];
+        Role role = RoleTestFixture.GET_BY_NAME(roleName);
 
+        ROLE.ROLES.stream()
+                .filter(r -> r.getValue() <= role.getValue())
+                .forEach(r -> authorities.add(new SimpleGrantedAuthority(r.getName())));
+
+        return new UsernamePasswordAuthenticationToken(login, password, authorities);
+    }
+
+    @Override
+    public boolean supports(Class<?> authentication) {
+        return true;
+    }
 }

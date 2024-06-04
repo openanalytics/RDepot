@@ -23,51 +23,50 @@ package eu.openanalytics.rdepot.base.strategy.exceptions;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
-import lombok.Getter;
-
 import java.io.Serial;
+import lombok.Getter;
 
 /**
  * It is thrown in case of {@link Strategy} failure.
  */
 public class StrategyFailure extends Exception {
 
-	@Serial
-	private static final long serialVersionUID = 8980879718772746241L;
-	private boolean requiresRollback_ = true;
+    @Serial
+    private static final long serialVersionUID = 8980879718772746241L;
 
-	@Getter
-	private final Exception reason;
-	
-	protected StrategyFailure(Exception reason, String messageCode, boolean requiresRollback) {
-		super(resolveFullMessage(reason, messageCode));
-		this.requiresRollback_ = requiresRollback;
-		this.reason = reason;
-	}
-	
-	public StrategyFailure(Exception reason) {
-		this(reason, false);
-	}
-	
-	public StrategyFailure(Exception reason, boolean requiresRollback) {
-		super(resolveFullMessage(reason, MessageCodes.STRATEGY_FAILURE));
-		this.requiresRollback_ = requiresRollback;
-		this.reason = reason;
-	}
-	
-	protected static String resolveFullMessage(Exception reason, String messageCode) {
-		String strategyFailureMessage = 
-				StaticMessageResolver.getMessage(messageCode);
-		String reasonMessage = reason.getMessage();
-		
-		return strategyFailureMessage + ": " + reasonMessage;
-	}
-	
-	/**
-	 * Determines if failure requires all introduced changes to be reverted.
-	 * @return true or false
-	 */
-	public boolean requiresRollback() {
-		return requiresRollback_;
-	}
+    private boolean requiresRollback_ = true;
+
+    @Getter
+    private final Exception reason;
+
+    protected StrategyFailure(Exception reason, String messageCode, boolean requiresRollback) {
+        super(resolveFullMessage(reason, messageCode));
+        this.requiresRollback_ = requiresRollback;
+        this.reason = reason;
+    }
+
+    public StrategyFailure(Exception reason) {
+        this(reason, false);
+    }
+
+    public StrategyFailure(Exception reason, boolean requiresRollback) {
+        super(resolveFullMessage(reason, MessageCodes.STRATEGY_FAILURE));
+        this.requiresRollback_ = requiresRollback;
+        this.reason = reason;
+    }
+
+    protected static String resolveFullMessage(Exception reason, String messageCode) {
+        String strategyFailureMessage = StaticMessageResolver.getMessage(messageCode);
+        String reasonMessage = reason.getMessage();
+
+        return strategyFailureMessage + ": " + reasonMessage;
+    }
+
+    /**
+     * Determines if failure requires all introduced changes to be reverted.
+     * @return true or false
+     */
+    public boolean requiresRollback() {
+        return requiresRollback_;
+    }
 }

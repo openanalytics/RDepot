@@ -20,15 +20,13 @@
  */
 package eu.openanalytics.rdepot.base.validation.repositories;
 
-import java.util.Optional;
-
-import org.springframework.validation.Errors;
-
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.base.validation.ChainValidator;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
+import org.springframework.validation.Errors;
 
 /**
  * Validates {@link Repository Repository's} Publication URI.
@@ -36,20 +34,20 @@ import lombok.AllArgsConstructor;
  * @param <R> technology-specific repository class
  */
 @AllArgsConstructor
-public class PublicationUriValidation<R extends Repository> extends ChainValidator<R>{
-	
-	private final RepositoryService<R> service;
-	
-	public void validateField(R repository, Errors errors){
-		if(repository.getPublicationUri() == null || repository.getPublicationUri().isBlank()) {
-			errors.rejectValue("publicationUri", MessageCodes.EMPTY_PUBLICATIONURI);
-		} else {
-			Optional<R> duplicatePublicationUri = 
-					service.findByPublicationUri(repository.getPublicationUri());
-			if(duplicatePublicationUri.isPresent() 
-					&& duplicatePublicationUri.get().getId() != repository.getId()) {
-				errors.rejectValue("publicationUri", MessageCodes.ERROR_DUPLICATE_PUBLICATIONURI);
-			}
-		}
-	}
+public class PublicationUriValidation<R extends Repository> extends ChainValidator<R> {
+
+    private final RepositoryService<R> service;
+
+    public void validateField(R repository, Errors errors) {
+        if (repository.getPublicationUri() == null
+                || repository.getPublicationUri().isBlank()) {
+            errors.rejectValue("publicationUri", MessageCodes.EMPTY_PUBLICATIONURI);
+        } else {
+            Optional<R> duplicatePublicationUri = service.findByPublicationUri(repository.getPublicationUri());
+            if (duplicatePublicationUri.isPresent()
+                    && duplicatePublicationUri.get().getId() != repository.getId()) {
+                errors.rejectValue("publicationUri", MessageCodes.ERROR_DUPLICATE_PUBLICATIONURI);
+            }
+        }
+    }
 }

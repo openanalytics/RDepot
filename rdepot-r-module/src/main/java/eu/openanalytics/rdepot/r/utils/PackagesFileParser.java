@@ -20,15 +20,14 @@
  */
 package eu.openanalytics.rdepot.r.utils;
 
+import eu.openanalytics.rdepot.r.entities.RPackage;
+import eu.openanalytics.rdepot.r.utils.exceptions.ParsePackagesFileException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import eu.openanalytics.rdepot.r.entities.RPackage;
-import eu.openanalytics.rdepot.r.utils.exceptions.ParsePackagesFileException;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -36,68 +35,66 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class PackagesFileParser {
-	
-	private void setValue(RPackage packageBag, String key, String value) {
-		if(key.equals("Package")) {
-			packageBag.setName(value);
-		} else if(key.equals("Version")) {
-			packageBag.setVersion(value);
-		} else if(key.equals("Depends")) {
-			packageBag.setDepends(value);
-		} else if(key.equals("Imports")) {
-			packageBag.setImports(value);
-		} else if(key.equals("License")) {
-			packageBag.setLicense(value);
-		} else if(key.equals("MD5sum")) {
-			packageBag.setMd5sum(value);
-		}
-	}
 
-	/**
-	 * Parses PACKAGES file.
-	 * @param packagesFile
-	 * @return list of packages assumed to be in the repository
-	 * @throws ParsePackagesFileException
-	 */
-	public List<RPackage> parse(File packagesFile) throws ParsePackagesFileException {
-		List<RPackage> packages = new ArrayList<>();
-		String line = null;
-		String key = "";
-		String value = "";
-		
-		try(BufferedReader br = new BufferedReader(new FileReader(packagesFile))) {
-			RPackage packageBag = new RPackage();
-			
-			
-			while((line = br.readLine()) != null) {
-				if(line.equals("")) {
-					packages.add(packageBag);
-					packageBag = new RPackage();
-				} else if(line.startsWith(" ")) {
-					String trimmed = line.trim();
-					value += " " + trimmed;
-					
-					setValue(packageBag, key, value);
-				} else {
-					String[] parsed = line.split(": ");
-					key = parsed[0];
-					if(parsed.length == 2) {
-						value = parsed[1];
-					} else {
-						value = "";
-					}
-					
-					setValue(packageBag, key, value);
-				}
-			}
-			
-			packages.add(packageBag);
-		} catch (IOException | ArrayIndexOutOfBoundsException e) {
-			log.error(e.getClass().getName() + ": " + e.getMessage(), e);
-			throw new ParsePackagesFileException(line);
-		}
-		
-		return packages;
-	}
-	
+    private void setValue(RPackage packageBag, String key, String value) {
+        if (key.equals("Package")) {
+            packageBag.setName(value);
+        } else if (key.equals("Version")) {
+            packageBag.setVersion(value);
+        } else if (key.equals("Depends")) {
+            packageBag.setDepends(value);
+        } else if (key.equals("Imports")) {
+            packageBag.setImports(value);
+        } else if (key.equals("License")) {
+            packageBag.setLicense(value);
+        } else if (key.equals("MD5sum")) {
+            packageBag.setMd5sum(value);
+        }
+    }
+
+    /**
+     * Parses PACKAGES file.
+     * @param packagesFile
+     * @return list of packages assumed to be in the repository
+     * @throws ParsePackagesFileException
+     */
+    public List<RPackage> parse(File packagesFile) throws ParsePackagesFileException {
+        List<RPackage> packages = new ArrayList<>();
+        String line = null;
+        String key = "";
+        String value = "";
+
+        try (BufferedReader br = new BufferedReader(new FileReader(packagesFile))) {
+            RPackage packageBag = new RPackage();
+
+            while ((line = br.readLine()) != null) {
+                if (line.equals("")) {
+                    packages.add(packageBag);
+                    packageBag = new RPackage();
+                } else if (line.startsWith(" ")) {
+                    String trimmed = line.trim();
+                    value += " " + trimmed;
+
+                    setValue(packageBag, key, value);
+                } else {
+                    String[] parsed = line.split(": ");
+                    key = parsed[0];
+                    if (parsed.length == 2) {
+                        value = parsed[1];
+                    } else {
+                        value = "";
+                    }
+
+                    setValue(packageBag, key, value);
+                }
+            }
+
+            packages.add(packageBag);
+        } catch (IOException | ArrayIndexOutOfBoundsException e) {
+            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            throw new ParsePackagesFileException(line);
+        }
+
+        return packages;
+    }
 }

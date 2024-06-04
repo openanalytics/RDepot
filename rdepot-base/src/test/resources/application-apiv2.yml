@@ -1,0 +1,9 @@
+declarative: false
+replacing:
+   packages:
+      enabled: true
+deleting:
+  repositories:
+    enabled: true
+  packages:
+    enabled: true

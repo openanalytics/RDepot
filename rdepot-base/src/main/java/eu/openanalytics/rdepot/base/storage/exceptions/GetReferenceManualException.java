@@ -22,9 +22,8 @@ package eu.openanalytics.rdepot.base.storage.exceptions;
 
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
-import lombok.Getter;
-
 import java.io.Serial;
+import lombok.Getter;
 
 /**
  * Thrown when a reference manual cannot be retrieved.
@@ -32,15 +31,14 @@ import java.io.Serial;
 @Getter
 public class GetReferenceManualException extends Exception {
 
-	@Serial
-	private static final long serialVersionUID = -3067971397080564945L;
+    @Serial
+    private static final long serialVersionUID = -3067971397080564945L;
 
-	private final Exception reason;
-	
-	public GetReferenceManualException(Exception reason) {
-		super(StaticMessageResolver.getMessage(MessageCodes.COULD_NOT_GET_REFERENCE_MANUAL)
-				+ ": " + reason.getMessage());
-		this.reason = reason;
-	}
+    private final Exception reason;
 
+    public GetReferenceManualException(Exception reason) {
+        super(StaticMessageResolver.getMessage(MessageCodes.COULD_NOT_GET_REFERENCE_MANUAL) + ": "
+                + reason.getMessage());
+        this.reason = reason;
+    }
 }

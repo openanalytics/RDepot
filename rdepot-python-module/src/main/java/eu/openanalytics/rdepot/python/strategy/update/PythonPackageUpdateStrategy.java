@@ -33,25 +33,32 @@ import eu.openanalytics.rdepot.python.synchronization.PythonRepositorySynchroniz
 
 public class PythonPackageUpdateStrategy extends UpdatePackageStrategy<PythonPackage> {
 
-	private final PythonRepositorySynchronizer repositorySynchronizer;
-	
-	public PythonPackageUpdateStrategy(PythonPackage resource, 
-			NewsfeedEventService eventService, 
-			PythonPackageService service,
-			User requester, 
-			PythonPackage updatedPackage, 
-			Storage<?, PythonPackage> storage,
-			BestMaintainerChooser bestMaintainerChooser,
-			PythonRepositorySynchronizer repositorySynchronizer) {
-		super(resource, eventService, service, requester, updatedPackage, 
-				updatedPackage, storage, bestMaintainerChooser);
-		this.repositorySynchronizer = repositorySynchronizer;
-	}
+    private final PythonRepositorySynchronizer repositorySynchronizer;
 
-	@Override
-	protected void publishPackageRepository(PythonPackage packageBag) throws SynchronizeRepositoryException {
-		repositorySynchronizer.storeRepositoryOnRemoteServer(packageBag.getRepository(),
-        DateProvider.getCurrentDateStamp());
-	}
+    public PythonPackageUpdateStrategy(
+            PythonPackage resource,
+            NewsfeedEventService eventService,
+            PythonPackageService service,
+            User requester,
+            PythonPackage updatedPackage,
+            Storage<?, PythonPackage> storage,
+            BestMaintainerChooser bestMaintainerChooser,
+            PythonRepositorySynchronizer repositorySynchronizer) {
+        super(
+                resource,
+                eventService,
+                service,
+                requester,
+                updatedPackage,
+                updatedPackage,
+                storage,
+                bestMaintainerChooser);
+        this.repositorySynchronizer = repositorySynchronizer;
+    }
 
+    @Override
+    protected void publishPackageRepository(PythonPackage packageBag) throws SynchronizeRepositoryException {
+        repositorySynchronizer.storeRepositoryOnRemoteServer(
+                packageBag.getRepository(), DateProvider.getCurrentDateStamp());
+    }
 }

@@ -28,11 +28,11 @@ import eu.openanalytics.rdepot.python.services.PythonRepositoryService;
 
 public class PythonRepositoryCreateStrategy extends CreateRepositoryStrategy<PythonRepository> {
 
-	public PythonRepositoryCreateStrategy(
-			PythonRepository resource, 
-			NewsfeedEventService newsfeedEventService, 
-			PythonRepositoryService service,
-			User requester) {
-		super(resource, service, requester, newsfeedEventService);
-	}
+    public PythonRepositoryCreateStrategy(
+            PythonRepository resource,
+            NewsfeedEventService newsfeedEventService,
+            PythonRepositoryService service,
+            User requester) {
+        super(resource, service, requester, newsfeedEventService);
+    }
 }

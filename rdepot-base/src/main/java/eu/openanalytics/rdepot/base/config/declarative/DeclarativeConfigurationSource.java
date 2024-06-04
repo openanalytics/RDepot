@@ -20,11 +20,10 @@
  */
 package eu.openanalytics.rdepot.base.config.declarative;
 
-import java.util.List;
-
 import eu.openanalytics.rdepot.base.mirroring.Mirror;
 import eu.openanalytics.rdepot.base.mirroring.pojos.MirroredPackage;
 import eu.openanalytics.rdepot.base.mirroring.pojos.MirroredRepository;
+import java.util.List;
 
 /**
  * Gathers declarations of repositories from various configuration sources.
@@ -32,9 +31,8 @@ import eu.openanalytics.rdepot.base.mirroring.pojos.MirroredRepository;
  * @param <P> technology-specific Mirrored Package
  * @param <M> technology-specific Mirror
  */
-public interface DeclarativeConfigurationSource<R extends MirroredRepository<P, M>, 
-	P extends MirroredPackage,
-	M extends Mirror<P>> {
+public interface DeclarativeConfigurationSource<
+        R extends MirroredRepository<P, M>, P extends MirroredPackage, M extends Mirror<P>> {
 
-	List<R> retrieveDeclaredRepositories();
+    List<R> retrieveDeclaredRepositories();
 }

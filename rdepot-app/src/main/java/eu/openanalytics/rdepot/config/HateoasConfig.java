@@ -21,7 +21,7 @@
 package eu.openanalytics.rdepot.config;
 
 import eu.openanalytics.rdepot.base.api.v2.resolvers.HateoasDtoSortArgumentResolver;
-import eu.openanalytics.rdepot.base.api.v2.sorting.DtoToEntityPropertyMapping;
+import eu.openanalytics.rdepot.base.api.v2.sorting.DtoToEntityPropertyMappingImpl;
 import eu.openanalytics.rdepot.base.api.v2.sorting.PackageDtoToEntityPropertyMapping;
 import lombok.NonNull;
 import org.springframework.beans.factory.ObjectFactory;
@@ -37,7 +37,6 @@ import org.springframework.data.web.config.HateoasAwareSpringDataWebConfiguratio
 @ComponentScan("eu.openanalytics.rdepot")
 public class HateoasConfig extends HateoasAwareSpringDataWebConfiguration {
 
-
     /**
      * @param context           must not be {@literal null}.
      * @param conversionService must not be {@literal null}.
@@ -49,15 +48,15 @@ public class HateoasConfig extends HateoasAwareSpringDataWebConfiguration {
     @Bean
     @Override
     public @NonNull HateoasSortHandlerMethodArgumentResolver sortResolver() {
-        return new HateoasDtoSortArgumentResolver(dtoToEntityPropertyMapping());
+        return new HateoasDtoSortArgumentResolver(dtoToEntityPropertyMapping(), packageDtoToEntityPropertyMapping());
     }
 
-    @Bean
-    public DtoToEntityPropertyMapping dtoToEntityPropertyMapping() {
-        return new DtoToEntityPropertyMapping();
+    @Bean(name = "dtoToEntityPropertyMapping")
+    public DtoToEntityPropertyMappingImpl dtoToEntityPropertyMapping() {
+        return new DtoToEntityPropertyMappingImpl();
     }
-    
-    @Bean
+
+    @Bean(name = "packageDtoToEntityPropertyMapping")
     public PackageDtoToEntityPropertyMapping packageDtoToEntityPropertyMapping() {
         return new PackageDtoToEntityPropertyMapping();
     }

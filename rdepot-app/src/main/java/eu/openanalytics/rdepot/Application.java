@@ -19,7 +19,7 @@
  * along with this program. If not, see <http://www.apache.org/licenses/>
  */
 /**
- * 
+ *
  */
 package eu.openanalytics.rdepot;
 
@@ -31,14 +31,14 @@ import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootApplication
 @EnableAutoConfiguration
-public class Application extends SpringBootServletInitializer {	
+public class Application extends SpringBootServletInitializer {
 
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
 
-	@Override
-	protected WebApplicationContext run(SpringApplication application) {
-		return super.run(application);
-	}	
+    @Override
+    protected WebApplicationContext run(SpringApplication application) {
+        return super.run(application);
+    }
 }

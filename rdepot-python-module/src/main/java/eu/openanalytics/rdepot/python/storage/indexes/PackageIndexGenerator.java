@@ -20,45 +20,62 @@
  */
 package eu.openanalytics.rdepot.python.storage.indexes;
 
+import eu.openanalytics.rdepot.python.entities.PythonPackage;
+import eu.openanalytics.rdepot.python.utils.PublicationURIUtils;
 import java.io.IOException;
-
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
-import eu.openanalytics.rdepot.python.entities.PythonPackage;
-
 @Component
+@Slf4j
 public class PackageIndexGenerator extends IndexesGenerator {
 
-	private final Resource indexTemplate;
+    private final Resource indexTemplate;
 
-	@Autowired
-	public PackageIndexGenerator(@Value("classpath:templates/index_template.html") Resource indexTemplate) {
-		this.indexTemplate = indexTemplate;
-	}
+    @Autowired
+    public PackageIndexGenerator(@Value("classpath:templates/index_template.html") Resource indexTemplate) {
+        this.indexTemplate = indexTemplate;
+    }
 
-	protected String getPackageAnchor(PythonPackage packageBag) {
-		String packageFileName = packageBag.getName() + "-" + packageBag.getVersion() + ".tar.gz";
-		String anchor = "<a href=\"%s\" data-requires-python=\"%s\">%s</a><br>";
-		return String.format(anchor,
-				packageBag.getRepository().getPublicationUri() + separator + packageBag.getName() + separator + packageFileName, 
-				packageBag.getRequiresPython(), 
-				packageFileName);
-	}
-	
-	protected String prepareTemplateString(String template, PythonPackage packageBag) {
-		return template
-				.replace("$document_title", String.format("Links for %s", packageBag.getName()))
-				.replace("$title", String.format("Links for %s", packageBag.getName()))
-				.replace("$meta_name", String.format("%s:repository-version", packageBag.getRepository().getName()))
-				.replace("$meta_content", packageBag.getRepository().getVersion().toString());
-	}
+    protected String getPackageAnchor(PythonPackage packageBag) {
+        String packageFileName = packageBag.getName() + "-" + packageBag.getVersion() + ".tar.gz";
+        String anchor = "<a href=\"%s\" data-requires-python=\"%s\">%s</a><br>";
 
-	public void createIndexFile(PythonPackage packageBag, String path) throws IOException {
-		String initialTemplate = getTemplateString(indexTemplate);
-		String finalTemplate = prepareTemplateString(initialTemplate, packageBag);
-		writeTemplateStringToFile(path, finalTemplate);
-	}
+        String publicationUri;
+        try {
+            publicationUri = PublicationURIUtils.resolveToRelativeURL(
+                    packageBag.getRepository().getPublicationUri());
+        } catch (MalformedURLException | URISyntaxException e) {
+            log.debug(e.getMessage(), e);
+            publicationUri = packageBag.getRepository().getPublicationUri();
+        }
+        return String.format(
+                anchor,
+                publicationUri + separator + packageBag.getName() + separator + packageFileName,
+                packageBag.getRequiresPython(),
+                packageFileName);
+    }
+
+    protected String prepareTemplateString(String template, PythonPackage packageBag) {
+        return template.replace("$document_title", String.format("Links for %s", packageBag.getName()))
+                .replace("$title", String.format("Links for %s", packageBag.getName()))
+                .replace(
+                        "$meta_name",
+                        String.format(
+                                "%s:repository-version",
+                                packageBag.getRepository().getName()))
+                .replace(
+                        "$meta_content", packageBag.getRepository().getVersion().toString());
+    }
+
+    public void createIndexFile(PythonPackage packageBag, String path) throws IOException {
+        String initialTemplate = getTemplateString(indexTemplate);
+        String finalTemplate = prepareTemplateString(initialTemplate, packageBag);
+        writeTemplateStringToFile(path, finalTemplate);
+    }
 }

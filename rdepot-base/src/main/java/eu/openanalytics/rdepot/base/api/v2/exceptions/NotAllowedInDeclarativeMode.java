@@ -21,11 +21,10 @@
 package eu.openanalytics.rdepot.base.api.v2.exceptions;
 
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
-
 import java.io.Serial;
 import java.util.Locale;
+import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 
 /**
  * Thrown when the declarative mode is turned on and user attempts
@@ -33,13 +32,10 @@ import java.util.Locale;
  */
 public class NotAllowedInDeclarativeMode extends ApiException {
 
-	@Serial
-	private static final long serialVersionUID = -2028286169520839609L;
+    @Serial
+    private static final long serialVersionUID = -2028286169520839609L;
 
-	public NotAllowedInDeclarativeMode(MessageSource messageSource, Locale locale) {
-		super(messageSource, locale, 
-				MessageCodes.ERROR_REPOSITORY_DECLARATIVE_MODE,
-				HttpStatus.METHOD_NOT_ALLOWED);
-	}
-
+    public NotAllowedInDeclarativeMode(MessageSource messageSource, Locale locale) {
+        super(messageSource, locale, MessageCodes.ERROR_REPOSITORY_DECLARATIVE_MODE, HttpStatus.METHOD_NOT_ALLOWED);
+    }
 }

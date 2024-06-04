@@ -20,20 +20,18 @@
  */
 package eu.openanalytics.rdepot.base.daos;
 
-import java.util.List;
-import java.util.Optional;
-
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.Submission;
-import eu.openanalytics.rdepot.base.entities.User;
-import eu.openanalytics.rdepot.base.entities.enums.SubmissionState;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * {@link org.springframework.data.jpa.repository.JpaRepository JPA Repository}
  * for {@link Submission Submissions}.
  */
 public interface SubmissionDao extends Dao<Submission> {
-	Optional<Submission> findByPackageBag(Package packageBag);
-	List<Submission> findByPackageBag_RepositoryGeneric(Repository repositoryGeneric);
+    Optional<Submission> findByPackageBag(Package packageBag);
+
+    List<Submission> findByPackageBag_RepositoryGeneric(Repository repositoryGeneric);
 }

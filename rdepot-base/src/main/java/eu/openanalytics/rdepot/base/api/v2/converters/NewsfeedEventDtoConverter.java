@@ -20,28 +20,26 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.converters;
 
-import org.apache.commons.lang3.NotImplementedException;
-import org.springframework.stereotype.Component;
-
 import eu.openanalytics.rdepot.base.api.v2.converters.exceptions.EntityResolutionException;
 import eu.openanalytics.rdepot.base.api.v2.dtos.NewsfeedEventDto;
 import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
+import org.apache.commons.lang3.NotImplementedException;
+import org.springframework.stereotype.Component;
 
 /**
  * {@link DtoConverter DTO Converter} for {@link NewsfeedEvent Newsfeed Events}
  */
 @Component
 public class NewsfeedEventDtoConverter implements DtoConverter<NewsfeedEvent, NewsfeedEventDto> {
-	
-	@Override
-	public NewsfeedEvent resolveDtoToEntity(NewsfeedEventDto dto) throws EntityResolutionException {
-		throw new NotImplementedException("Events are read-only "
-				+ "and only registered internally by the application.");
-	}
 
-	@Override
-	public NewsfeedEventDto convertEntityToDto(NewsfeedEvent entity) {
-		return new NewsfeedEventDto(entity);
-	}
+    @Override
+    public NewsfeedEvent resolveDtoToEntity(NewsfeedEventDto dto) throws EntityResolutionException {
+        throw new NotImplementedException(
+                "Events are read-only " + "and only registered internally by the application.");
+    }
 
+    @Override
+    public NewsfeedEventDto convertEntityToDto(NewsfeedEvent entity) {
+        return new NewsfeedEventDto(entity);
+    }
 }

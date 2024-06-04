@@ -23,7 +23,6 @@ package eu.openanalytics.rdepot.base.storage.exceptions;
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 /**
@@ -31,11 +30,10 @@ import java.io.Serial;
  */
 public class SourceFileDeleteException extends LocalizedException {
 
-	@Serial
-	private static final long serialVersionUID = -5220829666605667979L;
+    @Serial
+    private static final long serialVersionUID = -5220829666605667979L;
 
-	public SourceFileDeleteException() {
-		super(MessageCodes.SOURCE_FILE_DELETE_EXCEPTION);
-	}
-
+    public SourceFileDeleteException() {
+        super(MessageCodes.SOURCE_FILE_DELETE_EXCEPTION);
+    }
 }

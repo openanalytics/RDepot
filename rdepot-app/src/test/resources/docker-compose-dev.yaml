@@ -16,10 +16,10 @@ services:
       - repo
     networks:
       - oa-rdepot
-      
+
   app:
     build: ./docker/app
-    # image: openanalytics/rdepot-app-it:2.0.0
+    # image: openanalytics/rdepot-app-it:2.1.0
     restart: always
     hostname: oa-rdepot-app
     # container_name: oa-rdepot-app
@@ -50,12 +50,12 @@ services:
       test: ["CMD-SHELL", "if [ \"$$(curl -I localhost:8080 2>/dev/null | grep HTTP/1.1 | cut -d\" \" -f2)\" != \"302\" ]; then exit 1; else exit 0; fi;"]
       interval: 10s
       timeout: 10s
-      retries: 50 
+      retries: 50
     networks:
-      - oa-rdepot  
-      
+      - oa-rdepot
+
   repo:
-    # image: openanalytics/rdepot-repo-it:2.0.0
+    # image: openanalytics/rdepot-repo-it:2.1.0
     build: ./docker/repo/
     restart: always
     hostname: oa-rdepot-repo
@@ -66,12 +66,12 @@ services:
       - repository:/opt/rdepot/
       - ./itestServer:/opt/testServer
     networks:
-      - oa-rdepot 
+      - oa-rdepot
     ports:
       - 8002:8002
     environment:
       - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8002
-        
+
   db:
     image: registry.openanalytics.eu/proxy/library/postgres:alpine
     restart: always
@@ -84,7 +84,7 @@ services:
       - POSTGRES_PASSWORD=mysecretpassword
     networks:
       - oa-rdepot
-                      
+
   #openid:
     #image: qlik/simple-oidc-provider
     #restart: unless-stopped
@@ -96,12 +96,12 @@ services:
     #volumes:
      #- ./docker/oidc/config.json:/opt/rdepot/config.json
       #- ./docker/oidc/test-config.json:/opt/rdepot/config.json
-      #- ./docker/oidc/users.json:/opt/rdepot/users.json  
+      #- ./docker/oidc/users.json:/opt/rdepot/users.json
     #ports:
       #- 9000:9000
     #networks:
       #- oa-rdepot
-  
+
   #keycloak:
     #image: quay.io/keycloak/keycloak:10.0.2
     #restart: unless-stopped
@@ -121,9 +121,9 @@ services:
     #networks:
       #oa-rdepot:
         #ipv4_address: 192.168.49.17
- 
+
   ldap:
-    image: openanalytics/rdepot-ldap-it:2.0.0
+    image: openanalytics/rdepot-ldap-it:2.1.0
     restart: unless-stopped
     hostname: oa-rdepot-ldap
     # container_name: oa-rdepot-ldap
@@ -134,7 +134,7 @@ services:
       - LDAP_ADMIN_PASSWORD=testpassword
     networks:
       - oa-rdepot
-                   
+
 networks:
   oa-rdepot:
     ipam:

@@ -7,26 +7,26 @@ Author: Bruno Celeste
 Author-email: bruno@coconut.co
 License: MIT License
 Description: Client Library for encoding Videos with Coconut
-        
+
         Coconut is a Video Encoding Web Service built for developers.
-        
+
         For more information:
-        
+
         * Coconut: http://coconut.co
         * API Documentation: http://coconut.co/docs
         * Twitter: @openCoconut
-        
+
         Changelogs
-        
+
         2.2.0
         Added a new method #config to generate a full configuration based on the given parameters. It's especially useful to handle dynamic settings like source or variables that can be set directly in code.
-        
+
         2.0.0
         New version of the client library which uses the HeyWatch API v2. This library is not compatible with 1.x
-        
+
         1.0.0
         First version
-        
-        
+
+
 Keywords: coconut video encoding api
 Platform: UNKNOWN

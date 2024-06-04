@@ -30,17 +30,17 @@ import org.springframework.validation.Errors;
 @Component
 public class RRepositoryValidator extends RepositoryValidator<RRepository> {
 
-	public RRepositoryValidator(RRepositoryService repositoryService) {
-		super(repositoryService);
-	}
+    public RRepositoryValidator(RRepositoryService repositoryService) {
+        super(repositoryService);
+    }
 
-	@Override
-	public boolean supports(Class<?> clazz) {
-		return clazz.isAssignableFrom(RRepository.class);
-	}
+    @Override
+    public boolean supports(Class<?> clazz) {
+        return clazz.isAssignableFrom(RRepository.class);
+    }
 
-	@Override
-	public void validate(@NonNull Object target, @NonNull Errors errors) {
-		validate((RRepository)target, errors);
-	}
+    @Override
+    public void validate(@NonNull Object target, @NonNull Errors errors) {
+        validate((RRepository) target, errors);
+    }
 }

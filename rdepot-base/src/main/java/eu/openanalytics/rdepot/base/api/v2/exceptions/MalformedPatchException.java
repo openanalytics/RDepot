@@ -21,11 +21,10 @@
 package eu.openanalytics.rdepot.base.api.v2.exceptions;
 
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
-
 import java.io.Serial;
 import java.util.Locale;
+import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 
 /**
  * Thrown when a PATCH request is invalid.
@@ -36,8 +35,11 @@ public class MalformedPatchException extends ApiException {
     private static final long serialVersionUID = -5220688592909790424L;
 
     public MalformedPatchException(MessageSource messageSource, Locale locale, Exception e) {
-        super(messageSource, locale, MessageCodes.ERROR_MALFORMED_PATCH,
-                HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
+        super(
+                messageSource,
+                locale,
+                MessageCodes.ERROR_MALFORMED_PATCH,
+                HttpStatus.UNPROCESSABLE_ENTITY,
+                e.getMessage());
     }
-
 }

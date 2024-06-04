@@ -20,12 +20,11 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.dtos;
 
-import org.apache.commons.lang3.builder.ToStringExclude;
-
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.Resource;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.ToStringExclude;
 
 /**
  * Simplified Data Transfer Object for {@link Package Packages}
@@ -34,35 +33,36 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PackageSimpleDto implements IDto {
 
-	protected Integer id;
-	protected UserProjection user;	
-	protected RepositoryProjection repository;
-	protected SubmissionProjection submission;
-	protected String name;
-	protected String version;
-	protected String source;
-	protected Boolean active;
-	protected Boolean deleted;
-	private String technology;
-	@ToStringExclude
-	protected Package entity;
-	
-	public PackageSimpleDto(Package packageBag) {
-		this.id = packageBag.getId();
-		this.user = new UserProjection(packageBag.getUser());
-		this.repository = new RepositoryProjection(packageBag.getRepository());
-		this.submission = new SubmissionProjection(packageBag.getSubmission());
-		this.version = packageBag.getVersion();
-		this.name = packageBag.getName();
-		this.source = packageBag.getSource();
-		this.active = packageBag.isActive();
-		this.deleted = packageBag.isDeleted();
-		this.technology = packageBag.getTechnology().getName();
-		this.entity = packageBag;
-	}
-	
-	@Override
-	public Resource getEntity() {
-		return entity;
-	}
+    protected Integer id;
+    protected UserProjection user;
+    protected RepositoryProjection repository;
+    protected SubmissionProjection submission;
+    protected String name;
+    protected String version;
+    protected String source;
+    protected Boolean active;
+    protected Boolean deleted;
+    private String technology;
+
+    @ToStringExclude
+    protected Package entity;
+
+    public PackageSimpleDto(Package packageBag) {
+        this.id = packageBag.getId();
+        this.user = new UserProjection(packageBag.getUser());
+        this.repository = new RepositoryProjection(packageBag.getRepository());
+        this.submission = new SubmissionProjection(packageBag.getSubmission());
+        this.version = packageBag.getVersion();
+        this.name = packageBag.getName();
+        this.source = packageBag.getSource();
+        this.active = packageBag.isActive();
+        this.deleted = packageBag.isDeleted();
+        this.technology = packageBag.getTechnology().getName();
+        this.entity = packageBag;
+    }
+
+    @Override
+    public Resource getEntity() {
+        return entity;
+    }
 }

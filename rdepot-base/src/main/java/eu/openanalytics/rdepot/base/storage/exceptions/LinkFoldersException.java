@@ -22,7 +22,6 @@ package eu.openanalytics.rdepot.base.storage.exceptions;
 
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 /**
@@ -30,11 +29,10 @@ import java.io.Serial;
  */
 public class LinkFoldersException extends LocalizedException {
 
-	@Serial
-	private static final long serialVersionUID = 3909230373225263238L;
+    @Serial
+    private static final long serialVersionUID = 3909230373225263238L;
 
-	public LinkFoldersException() {
-		super(MessageCodes.COULD_NOT_LINK_FOLDERS);
-	}
-
+    public LinkFoldersException() {
+        super(MessageCodes.COULD_NOT_LINK_FOLDERS);
+    }
 }

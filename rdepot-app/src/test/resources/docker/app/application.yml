@@ -3,11 +3,20 @@ api-token:
   issuer: RDepot
   audience:
     - RDepot
-  lifetime: 10
+  lifetime: 5000
 
 allowed-origin: http://localhost:3001
 
 repository-snapshots: true
+
+replacing:
+   packages:
+      enabled: true
+deleting:
+  repositories:
+    enabled: true
+  packages:
+    enabled: true
 
 oauth2:
   jwk-set-uri: http://192.168.49.17:8080/auth/realms/RDepot/protocol/openid-connect/certs
@@ -45,10 +54,10 @@ spring:
     host: 192.168.49.1
     port: 3925
 
-# Enable Liquibase  
+# Enable Liquibase
   liquibase:
     user: postgres
-    enabled: true    
+    enabled: true
 # Logging
 #logging:
 #  level:
@@ -56,22 +65,20 @@ spring:
 #      springframework:
 #        web: TRACE
 #      hibernate:
-#        SQL: DEBUG
-#        type: 
-#          descriptor:
-#            sql:
-#              BasicBinder: TRACE
-   
+#        SQL: TRACE
+#        orm:
+#          jdbc:
+#            bind: TRACE
 # Authentication related properties
-app:  
+app:
   authentication: simple
 
   # Simple authentication related properties
   simple:
     users:
       - login: einstein
-        password: testpassword  
-        name: Albert Einstein 
+        password: testpassword
+        name: Albert Einstein
       - login: tesla
         password: testpassword
         name: Nicolas Tesla
@@ -86,10 +93,10 @@ app:
         name: New User
       - login: doe
         password: testpassword
-        name: John Doe  
+        name: John Doe
     default:
       admins:
-        - einstein            
+        - einstein
 
 # Database related properties
 db:
@@ -101,5 +108,4 @@ db:
 # Hibernate related properties
 hibernate:
   dialect: org.hibernate.dialect.PostgreSQLDialect
-  show_sql: false  
-
+  show_sql: false

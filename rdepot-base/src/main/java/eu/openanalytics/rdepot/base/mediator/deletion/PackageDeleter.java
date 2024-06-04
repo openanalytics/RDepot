@@ -20,8 +20,6 @@
  */
 package eu.openanalytics.rdepot.base.mediator.deletion;
 
-import org.springframework.dao.DataAccessException;
-
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.Submission;
@@ -37,6 +35,7 @@ import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryExcepti
 import eu.openanalytics.rdepot.base.time.DateProvider;
 import eu.openanalytics.rdepot.base.utils.PackageRepositoryResolver;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -48,83 +47,83 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public abstract class PackageDeleter<P extends Package, R extends Repository> extends ResourceDeleter<P> {
 
-	protected final Storage<?, P> storage;
-	protected final SubmissionService submissionService;
-	protected final RepositorySynchronizer<R> repositorySynchronizer;
-	protected final PackageRepositoryResolver<R,P> packageRepositoryResolver;
-	
-	public PackageDeleter(NewsfeedEventService newsfeedEventService, 
-			PackageService<P> resourceService, 
-			Storage<?, P> storage,
-			SubmissionService submissionService,
-			RepositorySynchronizer<R> repositorySynchronizer,
-			PackageRepositoryResolver<R,P> packageRepositoryResolver) {
-		super(newsfeedEventService, resourceService);
-		this.storage = storage;
-		this.submissionService = submissionService;
-		this.repositorySynchronizer = repositorySynchronizer;
-		this.packageRepositoryResolver = packageRepositoryResolver;
-	}
+    protected final Storage<?, P> storage;
+    protected final SubmissionService submissionService;
+    protected final RepositorySynchronizer<R> repositorySynchronizer;
+    protected final PackageRepositoryResolver<R, P> packageRepositoryResolver;
 
-	private void synchronizeRepository(P resource) throws SynchronizeRepositoryException {
-		if(resource.getRepository().getPublished()) {
-				repositorySynchronizer.storeRepositoryOnRemoteServer(
-						packageRepositoryResolver.getRepositoryForPackage(resource),
-            DateProvider.getCurrentDateStamp());
-		}
-	}
+    public PackageDeleter(
+            NewsfeedEventService newsfeedEventService,
+            PackageService<P> resourceService,
+            Storage<?, P> storage,
+            SubmissionService submissionService,
+            RepositorySynchronizer<R> repositorySynchronizer,
+            PackageRepositoryResolver<R, P> packageRepositoryResolver) {
+        super(newsfeedEventService, resourceService);
+        this.storage = storage;
+        this.submissionService = submissionService;
+        this.repositorySynchronizer = repositorySynchronizer;
+        this.packageRepositoryResolver = packageRepositoryResolver;
+    }
 
-	@Transactional
-	public void deleteAndSynchronize(P resource) throws DeleteEntityException, SynchronizeRepositoryException {
-			delete(resource);
-			synchronizeRepository(resource);
-	}
+    private void synchronizeRepository(P resource) throws SynchronizeRepositoryException {
+        if (resource.getRepository().getPublished()) {
+            repositorySynchronizer.storeRepositoryOnRemoteServer(
+                    packageRepositoryResolver.getRepositoryForPackage(resource), DateProvider.getCurrentDateStamp());
+        }
+    }
 
-	@Override
-	public void delete(P packageBag) throws DeleteEntityException {
-		if(packageBag.getSource() == null || packageBag.getSource().isBlank()) {
-			log.warn("Deleting package with empty source property: " + packageBag.toString());
-			deleteFromDatabase(packageBag);
-			return;
-		}
+    @Transactional
+    public void deleteAndSynchronize(P resource) throws DeleteEntityException, SynchronizeRepositoryException {
+        delete(resource);
+        synchronizeRepository(resource);
+    }
 
-		String recycledPackageSourcePath;
-		final String oldPackageSourcePath = packageBag.getSource();
-		try {
-			recycledPackageSourcePath = storage.moveToTrashDirectory(packageBag);
-			packageBag.setSource(recycledPackageSourcePath);
-			
-			deleteFromDatabase(packageBag);
-			
-			storage.removePackageSource(recycledPackageSourcePath);
-		} catch (MovePackageSourceException | SourceFileDeleteException e) {
-			log.error(e.getMessage(), e);
-			throw new DeleteEntityException();
-		} catch (DataAccessException dae) {
-			log.error(dae.getMessage(), dae);
-			try {
-				packageBag.setSource(storage.moveSource(packageBag, oldPackageSourcePath));
-			} catch (MovePackageSourceException mpse) {
-				log.error("Could not restore package source after failed delete!");
-				log.error(mpse.getMessage(), mpse);
-			}
-			throw new DeleteEntityException();
-		}
-	}
+    @Override
+    public void delete(P packageBag) throws DeleteEntityException {
+        if (packageBag.getSource() == null || packageBag.getSource().isBlank()) {
+            log.warn("Deleting package with empty source property: " + packageBag.toString());
+            deleteFromDatabase(packageBag);
+            return;
+        }
 
-	protected void deleteFromDatabase(P packageBag) throws DeleteEntityException {
-		newsfeedEventService.deleteRelatedEvents(packageBag.getSubmission());
-		newsfeedEventService.deleteRelatedEvents(packageBag);
-		submissionService.delete(packageBag.getSubmission());
-	}
+        String recycledPackageSourcePath;
+        final String oldPackageSourcePath = packageBag.getSource();
+        try {
+            recycledPackageSourcePath = storage.moveToTrashDirectory(packageBag);
+            packageBag.setSource(recycledPackageSourcePath);
 
-	@Transactional
-	public void delete(int id) throws DeleteEntityException {
-		delete(resourceService.findById(id).orElseThrow(DeleteEntityException::new));
-	}
+            deleteFromDatabase(packageBag);
 
-	@Transactional
-	public void deleteForSubmission(Submission submission) throws DeleteEntityException {
-		delete(submission.getPackage().getId());
-	}
+            storage.removePackageSource(recycledPackageSourcePath);
+        } catch (MovePackageSourceException | SourceFileDeleteException e) {
+            log.error(e.getMessage(), e);
+            throw new DeleteEntityException();
+        } catch (DataAccessException dae) {
+            log.error(dae.getMessage(), dae);
+            try {
+                packageBag.setSource(storage.moveSource(packageBag, oldPackageSourcePath));
+            } catch (MovePackageSourceException mpse) {
+                log.error("Could not restore package source after failed delete!");
+                log.error(mpse.getMessage(), mpse);
+            }
+            throw new DeleteEntityException();
+        }
+    }
+
+    protected void deleteFromDatabase(P packageBag) throws DeleteEntityException {
+        newsfeedEventService.deleteRelatedEvents(packageBag.getSubmission());
+        newsfeedEventService.deleteRelatedEvents(packageBag);
+        submissionService.delete(packageBag.getSubmission());
+    }
+
+    @Transactional
+    public void delete(int id) throws DeleteEntityException {
+        delete(resourceService.findById(id).orElseThrow(DeleteEntityException::new));
+    }
+
+    @Transactional
+    public void deleteForSubmission(Submission submission) throws DeleteEntityException {
+        delete(submission.getPackage().getId());
+    }
 }

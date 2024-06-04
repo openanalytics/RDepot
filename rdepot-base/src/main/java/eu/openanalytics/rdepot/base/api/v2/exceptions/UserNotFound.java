@@ -21,22 +21,20 @@
 package eu.openanalytics.rdepot.base.api.v2.exceptions;
 
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
-
 import java.io.Serial;
 import java.util.Locale;
+import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 
 /**
  * Thrown when user cannot be found.
  */
 public class UserNotFound extends ApiException {
 
-	@Serial
-	private static final long serialVersionUID = 7730809459171959486L;
+    @Serial
+    private static final long serialVersionUID = 7730809459171959486L;
 
-	public UserNotFound(MessageSource messageSource, Locale locale) {
-		super(messageSource, locale, MessageCodes.ERROR_USER_NOT_FOUND, HttpStatus.NOT_FOUND);
-	}
-
+    public UserNotFound(MessageSource messageSource, Locale locale) {
+        super(messageSource, locale, MessageCodes.ERROR_USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+    }
 }

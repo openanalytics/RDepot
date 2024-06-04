@@ -20,74 +20,77 @@
  */
 package eu.openanalytics.rdepot.base.utils.specs;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.springframework.data.jpa.domain.Specification;
-
 import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.enums.SubmissionState;
-import eu.openanalytics.rdepot.base.event.NewsfeedEventType;
 import eu.openanalytics.rdepot.base.utils.TechnologyResolver;
-import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.data.jpa.domain.Specification;
 
 public class SubmissionSpecs {
-	public static Specification<Submission> ofState(List<SubmissionState> state) {
-		return (root, query, criteriaBuilder) -> criteriaBuilder.in(root.get("state")).value(state);
-	}
+    public static Specification<Submission> ofState(List<SubmissionState> state) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.in(root.get("state")).value(state);
+    }
 
-	public static Specification<Submission> ofSubmitter(String submitter) {
-		return (root, query, criteriaBuilder) ->
-			criteriaBuilder.like(criteriaBuilder.lower(root.join("submitter", JoinType.LEFT).get("name")), "%" + submitter.toLowerCase() + "%");
-	}
-	
-	public static Specification<Submission> ofApprover(String approver) {
-		return (root, query, criteriaBuilder) -> 
-			criteriaBuilder.like(criteriaBuilder.lower(root.join("approver", JoinType.LEFT).get("name")), "%" + approver.toLowerCase() + "%");
-	}
+    public static Specification<Submission> ofSubmitter(String submitter) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.like(
+                criteriaBuilder.lower(root.join("submitter", JoinType.LEFT).get("name")),
+                "%" + submitter.toLowerCase() + "%");
+    }
 
-	public static Specification<Submission> ofPackage(String packageBag) {
-		return (root, query, criteriaBuilder) -> 
-			criteriaBuilder.like(criteriaBuilder.lower(root.join("packageBag", JoinType.LEFT).get("name")), "%" + packageBag.toLowerCase() + "%");
-	}
-	
-	public static Specification<Submission> fromDate(String fromDate) {
-		return (root, query, criteriaBuilder) -> {
-			List<Predicate> predicates = new ArrayList<>();
-			LocalDate date = LocalDate.parse(fromDate);
+    public static Specification<Submission> ofApprover(String approver) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.like(
+                criteriaBuilder.lower(root.join("approver", JoinType.LEFT).get("name")),
+                "%" + approver.toLowerCase() + "%");
+    }
 
-			predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("createdDate"), date));
-			query.distinct(true);
-			
-			return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
-		};
-	}
+    public static Specification<Submission> ofPackage(String packageBag) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.like(
+                criteriaBuilder.lower(root.join("packageBag", JoinType.LEFT).get("name")),
+                "%" + packageBag.toLowerCase() + "%");
+    }
 
-	public static Specification<Submission> toDate(String toDate) {
-		return (root, query, criteriaBuilder) -> {
-			List<Predicate> predicates = new ArrayList<>();
-			LocalDate date = LocalDate.parse(toDate);
+    public static Specification<Submission> fromDate(String fromDate) {
+        return (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            LocalDate date = LocalDate.parse(fromDate);
 
-			predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("createdDate"), date));
-			query.distinct(true);
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("createdDate"), date));
+            query.distinct(true);
 
-			return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
-		};
-	}
-	
-	public static Specification<Submission> ofTechnology(List<String> technologies) {
-		return (root, query, criteriaBuilder) -> {
-			TechnologyResolver technologyResolver = new TechnologyResolver();
-			List<String> updatedTechnologies = technologyResolver.getTechnologies(technologies);
-			return criteriaBuilder.in(root.get("packageBag").get("resourceTechnology")).value(updatedTechnologies);
-		};
-	}
-	
-	public static Specification<Submission> ofRepository(List<String> repositories) {
-			return (root, query, criteriaBuilder) -> criteriaBuilder.in(root.get("packageBag").get("repositoryGeneric").get("name")).value(repositories);
-	}
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        };
+    }
+
+    public static Specification<Submission> toDate(String toDate) {
+        return (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            LocalDate date = LocalDate.parse(toDate);
+
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("createdDate"), date));
+            query.distinct(true);
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        };
+    }
+
+    public static Specification<Submission> ofTechnology(List<String> technologies) {
+        return (root, query, criteriaBuilder) -> {
+            TechnologyResolver technologyResolver = new TechnologyResolver();
+            List<String> updatedTechnologies = technologyResolver.getTechnologies(technologies);
+            return criteriaBuilder
+                    .in(root.get("packageBag").get("resourceTechnology"))
+                    .value(updatedTechnologies);
+        };
+    }
+
+    public static Specification<Submission> ofRepository(List<String> repositories) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder
+                .in(root.get("packageBag").get("repositoryGeneric").get("name"))
+                .value(repositories);
+    }
 }

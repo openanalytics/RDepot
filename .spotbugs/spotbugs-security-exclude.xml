@@ -1,0 +1,63 @@
+<FindBugsFilter>
+    <Match>
+        <Class name="~eu\.openanalytics\.rdepot\.(base|python|r)\.storage\.implementations.(Common|Python|R)LocalStorage" />
+        <Bug pattern="PATH_TRAVERSAL_IN" />
+    </Match>
+    <Match>
+        <Class name="eu.openanalytics.rdepot.base.storage.implementations.CommonLocalStorage" />
+        <Bug pattern="PREDICTABLE_RANDOM" />
+    </Match>
+    <Match>
+        <Class name="eu.openanalytics.rdepot.base.storage.implementations.CommonLocalStorage" />
+        <Method name="downloadFileToDestination" />
+        <Bug pattern="HTTP_PARAMETER_POLLUTION" />
+    </Match>
+    <Match>
+        <Class name="eu.openanalytics.rdepot.base.strategy.upload.DefaultPackageUploadStrategy" />
+        <Bug pattern="PATH_TRAVERSAL_IN" />
+    </Match>
+    <Match>
+        <Package name="~eu\.openanalytics\.rdepot\.(base|python|r)\.config\.declarative" />
+        <Bug pattern="PATH_TRAVERSAL_IN" />
+    </Match>
+    <Match>
+        <Class name="eu.openanalytics.rdepot.python.mediator.hash.HashCalculator" />
+        <Bug pattern="WEAK_MESSAGE_DIGEST_MD5,WEAK_MESSAGE_DIGEST_SHA1,PATH_TRAVERSAL_IN" />
+    </Match>
+    <Match>
+        <Class name="eu.openanalytics.rdepot.python.storage.indexes.IndexesGenerator" />
+        <Bug pattern="PATH_TRAVERSAL_IN" />
+    </Match>
+    <Match>
+        <Class name="~eu\.openanalytics\.rdepot\.python\.synchronization\.(FilesHierarchy|PythonRepositorySynchronizer|SynchronizeRepositoryRequestBody)" />
+        <Bug pattern="PATH_TRAVERSAL_IN" />
+    </Match>
+    <Match>
+        <Class name="eu.openanalytics.rdepot.r.storage.implementations.RLocalStorage" />
+        <Bug pattern="WEAK_MESSAGE_DIGEST_MD5" />
+    </Match>
+    <Match>
+        <Class name="eu.openanalytics.rdepot.r.mirroring.CranMirrorSynchronizer" />
+        <Bug pattern="PATH_TRAVERSAL_IN" />
+    </Match>
+    <Match>
+        <Class name="eu.openanalytics.rdepot.repo.api.FileListingController" />
+        <Bug pattern="WEAK_MESSAGE_DIGEST_MD5" />
+    </Match>
+    <Match>
+        <Class name="eu.openanalytics.rdepot.repo.hash.HashCalculatorImpl" />
+        <Bug pattern="WEAK_MESSAGE_DIGEST_MD5" />
+    </Match>
+    <Match>
+        <Class name="eu.openanalytics.rdepot.repo.hash.HashCalculatorImpl" />
+        <Bug pattern="WEAK_MESSAGE_DIGEST_SHA1" />
+    </Match>
+    <Match>
+        <Class name="eu.openanalytics.rdepot.repo.storage.implementations.FileSystemStorageService" />
+        <Bug pattern="PATH_TRAVERSAL_IN" />
+    </Match>
+    <Match>
+        <Class name="eu.openanalytics.rdepot.repo.python.storage.PythonFileSystemStorageService" />
+        <Bug pattern="PATH_TRAVERSAL_IN" />
+    </Match>
+</FindBugsFilter>

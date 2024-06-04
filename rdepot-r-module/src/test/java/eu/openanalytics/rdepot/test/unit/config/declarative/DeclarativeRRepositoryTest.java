@@ -25,15 +25,16 @@ import eu.openanalytics.rdepot.r.config.declarative.RYamlDeclarativeConfiguratio
 import eu.openanalytics.rdepot.r.mirroring.pojos.MirroredRRepository;
 import eu.openanalytics.rdepot.r.technology.RLanguage;
 import eu.openanalytics.rdepot.test.unit.UnitTest;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 public class DeclarativeRRepositoryTest extends UnitTest {
     private static final String TEST_RESOURCES_PATH = "src/test/resources/unit";
-    private static final String GOOD_REPOSITORIES = TEST_RESOURCES_PATH +  "/test_files/declarative_repository_files/good";
-    private static final String TECHNOLOGY_MISMATCH_REPOSITORIES = TEST_RESOURCES_PATH +  "/test_files/declarative_repository_files/technology_mismatch";
+    private static final String GOOD_REPOSITORIES =
+            TEST_RESOURCES_PATH + "/test_files/declarative_repository_files/good";
+    private static final String TECHNOLOGY_MISMATCH_REPOSITORIES =
+            TEST_RESOURCES_PATH + "/test_files/declarative_repository_files/technology_mismatch";
 
     @Test
     public void successfullyInitializeDeclarativeRRepository() throws Exception {
@@ -42,7 +43,7 @@ public class DeclarativeRRepositoryTest extends UnitTest {
         RYamlDeclarativeConfigurationSource configurationSource = new RYamlDeclarativeConfigurationSource(directories);
         List<MirroredRRepository> repositories = configurationSource.retrieveDeclaredRepositories();
         Assertions.assertEquals(3, repositories.size());
-        for(MirroredRRepository repository : repositories) {
+        for (MirroredRRepository repository : repositories) {
             Assertions.assertEquals("a", repository.getName());
             Assertions.assertEquals("http://localhost/repo/R", repository.getPublicationUri());
             Assertions.assertEquals("http://oa-rdepot-repo:8080/R", repository.getServerAddress());

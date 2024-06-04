@@ -20,11 +20,10 @@
  */
 package eu.openanalytics.rdepot.base.mediator.deletion;
 
-import org.springframework.stereotype.Component;
-
 import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
+import org.springframework.stereotype.Component;
 
 /**
  * Permanently deletes {@link PackageMaintainer Package Maintainers}.
@@ -32,10 +31,8 @@ import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 @Component
 public class PackageMaintainerDeleter extends ResourceDeleter<PackageMaintainer> {
 
-	public PackageMaintainerDeleter(
-			NewsfeedEventService newsfeedEventService,
-			PackageMaintainerService packageMaintainerService) {
-		super(newsfeedEventService, packageMaintainerService);
-	}
-
+    public PackageMaintainerDeleter(
+            NewsfeedEventService newsfeedEventService, PackageMaintainerService packageMaintainerService) {
+        super(newsfeedEventService, packageMaintainerService);
+    }
 }

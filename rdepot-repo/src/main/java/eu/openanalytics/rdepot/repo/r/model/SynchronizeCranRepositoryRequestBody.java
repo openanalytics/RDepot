@@ -20,54 +20,45 @@
  */
 package eu.openanalytics.rdepot.repo.r.model;
 
+import eu.openanalytics.rdepot.repo.hash.model.HashMethod;
+import eu.openanalytics.rdepot.repo.model.SynchronizeRepositoryRequestBody;
+import eu.openanalytics.rdepot.repo.model.Technology;
+import java.util.Map;
+import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
 
-import eu.openanalytics.rdepot.repo.model.SynchronizeRepositoryRequestBody;
-
+@Getter
 public class SynchronizeCranRepositoryRequestBody extends SynchronizeRepositoryRequestBody {
-	MultipartFile[] filesToUpload;
-	MultipartFile[] filesToUploadToArchive;
-	String[] filesToDelete;
-	String[] filesToDeleteFromArchive;
-	
-	public SynchronizeCranRepositoryRequestBody(String id, MultipartFile[] filesToUpload, MultipartFile[] filesToUploadToArchive, String[] filesToDelete, String[] filesToDeleteFromArchive, String versionBefore, String versionAfter,
-			String page, String repository) {
-		super(page, repository, id, versionBefore, versionAfter);
-		this.filesToUpload = filesToUpload;
-		this.filesToUploadToArchive = filesToUploadToArchive;
-		this.filesToDelete = filesToDelete;
-		this.filesToDeleteFromArchive = filesToDeleteFromArchive;
-	}
-	
-	public MultipartFile[] getFilesToUpload() {
-		return filesToUpload;
-	}
+    MultipartFile[] filesToUploadToArchive;
+    String[] filesToDeleteFromArchive;
 
-	public void setFilesToUpload(MultipartFile[] filesToUpload) {
-		this.filesToUpload = filesToUpload;
-	}
+    public SynchronizeCranRepositoryRequestBody(
+            String id,
+            MultipartFile[] filesToUpload,
+            MultipartFile[] filesToUploadToArchive,
+            String[] filesToDelete,
+            String[] filesToDeleteFromArchive,
+            String versionBefore,
+            String versionAfter,
+            String page,
+            String repository,
+            Map<String, String> checksums) {
+        super(
+                page,
+                repository,
+                id,
+                versionBefore,
+                versionAfter,
+                checksums,
+                HashMethod.MD5,
+                filesToUpload,
+                filesToDelete);
+        this.filesToUploadToArchive = filesToUploadToArchive == null ? new MultipartFile[0] : filesToUploadToArchive;
+        this.filesToDeleteFromArchive = filesToDeleteFromArchive == null ? new String[0] : filesToDeleteFromArchive;
+    }
 
-	public MultipartFile[] getFilesToUploadToArchive() {
-		return filesToUploadToArchive;
-	}
-
-	public void setFilesToUploadToArchive(MultipartFile[] filesToUploadToArchive) {
-		this.filesToUploadToArchive = filesToUploadToArchive;
-	}
-
-	public String[] getFilesToDelete() {
-		return filesToDelete;
-	}
-
-	public void setFilesToDelete(String[] filesToDelete) {
-		this.filesToDelete = filesToDelete;
-	}
-
-	public String[] getFilesToDeleteFromArchive() {
-		return filesToDeleteFromArchive;
-	}
-
-	public void setFilesToDeleteFromArchive(String[] filesToDeleteFromArchive) {
-		this.filesToDeleteFromArchive = filesToDeleteFromArchive;
-	}
+    @Override
+    public Technology getTechnology() {
+        return Technology.R;
+    }
 }

@@ -26,5 +26,4 @@ import eu.openanalytics.rdepot.base.entities.EventChangedVariable;
  * {@link org.springframework.data.jpa.repository.JpaRepository JPA Repository}
  * for {@link EventChangedVariable Event's changed variables}.
  */
-public interface EventChangedVariableDao extends Dao<EventChangedVariable> {
-}
+public interface EventChangedVariableDao extends Dao<EventChangedVariable> {}

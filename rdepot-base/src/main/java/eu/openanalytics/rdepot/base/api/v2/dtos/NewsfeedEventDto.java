@@ -20,13 +20,12 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.dtos;
 
+import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
+import eu.openanalytics.rdepot.base.entities.enums.ResourceType;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
-import eu.openanalytics.rdepot.base.entities.enums.ResourceType;
 import lombok.Getter;
 
 /**
@@ -35,38 +34,39 @@ import lombok.Getter;
 @Getter
 public class NewsfeedEventDto implements IDto {
 
-	private final int id;
-	private final String technology;
-	private final String time;
-	private final UserProjection user;
-	private final String eventType;
-	private final int resourceId;
-	private final ResourceType resourceType;
-	private final NewsfeedEvent entity;
-	private final List<ChangedVariableDto> changedProperties;
-	private final IDto relatedResource;
+    private final int id;
+    private final String technology;
+    private final String time;
+    private final UserProjection user;
+    private final String eventType;
+    private final int resourceId;
+    private final ResourceType resourceType;
+    private final NewsfeedEvent entity;
+    private final List<ChangedVariableDto> changedProperties;
+    private final IDto relatedResource;
 
-	@Override
-	public NewsfeedEvent getEntity() {
-		return entity;
-	}
+    @Override
+    public NewsfeedEvent getEntity() {
+        return entity;
+    }
 
-	public NewsfeedEventDto(NewsfeedEvent entity) {
-		this.entity = entity;
-		this.technology = entity.getTechnology().getName() 
-				+ " version: " 
-				+ entity.getTechnology().getVersion();
-		LocalDateTime fullDate = LocalDateTime.of(entity.getDate(), entity.getTime().toLocalTime());
-		this.time = fullDate.format(DateTimeFormatter.ISO_DATE_TIME);
-		this.user = entity.getAuthor().createDtoShort();
-		this.eventType = entity.getType().getValue();
-		this.resourceId = entity.getRelatedResource().getId();
-		this.id = entity.getId();
-		this.resourceType = entity.getRelatedResource().getResourceType();
-		this.changedProperties = entity.getEventChangedVariables().stream()
-				.map(ChangedVariableDto::of)
-				.sorted()
-				.collect(Collectors.toList());
-		this.relatedResource = entity.getRelatedResource().createSimpleDto();
-	}
+    public NewsfeedEventDto(NewsfeedEvent entity) {
+        this.entity = entity;
+        this.technology = entity.getTechnology().getName()
+                + " version: "
+                + entity.getTechnology().getVersion();
+        LocalDateTime fullDate =
+                LocalDateTime.of(entity.getDate(), entity.getTime().toLocalTime());
+        this.time = fullDate.format(DateTimeFormatter.ISO_DATE_TIME);
+        this.user = entity.getAuthor().createDtoShort();
+        this.eventType = entity.getType().getValue();
+        this.resourceId = entity.getRelatedResource().getId();
+        this.id = entity.getId();
+        this.resourceType = entity.getRelatedResource().getResourceType();
+        this.changedProperties = entity.getEventChangedVariables().stream()
+                .map(ChangedVariableDto::of)
+                .sorted()
+                .collect(Collectors.toList());
+        this.relatedResource = entity.getRelatedResource().createSimpleDto();
+    }
 }

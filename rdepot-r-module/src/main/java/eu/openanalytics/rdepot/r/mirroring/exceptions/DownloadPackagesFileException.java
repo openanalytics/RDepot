@@ -23,16 +23,15 @@ package eu.openanalytics.rdepot.r.mirroring.exceptions;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
 import eu.openanalytics.rdepot.base.mirroring.Mirror;
-
 import java.io.Serial;
 
 public class DownloadPackagesFileException extends Exception {
 
-	@Serial
-	private static final long serialVersionUID = -3268554656525233152L;
+    @Serial
+    private static final long serialVersionUID = -3268554656525233152L;
 
-	public DownloadPackagesFileException(Mirror<?> mirror) {
-		super(StaticMessageResolver.getMessage(MessageCodes.COULD_NOT_DOWNLOAD_PACKAGES_FILE)
-				+ ": " + mirror.toString());
-	}
+    public DownloadPackagesFileException(Mirror<?> mirror) {
+        super(StaticMessageResolver.getMessage(MessageCodes.COULD_NOT_DOWNLOAD_PACKAGES_FILE) + ": "
+                + mirror.toString());
+    }
 }

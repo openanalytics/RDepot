@@ -4,12 +4,12 @@
   Cross validation for Approximate Bayesian Computation (ABC)
 }
 \description{
- 
+
  This function performs a leave-one-out cross validation for ABC via
  subsequent calls to the function \code{\link{abc}}. A potential use of
  this function is to evaluate the effect of the choice of the tolerance
  rate on the quality of the estimation with ABC.
- 
+
 }
 \usage{
 cv4abc(param, sumstat, abc.out = NULL, nval, tols, statistic = "median",
@@ -86,14 +86,14 @@ prior.range = NULL, method, hcorr = TRUE, transf = "none", logit.bounds
   \item{\dots}{
     other arguments passed to \code{\link{nnet}}.}
 }
-\details{  
-  
+\details{
+
   A simulation is selected repeatedly to be a validation simulation,
   while the other simulations are used as training simulations. Each
   time the function \code{\link{abc}} is called to estimate the
   parameter(s). A total of \code{nval} validation simulations are
   selected.
-  
+
   The arguments of the function \code{\link{abc}} can be supplied in two
   ways. First, simply give them as arguments when calling this function,
   in which case \code{abc.out} can be \code{NULL}. Second, via an
@@ -105,7 +105,7 @@ prior.range = NULL, method, hcorr = TRUE, transf = "none", logit.bounds
 
   See \code{\link{summary.cv4abc}} for calculating the prediction error
   from an object of class \code{"cv4abc"}.
-  
+
 }
 \value{
   An object of class \code{"cv4abc"}, which is a list with the following
@@ -117,13 +117,13 @@ prior.range = NULL, method, hcorr = TRUE, transf = "none", logit.bounds
     as validation values.}
   \item{tols}{The tolerance rates.}
   \item{true}{The parameter values that served as validation values.}
-  \item{estim}{The estimated parameter values.}     
+  \item{estim}{The estimated parameter values.}
   \item{names}{A list with two elements: \code{parameter.names} and
   \code{statistics.names}. Both contain a vector of character strings
     with the parameter and statistics names, respectively.}
   \item{seed}{The value of \code{.Random.seed} when \code{cv4abc} is
     called.}
-  
+
 }
 \seealso{
   \code{\link{abc}}, \code{\link{plot.cv4abc}}, \code{\link{summary.cv4abc}}
@@ -131,7 +131,7 @@ prior.range = NULL, method, hcorr = TRUE, transf = "none", logit.bounds
 \examples{
 data(musigma2)
 ## this data set contains five R objects, see ?musigma2 for
-## details 
+## details
 
 ## cv4abc() calls abc(). Here we show two ways for the supplying
 ## arguments of abc(). 1st way: passing arguments directly. In this

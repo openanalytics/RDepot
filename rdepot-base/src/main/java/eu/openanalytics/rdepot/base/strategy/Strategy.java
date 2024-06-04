@@ -20,10 +20,6 @@
  */
 package eu.openanalytics.rdepot.base.strategy;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
-
 import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
 import eu.openanalytics.rdepot.base.entities.Resource;
 import eu.openanalytics.rdepot.base.entities.User;
@@ -33,6 +29,9 @@ import eu.openanalytics.rdepot.base.service.exceptions.CreateEntityException;
 import eu.openanalytics.rdepot.base.strategy.exceptions.FatalStrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Strategy is an object that coordinates RDepot's business logic.
@@ -44,77 +43,76 @@ import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure
  * @param <T> resource type (entity class) which strategy is related to
  */
 public abstract class Strategy<T extends Resource> {
-	
-	protected final T resource;
-	protected T processedResource;
-	protected final Service<T> service;
-	protected final User requester;
-	protected final Logger logger = LoggerFactory.getLogger(getClass());
-	protected final NewsfeedEventService newsfeedEventService;
-	
-	/**
-	 * @param resource related resource
-	 * @param newsfeedEventService used to register event
-	 * @param service main service related to the resource
-	 * @param requester user performing a request
-	 */
-	protected Strategy(T resource, Service<T> service, User requester,
-			NewsfeedEventService newsfeedEventService) {
-		this.resource = resource;
-		this.service = service;
-		this.requester = requester;
-		this.newsfeedEventService = newsfeedEventService;
-	}
 
-	/**
-	 * Actual business logic of the strategy.
-	 * @return created, modified or unchanged (in case of deletion) object
-	 * @throws StrategyFailure in case any step could not succeed.
-	 */
-	protected abstract T actualStrategy() throws StrategyFailure;
-	
-	/**
-	 * Generates event describing what happened in the strategy.
-	 * @param resource related resource
-	 */
-	protected abstract NewsfeedEvent generateEvent(T resource);
-	
-	/**
-	 * Operations performed after the event is registered and operation performed.
-	 * May be used to link another strategy that 
-	 * would be performed as the next operation in the chain.
-	 */
-	protected abstract void postStrategy() throws StrategyFailure;
-	
-	/**
-	 * Rolls back every operation performed in the strategy.
-	 * May be used for failure recovery.
-	 */
-	public abstract void revertChanges() throws StrategyReversionFailure;
-	
-	/**
-	 * Performs the strategy. 
-	 * This method coordinates the basic flow of every strategy.
-	 * @return created, modified or unchanged (in case of deletion) object
-	 * @throws StrategyFailure contains information about what went wrong in the strategy
-	 */
-	@Transactional(rollbackFor = FatalStrategyFailure.class)
-	public T perform() throws StrategyFailure {
-		processedResource = actualStrategy();
-		try {
-			registerEvent(generateEvent(processedResource));
-		} catch (CreateEntityException e) {
-			logger.error(e.getMessage(), e);
-			throw new FatalStrategyFailure(e);
-		}
-		postStrategy();
-		return processedResource;
-	}
-	
-	/**
-	 * Saves event in the database.
-	 */
-	protected void registerEvent(NewsfeedEvent event) throws CreateEntityException {
-		newsfeedEventService.create(event);
-	}
+    protected final T resource;
+    protected T processedResource;
+    protected final Service<T> service;
+    protected final User requester;
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected final NewsfeedEventService newsfeedEventService;
+
+    /**
+     * @param resource related resource
+     * @param newsfeedEventService used to register event
+     * @param service main service related to the resource
+     * @param requester user performing a request
+     */
+    protected Strategy(T resource, Service<T> service, User requester, NewsfeedEventService newsfeedEventService) {
+        this.resource = resource;
+        this.service = service;
+        this.requester = requester;
+        this.newsfeedEventService = newsfeedEventService;
+    }
+
+    /**
+     * Actual business logic of the strategy.
+     * @return created, modified or unchanged (in case of deletion) object
+     * @throws StrategyFailure in case any step could not succeed.
+     */
+    protected abstract T actualStrategy() throws StrategyFailure;
+
+    /**
+     * Generates event describing what happened in the strategy.
+     * @param resource related resource
+     */
+    protected abstract NewsfeedEvent generateEvent(T resource);
+
+    /**
+     * Operations performed after the event is registered and operation performed.
+     * May be used to link another strategy that
+     * would be performed as the next operation in the chain.
+     */
+    protected abstract void postStrategy() throws StrategyFailure;
+
+    /**
+     * Rolls back every operation performed in the strategy.
+     * May be used for failure recovery.
+     */
+    public abstract void revertChanges() throws StrategyReversionFailure;
+
+    /**
+     * Performs the strategy.
+     * This method coordinates the basic flow of every strategy.
+     * @return created, modified or unchanged (in case of deletion) object
+     * @throws StrategyFailure contains information about what went wrong in the strategy
+     */
+    @Transactional(rollbackFor = FatalStrategyFailure.class)
+    public T perform() throws StrategyFailure {
+        processedResource = actualStrategy();
+        try {
+            registerEvent(generateEvent(processedResource));
+        } catch (CreateEntityException e) {
+            logger.error(e.getMessage(), e);
+            throw new FatalStrategyFailure(e);
+        }
+        postStrategy();
+        return processedResource;
+    }
+
+    /**
+     * Saves event in the database.
+     */
+    protected void registerEvent(NewsfeedEvent event) throws CreateEntityException {
+        newsfeedEventService.create(event);
+    }
 }

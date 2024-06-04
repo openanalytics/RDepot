@@ -25,11 +25,6 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-
 import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
@@ -39,58 +34,61 @@ import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.mediator.deletion.RPackageDeleter;
 import eu.openanalytics.rdepot.r.mediator.deletion.RSubmissionDeleter;
-import eu.openanalytics.rdepot.r.test.strategy.fixture.RPackageTestFixture;
-import eu.openanalytics.rdepot.r.test.strategy.fixture.RRepositoryTestFixture;
+import eu.openanalytics.rdepot.test.fixture.RPackageTestFixture;
+import eu.openanalytics.rdepot.test.fixture.RRepositoryTestFixture;
 import eu.openanalytics.rdepot.test.fixture.UserTestFixture;
 import eu.openanalytics.rdepot.test.unit.UnitTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 
 public class RSubmissionDeleterUnitTest extends UnitTest {
-	@Mock
-	NewsfeedEventService newsfeedEventService;
-	
-	@Mock
-	SubmissionService submissionService;
-	
-	@Mock
-	RPackageDeleter packageDeleter;
-	
-	@InjectMocks
-	RSubmissionDeleter deleter;
-	
-	User user;
-	RRepository repository;
-	RPackage packageBag;
-	Submission submission;
-	
-	@BeforeEach
-	public void setUpResources() {
-		user = UserTestFixture.GET_FIXTURE_USER_PACKAGEMAINTAINER();
-		repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-		packageBag = RPackageTestFixture.GET_PACKAGE_FOR_REPOSITORY_AND_USER(repository, user);
-		submission = packageBag.getSubmission();
-	}
-	
-	
-	@Test
-	public void delete() throws Exception {
-		doNothing().when(packageDeleter).deleteForSubmission(submission);
-		
-		deleter.delete(submission);
-		
-		verify(packageDeleter).deleteForSubmission(submission);
-	}
-	
-	@Test
-	public void delete_throwsNPE_whenTryingToDeleteNullEvent() throws Exception {
-		doThrow(new NullPointerException()).when(packageDeleter).deleteForSubmission(null);
-		
-		assertThrows(NullPointerException.class, () -> deleter.delete(null));
-	}
-	
-	@Test
-	public void delete_throwsException_whenPackageCannotBeDeleted() throws Exception {
-		doThrow(new DeleteEntityException()).when(packageDeleter).deleteForSubmission(submission);
-	
-		assertThrows(DeleteEntityException.class, () -> deleter.delete(submission));
-	}
+    @Mock
+    NewsfeedEventService newsfeedEventService;
+
+    @Mock
+    SubmissionService submissionService;
+
+    @Mock
+    RPackageDeleter packageDeleter;
+
+    @InjectMocks
+    RSubmissionDeleter deleter;
+
+    User user;
+    RRepository repository;
+    RPackage packageBag;
+    Submission submission;
+
+    @BeforeEach
+    public void setUpResources() {
+        user = UserTestFixture.GET_PACKAGE_MAINTAINER();
+        repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
+        packageBag = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
+        submission = packageBag.getSubmission();
+    }
+
+    @Test
+    public void delete() throws Exception {
+        doNothing().when(packageDeleter).deleteForSubmission(submission);
+
+        deleter.delete(submission);
+
+        verify(packageDeleter).deleteForSubmission(submission);
+    }
+
+    @Test
+    public void delete_throwsNPE_whenTryingToDeleteNullEvent() throws Exception {
+        doThrow(new NullPointerException()).when(packageDeleter).deleteForSubmission(null);
+
+        assertThrows(NullPointerException.class, () -> deleter.delete(null));
+    }
+
+    @Test
+    public void delete_throwsException_whenPackageCannotBeDeleted() throws Exception {
+        doThrow(new DeleteEntityException()).when(packageDeleter).deleteForSubmission(submission);
+
+        assertThrows(DeleteEntityException.class, () -> deleter.delete(submission));
+    }
 }

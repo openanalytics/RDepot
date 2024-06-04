@@ -21,7 +21,6 @@
 package eu.openanalytics.rdepot.base.exception;
 
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 /**
@@ -30,11 +29,10 @@ import java.io.Serial;
  */
 public class NoAdminLeftException extends LocalizedException {
 
-	@Serial
-	private static final long serialVersionUID = 8952772133708186441L;
+    @Serial
+    private static final long serialVersionUID = 8952772133708186441L;
 
-	public NoAdminLeftException() {
-		super(MessageCodes.NO_ADMIN_LEFT);
-	}
-
+    public NoAdminLeftException() {
+        super(MessageCodes.NO_ADMIN_LEFT);
+    }
 }

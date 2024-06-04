@@ -22,12 +22,10 @@ package eu.openanalytics.rdepot.base.config.declarative;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
-
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 /**
  * Contains list of paths to directories
@@ -38,5 +36,5 @@ import lombok.Setter;
 @Component
 @ConfigurationProperties(prefix = "additional-repository-configs")
 public class DeclaredRepositoryDirectoriesProps {
-	private List<String> paths = new ArrayList<>();
+    private List<String> paths = new ArrayList<>();
 }

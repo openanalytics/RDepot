@@ -10,10 +10,10 @@ olcAttributeTypes: {1}( 1.3.6.1.4.1.19937.1.1.2 NAME 'networkquota' DESC 'Ne
  twork Quotas (network,protocol,bytes)' EQUALITY caseIgnoreIA5Match SYNTAX 1
  .3.6.1.4.1.1466.115.121.1.26{255} )
 olcObjectClasses: {0}( 1.3.6.1.4.1.19937.1.2.1 NAME 'systemQuotas' DESC 'Sys
- tem Quotas' SUP posixAccount AUXILIARY MUST uid MAY ( quota $ networkquota 
+ tem Quotas' SUP posixAccount AUXILIARY MUST uid MAY ( quota $ networkquota
  ) )
 olcObjectClasses: {1}( 1.3.6.1.4.1.19937.1.2.2 NAME 'defaultQuotas' DESC 'Qu
- ota defaults to apply to members of a group' SUP top AUXILIARY MUST cn MAY 
+ ota defaults to apply to members of a group' SUP top AUXILIARY MUST cn MAY
  ( quota $ networkquota ) )
 structuralObjectClass: olcSchemaConfig
 entryUUID: a2a7fc9e-69b7-103a-873e-5fceeacf3ebe

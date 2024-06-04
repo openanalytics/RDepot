@@ -20,10 +20,9 @@
  */
 package eu.openanalytics.rdepot.r.mirroring;
 
-import java.util.List;
-
 import eu.openanalytics.rdepot.base.mirroring.Mirror;
 import eu.openanalytics.rdepot.r.mirroring.pojos.MirroredRPackage;
+import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -32,18 +31,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class CranMirror extends Mirror<MirroredRPackage> {
-	
-	private Boolean generateManuals = false;
-	
-	@Override
-	public void setPackages(List<MirroredRPackage> packages) {
-		for(MirroredRPackage packageBag : packages) {
-			if(packageBag.getGenerateManuals() == null) {
-				packageBag.setGenerateManuals(
-						getGenerateManuals() != null && getGenerateManuals());
-			}
-		}
 
-		super.setPackages(packages);
-	}
+    private Boolean generateManuals = false;
+
+    @Override
+    public void setPackages(List<MirroredRPackage> packages) {
+        for (MirroredRPackage packageBag : packages) {
+            if (packageBag.getGenerateManuals() == null) {
+                packageBag.setGenerateManuals(getGenerateManuals() != null && getGenerateManuals());
+            }
+        }
+
+        super.setPackages(packages);
+    }
 }

@@ -21,23 +21,20 @@
 package eu.openanalytics.rdepot.base.api.v2.exceptions;
 
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
-
 import java.io.Serial;
 import java.util.Locale;
+import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 
 /**
  * Thrown when a POST request fails due to an internal error.
  */
 public class CreateException extends ApiException {
 
-	@Serial
-	private static final long serialVersionUID = 9200279677295950534L;
+    @Serial
+    private static final long serialVersionUID = 9200279677295950534L;
 
-	public CreateException(MessageSource messageSource, Locale locale) {
-		super(messageSource, locale, MessageCodes.ERROR_CREATE_RESOURCE,
-				HttpStatus.INTERNAL_SERVER_ERROR);
-	}
-
+    public CreateException(MessageSource messageSource, Locale locale) {
+        super(messageSource, locale, MessageCodes.ERROR_CREATE_RESOURCE, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

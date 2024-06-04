@@ -22,7 +22,6 @@ package eu.openanalytics.rdepot.base.storage.exceptions;
 
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 /**
@@ -30,11 +29,10 @@ import java.io.Serial;
  */
 public class ExtractFileException extends LocalizedException {
 
-	@Serial
-	private static final long serialVersionUID = 1391384175994434609L;
+    @Serial
+    private static final long serialVersionUID = 1391384175994434609L;
 
-	public ExtractFileException() {
-		super(MessageCodes.COULD_NOT_EXTRACT_FILE);
-	}
-
+    public ExtractFileException() {
+        super(MessageCodes.COULD_NOT_EXTRACT_FILE);
+    }
 }

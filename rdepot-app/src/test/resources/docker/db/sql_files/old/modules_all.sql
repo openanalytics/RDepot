@@ -1887,4 +1887,3 @@ ALTER TABLE ONLY public.newsfeed_event
 --
 -- PostgreSQL database dump complete
 --
-

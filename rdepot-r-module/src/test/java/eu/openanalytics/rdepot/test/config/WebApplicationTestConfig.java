@@ -20,11 +20,13 @@
  */
 package eu.openanalytics.rdepot.test.config;
 
+import com.google.gson.Gson;
+import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
+// import eu.openanalytics.rdepot.config.HibernateAwareObjectMapper;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
 import org.apache.catalina.core.ApplicationContext;
 import org.apache.catalina.core.ApplicationContextFacade;
 import org.apache.catalina.core.StandardContext;
@@ -50,167 +52,140 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
-import com.google.gson.Gson;
-
-import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
-//import eu.openanalytics.rdepot.config.HibernateAwareObjectMapper;
-
 @Configuration
 @ComponentScan("eu.openanalytics.rdepot")
 public class WebApplicationTestConfig implements WebMvcConfigurer {
-	
-	private static final String repositoryGenerationDir = "/tmp/rdepot_test/generated";
-	
-	@TempDir
-	File packageUploadDir;
-	
-	@Autowired
-	MessageSource messageSource;
+
+    private static final String repositoryGenerationDir = "/tmp/rdepot_test/generated";
+
+    @TempDir
+    File packageUploadDir;
+
+    @Autowired
+    MessageSource messageSource;
 
     @Bean
     WebApplicationContext webApplicationContext() {
-		AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
-		StandardContext standardContext = new StandardContext();
-		StandardContext standardContextParent = new StandardContext();
-		
-		StandardEngine standardEngine = new StandardEngine();
-		standardEngine.setService(new StandardService());
-		standardContextParent.setParent(standardEngine);
-		standardContext.setParent(standardContextParent);
-		
-		context.setServletContext(new ApplicationContextFacade(new ApplicationContext(standardContext)));
-		
-		return context;
-	}
+        AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
+        StandardContext standardContext = new StandardContext();
+        StandardContext standardContextParent = new StandardContext();
+
+        StandardEngine standardEngine = new StandardEngine();
+        standardEngine.setService(new StandardService());
+        standardContextParent.setParent(standardEngine);
+        standardContext.setParent(standardContextParent);
+
+        context.setServletContext(new ApplicationContextFacade(new ApplicationContext(standardContext)));
+
+        return context;
+    }
 
     @Bean(name = "packageUploadDirectory")
-    File packageUploadDirectory()
-	{
-		File location = packageUploadDir;
-		try 
-		{
-			//location = new File(packageUploadDir);
-			if(!location.exists() || !location.canRead() || !location.canWrite())
-			{
-				location = new File("");
-			}
-		} 
-		catch (Exception e) 
-		{
-			location = new File("");
-		}
-		return location;
-	}
+    File packageUploadDirectory() {
+        File location = packageUploadDir;
+        try {
+            // location = new File(packageUploadDir);
+            if (!location.exists() || !location.canRead() || !location.canWrite()) {
+                location = new File("");
+            }
+        } catch (Exception e) {
+            location = new File("");
+        }
+        return location;
+    }
 
     @Bean(name = "repositoryGenerationDirectory")
-    File repositoryGenerationDirectory()
-	{
-		File location;
-		try 
-		{
-			location = new File(repositoryGenerationDir);
-			if(!location.exists() || !location.canRead() || !location.canWrite())
-			{
-				location = new File("");
-			}
-		} 
-		catch (Exception e) 
-		{
-			location = new File("");
-		}
-		return location;
-	}
+    File repositoryGenerationDirectory() {
+        File location;
+        try {
+            location = new File(repositoryGenerationDir);
+            if (!location.exists() || !location.canRead() || !location.canWrite()) {
+                location = new File("");
+            }
+        } catch (Exception e) {
+            location = new File("");
+        }
+        return location;
+    }
 
     @Bean
-    MappingJackson2HttpMessageConverter jsonConverter()
-    {
+    MappingJackson2HttpMessageConverter jsonConverter() {
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-//        converter.setObjectMapper(new HibernateAwareObjectMapper());
+        //        converter.setObjectMapper(new HibernateAwareObjectMapper());
         return converter;
     }
 
     @Bean
-    ByteArrayHttpMessageConverter byteConverter()
-    {
-    	ByteArrayHttpMessageConverter converter = new ByteArrayHttpMessageConverter();
-    	List<MediaType> mediaTypes = new ArrayList<MediaType>();
-    	mediaTypes.add(MediaType.valueOf("application/gzip"));
-    	mediaTypes.add(MediaType.valueOf("application/pdf"));
-    	converter.setSupportedMediaTypes(mediaTypes);
-    	return converter;
+    ByteArrayHttpMessageConverter byteConverter() {
+        ByteArrayHttpMessageConverter converter = new ByteArrayHttpMessageConverter();
+        List<MediaType> mediaTypes = new ArrayList<MediaType>();
+        mediaTypes.add(MediaType.valueOf("application/gzip"));
+        mediaTypes.add(MediaType.valueOf("application/pdf"));
+        converter.setSupportedMediaTypes(mediaTypes);
+        return converter;
     }
 
-//    @Override
-//    public void addFormatters(FormatterRegistry registry)
-//    {
-//        registry.addFormatter(roleFormatter());
-//        registry.addFormatter(repositoryFormatter());
-//        registry.addFormatter(userFormatter());
-//    }
+    //    @Override
+    //    public void addFormatters(FormatterRegistry registry)
+    //    {
+    //        registry.addFormatter(roleFormatter());
+    //        registry.addFormatter(repositoryFormatter());
+    //        registry.addFormatter(userFormatter());
+    //    }
 
     @Bean
-    MessageSource messageSource() 
-	{
-		ResourceBundleMessageSource source = new ResourceBundleMessageSource();
-		//source.setBasename(env.getRequiredProperty("message.source.basename"));
-		source.setBasename("i18n/messages");
-		source.setUseCodeAsDefaultMessage(true);
-		return messageSource;
-//		return source;
-	}
+    MessageSource messageSource() {
+        ResourceBundleMessageSource source = new ResourceBundleMessageSource();
+        // source.setBasename(env.getRequiredProperty("message.source.basename"));
+        source.setBasename("i18n/messages");
+        source.setUseCodeAsDefaultMessage(true);
+        return messageSource;
+        //		return source;
+    }
 
     @Bean
-    StaticMessageResolver staticMessageResolver()
-	{
-		return new StaticMessageResolver(messageSource());
-	}
+    StaticMessageResolver staticMessageResolver() {
+        return new StaticMessageResolver(messageSource());
+    }
 
     @Bean
-    CookieLocaleResolver localeResolver() 
-	{
-		CookieLocaleResolver localeResolver = new CookieLocaleResolver();
-		localeResolver.setDefaultLocale(Locale.ENGLISH);
-		return localeResolver;
-	}
+    CookieLocaleResolver localeResolver() {
+        CookieLocaleResolver localeResolver = new CookieLocaleResolver();
+        localeResolver.setDefaultLocale(Locale.ENGLISH);
+        return localeResolver;
+    }
 
     @Bean
-    LocaleChangeInterceptor localeChangeInterceptor() 
-	{
-		LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
-		localeChangeInterceptor.setParamName("lang");
-		return localeChangeInterceptor;
-	}
-	
-	@Override
-	public void addResourceHandlers(ResourceHandlerRegistry registry) 
-	{
-	    registry.addResourceHandler("/static/**").addResourceLocations("/WEB-INF/static/");
-	    registry.addResourceHandler("/webjars/**").addResourceLocations("/webjars/");
-	}
-	
+    LocaleChangeInterceptor localeChangeInterceptor() {
+        LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
+        localeChangeInterceptor.setParamName("lang");
+        return localeChangeInterceptor;
+    }
+
     @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters)
-    {
-    	converters.add(jsonConverter());
-    	converters.add(byteConverter());
-	}
-	
-	@Override
-	public void addInterceptors(InterceptorRegistry registry) 
-	{		
-	    registry.addInterceptor(localeChangeInterceptor());
-	}
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/static/**").addResourceLocations("/WEB-INF/static/");
+        registry.addResourceHandler("/webjars/**").addResourceLocations("/webjars/");
+    }
+
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        converters.add(jsonConverter());
+        converters.add(byteConverter());
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(localeChangeInterceptor());
+    }
 
     @Bean
-    Gson jsonParser()
-	{
-		return new Gson();
-	}
-	
-	@Override
-	public void configureContentNegotiation(ContentNegotiationConfigurer configurer) 
-	{
-	      configurer.ignoreAcceptHeader(false)
-	                .defaultContentType(MediaType.TEXT_HTML);
-	}
+    Gson jsonParser() {
+        return new Gson();
+    }
+
+    @Override
+    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+        configurer.ignoreAcceptHeader(false).defaultContentType(MediaType.TEXT_HTML);
+    }
 }

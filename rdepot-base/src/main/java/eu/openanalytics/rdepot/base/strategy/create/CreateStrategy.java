@@ -34,31 +34,31 @@ import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure
 /**
  * Strategy template for creating resources.
  * @param <T> Resource entity
- */	
+ */
 public abstract class CreateStrategy<T extends Resource> extends Strategy<T> {
 
-	protected CreateStrategy(T resource, Service<T> service, User requester, 
-			NewsfeedEventService newsfeedEventService) {
-		super(resource, service, requester, newsfeedEventService);
-	}
-	
-	@Override
-	protected T actualStrategy() throws StrategyFailure {
-		try {
-			return service.create(resource);
-		} catch (CreateEntityException e) {
-			logger.error(e.getMessage(), e);
-			throw new FatalStrategyFailure(e);
-		}
-	}
-	
-	@Override
-	public void revertChanges() throws StrategyReversionFailure {
-		try {
-			service.delete(processedResource);
-		} catch (DeleteEntityException e) {
-			logger.error(e.getMessage(), e);
-			throw new StrategyReversionFailure(e);
-		}
-	}
+    protected CreateStrategy(
+            T resource, Service<T> service, User requester, NewsfeedEventService newsfeedEventService) {
+        super(resource, service, requester, newsfeedEventService);
+    }
+
+    @Override
+    protected T actualStrategy() throws StrategyFailure {
+        try {
+            return service.create(resource);
+        } catch (CreateEntityException e) {
+            logger.error(e.getMessage(), e);
+            throw new FatalStrategyFailure(e);
+        }
+    }
+
+    @Override
+    public void revertChanges() throws StrategyReversionFailure {
+        try {
+            service.delete(processedResource);
+        } catch (DeleteEntityException e) {
+            logger.error(e.getMessage(), e);
+            throw new StrategyReversionFailure(e);
+        }
+    }
 }

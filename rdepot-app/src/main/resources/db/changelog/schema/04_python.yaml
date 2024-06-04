@@ -65,15 +65,15 @@ databaseChangeLog:
       id:  04_03_update_package
       author:  pgleska
       preConditions:
-        - onFail: MARK_RAN        
+        - onFail: MARK_RAN
         - columnExists:
             tableName: package
             schemaName: public
             columnName: dtype
       changes:
-        - renameColumn:          
+        - renameColumn:
             newColumnName:  resource_technology
-            oldColumnName:  dtype            
+            oldColumnName:  dtype
             schemaName:  public
             tableName:  package
         - update:
@@ -87,15 +87,15 @@ databaseChangeLog:
       id:  04_04_update_repository
       author:  pgleska
       preConditions:
-        - onFail: MARK_RAN        
+        - onFail: MARK_RAN
         - columnExists:
             tableName: repository
             schemaName: public
             columnName: dtype
       changes:
-        - renameColumn:          
+        - renameColumn:
             newColumnName:  resource_technology
-            oldColumnName:  dtype            
+            oldColumnName:  dtype
             schemaName:  public
             tableName:  repository
         - update:

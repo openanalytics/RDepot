@@ -22,12 +22,12 @@ package eu.openanalytics.rdepot.repo.exception;
 
 public class ProcessRequestException extends Exception {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7667534203765408215L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -7667534203765408215L;
 
-	public ProcessRequestException() {
-		super("Error while processing request!");
-	}
+    public ProcessRequestException() {
+        super("Error while processing request!");
+    }
 }

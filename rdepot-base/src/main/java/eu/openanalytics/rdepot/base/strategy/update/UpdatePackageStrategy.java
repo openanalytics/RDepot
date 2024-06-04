@@ -20,8 +20,6 @@
  */
 package eu.openanalytics.rdepot.base.strategy.update;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 import eu.openanalytics.rdepot.base.entities.EventChangedVariable;
 import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
 import eu.openanalytics.rdepot.base.entities.Package;
@@ -36,111 +34,112 @@ import eu.openanalytics.rdepot.base.storage.exceptions.InvalidSourceException;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
+import org.apache.commons.lang3.NotImplementedException;
 
 /**
  * Updates {@link Package}.
  * If situation requires, its maintainer will be refreshed.
  * @param <P> Technology-specific Package class
  */
-public abstract class UpdatePackageStrategy
-	<P extends Package> extends UpdateStrategy<P> {
+public abstract class UpdatePackageStrategy<P extends Package> extends UpdateStrategy<P> {
 
-	protected final Storage<?, P> storage;
-	protected final BestMaintainerChooser bestMaintainerChooser;
-	
-	protected UpdatePackageStrategy(P resource, 
-			NewsfeedEventService eventService, 
-			Service<P> service, User requester,
-			P updatedPackage, P oldResourceCopy, Storage<?, P> storage, 
-			BestMaintainerChooser bestMaintainerChooser) {
-		super(resource, service, eventService, requester, updatedPackage, oldResourceCopy);
-		this.storage = storage;
-		this.bestMaintainerChooser = bestMaintainerChooser;
-	}
-	
-	@Override
-	protected P actualStrategy() throws StrategyFailure {
-		boolean shouldRefreshMaintainer = false;
-		try {
-			if(updatedResource.isActive() != resource.isActive()) {
-				if(!updatedResource.isActive()) {
-					deactivatePackage(resource);
-				} else {
-					activatePackage(resource);
-				}
-				shouldRefreshMaintainer = true;
-			}
-			if(updatedResource.isDeleted() && !resource.isDeleted()) {
-				delete(resource);
-			}
-			if(updatedResource.getSource() != null && resource.getSource() != null) {
-				if(!updatedResource.getSource().equals(resource.getSource())) {
-					updateSource(resource, updatedResource.getSource());
-				}
-			}
-			
-			if(shouldRefreshMaintainer) {
-				final User oldMaintainer = resource.getUser();
-				final User refreshedMaintainer = bestMaintainerChooser.chooseBestPackageMaintainer(resource);
-				if(!oldMaintainer.equals(refreshedMaintainer))
-					updateUser(resource, refreshedMaintainer);
-			}
-		} catch(NotImplementedException | InvalidSourceException | NoSuitableMaintainerFound e) {
-			throw new StrategyFailure(e, true);
-		}
-		
-		return resource;
-	}
-	
-	protected void updateUser(P resource, User user) {
-		changedValues.add(new EventChangedVariable("user", resource.getUser().toString(), user.toString()));
-		resource.setUser(user);
-	}
-	
-	protected void updateSource(P resource, String source) throws InvalidSourceException {
-		storage.verifySource(resource, source);
-		changedValues.add(new EventChangedVariable("source", resource.getSource(), source));
-		resource.setSource(source);
-	}
+    protected final Storage<?, P> storage;
+    protected final BestMaintainerChooser bestMaintainerChooser;
 
-	protected void activatePackage(P resource) {
-		changedValues.add(new EventChangedVariable("active", "false", "true"));
-		resource.setActive(true);
-	}
+    protected UpdatePackageStrategy(
+            P resource,
+            NewsfeedEventService eventService,
+            Service<P> service,
+            User requester,
+            P updatedPackage,
+            P oldResourceCopy,
+            Storage<?, P> storage,
+            BestMaintainerChooser bestMaintainerChooser) {
+        super(resource, service, eventService, requester, updatedPackage, oldResourceCopy);
+        this.storage = storage;
+        this.bestMaintainerChooser = bestMaintainerChooser;
+    }
 
-	protected void deactivatePackage(P resource) {
-		changedValues.add(new EventChangedVariable("active", "true", "false"));
-		resource.setActive(false);
-	}
-	
-	protected void delete(P packageBag) {
-		changedValues.add(new EventChangedVariable("deleted", "false", "true"));
-		packageBag.setActive(false);
-		packageBag.setDeleted(true);
-	}
-	
-	@Override
-	protected void postStrategy() throws StrategyFailure {
-		try {
-			if(processedResource.getRepository().getPublished())
-				publishPackageRepository(processedResource);
-		} catch (SynchronizeRepositoryException e) {
-			logger.error(e.getMessage(), e);
-			throw new StrategyFailure(e, false);
-		}	
-	}
-	
-	/**
-	 * This method should trigger repository (re)publication.
-	 */
-	protected abstract void publishPackageRepository(P packageBag) 
-			throws SynchronizeRepositoryException;
-	
-	@Override
-	public void revertChanges() throws StrategyReversionFailure {}
-	
-	@Override
-	protected NewsfeedEvent generateEvent(P resource) {
-		return new NewsfeedEvent(requester, NewsfeedEventType.UPDATE, resource);
-	}
+    @Override
+    protected P actualStrategy() throws StrategyFailure {
+        boolean shouldRefreshMaintainer = false;
+        try {
+            if (updatedResource.isActive() != resource.isActive()) {
+                if (!updatedResource.isActive()) {
+                    deactivatePackage(resource);
+                } else {
+                    activatePackage(resource);
+                }
+                shouldRefreshMaintainer = true;
+            }
+            if (updatedResource.isDeleted() && !resource.isDeleted()) {
+                delete(resource);
+            }
+            if (updatedResource.getSource() != null && resource.getSource() != null) {
+                if (!updatedResource.getSource().equals(resource.getSource())) {
+                    updateSource(resource, updatedResource.getSource());
+                }
+            }
+
+            if (shouldRefreshMaintainer) {
+                final User oldMaintainer = resource.getUser();
+                final User refreshedMaintainer = bestMaintainerChooser.chooseBestPackageMaintainer(resource);
+                if (!oldMaintainer.equals(refreshedMaintainer)) updateUser(resource, refreshedMaintainer);
+            }
+        } catch (NotImplementedException | InvalidSourceException | NoSuitableMaintainerFound e) {
+            throw new StrategyFailure(e, true);
+        }
+
+        return resource;
+    }
+
+    protected void updateUser(P resource, User user) {
+        changedValues.add(new EventChangedVariable("user", resource.getUser().toString(), user.toString()));
+        resource.setUser(user);
+    }
+
+    protected void updateSource(P resource, String source) throws InvalidSourceException {
+        storage.verifySource(resource, source);
+        changedValues.add(new EventChangedVariable("source", resource.getSource(), source));
+        resource.setSource(source);
+    }
+
+    protected void activatePackage(P resource) {
+        changedValues.add(new EventChangedVariable("active", "false", "true"));
+        resource.setActive(true);
+    }
+
+    protected void deactivatePackage(P resource) {
+        changedValues.add(new EventChangedVariable("active", "true", "false"));
+        resource.setActive(false);
+    }
+
+    protected void delete(P packageBag) {
+        changedValues.add(new EventChangedVariable("deleted", "false", "true"));
+        packageBag.setActive(false);
+        packageBag.setDeleted(true);
+    }
+
+    @Override
+    protected void postStrategy() throws StrategyFailure {
+        try {
+            if (processedResource.getRepository().getPublished()) publishPackageRepository(processedResource);
+        } catch (SynchronizeRepositoryException e) {
+            logger.error(e.getMessage(), e);
+            throw new StrategyFailure(e, false);
+        }
+    }
+
+    /**
+     * This method should trigger repository (re)publication.
+     */
+    protected abstract void publishPackageRepository(P packageBag) throws SynchronizeRepositoryException;
+
+    @Override
+    public void revertChanges() throws StrategyReversionFailure {}
+
+    @Override
+    protected NewsfeedEvent generateEvent(P resource) {
+        return new NewsfeedEvent(requester, NewsfeedEventType.UPDATE, resource);
+    }
 }

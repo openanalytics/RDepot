@@ -22,14 +22,11 @@ package eu.openanalytics.rdepot.base.daos;
 
 import eu.openanalytics.rdepot.base.entities.Repository;
 import jakarta.persistence.LockModeType;
+import java.util.Optional;
 import org.springframework.context.annotation.Primary;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import java.util.Optional;
 
 /**
  * {@link org.springframework.data.jpa.repository.JpaRepository JPA Repository}
@@ -38,13 +35,15 @@ import java.util.Optional;
  */
 @Primary
 public interface RepositoryDao<T extends Repository> extends Dao<T> {
-	Optional<T> findByName(String name);
-	
-	@Lock(LockModeType.PESSIMISTIC_WRITE)
-	@Query("SELECT r FROM Repository r WHERE r.name = :name")
-	Optional<T> findByNameAcquirePessimisticWriteLock(@Param("name") String name);
+    Optional<T> findByName(String name);
 
-	Optional<T> findByNameAndDeleted(String name, boolean deleted);
-	Optional<T> findByPublicationUri(String publicationUri);
-	Optional<T> findByServerAddress(String serverAddress);
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT r FROM Repository r WHERE r.name = :name")
+    Optional<T> findByNameAcquirePessimisticWriteLock(@Param("name") String name);
+
+    Optional<T> findByNameAndDeleted(String name, boolean deleted);
+
+    Optional<T> findByPublicationUri(String publicationUri);
+
+    Optional<T> findByServerAddress(String serverAddress);
 }

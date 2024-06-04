@@ -20,10 +20,9 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.exceptions;
 
+import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import java.io.Serial;
 import java.util.Locale;
-
-import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 
@@ -32,12 +31,10 @@ import org.springframework.http.HttpStatus;
  */
 public class InvalidSubmission extends ApiException {
 
-	@Serial
-	private static final long serialVersionUID = -1808139586143952784L;
+    @Serial
+    private static final long serialVersionUID = -1808139586143952784L;
 
-	public InvalidSubmission(MessageSource messageSource, Locale locale, String details) {
-		super(messageSource, locale, MessageCodes.ERROR_INVALID_SUBMISSION,
-				HttpStatus.UNPROCESSABLE_ENTITY, details);
-	}
-
+    public InvalidSubmission(MessageSource messageSource, Locale locale, String details) {
+        super(messageSource, locale, MessageCodes.ERROR_INVALID_SUBMISSION, HttpStatus.UNPROCESSABLE_ENTITY, details);
+    }
 }

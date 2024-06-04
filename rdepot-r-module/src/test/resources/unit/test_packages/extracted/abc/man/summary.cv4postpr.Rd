@@ -25,7 +25,7 @@ max(3, getOption("digits")-3), \dots)
   \item{\dots}{
     other arguments.}
 }
-\value{  
+\value{
   If \code{probs}=\code{FALSE} a matrix with the frequencies of the
   simulations classified to the different models (the confusion
   matrix). If \code{probs}=\code{TRUE}, a list with two components:

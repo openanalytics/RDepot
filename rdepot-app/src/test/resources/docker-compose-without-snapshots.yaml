@@ -15,8 +15,8 @@ services:
       - repo
     networks:
       - oa-rdepot
-      
-  app:    
+
+  app:
     build: ./docker/app
     restart: always
     hostname: oa-rdepot-app
@@ -28,7 +28,7 @@ services:
       - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
       - ./itestSourceFiles:/opt/testSourceFiles:ro
       - ./itestGenerated:/opt/testGenerated:ro
-      - ./itestNewFiles:/opt/newFiles:ro    
+      - ./itestNewFiles:/opt/newFiles:ro
     ports:
       - 8001:8001
       - 8018:8080
@@ -48,8 +48,8 @@ services:
       oa-rdepot:
         aliases:
           - oa-rdepot-app
-        ipv4_address: 192.168.49.37  
-      
+        ipv4_address: 192.168.49.37
+
   repo:
     build: ./docker/repo
     restart: always
@@ -60,8 +60,8 @@ services:
       - repository:/opt/rdepot/
       - ./itestServer:/opt/testServer
     networks:
-      - oa-rdepot 
-        
+      - oa-rdepot
+
   db:
     image: registry.openanalytics.eu/proxy/library/postgres:alpine
     restart: always
@@ -72,10 +72,10 @@ services:
     environment:
       - POSTGRES_PASSWORD=mysecretpassword
     ports:
-      - 54321:5432  
+      - 54321:5432
     networks:
       - oa-rdepot
-                  
+
 networks:
   oa-rdepot:
     ipam:
@@ -83,4 +83,3 @@ networks:
         - subnet: 192.168.49.0/24
 volumes:
   repository:
-

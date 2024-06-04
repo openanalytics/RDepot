@@ -20,29 +20,25 @@
  */
 package eu.openanalytics.rdepot.base.validation;
 
-import org.springframework.stereotype.Component;
-
 import eu.openanalytics.rdepot.base.api.v2.dtos.AccessTokenDto;
 import eu.openanalytics.rdepot.base.entities.AccessToken;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.validation.exceptions.PatchValidationException;
 import jakarta.json.JsonPatch;
+import org.springframework.stereotype.Component;
 
 /**
  * Validates {@link AccessToken} Patch operation.
  * Fails if token has already been deactivated.
  */
 @Component
-public class AccessTokenPatchValidator
-	implements PatchValidator<AccessToken, AccessTokenDto>{
+public class AccessTokenPatchValidator implements PatchValidator<AccessToken, AccessTokenDto> {
 
-	@Override
-	public void validatePatch(JsonPatch patch, AccessToken accessToken, 
-			AccessTokenDto accessTokenDto) 
-			throws PatchValidationException {
-		if(!accessToken.isActive()) {
-			throw new PatchValidationException(MessageCodes.DEACTIVATED_TOKEN_COULD_NOT_BE_CHANGED);
-		}
-	}
-
+    @Override
+    public void validatePatch(JsonPatch patch, AccessToken accessToken, AccessTokenDto accessTokenDto)
+            throws PatchValidationException {
+        if (!accessToken.isActive()) {
+            throw new PatchValidationException(MessageCodes.DEACTIVATED_TOKEN_COULD_NOT_BE_CHANGED);
+        }
+    }
 }

@@ -22,16 +22,14 @@ package eu.openanalytics.rdepot.base.security.exceptions;
 
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 public class UserSoftDeletedException extends AuthException {
 
-	@Serial
-	private static final long serialVersionUID = -3489026345063517817L;
+    @Serial
+    private static final long serialVersionUID = -3489026345063517817L;
 
-	public UserSoftDeletedException(User user) {
-		super(user.getId(), MessageCodes.USER_SOFT_DELETED);
-	}
-
+    public UserSoftDeletedException(User user) {
+        super(user.getId(), MessageCodes.USER_SOFT_DELETED);
+    }
 }

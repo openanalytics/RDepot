@@ -23,19 +23,18 @@ package eu.openanalytics.rdepot.base.synchronization;
 import eu.openanalytics.rdepot.base.entities.Repository;
 
 /**
- * Synchronizer publishes repository on a server 
+ * Synchronizer publishes repository on a server
  * so that it is accessible outside the RDepot context.
- * Every technology and its package manager require different 
+ * Every technology and its package manager require different
  * publication flow and server directory structure
  * so this interface should be implemented by each extension module.
  * @param <T>
  */
 public interface RepositorySynchronizer<T extends Repository> {
-	/**
-	 * Stores repository on a public server.
-	 * @param repository to publish
-	 * @param dateStamp in the format "yyyyMMdd"
-	 */
-	void storeRepositoryOnRemoteServer(T repository, String dateStamp) 
-			throws SynchronizeRepositoryException;
+    /**
+     * Stores repository on a public server.
+     * @param repository to publish
+     * @param dateStamp in the format "yyyyMMdd"
+     */
+    void storeRepositoryOnRemoteServer(T repository, String dateStamp) throws SynchronizeRepositoryException;
 }

@@ -20,8 +20,11 @@
  */
 package eu.openanalytics.rdepot.python.entities;
 
-import java.io.Serializable;
-
+import eu.openanalytics.rdepot.base.entities.Repository;
+import eu.openanalytics.rdepot.python.api.v2.dtos.PythonRepositoryDto;
+import eu.openanalytics.rdepot.python.api.v2.dtos.PythonRepositorySimpleDto;
+import eu.openanalytics.rdepot.python.entities.enums.HashMethod;
+import eu.openanalytics.rdepot.python.technology.PythonLanguage;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -29,12 +32,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.SecondaryTable;
-
-import eu.openanalytics.rdepot.base.entities.Repository;
-import eu.openanalytics.rdepot.python.api.v2.dtos.PythonRepositoryDto;
-import eu.openanalytics.rdepot.python.api.v2.dtos.PythonRepositorySimpleDto;
-import eu.openanalytics.rdepot.python.entities.enums.HashMethod;
-import eu.openanalytics.rdepot.python.technology.PythonLanguage;
+import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -44,26 +42,29 @@ import lombok.Setter;
 @DiscriminatorValue("Python")
 @SecondaryTable(name = "pythonrepository", pkJoinColumns = @PrimaryKeyJoinColumn(name = "id"))
 public class PythonRepository extends Repository implements Serializable {
-	
-	private static final long serialVersionUID = 3346101145064616895L;
-	
-	@Column(name = "hash_method", nullable = false, table = "pythonrepository")
-	@Enumerated(value = EnumType.STRING)
-	private HashMethod hashMethod = HashMethod.SHA256;
 
-	public PythonRepository() {
-		super(PythonLanguage.instance);
-	}
-	
-	public PythonRepository(PythonRepositoryDto dto) {
-		super(PythonLanguage.instance, dto);
-	}
-	
-	public PythonRepository(PythonRepository that) {
-		super(that);
-	}
+    private static final long serialVersionUID = 3346101145064616895L;
 
-	public PythonRepositorySimpleDto createDto() {
-		return new PythonRepositorySimpleDto(this);
-	}
+    @Column(name = "hash_method", nullable = false, table = "pythonrepository")
+    @Enumerated(value = EnumType.STRING)
+    private HashMethod hashMethod = HashMethod.SHA256;
+
+    public PythonRepository() {
+        super(PythonLanguage.instance);
+    }
+
+    public PythonRepository(PythonRepositoryDto dto) {
+        super(PythonLanguage.instance, dto);
+        if (dto.getHashMethod() != null) {
+            this.hashMethod = dto.getHashMethod();
+        }
+    }
+
+    public PythonRepository(PythonRepository that) {
+        super(that);
+    }
+
+    public PythonRepositorySimpleDto createDto() {
+        return new PythonRepositorySimpleDto(this);
+    }
 }

@@ -20,19 +20,21 @@
  */
 package eu.openanalytics.rdepot.base.daos;
 
-import java.util.List;
-import java.util.Optional;
-
 import eu.openanalytics.rdepot.base.entities.Role;
 import eu.openanalytics.rdepot.base.entities.User;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * {@link org.springframework.data.jpa.repository.JpaRepository JPA Repository}
  * for {@link User Users}.
  */
 public interface UserDao extends Dao<User> {
-	List<User> findByRoleAndDeletedAndActive(Role role, boolean deleted, boolean active);
-	Optional<User> findByLogin(String login);
-	Optional<User> findByEmail(String email);
-	Optional<User> findByLoginAndActive(String login, boolean active);
+    List<User> findByRoleAndDeletedAndActive(Role role, boolean deleted, boolean active);
+
+    Optional<User> findByLogin(String login);
+
+    Optional<User> findByEmail(String email);
+
+    Optional<User> findByLoginAndActive(String login, boolean active);
 }

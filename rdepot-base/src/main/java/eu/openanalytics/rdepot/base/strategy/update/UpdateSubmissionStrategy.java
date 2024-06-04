@@ -20,6 +20,7 @@
  */
 package eu.openanalytics.rdepot.base.strategy.update;
 
+import eu.openanalytics.rdepot.base.email.EmailService;
 import eu.openanalytics.rdepot.base.entities.EventChangedVariable;
 import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
 import eu.openanalytics.rdepot.base.entities.Package;
@@ -29,7 +30,6 @@ import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.entities.enums.SubmissionState;
 import eu.openanalytics.rdepot.base.event.NewsfeedEventType;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
-import eu.openanalytics.rdepot.base.email.EmailService;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.PackageService;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
@@ -49,138 +49,143 @@ import eu.openanalytics.rdepot.base.time.DateProvider;
  * @param <P> Technology-specific {@link Package} type.
  * @param <R> Technology-specific {@link Repository} type.
  */
-public class UpdateSubmissionStrategy
-	<P extends Package, R extends Repository> 
-	extends UpdateStrategy<Submission> {
-	
-	private final Storage<R, P> storage;
-	private final PackageService<P> packageService;
-	private final RepositoryService<R> repositoryService;
-	private final EmailService emailService;
-	private final SecurityMediator securityMediator;
-	private final RepositorySynchronizer<R> repositorySynchronizer;
-	private boolean requiresRepublishing = false;
-	private final R repository;
-	
-	public UpdateSubmissionStrategy(Submission resource, NewsfeedEventService eventService, 
-			SubmissionService service, User requester, Submission updateSubmission,
-			PackageService<P> packageService,
-			Storage<R, P> storage, EmailService emailService, SecurityMediator securityMediator,
-			RepositorySynchronizer<R> repositorySynchronizer, R repository, RepositoryService<R> repositoryService) {
-		super(resource, service, eventService, requester, updateSubmission, new Submission(resource));
-		this.packageService = packageService;
-		this.storage = storage;
-		this.emailService = emailService;
-		this.securityMediator = securityMediator;
-		this.repositorySynchronizer = repositorySynchronizer;
-		this.repository = repository;
-		this.repositoryService = repositoryService;
-	}
+public class UpdateSubmissionStrategy<P extends Package, R extends Repository> extends UpdateStrategy<Submission> {
 
-	@Override
-	protected Submission actualStrategy() throws StrategyFailure {
-		if(updatedResource.getState() == SubmissionState.ACCEPTED) {
-			acceptSubmission(resource);
-		} else if(updatedResource.getState() == SubmissionState.CANCELLED) {
-			cancelSubmission(resource);
-		} else if(updatedResource.getState() == SubmissionState.REJECTED) {
-			rejectSubmission(resource);
-		}
-		
-		return resource;
-	}
+    private final Storage<R, P> storage;
+    private final PackageService<P> packageService;
+    private final RepositoryService<R> repositoryService;
+    private final EmailService emailService;
+    private final SecurityMediator securityMediator;
+    private final RepositorySynchronizer<R> repositorySynchronizer;
+    private boolean requiresRepublishing = false;
+    private final R repository;
 
-	/**
-	 * Used when waiting submission is rejected by maintainer.
-	 */
-	private void rejectSubmission(Submission submission) throws StrategyFailure {
-		recycleSubmission(submission);
-		
-		submission.setState(SubmissionState.REJECTED);
-		submission.setApprover(requester);
-		changedValues.add(new EventChangedVariable("state", 
-				submission.getState().getValue(), SubmissionState.REJECTED.getValue()));
-		changedValues.add(new EventChangedVariable("approver_id", "", String.valueOf(requester.getId())));
-	}
+    public UpdateSubmissionStrategy(
+            Submission resource,
+            NewsfeedEventService eventService,
+            SubmissionService service,
+            User requester,
+            Submission updateSubmission,
+            PackageService<P> packageService,
+            Storage<R, P> storage,
+            EmailService emailService,
+            SecurityMediator securityMediator,
+            RepositorySynchronizer<R> repositorySynchronizer,
+            R repository,
+            RepositoryService<R> repositoryService) {
+        super(resource, service, eventService, requester, updateSubmission, new Submission(resource));
+        this.packageService = packageService;
+        this.storage = storage;
+        this.emailService = emailService;
+        this.securityMediator = securityMediator;
+        this.repositorySynchronizer = repositorySynchronizer;
+        this.repository = repository;
+        this.repositoryService = repositoryService;
+    }
 
-	/**
-	 * Used when waiting submission is cancelled by its author.
-	 */
-	private void cancelSubmission(Submission submission) throws StrategyFailure {
-		recycleSubmission(submission);
-		
-		if(requester.getId() == submission.getSubmitter().getId() &&
-				!securityMediator.isAuthorizedToAccept(submission, requester)) {
-			emailService.sendCancelledSubmissionEmail(submission);
-		}
-		
-		submission.setState(SubmissionState.CANCELLED);
-		submission.setApprover(requester);
-		changedValues.add(new EventChangedVariable("state", 
-				submission.getState().getValue(), SubmissionState.CANCELLED.getValue()));
-		changedValues.add(new EventChangedVariable("approver_id", "", String.valueOf(requester.getId())));
-	}
-	
-	/**
-	 * Moves package source to the trash directory and 
-	 * set related package object as deleted
-	 */
-	private void recycleSubmission(Submission submission) throws StrategyFailure {
-		try {
-			P packageBag = packageService.findById(submission.getPackage().getId())
-					.orElseThrow(WrongServiceException::new);
-			packageBag.setSource(storage.moveToTrashDirectory(packageBag));
-			packageBag.setActive(false);
-			packageBag.setDeleted(true);
-		} catch (WrongServiceException | MovePackageSourceException e) {
-			logger.error(e.getMessage(), e);
-			throw new StrategyFailure(e);
-		}
-	}
+    @Override
+    protected Submission actualStrategy() throws StrategyFailure {
+        if (updatedResource.getState() == SubmissionState.ACCEPTED) {
+            acceptSubmission(resource);
+        } else if (updatedResource.getState() == SubmissionState.CANCELLED) {
+            cancelSubmission(resource);
+        } else if (updatedResource.getState() == SubmissionState.REJECTED) {
+            rejectSubmission(resource);
+        }
 
-	/**
-	 * Accepts submission and moves its source from waiting room to designated directory.
-	 */
-	private void acceptSubmission(Submission submission) throws StrategyFailure {
-		try {
-			P packageBag = packageService.findById(submission.getPackage().getId()) 
-					// TODO: #32886 We can cast it in the service method 
-					// so that not to fetch it twice
-					.orElseThrow(WrongServiceException::new);
-			packageBag.setSource(storage.moveToMainDirectory(packageBag));
-			packageBag.setActive(true);
-			requiresRepublishing = packageBag.getRepository().getPublished();
-			repositoryService.incrementVersion(repository);
-		} catch(InvalidSourceException | MovePackageSourceException | WrongServiceException e) {
-			logger.error(e.getMessage(), e);
-			throw new StrategyFailure(e);
-		}
-				
-		submission.setState(SubmissionState.ACCEPTED);
-		submission.setApprover(requester);
-		changedValues.add(new EventChangedVariable("state", 
-				SubmissionState.WAITING.getValue(), SubmissionState.ACCEPTED.getValue()));
-		changedValues.add(new EventChangedVariable("approver_id", "", String.valueOf(requester.getId())));
-	}
-	
-	@Override
-	protected void postStrategy() throws StrategyFailure {
-		try {
-			if(requiresRepublishing)
-				repositorySynchronizer.storeRepositoryOnRemoteServer(repository,
-            DateProvider.getCurrentDateStamp());
-		} catch(SynchronizeRepositoryException e) {
-			logger.error(e.getMessage(), e);
-			throw new StrategyFailure(e, false);
-		}
-		
-	}
+        return resource;
+    }
 
-	@Override
-	public void revertChanges() throws StrategyReversionFailure {}
+    /**
+     * Used when waiting submission is rejected by maintainer.
+     */
+    private void rejectSubmission(Submission submission) throws StrategyFailure {
+        recycleSubmission(submission);
 
-	@Override
-	protected NewsfeedEvent generateEvent(Submission resource) {
-		return new NewsfeedEvent(requester, NewsfeedEventType.UPDATE, resource);
-	}
+        submission.setState(SubmissionState.REJECTED);
+        submission.setApprover(requester);
+        changedValues.add(new EventChangedVariable(
+                "state", submission.getState().getValue(), SubmissionState.REJECTED.getValue()));
+        changedValues.add(new EventChangedVariable("approver_id", "", String.valueOf(requester.getId())));
+    }
+
+    /**
+     * Used when waiting submission is cancelled by its author.
+     */
+    private void cancelSubmission(Submission submission) throws StrategyFailure {
+        recycleSubmission(submission);
+
+        if (requester.getId() == submission.getSubmitter().getId()
+                && !securityMediator.isAuthorizedToAccept(submission, requester)) {
+            emailService.sendCancelledSubmissionEmail(submission);
+        }
+
+        submission.setState(SubmissionState.CANCELLED);
+        submission.setApprover(requester);
+        changedValues.add(new EventChangedVariable(
+                "state", submission.getState().getValue(), SubmissionState.CANCELLED.getValue()));
+        changedValues.add(new EventChangedVariable("approver_id", "", String.valueOf(requester.getId())));
+    }
+
+    /**
+     * Moves package source to the trash directory and
+     * set related package object as deleted
+     */
+    private void recycleSubmission(Submission submission) throws StrategyFailure {
+        try {
+            P packageBag =
+                    packageService.findById(submission.getPackage().getId()).orElseThrow(WrongServiceException::new);
+            packageBag.setSource(storage.moveToTrashDirectory(packageBag));
+            packageBag.setActive(false);
+            packageBag.setDeleted(true);
+        } catch (WrongServiceException | MovePackageSourceException e) {
+            logger.error(e.getMessage(), e);
+            throw new StrategyFailure(e);
+        }
+    }
+
+    /**
+     * Accepts submission and moves its source from waiting room to designated directory.
+     */
+    private void acceptSubmission(Submission submission) throws StrategyFailure {
+        try {
+            P packageBag = packageService
+                    .findById(submission.getPackage().getId())
+                    // TODO: #32886 We can cast it in the service method
+                    // so that not to fetch it twice
+                    .orElseThrow(WrongServiceException::new);
+            packageBag.setSource(storage.moveToMainDirectory(packageBag));
+            packageBag.setActive(true);
+            requiresRepublishing = packageBag.getRepository().getPublished();
+            repositoryService.incrementVersion(repository);
+        } catch (InvalidSourceException | MovePackageSourceException | WrongServiceException e) {
+            logger.error(e.getMessage(), e);
+            throw new StrategyFailure(e);
+        }
+
+        submission.setState(SubmissionState.ACCEPTED);
+        submission.setApprover(requester);
+        changedValues.add(new EventChangedVariable(
+                "state", SubmissionState.WAITING.getValue(), SubmissionState.ACCEPTED.getValue()));
+        changedValues.add(new EventChangedVariable("approver_id", "", String.valueOf(requester.getId())));
+    }
+
+    @Override
+    protected void postStrategy() throws StrategyFailure {
+        try {
+            if (requiresRepublishing)
+                repositorySynchronizer.storeRepositoryOnRemoteServer(repository, DateProvider.getCurrentDateStamp());
+        } catch (SynchronizeRepositoryException e) {
+            logger.error(e.getMessage(), e);
+            throw new StrategyFailure(e, false);
+        }
+    }
+
+    @Override
+    public void revertChanges() throws StrategyReversionFailure {}
+
+    @Override
+    protected NewsfeedEvent generateEvent(Submission resource) {
+        return new NewsfeedEvent(requester, NewsfeedEventType.UPDATE, resource);
+    }
 }

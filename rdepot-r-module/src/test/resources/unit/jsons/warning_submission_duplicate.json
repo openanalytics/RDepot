@@ -4,45 +4,45 @@
   "message": "There already is such a package in this repository.",
   "messageCode": "warning.package.duplicate",
   "data": {
-    "id": 0,
+    "id": 1,
     "packageBag": {
-      "id": 0,
+      "id": 1,
       "user": {
-        "id": 0,
-        "name": "Test User0",
-        "login": "admin_testusername0",
-        "email": "0test@example.org"
+        "id": 123,
+        "name": "Test Admin",
+        "login": "testadmin",
+        "email": "admin@example.org"
       },
       "repository": {
         "id": 123,
-        "name": "Test Repository 123",
+        "name": "Test R Repository",
         "publicationUri": "http://localhost/repo/testrepo123",
         "technology": "R"
       },
       "submission": {
-        "id": 0,
+        "id": 1,
         "state": "WAITING"
       },
-      "name": "TestPackage0",
+      "name": "TestPackage1",
       "version": "4.5.6",
-      "source": "0test_package.tar.gz",
+      "source": "1test_package.tar.gz",
       "active": true,
       "deleted": false,
       "technology": "R",
-      "description": "Simple test package0",
-      "author": "Albert Einstein0",
-      "title": "Test Package0",
+      "description": "Simple test package1",
+      "author": "Albert Einstein1",
+      "title": "Test Package1",
       "url": "",
       "depends": "",
       "imports": "",
       "suggests": "",
       "systemRequirements": "",
-      "license": "Some license0",
-      "md5sum": "12345670",
+      "license": "Some license1",
+      "md5sum": "12345671",
       "links": [
         {
           "rel": "self",
-          "href": "http://localhost/api/v2/manager/r/packages/0"
+          "href": "http://localhost/api/v2/manager/r/packages/1"
         },
         {
           "rel": "packageList",
@@ -51,10 +51,10 @@
       ]
     },
     "submitter": {
-      "id": 0,
-      "name": "Test User0",
-      "login": "admin_testusername0",
-      "email": "0test@example.org"
+      "id": 123,
+      "name": "Test Admin",
+      "login": "testadmin",
+      "email": "admin@example.org"
     },
     "approver": null,
     "changes": "Some changes 123",
@@ -63,7 +63,7 @@
     "links": [
       {
         "rel": "self",
-        "href": "http://localhost/api/v2/manager/r/submissions/0"
+        "href": "http://localhost/api/v2/manager/r/submissions/1"
       },
       {
         "rel": "submissionList",

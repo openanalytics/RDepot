@@ -32,27 +32,27 @@ import eu.openanalytics.rdepot.python.synchronization.PythonRepositorySynchroniz
 
 public class PythonRepositoryUpdateStrategy extends UpdateRepositoryStrategy<PythonRepository> {
 
-	public PythonRepositoryUpdateStrategy(
-			PythonRepository resource,
-			NewsfeedEventService eventService, 
-			PythonRepositoryService service,
-			User requester, 
-			PythonRepository updatedResource, 
-			PythonRepository oldResourceCopy,
-			PythonRepositorySynchronizer repositorySynchronizer,
-			RepositoryMaintainerService repositoryMaintainerService, 
-			PackageMaintainerService packageMaintainerService,
-			PythonPackageService packageService) {
-		super(resource, 
-				eventService,
-				service,
-				requester, 
-				updatedResource, 
-				oldResourceCopy,
-				repositorySynchronizer,
-				repositoryMaintainerService, 
-				packageMaintainerService, 
-				packageService);
-	}
-	
+    public PythonRepositoryUpdateStrategy(
+            PythonRepository resource,
+            NewsfeedEventService eventService,
+            PythonRepositoryService service,
+            User requester,
+            PythonRepository updatedResource,
+            PythonRepository oldResourceCopy,
+            PythonRepositorySynchronizer repositorySynchronizer,
+            RepositoryMaintainerService repositoryMaintainerService,
+            PackageMaintainerService packageMaintainerService,
+            PythonPackageService packageService) {
+        super(
+                resource,
+                eventService,
+                service,
+                requester,
+                updatedResource,
+                oldResourceCopy,
+                repositorySynchronizer,
+                repositoryMaintainerService,
+                packageMaintainerService,
+                packageService);
+    }
 }

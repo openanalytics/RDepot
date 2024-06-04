@@ -26,44 +26,43 @@ import java.util.Objects;
  * {@link Technology} which represents internal RDepot's features and entities.
  */
 public class InternalTechnology implements Technology {
-	
-	public static InternalTechnology instance;
-	
-	static {
-		instance = new InternalTechnology();
-	}
 
-	@Override
-	public Technology getInstance() {
-		return instance;
-	}
+    public static InternalTechnology instance;
 
-	@Override
-	public String getName() {
-		return "RDepot";
-	}
+    static {
+        instance = new InternalTechnology();
+    }
 
-	@Override
-	public String getVersion() {
-		return "2.0.0";
-	}
+    @Override
+    public Technology getInstance() {
+        return instance;
+    }
 
-	@Override
-	public Boolean isCompatible(String version) {
-		return true;
-	}
-	
-	@Override
-	public int hashCode() {
-		return Objects.hash(getName(), getVersion());
-	}
+    @Override
+    public String getName() {
+        return "RDepot";
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if(obj == null) return false;
-		if(!obj.getClass().isAssignableFrom(InternalTechnology.class)) return false;
-		InternalTechnology that = (InternalTechnology) obj;
-		return this.getName().equals(that.getName()) 
-				&& this.getVersion().equals(that.getVersion());
-	}
+    @Override
+    public String getVersion() {
+        return "2.1.0";
+    }
+
+    @Override
+    public Boolean isCompatible(String version) {
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName(), getVersion());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (!obj.getClass().isAssignableFrom(InternalTechnology.class)) return false;
+        InternalTechnology that = (InternalTechnology) obj;
+        return this.getName().equals(that.getName()) && this.getVersion().equals(that.getVersion());
+    }
 }

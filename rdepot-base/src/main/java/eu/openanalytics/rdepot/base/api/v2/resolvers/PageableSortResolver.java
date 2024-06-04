@@ -24,6 +24,4 @@ import org.springframework.data.domain.Pageable;
 
 public interface PageableSortResolver {
     DtoResolvedPageable resolve(Pageable pageable);
-    
-    DtoResolvedPageable resolvePackage(Pageable pageable);
 }

@@ -20,9 +20,8 @@
  */
 package eu.openanalytics.rdepot.base.validation;
 
-import lombok.NonNull;
-
 import java.util.List;
+import lombok.NonNull;
 
 /**
  * Contains validation results as pairs property-message codes.

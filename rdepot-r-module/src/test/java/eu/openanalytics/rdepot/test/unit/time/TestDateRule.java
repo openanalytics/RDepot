@@ -20,33 +20,32 @@
  */
 package eu.openanalytics.rdepot.test.unit.time;
 
-import java.util.Date;
-
 import eu.openanalytics.rdepot.base.time.DateProvider;
+import java.util.Date;
 
 public class TestDateRule {
 
-  private Date testDate;
+    private Date testDate;
 
-  public TestDateRule() {
-    this(new Date());
-  }
+    public TestDateRule() {
+        this(new Date());
+    }
 
-  public TestDateRule(Date testDate) {
-    this.testDate = testDate;
-    DateProvider.setTestDate(testDate);
-  }
+    public TestDateRule(Date testDate) {
+        this.testDate = testDate;
+        DateProvider.setTestDate(testDate);
+    }
 
-  public void setTestDate(Date testDate) {
-    this.testDate = Date.from(testDate.toInstant());
-  }
+    public void setTestDate(Date testDate) {
+        this.testDate = Date.from(testDate.toInstant());
+    }
 
-  public Date getTestDate() {
-    return testDate;
-  }
+    public Date getTestDate() {
+        return testDate;
+    }
 
-//  @Override
-//  protected void after() {
-//    DateProvider.clearTestDate();
-//  }
+    //  @Override
+    //  protected void after() {
+    //    DateProvider.clearTestDate();
+    //  }
 }

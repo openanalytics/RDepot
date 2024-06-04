@@ -37,51 +37,51 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "role", schema = "public")
-public class Role extends Resource{
+public class Role extends Resource {
 
-	/**
-	 * Numeric values representing roles.
-	 */
-	public static class VALUE {
-		public static final int USER = 0;
-		public static final int PACKAGEMAINTAINER = 1;
-		public static final int REPOSITORYMAINTAINER = 2;
-		public static final int ADMIN = 3;
-	}
+    /**
+     * Numeric values representing roles.
+     */
+    public static class VALUE {
+        public static final int USER = 0;
+        public static final int PACKAGEMAINTAINER = 1;
+        public static final int REPOSITORYMAINTAINER = 2;
+        public static final int ADMIN = 3;
+    }
 
-	@Column(name = "value", unique = true, nullable = false)
-	private int value;
-	
-	@Column(name = "name", unique = true, nullable = false)
-	private String name;
-	
-	@Column(name = "description", unique = true, nullable = false)
-	private String description;
+    @Column(name = "value", unique = true, nullable = false)
+    private int value;
 
-	public Role() {
-		super(InternalTechnology.instance, ResourceType.ROLE);
-	}
+    @Column(name = "name", unique = true, nullable = false)
+    private String name;
 
-	public Role(int id, int value, String name, String description) {
-		this();
-		this.id = id;
-		this.value = value;
-		this.name = name;
-		this.description = description;
-	}
+    @Column(name = "description", unique = true, nullable = false)
+    private String description;
 
-	public boolean equals(Role that) {
-		return this.name.equals(that.name);
-	}
+    public Role() {
+        super(InternalTechnology.instance, ResourceType.ROLE);
+    }
 
-	@Override
-	public String toString() {
-		return switch(value) {
-			case VALUE.ADMIN -> "Admin";
-			case VALUE.REPOSITORYMAINTAINER -> "Repository Maintainer";
-			case VALUE.PACKAGEMAINTAINER -> "Package Maintainer";
-			case VALUE.USER -> "Standard User";
-			default -> "Unknown";
-		} + " role";
-	}
+    public Role(int id, int value, String name, String description) {
+        this();
+        this.id = id;
+        this.value = value;
+        this.name = name;
+        this.description = description;
+    }
+
+    public boolean equals(Role that) {
+        return this.name.equals(that.name);
+    }
+
+    @Override
+    public String toString() {
+        return switch (value) {
+                    case VALUE.ADMIN -> "Admin";
+                    case VALUE.REPOSITORYMAINTAINER -> "Repository Maintainer";
+                    case VALUE.PACKAGEMAINTAINER -> "Package Maintainer";
+                    case VALUE.USER -> "Standard User";
+                    default -> "Unknown";
+                } + " role";
+    }
 }

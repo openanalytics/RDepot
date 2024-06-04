@@ -720,4 +720,3 @@ SELECT pg_catalog.setval('public."User_id_seq"', 10, true);
 --
 -- PostgreSQL database dump complete
 --
-

@@ -1,0 +1,7 @@
+{
+    "status":"ERROR",
+    "code":405,
+    "message":"Deleting packages has been disabled by the system administrator.",
+    "messageCode":"deleting.packages.disabled",
+    "data":null
+}

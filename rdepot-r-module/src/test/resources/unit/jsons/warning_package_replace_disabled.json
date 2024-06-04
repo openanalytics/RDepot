@@ -1,0 +1,75 @@
+{
+    "status":"WARNING",
+    "code":200,
+    "message":"Replacing packages has been disabled by the system administrator.",
+    "messageCode":"warning.replacing.packages.disabled",
+    "data": {
+        "id":1,
+        "packageBag":{
+            "id":1,
+            "user":{
+                "id":123,
+                "name":"Test Admin",
+                "login":"testadmin",
+                "email":"admin@example.org"
+            },
+            "repository":{
+                "id":123,
+                "name":"Test R Repository",
+                "publicationUri":"http://localhost/repo/testrepo123",
+                "published":true,
+                "technology":"R"
+            },
+            "submission":{
+                "id":1,
+                "state": "WAITING"
+            },
+            "name":"TestPackage1",
+            "version":"4.5.6",
+            "source":"1test_package.tar.gz",
+            "active":true,
+            "deleted":false,
+            "technology":"R",
+            "description":"Simple test package1",
+            "author":"Albert Einstein1",
+            "title":"Test Package1",
+            "url":"",
+            "depends":"",
+            "imports":"",
+            "suggests":"",
+            "systemRequirements":"",
+            "license":"Some license1",
+            "md5sum":"12345671",
+            "links":[
+                {
+                    "rel":"self",
+                    "href":"http://localhost/api/v2/manager/r/packages/1"
+                },{
+                    "rel":"packageList",
+                    "href":"http://localhost/api/v2/manager/packages"
+                }
+            ]
+        },
+        "submitter":{
+            "id":123,
+            "name":"Test Admin",
+            "login":"testadmin",
+            "email":"admin@example.org"
+        },
+        "approver":null,
+        "changes":"Some changes 123",
+        "state":"WAITING",
+        "created":"2024-03-19",
+        "technology":"R",
+        "links":[
+            {
+                "rel":"self",
+                "href":"http://localhost/api/v2/manager/r/submissions/1"
+            },
+            {
+                "rel":"submissionList",
+                "href":"http://localhost/api/v2/manager/r/submissions"
+            }
+        ]
+    }
+}

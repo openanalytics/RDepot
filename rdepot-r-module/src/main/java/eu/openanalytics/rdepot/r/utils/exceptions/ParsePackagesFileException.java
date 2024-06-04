@@ -25,11 +25,9 @@ import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
 
 public class ParsePackagesFileException extends Exception {
 
-	private static final long serialVersionUID = -7221220068660991883L;
+    private static final long serialVersionUID = -7221220068660991883L;
 
-	public ParsePackagesFileException(String line) {
-		super(StaticMessageResolver.getMessage(
-				MessageCodes.COULD_NOT_PARSE_PACKAGES_FILE)
-				+ ": line '" + line + "'");
-	}
+    public ParsePackagesFileException(String line) {
+        super(StaticMessageResolver.getMessage(MessageCodes.COULD_NOT_PARSE_PACKAGES_FILE) + ": line '" + line + "'");
+    }
 }

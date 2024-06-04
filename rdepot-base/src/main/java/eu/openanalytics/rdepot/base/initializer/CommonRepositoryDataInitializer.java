@@ -20,8 +20,8 @@
  */
 package eu.openanalytics.rdepot.base.initializer;
 
+import java.util.Comparator;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
@@ -39,38 +39,42 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class CommonRepositoryDataInitializer implements HealthIndicator {
 
-	private final List<IRepositoryDataInitializer> repositoryDataInitializers;
-	
-	private final String declarative;
-	private volatile boolean initializationComplete = false;
-	
-	public CommonRepositoryDataInitializer(List<IRepositoryDataInitializer> repositoryDataInitializers,
-			@Value("${declarative}") String declarative) {
-		this.repositoryDataInitializers = repositoryDataInitializers;
-		this.declarative = declarative;
-	}
-	
-	@Transactional
-	@EventListener(ApplicationReadyEvent.class)
-	public void createRepositoriesFromConfig() {
-		initializationComplete = false;
-		createRepositoriesFromConfig(Boolean.parseBoolean(declarative));
-		initializationComplete = true;
-	}
+    private final List<IRepositoryDataInitializer> repositoryDataInitializers;
 
-	/**
-	 * Creates {@link eu.openanalytics.rdepot.base.entities.Repository Repositories}
-	 * from declared YAML configuration files.
-	 * It will trigger initializers for all existing technologies.
-	 * @param declarative should be true if declarative mode is enabled
-	 */
-	public void createRepositoriesFromConfig(boolean declarative) {
-		repositoryDataInitializers.forEach(i -> i.createRepositoriesFromConfig(declarative));
-	}
+    private final String declarative;
+    private volatile boolean initializationComplete = false;
 
-	@Override
-	public Health health() {
-		return initializationComplete ? Health.up().build() : Health.down().build();
-	}
+    public CommonRepositoryDataInitializer(
+            List<IRepositoryDataInitializer> repositoryDataInitializers, @Value("${declarative}") String declarative) {
+        this.repositoryDataInitializers = repositoryDataInitializers;
+        this.declarative = declarative;
+    }
 
+    @Transactional
+    @EventListener(ApplicationReadyEvent.class)
+    public void createRepositoriesFromConfig() {
+        initializationComplete = false;
+        createRepositoriesFromConfig(Boolean.parseBoolean(declarative));
+        initializationComplete = true;
+    }
+
+    /**
+     * Creates {@link eu.openanalytics.rdepot.base.entities.Repository Repositories}
+     * from declared YAML configuration files.
+     * It will trigger initializers for all existing technologies.
+     * @param declarative should be true if declarative mode is enabled
+     */
+    public void createRepositoriesFromConfig(boolean declarative) {
+        // Although it does not matter this much in production environment
+        // it makes it much easier for testing if the order of created repositories is preserved.
+        // This line ensures that by simply sorting classes by name.
+        repositoryDataInitializers.sort(Comparator.comparing(a -> a.getClass().getName()));
+        //
+        repositoryDataInitializers.forEach(i -> i.createRepositoriesFromConfig(declarative));
+    }
+
+    @Override
+    public Health health() {
+        return initializationComplete ? Health.up().build() : Health.down().build();
+    }
 }

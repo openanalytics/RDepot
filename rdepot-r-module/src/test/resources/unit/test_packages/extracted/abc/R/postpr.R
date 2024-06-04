@@ -8,15 +8,15 @@
 #     This program is free software; you can redistribute it and/or
 #     modify it under the terms of the GNU General Public License,
 #     version 3, as published by the Free Software Foundation.
-# 
+#
 #     This program is distributed in the hope that it will be useful,
 #     but without any warranty; without even the implied warranty of
 #     merchantability or fitness for a particular purpose.  See the GNU
 #     General Public License, version 3, for more details.
-# 
+#
 #     A copy of the GNU General Public License, version 3, is available
 #     at http://www.r-project.org/Licenses/GPL-3
-# 
+#
 # Part of the R/abc package
 # Contains: postpr, summary.postpr
 #
@@ -52,26 +52,26 @@ postpr <- function(target, index, sumstat, tol, subset=NULL, method, corr=TRUE, 
   if(length(target)!=dim(sumstat)[2]) stop("Number of summary statistics in 'target' has to be the same as in 'sumstat'.", call.=F)
   if(length(index) != length(sumstat[,1]))
     stop("'index' must be the same length as the number of rows in 'sumstat'.", call.=F)
-  
+
   if(!any(kernel == c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight", "cosine"))){
     kernel <- "epanechnikov"
     warning("Kernel is incorrectly defined. Setting to default kernel (Epanechnikov)", call.=F, immediate=T)
   }
-  
+
   if(is.vector(sumstat)) sumstat <- matrix(sumstat, ncol=1)
   if(length(target)!=dim(sumstat)[2]) stop("Number of summary statistics in 'target' has to be the same as in 'sumstat'.", call.=F)
 
   index <- factor(index)
   mymodels <- levels(index)
   if(!is.numeric(target)) target <- as.numeric(target)
-  
+
   ## parameter and/or sumstat values that are to be excluded
   ## #######################################################
   gwt <- rep(TRUE,length(sumstat[,1]))
   gwt[attributes(na.omit(sumstat))$na.action] <- FALSE
   if(is.null(subset)) subset <- rep(TRUE,length(sumstat[,1]))
   gwt <- as.logical(gwt*subset)
-  
+
   sumstat <- as.data.frame(sumstat) ## ?????????????????
   ## extract names of statistics if given
   ## ####################################
@@ -81,7 +81,7 @@ postpr <- function(target, index, sumstat, tol, subset=NULL, method, corr=TRUE, 
     statnames <- paste("S", 1:nss, sep="")
   }
   else statnames <- colnames(sumstat)
-    
+
   ## stop if zero var in sumstat
   ## ###########################
   cond1 <- as.logical(apply(sumstat, 2, function(x) length(unique(x))-1))
@@ -100,7 +100,7 @@ postpr <- function(target, index, sumstat, tol, subset=NULL, method, corr=TRUE, 
   for(j in 1:nss){
     scaled.sumstat[,j] <- normalise(sumstat[,j],sumstat[,j][gwt])
   }
-  
+
   for(j in 1:nss){
     target[j] <- normalise(target[j],sumstat[,j][gwt])
   }
@@ -126,7 +126,7 @@ postpr <- function(target, index, sumstat, tol, subset=NULL, method, corr=TRUE, 
       aux<-cumsum(wt1)
       wt1 <- wt1 & (aux<=nacc)
   }
-  
+
   ## select summary statistics in region
   ## ##################################
   ss <- scaled.sumstat[wt1,]
@@ -135,11 +135,11 @@ postpr <- function(target, index, sumstat, tol, subset=NULL, method, corr=TRUE, 
 
   statvar <- as.logical(apply(scaled.sumstat[wt1, , drop=FALSE], 2, function(x) length(unique(x))-1))
   cond2 <- !any(statvar)
-  
+
   if(cond2 && !rejmethod)
     stop("Zero variance in the summary statistics in the selected region.\nTry: checking summary statistics, choosing larger tolerance, or rejection method.", call.=F)
 
-  
+
   ## if simple rejection or in the selected region there is no var in sumstat
   ## #########################################################################
   if(rejmethod){
@@ -154,7 +154,7 @@ postpr <- function(target, index, sumstat, tol, subset=NULL, method, corr=TRUE, 
     if(cond2) cat("Warning messages:\nStatistic(s)",
                   statnames[!statvar],
                   "has/have zero variance in the selected region.\nConsider using larger tolerance or the rejection method or discard this/these statistics.\n", sep="\t")
-    
+
     ## weights
     if(kernel == "epanechnikov") weights <- 1 - (dist[wt1]/abstol)^2
     if(kernel == "rectangular") weights <- dist[wt1]/abstol
@@ -165,14 +165,14 @@ postpr <- function(target, index, sumstat, tol, subset=NULL, method, corr=TRUE, 
 
     ok <- index[wt1] # models accepted
     fml <- as.formula(paste("ok ~ ", paste(statnames, collapse= "+")))
-      
+
     if ( length(unique(ok)) < length(mymodels)) {
       warning(paste("There are",length(mymodels),"models but only",length(unique(ok)), "for which simulations have been accepted.\nNo regression is performed, method is set to rejection.\nConsider increasing the tolerance rate."),sep="", call.=F, immediate=T)
       weights <- NULL
       pred.logit <- NULL
       method <- "rejection"
     }
-      
+
     else if(method == "mnlogistic"){
       fit1 <- multinom(fml, data = ss, weigths = weights, trace=F)
       target <- as.data.frame(matrix(target, nrow=1))
@@ -183,7 +183,7 @@ postpr <- function(target, index, sumstat, tol, subset=NULL, method, corr=TRUE, 
         names(pred)<-levels(ok)
       }
   }
-    
+
     else if(method == "neuralnet"){
         lambda <- sample(lambda, numnet, replace=T)
         target <- as.data.frame(matrix(target, nrow=1))
@@ -230,9 +230,9 @@ postpr <- function(target, index, sumstat, tol, subset=NULL, method, corr=TRUE, 
 
 summary.postpr <- function(object, rejection = TRUE, print = TRUE, digits = max(3, getOption("digits")-3), ...){
 
-  if (!inherits(object, "postpr")) 
+  if (!inherits(object, "postpr"))
     stop("Use only with objects of class \"postpr\".", call.=F)
-  
+
   postpr.out <- object
   cl <- postpr.out$call
   npost <- length(postpr.out$values)
@@ -243,10 +243,10 @@ summary.postpr <- function(object, rejection = TRUE, print = TRUE, digits = max(
   method <- postpr.out$method
   corr <- postpr.out$corr
   nmodels <- postpr.out$nmodels
-  
+
   if(print){
       cat("Call: \n")
-      dput(cl, control=NULL)  
+      dput(cl, control=NULL)
       cat(paste("Data:\n postpr.out$values (",npost," posterior samples)\n", sep=""))
       cat(paste("Models a priori:\n "))
       cat(postpr.out$names$models, sep=", ")
@@ -258,9 +258,9 @@ summary.postpr <- function(object, rejection = TRUE, print = TRUE, digits = max(
       }
       cat("\n\n")
   }
-  
+
   if(rejection || method == "rejection"){
-      
+
       if(print) cat("Proportion of accepted simulations (rejection):\n")
       allpr <- table(allvals)/length(allvals)
       if(corr){
@@ -270,7 +270,7 @@ summary.postpr <- function(object, rejection = TRUE, print = TRUE, digits = max(
       prnames <- dimnames(allpr)$allvals
       allpr <- c(allpr); names(allpr) <- prnames
       if(print) print(round(allpr, digits=digits))
-      
+
       if(nmod>1){
           pr.rej <- table(allvals)/length(allvals)
           bf.rej <- t(matrix(pr.rej, nmod, nmod, byrow=T)/matrix(pr.rej, nmod, nmod, byrow=F))
@@ -284,11 +284,11 @@ summary.postpr <- function(object, rejection = TRUE, print = TRUE, digits = max(
           }
       }
       else bf.rej <- NA
-      
+
   }
-  
+
   if(method == "mnlogistic" | method == "neuralnet"){
-    
+
     if(print){
       cat(paste("Posterior model probabilities (", method, "):\n", sep=""))
       print(round(pred, digits=digits))
@@ -305,7 +305,7 @@ summary.postpr <- function(object, rejection = TRUE, print = TRUE, digits = max(
       }
     }
     else bf.reg <- NA
-      
+
     if(rejection){
       if(method == "mnlogistic")
         out <- list(rejection=list(Prob=allpr, BayesF=bf.rej), mnlogistic=list(Prob=pred, BayesF=bf.reg))
@@ -319,4 +319,3 @@ summary.postpr <- function(object, rejection = TRUE, print = TRUE, digits = max(
   else out <- list(Prob=allpr, BayesF=bf.rej)
   invisible(out)
 }
-  

@@ -23,20 +23,18 @@ package eu.openanalytics.rdepot.base.storage.exceptions;
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 /**
- * Thrown when the entire folder 
+ * Thrown when the entire folder
  * of {@link Package packages} cannot be properly populated.
  */
 public class PackageFolderPopulationException extends LocalizedException {
 
-	@Serial
-	private static final long serialVersionUID = -5943142277801173185L;
+    @Serial
+    private static final long serialVersionUID = -5943142277801173185L;
 
-	public PackageFolderPopulationException() {
-		super(MessageCodes.COULD_NOT_POPULATE_PACKAGE_FOLDER);
-	}
-
+    public PackageFolderPopulationException() {
+        super(MessageCodes.COULD_NOT_POPULATE_PACKAGE_FOLDER);
+    }
 }

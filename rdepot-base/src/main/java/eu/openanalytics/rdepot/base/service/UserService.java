@@ -24,7 +24,6 @@ import eu.openanalytics.rdepot.base.daos.UserDao;
 import eu.openanalytics.rdepot.base.entities.Role;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.exception.AdminNotFound;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -33,60 +32,56 @@ import java.util.Optional;
  */
 @org.springframework.stereotype.Service
 public class UserService extends Service<User> {
-	
-	private final UserDao dao;		
-	
-	private final RoleService roleService;
-	
-	public UserService(UserDao dao, RoleService roleService) {
-		super(dao);
-		this.dao = dao;		
-		this.roleService = roleService;
-	}
-	
-	/**
-	 * @return active users by the given role
-	 */
-	public List<User> findByRole(Role role) {
-		return dao.findByRoleAndDeletedAndActive(role, false, true);
-	}
-	
-	/**
-	 * @return unique user by the given login
-	 */
-	public Optional<User> findByLogin(String login) {
-		return dao.findByLogin(login);
-	}
 
-	/**
-	 * @return unique user by the given e-mail address
-	 */
-	public Optional<User> findByEmail(String email) {
-		return dao.findByEmail(email);
-	}
-	
-	/**
-	 * @return true if given user has admin rights
-	 */
-	public boolean isAdmin(User user) {		
-		return user.getRole().getValue() == Role.VALUE.ADMIN;
-	}
-	
-	/**
-	 * Fetches first admin found in the system.
-	 * No assumptions should be made about admin priority,
-	 * unless there is an overriding implementation.
-	 * @return admin
-	 */
-	public User findFirstAdmin() throws AdminNotFound {
-		Optional<Role> role = roleService.findByValue(Role.VALUE.ADMIN);
-		if(role.isEmpty())
-			throw new AdminNotFound();
-		List<User> admins = findByRole(role.get());
-		if(admins.isEmpty())
-			throw new AdminNotFound();
-		else
-			return admins.get(0);
-	}
-	
+    private final UserDao dao;
+
+    private final RoleService roleService;
+
+    public UserService(UserDao dao, RoleService roleService) {
+        super(dao);
+        this.dao = dao;
+        this.roleService = roleService;
+    }
+
+    /**
+     * @return active users by the given role
+     */
+    public List<User> findByRole(Role role) {
+        return dao.findByRoleAndDeletedAndActive(role, false, true);
+    }
+
+    /**
+     * @return unique user by the given login
+     */
+    public Optional<User> findByLogin(String login) {
+        return dao.findByLogin(login);
+    }
+
+    /**
+     * @return unique user by the given e-mail address
+     */
+    public Optional<User> findByEmail(String email) {
+        return dao.findByEmail(email);
+    }
+
+    /**
+     * @return true if given user has admin rights
+     */
+    public boolean isAdmin(User user) {
+        return user.getRole().getValue() == Role.VALUE.ADMIN;
+    }
+
+    /**
+     * Fetches first admin found in the system.
+     * No assumptions should be made about admin priority,
+     * unless there is an overriding implementation.
+     * @return admin
+     */
+    public User findFirstAdmin() throws AdminNotFound {
+        Optional<Role> role = roleService.findByValue(Role.VALUE.ADMIN);
+        if (role.isEmpty()) throw new AdminNotFound();
+        List<User> admins = findByRole(role.get());
+        if (admins.isEmpty()) throw new AdminNotFound();
+        else return admins.get(0);
+    }
 }

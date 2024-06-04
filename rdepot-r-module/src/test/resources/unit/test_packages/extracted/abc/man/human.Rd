@@ -26,7 +26,7 @@ A set of R objects used to illustrate model selection in an ABC framework
       populations, Hausa, Italian, and Chinese.
     }
   }
-  
+
   The \code{tajima.sim} data frame contains the following columns:
   \describe{
     \item{\code{D.mean}}{
@@ -42,8 +42,8 @@ A set of R objects used to illustrate model selection in an ABC framework
   }
   Each row represents a simulation. Under each model 50,000 simulations
   were performed. Row names indicate the type of demographic model.
-  
-  \code{models} contains the names of the demographic models.  
+
+  \code{models} contains the names of the demographic models.
 }
 
 \details{
@@ -51,7 +51,7 @@ A set of R objects used to illustrate model selection in an ABC framework
   demographic scenarios in three human populations: Hausa, Italian, and
   Chinese. These three populations represent the three continents:
   Africa, Europe, Asia, respectively.
-  
+
   It is generally believed that African human populations are expanding,
   while human populations from outside of Africa have gone through a
   population bottleneck. Tajima's D statistic has been classically used

@@ -20,14 +20,13 @@
  */
 package eu.openanalytics.rdepot.base.daos;
 
-import java.util.List;
-
 import eu.openanalytics.rdepot.base.entities.AccessToken;
+import java.util.List;
 
 /**
  * {@link org.springframework.data.jpa.repository.JpaRepository JPA Repository}
  * for {@link AccessToken Access Tokens}.
  */
 public interface AccessTokenDao extends Dao<AccessToken> {
-	List<AccessToken> findByUserId(int userId);	
+    List<AccessToken> findByUserId(int userId);
 }

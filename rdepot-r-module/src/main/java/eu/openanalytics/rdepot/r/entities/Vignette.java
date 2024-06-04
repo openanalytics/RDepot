@@ -28,6 +28,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Vignette {
-	private String title;
-	private String fileName;
+    private String title;
+    private String fileName;
 }

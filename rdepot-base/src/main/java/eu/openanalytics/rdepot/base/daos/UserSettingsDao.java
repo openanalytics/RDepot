@@ -20,14 +20,13 @@
  */
 package eu.openanalytics.rdepot.base.daos;
 
-import java.util.Optional;
-
 import eu.openanalytics.rdepot.base.entities.UserSettings;
+import java.util.Optional;
 
 /**
  * {@link org.springframework.data.jpa.repository.JpaRepository JPA Repository}
  * for {@link UserSettings User Settings}.
  */
 public interface UserSettingsDao extends Dao<UserSettings> {
-	Optional<UserSettings> findByUserId(int userId);
+    Optional<UserSettings> findByUserId(int userId);
 }

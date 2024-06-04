@@ -196,7 +196,7 @@ CREATE TABLE public.package (
     version text NOT NULL,
     description text,
     author text,
-    maintainer_id integer NOT NULL,
+    user_maintainer_id integer NOT NULL,
     repository_id integer NOT NULL,
     url text,
     source text NOT NULL,
@@ -1097,7 +1097,7 @@ ALTER TABLE ONLY public."user"
 --
 
 ALTER TABLE ONLY public.package
-    ADD CONSTRAINT is_maintainer_of FOREIGN KEY (maintainer_id) REFERENCES public."user"(id);
+    ADD CONSTRAINT is_maintainer_of FOREIGN KEY (user_maintainer_id) REFERENCES public."user"(id);
 
 
 --
@@ -1207,4 +1207,3 @@ ALTER TABLE ONLY public.newsfeed_event
 --
 -- PostgreSQL database dump complete
 --
-

@@ -79,12 +79,12 @@ databaseChangeLog:
                  name: description
                  type: text
                  constraints:
-                   nullable: false   
+                   nullable: false
               - column:
                  name: author
                  type: text
                  constraints:
-                   nullable: false  
+                   nullable: false
               - column:
                  name: maintainer_id
                  type: integer
@@ -395,7 +395,7 @@ databaseChangeLog:
                  type: boolean
                  defaultValueBoolean: false
                  constraints:
-                   nullable: false                   
+                   nullable: false
               - column:
                  name: deleted
                  type: boolean
@@ -468,7 +468,7 @@ databaseChangeLog:
                   type: boolean
                   defaultValueBoolean: false
                   constraints:
-                    nullable: false        
+                    nullable: false
         - sql:
             dbms: postgresql
             sql: select setval('user_id_seq', max(id)+1) from "user"
@@ -941,7 +941,7 @@ databaseChangeLog:
                   type: time with time zone
                   defaultValueDate: now()
                   constraints:
-                    nullable: true        
+                    nullable: true
       rollback: empty
   - changeSet:
       id: 01_15_addForeignKeyConstraint_by_user_package_event

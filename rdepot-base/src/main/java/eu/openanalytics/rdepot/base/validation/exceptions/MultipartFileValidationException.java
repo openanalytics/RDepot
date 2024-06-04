@@ -22,7 +22,6 @@ package eu.openanalytics.rdepot.base.validation.exceptions;
 
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
-
 import java.io.Serial;
 
 /**
@@ -30,14 +29,11 @@ import java.io.Serial;
  */
 public class MultipartFileValidationException extends Exception {
 
-	@Serial
-	private static final long serialVersionUID = 8419796330374154319L;
+    @Serial
+    private static final long serialVersionUID = 8419796330374154319L;
 
-	public MultipartFileValidationException(String messageCode) {
-		super(
-			StaticMessageResolver.getMessage(
-					MessageCodes.MULTIPART_FILE_VALIDATION_EXCEPTION)
-			+ ": " + StaticMessageResolver.getMessage(messageCode));
-	}
-
+    public MultipartFileValidationException(String messageCode) {
+        super(StaticMessageResolver.getMessage(MessageCodes.MULTIPART_FILE_VALIDATION_EXCEPTION) + ": "
+                + StaticMessageResolver.getMessage(messageCode));
+    }
 }

@@ -17,7 +17,7 @@ olcAttributeTypes: {2}( 2.16.840.1.113719.1.203.4.3 NAME 'dhcpStatements' DE
  tandard to evolve without needing to adjust the schema.' EQUALITY caseIgnor
  eIA5Match SYNTAX 1.3.6.1.4.1.1466.115.121.1.26 )
 olcAttributeTypes: {3}( 2.16.840.1.113719.1.203.4.4 NAME 'dhcpRange' DESC 'T
- he starting & ending IP Addresses in the range (inclusive), separated by a 
+ he starting & ending IP Addresses in the range (inclusive), separated by a
  hyphen; if the range only contains one address, then just the address can b
  e specified with no hyphen.  Each range is defined as a separate value.' EQ
  UALITY caseIgnoreIA5Match SYNTAX 1.3.6.1.4.1.1466.115.121.1.26 )
@@ -25,7 +25,7 @@ olcAttributeTypes: {4}( 2.16.840.1.113719.1.203.4.5 NAME 'dhcpPermitList' DE
  SC 'This attribute contains the permit lists associated with a pool. Each p
  ermit list is defined as a separate value.' EQUALITY caseIgnoreIA5Match SYN
  TAX 1.3.6.1.4.1.1466.115.121.1.26 )
-olcAttributeTypes: {5}( 2.16.840.1.113719.1.203.4.6 NAME 'dhcpNetMask' DESC 
+olcAttributeTypes: {5}( 2.16.840.1.113719.1.203.4.6 NAME 'dhcpNetMask' DESC
  'The subnet mask length for the subnet.  The mask can be easily computed fr
  om this length.' EQUALITY integerMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
   SINGLE-VALUE )
@@ -44,7 +44,7 @@ olcAttributeTypes: {8}( 2.16.840.1.113719.1.203.4.9 NAME 'dhcpOptionsDN' DES
  C 'The distinguished name(s) of the dhcpOption objects containing the confi
  guration options provided by the server.' EQUALITY distinguishedNameMatch S
  YNTAX 1.3.6.1.4.1.1466.115.121.1.12 )
-olcAttributeTypes: {9}( 2.16.840.1.113719.1.203.4.10 NAME 'dhcpHostDN' DESC 
+olcAttributeTypes: {9}( 2.16.840.1.113719.1.203.4.10 NAME 'dhcpHostDN' DESC
  'the distinguished name(s) of the dhcpHost objects.' EQUALITY distinguished
  NameMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 )
 olcAttributeTypes: {10}( 2.16.840.1.113719.1.203.4.11 NAME 'dhcpPoolDN' DESC
@@ -87,29 +87,29 @@ olcAttributeTypes: {21}( 2.16.840.1.113719.1.203.4.22 NAME 'dhcpAddressState
  ' DESC 'This stores information about the current binding-status of an addr
  ess.  For dynamic addresses managed by DHCP, the values should be restricte
  d to the following: "FREE", "ACTIVE", "EXPIRED", "RELEASED", "RESET", "ABAN
- DONED", "BACKUP".  For other addresses, it SHOULD be one of the following: 
- "UNKNOWN", "RESERVED" (an address that is managed by DHCP that is reserved 
+ DONED", "BACKUP".  For other addresses, it SHOULD be one of the following:
+ "UNKNOWN", "RESERVED" (an address that is managed by DHCP that is reserved
  for a specific client), "RESERVED-ACTIVE" (same as reserved, but address is
   currently in use), "ASSIGNED" (assigned manually or by some other mechanis
  m), "UNASSIGNED", "NOTASSIGNABLE".' EQUALITY caseIgnoreIA5Match SYNTAX 1.3.
  6.1.4.1.1466.115.121.1.26 SINGLE-VALUE )
 olcAttributeTypes: {22}( 2.16.840.1.113719.1.203.4.23 NAME 'dhcpExpirationTi
  me' DESC 'This is the time the current lease for an address expires.' EQUAL
- ITY generalizedTimeMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.24 SINGLE-VALUE 
+ ITY generalizedTimeMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.24 SINGLE-VALUE
  )
 olcAttributeTypes: {23}( 2.16.840.1.113719.1.203.4.24 NAME 'dhcpStartTimeOfS
  tate' DESC 'This is the time of the last state change for a leased address.
  ' EQUALITY generalizedTimeMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.24 SINGLE
  -VALUE )
 olcAttributeTypes: {24}( 2.16.840.1.113719.1.203.4.25 NAME 'dhcpLastTransact
- ionTime' DESC 'This is the last time a valid DHCP packet was received from 
+ ionTime' DESC 'This is the last time a valid DHCP packet was received from
  the client.' EQUALITY generalizedTimeMatch SYNTAX 1.3.6.1.4.1.1466.115.121.
  1.24 SINGLE-VALUE )
 olcAttributeTypes: {25}( 2.16.840.1.113719.1.203.4.26 NAME 'dhcpBootpFlag' D
  ESC 'This indicates whether the address was assigned via BOOTP.' EQUALITY b
  ooleanMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE )
-olcAttributeTypes: {26}( 2.16.840.1.113719.1.203.4.27 NAME 'dhcpDomainName' 
- DESC 'This is the name of the domain sent to the client by the server.  It 
+olcAttributeTypes: {26}( 2.16.840.1.113719.1.203.4.27 NAME 'dhcpDomainName'
+ DESC 'This is the name of the domain sent to the client by the server.  It
  is essentially the same as the value for DHCP option 15 sent to the client,
   and represents only the domain - not the full FQDN.  To obtain the full FQ
  DN assigned to the client you must prepend the "dhcpAssignedHostName" to th
@@ -143,7 +143,7 @@ olcAttributeTypes: {31}( 2.16.840.1.113719.1.203.4.32 NAME 'dhcpAssignedToCl
 olcAttributeTypes: {32}( 2.16.840.1.113719.1.203.4.33 NAME 'dhcpRelayAgentIn
  fo' DESC 'If the client request was received via a relay agent, this contai
  ns information about the relay agent that was available from the DHCP reque
- st.  This is a hex-encoded option value.' EQUALITY octetStringMatch SYNTAX 
+ st.  This is a hex-encoded option value.' EQUALITY octetStringMatch SYNTAX
  1.3.6.1.4.1.1466.115.121.1.40 SINGLE-VALUE )
 olcAttributeTypes: {33}( 2.16.840.1.113719.1.203.4.34 NAME 'dhcpHWAddress' D
  ESC 'The clients hardware address that requested this IP address.' EQUALITY
@@ -154,10 +154,10 @@ olcAttributeTypes: {34}( 2.16.840.1.113719.1.203.4.35 NAME 'dhcpHashBucketAs
  NTAX 1.3.6.1.4.1.1466.115.121.1.40 SINGLE-VALUE )
 olcAttributeTypes: {35}( 2.16.840.1.113719.1.203.4.36 NAME 'dhcpDelayedServi
  ceParameter' DESC 'Delay in seconds corresponding to Delayed Service Parame
- ter configuration, as defined in  DHC Load Balancing Algorithm [RFC 3074]. 
+ ter configuration, as defined in  DHC Load Balancing Algorithm [RFC 3074].
  ' EQUALITY integerMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
 olcAttributeTypes: {36}( 2.16.840.1.113719.1.203.4.37 NAME 'dhcpMaxClientLea
- dTime' DESC 'Maximum Client Lead Time configuration in seconds, as defined 
+ dTime' DESC 'Maximum Client Lead Time configuration in seconds, as defined
  in DHCP Failover Protocol [FAILOVR]' EQUALITY integerMatch SYNTAX 1.3.6.1.4
  .1.1466.115.121.1.27 SINGLE-VALUE )
 olcAttributeTypes: {37}( 2.16.840.1.113719.1.203.4.38 NAME 'dhcpFailOverEndp
@@ -166,30 +166,30 @@ olcAttributeTypes: {37}( 2.16.840.1.113719.1.203.4.38 NAME 'dhcpFailOverEndp
  .115.121.1.26 SINGLE-VALUE )
 olcAttributeTypes: {38}( 2.16.840.1.113719.1.203.4.39 NAME 'dhcpErrorLog' DE
  SC 'Generic error log attribute that allows logging error conditions within
-  a dhcpService or a dhcpSubnet, like no IP addresses available for lease.' 
+  a dhcpService or a dhcpSubnet, like no IP addresses available for lease.'
  EQUALITY caseIgnoreIA5Match SYNTAX 1.3.6.1.4.1.1466.115.121.1.26 SINGLE-VAL
  UE )
 olcAttributeTypes: {39}( 2.16.840.1.113719.1.203.4.40 NAME 'dhcpLocatorDN' D
  ESC 'The DN of dhcpLocator object which contain the DNs of all DHCP configu
- ration objects. There will be a single dhcpLocator object in the tree with 
- links to all the DHCP objects in the tree' EQUALITY distinguishedNameMatch 
+ ration objects. There will be a single dhcpLocator object in the tree with
+ links to all the DHCP objects in the tree' EQUALITY distinguishedNameMatch
  SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 )
 olcAttributeTypes: {40}( 2.16.840.1.113719.1.203.4.41 NAME 'dhcpKeyAlgorithm
- ' DESC 'Algorithm to generate TSIG Key' EQUALITY caseIgnoreIA5Match SYNTAX 
+ ' DESC 'Algorithm to generate TSIG Key' EQUALITY caseIgnoreIA5Match SYNTAX
  1.3.6.1.4.1.1466.115.121.1.26 SINGLE-VALUE )
 olcAttributeTypes: {41}( 2.16.840.1.113719.1.203.4.42 NAME 'dhcpKeySecret' D
  ESC 'Secret to generate TSIG Key' EQUALITY octetStringMatch SYNTAX 1.3.6.1.
  4.1.1466.115.121.1.40 SINGLE-VALUE )
 olcAttributeTypes: {42}( 2.16.840.1.113719.1.203.4.43 NAME 'dhcpDnsZoneServe
- r' DESC 'Master server of the DNS Zone' EQUALITY caseIgnoreIA5Match SYNTAX 
+ r' DESC 'Master server of the DNS Zone' EQUALITY caseIgnoreIA5Match SYNTAX
  1.3.6.1.4.1.1466.115.121.1.26 SINGLE-VALUE )
-olcAttributeTypes: {43}( 2.16.840.1.113719.1.203.4.44 NAME 'dhcpKeyDN' DESC 
+olcAttributeTypes: {43}( 2.16.840.1.113719.1.203.4.44 NAME 'dhcpKeyDN' DESC
  'The DNs of TSIG Key to use in secure dynamic updates. In case of locator o
  bject, this will be list of TSIG keys.  In case of DHCP Service, Shared Net
  work, Subnet and DNS Zone, it will be a single key.' EQUALITY distinguished
  NameMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 )
 olcAttributeTypes: {44}( 2.16.840.1.113719.1.203.4.45 NAME 'dhcpZoneDN' DESC
-  'The DNs of DNS Zone. In case of locator object, this will be list of DNS 
+  'The DNs of DNS Zone. In case of locator object, this will be list of DNS
  Zones in the tree. In case of DHCP Service, Shared Network and Subnet, it w
  ill be a single DNS Zone.' EQUALITY distinguishedNameMatch SYNTAX 1.3.6.1.4
  .1.1466.115.121.1.12 )
@@ -208,8 +208,8 @@ olcAttributeTypes: {48}( 2.16.840.1.113719.1.203.4.49 NAME 'dhcpFailOverPeer
  Port' DESC 'Port to which server should connect to reach its fail over peer
  ' EQUALITY integerMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 )
 olcAttributeTypes: {49}( 2.16.840.1.113719.1.203.4.50 NAME 'dhcpFailOverRece
- ivePort' DESC 'Port on which server should listen for connections from its 
- fail over peer' EQUALITY integerMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 
+ ivePort' DESC 'Port on which server should listen for connections from its
+ fail over peer' EQUALITY integerMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
  )
 olcAttributeTypes: {50}( 2.16.840.1.113719.1.203.4.51 NAME 'dhcpFailOverResp
  onseDelay' DESC 'Maximum response time in seconds, before Server assumes th
@@ -226,7 +226,7 @@ olcAttributeTypes: {53}( 2.16.840.1.113719.1.203.4.54 NAME 'dhcpFailOverLoad
  BalanceTime' DESC 'Cutoff time in seconds, after which load balance is disa
  bled' EQUALITY integerMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 )
 olcAttributeTypes: {54}( 2.16.840.1.113719.1.203.4.55 NAME 'dhcpFailOverPeer
- DN' DESC 'The DNs of Fail over peers. In case of locator object, this will 
+ DN' DESC 'The DNs of Fail over peers. In case of locator object, this will
  be list of fail over peers in the tree. In case of Subnet and pool, it will
   be a single Fail Over Peer' EQUALITY distinguishedNameMatch SYNTAX 1.3.6.1
  .4.1.1466.115.121.1.12 )
@@ -237,13 +237,13 @@ olcAttributeTypes: {56}( 2.16.840.1.113719.1.203.4.57 NAME 'dhcpComments' DE
  SC 'Generic attribute that allows coments  within any DHCP object' EQUALITY
   caseIgnoreIA5Match SYNTAX 1.3.6.1.4.1.1466.115.121.1.26 SINGLE-VALUE )
 olcObjectClasses: {0}( 2.16.840.1.113719.1.203.6.1 NAME 'dhcpService' DESC '
- Service object that represents the actual DHCP Service configuration. This 
+ Service object that represents the actual DHCP Service configuration. This
  is a container object.' SUP top STRUCTURAL MUST cn MAY ( dhcpPrimaryDN $ dh
  cpSecondaryDN $ dhcpServerDN $ dhcpSharedNetworkDN $ dhcpSubnetDN $ dhcpGro
- upDN $ dhcpHostDN $ dhcpClassesDN $ dhcpOptionsDN $ dhcpZoneDN $ dhcpKeyDN 
+ upDN $ dhcpHostDN $ dhcpClassesDN $ dhcpOptionsDN $ dhcpZoneDN $ dhcpKeyDN
  $ dhcpFailOverPeerDN $ dhcpStatements $ dhcpComments $ dhcpOption ) )
-olcObjectClasses: {1}( 2.16.840.1.113719.1.203.6.2 NAME 'dhcpSharedNetwork' 
- DESC 'This stores configuration information for a shared network.' SUP top 
+olcObjectClasses: {1}( 2.16.840.1.113719.1.203.6.2 NAME 'dhcpSharedNetwork'
+ DESC 'This stores configuration information for a shared network.' SUP top
  STRUCTURAL MUST cn MAY ( dhcpSubnetDN $ dhcpPoolDN $ dhcpOptionsDN $ dhcpZo
  neDN $ dhcpStatements $ dhcpComments $ dhcpOption ) X-NDS_CONTAINMENT 'dhcp
  Service' )
@@ -272,7 +272,7 @@ olcObjectClasses: {6}( 2.16.840.1.113719.1.203.6.7 NAME 'dhcpClass' DESC 'Re
  presents information about a collection of related clients.' SUP top STRUCT
  URAL MUST cn MAY ( dhcpSubClassesDN $ dhcpOptionsDN $ dhcpStatements $ dhcp
  Comments $ dhcpOption ) X-NDS_CONTAINMENT ( 'dhcpService' 'dhcpSubnet' ) )
-olcObjectClasses: {7}( 2.16.840.1.113719.1.203.6.8 NAME 'dhcpSubClass' DESC 
+olcObjectClasses: {7}( 2.16.840.1.113719.1.203.6.8 NAME 'dhcpSubClass' DESC
  'Represents information about a collection of related classes.' SUP top STR
  UCTURAL MUST cn MAY ( dhcpClassData $ dhcpOptionsDN $ dhcpStatements $ dhcp
  Comments $ dhcpOption ) X-NDS_CONTAINMENT 'dhcpClass' )
@@ -299,7 +299,7 @@ olcObjectClasses: {10}( 2.16.840.1.113719.1.203.6.11 NAME 'dhcpLog' DESC 'Th
  nt $ dhcpAssignedToClient $ dhcpRelayAgentInfo $ dhcpHWAddress $ dhcpErrorL
  og ) X-NDS_CONTAINMENT ( 'dhcpLeases' 'dhcpPool' 'dhcpSubnet' 'dhcpSharedNe
  twork' 'dhcpService' ) )
-olcObjectClasses: {11}( 2.16.840.1.113719.1.203.6.12 NAME 'dhcpServer' DESC 
+olcObjectClasses: {11}( 2.16.840.1.113719.1.203.6.12 NAME 'dhcpServer' DESC
  'DHCP Server Object' SUP top STRUCTURAL MUST cn MAY ( dhcpServiceDN $ dhcpL
  ocatorDN $ dhcpVersion $ dhcpImplementation $ dhcpHashBucketAssignment $ dh
  cpDelayedServiceParameter $ dhcpMaxClientLeadTime $ dhcpFailOverEndpointSta
@@ -311,10 +311,10 @@ olcObjectClasses: {12}( 2.16.840.1.113719.1.203.6.13 NAME 'dhcpTSigKey' DESC
  vice' 'dhcpSharedNetwork' 'dhcpSubnet' ) )
 olcObjectClasses: {13}( 2.16.840.1.113719.1.203.6.14 NAME 'dhcpDnsZone' DESC
   'DNS Zone for updating leases' SUP top STRUCTURAL MUST ( cn $ dhcpDnsZoneS
- erver ) MAY ( dhcpKeyDN $ dhcpComments ) X-NDS_CONTAINMENT ( 'dhcpService' 
+ erver ) MAY ( dhcpKeyDN $ dhcpComments ) X-NDS_CONTAINMENT ( 'dhcpService'
  'dhcpSharedNetwork' 'dhcpSubnet' ) )
 olcObjectClasses: {14}( 2.16.840.1.113719.1.203.6.15 NAME 'dhcpFailOverPeer'
-  DESC 'This class defines the Fail over peer' SUP top STRUCTURAL MUST ( cn 
+  DESC 'This class defines the Fail over peer' SUP top STRUCTURAL MUST ( cn
  $ dhcpFailOverRole $ dhcpFailOverReceiveAddress $ dhcpFailOverPeerAddress $
   dhcpFailoverReceivePort $ dhcpFailOverPeerPort ) MAY ( dhcpFailOverRespons
  eDelay $ dhcpFailOverUnpackedUpdates $ dhcpMaxClientLeadTime $ dhcpFailOver

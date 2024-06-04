@@ -22,7 +22,6 @@ package eu.openanalytics.rdepot.base.mediator.deletion.exceptions;
 
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 /**
@@ -33,11 +32,10 @@ import java.io.Serial;
  */
 public class NoSuitableMaintainerFound extends LocalizedException {
 
-	@Serial
-	private static final long serialVersionUID = -1987352336412574307L;
+    @Serial
+    private static final long serialVersionUID = -1987352336412574307L;
 
-	public NoSuitableMaintainerFound() {
-		super(MessageCodes.NO_SUITABLE_MAINTAINER_FOUND);
-	}
-
+    public NoSuitableMaintainerFound() {
+        super(MessageCodes.NO_SUITABLE_MAINTAINER_FOUND);
+    }
 }

@@ -20,18 +20,16 @@
  */
 package eu.openanalytics.rdepot.r.storage.utils;
 
-import java.util.List;
-
 import eu.openanalytics.rdepot.r.entities.RPackage;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
 public class PopulatedRepositoryContent {
-	private final List<RPackage> latestPackages;
-	private final List<RPackage> archivePackages;
-	private final String latestDirectoryPath;
-	private final String archiveDirectoryPath;
-
+    private final List<RPackage> latestPackages;
+    private final List<RPackage> archivePackages;
+    private final String latestDirectoryPath;
+    private final String archiveDirectoryPath;
 }

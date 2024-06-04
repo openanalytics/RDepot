@@ -20,40 +20,38 @@
  */
 package eu.openanalytics.rdepot.base.validation;
 
-import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
-
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.base.validation.repositories.IdValidation;
 import eu.openanalytics.rdepot.base.validation.repositories.NameValidation;
 import eu.openanalytics.rdepot.base.validation.repositories.PublicationUriValidation;
 import eu.openanalytics.rdepot.base.validation.repositories.ServerAddressValidation;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 
-public abstract class RepositoryValidator<R extends Repository> 
-	implements Validator {
-	
-	private final PublicationUriValidation<R>  publicationUriValidation;
-	private final ServerAddressValidation<R> serverAddressValidation;
-	private final NameValidation<R> nameValidation;
-	private final IdValidation<R> idValidation;
-	
-	public RepositoryValidator(RepositoryService<R> service){
-		publicationUriValidation = new PublicationUriValidation<>(service);
-		serverAddressValidation = new ServerAddressValidation<>(service);
-		nameValidation = new NameValidation<>(service);
-		idValidation = new IdValidation<>(service);
-	}
-	
-	private ChainValidator<R> getValidationChain(){
-		publicationUriValidation.setNext(serverAddressValidation);
-		nameValidation.setNext(publicationUriValidation); 
-		idValidation.setNext(nameValidation);
-		return idValidation;
-	}
-	
-	protected void validate(R repository, Errors errors){
-		ChainValidator<R> validator = getValidationChain();
-		validator.validate(repository, errors);
-	}
+public abstract class RepositoryValidator<R extends Repository> implements Validator {
+
+    private final PublicationUriValidation<R> publicationUriValidation;
+    private final ServerAddressValidation<R> serverAddressValidation;
+    private final NameValidation<R> nameValidation;
+    private final IdValidation<R> idValidation;
+
+    public RepositoryValidator(RepositoryService<R> service) {
+        publicationUriValidation = new PublicationUriValidation<>(service);
+        serverAddressValidation = new ServerAddressValidation<>(service);
+        nameValidation = new NameValidation<>(service);
+        idValidation = new IdValidation<>(service);
+    }
+
+    private ChainValidator<R> getValidationChain() {
+        publicationUriValidation.setNext(serverAddressValidation);
+        nameValidation.setNext(publicationUriValidation);
+        idValidation.setNext(nameValidation);
+        return idValidation;
+    }
+
+    protected void validate(R repository, Errors errors) {
+        ChainValidator<R> validator = getValidationChain();
+        validator.validate(repository, errors);
+    }
 }

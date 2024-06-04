@@ -20,10 +20,10 @@
  */
 package eu.openanalytics.rdepot.base.security.backends.simple;
 
+import eu.openanalytics.rdepot.base.security.authenticators.SimpleCustomBindAuthenticator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import lombok.Getter;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -33,63 +33,61 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 
-import eu.openanalytics.rdepot.base.security.authenticators.SimpleCustomBindAuthenticator;
-
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
-	private static final List<User> users = new ArrayList<>();
-		
-	private final SimpleCustomBindAuthenticator authenticator;
-	
-	public CustomAuthenticationProvider(Environment environment, SimpleCustomBindAuthenticator authenticator) {
-		this .authenticator = authenticator;
-		for(int i = 0;;i++) {
-			String login = environment.getProperty(String.format("app.simple.users[%d].login", i));
-			if(login == null) break;
-			else {
-				String password = environment.getProperty(String.format("app.simple.users[%d].password", i));
-				String email = environment.getProperty(String.format("app.simple.users[%d].email", i));
-				String name = environment.getProperty(String.format("app.simple.users[%d].name", i));			
-				
-				users.add(new User(login, password, email, name));
-			}
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-		String login = authentication.getName();
+    private static final List<User> users = new ArrayList<>();
+
+    private final SimpleCustomBindAuthenticator authenticator;
+
+    public CustomAuthenticationProvider(Environment environment, SimpleCustomBindAuthenticator authenticator) {
+        this.authenticator = authenticator;
+        for (int i = 0; ; i++) {
+            String login = environment.getProperty(String.format("app.simple.users[%d].login", i));
+            if (login == null) break;
+            else {
+                String password = environment.getProperty(String.format("app.simple.users[%d].password", i));
+                String email = environment.getProperty(String.format("app.simple.users[%d].email", i));
+                String name = environment.getProperty(String.format("app.simple.users[%d].name", i));
+
+                users.add(new User(login, password, email, name));
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+        String login = authentication.getName();
         Object credentials = authentication.getCredentials();
         if (!(credentials instanceof String)) {
             return null;
         }
         String password = credentials.toString();
 
-        Optional<User> userOptional = users.stream()
-                                           .filter(u -> u.match(login, password))
-                                           .findFirst();
+        Optional<User> userOptional =
+                users.stream().filter(u -> u.match(login, password)).findFirst();
 
         if (userOptional.isEmpty()) {
             throw new BadCredentialsException("Authentication failed for " + login);
         }
 
-        List<GrantedAuthority> grantedAuthorities = (List<GrantedAuthority>) authenticator.authenticate(login, userOptional.get().getEmail(),
-        																	userOptional.get().getName());
-        return new
-                UsernamePasswordAuthenticationToken(login, password, grantedAuthorities);
-	}
+        List<GrantedAuthority> grantedAuthorities = (List<GrantedAuthority>) authenticator.authenticate(
+                login, userOptional.get().getEmail(), userOptional.get().getName());
+        return new UsernamePasswordAuthenticationToken(login, password, grantedAuthorities);
+    }
 
-	@Override
-	public boolean supports(Class<?> authentication) {		
-		return authentication.equals(UsernamePasswordAuthenticationToken.class);
-	}
+    @Override
+    public boolean supports(Class<?> authentication) {
+        return authentication.equals(UsernamePasswordAuthenticationToken.class);
+    }
 
-	private static class User {
+    private static class User {
         private final String login;
         private final String password;
+
         @Getter
         private final String email;
+
         @Getter
         private final String name;
 

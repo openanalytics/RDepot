@@ -23,7 +23,6 @@ package eu.openanalytics.rdepot.base.storage.exceptions;
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 /**
@@ -31,11 +30,10 @@ import java.io.Serial;
  */
 public class MovePackageSourceException extends LocalizedException {
 
-	@Serial
-	private static final long serialVersionUID = 4089160286799727854L;
+    @Serial
+    private static final long serialVersionUID = 4089160286799727854L;
 
-	public MovePackageSourceException() {
-		super(MessageCodes.COULD_NOT_MOVE_PACKAGE_SOURCE);
-	}
-
+    public MovePackageSourceException() {
+        super(MessageCodes.COULD_NOT_MOVE_PACKAGE_SOURCE);
+    }
 }

@@ -23,13 +23,11 @@ package eu.openanalytics.rdepot.base.api.v2.validation;
 import eu.openanalytics.rdepot.base.api.v2.dtos.IDto;
 import eu.openanalytics.rdepot.base.api.v2.exceptions.UnrecognizedQueryParameterException;
 import eu.openanalytics.rdepot.base.api.v2.resolvers.DtoResolvedPageable;
-import jakarta.validation.ConstraintValidator;
-import org.springframework.data.domain.Pageable;
 
 /**
  * Checks if user searches or sorts resources using valid DTO fields.
  */
 public interface PageableValidator {
-	default void validate(Class<? extends IDto> c, DtoResolvedPageable pageable)
-			throws UnrecognizedQueryParameterException {}
+    default void validate(Class<? extends IDto> c, DtoResolvedPageable pageable)
+            throws UnrecognizedQueryParameterException {}
 }

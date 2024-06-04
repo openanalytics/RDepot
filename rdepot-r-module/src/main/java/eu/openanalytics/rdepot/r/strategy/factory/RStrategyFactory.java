@@ -51,94 +51,85 @@ import org.springframework.stereotype.Component;
 @Component
 @AllArgsConstructor
 public class RStrategyFactory {
-	
-	private final SubmissionService submissionService;
-	private final PackageValidator<RPackage> packageValidator;	
-	private final RRepositoryService repositoryService;
-	private final Storage<RRepository, RPackage> storage;
-	private final RPackageService packageService;
-	private final EmailService emailService;
-	private final BestMaintainerChooser bestMaintainerChooser;
-	private final NewsfeedEventService newsfeedEventService;
-	private final RRepositorySynchronizer repositorySynchronizer;
-	private final SecurityMediator securityMediator;
-	private final PackageMaintainerService packageMaintainerService;
-	private final RepositoryMaintainerService repositoryMaintainerService;
-	private final RStorage rStorage;
+
+    private final SubmissionService submissionService;
+    private final PackageValidator<RPackage> packageValidator;
+    private final RRepositoryService repositoryService;
+    private final Storage<RRepository, RPackage> storage;
+    private final RPackageService packageService;
+    private final EmailService emailService;
+    private final BestMaintainerChooser bestMaintainerChooser;
+    private final NewsfeedEventService newsfeedEventService;
+    private final RRepositorySynchronizer repositorySynchronizer;
+    private final SecurityMediator securityMediator;
+    private final PackageMaintainerService packageMaintainerService;
+    private final RepositoryMaintainerService repositoryMaintainerService;
+    private final RStorage rStorage;
     private final RPackageDeleter rPackageDeleter;
 
-	public Strategy<Submission> uploadPackageStrategy(
-			PackageUploadRequest<RRepository> request, 
-			User requester) {
-		return new RPackageUploadStrategy(
-				request, 
-				requester, 
-				newsfeedEventService, 
-				submissionService, 
-				packageValidator, 
-				repositoryService, 
-				storage, 
-				packageService, 
-				emailService, 
-				bestMaintainerChooser,
-				repositorySynchronizer,
-				securityMediator, 
-				rStorage,
-				rPackageDeleter
-		);
-	}
-	
-	public Strategy<RPackage> updatePackageStrategy(RPackage resource, User requester, RPackage updatedPackage) {
-		return new RPackageUpdateStrategy(
-				resource,
-				newsfeedEventService,
-				packageService,
-				requester,
-				updatedPackage,
-				storage,
-				bestMaintainerChooser,
-				repositorySynchronizer);
-	}
-	
-	public Strategy<RRepository> createRepositoryStrategy(RRepository resource, User requester) {
-		return new RRepositoryCreateStrategy(
-					resource, 
-					newsfeedEventService, 
-					repositoryService, 
-					requester
-				);
-	}
-	
-	public Strategy<RRepository> updateRepositoryStrategy(RRepository resource,
-														  User requester, RRepository updatedRepository) {
-		return new RRepositoryUpdateStrategy(
-					resource, 
-					newsfeedEventService, 
-					repositoryService, 
-					requester, 
-					updatedRepository,
-					new RRepository(resource),
-					repositorySynchronizer,
-					repositoryMaintainerService,
-					packageMaintainerService,
-					packageService
-				);
-	}
+    public Strategy<Submission> uploadPackageStrategy(PackageUploadRequest<RRepository> request, User requester) {
+        return new RPackageUploadStrategy(
+                request,
+                requester,
+                newsfeedEventService,
+                submissionService,
+                packageValidator,
+                repositoryService,
+                storage,
+                packageService,
+                emailService,
+                bestMaintainerChooser,
+                repositorySynchronizer,
+                securityMediator,
+                rStorage,
+                rPackageDeleter);
+    }
 
-	public Strategy<Submission> updateSubmissionStrategy(Submission resource, 
-			Submission updatedResource, RRepository repository, User requester) {
-		return new UpdateSubmissionStrategy<>(
-				resource, 
-				newsfeedEventService, 
-				submissionService, 
-				requester, 
-				updatedResource, 
-				packageService, 
-				storage, 
-				emailService, 
-				securityMediator, 
-				repositorySynchronizer, 
-				repository,
-				repositoryService);
-	}
+    public Strategy<RPackage> updatePackageStrategy(RPackage resource, User requester, RPackage updatedPackage) {
+        return new RPackageUpdateStrategy(
+                resource,
+                newsfeedEventService,
+                packageService,
+                requester,
+                updatedPackage,
+                storage,
+                bestMaintainerChooser,
+                repositorySynchronizer);
+    }
+
+    public Strategy<RRepository> createRepositoryStrategy(RRepository resource, User requester) {
+        return new RRepositoryCreateStrategy(resource, newsfeedEventService, repositoryService, requester);
+    }
+
+    public Strategy<RRepository> updateRepositoryStrategy(
+            RRepository resource, User requester, RRepository updatedRepository) {
+        return new RRepositoryUpdateStrategy(
+                resource,
+                newsfeedEventService,
+                repositoryService,
+                requester,
+                updatedRepository,
+                new RRepository(resource),
+                repositorySynchronizer,
+                repositoryMaintainerService,
+                packageMaintainerService,
+                packageService);
+    }
+
+    public Strategy<Submission> updateSubmissionStrategy(
+            Submission resource, Submission updatedResource, RRepository repository, User requester) {
+        return new UpdateSubmissionStrategy<>(
+                resource,
+                newsfeedEventService,
+                submissionService,
+                requester,
+                updatedResource,
+                packageService,
+                storage,
+                emailService,
+                securityMediator,
+                repositorySynchronizer,
+                repository,
+                repositoryService);
+    }
 }

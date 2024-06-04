@@ -20,10 +20,9 @@
  */
 package eu.openanalytics.rdepot.base.mirroring;
 
+import eu.openanalytics.rdepot.base.mirroring.pojos.MirroredPackage;
 import java.util.List;
 import java.util.Objects;
-
-import eu.openanalytics.rdepot.base.mirroring.pojos.MirroredPackage;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -37,30 +36,32 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public abstract class Mirror<P extends MirroredPackage> {
-	
-	protected String name;
-	protected String uri;
-	protected String syncInterval;
-	protected String type;
-	protected List<P> packages;
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(name, packages, syncInterval, type, uri);
-	}
+    protected String name;
+    protected String uri;
+    protected String syncInterval;
+    protected String type;
+    protected List<P> packages;
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, packages, syncInterval, type, uri);
+    }
 
-		if (!(obj instanceof Mirror<?> other)) {
-			return false;
-		}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
 
-        return Objects.equals(name, other.name) && Objects.equals(packages, other.packages)
-				&& Objects.equals(syncInterval, other.syncInterval) && Objects.equals(type, other.type)
-				&& Objects.equals(uri, other.uri);
-	}
+        if (!(obj instanceof Mirror<?> other)) {
+            return false;
+        }
+
+        return Objects.equals(name, other.name)
+                && Objects.equals(packages, other.packages)
+                && Objects.equals(syncInterval, other.syncInterval)
+                && Objects.equals(type, other.type)
+                && Objects.equals(uri, other.uri);
+    }
 }

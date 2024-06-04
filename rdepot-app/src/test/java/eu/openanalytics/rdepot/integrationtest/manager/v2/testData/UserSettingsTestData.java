@@ -26,9 +26,9 @@ import lombok.Getter;
 @Builder
 @Getter
 public class UserSettingsTestData {
-	private int userIdDefaultSettings;
-	private int userIdWithSettings;
-	private int userIdAdmin;
-	private int getEndpointNewEventsAmount;
-	private int changeEndpointNewEventsAmount;
+    private int userIdDefaultSettings;
+    private int userIdWithSettings;
+    private int userIdAdmin;
+    private int getEndpointNewEventsAmount;
+    private int changeEndpointNewEventsAmount;
 }

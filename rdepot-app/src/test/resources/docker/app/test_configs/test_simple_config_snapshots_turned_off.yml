@@ -26,11 +26,11 @@ declarative: false
 spring:
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
-# Enable Liquibase  
+# Enable Liquibase
   liquibase:
     user: postgres
-    enabled: true    
-    
+    enabled: true
+
 # Authentication related properties
 app:
   authentication: simple
@@ -74,5 +74,4 @@ db:
 # Hibernate related properties
 hibernate:
   dialect: org.hibernate.dialect.PostgreSQLDialect
-  show_sql: false  
-
+  show_sql: false

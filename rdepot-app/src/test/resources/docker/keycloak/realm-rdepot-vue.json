@@ -131,7 +131,7 @@
       },
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": true,
-      "nodeReRegistrationTimeout": -1,      
+      "nodeReRegistrationTimeout": -1,
       "defaultClientScopes": [
         "web-origins",
         "role_list",

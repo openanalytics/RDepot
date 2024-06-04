@@ -20,8 +20,6 @@
  */
 package eu.openanalytics.rdepot.r.api.v2.converters;
 
-import org.springframework.stereotype.Component;
-
 import eu.openanalytics.rdepot.base.api.v2.converters.DtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.converters.exceptions.EntityResolutionException;
 import eu.openanalytics.rdepot.base.entities.Submission;
@@ -33,29 +31,30 @@ import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.services.RRepositoryService;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
 public class RPackageDtoConverter implements DtoConverter<RPackage, RPackageDto> {
 
-	private final RRepositoryService repositoryService;
-	private final UserService userService;
-	private final SubmissionService submissionService;
+    private final RRepositoryService repositoryService;
+    private final UserService userService;
+    private final SubmissionService submissionService;
 
-	@Override
-	public RPackage resolveDtoToEntity(RPackageDto dto) throws EntityResolutionException {
-		RRepository repository = repositoryService.findById(dto.getRepository().getId())
-				.orElseThrow(() -> new EntityResolutionException(dto));
-		User user = userService.findById(dto.getUser().getId())
-				.orElseThrow(() -> new EntityResolutionException(dto));
-		Submission submission = submissionService.findById(dto.getSubmission().getId())
-				.orElseThrow(() -> new EntityResolutionException(dto));
-		return new RPackage(dto, repository, submission, user);
-	}
+    @Override
+    public RPackage resolveDtoToEntity(RPackageDto dto) throws EntityResolutionException {
+        RRepository repository = repositoryService
+                .findById(dto.getRepository().getId())
+                .orElseThrow(() -> new EntityResolutionException(dto));
+        User user = userService.findById(dto.getUser().getId()).orElseThrow(() -> new EntityResolutionException(dto));
+        Submission submission = submissionService
+                .findById(dto.getSubmission().getId())
+                .orElseThrow(() -> new EntityResolutionException(dto));
+        return new RPackage(dto, repository, submission, user);
+    }
 
-	@Override
-	public RPackageDto convertEntityToDto(RPackage entity) {
-		return new RPackageDto(entity);
-	}
-
+    @Override
+    public RPackageDto convertEntityToDto(RPackage entity) {
+        return new RPackageDto(entity);
+    }
 }

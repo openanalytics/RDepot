@@ -22,20 +22,18 @@ package eu.openanalytics.rdepot.base.storage.exceptions;
 
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 /**
- * Thrown when an MD5 calculation cannot be performed. 
+ * Thrown when an MD5 calculation cannot be performed.
  * Usually indicates that the file cannot be read properly.
  */
 public class Md5SumCalculationException extends LocalizedException {
 
-	@Serial
-	private static final long serialVersionUID = -6433302926528819241L;
+    @Serial
+    private static final long serialVersionUID = -6433302926528819241L;
 
-	public Md5SumCalculationException() {
-		super(MessageCodes.MD5_CALCULATION_EXCEPTION);
-	}
-
+    public Md5SumCalculationException() {
+        super(MessageCodes.MD5_CALCULATION_EXCEPTION);
+    }
 }

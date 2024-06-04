@@ -21,7 +21,6 @@
 package eu.openanalytics.rdepot.base.strategy.exceptions;
 
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 /**
@@ -30,11 +29,10 @@ import java.io.Serial;
  */
 public class StrategyReversionFailure extends StrategyFailure {
 
-	@Serial
-	private static final long serialVersionUID = -6275355677809984480L;
+    @Serial
+    private static final long serialVersionUID = -6275355677809984480L;
 
-	public StrategyReversionFailure(Exception reason) {
-		super(reason, MessageCodes.REVERSE_STRATEGY_FAILURE, false);
-	}
-
+    public StrategyReversionFailure(Exception reason) {
+        super(reason, MessageCodes.REVERSE_STRATEGY_FAILURE, false);
+    }
 }

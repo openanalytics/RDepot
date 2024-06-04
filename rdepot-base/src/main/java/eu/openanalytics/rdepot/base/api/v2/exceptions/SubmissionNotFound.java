@@ -21,23 +21,20 @@
 package eu.openanalytics.rdepot.base.api.v2.exceptions;
 
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
-
 import java.io.Serial;
 import java.util.Locale;
+import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 
 /**
  * Thrown when a Submission cannot be found.
  */
 public class SubmissionNotFound extends ApiException {
 
-	@Serial
-	private static final long serialVersionUID = 4685847327276364157L;
+    @Serial
+    private static final long serialVersionUID = 4685847327276364157L;
 
-	public SubmissionNotFound(MessageSource messageSource, Locale locale) {
-		super(messageSource, locale, MessageCodes.ERROR_SUBMISSION_NOT_FOUND,
-				HttpStatus.NOT_FOUND);
-	}
-
+    public SubmissionNotFound(MessageSource messageSource, Locale locale) {
+        super(messageSource, locale, MessageCodes.ERROR_SUBMISSION_NOT_FOUND, HttpStatus.NOT_FOUND);
+    }
 }

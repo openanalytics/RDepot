@@ -21,7 +21,6 @@
 package eu.openanalytics.rdepot.base.exception;
 
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 /**
@@ -29,10 +28,10 @@ import java.io.Serial;
  */
 public class AdminNotFound extends LocalizedException {
 
-	@Serial
-	private static final long serialVersionUID = 6294871000345715277L;
+    @Serial
+    private static final long serialVersionUID = 6294871000345715277L;
 
-	public AdminNotFound() {
-		super(MessageCodes.ADMIN_NOT_FOUND);
-	}
+    public AdminNotFound() {
+        super(MessageCodes.ADMIN_NOT_FOUND);
+    }
 }

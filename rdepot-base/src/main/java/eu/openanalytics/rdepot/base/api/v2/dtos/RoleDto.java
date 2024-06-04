@@ -20,11 +20,10 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.dtos;
 
-import org.apache.commons.lang3.builder.ToStringExclude;
-
 import eu.openanalytics.rdepot.base.entities.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.apache.commons.lang3.builder.ToStringExclude;
 
 /**
  * Data Transfer Object for {@link Role Roles}
@@ -33,23 +32,24 @@ import lombok.Data;
 @AllArgsConstructor
 public class RoleDto implements IDto {
 
-	private Integer id;
-	private Integer value;
-	private String name;
-	private String description;
-	@ToStringExclude 
-	private Role entity;
-	
-	public RoleDto(Role role) {
-		this.entity = role;
-		id = role.getId();
-		value = role.getValue();
-		name = role.getName();
-		description = role.getDescription();
-	}
+    private Integer id;
+    private Integer value;
+    private String name;
+    private String description;
 
-	@Override
-	public Role getEntity() {
-		return entity;
-	}
+    @ToStringExclude
+    private Role entity;
+
+    public RoleDto(Role role) {
+        this.entity = role;
+        id = role.getId();
+        value = role.getValue();
+        name = role.getName();
+        description = role.getDescription();
+    }
+
+    @Override
+    public Role getEntity() {
+        return entity;
+    }
 }

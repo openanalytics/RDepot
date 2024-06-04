@@ -21,18 +21,17 @@
 package eu.openanalytics.rdepot.integrationtest.manager.v2.testData;
 
 import java.util.List;
-
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
 public class EventTestData {
-	private String userName;
-	private List<String> technologies;
-	private List<String> resourceTypes;
-	private List<String> eventTypes;
-	private String fromDate;
-	private String toDate;
-	private int getEndpointNewEventsAmount;
+    private String userName;
+    private List<String> technologies;
+    private List<String> resourceTypes;
+    private List<String> eventTypes;
+    private String fromDate;
+    private String toDate;
+    private int getEndpointNewEventsAmount;
 }

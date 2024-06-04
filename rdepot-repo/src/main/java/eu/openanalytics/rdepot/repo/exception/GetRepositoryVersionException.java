@@ -22,9 +22,9 @@ package eu.openanalytics.rdepot.repo.exception;
 
 public class GetRepositoryVersionException extends Exception {
 
-	private static final long serialVersionUID = 5702137132272233059L;
-	
-	public GetRepositoryVersionException(String repository) {
-		super("Could not fetch version of repository " + repository);
-	}
+    private static final long serialVersionUID = 5702137132272233059L;
+
+    public GetRepositoryVersionException(String repository) {
+        super("Could not fetch version of repository " + repository);
+    }
 }

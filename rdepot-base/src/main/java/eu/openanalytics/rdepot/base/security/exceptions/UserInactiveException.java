@@ -22,16 +22,14 @@ package eu.openanalytics.rdepot.base.security.exceptions;
 
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 public class UserInactiveException extends AuthException {
 
-	@Serial
-	private static final long serialVersionUID = -8627734432557150140L;
+    @Serial
+    private static final long serialVersionUID = -8627734432557150140L;
 
-	public UserInactiveException(User user) {
-		super(user.getName(), MessageCodes.USER_INACTIVE);
-	}
-
+    public UserInactiveException(User user) {
+        super(user.getName(), MessageCodes.USER_INACTIVE);
+    }
 }

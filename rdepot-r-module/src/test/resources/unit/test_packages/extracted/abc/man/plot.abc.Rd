@@ -28,7 +28,7 @@ postscript = FALSE, onefile = TRUE, ask =
     were used in the original call to \code{\link{abc}}.}
   \item{subsample}{
     the number of rows (simulations) to be plotted. Rows are randomly
-    selected from \code{param}. 
+    selected from \code{param}.
   }
   \item{true}{
     a vector of true parameter values, if known. Vertical lines are
@@ -45,7 +45,7 @@ postscript = FALSE, onefile = TRUE, ask =
   \item{onefile}{
     logical, if \code{TRUE} (the default) allow multiple figures in one
     file.  If \code{FALSE}, generate a file name containing the page
-    number for each page. See \code{\link{postscript}} for further details.} 
+    number for each page. See \code{\link{postscript}} for further details.}
   \item{ask}{
     logical; if \code{TRUE} (the default), the user is asked before each plot, see
     \code{par(ask=.)}.}
@@ -53,7 +53,7 @@ postscript = FALSE, onefile = TRUE, ask =
     other parameters passed to \code{plot}.}
 }
 \details{
-  
+
   In order to use this function, one of the regression correction
   methods had to be used in the original call to \code{\link{abc}},
   i.e. \code{"loclinear"} or \code{"neuralnet"} (see \code{\link{abc}}

@@ -21,22 +21,20 @@
 package eu.openanalytics.rdepot.base.api.v2.exceptions;
 
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
-
 import java.io.Serial;
 import java.util.Locale;
+import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 
 /**
  * Thrown when a Newsfeed Event cannot be found.
  */
 public class EventNotFound extends ApiException {
 
-	@Serial
-	private static final long serialVersionUID = 2315832193144017748L;
+    @Serial
+    private static final long serialVersionUID = 2315832193144017748L;
 
-	public EventNotFound(MessageSource messageSource, Locale locale) {
-		super(messageSource, locale, MessageCodes.ERROR_EVENT_NOT_FOUND, HttpStatus.NOT_FOUND);
-	}
-
+    public EventNotFound(MessageSource messageSource, Locale locale) {
+        super(messageSource, locale, MessageCodes.ERROR_EVENT_NOT_FOUND, HttpStatus.NOT_FOUND);
+    }
 }

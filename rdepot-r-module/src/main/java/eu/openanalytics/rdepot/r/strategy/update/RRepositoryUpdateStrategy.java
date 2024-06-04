@@ -32,26 +32,27 @@ import eu.openanalytics.rdepot.r.synchronization.RRepositorySynchronizer;
 
 public class RRepositoryUpdateStrategy extends UpdateRepositoryStrategy<RRepository> {
 
-	public RRepositoryUpdateStrategy(
-			RRepository resource,
-			NewsfeedEventService eventService, 
-			RRepositoryService service,
-			User requester, 
-			RRepository updatedResource, 
-			RRepository oldResourceCopy,
-			RRepositorySynchronizer repositorySynchronizer,
-			RepositoryMaintainerService repositoryMaintainerService, 
-			PackageMaintainerService packageMaintainerService,
-			RPackageService packageService) {
-		super(resource, 
-				eventService,
-				service,
-				requester, 
-				updatedResource, 
-				oldResourceCopy, 
-				repositorySynchronizer,
-				repositoryMaintainerService, 
-				packageMaintainerService, 
-				packageService);
-	}
+    public RRepositoryUpdateStrategy(
+            RRepository resource,
+            NewsfeedEventService eventService,
+            RRepositoryService service,
+            User requester,
+            RRepository updatedResource,
+            RRepository oldResourceCopy,
+            RRepositorySynchronizer repositorySynchronizer,
+            RepositoryMaintainerService repositoryMaintainerService,
+            PackageMaintainerService packageMaintainerService,
+            RPackageService packageService) {
+        super(
+                resource,
+                eventService,
+                service,
+                requester,
+                updatedResource,
+                oldResourceCopy,
+                repositorySynchronizer,
+                repositoryMaintainerService,
+                packageMaintainerService,
+                packageService);
+    }
 }

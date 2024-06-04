@@ -22,17 +22,15 @@ package eu.openanalytics.rdepot.integrationtest.manager.v2.python;
 
 import static io.restassured.RestAssured.given;
 
-import java.io.File;
-import java.util.Arrays;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import eu.openanalytics.rdepot.integrationtest.manager.v2.IntegrationTest;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.RequestType;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.TestRequestBody;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.testData.PackageTestData;
 import io.restassured.http.ContentType;
+import java.io.File;
+import java.util.Arrays;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class PythonPackageIntegrationTest extends IntegrationTest {
 
@@ -57,7 +55,7 @@ public class PythonPackageIntegrationTest extends IntegrationTest {
                 .toBeActivatedPackageId("38")
                 .build();
     }
-    
+
     @Test
     public void getAllPackages() throws Exception {
         TestRequestBody requestBody = TestRequestBody.builder()
@@ -158,13 +156,8 @@ public class PythonPackageIntegrationTest extends IntegrationTest {
 
     @Test
     public void activatePackage() throws Exception {
-        final String patch = "["
-                + "{"
-                + "\"op\": \"replace\","
-                + "\"path\":\"/active\","
-                + "\"value\":false"
-                + "}"
-                + "]";
+        final String patch =
+                "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/active\"," + "\"value\":false" + "}" + "]";
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.PATCH)
                 .urlSuffix("/" + testData.getExamplePackageId())
@@ -190,17 +183,12 @@ public class PythonPackageIntegrationTest extends IntegrationTest {
 
     @Test
     public void activatePackage_returns403_whenMaintainerIsDeleted() throws Exception {
-        final String patch = "["
-                + "{"
-                + "\"op\": \"replace\","
-                + "\"path\":\"/active\","
-                + "\"value\":false"
-                + "}"
-                + "]";
+        final String patch =
+                "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/active\"," + "\"value\":false" + "}" + "]";
 
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.PATCH)
-                .urlSuffix( "/" + testData.getToBeActivatedPackageId())
+                .urlSuffix("/" + testData.getToBeActivatedPackageId())
                 .statusCode(403)
                 .token(PACKAGEMAINTAINER_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
@@ -222,17 +210,12 @@ public class PythonPackageIntegrationTest extends IntegrationTest {
 
     @Test
     public void activatePackage_returns401_whenUserIsNotAuthenticated() throws Exception {
-        final String patch = "["
-                + "{"
-                + "\"op\": \"replace\","
-                + "\"path\":\"/active\","
-                + "\"value\":false"
-                + "}"
-                + "]";
+        final String patch =
+                "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/active\"," + "\"value\":false" + "}" + "]";
 
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.PATCH_UNAUTHENTICATED)
-                .urlSuffix( "/" + testData.getExamplePackageId())
+                .urlSuffix("/" + testData.getExamplePackageId())
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
                 .body(patch)
                 .build();
@@ -247,22 +230,16 @@ public class PythonPackageIntegrationTest extends IntegrationTest {
                 .expectedJsonPath(PACKAGES_PATH + "list_of_packages.json")
                 .build();
         testEndpoint(requestBody);
-
     }
 
     @Test
     public void activatePackage_returns403_whenUserIsNotAllowed() throws Exception {
-        final String patch = "["
-                + "{"
-                + "\"op\": \"replace\","
-                + "\"path\":\"/active\","
-                + "\"value\":false"
-                + "}"
-                + "]";
+        final String patch =
+                "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/active\"," + "\"value\":false" + "}" + "]";
 
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.PATCH)
-                .urlSuffix( "/" + testData.getExamplePackageId())
+                .urlSuffix("/" + testData.getExamplePackageId())
                 .statusCode(403)
                 .token(USER_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
@@ -284,13 +261,8 @@ public class PythonPackageIntegrationTest extends IntegrationTest {
 
     @Test
     public void activatePackage_returns404_whenPackageIsNotFound() throws Exception {
-        final String patch = "["
-                + "{"
-                + "\"op\": \"replace\","
-                + "\"path\":\"/active\","
-                + "\"value\":false"
-                + "}"
-                + "]";
+        final String patch =
+                "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/active\"," + "\"value\":false" + "}" + "]";
 
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.PATCH)
@@ -316,17 +288,12 @@ public class PythonPackageIntegrationTest extends IntegrationTest {
 
     @Test
     public void patchPackage_returns422_whenPatchIsMalformed() throws Exception {
-        final String patch = "["
-                + "{"
-                + "\"op\": \"replace\","
-                + "\"path\":\"/dsdsadsadsa\","
-                + "\"value\":false"
-                + "}"
-                + "]";
+        final String patch =
+                "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/dsdsadsadsa\"," + "\"value\":false" + "}" + "]";
 
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.PATCH)
-                .urlSuffix( "/" + testData.getExamplePackageId())
+                .urlSuffix("/" + testData.getExamplePackageId())
                 .statusCode(422)
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
@@ -348,17 +315,12 @@ public class PythonPackageIntegrationTest extends IntegrationTest {
 
     @Test
     public void patchPackage_returns422_whenPatchIsForbidden() throws Exception {
-        final String patch = "["
-                + "{"
-                + "\"op\": \"replace\","
-                + "\"path\":\"/name\","
-                +  "\"value\":\"newName\""
-                + "}"
-                + "]";
+        final String patch =
+                "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/name\"," + "\"value\":\"newName\"" + "}" + "]";
 
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.PATCH)
-                .urlSuffix( "/" + testData.getExamplePackageId())
+                .urlSuffix("/" + testData.getExamplePackageId())
                 .statusCode(422)
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
@@ -380,17 +342,11 @@ public class PythonPackageIntegrationTest extends IntegrationTest {
 
     @Test
     public void patchPackage_returns422_whenValidationFails() throws Exception {
-        final String patch = "["
-                + "{"
-                + "\"op\": \"replace\","
-                + "\"path\":\"/name\","
-                + "\"value\":\"\""
-                + "}"
-                + "]";
+        final String patch = "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/name\"," + "\"value\":\"\"" + "}" + "]";
 
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.PATCH)
-                .urlSuffix( "/" + testData.getExamplePackageId())
+                .urlSuffix("/" + testData.getExamplePackageId())
                 .statusCode(422)
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
@@ -415,7 +371,7 @@ public class PythonPackageIntegrationTest extends IntegrationTest {
 
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.DELETE)
-                .urlSuffix( "/" + testData.getDeletedPackageId())
+                .urlSuffix("/" + testData.getDeletedPackageId())
                 .statusCode(204)
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getDeleteEndpointNewEventsAmount())
@@ -437,7 +393,7 @@ public class PythonPackageIntegrationTest extends IntegrationTest {
     public void shiftDeletePackage_returns403_whenUserIsNotAdmin() throws Exception {
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.DELETE)
-                .urlSuffix( "/" + testData.getDeletedPackageId())
+                .urlSuffix("/" + testData.getDeletedPackageId())
                 .statusCode(403)
                 .token(USER_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
@@ -450,7 +406,7 @@ public class PythonPackageIntegrationTest extends IntegrationTest {
                 .statusCode(200)
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
-                .expectedJsonPath( PACKAGES_PATH + "list_of_packages.json")
+                .expectedJsonPath(PACKAGES_PATH + "list_of_packages.json")
                 .build();
         testEndpoint(requestBody);
     }
@@ -459,7 +415,7 @@ public class PythonPackageIntegrationTest extends IntegrationTest {
     public void shiftDeletePackage_returns404_whenPackageIsNotFound() throws Exception {
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.DELETE)
-                .urlSuffix( "/" + testData.getExamplePackageId())
+                .urlSuffix("/" + testData.getExamplePackageId())
                 .statusCode(404)
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
@@ -477,39 +433,39 @@ public class PythonPackageIntegrationTest extends IntegrationTest {
         testEndpoint(requestBody);
     }
 
-//	@Test
-//	public void getManual() throws Exception {
-//		byte[] data = given()
-//				.header(AUTHORIZATION, BEARER + USER_TOKEN)
-//				.accept(ContentType.BINARY)
-//			.when()
-//				.get(apiPath + "/17/manual")
-//			.then()
-//				.statusCode(200)
-//				.extract()
-//				.asByteArray();
-//
-//		assertTrue("Returned manual is incorrect.", extractContent(data).contains("Version 0.9.2"));
-//	}
-//	
+    //	@Test
+    //	public void getManual() throws Exception {
+    //		byte[] data = given()
+    //				.header(AUTHORIZATION, BEARER + USER_TOKEN)
+    //				.accept(ContentType.BINARY)
+    //			.when()
+    //				.get(apiPath + "/17/manual")
+    //			.then()
+    //				.statusCode(200)
+    //				.extract()
+    //				.asByteArray();
+    //
+    //		assertTrue("Returned manual is incorrect.", extractContent(data).contains("Version 0.9.2"));
+    //	}
+    //
 
     @Test
-	public void downloadPackage() throws Exception {		
-		byte[] pkg = given()
-					.header(AUTHORIZATION, BASIC + ADMIN_TOKEN)
-					.accept(ContentType.ANY)
-				.when()
-	            	.get(apiPath + "/" + PACKAGE_ID_TO_DOWNLOAD + "/download/" + PACKAGE_NAME_TO_DOWNLOAD + "-" + PACKAGE_VERSION_TO_DOWNLOAD + ".tar.gz")
-	            .then()
-	            	.statusCode(200)
-	            	.extract()
-	            	.asByteArray();
+    public void downloadPackage() throws Exception {
+        byte[] pkg = given().header(AUTHORIZATION, BASIC + ADMIN_TOKEN)
+                .accept(ContentType.ANY)
+                .when()
+                .get(apiPath + "/" + PACKAGE_ID_TO_DOWNLOAD + "/download/" + PACKAGE_NAME_TO_DOWNLOAD + "-"
+                        + PACKAGE_VERSION_TO_DOWNLOAD + ".tar.gz")
+                .then()
+                .statusCode(200)
+                .extract()
+                .asByteArray();
 
-		File file = new File("src/test/resources/itestPackages/" + PACKAGE_NAME_TO_DOWNLOAD + "-" + PACKAGE_VERSION_TO_DOWNLOAD + ".tar.gz");
-		
-		byte[] expectedpkg = readFileToByteArray(file);
-						
-		Assertions.assertArrayEquals(expectedpkg, pkg, "Wrong package has been downloaded");
-	}
-    
+        File file = new File("src/test/resources/itestPackages/" + PACKAGE_NAME_TO_DOWNLOAD + "-"
+                + PACKAGE_VERSION_TO_DOWNLOAD + ".tar.gz");
+
+        byte[] expectedpkg = readFileToByteArray(file);
+
+        Assertions.assertArrayEquals(expectedpkg, pkg, "Wrong package has been downloaded");
+    }
 }

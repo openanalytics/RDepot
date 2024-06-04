@@ -32,7 +32,6 @@ import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
 import eu.openanalytics.rdepot.base.storage.Storage;
-import eu.openanalytics.rdepot.base.storage.exceptions.SourceFileDeleteException;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -42,49 +41,50 @@ import lombok.extern.slf4j.Slf4j;
  * @param <P> technology-specific {@link Package}
  */
 @Slf4j
-public abstract class RepositoryDeleter<R extends Repository, P extends Package> 
-	extends ResourceDeleter<R> {
+public abstract class RepositoryDeleter<R extends Repository, P extends Package> extends ResourceDeleter<R> {
 
-	private final PackageMaintainerService packageMaintainerService;
-	private final RepositoryMaintainerService repositoryMaintainerService;
-	private final Storage<R, P> storage;
-	private final NewsfeedEventService newsfeedEventService;
-	private final SubmissionDeleter submissionDeleter;
-	private final PackageService<P> packageService;
-	
-	public RepositoryDeleter(NewsfeedEventService newsfeedEventService, 
-			RepositoryService<R> resourceService, 
-			PackageMaintainerService packageMaintainerService,
-			RepositoryMaintainerService repositoryMaintainerService,
-			Storage<R, P> storage, SubmissionDeleter submissionDeleter,
-			PackageService<P> packageService) {
-		super(newsfeedEventService, resourceService);
-		this.packageMaintainerService = packageMaintainerService;
-		this.repositoryMaintainerService = repositoryMaintainerService;
-		this.storage = storage;
-		this.newsfeedEventService = newsfeedEventService;
-		this.submissionDeleter = submissionDeleter;
-		this.packageService = packageService;
-	}
+    private final PackageMaintainerService packageMaintainerService;
+    private final RepositoryMaintainerService repositoryMaintainerService;
+    private final Storage<R, P> storage;
+    private final NewsfeedEventService newsfeedEventService;
+    private final SubmissionDeleter submissionDeleter;
+    private final PackageService<P> packageService;
 
-	@Override
-	public void delete(R resource) throws DeleteEntityException {
-		for(PackageMaintainer maintainer : packageMaintainerService.findByRepository(resource)) {			
-			newsfeedEventService.deleteRelatedEvents(maintainer);
-			packageMaintainerService.delete(maintainer);
-		}
-		
-		for(RepositoryMaintainer maintainer : repositoryMaintainerService.findByRepository(resource)) {		
-			newsfeedEventService.deleteRelatedEvents(maintainer);
-			repositoryMaintainerService.delete(maintainer);
-		}
-		
-		for(Package packageBag : packageService.findAllByRepositoryIncludeDeleted(resource)) {
-			Submission submission = packageBag.getSubmission();
-			newsfeedEventService.deleteRelatedEvents(submission);
-			submissionDeleter.delete(submission);
-		}
+    public RepositoryDeleter(
+            NewsfeedEventService newsfeedEventService,
+            RepositoryService<R> resourceService,
+            PackageMaintainerService packageMaintainerService,
+            RepositoryMaintainerService repositoryMaintainerService,
+            Storage<R, P> storage,
+            SubmissionDeleter submissionDeleter,
+            PackageService<P> packageService) {
+        super(newsfeedEventService, resourceService);
+        this.packageMaintainerService = packageMaintainerService;
+        this.repositoryMaintainerService = repositoryMaintainerService;
+        this.storage = storage;
+        this.newsfeedEventService = newsfeedEventService;
+        this.submissionDeleter = submissionDeleter;
+        this.packageService = packageService;
+    }
 
-		super.delete(resource);
-	}
+    @Override
+    public void delete(R resource) throws DeleteEntityException {
+        for (PackageMaintainer maintainer : packageMaintainerService.findByRepository(resource)) {
+            newsfeedEventService.deleteRelatedEvents(maintainer);
+            packageMaintainerService.delete(maintainer);
+        }
+
+        for (RepositoryMaintainer maintainer : repositoryMaintainerService.findByRepository(resource)) {
+            newsfeedEventService.deleteRelatedEvents(maintainer);
+            repositoryMaintainerService.delete(maintainer);
+        }
+
+        for (Package packageBag : packageService.findAllByRepositoryIncludeDeleted(resource)) {
+            Submission submission = packageBag.getSubmission();
+            newsfeedEventService.deleteRelatedEvents(submission);
+            submissionDeleter.delete(submission);
+        }
+
+        super.delete(resource);
+    }
 }

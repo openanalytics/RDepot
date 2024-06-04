@@ -20,27 +20,24 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.converters;
 
-import org.springframework.stereotype.Component;
-
 import eu.openanalytics.rdepot.base.api.v2.converters.exceptions.EntityResolutionException;
 import eu.openanalytics.rdepot.base.api.v2.dtos.AccessTokenDto;
 import eu.openanalytics.rdepot.base.entities.AccessToken;
+import org.springframework.stereotype.Component;
 
 /**
  * {@link DtoConverter DTO Converter} for {@link AccessToken Access Tokens}
  */
 @Component
-public class AccessTokenDtoConverter implements DtoConverter<AccessToken, AccessTokenDto>{
-	
-	@Override
-	public AccessToken resolveDtoToEntity(AccessTokenDto dto) throws EntityResolutionException {
-		return new AccessToken(dto);
-	}
+public class AccessTokenDtoConverter implements DtoConverter<AccessToken, AccessTokenDto> {
 
-	@Override
-	public AccessTokenDto convertEntityToDto(AccessToken entity) {
-		return new AccessTokenDto(entity);
-	}
-	
+    @Override
+    public AccessToken resolveDtoToEntity(AccessTokenDto dto) throws EntityResolutionException {
+        return new AccessToken(dto);
+    }
+
+    @Override
+    public AccessTokenDto convertEntityToDto(AccessToken entity) {
+        return new AccessTokenDto(entity);
+    }
 }
-

@@ -1,0 +1,12 @@
+declarative: true
+replacing:
+   packages:
+      enabled: false
+deleting:
+  repositories:
+    enabled: true
+  packages:
+    enabled: true
+spring:
+  main:
+    allow-bean-definition-overriding: true

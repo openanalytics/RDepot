@@ -20,33 +20,30 @@
  */
 package eu.openanalytics.rdepot.base.validation;
 
-import org.springframework.stereotype.Component;
-
 import eu.openanalytics.rdepot.base.api.v2.dtos.SubmissionDto;
 import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.enums.SubmissionState;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.validation.exceptions.PatchValidationException;
 import jakarta.json.JsonPatch;
+import org.springframework.stereotype.Component;
 
 @Component
 public class SubmissionPatchValidator implements PatchValidator<Submission, SubmissionDto> {
 
-	@Override
-	public void validatePatch(JsonPatch patch, Submission submission, 
-			SubmissionDto submissionDto) 
-			throws PatchValidationException {
-		if(!submission.getState().equals(SubmissionState.WAITING)
-			||
-			submission.getSubmitter().getId() != submissionDto.getSubmitter().getId()) {
-			throw new PatchValidationException(MessageCodes.COULD_NOT_CHANGE_SUBMISSION);
-		}
-		for(int i = 0; i < patch.toJsonArray().size(); i++) {
-			String path = patch.toJsonArray().get(i).asJsonObject().get("path").toString();
-			if(path != null && !path.equals("\"/state\"")) {
-				throw new PatchValidationException(MessageCodes.COULD_NOT_CHANGE_SUBMISSION);
-			}
-		}
-	}
-
+    @Override
+    public void validatePatch(JsonPatch patch, Submission submission, SubmissionDto submissionDto)
+            throws PatchValidationException {
+        if (!submission.getState().equals(SubmissionState.WAITING)
+                || submission.getSubmitter().getId()
+                        != submissionDto.getSubmitter().getId()) {
+            throw new PatchValidationException(MessageCodes.COULD_NOT_CHANGE_SUBMISSION);
+        }
+        for (int i = 0; i < patch.toJsonArray().size(); i++) {
+            String path = patch.toJsonArray().get(i).asJsonObject().get("path").toString();
+            if (path != null && !path.equals("\"/state\"")) {
+                throw new PatchValidationException(MessageCodes.COULD_NOT_CHANGE_SUBMISSION);
+            }
+        }
+    }
 }

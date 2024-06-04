@@ -23,19 +23,18 @@ package eu.openanalytics.rdepot.base.service.exceptions;
 import eu.openanalytics.rdepot.base.api.v2.dtos.EventType;
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 /**
- * Thrown when conversion 
+ * Thrown when conversion
  * between {@link String} and {@link EventType} fails.
  */
 public class UnknownEventType extends LocalizedException {
 
-	@Serial
-	private static final long serialVersionUID = -2140352875676697696L;
+    @Serial
+    private static final long serialVersionUID = -2140352875676697696L;
 
-	public UnknownEventType() {
-		super(MessageCodes.COULD_NOT_RESOLVE_EVENT_TYPE);
-	}
+    public UnknownEventType() {
+        super(MessageCodes.COULD_NOT_RESOLVE_EVENT_TYPE);
+    }
 }

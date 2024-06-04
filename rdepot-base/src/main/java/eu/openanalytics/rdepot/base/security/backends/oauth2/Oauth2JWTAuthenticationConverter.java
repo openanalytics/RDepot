@@ -20,31 +20,28 @@
  */
 package eu.openanalytics.rdepot.base.security.backends.oauth2;
 
+import eu.openanalytics.rdepot.base.security.authenticators.Oauth2CustomBindAuthenticator;
+import eu.openanalytics.rdepot.base.security.exceptions.AuthException;
 import java.util.Collection;
-
+import lombok.AllArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 
-import eu.openanalytics.rdepot.base.security.authenticators.Oauth2CustomBindAuthenticator;
-import eu.openanalytics.rdepot.base.security.exceptions.AuthException;
-import lombok.AllArgsConstructor;
-
 @AllArgsConstructor
 public class Oauth2JWTAuthenticationConverter implements Converter<Jwt, RDepotAuthenticationToken> {
-	
-	private final Oauth2CustomBindAuthenticator authenticator;
-	private final String loginField;
-	
-	@Override
-	public RDepotAuthenticationToken convert(Jwt source) throws AuthException {
-		String login = source.getClaimAsString(loginField);
-		String email = source.getClaimAsString("email");
-		String fullName = source.getClaimAsString("name");
-		
-		Collection<? extends GrantedAuthority> authorities = authenticator
-				.authenticate(login, email, fullName);
-		
-		return new RDepotAuthenticationToken(login, authorities);
-	}
+
+    private final Oauth2CustomBindAuthenticator authenticator;
+    private final String loginField;
+
+    @Override
+    public RDepotAuthenticationToken convert(Jwt source) throws AuthException {
+        String login = source.getClaimAsString(loginField);
+        String email = source.getClaimAsString("email");
+        String fullName = source.getClaimAsString("name");
+
+        Collection<? extends GrantedAuthority> authorities = authenticator.authenticate(login, email, fullName);
+
+        return new RDepotAuthenticationToken(login, authorities);
+    }
 }

@@ -20,68 +20,66 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.hateoas;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.stereotype.Component;
-
 import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2PackageMaintainerController;
 import eu.openanalytics.rdepot.base.api.v2.converters.DtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.dtos.PackageMaintainerDto;
 import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.stereotype.Component;
 
 /**
  * {@link RepresentationModelAssembler Model Assembler}
  * for {@link PackageMaintainer Package Maintainers}.
  */
 @Component
-public class PackageMaintainerModelAssembler 
-	extends AbstractRoleAwareModelAssembler<PackageMaintainer, PackageMaintainerDto> {
+public class PackageMaintainerModelAssembler
+        extends AbstractRoleAwareModelAssembler<PackageMaintainer, PackageMaintainerDto> {
 
-	private final SecurityMediator securityMediator;
-	
-	@Autowired
-	public PackageMaintainerModelAssembler(
-			DtoConverter<PackageMaintainer, PackageMaintainerDto> dtoConverter,
-			SecurityMediator securityMediator) {
-		super(dtoConverter, ApiV2PackageMaintainerController.class, "packageMaintainer", Optional.empty());
-		this.securityMediator = securityMediator;
-	}
-	
-	private PackageMaintainerModelAssembler(
-			DtoConverter<PackageMaintainer, PackageMaintainerDto> dtoConverter,
-			SecurityMediator securityMediator, User user) {
-		super(dtoConverter,	ApiV2PackageMaintainerController.class, "packageMaintainer", Optional.of(user));
-		this.securityMediator = securityMediator;
-	}
+    private final SecurityMediator securityMediator;
 
-	@Override
-	protected List<Link> getLinksToMethodsWithLimitedAccess(PackageMaintainer entity, User user, Link baseLink) {
-		List<Link> links = new ArrayList<>();
-		
-		if(securityMediator.isAuthorizedToEdit(entity, user)) {
-			links.add(baseLink.withType(HTTP_METHODS.PATCH.getValue()));
-			links.add(baseLink.withType(HTTP_METHODS.DELETE.getValue()));
-		}
-		
-		return links;
-	}
+    @Autowired
+    public PackageMaintainerModelAssembler(
+            DtoConverter<PackageMaintainer, PackageMaintainerDto> dtoConverter, SecurityMediator securityMediator) {
+        super(dtoConverter, ApiV2PackageMaintainerController.class, "packageMaintainer", Optional.empty());
+        this.securityMediator = securityMediator;
+    }
 
-	@Override
-	public RepresentationModelAssembler<PackageMaintainer, EntityModel<PackageMaintainerDto>> assemblerWithUser(
-			User user) {
-		return new PackageMaintainerModelAssembler(dtoConverter, securityMediator, user);
-	}
+    private PackageMaintainerModelAssembler(
+            DtoConverter<PackageMaintainer, PackageMaintainerDto> dtoConverter,
+            SecurityMediator securityMediator,
+            User user) {
+        super(dtoConverter, ApiV2PackageMaintainerController.class, "packageMaintainer", Optional.of(user));
+        this.securityMediator = securityMediator;
+    }
 
-	@Override
-	protected Class<?> getExtensionControllerClass(PackageMaintainer entity) {
-		return ApiV2PackageMaintainerController.class;
-	}
+    @Override
+    protected List<Link> getLinksToMethodsWithLimitedAccess(PackageMaintainer entity, User user, Link baseLink) {
+        List<Link> links = new ArrayList<>();
+
+        if (securityMediator.isAuthorizedToEdit(entity, user)) {
+            links.add(baseLink.withType(HTTP_METHODS.PATCH.getValue()));
+            links.add(baseLink.withType(HTTP_METHODS.DELETE.getValue()));
+        }
+
+        return links;
+    }
+
+    @Override
+    public RepresentationModelAssembler<PackageMaintainer, EntityModel<PackageMaintainerDto>> assemblerWithUser(
+            User user) {
+        return new PackageMaintainerModelAssembler(dtoConverter, securityMediator, user);
+    }
+
+    @Override
+    protected Class<?> getExtensionControllerClass(PackageMaintainer entity) {
+        return ApiV2PackageMaintainerController.class;
+    }
 }

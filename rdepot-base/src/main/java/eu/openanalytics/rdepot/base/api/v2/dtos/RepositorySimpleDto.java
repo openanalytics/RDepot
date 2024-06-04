@@ -20,15 +20,13 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.dtos;
 
-import org.apache.commons.lang3.builder.ToStringExclude;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.Resource;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.ToStringExclude;
 
 /**
  * Simplified Data Transfer Object for {@link Repository Repositories}
@@ -38,46 +36,47 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RepositorySimpleDto implements IDto {
 
-	private Integer id = 0;
-	private Integer version = 0;
-	private String publicationUri;
-	private String name;
-	private String serverAddress = "127.0.0.1";
-	private Boolean deleted = false;
-	private Boolean published = false;
-	private Boolean synchronizing = false;
-	private String technology;
-	@ToStringExclude 
-	private Repository entity;
+    private Integer id = 0;
+    private Integer version = 0;
+    private String publicationUri;
+    private String name;
+    private String serverAddress = "127.0.0.1";
+    private Boolean deleted = false;
+    private Boolean published = false;
+    private Boolean synchronizing = false;
+    private String technology;
 
-	public RepositorySimpleDto(Repository repository) {
-		this.id = repository.getId();
-		this.version = repository.getVersion();
-		this.publicationUri = repository.getPublicationUri();
-		this.name = repository.getName();
-		this.serverAddress = repository.getServerAddress();
-		this.deleted = repository.isDeleted();
-		this.published = repository.getPublished();
-		this.synchronizing = repository.isSynchronizing();
-		this.technology = repository.getTechnology().getName();
-		this.entity = repository;
-	}
+    @ToStringExclude
+    private Repository entity;
 
-	public Boolean isDeleted() {
-		return deleted;
-	}
-	
-	public Boolean isPublished() {
-		return published;
-	}
-	
-	public Boolean isSynchronizing() {
-		return synchronizing;
-	}
+    public RepositorySimpleDto(Repository repository) {
+        this.id = repository.getId();
+        this.version = repository.getVersion();
+        this.publicationUri = repository.getPublicationUri();
+        this.name = repository.getName();
+        this.serverAddress = repository.getServerAddress();
+        this.deleted = repository.isDeleted();
+        this.published = repository.getPublished();
+        this.synchronizing = repository.isSynchronizing();
+        this.technology = repository.getTechnology().getName();
+        this.entity = repository;
+    }
 
-	@Override
-	@JsonIgnore
-	public Resource getEntity() {
-		return this.entity;
-	}
+    public Boolean isDeleted() {
+        return deleted;
+    }
+
+    public Boolean isPublished() {
+        return published;
+    }
+
+    public Boolean isSynchronizing() {
+        return synchronizing;
+    }
+
+    @Override
+    @JsonIgnore
+    public Resource getEntity() {
+        return this.entity;
+    }
 }

@@ -30,14 +30,14 @@ import eu.openanalytics.rdepot.base.entities.Resource;
  * @param <D> dto type
  */
 public interface DtoConverter<E extends Resource, D extends IDto> {
-	/**
-	 * Converts DTO to an entity (together with nested properties).
-	 * @throws EntityResolutionException when related entities cannot be found
-	 */
-	E resolveDtoToEntity(D dto) throws EntityResolutionException;
-	
-	/**
-	 * Converts entity to DTO.
-	 */
-	D convertEntityToDto(E entity);
+    /**
+     * Converts DTO to an entity (together with nested properties).
+     * @throws EntityResolutionException when related entities cannot be found
+     */
+    E resolveDtoToEntity(D dto) throws EntityResolutionException;
+
+    /**
+     * Converts entity to DTO.
+     */
+    D convertEntityToDto(E entity);
 }

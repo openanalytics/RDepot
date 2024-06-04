@@ -20,11 +20,10 @@
  */
 package eu.openanalytics.rdepot.base.mirroring.pojos;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import eu.openanalytics.rdepot.base.mirroring.Mirror;
 import eu.openanalytics.rdepot.base.technology.Technology;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,11 +37,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public abstract class MirroredRepository<P extends MirroredPackage, M extends Mirror<P>> {
-	protected String name;
-	protected String publicationUri;
-	protected String serverAddress;
-	protected Boolean deleted = false;
-	protected Boolean published = true;
-	protected Set<M> mirrors = new HashSet<>();
-	public abstract Technology getTechnology();
+    protected String name;
+    protected String publicationUri;
+    protected String serverAddress;
+    protected Boolean deleted = false;
+    protected Boolean published = true;
+    protected Set<M> mirrors = new HashSet<>();
+
+    public abstract Technology getTechnology();
 }

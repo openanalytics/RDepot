@@ -21,12 +21,10 @@
 package eu.openanalytics.rdepot.base.config.props;
 
 import java.util.List;
-
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
-
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 /**
  * Defines default
@@ -37,10 +35,10 @@ import lombok.Setter;
 @Setter
 @ConfigurationProperties("default-user-configuration")
 public class UserSettingsConfiguration {
-	private String language = "en-US";
-	private String theme = "light";
-	private int pageSize = 10;
-	private int pageSizeMaxLimit = 1000;
-	private List<String> supportedLanguages;
-	private List<String> supportedThemes;
+    private String language = "en-US";
+    private String theme = "light";
+    private int pageSize = 10;
+    private int pageSizeMaxLimit = 1000;
+    private List<String> supportedLanguages;
+    private List<String> supportedThemes;
 }

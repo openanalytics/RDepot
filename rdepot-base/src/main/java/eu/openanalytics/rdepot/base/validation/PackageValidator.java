@@ -20,31 +20,27 @@
  */
 package eu.openanalytics.rdepot.base.validation;
 
+import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.Submission;
 import org.springframework.web.multipart.MultipartFile;
-
-import eu.openanalytics.rdepot.base.entities.Package;
-import eu.openanalytics.rdepot.base.service.PackageService;
 
 /**
  * Validates if package object is correct.
  * @param <T>
  */
 public interface PackageValidator<T extends Package> {
-	/**
-	 * Validates package after its creation.
-	 * @param packageBag package to validate
-	 * @param replace if the package is supposed to replace another one
-	 */
-	void validate(T packageBag, boolean replace, DataSpecificValidationResult<Submission> errors);
-	
-	void validateUploadPackage(
-			T packageBag, boolean replace,
-			DataSpecificValidationResult<Submission> validationResult
-	);
+    /**
+     * Validates package after its creation.
+     * @param packageBag package to validate
+     * @param replace if the package is supposed to replace another one
+     */
+    void validate(T packageBag, boolean replace, DataSpecificValidationResult<Submission> errors);
 
-	/**
-	 * Validates R package file right after upload, before it gets passed further.
-	 */
-	void validate(MultipartFile multipartFile, ValidationResult validationResult);
+    void validateUploadPackage(
+            T packageBag, boolean replace, DataSpecificValidationResult<Submission> validationResult);
+
+    /**
+     * Validates R package file right after upload, before it gets passed further.
+     */
+    void validate(MultipartFile multipartFile, ValidationResult validationResult);
 }

@@ -32,14 +32,13 @@ import lombok.EqualsAndHashCode;
  * can be created for (when it is edited or created).
  */
 @EqualsAndHashCode(callSuper = true)
-public abstract class EventableResource extends Resource 
-	implements HavingSimpleDtoRepresentation {
-	
-	public EventableResource(Technology technology, ResourceType resourceType) {
-		super(technology, resourceType);
-	}
-	
-	public EventableResource(int id, Technology technology, ResourceType resourceType) {
-		super(id, technology, resourceType);
-	}
+public abstract class EventableResource extends Resource implements HavingSimpleDtoRepresentation {
+
+    public EventableResource(Technology technology, ResourceType resourceType) {
+        super(technology, resourceType);
+    }
+
+    public EventableResource(int id, Technology technology, ResourceType resourceType) {
+        super(id, technology, resourceType);
+    }
 }

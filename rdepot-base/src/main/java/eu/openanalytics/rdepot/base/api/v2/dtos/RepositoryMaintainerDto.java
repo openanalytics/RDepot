@@ -20,14 +20,12 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.dtos;
 
-import org.apache.commons.lang3.builder.ToStringExclude;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import eu.openanalytics.rdepot.base.entities.RepositoryMaintainer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.ToStringExclude;
 
 /**
  * Data Transfer Object for {@link RepositoryMaintainer Repository Maintainers}
@@ -36,25 +34,25 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RepositoryMaintainerDto 
-	implements IDto {
-	private Integer id = 0;
-	private UserProjection user;	
-	private RepositoryProjection repository;
-	private Boolean deleted = false;
-	@ToStringExclude 
-	private RepositoryMaintainer entity;
-	
-	public RepositoryMaintainerDto(RepositoryMaintainer repositoryMaintainer) {
-		this.entity = repositoryMaintainer;
-		this.id = repositoryMaintainer.getId();
-		this.user = new UserProjection(repositoryMaintainer.getUser());
-		this.repository = new RepositoryProjection(repositoryMaintainer.getRepository());
-		this.deleted = repositoryMaintainer.isDeleted();
-	}
+public class RepositoryMaintainerDto implements IDto {
+    private Integer id = 0;
+    private UserProjection user;
+    private RepositoryProjection repository;
+    private Boolean deleted = false;
 
-	@Override
-	public RepositoryMaintainer getEntity() {
-		return entity;
-	}
+    @ToStringExclude
+    private RepositoryMaintainer entity;
+
+    public RepositoryMaintainerDto(RepositoryMaintainer repositoryMaintainer) {
+        this.entity = repositoryMaintainer;
+        this.id = repositoryMaintainer.getId();
+        this.user = new UserProjection(repositoryMaintainer.getUser());
+        this.repository = new RepositoryProjection(repositoryMaintainer.getRepository());
+        this.deleted = repositoryMaintainer.isDeleted();
+    }
+
+    @Override
+    public RepositoryMaintainer getEntity() {
+        return entity;
+    }
 }

@@ -21,22 +21,20 @@
 package eu.openanalytics.rdepot.base.api.v2.exceptions;
 
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
-
 import java.io.Serial;
 import java.util.Locale;
+import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 
 /**
  * Thrown when a resource cannot be deleted due to an internal error.
  */
 public class DeleteException extends ApiException {
 
-	@Serial
-	private static final long serialVersionUID = 6602106189983212106L;
+    @Serial
+    private static final long serialVersionUID = 6602106189983212106L;
 
-	public DeleteException(MessageSource messageSource, Locale locale) {
-		super(messageSource, locale, MessageCodes.ERROR_DELETE_RESOURCE, HttpStatus.INTERNAL_SERVER_ERROR);
-	}
-
+    public DeleteException(MessageSource messageSource, Locale locale) {
+        super(messageSource, locale, MessageCodes.ERROR_DELETE_RESOURCE, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

@@ -31,7 +31,7 @@
     probabilities.}
   \item{BayesF}{an object of class \code{table} with the Bayes factors
     between pairs of models.}
-  
+
   A list with the following components if method is \code{"mnlogistic"}
   or \code{"neuralnet"} and rejection is \code{TRUE}:
   \item{rejection}{a list with the same components as above}

@@ -23,19 +23,17 @@ package eu.openanalytics.rdepot.base.storage.exceptions;
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 /**
- * Thrown when the population of {@link Package packages} fails. 
+ * Thrown when the population of {@link Package packages} fails.
  */
 public class OrganizePackagesException extends LocalizedException {
 
-	@Serial
-	private static final long serialVersionUID = 4388902648838594040L;
+    @Serial
+    private static final long serialVersionUID = 4388902648838594040L;
 
-	public OrganizePackagesException() {
-		super(MessageCodes.ERROR_ORGANIZE_PACKAGES_IN_STORAGE);
-	}
-
+    public OrganizePackagesException() {
+        super(MessageCodes.ERROR_ORGANIZE_PACKAGES_IN_STORAGE);
+    }
 }

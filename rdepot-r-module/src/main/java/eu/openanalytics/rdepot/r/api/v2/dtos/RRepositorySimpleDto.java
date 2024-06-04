@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class RRepositorySimpleDto extends RepositorySimpleDto {
-	public RRepositorySimpleDto(RRepository repository) {
-		super(repository);
-	}
+    public RRepositorySimpleDto(RRepository repository) {
+        super(repository);
+    }
 }

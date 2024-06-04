@@ -20,14 +20,12 @@
  */
 package eu.openanalytics.rdepot.repo.python.storage;
 
-import java.io.File;
-import java.util.List;
-import java.util.Map;
-
+import eu.openanalytics.rdepot.repo.model.Technology;
 import eu.openanalytics.rdepot.repo.python.model.SynchronizePythonRepositoryRequestBody;
 import eu.openanalytics.rdepot.repo.storage.StorageService;
 
 public interface PythonStorageService extends StorageService<SynchronizePythonRepositoryRequestBody> {
-	Map<String, File> getPackagesFiles(String repository, boolean archive);
-    Map<String, List<File>> getArchiveFromRepository(String repository);
+    default Technology getTechnology() {
+        return Technology.PYTHON;
+    }
 }

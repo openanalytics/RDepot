@@ -20,8 +20,6 @@
  */
 package eu.openanalytics.rdepot.base.strategy.update;
 
-import javax.naming.OperationNotSupportedException;
-
 import eu.openanalytics.rdepot.base.entities.AccessToken;
 import eu.openanalytics.rdepot.base.entities.EventChangedVariable;
 import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
@@ -31,50 +29,54 @@ import eu.openanalytics.rdepot.base.service.AccessTokenService;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure;
+import javax.naming.OperationNotSupportedException;
 
 /**
  * Updates the {@link AccessToken Access Token}.
  * Can only deactivate the token or update its name.
  */
-public class UpdateAccessTokenStrategy
-	extends UpdateStrategy<AccessToken>{
-	
-	public UpdateAccessTokenStrategy(
-			AccessToken resource, 
-			User requester,
-			AccessToken updatedResource,
-			NewsfeedEventService newsfeedEventService,
-			AccessTokenService accessTokenService) {
-		super(resource, accessTokenService, 
-				newsfeedEventService, requester, 
-				updatedResource, new AccessToken(resource));
-	}
-	
-	@Override
-	protected AccessToken actualStrategy() throws StrategyFailure {
-		if(updatedResource.isActive() && !resource.isActive()) {
+public class UpdateAccessTokenStrategy extends UpdateStrategy<AccessToken> {
+
+    public UpdateAccessTokenStrategy(
+            AccessToken resource,
+            User requester,
+            AccessToken updatedResource,
+            NewsfeedEventService newsfeedEventService,
+            AccessTokenService accessTokenService) {
+        super(
+                resource,
+                accessTokenService,
+                newsfeedEventService,
+                requester,
+                updatedResource,
+                new AccessToken(resource));
+    }
+
+    @Override
+    protected AccessToken actualStrategy() throws StrategyFailure {
+        if (updatedResource.isActive() && !resource.isActive()) {
             throw new StrategyFailure(new OperationNotSupportedException());
-        } else if(!updatedResource.isActive()) {
+        } else if (!updatedResource.isActive()) {
             resource.setActive(false);
             changedValues.add(new EventChangedVariable("active", "true", "false"));
         }
-        
-        if(!resource.getName().equals(updatedResource.getName())) {
+
+        if (!resource.getName().equals(updatedResource.getName())) {
             changedValues.add(new EventChangedVariable("name", resource.getName(), updatedResource.getName()));
             resource.setName(updatedResource.getName());
-        } 
-		
-		return resource;
-	}
-	
-	@Override
-	protected NewsfeedEvent generateEvent(AccessToken resource) {
-		return new NewsfeedEvent(requester, NewsfeedEventType.UPDATE, resource);
-	}
+        }
 
-	@Override
-	protected void postStrategy() throws StrategyFailure {}
+        return resource;
+    }
 
-	@Override
-	public void revertChanges() throws StrategyReversionFailure {}
+    @Override
+    protected NewsfeedEvent generateEvent(AccessToken resource) {
+        return new NewsfeedEvent(requester, NewsfeedEventType.UPDATE, resource);
+    }
+
+    @Override
+    protected void postStrategy() throws StrategyFailure {}
+
+    @Override
+    public void revertChanges() throws StrategyReversionFailure {}
 }

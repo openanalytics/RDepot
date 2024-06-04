@@ -29,11 +29,10 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum NewsfeedEventType {
-	CREATE("create"),
-	DELETE("delete"),
-	UPDATE("update"),
-	UPLOAD("upload");
-	
-	private final String value;
+    CREATE("create"),
+    DELETE("delete"),
+    UPDATE("update"),
+    UPLOAD("upload");
 
+    private final String value;
 }

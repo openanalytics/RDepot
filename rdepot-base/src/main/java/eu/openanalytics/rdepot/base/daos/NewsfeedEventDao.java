@@ -20,20 +20,17 @@
  */
 package eu.openanalytics.rdepot.base.daos;
 
+import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
 import java.util.List;
-
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
 
 /**
  * {@link org.springframework.data.jpa.repository.JpaRepository JPA Repository}
  * for {@link NewsfeedEvent Newsfeed Events}.
  */
 public interface NewsfeedEventDao extends Dao<NewsfeedEvent> {
-	
-	@Query(value = "SELECT event FROM NewsfeedEvent event WHERE event.packageBag.id = :packageId")
-	List<NewsfeedEvent> findAllForPackageWithId(@Param("packageId") int packageId);
-	
+
+    @Query(value = "SELECT event FROM NewsfeedEvent event WHERE event.packageBag.id = :packageId")
+    List<NewsfeedEvent> findAllForPackageWithId(@Param("packageId") int packageId);
 }

@@ -20,8 +20,6 @@
  */
 package eu.openanalytics.rdepot.r.mediator.deletion;
 
-import org.springframework.stereotype.Component;
-
 import eu.openanalytics.rdepot.base.mediator.deletion.PackageDeleter;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
@@ -31,18 +29,24 @@ import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.services.RPackageService;
 import eu.openanalytics.rdepot.r.synchronization.RRepositorySynchronizer;
 import eu.openanalytics.rdepot.r.utils.RPackageRepositoryResolver;
+import org.springframework.stereotype.Component;
 
 @Component
 public class RPackageDeleter extends PackageDeleter<RPackage, RRepository> {
-	
-	public RPackageDeleter(NewsfeedEventService newsfeedEventService,
-			RPackageService resourceService, 
-			Storage<?, RPackage> storage, 
-			SubmissionService submissionService,
-			RRepositorySynchronizer repositorySynchronizer,
-			RPackageRepositoryResolver rPackageRepositoryResolver) {
-		super(newsfeedEventService, resourceService, storage, submissionService, 
-				repositorySynchronizer, rPackageRepositoryResolver);
-	}
 
+    public RPackageDeleter(
+            NewsfeedEventService newsfeedEventService,
+            RPackageService resourceService,
+            Storage<?, RPackage> storage,
+            SubmissionService submissionService,
+            RRepositorySynchronizer repositorySynchronizer,
+            RPackageRepositoryResolver rPackageRepositoryResolver) {
+        super(
+                newsfeedEventService,
+                resourceService,
+                storage,
+                submissionService,
+                repositorySynchronizer,
+                rPackageRepositoryResolver);
+    }
 }

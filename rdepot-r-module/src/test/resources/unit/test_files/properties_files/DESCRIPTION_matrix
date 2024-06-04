@@ -13,7 +13,7 @@ License: GPL (>= 2) | file LICENCE
 URL: https://Matrix.R-forge.R-project.org
 BugReports: https://R-forge.R-project.org/tracker/?atid=294&group_id=61
 Contact: Matrix-authors@R-project.org
-Authors@R: 
+Authors@R:
 	c(person("Douglas", "Bates", role = "aut",
 	         comment = c(ORCID = "0000-0001-8316-9503")),
 	  person("Martin", "Maechler", role = c("aut", "cre"),

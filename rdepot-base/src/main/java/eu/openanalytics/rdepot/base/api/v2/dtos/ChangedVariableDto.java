@@ -31,22 +31,22 @@ import lombok.Getter;
 @Getter
 public class ChangedVariableDto implements Comparable<ChangedVariableDto> {
 
-	private final String property;
-	private final Object valueBefore;
-	private final Object valueAfter;
-	
-	private ChangedVariableDto(EventChangedVariable variable) {
-		this.property = variable.getChangedVariable();
-		this.valueBefore = variable.getValueBefore();
-		this.valueAfter = variable.getValueAfter();
-	}
-	
-	public static ChangedVariableDto of(EventChangedVariable variable) {
-		return new ChangedVariableDto(variable);
-	}
+    private final String property;
+    private final Object valueBefore;
+    private final Object valueAfter;
 
-	@Override
-	public int compareTo(ChangedVariableDto that) {
-		return this.property.compareTo(that.property);
-	}
+    private ChangedVariableDto(EventChangedVariable variable) {
+        this.property = variable.getChangedVariable();
+        this.valueBefore = variable.getValueBefore();
+        this.valueAfter = variable.getValueAfter();
+    }
+
+    public static ChangedVariableDto of(EventChangedVariable variable) {
+        return new ChangedVariableDto(variable);
+    }
+
+    @Override
+    public int compareTo(ChangedVariableDto that) {
+        return this.property.compareTo(that.property);
+    }
 }

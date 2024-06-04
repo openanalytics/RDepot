@@ -29,13 +29,13 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class SubmissionMultipartBody {
-	private String repository;
-	private Boolean generateManual;
-	private Boolean replace;
-	private MultiPartSpecification multipartFile;
-	
-	public SubmissionMultipartBody(String repository, MultiPartSpecification multipartFile) {
-		this.repository = repository;
-		this.multipartFile = multipartFile;
-	}
+    private String repository;
+    private Boolean generateManual;
+    private Boolean replace;
+    private MultiPartSpecification multipartFile;
+
+    public SubmissionMultipartBody(String repository, MultiPartSpecification multipartFile) {
+        this.repository = repository;
+        this.multipartFile = multipartFile;
+    }
 }

@@ -33,25 +33,32 @@ import eu.openanalytics.rdepot.r.synchronization.RRepositorySynchronizer;
 
 public class RPackageUpdateStrategy extends UpdatePackageStrategy<RPackage> {
 
-	private final RRepositorySynchronizer repositorySynchronizer;
-	
-	public RPackageUpdateStrategy(RPackage resource, 
-			NewsfeedEventService eventService, 
-			RPackageService service,
-			User requester, 
-			RPackage updatedPackage, 
-			Storage<?, RPackage> storage,
-			BestMaintainerChooser bestMaintainerChooser,
-			RRepositorySynchronizer repositorySynchronizer) {
-		super(resource, eventService, service, requester, updatedPackage, 
-				updatedPackage, storage, bestMaintainerChooser);
-		this.repositorySynchronizer = repositorySynchronizer;
-	}
+    private final RRepositorySynchronizer repositorySynchronizer;
 
-	@Override
-	protected void publishPackageRepository(RPackage packageBag) throws SynchronizeRepositoryException {
-		repositorySynchronizer.storeRepositoryOnRemoteServer(packageBag.getRepository(),
-        DateProvider.getCurrentDateStamp());
-	}
+    public RPackageUpdateStrategy(
+            RPackage resource,
+            NewsfeedEventService eventService,
+            RPackageService service,
+            User requester,
+            RPackage updatedPackage,
+            Storage<?, RPackage> storage,
+            BestMaintainerChooser bestMaintainerChooser,
+            RRepositorySynchronizer repositorySynchronizer) {
+        super(
+                resource,
+                eventService,
+                service,
+                requester,
+                updatedPackage,
+                updatedPackage,
+                storage,
+                bestMaintainerChooser);
+        this.repositorySynchronizer = repositorySynchronizer;
+    }
 
+    @Override
+    protected void publishPackageRepository(RPackage packageBag) throws SynchronizeRepositoryException {
+        repositorySynchronizer.storeRepositoryOnRemoteServer(
+                packageBag.getRepository(), DateProvider.getCurrentDateStamp());
+    }
 }

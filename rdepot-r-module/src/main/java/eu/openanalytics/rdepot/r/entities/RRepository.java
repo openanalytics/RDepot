@@ -28,7 +28,6 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.SecondaryTable;
-
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -37,23 +36,23 @@ import java.io.Serializable;
 @SecondaryTable(name = "rrepository", pkJoinColumns = @PrimaryKeyJoinColumn(name = "id"))
 public class RRepository extends Repository implements Serializable {
 
-	@Serial
-	private static final long serialVersionUID = 3346101145064616895L;
-	
-	public RRepository() {
-		super(RLanguage.instance);
-	}
-	
-	public RRepository(RRepositoryDto dto) {
-		super(RLanguage.instance, dto);
-	}
-	
-	public RRepository(RRepository that) {
-		super(that);
-	}
+    @Serial
+    private static final long serialVersionUID = 3346101145064616895L;
 
-	@Override
-	public RRepositorySimpleDto createSimpleDto() {
-		return new RRepositorySimpleDto(this);
-	}
+    public RRepository() {
+        super(RLanguage.instance);
+    }
+
+    public RRepository(RRepositoryDto dto) {
+        super(RLanguage.instance, dto);
+    }
+
+    public RRepository(RRepository that) {
+        super(that);
+    }
+
+    @Override
+    public RRepositorySimpleDto createSimpleDto() {
+        return new RRepositorySimpleDto(this);
+    }
 }

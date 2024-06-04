@@ -20,10 +20,9 @@
  */
 package eu.openanalytics.rdepot.base.storage.exceptions;
 
+import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
-import eu.openanalytics.rdepot.base.entities.Package;
-
 import java.io.Serial;
 
 /**
@@ -31,12 +30,10 @@ import java.io.Serial;
  */
 public class GenerateManualException extends Exception {
 
-	@Serial
-	private static final long serialVersionUID = -657347737809814573L;
+    @Serial
+    private static final long serialVersionUID = -657347737809814573L;
 
-	public GenerateManualException(Package packageBag) {
-		super(StaticMessageResolver.getMessage(MessageCodes.COULD_NOT_GENERATE_MANUAL)
-				+ ": " + packageBag.toString());
-	}
-
+    public GenerateManualException(Package packageBag) {
+        super(StaticMessageResolver.getMessage(MessageCodes.COULD_NOT_GENERATE_MANUAL) + ": " + packageBag.toString());
+    }
 }

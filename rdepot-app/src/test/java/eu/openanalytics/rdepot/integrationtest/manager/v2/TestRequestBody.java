@@ -20,9 +20,8 @@
  */
 package eu.openanalytics.rdepot.integrationtest.manager.v2;
 
-import java.util.Optional;
-
 import eu.openanalytics.rdepot.integrationtest.manager.v2.testData.SubmissionMultipartBody;
+import java.util.Optional;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,31 +30,30 @@ import lombok.Setter;
 @Setter
 @Builder
 public class TestRequestBody {
-	private RequestType requestType;
-	private String expectedJsonPath;
-	private String urlSuffix;
-	private int statusCode;
-	private String token;
-	private int howManyNewEventsShouldBeCreated;
-	private String path;
-	private String expectedEventsJson;
-	private String body;
-	private SubmissionMultipartBody submissionMultipartBody;
-	
-	
-	public Optional<SubmissionMultipartBody> getSubmissionMultipartBody() {
+    private RequestType requestType;
+    private String expectedJsonPath;
+    private String urlSuffix;
+    private int statusCode;
+    private String token;
+    private int howManyNewEventsShouldBeCreated;
+    private String path;
+    private String expectedEventsJson;
+    private String body;
+    private SubmissionMultipartBody submissionMultipartBody;
+
+    public Optional<SubmissionMultipartBody> getSubmissionMultipartBody() {
         return Optional.ofNullable(submissionMultipartBody);
     }
-	
-	public Optional<String> getExpectedEventsJson() {
+
+    public Optional<String> getExpectedEventsJson() {
         return Optional.ofNullable(expectedEventsJson);
     }
-	
-	public Optional<String> getBody() {
+
+    public Optional<String> getBody() {
         return Optional.ofNullable(body);
     }
-	
-	public Optional<String> getPath() {
+
+    public Optional<String> getPath() {
         return Optional.ofNullable(path);
     }
 }

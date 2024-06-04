@@ -20,24 +20,23 @@
  */
 package eu.openanalytics.rdepot.base.storage.utils;
 
-import java.util.List;
-
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.storage.Storage;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Represents {@link Repository} content 
+ * Represents {@link Repository} content
  * organized into "latest" and "archive" {@link Package packages}.
  * It also points to their respective locations in {@link Storage}.
  */
 @Getter
 @AllArgsConstructor
 public class PopulatedRepositoryContent {
-	private final List<? extends Package> latestPackages;
-	private final List<? extends Package> archivePackages;
-	private final String latestDirectoryPath;
-	private final String archiveDirectoryPath;
+    private final List<? extends Package> latestPackages;
+    private final List<? extends Package> archivePackages;
+    private final String latestDirectoryPath;
+    private final String archiveDirectoryPath;
 }

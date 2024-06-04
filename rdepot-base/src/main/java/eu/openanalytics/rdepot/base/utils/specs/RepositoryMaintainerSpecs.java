@@ -20,33 +20,33 @@
  */
 package eu.openanalytics.rdepot.base.utils.specs;
 
-import java.util.List;
-
-import org.springframework.data.jpa.domain.Specification;
-
 import eu.openanalytics.rdepot.base.entities.RepositoryMaintainer;
 import eu.openanalytics.rdepot.base.utils.TechnologyResolver;
+import java.util.List;
+import org.springframework.data.jpa.domain.Specification;
 
 public class RepositoryMaintainerSpecs {
-	public static Specification<RepositoryMaintainer> ofRepository(String repository) {
-		return (root, query, criteriaBuilder) -> 
-		criteriaBuilder.like(criteriaBuilder.lower(root.get("repository").get("name")), "%" + repository.toLowerCase() + "%");
-	}
-	
-	public static Specification<RepositoryMaintainer> isDeleted(boolean deleted) {
-		return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("deleted"), deleted);
-	}
-	
-	public static Specification<RepositoryMaintainer> ofUser(String user) {
-		return (root, query, criteriaBuilder) -> 
-			criteriaBuilder.like(criteriaBuilder.lower(root.get("user").get("name")), "%" + user.toLowerCase() + "%");
-	}
-	
-	public static Specification<RepositoryMaintainer> ofTechnology(List<String> technologies) {
-		return (root, query, criteriaBuilder) -> {
-			TechnologyResolver technologyResolver = new TechnologyResolver();
-			List<String> updatedTechnologies = technologyResolver.getTechnologies(technologies);
-			return criteriaBuilder.in(root.get("repository").get("resourceTechnology")).value(updatedTechnologies);
-		};
-	}
+    public static Specification<RepositoryMaintainer> ofRepository(String repository) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.like(
+                criteriaBuilder.lower(root.get("repository").get("name")), "%" + repository.toLowerCase() + "%");
+    }
+
+    public static Specification<RepositoryMaintainer> isDeleted(boolean deleted) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("deleted"), deleted);
+    }
+
+    public static Specification<RepositoryMaintainer> ofUser(String user) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.like(
+                criteriaBuilder.lower(root.get("user").get("name")), "%" + user.toLowerCase() + "%");
+    }
+
+    public static Specification<RepositoryMaintainer> ofTechnology(List<String> technologies) {
+        return (root, query, criteriaBuilder) -> {
+            TechnologyResolver technologyResolver = new TechnologyResolver();
+            List<String> updatedTechnologies = technologyResolver.getTechnologies(technologies);
+            return criteriaBuilder
+                    .in(root.get("repository").get("resourceTechnology"))
+                    .value(updatedTechnologies);
+        };
+    }
 }

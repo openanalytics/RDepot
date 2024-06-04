@@ -41,7 +41,7 @@ digits = max(3, getOption("digits")-3), \dots)
   To calculate the mode, parameters are passed on from
   \code{\link{density.default}}. Note that the posterior mode can be
   rather different depending on the parameters to estimate the
-  density.  
+  density.
 }
 \value{
   The returned value is an object of class \code{"table"}. The rows are,

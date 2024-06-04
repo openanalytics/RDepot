@@ -20,27 +20,26 @@
  */
 package eu.openanalytics.rdepot.repo;
 
+import eu.openanalytics.rdepot.repo.storage.InitializableStorageService;
+import eu.openanalytics.rdepot.repo.storage.StorageProperties;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
-import eu.openanalytics.rdepot.repo.storage.InitializableStorageService;
-import eu.openanalytics.rdepot.repo.storage.StorageProperties;
-
 @SpringBootApplication
 @EnableConfigurationProperties(StorageProperties.class)
 public class Application {
 
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
 
-	@Bean
-	CommandLineRunner init(InitializableStorageService storageService) {
-		return (args) -> {
+    @Bean
+    CommandLineRunner init(InitializableStorageService storageService) {
+        return (args) -> {
             storageService.init();
-		};
-	}
+        };
+    }
 }

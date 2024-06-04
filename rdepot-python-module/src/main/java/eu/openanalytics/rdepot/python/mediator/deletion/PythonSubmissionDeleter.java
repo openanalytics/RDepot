@@ -20,20 +20,19 @@
  */
 package eu.openanalytics.rdepot.python.mediator.deletion;
 
-import org.springframework.stereotype.Component;
-
 import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.mediator.deletion.SubmissionDeleter;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.Service;
+import org.springframework.stereotype.Component;
 
 @Component
 public class PythonSubmissionDeleter extends SubmissionDeleter {
 
-	public PythonSubmissionDeleter(NewsfeedEventService newsfeedEventService, 
-			Service<Submission> resourceService,
-			PythonPackageDeleter packageDeleter) {
-		super(newsfeedEventService, resourceService, packageDeleter);
-	}
-
+    public PythonSubmissionDeleter(
+            NewsfeedEventService newsfeedEventService,
+            Service<Submission> resourceService,
+            PythonPackageDeleter packageDeleter) {
+        super(newsfeedEventService, resourceService, packageDeleter);
+    }
 }

@@ -1,84 +1,84 @@
 {
-    "status": "WARNING",
-    "code": 200,
-    "message": "Your package has been submitted successfully but the repository failed to synchronize with the remote server.",
-    "messageCode": "warning.synchronization.failure",
-    "data": {
-        "id": 47,
-        "packageBag": {
-            "id": 47,
-            "user": {
-                "id": 4,
-                "name": "Albert Einstein",
-                "login": "einstein",
-                "email": "einstein@ldap.forumsys.com"
-            },
-            "repository": {
-                "id": 3,
-                "name": "testrepo2",
-                "publicationUri": "http://localhost/repo/testrepo2",
-                "technology": "R"
-            },
-            "submission": {
-                "id": 47,
-                "state": "ACCEPTED"
-            },
-            "name": "Benchmarking",
-            "version": "0.10",
-            "source": "/opt/rdepot/repositories/3/10283244/Benchmarking_0.10.tar.gz",
-            "active": true,
-            "deleted": false,
-            "technology": "R",
-            "description": "Estimates and graphs deterministic (DEA) frontier models with different technology assumptions (fdh, vrs, drs, crs, irs,\\n add). Also handles possible slacks, peers and their weights\\n (lambdas), optimal cost, revenue and profit allocation,\\n super--efficiency, and mergers. A comparative method for\\n estimating SFA efficiencies is included.\\n",
-            "author": "Peter Bogetoft and Lars Otto",
-            "title": "Benchmark and frontier analysis using DEA and SFA",
-            "url": null,
-            "links": [
-                {
-                    "rel": "self",
-                    "href": "http://localhost:8017/api/v2/manager/r/packages/47"
-                },
-                {
-                    "rel": "packageList",
-                    "href": "http://localhost:8017/api/v2/manager/packages"
-                },
-                {
-                    "rel": "self",
-                    "href": "http://localhost:8017/api/v2/manager/r/packages/47",
-                    "type": "PATCH"
-                },
-                {
-                    "rel": "self",
-                    "href": "http://localhost:8017/api/v2/manager/r/packages/47",
-                    "type": "DELETE"
-                }
-            ]
-        },
-        "submitter": {
-            "id": 4,
-            "name": "Albert Einstein",
-            "login": "einstein",
-            "email": "einstein@ldap.forumsys.com"
-        },
-        "approver": {
-            "id": 4,
-            "name": "Albert Einstein",
-            "login": "einstein",
-            "email": "einstein@ldap.forumsys.com"
-        },
-        "changes": null,
-        "state": "ACCEPTED",
-        "created": "2024-03-28",
+  "code": 201,
+  "data": {
+    "approver": {
+      "name": "Albert Einstein",
+      "id": 4,
+      "login": "einstein",
+      "email": "einstein@ldap.forumsys.com"
+    },
+    "submitter": {
+      "name": "Albert Einstein",
+      "id": 4,
+      "login": "einstein",
+      "email": "einstein@ldap.forumsys.com"
+    },
+    "created": "2024-05-21",
+    "changes": null,
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/r/submissions/47"
+      },
+      {
+        "rel": "submissionList",
+        "href": "http://localhost:8017/api/v2/manager/r/submissions"
+      }
+    ],
+    "id": 47,
+    "state": "ACCEPTED",
+    "technology": "R",
+    "packageBag": {
+      "author": "Barret Schloerke [aut, cre], Di Cook [aut, ths],\\n Joseph Larmarange [aut],\\n Francois Briatte [aut],\\n Moritz Marbach [aut],\\n Edwin Thoen [aut],\\n Amos Elberg [aut],\\n Ott Toomet [ctb],\\n Jason Crowley [aut],\\n Heike Hofmann [ths],\\n Hadley Wickham [ths]\\n",
+      "active": true,
+      "description": "The R package 'ggplot2' is a plotting system based on the grammar of graphics.\\n 'GGally' extends 'ggplot2' by adding several functions\\n to reduce the complexity of combining geometric objects with transformed data.\\n Some of these functions include a pairwise plot matrix, a two group pairwise plot\\n matrix, a parallel coordinates plot, a survival plot, and several functions to\\n plot networks.\\n",
+      "technology": "R",
+      "repository": {
+        "name": "testrepo2",
+        "id": 3,
+        "published": true,
         "technology": "R",
-        "links": [
-            {
-                "rel": "self",
-                "href": "http://localhost:8017/api/v2/manager/r/submissions/47"
-            },
-            {
-                "rel": "submissionList",
-                "href": "http://localhost:8017/api/v2/manager/r/submissions"
-            }
-        ]
+        "publicationUri": "http://localhost/repo/testrepo2"
+      },
+      "title": "Extension to 'ggplot2'",
+      "version": "2.2.1",
+      "url": "https://ggobi.github.io/ggally/, https://github.com/ggobi/ggally",
+      "deleted": false,
+      "name": "GGally",
+      "submission": {
+        "id": 47,
+        "state": "ACCEPTED"
+      },
+      "links": [
+        {
+          "rel": "self",
+          "href": "http://localhost:8017/api/v2/manager/r/packages/47"
+        },
+        {
+          "rel": "packageList",
+          "href": "http://localhost:8017/api/v2/manager/packages"
+        },
+        {
+          "rel": "self",
+          "href": "http://localhost:8017/api/v2/manager/r/packages/47",
+          "type": "PATCH"
+        },
+        {
+          "rel": "self",
+          "href": "http://localhost:8017/api/v2/manager/r/packages/47",
+          "type": "DELETE"
+        }
+      ],
+      "id": 47,
+      "user": {
+        "name": "Albert Einstein",
+        "id": 4,
+        "login": "einstein",
+        "email": "einstein@ldap.forumsys.com"
+      }
     }
+  },
+  "messageCode": "success.resource.created",
+  "message": "Your resource has been created successfully.",
+  "status": "SUCCESS"
 }

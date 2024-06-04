@@ -22,6 +22,10 @@ package eu.openanalytics.rdepot.test.unit;
 
 import static org.mockito.ArgumentMatchers.any;
 
+import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
+import eu.openanalytics.rdepot.test.context.TestWebApplicationContext;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -34,39 +38,35 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.ContextLoaderListener;
 
-import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
-import eu.openanalytics.rdepot.test.context.TestWebApplicationContext;
-import jakarta.servlet.ServletContextEvent;
-import jakarta.servlet.ServletContextListener;
-
 @ExtendWith(MockitoExtension.class)
 public abstract class UnitTest {
-	
-	@Mock
-	protected MessageSource messageSource;
-	
-	@BeforeEach
-	public void setUp() {
-		//This piece of code is used mainly to provide mock message source for static methods
-		MockServletContext msc = new MockServletContext();
-		msc.addInitParameter(ContextLoader.CONTEXT_CLASS_PARAM, 
-				TestWebApplicationContext.class.getName());
-		ServletContextListener listener = new ContextLoaderListener();
-		ServletContextEvent event = new ServletContextEvent(msc);
-		listener.contextInitialized(event);
-	    Mockito.lenient().when(messageSource.getMessage(any(), any(),any(), any())).thenAnswer(new Answer<String>() {
-			@Override
-			public String answer(InvocationOnMock invocation) throws Throwable {
-				String messageCode = invocation.getArgument(0);
-				return messageCode;
-			}
-		});
-		new StaticMessageResolver(messageSource);
-	}
-	
-	protected void executeBashCommand(String... args) throws Exception {
-		Process process = Runtime.getRuntime().exec(args);
-		process.waitFor();
-		process.destroy();	
-	}
+
+    @Mock
+    protected MessageSource messageSource;
+
+    @BeforeEach
+    public void setUp() {
+        // This piece of code is used mainly to provide mock message source for static methods
+        MockServletContext msc = new MockServletContext();
+        msc.addInitParameter(ContextLoader.CONTEXT_CLASS_PARAM, TestWebApplicationContext.class.getName());
+        ServletContextListener listener = new ContextLoaderListener();
+        ServletContextEvent event = new ServletContextEvent(msc);
+        listener.contextInitialized(event);
+        Mockito.lenient()
+                .when(messageSource.getMessage(any(), any(), any(), any()))
+                .thenAnswer(new Answer<String>() {
+                    @Override
+                    public String answer(InvocationOnMock invocation) throws Throwable {
+                        String messageCode = invocation.getArgument(0);
+                        return messageCode;
+                    }
+                });
+        new StaticMessageResolver(messageSource);
+    }
+
+    protected void executeBashCommand(String... args) throws Exception {
+        Process process = Runtime.getRuntime().exec(args);
+        process.waitFor();
+        process.destroy();
+    }
 }

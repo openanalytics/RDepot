@@ -20,64 +20,59 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.hateoas;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.stereotype.Component;
-
 import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2AccessTokenController;
 import eu.openanalytics.rdepot.base.api.v2.converters.DtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.dtos.AccessTokenDto;
 import eu.openanalytics.rdepot.base.entities.AccessToken;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.service.UserService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.stereotype.Component;
 
 /**
  * {@link RepresentationModelAssembler Model Assembler}
  * for {@link AccessToken Access Tokens}.
  */
 @Component
-public class AccessTokenModelAssembler 
-	extends AbstractRoleAwareModelAssembler<AccessToken, AccessTokenDto> {
+public class AccessTokenModelAssembler extends AbstractRoleAwareModelAssembler<AccessToken, AccessTokenDto> {
 
-	private final UserService userService;
-	
-	@Autowired
-	public AccessTokenModelAssembler(DtoConverter<AccessToken, AccessTokenDto> dtoConverter,
-			UserService userService) {
-		super(dtoConverter, ApiV2AccessTokenController.class, "accessToken", Optional.empty());
-		this.userService = userService;
-	}
-	
-	private AccessTokenModelAssembler(DtoConverter<AccessToken, AccessTokenDto> dtoConverter,
-			UserService userService, User user) {
-		super(dtoConverter, ApiV2AccessTokenController.class, "accessToken", Optional.of(user));
-		this.userService = userService;
-	}
+    private final UserService userService;
 
-	@Override
-	public RepresentationModelAssembler<AccessToken, EntityModel<AccessTokenDto>> assemblerWithUser(User user) {
-		return new AccessTokenModelAssembler(dtoConverter, userService, user);
-	}
+    @Autowired
+    public AccessTokenModelAssembler(DtoConverter<AccessToken, AccessTokenDto> dtoConverter, UserService userService) {
+        super(dtoConverter, ApiV2AccessTokenController.class, "accessToken", Optional.empty());
+        this.userService = userService;
+    }
 
-	@Override
-	protected List<Link> getLinksToMethodsWithLimitedAccess(AccessToken entity, User user, Link baseLink) {
-		List<Link> links = new ArrayList<>();
-		if(user.getId() == entity.getUser().getId()) {
-			links.add(baseLink.withType(HTTP_METHODS.PATCH.getValue()));
-			links.add(baseLink.withType(HTTP_METHODS.DELETE.getValue()));			
-		}
-		return links;
-	}
+    private AccessTokenModelAssembler(
+            DtoConverter<AccessToken, AccessTokenDto> dtoConverter, UserService userService, User user) {
+        super(dtoConverter, ApiV2AccessTokenController.class, "accessToken", Optional.of(user));
+        this.userService = userService;
+    }
 
-	@Override
-	protected Class<?> getExtensionControllerClass(AccessToken entity) {
-		return ApiV2AccessTokenController.class;
-	}
-	
+    @Override
+    public RepresentationModelAssembler<AccessToken, EntityModel<AccessTokenDto>> assemblerWithUser(User user) {
+        return new AccessTokenModelAssembler(dtoConverter, userService, user);
+    }
+
+    @Override
+    protected List<Link> getLinksToMethodsWithLimitedAccess(AccessToken entity, User user, Link baseLink) {
+        List<Link> links = new ArrayList<>();
+        if (user.getId() == entity.getUser().getId()) {
+            links.add(baseLink.withType(HTTP_METHODS.PATCH.getValue()));
+            links.add(baseLink.withType(HTTP_METHODS.DELETE.getValue()));
+        }
+        return links;
+    }
+
+    @Override
+    protected Class<?> getExtensionControllerClass(AccessToken entity) {
+        return ApiV2AccessTokenController.class;
+    }
 }

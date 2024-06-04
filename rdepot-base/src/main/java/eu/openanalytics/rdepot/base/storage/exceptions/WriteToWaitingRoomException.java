@@ -23,21 +23,19 @@ package eu.openanalytics.rdepot.base.storage.exceptions;
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 /**
- * Thrown when a newly uploaded {@link Package} 
- * cannot be written into the "waiting room" 
+ * Thrown when a newly uploaded {@link Package}
+ * cannot be written into the "waiting room"
  * where it would wait for acceptance.
  */
 public class WriteToWaitingRoomException extends LocalizedException {
 
-	@Serial
-	private static final long serialVersionUID = -6834647665319511857L;
+    @Serial
+    private static final long serialVersionUID = -6834647665319511857L;
 
-	public WriteToWaitingRoomException() {
-		super(MessageCodes.COULD_NOT_WRITE_TO_WAITING_ROOM);
-	}
-
+    public WriteToWaitingRoomException() {
+        super(MessageCodes.COULD_NOT_WRITE_TO_WAITING_ROOM);
+    }
 }

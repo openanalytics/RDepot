@@ -6,7 +6,7 @@
 \description{
  This function performs a leave-one-out cross validation for model
  selection with ABC via subsequent calls to the function
- \code{\link{postpr}}. 
+ \code{\link{postpr}}.
 }
 \usage{cv4postpr(index, sumstat, postpr.out = NULL, nval, tols, method,
 subset = NULL, kernel = "epanechnikov", numnet = 10, sizenet = 5, lambda
@@ -76,7 +76,7 @@ subset = NULL, kernel = "epanechnikov", numnet = 10, sizenet = 5, lambda
   when the neural networks are used). Beware that the actual number of
   cross-validation estimation steps that need to be performed is
   \code{nval}*the number of models.
-  
+
   The arguments for the function \code{\link{postpr}} can be supplied in
   two ways. First, simply give them as arguments when calling this
   function, in which case \code{postpr.out} can be \code{NULL}. Second,
@@ -90,7 +90,7 @@ subset = NULL, kernel = "epanechnikov", numnet = 10, sizenet = 5, lambda
   error from an object of class \code{"cv4postpr"} and
   \code{\link{plot.cv4postpr}} for visualizing the misclassification of
   the models using barplots.
-  
+
 }
 \value{
   An object of class \code{"cv4postpr"}, which is a list with the following

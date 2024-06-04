@@ -4,6 +4,6 @@
     "message": "Validation failed for the resource.",
     "messageCode": "error.validation",
     "data": [
-        "read.package.description.exception"
+        "read.r.package.description.exception"
     ]
 }

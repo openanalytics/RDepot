@@ -20,27 +20,26 @@
  */
 package eu.openanalytics.rdepot.python.validation;
 
-import org.springframework.stereotype.Component;
-import org.springframework.validation.Errors;
-
 import eu.openanalytics.rdepot.base.validation.RepositoryValidator;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.services.PythonRepositoryService;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
 
 @Component
-public class PythonRepositoryValidator extends RepositoryValidator<PythonRepository>{
-	
-	public PythonRepositoryValidator(PythonRepositoryService repositoryService) {
-		super(repositoryService);
-	}
+public class PythonRepositoryValidator extends RepositoryValidator<PythonRepository> {
 
-	@Override
-	public boolean supports(Class<?> clazz) {
-		return clazz.isAssignableFrom(PythonRepository.class);
-	}
+    public PythonRepositoryValidator(PythonRepositoryService repositoryService) {
+        super(repositoryService);
+    }
 
-	@Override
-	public void validate(Object target, Errors errors) {
-		validate((PythonRepository)target, errors);
-	}
+    @Override
+    public boolean supports(Class<?> clazz) {
+        return clazz.isAssignableFrom(PythonRepository.class);
+    }
+
+    @Override
+    public void validate(Object target, Errors errors) {
+        validate((PythonRepository) target, errors);
+    }
 }

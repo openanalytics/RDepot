@@ -27,14 +27,14 @@ import eu.openanalytics.rdepot.base.entities.Submission;
  * Can be disabled via a proper configuration flag in the application.yaml file.
  */
 public interface EmailService {
-	
-	/**
-	 * Sends an e-mail informing that the submission can be now accepted or rejected.
-	 */
-	void sendAcceptSubmissionEmail(Submission submission);
 
-	/**
-	 * Sends an e-mail informing that the submission has been cancelled by the submitter.
-	 */
-	void sendCancelledSubmissionEmail(Submission submission);
+    /**
+     * Sends an e-mail informing that the submission can be now accepted or rejected.
+     */
+    void sendAcceptSubmissionEmail(Submission submission);
+
+    /**
+     * Sends an e-mail informing that the submission has been cancelled by the submitter.
+     */
+    void sendCancelledSubmissionEmail(Submission submission);
 }

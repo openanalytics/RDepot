@@ -27,6 +27,6 @@ import lombok.Data;
  */
 @Data
 public class RepoResponse {
-	String id;
-	String message;
+    String id;
+    String message;
 }

@@ -32,31 +32,33 @@ import eu.openanalytics.rdepot.base.validation.exceptions.PackageDuplicateWithRe
 
 public class DuplicatePackageStrategy extends Strategy<Submission> {
 
-	/**
+    /**
      * @param resource             related resource
      * @param service              main service related to the resource
      * @param requester            user performing a request
      * @param newsfeedEventService used to register event
      */
-	public DuplicatePackageStrategy(Submission resource, Service<Submission> service, User requester,
-			NewsfeedEventService newsfeedEventService) {
-		super(resource, service, requester, newsfeedEventService);
-	}
-	
-	@Override
-	protected Submission actualStrategy() throws StrategyFailure {
-		throw new StrategyFailure(new PackageDuplicateWithReplaceOff(resource), false);
-	}
+    public DuplicatePackageStrategy(
+            Submission resource,
+            Service<Submission> service,
+            User requester,
+            NewsfeedEventService newsfeedEventService) {
+        super(resource, service, requester, newsfeedEventService);
+    }
 
-	@Override
-	protected NewsfeedEvent generateEvent(Submission resource) {
-		return null;
-	}
+    @Override
+    protected Submission actualStrategy() throws StrategyFailure {
+        throw new StrategyFailure(new PackageDuplicateWithReplaceOff(resource), false);
+    }
 
-	@Override
-	protected void postStrategy() throws StrategyFailure {}
+    @Override
+    protected NewsfeedEvent generateEvent(Submission resource) {
+        return null;
+    }
 
-	@Override
-	public void revertChanges() throws StrategyReversionFailure {}
+    @Override
+    protected void postStrategy() throws StrategyFailure {}
 
+    @Override
+    public void revertChanges() throws StrategyReversionFailure {}
 }

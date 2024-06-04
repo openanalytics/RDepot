@@ -34,9 +34,9 @@ caption = NULL, \dots)
   \item{onefile}{
     logical, if \code{TRUE} (the default) allow multiple figures in one
     file.  If \code{FALSE}, generate a file name containing the page
-    number for each page. See \code{\link{postscript}} for further details.} 
+    number for each page. See \code{\link{postscript}} for further details.}
   \item{ask}{
-    
+
     logical; if \code{TRUE} (the default), the user is asked before each
     plot, see \code{par(ask=.)}.}
 
@@ -54,7 +54,7 @@ caption = NULL, \dots)
     other parameters passed to \code{hist}.}
 }
 \value{
-  
+
   A list of length equal to the number of parameters, the elements of
   which are objects of class \code{"histogram"}. See \code{\link{hist}}
   for details.}
@@ -63,7 +63,7 @@ caption = NULL, \dots)
   \code{\link{abc}}, \code{\link{plot.abc}}
 }
 \examples{
-## see ?abc for examples 
+## see ?abc for examples
 }
 \keyword{hplot}
 % Converted by Sd2Rd version 1.15.

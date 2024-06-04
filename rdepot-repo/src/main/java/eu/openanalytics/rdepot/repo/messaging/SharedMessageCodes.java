@@ -21,6 +21,6 @@
 package eu.openanalytics.rdepot.repo.messaging;
 
 public class SharedMessageCodes {
-	public static final String RESPONSE_OK = "OK";
-	public static final String RESPONSE_ERROR = "ERROR";
+    public static final String RESPONSE_OK = "OK";
+    public static final String RESPONSE_ERROR = "ERROR";
 }

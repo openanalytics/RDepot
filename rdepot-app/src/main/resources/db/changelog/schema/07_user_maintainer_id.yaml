@@ -1,0 +1,30 @@
+databaseChangeLog:
+  - changeSet:
+      id: 00_01_user_maintainer_id
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - columnExists:
+            tableName: package
+            columnName: maintainer_id
+            schemaName: public
+      changes:
+        -  dropForeignKeyConstraint:
+             baseTableName:  package
+             baseTableSchemaName:  public
+             constraintName:  is_maintainer_of
+        -  renameColumn:
+             newColumnName:  user_maintainer_id
+             oldColumnName:  maintainer_id
+             schemaName:  public
+             tableName:  package
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: package
+            baseColumnNames: user_maintainer_id
+            constraintName: is_maintainer_of
+            referencedTableSchemaName: public
+            referencedTableName: user
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION

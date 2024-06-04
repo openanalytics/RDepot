@@ -20,19 +20,17 @@
  */
 package eu.openanalytics.rdepot.base.service;
 
-import org.springframework.stereotype.Component;
-
 import eu.openanalytics.rdepot.base.daos.PackageDao;
 import eu.openanalytics.rdepot.base.entities.Package;
+import org.springframework.stereotype.Component;
 
 /**
  * Package service that aggregates packages of all technologies.
  */
 @Component
 public class CommonPackageService extends PackageService<Package> {
-	
-	public CommonPackageService(PackageDao<Package> dao) {
-		super(dao);
-	}
-	
+
+    public CommonPackageService(PackageDao<Package> dao) {
+        super(dao);
+    }
 }

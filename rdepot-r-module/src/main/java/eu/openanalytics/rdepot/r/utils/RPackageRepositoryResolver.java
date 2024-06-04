@@ -20,18 +20,16 @@
  */
 package eu.openanalytics.rdepot.r.utils;
 
-import org.springframework.stereotype.Component;
-
 import eu.openanalytics.rdepot.base.utils.PackageRepositoryResolver;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
+import org.springframework.stereotype.Component;
 
 @Component
 public class RPackageRepositoryResolver implements PackageRepositoryResolver<RRepository, RPackage> {
 
-	@Override
-	public RRepository getRepositoryForPackage(RPackage packageBag) {
-		return packageBag.getRepository();
-	}
-
+    @Override
+    public RRepository getRepositoryForPackage(RPackage packageBag) {
+        return packageBag.getRepository();
+    }
 }

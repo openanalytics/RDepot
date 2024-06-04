@@ -22,16 +22,14 @@ package eu.openanalytics.rdepot.base.synchronization;
 
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 public class SynchronizeRepositoryException extends LocalizedException {
 
-	@Serial
-	private static final long serialVersionUID = 639575032059848229L;
+    @Serial
+    private static final long serialVersionUID = 639575032059848229L;
 
-	public SynchronizeRepositoryException() {
-		super(MessageCodes.COULD_NOT_SYNCHRONIZE_REPOSITORY);
-	}
-
+    public SynchronizeRepositoryException() {
+        super(MessageCodes.COULD_NOT_SYNCHRONIZE_REPOSITORY);
+    }
 }

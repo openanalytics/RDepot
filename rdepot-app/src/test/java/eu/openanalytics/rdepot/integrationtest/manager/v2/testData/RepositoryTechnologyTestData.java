@@ -26,18 +26,18 @@ import lombok.Getter;
 @Builder
 @Getter
 public class RepositoryTechnologyTestData {
-	private String technology;
-	private String repoNameToCreate;
-	private String repoNameToDuplicate;
-	private String repoNameToEdit;
-	private String repoIdToPublish;
-	private String repoIdToUnpublish;
-	private String repoIdToDelete;
-	private String repoIdToShiftDelete;
-	private String repoIdToEdit;
-	private String repoIdToRead;
-	private String deletedRepoId;
-	private int getEndpointNewEventsAmount;
-	private int deleteEndpointNewEventsAmount;
-	private int changeEndpointNewEventsAmount;
+    private String technology;
+    private String repoNameToCreate;
+    private String repoNameToDuplicate;
+    private String repoNameToEdit;
+    private String repoIdToPublish;
+    private String repoIdToUnpublish;
+    private String repoIdToDelete;
+    private String repoIdToShiftDelete;
+    private String repoIdToEdit;
+    private String repoIdToRead;
+    private String deletedRepoId;
+    private int getEndpointNewEventsAmount;
+    private int deleteEndpointNewEventsAmount;
+    private int changeEndpointNewEventsAmount;
 }

@@ -20,61 +20,56 @@
  */
 package eu.openanalytics.rdepot.base.service;
 
-import java.util.Objects;
-import java.util.Optional;
-
-import org.springframework.stereotype.Service;
-
 import eu.openanalytics.rdepot.base.config.props.UserSettingsConfiguration;
 import eu.openanalytics.rdepot.base.daos.UserSettingsDao;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.entities.UserSettings;
+import java.util.Objects;
+import java.util.Optional;
+import org.springframework.stereotype.Service;
 
 /**
  * Reads and write {@link UserSettings} from/into the database.
  */
 @Service
 public class UserSettingsService extends eu.openanalytics.rdepot.base.service.Service<UserSettings> {
-	
-	private final UserSettingsDao dao;
-	private final UserSettingsConfiguration config;
-	
-	public UserSettingsService(UserSettingsDao dao, UserSettingsConfiguration config) {
-		super(dao);
-		this.dao = dao;
-		this.config = config;
-	}	
-	
-	/**
-	 * Fetches settings for a given user.
-	 */
-	public Optional<UserSettings> findSettingsByUser(User user) {
-		return dao.findByUserId(user.getId());
-	}
-	
-	/**
-	 * Retrieves current {@link UserSettings settings} for a given {@link User user}.
-	 * If they are not yet set, {@link #getDefaultSettings() defaults} 
-	 * are assigned and returned.
-	 * @return current or default user settings
-	 */
-	public UserSettings getUserSettings(User user) {
-		UserSettings settings = user.getUserSettings();
-		if(Objects.isNull(settings)) {
-			settings = getDefaultSettings();
-			settings.setUser(user);
-		}		
-		return settings;
-	}
-	
-	/**
-	 * @return Default user settings, 
-	 *  based on values from {@link UserSettingsConfiguration}.
-	 */
-	public UserSettings getDefaultSettings() {
-		return new UserSettings(false, 
-				config.getLanguage(), 
-				config.getTheme(), 
-				config.getPageSize());
-	}
+
+    private final UserSettingsDao dao;
+    private final UserSettingsConfiguration config;
+
+    public UserSettingsService(UserSettingsDao dao, UserSettingsConfiguration config) {
+        super(dao);
+        this.dao = dao;
+        this.config = config;
+    }
+
+    /**
+     * Fetches settings for a given user.
+     */
+    public Optional<UserSettings> findSettingsByUser(User user) {
+        return dao.findByUserId(user.getId());
+    }
+
+    /**
+     * Retrieves current {@link UserSettings settings} for a given {@link User user}.
+     * If they are not yet set, {@link #getDefaultSettings() defaults}
+     * are assigned and returned.
+     * @return current or default user settings
+     */
+    public UserSettings getUserSettings(User user) {
+        UserSettings settings = user.getUserSettings();
+        if (Objects.isNull(settings)) {
+            settings = getDefaultSettings();
+            settings.setUser(user);
+        }
+        return settings;
+    }
+
+    /**
+     * @return Default user settings,
+     *  based on values from {@link UserSettingsConfiguration}.
+     */
+    public UserSettings getDefaultSettings() {
+        return new UserSettings(false, config.getLanguage(), config.getTheme(), config.getPageSize());
+    }
 }

@@ -20,14 +20,27 @@
  */
 package eu.openanalytics.rdepot.repo.r.storage;
 
+import eu.openanalytics.rdepot.repo.exception.RestoreRepositoryException;
+import eu.openanalytics.rdepot.repo.model.Technology;
+import eu.openanalytics.rdepot.repo.r.model.SynchronizeCranRepositoryRequestBody;
+import eu.openanalytics.rdepot.repo.storage.StorageService;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import eu.openanalytics.rdepot.repo.r.model.SynchronizeCranRepositoryRequestBody;
-import eu.openanalytics.rdepot.repo.storage.StorageService;
-
 public interface CranStorageService extends StorageService<SynchronizeCranRepositoryRequestBody> {
-	Map<String, File> getPackagesFiles(String repository, boolean archive);
+    Map<String, File> getPackagesFiles(String repository, boolean archive);
+
     Map<String, List<File>> getArchiveFromRepository(String repository);
+
+    void removeNonExistingArchivePackagesFromRepo(List<String> packages, String repository)
+            throws RestoreRepositoryException;
+
+    void generateArchiveRds(String repository) throws IOException;
+
+    @Override
+    default Technology getTechnology() {
+        return Technology.R;
+    }
 }

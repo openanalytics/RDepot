@@ -20,12 +20,10 @@
  */
 package eu.openanalytics.rdepot.base.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import eu.openanalytics.rdepot.base.technology.Technology;
 import java.util.Date;
 import java.util.Optional;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import eu.openanalytics.rdepot.base.technology.Technology;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -35,11 +33,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class SynchronizationStatus {
-	private Integer repositoryId;
-	private Date timestamp;
-	private Optional<Exception> error = Optional.empty();
-	private boolean pending;
+    private Integer repositoryId;
+    private Date timestamp;
+    private Optional<Exception> error = Optional.empty();
+    private boolean pending;
 
-	@JsonIgnore
-	private Technology technology;
+    @JsonIgnore
+    private Technology technology;
 }

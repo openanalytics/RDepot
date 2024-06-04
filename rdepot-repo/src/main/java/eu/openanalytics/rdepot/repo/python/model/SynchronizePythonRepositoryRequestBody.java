@@ -20,22 +20,29 @@
  */
 package eu.openanalytics.rdepot.repo.python.model;
 
+import eu.openanalytics.rdepot.repo.hash.model.HashMethod;
+import eu.openanalytics.rdepot.repo.model.SynchronizeRepositoryRequestBody;
+import eu.openanalytics.rdepot.repo.model.Technology;
+import java.util.Map;
 import org.springframework.web.multipart.MultipartFile;
 
-import eu.openanalytics.rdepot.repo.model.SynchronizeRepositoryRequestBody;
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 public class SynchronizePythonRepositoryRequestBody extends SynchronizeRepositoryRequestBody {
-	MultipartFile[] filesToUpload;
-	String[] filesToDelete;
 
-	public SynchronizePythonRepositoryRequestBody(String id, MultipartFile[] filesToUpload, String[] filesToDelete, String versionBefore, String versionAfter,
-			String page, String repository) {
-		super(page, repository, id, versionBefore, versionAfter);
-		this.filesToUpload = filesToUpload;
-		this.filesToDelete = filesToDelete;
-	}
+    public SynchronizePythonRepositoryRequestBody(
+            String id,
+            MultipartFile[] filesToUpload,
+            String[] filesToDelete,
+            String versionBefore,
+            String versionAfter,
+            String page,
+            String repository,
+            Map<String, String> checksums,
+            HashMethod hashMethod) {
+        super(page, repository, id, versionBefore, versionAfter, checksums, hashMethod, filesToUpload, filesToDelete);
+    }
+
+    @Override
+    public Technology getTechnology() {
+        return Technology.PYTHON;
+    }
 }

@@ -22,9 +22,9 @@ package eu.openanalytics.rdepot.repo.exception;
 
 public class InitTrashDirectoryException extends Exception {
 
-	private static final long serialVersionUID = 2434381662852803993L;
-	
-	public InitTrashDirectoryException(String id) {
-		super("Could not create trash directory for request " + id);
-	}
+    private static final long serialVersionUID = 2434381662852803993L;
+
+    public InitTrashDirectoryException(String id) {
+        super("Could not create trash directory for request " + id);
+    }
 }

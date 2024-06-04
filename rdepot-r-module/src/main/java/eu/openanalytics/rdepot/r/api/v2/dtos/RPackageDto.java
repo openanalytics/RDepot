@@ -31,27 +31,27 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class RPackageDto extends PackageDto {
-	
-	private String depends;
-	private String imports;
-	private String suggests;
-	private String systemRequirements;
-	private String license;
-	private String md5sum;
-	
-	public RPackageDto(RPackage packageBag) {
-		super(packageBag);
-		this.depends = packageBag.getDepends();
-		this.imports = packageBag.getImports();
-		this.suggests = packageBag.getSuggests();
-		this.systemRequirements = packageBag.getSystemRequirements();
-		this.license = packageBag.getLicense();
-		this.md5sum = packageBag.getMd5sum();
-	}
 
-	@Override
-	@JsonIgnore
-	public RPackage getEntity() {
-		return (RPackage) entity;
-	}
+    private String depends;
+    private String imports;
+    private String suggests;
+    private String systemRequirements;
+    private String license;
+    private String md5sum;
+
+    public RPackageDto(RPackage packageBag) {
+        super(packageBag);
+        this.depends = packageBag.getDepends();
+        this.imports = packageBag.getImports();
+        this.suggests = packageBag.getSuggests();
+        this.systemRequirements = packageBag.getSystemRequirements();
+        this.license = packageBag.getLicense();
+        this.md5sum = packageBag.getMd5sum();
+    }
+
+    @Override
+    @JsonIgnore
+    public RPackage getEntity() {
+        return (RPackage) entity;
+    }
 }

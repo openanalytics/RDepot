@@ -26,7 +26,7 @@ databaseChangeLog:
                   type: integer
                   constraints:
                     nullable: false
-                    unique: false      
+                    unique: false
               - column:
                   name: name
                   type: text
@@ -59,7 +59,7 @@ databaseChangeLog:
               - column:
                   name: deleted
                   type: boolean
-                  defaultValueBoolean: false    
+                  defaultValueBoolean: false
   - changeSet:
       id: 06_02_addForeignKeyConstraint_of_user_access_token
       author: dglebowska
@@ -99,6 +99,5 @@ databaseChangeLog:
               - column:
                   name: related_accesstoken_id
                   type: integer
-                  constraints: 
+                  constraints:
                     nullable: true
- 

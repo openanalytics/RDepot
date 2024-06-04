@@ -23,20 +23,18 @@ package eu.openanalytics.rdepot.base.service.exceptions;
 import eu.openanalytics.rdepot.base.entities.enums.ResourceType;
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-
 import java.io.Serial;
 
 /**
- * Thrown when conversion 
+ * Thrown when conversion
  * between {@link String} and {@link ResourceType} fails.
  */
 public class UnknownResourceType extends LocalizedException {
 
-	@Serial
-	private static final long serialVersionUID = 3539799984087057997L;
+    @Serial
+    private static final long serialVersionUID = 3539799984087057997L;
 
-	public UnknownResourceType() {
-		super(MessageCodes.COULD_NOT_RESOLVE_RESOURCE_TYPE);
-	}
-
+    public UnknownResourceType() {
+        super(MessageCodes.COULD_NOT_RESOLVE_RESOURCE_TYPE);
+    }
 }

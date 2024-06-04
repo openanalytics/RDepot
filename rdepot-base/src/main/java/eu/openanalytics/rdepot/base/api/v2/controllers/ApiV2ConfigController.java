@@ -22,6 +22,7 @@ package eu.openanalytics.rdepot.base.api.v2.controllers;
 
 import eu.openanalytics.rdepot.base.api.v2.dtos.PublicConfigurationDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.ResponseDto;
+import java.util.Locale;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -31,30 +32,38 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Locale;
-
 @RestController
 @PreAuthorize("hasAuthority('user')")
 @RequestMapping("/api/v2/manager/config")
 public class ApiV2ConfigController {
 
     private final boolean declarative;
+    private final boolean deletingPackagesEnabled;
+    private final boolean deletingRepositoriesEnabled;
+    private final boolean replacingPackagesEnabled;
     private final MessageSource messageSource;
     private final Locale locale = LocaleContextHolder.getLocale();
 
     public ApiV2ConfigController(
             MessageSource messageSource,
-            @Value("${declarative}") String declarative) {
+            @Value("${declarative}") String declarative,
+            @Value("${deleting.packages.enabled}") String deletingPackagesEnabled,
+            @Value("${deleting.repositories.enabled}") String deletingRepositoriesEnabled,
+            @Value("${replacing.packages.enabled}") String replacingPackagesEnabled) {
         this.messageSource = messageSource;
         this.declarative = Boolean.parseBoolean(declarative);
+        this.deletingPackagesEnabled = Boolean.parseBoolean(deletingPackagesEnabled);
+        this.deletingRepositoriesEnabled = Boolean.parseBoolean(deletingRepositoriesEnabled);
+        this.replacingPackagesEnabled = Boolean.parseBoolean(replacingPackagesEnabled);
     }
 
     @GetMapping
     public ResponseEntity<ResponseDto<PublicConfigurationDto>> getPublicConfig() {
-        final ResponseDto<PublicConfigurationDto> dto = ResponseDto
-                .generateSuccessBody(messageSource, locale,
-                        new PublicConfigurationDto(declarative)
-                );
+        final ResponseDto<PublicConfigurationDto> dto = ResponseDto.generateSuccessBody(
+                messageSource,
+                locale,
+                new PublicConfigurationDto(
+                        declarative, deletingPackagesEnabled, deletingRepositoriesEnabled, replacingPackagesEnabled));
 
         return ResponseEntity.ok(dto);
     }

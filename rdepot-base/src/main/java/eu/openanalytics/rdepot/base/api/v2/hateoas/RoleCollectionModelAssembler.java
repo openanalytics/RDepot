@@ -22,31 +22,28 @@ package eu.openanalytics.rdepot.base.api.v2.hateoas;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
+import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2UserController;
+import eu.openanalytics.rdepot.base.api.v2.dtos.RoleDto;
+import eu.openanalytics.rdepot.base.entities.Role;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import lombok.NonNull;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
-
-import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2UserController;
-import eu.openanalytics.rdepot.base.api.v2.dtos.RoleDto;
-import eu.openanalytics.rdepot.base.entities.Role;
 
 /**
  * {@link RepresentationModelAssembler Model Assembler}
  * for {@link Role User Roles}.
  */
 @Component
-public class RoleCollectionModelAssembler implements RepresentationModelAssembler
-	<List<Role>, CollectionModel<RoleDto>>  {
+public class RoleCollectionModelAssembler
+        implements RepresentationModelAssembler<List<Role>, CollectionModel<RoleDto>> {
 
-	@Override
-	public @NonNull CollectionModel<RoleDto> toModel(List<Role> entities) {
-		return CollectionModel.of(
-				entities.stream().map(RoleDto::new).collect(Collectors.toList()),
-				linkTo(ApiV2UserController.class).slash("roles").withSelfRel());
-	}
-
+    @Override
+    public @NonNull CollectionModel<RoleDto> toModel(List<Role> entities) {
+        return CollectionModel.of(
+                entities.stream().map(RoleDto::new).collect(Collectors.toList()),
+                linkTo(ApiV2UserController.class).slash("roles").withSelfRel());
+    }
 }

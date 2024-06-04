@@ -29,130 +29,139 @@ import eu.openanalytics.rdepot.base.validation.ValidationResult;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.services.PythonPackageService;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Objects;
-import java.util.Optional;
-
 /**
  * Validates Python packages.
  */
-
 @Component
 public class PythonPackageValidator implements PackageValidator<PythonPackage> {
 
-	private final Environment env;
-	private final SubmissionService submissionService;
-	private final PythonPackageService packageService;
-	
-	public PythonPackageValidator(SubmissionService submissionService, PythonPackageService pythonPackageService, Environment environment) {
-		this.env = environment;
-		this.packageService = pythonPackageService;
-		this.submissionService = submissionService;
-	}
+    private final Environment env;
+    private final SubmissionService submissionService;
+    private final PythonPackageService packageService;
 
-	private void validateNotEmpty(@NonNull String propertyName, String property, String messageCode, DataSpecificValidationResult<Submission> validationResult) {
-		if(StringUtils.isBlank(property)) {
-			validationResult.error(propertyName, messageCode);
-		}
-	}
-	
-	
-	public void validateUploadPackage(PythonPackage packageBag, boolean replace, DataSpecificValidationResult<Submission> validationResult) {
-		validateName(packageBag.getName(), validationResult);
-		validateNotEmpty("license", packageBag.getLicense(), MessageCodes.EMPTY_LICENSE, validationResult);
-		validateNotEmpty("hash", packageBag.getHash(), MessageCodes.EMPTY_MD5SUM, validationResult);
-		validateVersion(packageBag, replace, validationResult);
-	}
+    public PythonPackageValidator(
+            SubmissionService submissionService, PythonPackageService pythonPackageService, Environment environment) {
+        this.env = environment;
+        this.packageService = pythonPackageService;
+        this.submissionService = submissionService;
+    }
 
-	private void validateName(final String name, final DataSpecificValidationResult<Submission> validationResult) {
-		validateNotEmpty("name", name, MessageCodes.EMPTY_NAME, validationResult);
-		if(!StringUtils.isAsciiPrintable(name) || !name.matches("^[A-Za-z][A-Za-z-_\\d.]+(?<!\\.)$"))
-			validationResult.error("name", MessageCodes.INVALID_PACKAGE_NAME);
-	}
+    private void validateNotEmpty(
+            @NonNull String propertyName,
+            String property,
+            String messageCode,
+            DataSpecificValidationResult<Submission> validationResult) {
+        if (StringUtils.isBlank(property)) {
+            validationResult.error(propertyName, messageCode);
+        }
+    }
 
-	public void validate(PythonPackage packageBag, boolean replace, DataSpecificValidationResult<Submission> errors) {
-		validateUploadPackage(packageBag, replace, errors);
-		if(packageBag.getId() > 0) {
-			Optional<PythonPackage> exsitingPackageOptional = packageService.findById(packageBag.getId()); 
-			if(exsitingPackageOptional.isEmpty()) {
-				errors.error("id", MessageCodes.NO_SUCH_PACKAGE_ERROR);
-			} else {
-				PythonPackage existingPackage = exsitingPackageOptional.get();
-				if(existingPackage.getName() != null && !existingPackage.getName().equals(packageBag.getName())) 
-					errors.error("name", MessageCodes.FORBIDDEN_UPDATE);
-				if(existingPackage.getVersion() != null && !existingPackage.getVersion().equals(packageBag.getVersion()))
-					errors.error("version", MessageCodes.FORBIDDEN_UPDATE);
-				if(existingPackage.getLicense() != null && !existingPackage.getLicense().equals(packageBag.getLicense()))
-					errors.error("license", MessageCodes.FORBIDDEN_UPDATE);
-				if(packageBag.getSource() != null && !packageBag.getSource().equals(existingPackage.getSource()))
-					errors.error("source", MessageCodes.FORBIDDEN_UPDATE);
-				if(existingPackage.getUser() != null && !existingPackage.getUser().equals(packageBag.getUser()))
-					errors.error("user", MessageCodes.FORBIDDEN_UPDATE);
-				if(existingPackage.getRepository() != null && !existingPackage.getRepository().equals(packageBag.getRepository()))
-					errors.error("repository", MessageCodes.FORBIDDEN_UPDATE);
-				if(existingPackage.getHash() != null && !existingPackage.getHash().equals(packageBag.getHash()))
-					errors.error("hash", MessageCodes.FORBIDDEN_UPDATE);
-			}
-		}
-	}
+    public void validateUploadPackage(
+            PythonPackage packageBag, boolean replace, DataSpecificValidationResult<Submission> validationResult) {
+        validateName(packageBag.getName(), validationResult);
+        validateNotEmpty("license", packageBag.getLicense(), MessageCodes.EMPTY_LICENSE, validationResult);
+        validateNotEmpty("hash", packageBag.getHash(), MessageCodes.EMPTY_HASH, validationResult);
+        validateVersion(packageBag, replace, validationResult);
+    }
 
-	private void validateVersion(PythonPackage packageBag, boolean replace, DataSpecificValidationResult<Submission> validationResult) {
-		String version = packageBag.getVersion();
-		validateNotEmpty("version", version,
-				MessageCodes.EMPTY_VERSION, validationResult);
-		
-		String[] tokens = version.split("-|\\.");
-		String name = packageBag.getName();
-		PythonRepository repository = packageBag.getRepository();
-		int maxLength = Integer.valueOf(env.getProperty("package.version.max-numbers", "10"));
-		
-		if(tokens.length > maxLength) {
-			validationResult.error("version", MessageCodes.INVALID_VERSION);
-		}
-		
-		Optional<PythonPackage> sameVersionOpt = packageService
-				.findByNameAndVersionAndRepositoryAndDeleted(name, version, repository, false);
-		
-		if(sameVersionOpt.isPresent() && packageBag.getId() <= 0) {
-			Submission submission = submissionService.findByPackage(sameVersionOpt.get()).orElseThrow(
-					() -> new IllegalStateException("There is a package without submission which is not allowed: "
-							+ sameVersionOpt.get()));
-			validationResult.warning("version",
-					replace ? MessageCodes.DUPLICATE_VERSION_REPLACE_ON
-							: MessageCodes.DUPLICATE_VERSION_REPLACE_OFF,
-					submission);
-		}
-		
-	}
+    private void validateName(final String name, final DataSpecificValidationResult<Submission> validationResult) {
+        validateNotEmpty("name", name, MessageCodes.EMPTY_NAME, validationResult);
+        if (!StringUtils.isAsciiPrintable(name) || !name.matches("^[A-Za-z][A-Za-z-_\\d.]+(?<!\\.)$"))
+            validationResult.error("name", MessageCodes.INVALID_PACKAGE_NAME);
+    }
 
-	public void validate(MultipartFile multipartFile, ValidationResult validationResult) {
-		validateContentType(multipartFile, validationResult);
-		validateSize(multipartFile, validationResult);
-		validateFilename(multipartFile, validationResult);
-	}
+    public void validate(PythonPackage packageBag, boolean replace, DataSpecificValidationResult<Submission> errors) {
+        validateUploadPackage(packageBag, replace, errors);
+        if (packageBag.getId() > 0) {
+            Optional<PythonPackage> exsitingPackageOptional = packageService.findById(packageBag.getId());
+            if (exsitingPackageOptional.isEmpty()) {
+                errors.error("id", MessageCodes.NO_SUCH_PACKAGE_ERROR);
+            } else {
+                PythonPackage existingPackage = exsitingPackageOptional.get();
+                if (existingPackage.getName() != null
+                        && !existingPackage.getName().equals(packageBag.getName()))
+                    errors.error("name", MessageCodes.FORBIDDEN_UPDATE);
+                if (existingPackage.getVersion() != null
+                        && !existingPackage.getVersion().equals(packageBag.getVersion()))
+                    errors.error("version", MessageCodes.FORBIDDEN_UPDATE);
+                if (existingPackage.getLicense() != null
+                        && !existingPackage.getLicense().equals(packageBag.getLicense()))
+                    errors.error("license", MessageCodes.FORBIDDEN_UPDATE);
+                if (packageBag.getSource() != null && !packageBag.getSource().equals(existingPackage.getSource()))
+                    errors.error("source", MessageCodes.FORBIDDEN_UPDATE);
+                if (existingPackage.getUser() != null
+                        && !existingPackage.getUser().equals(packageBag.getUser()))
+                    errors.error("user", MessageCodes.FORBIDDEN_UPDATE);
+                if (existingPackage.getRepository() != null
+                        && !existingPackage.getRepository().equals(packageBag.getRepository()))
+                    errors.error("repository", MessageCodes.FORBIDDEN_UPDATE);
+                if (existingPackage.getHash() != null
+                        && !existingPackage.getHash().equals(packageBag.getHash()))
+                    errors.error("hash", MessageCodes.FORBIDDEN_UPDATE);
+            }
+        }
+    }
 
-	private void validateFilename(MultipartFile multipartFile, ValidationResult validationResult) {
-		String name = StringUtils.substringBeforeLast(multipartFile.getOriginalFilename(), "-");
-			if(!(name != null && !name.isEmpty() && !name.trim().equals(""))) {
-				validationResult.error("MULTIPART-FILE", MessageCodes.INVALID_FILENAME);
-		}
-	}
+    private void validateVersion(
+            PythonPackage packageBag, boolean replace, DataSpecificValidationResult<Submission> validationResult) {
+        String version = packageBag.getVersion();
+        validateNotEmpty("version", version, MessageCodes.EMPTY_VERSION, validationResult);
 
-	private void validateSize(MultipartFile multipartFile, ValidationResult validationResult) {
-		if(multipartFile.getSize() <= 0) {
-			validationResult.error("MULTIPART-FILE", MessageCodes.ERROR_EMPTY_FILE);
-		}
-	}
+        String[] tokens = version.split("-|\\.");
+        String name = packageBag.getName();
+        PythonRepository repository = packageBag.getRepository();
+        int maxLength = Integer.valueOf(env.getProperty("package.version.max-numbers", "10"));
 
-	private void validateContentType(MultipartFile multipartFile, ValidationResult validationResult) {
-		if(!(Objects.equals(multipartFile.getContentType(), "application/gzip") ||
-				Objects.equals(multipartFile.getContentType(), "application/x-gzip"))) {
-			validationResult.error("CONTENT-TYPE", MessageCodes.INVALID_CONTENTTYPE);
-		}
-	}
+        if (tokens.length > maxLength) {
+            validationResult.error("version", MessageCodes.INVALID_VERSION);
+        }
+
+        Optional<PythonPackage> sameVersionOpt =
+                packageService.findByNameAndVersionAndRepositoryAndDeleted(name, version, repository, false);
+
+        if (sameVersionOpt.isPresent() && packageBag.getId() <= 0) {
+            Submission submission = submissionService
+                    .findByPackage(sameVersionOpt.get())
+                    .orElseThrow(() -> new IllegalStateException(
+                            "There is a package without submission which is not allowed: " + sameVersionOpt.get()));
+            validationResult.warning(
+                    "version",
+                    replace ? MessageCodes.DUPLICATE_VERSION_REPLACE_ON : MessageCodes.DUPLICATE_VERSION_REPLACE_OFF,
+                    submission);
+        }
+    }
+
+    public void validate(MultipartFile multipartFile, ValidationResult validationResult) {
+        validateContentType(multipartFile, validationResult);
+        validateSize(multipartFile, validationResult);
+        validateFilename(multipartFile, validationResult);
+    }
+
+    private void validateFilename(MultipartFile multipartFile, ValidationResult validationResult) {
+        String name = StringUtils.substringBeforeLast(multipartFile.getOriginalFilename(), "-");
+        if (!(name != null && !name.isEmpty() && !name.trim().equals(""))) {
+            validationResult.error("MULTIPART-FILE", MessageCodes.INVALID_FILENAME);
+        }
+    }
+
+    private void validateSize(MultipartFile multipartFile, ValidationResult validationResult) {
+        if (multipartFile.getSize() <= 0) {
+            validationResult.error("MULTIPART-FILE", MessageCodes.ERROR_EMPTY_FILE);
+        }
+    }
+
+    private void validateContentType(MultipartFile multipartFile, ValidationResult validationResult) {
+        if (!(Objects.equals(multipartFile.getContentType(), "application/gzip")
+                || Objects.equals(multipartFile.getContentType(), "application/x-gzip"))) {
+            validationResult.error("CONTENT-TYPE", MessageCodes.INVALID_CONTENTTYPE);
+        }
+    }
 }

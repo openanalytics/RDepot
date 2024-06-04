@@ -20,7 +20,6 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.dtos;
 
-
 import eu.openanalytics.rdepot.base.entities.Repository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,15 +30,15 @@ import lombok.NoArgsConstructor;
  * Data Transfer Object for {@link Repository Repositories}
  */
 @Data
-@EqualsAndHashCode(callSuper=true)
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class RepositoryDto extends RepositorySimpleDto {
-	
-	private int numberOfPackages = -1;
-	
-	public RepositoryDto(Repository repository, int numberOfPackages) {
-		super(repository);
-		this.numberOfPackages = numberOfPackages;
-	}
+
+    private int numberOfPackages = -1;
+
+    public RepositoryDto(Repository repository, int numberOfPackages) {
+        super(repository);
+        this.numberOfPackages = numberOfPackages;
+    }
 }

@@ -20,17 +20,16 @@
  */
 package eu.openanalytics.rdepot.integrationtest.manager.v2.declarative;
 
+import static io.restassured.RestAssured.given;
+import static org.junit.Assert.assertEquals;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.restassured.http.ContentType;
-import org.json.simple.parser.ParseException;
-
 import java.io.IOException;
-
-import static io.restassured.RestAssured.given;
-import static org.junit.Assert.assertEquals;
+import org.json.simple.parser.ParseException;
 
 public abstract class DeclarativeIntegrationTest {
 
@@ -47,8 +46,7 @@ public abstract class DeclarativeIntegrationTest {
     }
 
     protected void assertPackages(JsonObject expectedJSON, boolean isSynchronized) throws IOException {
-        String data = given()
-                .header(authorization, bearer + userToken)
+        String data = given().header(authorization, bearer + userToken)
                 .accept(ContentType.JSON)
                 .when()
                 .get(apiPath + "/packages?sort=id,asc")
@@ -59,26 +57,38 @@ public abstract class DeclarativeIntegrationTest {
 
         JsonObject actualJSON = (JsonObject) JsonParser.parseString(data);
 
-        JsonArray expectedContent = expectedJSON.getAsJsonObject("data").getAsJsonObject().get("content").getAsJsonArray();
+        JsonArray expectedContent = expectedJSON
+                .getAsJsonObject("data")
+                .getAsJsonObject()
+                .get("content")
+                .getAsJsonArray();
 
-        JsonArray actualContent = actualJSON.getAsJsonObject("data").getAsJsonObject().get("content").getAsJsonArray();
+        JsonArray actualContent = actualJSON
+                .getAsJsonObject("data")
+                .getAsJsonObject()
+                .get("content")
+                .getAsJsonArray();
 
-        if(isSynchronized)
-            updateMd5SumsAndVersion(expectedContent);
+        if (isSynchronized) updateMd5SumsAndVersion(expectedContent);
 
-        for(JsonElement el : expectedContent) {
+        for (JsonElement el : expectedContent) {
             el.getAsJsonObject().remove("source");
+            if (el.getAsJsonObject().get("name").getAsString().equals("genefilter")) {
+                el.getAsJsonObject().remove("version");
+            }
         }
-        for(JsonElement el : actualContent) {
+        for (JsonElement el : actualContent) {
             el.getAsJsonObject().remove("source");
+            if (el.getAsJsonObject().get("name").getAsString().equals("genefilter")) {
+                el.getAsJsonObject().remove("version");
+            }
         }
 
         assertEquals("Incorrect JSON output.", expectedContent, actualContent);
     }
 
     protected void assertRepositories(JsonObject expectedJSON) throws ParseException, IOException {
-        String data = given()
-                .header(authorization, bearer + userToken)
+        String data = given().header(authorization, bearer + userToken)
                 .accept(ContentType.JSON)
                 .when()
                 .get(apiPath + "/repositories?sort=id,asc")

@@ -22,25 +22,23 @@ package eu.openanalytics.rdepot.r.test.strategy.answer;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import eu.openanalytics.rdepot.base.entities.EventChangedVariable;
 import java.util.Set;
-
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import eu.openanalytics.rdepot.base.entities.EventChangedVariable;
-
 public class AssertEventChangedValuesAnswer implements Answer<Object> {
-	
-	private final Set<EventChangedVariable> expectedValues;
 
-	public AssertEventChangedValuesAnswer(Set<EventChangedVariable> expectedValues) {
-		this.expectedValues = expectedValues;
-	}
-	
-	@Override
-	public Object answer(InvocationOnMock invocation) throws Throwable {
-		Set<EventChangedVariable> changedValues = invocation.getArgument(1);
-		assertTrue(changedValues.containsAll(expectedValues),"Not all changed values were registered.");
-		return null;
-	}
+    private final Set<EventChangedVariable> expectedValues;
+
+    public AssertEventChangedValuesAnswer(Set<EventChangedVariable> expectedValues) {
+        this.expectedValues = expectedValues;
+    }
+
+    @Override
+    public Object answer(InvocationOnMock invocation) throws Throwable {
+        Set<EventChangedVariable> changedValues = invocation.getArgument(1);
+        assertTrue(changedValues.containsAll(expectedValues), "Not all changed values were registered.");
+        return null;
+    }
 }

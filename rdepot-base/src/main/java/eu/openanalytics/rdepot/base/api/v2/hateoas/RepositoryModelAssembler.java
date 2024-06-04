@@ -20,19 +20,6 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.hateoas;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.stereotype.Component;
-
 import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2ReadingController;
 import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2RepositoryController;
 import eu.openanalytics.rdepot.base.api.v2.converters.DtoConverter;
@@ -41,61 +28,75 @@ import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.technology.Technology;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.stereotype.Component;
 
 /**
  * {@link RepresentationModelAssembler Model Assembler}
  * for {@link Repository Repositories}.
  */
 @Component
-public class RepositoryModelAssembler 
-	extends AbstractRoleAwareModelAssembler<Repository, RepositoryDto> {
-	
-	private final SecurityMediator securityMediator;
-	private final Map<Technology, Class<? extends ApiV2ReadingController<?, ?>>> 
-		repositoryControllerClassesByTechnology;
-	
-	@Value("${declarative}")
-	private String declarative;
-	
-	@Autowired
-	public RepositoryModelAssembler(DtoConverter<Repository, RepositoryDto> dtoConverter, 
-			@Qualifier("repositoryControllerClassesByTechnology")
-			Map<Technology, Class<? extends ApiV2ReadingController<?, ?>>> 
-			repositoryControllerClassesByTechnology, SecurityMediator securityMediator) {
-		super(dtoConverter, ApiV2RepositoryController.class, "repository", Optional.empty());
-		this.securityMediator = securityMediator;
-		this.repositoryControllerClassesByTechnology = repositoryControllerClassesByTechnology;
-	}
-	
-	private RepositoryModelAssembler(DtoConverter<Repository, RepositoryDto> dtoConverter, 
-			Map<Technology, Class<? extends ApiV2ReadingController<?, ?>>> 
-			repositoryControllerClassesByTechnology, SecurityMediator securityMediator, User user) {
-		super(dtoConverter, ApiV2RepositoryController.class, "repository", Optional.of(user));
-		this.securityMediator = securityMediator;
-		this.repositoryControllerClassesByTechnology = repositoryControllerClassesByTechnology;
-	}
+public class RepositoryModelAssembler extends AbstractRoleAwareModelAssembler<Repository, RepositoryDto> {
 
-	@Override
-	protected List<Link> getLinksToMethodsWithLimitedAccess(Repository entity, User user, Link baseLink) {
-		List<Link> links = new ArrayList<>();
-		
-		if(securityMediator.isAuthorizedToEdit(entity, user) 
-				&& !Boolean.parseBoolean(declarative)) {
-			links.add(baseLink.withType(HTTP_METHODS.PATCH.getValue()));
-			links.add(baseLink.withType(HTTP_METHODS.DELETE.getValue()));
-		}
-		
-		return links;
-	}
-	
-	@Override
-	public RepresentationModelAssembler<Repository, EntityModel<RepositoryDto>> assemblerWithUser(User user) {
-		return new RepositoryModelAssembler(dtoConverter, repositoryControllerClassesByTechnology, securityMediator, user);
-	}
+    private final SecurityMediator securityMediator;
+    private final Map<Technology, Class<? extends ApiV2ReadingController<?, ?>>>
+            repositoryControllerClassesByTechnology;
 
-	@Override
-	protected Class<?> getExtensionControllerClass(Repository entity) {
-		return repositoryControllerClassesByTechnology.getOrDefault(
-				entity.getTechnology(), ApiV2RepositoryController.class);
-	}
+    @Value("${declarative}")
+    private String declarative;
+
+    @Autowired
+    public RepositoryModelAssembler(
+            DtoConverter<Repository, RepositoryDto> dtoConverter,
+            @Qualifier("repositoryControllerClassesByTechnology")
+                    Map<Technology, Class<? extends ApiV2ReadingController<?, ?>>>
+                            repositoryControllerClassesByTechnology,
+            SecurityMediator securityMediator) {
+        super(dtoConverter, ApiV2RepositoryController.class, "repository", Optional.empty());
+        this.securityMediator = securityMediator;
+        this.repositoryControllerClassesByTechnology = repositoryControllerClassesByTechnology;
+    }
+
+    private RepositoryModelAssembler(
+            DtoConverter<Repository, RepositoryDto> dtoConverter,
+            Map<Technology, Class<? extends ApiV2ReadingController<?, ?>>> repositoryControllerClassesByTechnology,
+            SecurityMediator securityMediator,
+            User user) {
+        super(dtoConverter, ApiV2RepositoryController.class, "repository", Optional.of(user));
+        this.securityMediator = securityMediator;
+        this.repositoryControllerClassesByTechnology = repositoryControllerClassesByTechnology;
+    }
+
+    @Override
+    protected List<Link> getLinksToMethodsWithLimitedAccess(Repository entity, User user, Link baseLink) {
+        List<Link> links = new ArrayList<>();
+
+        if (securityMediator.isAuthorizedToEdit(entity, user) && !Boolean.parseBoolean(declarative)) {
+            links.add(baseLink.withType(HTTP_METHODS.PATCH.getValue()));
+            links.add(baseLink.withType(HTTP_METHODS.DELETE.getValue()));
+        }
+
+        return links;
+    }
+
+    @Override
+    public RepresentationModelAssembler<Repository, EntityModel<RepositoryDto>> assemblerWithUser(User user) {
+        return new RepositoryModelAssembler(
+                dtoConverter, repositoryControllerClassesByTechnology, securityMediator, user);
+    }
+
+    @Override
+    protected Class<?> getExtensionControllerClass(Repository entity) {
+        return repositoryControllerClassesByTechnology.getOrDefault(
+                entity.getTechnology(), ApiV2RepositoryController.class);
+    }
 }

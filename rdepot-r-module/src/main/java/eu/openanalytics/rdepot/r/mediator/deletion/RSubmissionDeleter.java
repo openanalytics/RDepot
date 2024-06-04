@@ -20,18 +20,18 @@
  */
 package eu.openanalytics.rdepot.r.mediator.deletion;
 
-import org.springframework.stereotype.Component;
-
 import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.mediator.deletion.SubmissionDeleter;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.Service;
+import org.springframework.stereotype.Component;
 
 @Component
 public class RSubmissionDeleter extends SubmissionDeleter {
-	public RSubmissionDeleter(NewsfeedEventService newsfeedEventService,
-			Service<Submission> resourceService,
-			RPackageDeleter packageDeleter) {
-		super(newsfeedEventService, resourceService, packageDeleter);
-	}
+    public RSubmissionDeleter(
+            NewsfeedEventService newsfeedEventService,
+            Service<Submission> resourceService,
+            RPackageDeleter packageDeleter) {
+        super(newsfeedEventService, resourceService, packageDeleter);
+    }
 }

@@ -23,38 +23,40 @@ package eu.openanalytics.rdepot.base.utils.specs;
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.enums.SubmissionState;
 import eu.openanalytics.rdepot.base.utils.TechnologyResolver;
+import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.util.List;
-
 public class PackageSpecs {
-	
-	public static <P extends Package>
-		Specification<P> ofRepository(List<String> repositories) {
-		return (root, query, criteriaBuilder) -> criteriaBuilder.in(root.get("repositoryGeneric").get("name")).value(repositories);
-	}
-	
-	public static <P extends Package> Specification<P> isDeleted(boolean deleted) {
-		return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("deleted"), deleted);
-	}
-	
-	public static <P extends Package> Specification<P> ofSubmissionState(List<SubmissionState> states) {
-		return (root, query, criteriaBuilder) -> criteriaBuilder.in(root.get("submission").get("state")).value(states);
-	}
-	
-	public static <P extends Package> Specification<P> ofTechnology(List<String> technologies) {
-		return (root, query, criteriaBuilder) -> {
-			TechnologyResolver technologyResolver = new TechnologyResolver();
-			List<String> updatedTechnologies = technologyResolver.getTechnologies(technologies);
-			return criteriaBuilder.in(root.get("resourceTechnology")).value(updatedTechnologies);
-		};
-	}
 
-	public static <P extends Package> Specification<P> ofName(String name) {
-		return (root, query, criteriaBuilder) -> 
-			criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + name.toLowerCase() + "%");
-	}
-	public static<P extends Package> Specification<P> ofMaintainer(List<String> maintainers){
-		return (root, query, criteriaBuilder) -> criteriaBuilder.in(root.get("user").get("name")).value(maintainers);
-	}
+    public static <P extends Package> Specification<P> ofRepository(List<String> repositories) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.in(root.get("repositoryGeneric").get("name")).value(repositories);
+    }
+
+    public static <P extends Package> Specification<P> isDeleted(boolean deleted) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("deleted"), deleted);
+    }
+
+    public static <P extends Package> Specification<P> ofSubmissionState(List<SubmissionState> states) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.in(root.get("submission").get("state")).value(states);
+    }
+
+    public static <P extends Package> Specification<P> ofTechnology(List<String> technologies) {
+        return (root, query, criteriaBuilder) -> {
+            TechnologyResolver technologyResolver = new TechnologyResolver();
+            List<String> updatedTechnologies = technologyResolver.getTechnologies(technologies);
+            return criteriaBuilder.in(root.get("resourceTechnology")).value(updatedTechnologies);
+        };
+    }
+
+    public static <P extends Package> Specification<P> ofName(String name) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + name.toLowerCase() + "%");
+    }
+
+    public static <P extends Package> Specification<P> ofMaintainer(List<String> maintainers) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.in(root.get("user").get("name")).value(maintainers);
+    }
 }

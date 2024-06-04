@@ -20,9 +20,6 @@
  */
 package eu.openanalytics.rdepot.base.strategy.create;
 
-import java.util.Objects;
-import java.util.Optional;
-
 import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
@@ -34,57 +31,60 @@ import eu.openanalytics.rdepot.base.service.CommonPackageService;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Creates {@link PackageMaintainer Package Maintainer}.
  */
-public class CreatePackageMaintainerStrategy 
-	extends CreateStrategy<PackageMaintainer> {
+public class CreatePackageMaintainerStrategy extends CreateStrategy<PackageMaintainer> {
 
-	private final CommonPackageService packageService;
-	private final BestMaintainerChooser bestMaintainerChooser;	
-	private final PackageMaintainerService packageMaintainerService;
-	
-	public CreatePackageMaintainerStrategy(PackageMaintainer resource, 
-			NewsfeedEventService newsfeedEventService,
-			PackageMaintainerService service, User requester, CommonPackageService packageService,
-			BestMaintainerChooser bestMaintainerChooser) {
-		super(resource, service, requester, newsfeedEventService);
-		this.packageService = packageService;
-		this.packageMaintainerService = service;
-		this.bestMaintainerChooser = bestMaintainerChooser;
-	}
-	
-	@Override
-	protected PackageMaintainer actualStrategy() throws StrategyFailure {
-		PackageMaintainer maintainer;
-		Optional<PackageMaintainer> packageMaintainer = packageMaintainerService
-				.findByPackageAndRepositoryAndDeleted(resource.getPackageName(), resource.getRepository());
-		if(packageMaintainer.isPresent()) {
-			maintainer = packageMaintainer.get();
-			maintainer.setDeleted(false);
-		} else { 
-			maintainer = super.actualStrategy();
-		}
-		try {															
-			for(Package packageBag : 
-				packageService.findAllByRepository(maintainer.getRepository())) {
-				if(Objects.equals(packageBag.getName(), maintainer.getPackageName())) {
-					packageBag.setUser(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag));
-				}
-			}
-		} catch (NoSuitableMaintainerFound e) {
-			logger.error(e.getMessage(), e);
-			throw new StrategyFailure(e);
-		}
-		return maintainer;
-	}
+    private final CommonPackageService packageService;
+    private final BestMaintainerChooser bestMaintainerChooser;
+    private final PackageMaintainerService packageMaintainerService;
 
-	@Override
-	protected void postStrategy() throws StrategyFailure {}
+    public CreatePackageMaintainerStrategy(
+            PackageMaintainer resource,
+            NewsfeedEventService newsfeedEventService,
+            PackageMaintainerService service,
+            User requester,
+            CommonPackageService packageService,
+            BestMaintainerChooser bestMaintainerChooser) {
+        super(resource, service, requester, newsfeedEventService);
+        this.packageService = packageService;
+        this.packageMaintainerService = service;
+        this.bestMaintainerChooser = bestMaintainerChooser;
+    }
 
-	@Override
-	protected NewsfeedEvent generateEvent(PackageMaintainer resource) {
-		return new NewsfeedEvent(requester, NewsfeedEventType.CREATE, resource);
-	}
+    @Override
+    protected PackageMaintainer actualStrategy() throws StrategyFailure {
+        PackageMaintainer maintainer;
+        Optional<PackageMaintainer> packageMaintainer = packageMaintainerService.findByPackageAndRepositoryAndDeleted(
+                resource.getPackageName(), resource.getRepository());
+        if (packageMaintainer.isPresent()) {
+            maintainer = packageMaintainer.get();
+            maintainer.setDeleted(false);
+        } else {
+            maintainer = super.actualStrategy();
+        }
+        try {
+            for (Package packageBag : packageService.findAllByRepository(maintainer.getRepository())) {
+                if (Objects.equals(packageBag.getName(), maintainer.getPackageName())) {
+                    packageBag.setUser(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag));
+                }
+            }
+        } catch (NoSuitableMaintainerFound e) {
+            logger.error(e.getMessage(), e);
+            throw new StrategyFailure(e);
+        }
+        return maintainer;
+    }
+
+    @Override
+    protected void postStrategy() throws StrategyFailure {}
+
+    @Override
+    protected NewsfeedEvent generateEvent(PackageMaintainer resource) {
+        return new NewsfeedEvent(requester, NewsfeedEventType.CREATE, resource);
+    }
 }

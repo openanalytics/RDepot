@@ -29,26 +29,25 @@ import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure;
 
-public class FailureStrategy<T extends Resource> extends Strategy<T>{
+public class FailureStrategy<T extends Resource> extends Strategy<T> {
 
-	public FailureStrategy(T resource, NewsfeedEventService eventService, Service<T> service, User requester) {
-		super(resource, service, requester, eventService);
-	}
-	
-	@Override
-	protected T actualStrategy() throws StrategyFailure {
-			throw new StrategyFailure(new Exception(""));
-	}
+    public FailureStrategy(T resource, NewsfeedEventService eventService, Service<T> service, User requester) {
+        super(resource, service, requester, eventService);
+    }
 
-	@Override
-	protected void postStrategy() throws StrategyFailure {}
+    @Override
+    protected T actualStrategy() throws StrategyFailure {
+        throw new StrategyFailure(new Exception(""));
+    }
 
-	@Override
-	public void revertChanges() throws StrategyReversionFailure {}
+    @Override
+    protected void postStrategy() throws StrategyFailure {}
 
+    @Override
+    public void revertChanges() throws StrategyReversionFailure {}
 
-	@Override
-	protected NewsfeedEvent generateEvent(T resource) {
-		return null;
-	}	
+    @Override
+    protected NewsfeedEvent generateEvent(T resource) {
+        return null;
+    }
 }

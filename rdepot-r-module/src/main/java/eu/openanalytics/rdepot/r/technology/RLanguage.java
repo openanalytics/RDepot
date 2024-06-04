@@ -25,56 +25,58 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import eu.openanalytics.rdepot.base.config.declarative.exceptions.DeclaredRepositoryTechnologyMismatch;
 import eu.openanalytics.rdepot.base.technology.Technology;
-import org.apache.commons.lang3.StringUtils;
-
 import java.io.IOException;
 import java.util.Objects;
+import org.apache.commons.lang3.StringUtils;
 
 public class RLanguage extends JsonDeserializer<Technology> implements Technology {
-	
-	public static RLanguage instance;
-	static { instance = new RLanguage(); }
 
-	@Override
-	public Technology getInstance() {
-		return instance;
-	}
+    public static RLanguage instance;
 
-	@Override
-	public String getName() {
-		return "R";
-	}
+    static {
+        instance = new RLanguage();
+    }
 
-	@Override
-	public String getVersion() {
-		return "1.0.0";
-	}
+    @Override
+    public Technology getInstance() {
+        return instance;
+    }
 
-	@Override
-	public Boolean isCompatible(String version) {
-		return Objects.equals(version, this.getVersion());
-	}
+    @Override
+    public String getName() {
+        return "R";
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(getName(), getVersion());
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		if(obj == null) return false;
-		if(!obj.getClass().isAssignableFrom(RLanguage.class)) return false;
-		RLanguage that = (RLanguage) obj;
-		return this.getName().equals(that.getName()) 
-				&& this.getVersion().equals(that.getVersion());
-	}
+    @Override
+    public String getVersion() {
+        return "1.0.0";
+    }
 
-	@Override
-	public Technology deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
-		String value = deserializationContext.readValue(jsonParser, String.class);
-		if (StringUtils.isBlank(value) || value.equalsIgnoreCase(instance.getName())) {
-			return instance;
-		}
-		throw new DeclaredRepositoryTechnologyMismatch(value);
-	}
+    @Override
+    public Boolean isCompatible(String version) {
+        return Objects.equals(version, this.getVersion());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName(), getVersion());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (!obj.getClass().isAssignableFrom(RLanguage.class)) return false;
+        RLanguage that = (RLanguage) obj;
+        return this.getName().equals(that.getName()) && this.getVersion().equals(that.getVersion());
+    }
+
+    @Override
+    public Technology deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
+            throws IOException {
+        String value = deserializationContext.readValue(jsonParser, String.class);
+        if (StringUtils.isBlank(value) || value.equalsIgnoreCase(instance.getName())) {
+            return instance;
+        }
+        throw new DeclaredRepositoryTechnologyMismatch(value);
+    }
 }

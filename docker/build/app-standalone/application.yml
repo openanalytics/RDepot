@@ -1,12 +1,12 @@
 api-token:
   secret: SecretKeyToGenJWTsButItShouldBeReplaced
-  
+
 access-token:
   lifetime-default: 30
   lifetime-configurable: true
   length: 32
   allowed-characters: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
-  
+
 generate-manuals: true
 
 declarative: false
@@ -32,8 +32,8 @@ app:
   simple:
     users:
       - login: einstein
-        password: testpassword  
-        name: Albert Einstein 
+        password: testpassword
+        name: Albert Einstein
       - login: tesla
         password: testpassword
         name: Nicolas Tesla
@@ -48,7 +48,7 @@ app:
         name: New User
       - login: doe
         password: testpassword
-        name: John Doe 
+        name: John Doe
     default:
       admins:
         - einstein
@@ -101,11 +101,11 @@ spring:
       suffix: .html
   main:
     allow-bean-definition-overriding: true
-    log-startup-info: false  
+    log-startup-info: false
   output:
     ansi:
       enabled: always
-        
+
 #Liquibase related properties
   liquibase:
     # change-log: classpath:liquibase-changeLog.xml
@@ -113,17 +113,17 @@ spring:
     user: postgres
     password: mysecretpassword
     enabled: true
-    
+
 #spring.devtools.remote.secret=thisismysecret
 server:
   error:
     include-stacktrace: always
     path: /error
-    
+
 error:
   whitelabel:
     enabled: false
-  
+
 management:
   endpoints:
     enabled-by-default: false
@@ -160,7 +160,7 @@ logging:
       springframework:
         web:
           filter:
-            CommonsRequestLoggingFilter: INFO   
+            CommonsRequestLoggingFilter: INFO
 
 #storage related properties
 local-storage:

@@ -31,6 +31,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class MirroredRRepository extends MirroredRepository<MirroredRPackage, CranMirror> {
-	@JsonDeserialize(using = RLanguage.class)
-	protected Technology technology = RLanguage.instance;
+    @JsonDeserialize(using = RLanguage.class)
+    protected Technology technology = RLanguage.instance;
 }

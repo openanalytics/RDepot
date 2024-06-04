@@ -21,7 +21,6 @@
 package eu.openanalytics.rdepot.config;
 
 import java.util.Properties;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,8 +34,8 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
  */
 @Configuration
 public class EmailConfiguration {
-	
-	@Value("${spring.mail.host:localhost}")
+
+    @Value("${spring.mail.host:localhost}")
     private String mailServerHost;
 
     @Value("${spring.mail.port:587}")
@@ -53,29 +52,29 @@ public class EmailConfiguration {
 
     @Value("${spring.mail.properties.mail.smtp.starttls.enable:true}")
     private boolean mailServerStartTls;
-    
+
     @Bean
     static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-    	PropertySourcesPlaceholderConfigurer pspc = new PropertySourcesPlaceholderConfigurer();
-    	pspc.setIgnoreResourceNotFound(true);
-    	
-    	return pspc;
+        PropertySourcesPlaceholderConfigurer pspc = new PropertySourcesPlaceholderConfigurer();
+        pspc.setIgnoreResourceNotFound(true);
+
+        return pspc;
     }
-    
+
     @Bean
-    JavaMailSender getJavaMailSender() {    
+    JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        
+
         mailSender.setHost(mailServerHost);
         mailSender.setPort(mailServerPort);
         mailSender.setUsername(mailServerUsername);
         mailSender.setPassword(mailServerPassword);
-        
+
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", mailServerAuth);
         props.put("mail.smtp.starttls.enable", mailServerStartTls);
-        
+
         return mailSender;
     }
 }

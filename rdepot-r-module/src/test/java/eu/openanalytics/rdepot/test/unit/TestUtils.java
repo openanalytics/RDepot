@@ -20,14 +20,14 @@
  */
 package eu.openanalytics.rdepot.test.unit;
 
-import org.springframework.test.web.servlet.ResultActions;
-
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+
+import org.springframework.test.web.servlet.ResultActions;
 
 public class TestUtils {
 
-    private static void matchInternalServerError(
-            ResultActions result, String message, String messageCode) throws Exception {
+    private static void matchInternalServerError(ResultActions result, String message, String messageCode)
+            throws Exception {
         result.andExpect(jsonPath("$.data.traceId").exists())
                 .andExpect(jsonPath("$.data.timestamp").exists())
                 .andExpect(jsonPath("$.status").value("ERROR"))
@@ -37,20 +37,15 @@ public class TestUtils {
     }
 
     public static void matchInternalServerErrorCreate(ResultActions result) throws Exception {
-        matchInternalServerError(result,
-                "Could not create resource due to internal server error.",
-                "error.create.resource");
+        matchInternalServerError(
+                result, "Could not create resource due to internal server error.", "error.create.resource");
     }
 
     public static void matchInternalServerErrorPatch(ResultActions result) throws Exception {
-        matchInternalServerError(result,
-                "Could not apply patch to requested resource.",
-                "error.apply.patch");
+        matchInternalServerError(result, "Could not apply patch to requested resource.", "error.apply.patch");
     }
 
     public static void matchInternalServerErrorDelete(ResultActions result) throws Exception {
-        matchInternalServerError(result,
-                "Could not delete requested resource.",
-                "error.delete.resource");
+        matchInternalServerError(result, "Could not delete requested resource.", "error.delete.resource");
     }
 }

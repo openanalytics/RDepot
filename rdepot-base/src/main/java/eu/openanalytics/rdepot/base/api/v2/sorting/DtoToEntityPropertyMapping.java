@@ -20,37 +20,11 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.sorting;
 
-import eu.openanalytics.rdepot.base.utils.BidirectionalMap;
-
 import java.util.Optional;
 
-import org.springframework.stereotype.Component;
+public interface DtoToEntityPropertyMapping {
 
-@Component
-public class DtoToEntityPropertyMapping {
+    Optional<String> dtoToEntity(String property);
 
-    private static final BidirectionalMap<String> PROPERTIES = new BidirectionalMap<>();
-
-    static {
-        PROPERTIES.put("technology", "resourceTechnology");
-        PROPERTIES.put("repository", "repository.name"); 
-        PROPERTIES.put("repository.technology", "repository.resourceTechnology");
-        PROPERTIES.put("user", "user.name");
-        PROPERTIES.put("approver", "approver.name");
-        PROPERTIES.put("submitter", "submitter.name");
-        PROPERTIES.put("packageBag", "packageBag.name");
-        PROPERTIES.put("packageBag.repository", "packageBag.repositoryGeneric.name");
-        PROPERTIES.put("packageBag.repository.id", "packageBag.repositoryGeneric.id");
-        PROPERTIES.put("packageBag.repository.publicationUri", "packageBag.repositoryGeneric.publicationUri");
-        PROPERTIES.put("packageBag.repository.technology", "packageBag.repositoryGeneric.resourceTechnology");
-        PROPERTIES.put("created", "createdDate");
-    }
-
-    public Optional<String> dtoToEntity(String property) {
-        return Optional.ofNullable(PROPERTIES.get(property));
-    }
-
-    public Optional<String> entityToDto(String property) {
-        return Optional.ofNullable(PROPERTIES.getInverted().get(property));
-    }
+    Optional<String> entityToDto(String property);
 }

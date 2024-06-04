@@ -26,6 +26,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class SynchronizeRepositoryResponseBody {
-	String requestId;
-	String responseCode;
+    String requestId;
+    String responseCode;
 }
