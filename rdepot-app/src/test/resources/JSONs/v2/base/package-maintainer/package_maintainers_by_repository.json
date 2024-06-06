@@ -4,7 +4,7 @@
     "links": [
       {
         "rel": "self",
-        "href": "http://localhost:8017/api/v2/manager/package-maintainers?repository=testrepo8&page=0&size=20&sort=repository.id,asc"
+        "href": "http://localhost:8017/api/v2/manager/package-maintainers?repository=testrepo8&page=0&size=20&sort=id,asc"
       }
     ],
     "page": {

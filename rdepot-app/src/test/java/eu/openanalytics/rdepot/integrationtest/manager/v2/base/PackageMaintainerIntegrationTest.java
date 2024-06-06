@@ -184,7 +184,7 @@ public class PackageMaintainerIntegrationTest extends IntegrationTest {
     public void getPackageMaintainersByRepository() throws Exception {
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.GET)
-                .urlSuffix("?repository=" + testData.getRepositories().get(0) + "&sort=repository.id,asc")
+                .urlSuffix("?repository=" + testData.getRepositories().get(0) + "&sort=id,asc")
                 .statusCode(200)
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())

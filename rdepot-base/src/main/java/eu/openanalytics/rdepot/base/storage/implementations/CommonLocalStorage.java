@@ -503,16 +503,12 @@ public abstract class CommonLocalStorage<R extends Repository, P extends Package
      * This method calculates MD5 sum of a file.
      */
     protected String calculateMd5Sum(File target) throws Md5SumCalculationException {
-        byte[] bytes;
-
-        try {
-            bytes = Files.readAllBytes(target.toPath());
+        try (InputStream is = new FileInputStream(target)) {
+            return DigestUtils.md5DigestAsHex(is);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
             throw new Md5SumCalculationException();
         }
-
-        return DigestUtils.md5DigestAsHex(bytes);
     }
 
     /**
