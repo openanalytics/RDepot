@@ -69,7 +69,7 @@
         },
         "changes": null,
         "state": "CANCELLED",
-        "created": "2020-03-28",
+        "created": "2020-03-28T00:00:00Z",
         "technology": "R",
         "links": [
             {

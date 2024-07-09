@@ -34,7 +34,7 @@ public class ValidationResultImpl<T> implements DataSpecificValidationResult<T> 
         return new ValidationResultImpl<>();
     }
 
-    public static <T> DataSpecificValidationResult<T> createDataSpecificResult(Class<T> clazz) {
+    public static <T> DataSpecificValidationResult<T> createDataSpecificResult() {
         return new ValidationResultImpl<>();
     }
 

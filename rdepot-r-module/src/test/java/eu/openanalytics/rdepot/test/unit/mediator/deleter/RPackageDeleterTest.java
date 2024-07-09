@@ -170,7 +170,7 @@ public class RPackageDeleterTest extends UnitTest {
         doNothing().when(submissionService).delete(submission);
         doNothing().when(storage).removePackageSource(TRASHED_SOURCE);
 
-        deleter.delete(id);
+        deleter.deleteTransactional(id);
 
         verify(newsfeedEventService).deleteRelatedEvents(packageBag);
         verify(newsfeedEventService).deleteRelatedEvents(submission);

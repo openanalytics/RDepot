@@ -223,7 +223,10 @@ CREATE TABLE public.repository (
     name text NOT NULL,
     server_address text NOT NULL,
     published boolean DEFAULT false NOT NULL,
-    deleted boolean DEFAULT false NOT NULL
+    deleted boolean DEFAULT false NOT NULL,
+    last_publication_successful boolean DEFAULT false NOT NULL,
+    last_publication_timestamp date,
+    last_modified_timestamp date
 );
 
 
@@ -780,13 +783,13 @@ COPY public.package_maintainer_event (id, date, package_maintainer_id, event_id,
 -- Data for Name: repository; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.repository (version, id, publication_uri, name, server_address, published, deleted) FROM stdin;
-6	5	http://localhost/repo/testrepo4	testrepo4	http://oa-rdepot-repo:8080/testrepo4	f	f
-18	4	http://localhost/repo/testrepo3	testrepo3	http://oa-rdepot-repo:8080/testrepo3	f	f
-8	3	http://localhost/repo/testrepo2	testrepo2	http://oa-rdepot-repo:8080/testrepo2	t	f
-9	6	http://localhost/repo/testrepo5	testrepo5	http://oa-rdepot-repo:8080/testrepo5	f	t
-6	7	http://localhost/repo/testrepo6	testrepo6	http://oa-rdepot-repo:8080/testrepo6	f	t
-31	2	http://localhost/repo/testrepo1	testrepo1	http://oa-rdepot-repo:8080/testrepo1	t	f
+COPY public.repository (version, id, publication_uri, name, server_address, published, deleted, last_publication_successful, last_publication_timestamp, last_modified_timestamp) FROM stdin;
+6	5	http://localhost/repo/testrepo4	testrepo4	http://oa-rdepot-repo:8080/testrepo4	f	f	f	\N	'2024-06-21 12:30:25'
+18	4	http://localhost/repo/testrepo3	testrepo3	http://oa-rdepot-repo:8080/testrepo3	f	f	f	\N	'2024-05-21 12:30:25'
+8	3	http://localhost/repo/testrepo2	testrepo2	http://oa-rdepot-repo:8080/testrepo2	t	f	t	'2024-06-27 12:30:25'	'2024-04-27 12:30:25'
+9	6	http://localhost/repo/testrepo5	testrepo5	http://oa-rdepot-repo:8080/testrepo5	f	t	f	\N	'2024-03-21 12:30:25'
+6	7	http://localhost/repo/testrepo6	testrepo6	http://oa-rdepot-repo:8080/testrepo6	f	t	f	\N	'2024-03-21 12:30:25'
+31	2	http://localhost/repo/testrepo1	testrepo1	http://oa-rdepot-repo:8080/testrepo1	t	f	t	'2024-06-27 12:30:25'	'2024-02-27 12:30:25'
 \.
 
 

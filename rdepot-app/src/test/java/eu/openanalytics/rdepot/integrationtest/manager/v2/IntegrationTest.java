@@ -98,6 +98,22 @@ public abstract class IntegrationTest {
                 "wrong number of events created after the operation");
     }
 
+    public void testRepositoryEndpoint(TestRequestBody requestBody) throws Exception {
+        int eventsNumberBeforeOperation = getTotalEventsAmount();
+        chooseEndpoint(requestBody);
+        int eventsNumberAfterOperation = getTotalEventsAmount();
+        int result = eventsNumberAfterOperation - eventsNumberBeforeOperation;
+        if (requestBody.getExpectedEventsJson().isPresent()) {
+            testIfNewestEventsAreCorrect(
+                    requestBody.getHowManyNewEventsShouldBeCreated(),
+                    requestBody.getExpectedEventsJson().get());
+        }
+        Assertions.assertEquals(
+                requestBody.getHowManyNewEventsShouldBeCreated(),
+                result,
+                "wrong number of events created after the operation");
+    }
+
     @BeforeAll
     public static void setUpForAll() throws IOException, InterruptedException {
         if (RUN_CONTAINERS) {
@@ -108,7 +124,7 @@ public abstract class IntegrationTest {
     }
 
     @AfterAll
-    public static final void turnDownForAll() {
+    public static void turnDownForAll() {
         if (RUN_CONTAINERS) IntegrationTestContainers.stopContainersIfAllTestsCompleted();
     }
 
@@ -240,6 +256,8 @@ public abstract class IntegrationTest {
                 .asString();
 
         JSONObject actualJSON = (JSONObject) jsonParser.parse(data);
+        if (actualJSON.get("data") != null) removeFields(actualJSON, false);
+        if (expectedJSON.get("data") != null) removeFields(expectedJSON, false);
 
         Assertions.assertEquals(expectedJSON, actualJSON, "Incorrect JSON output.");
     }
@@ -262,6 +280,8 @@ public abstract class IntegrationTest {
                 .asString();
 
         JSONObject actualJSON = (JSONObject) jsonParser.parse(data);
+        if (actualJSON.get("data") != null) removeFields(actualJSON, false);
+        if (expectedJSON.get("data") != null) removeFields(expectedJSON, false);
 
         Assertions.assertEquals(expectedJSON, actualJSON, "Incorrect JSON output.");
     }
@@ -685,6 +705,12 @@ public abstract class IntegrationTest {
                 if (jsonData.get("value") != null) {
                     jsonData.remove("value");
                 }
+                if (jsonData.get("lastPublicationTimestamp") != null) {
+                    jsonData.remove("lastPublicationTimestamp");
+                }
+                if (jsonData.get("lastModifiedTimestamp") != null) {
+                    jsonData.remove("lastModifiedTimestamp");
+                }
                 if (newSubmission) {
                     jsonData.remove("created");
                 }
@@ -718,6 +744,12 @@ public abstract class IntegrationTest {
                     }
                     if (el.get("value") != null) {
                         el.remove("value");
+                    }
+                    if (el.get("lastPublicationTimestamp") != null) {
+                        el.remove("lastPublicationTimestamp");
+                    }
+                    if (el.get("lastModifiedTimestamp") != null) {
+                        el.remove("lastModifiedTimestamp");
                     }
                     if (newSubmission && i == 0) {
                         el.remove("created");

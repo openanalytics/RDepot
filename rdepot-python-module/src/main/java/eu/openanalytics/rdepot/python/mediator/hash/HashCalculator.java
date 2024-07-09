@@ -31,6 +31,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 @RequiredArgsConstructor
 public class HashCalculator {
+
     private final HashMethod hashMethod;
     private String hash;
     private final File file;

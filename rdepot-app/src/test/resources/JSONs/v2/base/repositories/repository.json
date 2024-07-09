@@ -17,6 +17,7 @@
     ],
     "id": 2,
     "published": true,
+    "lastPublicationSuccessful": true,
     "technology": "R",
     "version": 31,
     "publicationUri": "http:\/\/localhost\/repo\/testrepo1",

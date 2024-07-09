@@ -90,7 +90,7 @@ public class RPackageStrategyTest extends StrategyTest {
                 })
                 .when(eventService)
                 .create(any());
-        doNothing().when(repositorySynchronizer).storeRepositoryOnRemoteServer(eq(repository), any());
+        doNothing().when(repositorySynchronizer).storeRepositoryOnRemoteServer(eq(repository));
         doNothing().when(eventService).attachVariables(any(), any());
 
         Strategy<RPackage> strategy = new RPackageUpdateStrategy(
@@ -105,7 +105,7 @@ public class RPackageStrategyTest extends StrategyTest {
 
         strategy.perform();
 
-        verify(repositorySynchronizer, times(1)).storeRepositoryOnRemoteServer(eq(repository), any());
+        verify(repositorySynchronizer, times(1)).storeRepositoryOnRemoteServer(eq(repository));
     }
 
     @Test
@@ -197,7 +197,7 @@ public class RPackageStrategyTest extends StrategyTest {
                 })
                 .when(eventService)
                 .create(any());
-        doNothing().when(repositorySynchronizer).storeRepositoryOnRemoteServer(eq(repository), any());
+        doNothing().when(repositorySynchronizer).storeRepositoryOnRemoteServer(eq(repository));
         doNothing().when(eventService).attachVariables(any(), any());
 
         Strategy<RPackage> strategy = new RPackageUpdateStrategy(
@@ -239,7 +239,7 @@ public class RPackageStrategyTest extends StrategyTest {
                 })
                 .when(eventService)
                 .create(any());
-        doNothing().when(repositorySynchronizer).storeRepositoryOnRemoteServer(eq(repository), any());
+        doNothing().when(repositorySynchronizer).storeRepositoryOnRemoteServer(eq(repository));
         doNothing().when(eventService).attachVariables(any(), any());
 
         Strategy<RPackage> strategy = new RPackageUpdateStrategy(
@@ -283,7 +283,7 @@ public class RPackageStrategyTest extends StrategyTest {
                 .create(any());
         doThrow(new SynchronizeRepositoryException())
                 .when(repositorySynchronizer)
-                .storeRepositoryOnRemoteServer(eq(repository), any());
+                .storeRepositoryOnRemoteServer(eq(repository));
         doNothing().when(eventService).attachVariables(any(), any());
 
         Strategy<RPackage> strategy = new RPackageUpdateStrategy(

@@ -117,7 +117,7 @@ public class PythonRepositoryDeletingDisabledControllerTest extends ApiV2Control
     @WithMockUser(authorities = {"user", "admin"})
     public void getAllRepositories() throws Exception {
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         when(userService.isAdmin(user.get())).thenReturn(true);
         when(pythonRepositoryService.findAllBySpecification(any(), any()))
@@ -146,7 +146,7 @@ public class PythonRepositoryDeletingDisabledControllerTest extends ApiV2Control
         final Integer ID = repository.getId();
 
         when(pythonRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/python/repositories/" + ID)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -160,7 +160,7 @@ public class PythonRepositoryDeletingDisabledControllerTest extends ApiV2Control
         final PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
         final Integer ID = 1234;
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(pythonRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
         when(userService.isAdmin(user.get())).thenReturn(true);
         when(securityMediator.isAuthorizedToEdit(repository, user.get())).thenReturn(true);
@@ -184,7 +184,7 @@ public class PythonRepositoryDeletingDisabledControllerTest extends ApiV2Control
     public void getRepository_returns404_whenRepositoryIsNotFound() throws Exception {
 
         when(pythonRepositoryService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(null));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/python/repositories/" + 123)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -207,7 +207,7 @@ public class PythonRepositoryDeletingDisabledControllerTest extends ApiV2Control
                 .thenReturn(strategy);
         when(userService.findById(anyInt())).thenReturn(user);
         when(userService.isAdmin(user.get())).thenReturn(true);
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(pythonRepositoryValidator.supports(PythonRepository.class)).thenReturn(true);
         when(securityMediator.isAuthorizedToEdit(createdRepository, user.get())).thenReturn(true);
         doNothing().when(pythonRepositoryValidator).validate(any(), any());
@@ -240,7 +240,7 @@ public class PythonRepositoryDeletingDisabledControllerTest extends ApiV2Control
         final Path path = Path.of(EXAMPLE_NEW_REPOSITORY_PATH);
         final String exampleJson = Files.readString(path);
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v2/manager/python/repositories")
                         .contentType("application/json")
@@ -256,7 +256,7 @@ public class PythonRepositoryDeletingDisabledControllerTest extends ApiV2Control
         final Path path = Path.of(EXAMPLE_NEW_REPOSITORY_PATH);
         final String exampleJson = Files.readString(path);
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(userService.isAdmin(user.get())).thenReturn(true);
         doAnswer(invocation -> {
                     Errors errors = (Errors) invocation.getArgument(1);
@@ -287,7 +287,7 @@ public class PythonRepositoryDeletingDisabledControllerTest extends ApiV2Control
                 newRepository, newsfeedEventService, pythonRepositoryService, user.get()));
 
         when(userService.isAdmin(user.get())).thenReturn(true);
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(pythonStrategyFactory.createRepositoryStrategy(any(), eq(user.get())))
                 .thenReturn(strategy);
         doNothing().when(pythonRepositoryValidator).validate(any(), any());
@@ -312,7 +312,7 @@ public class PythonRepositoryDeletingDisabledControllerTest extends ApiV2Control
 
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/serverAddress\",\"value\":\"127.0.0.1\"}]";
         when(pythonRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(securityMediator.isAuthorizedToEdit(any(PythonRepository.class), eq(user.get())))
                 .thenReturn(true);
         when(pythonStrategyFactory.updateRepositoryStrategy(any(), eq(user.get()), any()))
@@ -339,7 +339,7 @@ public class PythonRepositoryDeletingDisabledControllerTest extends ApiV2Control
 
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/deleted\",\"value\":true}]";
         when(pythonRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(securityMediator.isAuthorizedToEdit(any(PythonRepository.class), eq(user.get())))
                 .thenReturn(true);
         when(pythonStrategyFactory.updateRepositoryStrategy(any(), eq(user.get()), any()))
@@ -371,7 +371,7 @@ public class PythonRepositoryDeletingDisabledControllerTest extends ApiV2Control
     @WithMockUser(authorities = "user")
     public void patchRepository_returns403_whenUserIsNotAuthorized() throws Exception {
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(securityMediator.isAuthorizedToEdit(any(Repository.class), eq(user.get())))
                 .thenReturn(false);
 
@@ -389,7 +389,7 @@ public class PythonRepositoryDeletingDisabledControllerTest extends ApiV2Control
     public void patchRepository_returns404_whenRepositoryIsNotFound() throws Exception {
 
         when(pythonRepositoryService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(null));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         String patchJson = "[{\"op\": \"replace\",\"path\":\"/serverAddress\",\"value\":\"127.0.0.1\"}]";
 
@@ -409,7 +409,7 @@ public class PythonRepositoryDeletingDisabledControllerTest extends ApiV2Control
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/nameeeeee\",\"value\":\"Test Repo 123\"}]";
 
         when(pythonRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(securityMediator.isAuthorizedToEdit(any(Repository.class), eq(user.get())))
                 .thenReturn(true);
 
@@ -428,7 +428,7 @@ public class PythonRepositoryDeletingDisabledControllerTest extends ApiV2Control
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/name\",\"value\":\"Test Repo 123\"}]";
 
         when(pythonRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(securityMediator.isAuthorizedToEdit(repository, user.get())).thenReturn(true);
         when(pythonRepositoryValidator.supports(PythonRepository.class)).thenReturn(true);
         doAnswer(invocation -> {
@@ -458,7 +458,7 @@ public class PythonRepositoryDeletingDisabledControllerTest extends ApiV2Control
 
         when(pythonRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
         doNothing().when(pythonRepositoryDeleter).delete(repository);
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(userService.isAdmin(user.get())).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v2/manager/python/repositories/" + ID))
@@ -486,7 +486,7 @@ public class PythonRepositoryDeletingDisabledControllerTest extends ApiV2Control
     @WithMockUser(authorities = {"admin", "user"})
     public void deleteRepository_returns404_whenRepositoryIsNotFound() throws Exception {
         when(pythonRepositoryService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(null));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(userService.isAdmin(user.get())).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v2/manager/python/repositories/" + 123))

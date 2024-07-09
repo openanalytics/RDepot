@@ -1,0 +1,37 @@
+{
+    "code": 200,
+    "data": {
+        "active": false,
+        "deleted": true,
+        "email": "newton@ldap.forumsys.com",
+        "id": 7,
+        "links": [
+            {
+                "href": "http://localhost:8017/api/v2/manager/users/7",
+                "rel": "self"
+            },
+            {
+                "href": "http://localhost:8017/api/v2/manager/users",
+                "rel": "userList"
+            },
+            {
+                "href": "http://localhost:8017/api/v2/manager/users/7",
+                "rel": "self",
+                "type": "PATCH"
+            },
+            {
+                "href": "http://localhost:8017/api/v2/manager/users/7",
+                "rel": "self",
+                "type": "DELETE"
+            }
+        ],
+        "login": "newton",
+        "name": "Isaac Newton",
+        "role": "user",
+        "roleId": 1,
+        "userSettings": null
+    },
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "status": "SUCCESS"
+}

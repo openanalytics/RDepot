@@ -33,13 +33,12 @@ import java.util.Optional;
 @org.springframework.stereotype.Service
 public class UserService extends Service<User> {
 
-    private final UserDao dao;
-
+    private final UserDao userDao;
     private final RoleService roleService;
 
-    public UserService(UserDao dao, RoleService roleService) {
-        super(dao);
-        this.dao = dao;
+    public UserService(UserDao userDao, RoleService roleService) {
+        super(userDao);
+        this.userDao = userDao;
         this.roleService = roleService;
     }
 
@@ -47,21 +46,21 @@ public class UserService extends Service<User> {
      * @return active users by the given role
      */
     public List<User> findByRole(Role role) {
-        return dao.findByRoleAndDeletedAndActive(role, false, true);
+        return userDao.findByRoleAndDeletedAndActive(role, false, true);
     }
 
     /**
      * @return unique user by the given login
      */
-    public Optional<User> findByLogin(String login) {
-        return dao.findByLogin(login);
+    public Optional<User> findActiveByLogin(String login) {
+        return userDao.findByLoginAndActive(login, true);
     }
 
     /**
      * @return unique user by the given e-mail address
      */
     public Optional<User> findByEmail(String email) {
-        return dao.findByEmail(email);
+        return userDao.findByEmail(email);
     }
 
     /**

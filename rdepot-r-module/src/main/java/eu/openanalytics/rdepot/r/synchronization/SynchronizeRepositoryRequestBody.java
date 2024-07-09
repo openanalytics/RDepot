@@ -62,6 +62,9 @@ public class SynchronizeRepositoryRequestBody {
 
         Map<String, String> checksumsForFirstChunk = null;
 
+        final String files = "files";
+        final String filesArchive = "files_archive";
+
         while (!recentChunks.isEmpty() || !archiveChunks.isEmpty()) {
             final Map<String, String> checksumsForChunk = new HashMap<>();
             if (checksumsForFirstChunk == null) {
@@ -72,7 +75,7 @@ public class SynchronizeRepositoryRequestBody {
             if (!recentChunks.isEmpty()) {
                 List<File> recentChunk = recentChunks.remove(0);
                 recentChunk.forEach(file -> {
-                    map.add("files", new FileSystemResource(file));
+                    map.add(files, new FileSystemResource(file));
                     checksumsForChunk.put(file.getName(), checksums.get(file.getName()));
                 });
             }
@@ -80,7 +83,7 @@ public class SynchronizeRepositoryRequestBody {
             if (!archiveChunks.isEmpty()) {
                 List<File> archiveChunk = archiveChunks.remove(0);
                 archiveChunk.forEach(file -> {
-                    map.add("files_archive", new FileSystemResource(file));
+                    map.add(filesArchive, new FileSystemResource(file));
                     checksumsForChunk.put(file.getName(), checksums.get(file.getName()));
                 });
             }
@@ -110,13 +113,13 @@ public class SynchronizeRepositoryRequestBody {
             firstChunk = chunks.get(0);
         }
 
-        firstChunk.add("files", new FileSystemResource(packagesFile));
+        firstChunk.add(files, new FileSystemResource(packagesFile));
         checksumsForFirstChunk.put("recent/PACKAGES", checksums.get("recent/PACKAGES"));
-        firstChunk.add("files", new FileSystemResource(packagesGzFile));
+        firstChunk.add(files, new FileSystemResource(packagesGzFile));
         checksumsForFirstChunk.put("recent/PACKAGES.gz", checksums.get("recent/PACKAGES.gz"));
-        firstChunk.add("files_archive", new FileSystemResource(packagesFileArchive));
+        firstChunk.add(filesArchive, new FileSystemResource(packagesFileArchive));
         checksumsForFirstChunk.put("archive/PACKAGES", checksums.get("archive/PACKAGES"));
-        firstChunk.add("files_archive", new FileSystemResource(packagesGzFileArchive));
+        firstChunk.add(filesArchive, new FileSystemResource(packagesGzFileArchive));
         checksumsForFirstChunk.put("archive/PACKAGES.gz", checksums.get("archive/PACKAGES.gz"));
 
         for (String packageName : packagesToDelete) {

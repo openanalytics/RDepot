@@ -31,6 +31,9 @@ import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
 
 public class SubmissionSpecs {
+
+    private static final String PACKAGE = "packageBag";
+
     public static Specification<Submission> ofState(List<SubmissionState> state) {
         return (root, query, criteriaBuilder) ->
                 criteriaBuilder.in(root.get("state")).value(state);
@@ -50,7 +53,7 @@ public class SubmissionSpecs {
 
     public static Specification<Submission> ofPackage(String packageBag) {
         return (root, query, criteriaBuilder) -> criteriaBuilder.like(
-                criteriaBuilder.lower(root.join("packageBag", JoinType.LEFT).get("name")),
+                criteriaBuilder.lower(root.join(PACKAGE, JoinType.LEFT).get("name")),
                 "%" + packageBag.toLowerCase() + "%");
     }
 
@@ -83,14 +86,14 @@ public class SubmissionSpecs {
             TechnologyResolver technologyResolver = new TechnologyResolver();
             List<String> updatedTechnologies = technologyResolver.getTechnologies(technologies);
             return criteriaBuilder
-                    .in(root.get("packageBag").get("resourceTechnology"))
+                    .in(root.get(PACKAGE).get("resourceTechnology"))
                     .value(updatedTechnologies);
         };
     }
 
     public static Specification<Submission> ofRepository(List<String> repositories) {
         return (root, query, criteriaBuilder) -> criteriaBuilder
-                .in(root.get("packageBag").get("repositoryGeneric").get("name"))
+                .in(root.get(PACKAGE).get("repositoryGeneric").get("name"))
                 .value(repositories);
     }
 }

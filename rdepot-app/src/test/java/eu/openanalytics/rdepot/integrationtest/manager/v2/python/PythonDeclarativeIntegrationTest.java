@@ -134,7 +134,8 @@ public class PythonDeclarativeIntegrationTest extends DeclarativeIntegrationTest
     }
 
     @Test
-    public void shouldUploadPackageToUnublishedRRepository() throws IOException, ParseException, InterruptedException {
+    public void shouldUploadPackageToUnpublishedPythonRepository()
+            throws IOException, ParseException, InterruptedException {
         File packageBag = new File("src/test/resources/itestPackages/coconutpy-2.2.1.tar.gz");
 
         given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)

@@ -436,7 +436,6 @@ public class RLocalStorageTest extends UnitTest {
         final File packageFile = new File(
                 "src/test/resources/unit/storage_tests/rdepot" + "/repositories/2/89565416/bea.R_1.0.5.tar.gz");
         final RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        final byte[] fileContent = Files.readAllBytes(packageFile.toPath());
         repository.setId(2);
         repository.setPublished(false);
         final User user = UserTestFixture.GET_PACKAGE_MAINTAINER();

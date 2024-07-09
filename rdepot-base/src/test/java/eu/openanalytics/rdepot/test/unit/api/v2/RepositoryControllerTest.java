@@ -99,7 +99,7 @@ public class RepositoryControllerTest extends ApiV2ControllerUnitTest {
     @WithMockUser(authorities = {"user", "admin"})
     public void getAllRepositories() throws Exception {
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(userService.isAdmin(user.get())).thenReturn(true);
         when(commonRepositoryService.findAllBySpecification(any(), any()))
                 .thenReturn(RepositoryTestFixture.GET_EXAMPLE_REPOSITORIES_PAGED());
@@ -126,7 +126,7 @@ public class RepositoryControllerTest extends ApiV2ControllerUnitTest {
         final Repository repository = RepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
         final Integer ID = repository.getId();
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(commonRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/repositories/" + ID)
@@ -148,7 +148,7 @@ public class RepositoryControllerTest extends ApiV2ControllerUnitTest {
     public void getRepository_returns404_whenRepositoryIsNotFound() throws Exception {
 
         when(commonRepositoryService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(null));
-        when(userService.findByLogin("user")).thenReturn(Optional.of(UserTestFixture.GET_ADMIN()));
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(UserTestFixture.GET_ADMIN()));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/repositories/" + 123)
                         .contentType(MediaType.APPLICATION_JSON))

@@ -20,16 +20,15 @@
  */
 package eu.openanalytics.rdepot.test.validator;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.validation.UserValidator;
 import eu.openanalytics.rdepot.test.fixture.UserTestFixture;
-import java.time.LocalDate;
+import java.time.Instant;
+import java.util.Calendar;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,6 +45,8 @@ public class UserValidatorTest {
     UserService userService;
 
     private UserValidator userValidator;
+
+    private static final Calendar cal = Calendar.getInstance();
 
     @Test
     public void validateUser_userNotFound() throws Exception {
@@ -66,12 +67,16 @@ public class UserValidatorTest {
 
     @Test
     public void validateUser_allForbiddenUpdates() throws Exception {
+        cal.set(1999, Calendar.JANUARY, 1);
+        final Instant lastLoggedInOn = cal.toInstant();
+        final Instant createdOn = cal.toInstant();
+
         userValidator = new UserValidator(userService);
 
         User user = UserTestFixture.GET_REGULAR_USER();
         User updatedUser = new User(user);
-        updatedUser.setLastLoggedInOn(LocalDate.of(1999, 1, 1));
-        updatedUser.setCreatedOn(LocalDate.of(1999, 1, 1));
+        updatedUser.setLastLoggedInOn(lastLoggedInOn);
+        updatedUser.setCreatedOn(createdOn);
         updatedUser.setName("Test new name");
         updatedUser.setLogin("tnm");
         updatedUser.setEmail("tnm@eu");
@@ -146,7 +151,7 @@ public class UserValidatorTest {
         dataBinder.setValidator(userValidator);
         Errors errors = Mockito.spy(dataBinder.getBindingResult());
 
-        when(userService.findByLogin(user.getLogin())).thenReturn(Optional.of(user));
+        when(userService.findActiveByLogin(user.getLogin())).thenReturn(Optional.of(user));
 
         userValidator.validate(updatedUser, errors);
         verify(errors, times(1)).rejectValue("email", MessageCodes.ERROR_INVALID_EMAIL);

@@ -13,7 +13,7 @@
       "login": "einstein",
       "email": "einstein@ldap.forumsys.com"
     },
-    "created": "2024-05-21",
+    "created": "2024-05-21T00:00:00Z",
     "changes": null,
     "links": [
       {
@@ -29,9 +29,9 @@
     "state": "ACCEPTED",
     "technology": "R",
     "packageBag": {
-      "author": "Douglas Bates [aut] (<https://orcid.org/0000-0001-8316-9503>), Martin Maechler [aut, cre] (<https://orcid.org/0000-0002-8685-9910>),\\n Mikael Jagan [aut] (<https://orcid.org/0000-0002-3542-2938>),\\n Timothy A. Davis [ctb] (<https://orcid.org/0000-0001-7614-6899>,\\n SuiteSparse libraries, notably CHOLMOD and AMD, collaborators\\n listed in dir(pattern=\"^[A-Z]+[.]txt$\", full.names=TRUE,\\n system.file(\"doc\", \"SuiteSparse\", package=\"Matrix\"))),\\n Jens Oehlschlägel [ctb] (initial nearPD()),\\n Jason Riedy [ctb] (<https://orcid.org/0000-0002-4345-4200>, GNU\\n Octave's condest() and onenormest(), Copyright: Regents of the\\n University of California),\\n R Core Team [ctb] (base R's matrix implementation)\\n",
+      "author": "Douglas Bates [aut] (<https://orcid.org/0000-0001-8316-9503>),\\n Martin Maechler [aut, cre] (<https://orcid.org/0000-0002-8685-9910>),\\n Mikael Jagan [aut] (<https://orcid.org/0000-0002-3542-2938>),\\n Timothy A. Davis [ctb] (<https://orcid.org/0000-0001-7614-6899>,\\n SuiteSparse libraries, notably CHOLMOD and AMD, collaborators\\n listed in dir(pattern=\"^[A-Z]+[.]txt$\", full.names=TRUE,\\n system.file(\"doc\", \"SuiteSparse\", package=\"Matrix\"))),\\n Jens Oehlschlägel [ctb] (initial nearPD()),\\n Jason Riedy [ctb] (<https://orcid.org/0000-0002-4345-4200>, GNU\\n Octave's condest() and onenormest(), Copyright: Regents of the\\n University of California),\\n R Core Team [ctb] (base R's matrix implementation)",
       "active": true,
-      "description": "A rich hierarchy of sparse and dense matrix classes,\tincluding general, symmetric, triangular, and diagonal matrices\\n\twith numeric, logical, or pattern entries. Efficient methods for\\n\toperating on such matrices, often wrapping the 'BLAS', 'LAPACK',\\n\tand 'SuiteSparse' libraries.\\n",
+      "description": "A rich hierarchy of sparse and dense matrix classes,\\n including general, symmetric, triangular, and diagonal matrices\\n with numeric, logical, or pattern entries. Efficient methods for\\n operating on such matrices, often wrapping the 'BLAS', 'LAPACK',\\n and 'SuiteSparse' libraries.",
       "technology": "R",
       "repository": {
         "name": "testrepo2",

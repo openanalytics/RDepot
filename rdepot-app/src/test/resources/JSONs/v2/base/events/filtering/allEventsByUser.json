@@ -40,7 +40,7 @@
             "login": "newton",
             "email": "newton@ldap.forumsys.com"
           },
-          "created": "2020-03-28",
+          "created": "2020-03-28T00:00:00Z",
           "changes": null,
           "id": 16,
           "state": "REJECTED",
@@ -92,7 +92,7 @@
           }
         ],
         "id": 25,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2020-03-28T20:05:58.312",
         "eventType": "create",
         "user": {
@@ -117,7 +117,7 @@
             "login": "newton",
             "email": "newton@ldap.forumsys.com"
           },
-          "created": "2020-03-28",
+          "created": "2020-03-28T00:00:00Z",
           "changes": null,
           "id": 17,
           "state": "ACCEPTED",
@@ -169,7 +169,7 @@
           }
         ],
         "id": 26,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2020-03-28T20:05:58.439",
         "eventType": "create",
         "user": {
@@ -194,7 +194,7 @@
             "login": "newton",
             "email": "newton@ldap.forumsys.com"
           },
-          "created": "2020-03-28",
+          "created": "2020-03-28T00:00:00Z",
           "changes": null,
           "id": 18,
           "state": "ACCEPTED",
@@ -246,7 +246,7 @@
           }
         ],
         "id": 27,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2020-03-28T20:05:58.691",
         "eventType": "create",
         "user": {
@@ -266,7 +266,7 @@
             "login": "newton",
             "email": "newton@ldap.forumsys.com"
           },
-          "created": "2020-03-28",
+          "created": "2020-03-28T00:00:00Z",
           "changes": null,
           "id": 19,
           "state": "WAITING",
@@ -318,7 +318,7 @@
           }
         ],
         "id": 28,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2020-03-28T20:06:13.346",
         "eventType": "create",
         "user": {
@@ -343,7 +343,7 @@
             "login": "newton",
             "email": "newton@ldap.forumsys.com"
           },
-          "created": "2020-03-28",
+          "created": "2020-03-28T00:00:00Z",
           "changes": null,
           "id": 20,
           "state": "ACCEPTED",
@@ -395,7 +395,7 @@
           }
         ],
         "id": 29,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2020-03-28T20:06:23.306",
         "eventType": "create",
         "user": {
@@ -416,7 +416,7 @@
           "active": true,
           "id": 7,
           "login": "newton",
-          "createdOn": "1970-01-01",
+          "createdOn": "1970-01-01T00:00:00Z",
           "email": "newton@ldap.forumsys.com"
         },
         "resourceId": 7,
@@ -438,7 +438,7 @@
           }
         ],
         "id": 61,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2020-03-28T19:59:28.830132",
         "eventType": "create",
         "user": {
@@ -495,7 +495,7 @@
           }
         ],
         "id": 135,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2020-03-28T20:05:55.782",
         "eventType": "upload",
         "user": {
@@ -552,7 +552,7 @@
           }
         ],
         "id": 136,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2020-03-28T20:05:55.961",
         "eventType": "upload",
         "user": {
@@ -609,7 +609,7 @@
           }
         ],
         "id": 137,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2020-03-28T20:05:56.091",
         "eventType": "upload",
         "user": {
@@ -666,7 +666,7 @@
           }
         ],
         "id": 138,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2020-03-28T20:06:11.429",
         "eventType": "upload",
         "user": {
@@ -723,7 +723,7 @@
           }
         ],
         "id": 139,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2020-03-28T20:06:21.099",
         "eventType": "upload",
         "user": {
@@ -765,7 +765,7 @@
           }
         ],
         "id": 266,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2020-03-28T20:05:58.313",
         "eventType": "update",
         "user": {
@@ -807,7 +807,7 @@
           }
         ],
         "id": 267,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2020-03-28T20:05:58.441",
         "eventType": "update",
         "user": {
@@ -849,7 +849,7 @@
           }
         ],
         "id": 268,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2020-03-28T20:05:58.693",
         "eventType": "update",
         "user": {
@@ -891,7 +891,7 @@
           }
         ],
         "id": 269,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2020-03-28T20:06:13.348",
         "eventType": "update",
         "user": {
@@ -933,7 +933,7 @@
           }
         ],
         "id": 270,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2020-03-28T20:06:23.307",
         "eventType": "update",
         "user": {
@@ -958,7 +958,7 @@
             "login": "newton",
             "email": "newton@ldap.forumsys.com"
           },
-          "created": "2023-07-10",
+          "created": "2023-07-10T00:00:00Z",
           "changes": null,
           "id": 34,
           "state": "ACCEPTED",
@@ -1004,7 +1004,7 @@
           }
         ],
         "id": 365,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2023-07-10T12:17:57.513055",
         "eventType": "upload",
         "user": {
@@ -1029,7 +1029,7 @@
             "login": "newton",
             "email": "newton@ldap.forumsys.com"
           },
-          "created": "2023-07-10",
+          "created": "2023-07-10T00:00:00Z",
           "changes": null,
           "id": 35,
           "state": "REJECTED",
@@ -1075,7 +1075,7 @@
           }
         ],
         "id": 366,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2023-07-10T12:18:06.909152",
         "eventType": "upload",
         "user": {
@@ -1100,7 +1100,7 @@
             "login": "newton",
             "email": "newton@ldap.forumsys.com"
           },
-          "created": "2023-07-10",
+          "created": "2023-07-10T00:00:00Z",
           "changes": null,
           "id": 36,
           "state": "REJECTED",
@@ -1146,7 +1146,7 @@
           }
         ],
         "id": 367,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2023-07-10T12:18:15.963673",
         "eventType": "upload",
         "user": {
@@ -1171,7 +1171,7 @@
             "login": "newton",
             "email": "newton@ldap.forumsys.com"
           },
-          "created": "2023-07-10",
+          "created": "2023-07-10T00:00:00Z",
           "changes": null,
           "id": 37,
           "state": "ACCEPTED",
@@ -1217,7 +1217,7 @@
           }
         ],
         "id": 368,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2023-07-10T12:18:30.307159",
         "eventType": "upload",
         "user": {

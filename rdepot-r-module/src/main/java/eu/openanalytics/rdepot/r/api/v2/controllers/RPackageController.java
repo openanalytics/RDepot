@@ -71,7 +71,6 @@ import jakarta.json.JsonPatch;
 import java.io.FileNotFoundException;
 import java.security.Principal;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -111,8 +110,8 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
     @Value("${deleting.packages.enabled}")
     private Boolean packagesDeletionEnabled;
 
-    private final Locale locale = LocaleContextHolder.getLocale();
-    private final MessageSource messageSource;
+    private static final String CONTENT_DISPOSITION = "Content-Disposition";
+
     private final RPackageService packageService;
     private final UserService userService;
     private final RPackageValidator packageValidator;
@@ -182,7 +181,7 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
             @RequestParam(name = "name", required = false) Optional<String> name)
             throws ApiException {
         final User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
 
         final DtoResolvedPageable resolvedPageable = pageableSortResolver.resolve(pageable);
@@ -233,7 +232,7 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
     public @ResponseBody ResponseEntity<ResponseDto<EntityModel<RPackageDto>>> getPackageById(
             Principal principal, @PathVariable("id") Integer id) throws PackageNotFound, UserNotAuthorized {
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
         RPackage packageBag = packageService.findById(id).orElseThrow(() -> new PackageNotFound(messageSource, locale));
         if ((!userService.isAdmin(requester) && packageBag.isDeleted()))
@@ -257,7 +256,7 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
             Principal principal, @PathVariable("id") Integer id, @RequestBody JsonPatch patch) throws ApiException {
         RPackage packageBag = packageService.findById(id).orElseThrow(() -> new PackageNotFound(messageSource, locale));
         final User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
 
         if (!securityMediator.isAuthorizedToEdit(packageBag, requester))
@@ -272,7 +271,7 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
                     throw new PackageDeletionException(messageSource, locale);
 
             final DataSpecificValidationResult<Submission> validationResult =
-                    ValidationResultImpl.createDataSpecificResult(Submission.class);
+                    ValidationResultImpl.createDataSpecificResult();
             packageValidator.validate(updatedPackage, true, validationResult);
 
             if (validationResult.hasErrors()) return handleValidationError(validationResult);
@@ -302,7 +301,7 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
     public void shiftDeletePackage(Principal principal, @PathVariable("id") Integer id) throws ApiException {
         final RPackage packageBag =
                 packageService.findOneDeleted(id).orElseThrow(() -> new PackageNotFound(messageSource, locale));
-        if (!userService.findByLogin(principal.getName()).isPresent()) {
+        if (!userService.findActiveByLogin(principal.getName()).isPresent()) {
             throw new UserNotAuthorized(messageSource, locale);
         }
 
@@ -352,7 +351,7 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         httpHeaders.set("Content-Type", "application/gzip");
-        httpHeaders.set("Content-Disposition", "attachment; filename= \"" + name + "_" + version + ".tar.gz\"");
+        httpHeaders.set(CONTENT_DISPOSITION, "attachment; filename= \"" + name + "_" + version + ".tar.gz\"");
 
         return new ResponseEntity<>(bytes, httpHeaders, httpStatus);
     }
@@ -369,7 +368,7 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.set(
-                "Content-Disposition",
+                CONTENT_DISPOSITION,
                 "attachment; filename=\"" + packageBag.getName() + "_" + packageBag.getVersion() + "_manual.pdf\"");
 
         try {
@@ -416,7 +415,7 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
 
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(mediaType);
-        headers.set("Content-Disposition", "attachment; filename= \"" + filename + "\"");
+        headers.set(CONTENT_DISPOSITION, "attachment; filename= \"" + filename + "\"");
 
         try {
             byte[] vignetteRaw = storage.readVignette(packageBag, filename);

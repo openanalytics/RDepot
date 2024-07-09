@@ -21,6 +21,7 @@
 package eu.openanalytics.rdepot.test.fixture;
 
 import eu.openanalytics.rdepot.base.entities.Repository;
+import eu.openanalytics.rdepot.base.time.DateProvider;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -28,7 +29,9 @@ import org.springframework.data.domain.PageImpl;
 public class RepositoryTestFixture {
 
     public static List<Repository> GET_EXAMPLE_REPOSITORIES() {
-        Repository repository1 = new Repository() {};
+        Repository repository1 = new Repository() {
+            private static final long serialVersionUID = 1L;
+        };
         repository1.setId(123);
         repository1.setName("Test RDepot Repository");
         repository1.setPublicationUri("http://localhost/repo/testrepo123");
@@ -37,8 +40,13 @@ public class RepositoryTestFixture {
         repository1.setSynchronizing(false);
         repository1.setVersion(10);
         repository1.setDeleted(false);
+        repository1.setLastPublicationSuccessful(true);
+        repository1.setLastModifiedTimestamp(DateProvider.now());
+        repository1.setLastPublicationTimestamp(DateProvider.now());
 
-        Repository repository2 = new Repository() {};
+        Repository repository2 = new Repository() {
+            private static final long serialVersionUID = 1L;
+        };
         repository2.setId(456);
         repository2.setName("Just another RDepot repository");
         repository2.setPublicationUri("http://localhost/repo/anotherrepo");
@@ -46,8 +54,12 @@ public class RepositoryTestFixture {
         repository2.setPublished(false);
         repository2.setSynchronizing(true);
         repository2.setVersion(5);
+        repository2.setLastPublicationSuccessful(false);
+        repository2.setLastModifiedTimestamp(DateProvider.now());
 
-        Repository repository3 = new Repository() {};
+        Repository repository3 = new Repository() {
+            private static final long serialVersionUID = 1L;
+        };
         repository3.setId(234);
         repository3.setName("Totally different RDepot repository");
         repository3.setPublicationUri("http://localhost/repo/differentrepo");
@@ -56,6 +68,8 @@ public class RepositoryTestFixture {
         repository3.setSynchronizing(false);
         repository3.setVersion(12);
         repository3.setDeleted(true);
+        repository3.setLastPublicationSuccessful(false);
+        repository3.setLastModifiedTimestamp(DateProvider.now());
 
         return List.of(repository1, repository2, repository3);
     }

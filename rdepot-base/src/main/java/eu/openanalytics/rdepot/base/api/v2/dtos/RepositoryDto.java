@@ -36,9 +36,20 @@ import lombok.NoArgsConstructor;
 public class RepositoryDto extends RepositorySimpleDto {
 
     private int numberOfPackages = -1;
+    private String lastPublicationTimestamp = "";
+    private String lastModifiedTimestamp = "";
+    private boolean lastPublicationSuccessful = false;
 
-    public RepositoryDto(Repository repository, int numberOfPackages) {
+    public RepositoryDto(
+            Repository repository,
+            int numberOfPackages,
+            String lastPublicationTimestamp,
+            String lastModifiedTimestamp,
+            boolean lastPublicationSuccessful) {
         super(repository);
         this.numberOfPackages = numberOfPackages;
+        this.lastPublicationSuccessful = lastPublicationSuccessful;
+        this.lastPublicationTimestamp = lastPublicationTimestamp;
+        this.lastModifiedTimestamp = lastModifiedTimestamp;
     }
 }

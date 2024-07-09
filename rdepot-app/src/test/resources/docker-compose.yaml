@@ -91,6 +91,10 @@ services:
       interval: 10s
       timeout: 10s
       retries: 100
+    deploy:
+      resources:
+        limits:
+          memory: 1G
     networks:
       oa-rdepot:
         aliases:

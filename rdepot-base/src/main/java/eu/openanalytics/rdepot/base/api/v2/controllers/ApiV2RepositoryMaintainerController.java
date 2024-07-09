@@ -152,7 +152,7 @@ public class ApiV2RepositoryMaintainerController
             Principal principal)
             throws ApiException {
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
 
         final DtoResolvedPageable resolvedPageable = pageableSortResolver.resolve(pageable);
@@ -191,7 +191,7 @@ public class ApiV2RepositoryMaintainerController
     public @ResponseBody ResponseEntity<ResponseDto<EntityModel<RepositoryMaintainerDto>>> getMaintainer(
             @PathVariable("id") Integer id, Principal principal) throws ApiException {
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
 
         RepositoryMaintainer maintainer = repositoryMaintainerService
@@ -210,7 +210,7 @@ public class ApiV2RepositoryMaintainerController
     public @ResponseBody ResponseEntity<?> createMaintainer(
             Principal principal, @RequestBody RepositoryMaintainerDto repositoryMaintainerDto) throws ApiException {
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
 
         RepositoryMaintainer repositoryMaintainer = null;
@@ -245,7 +245,7 @@ public class ApiV2RepositoryMaintainerController
     public @ResponseBody ResponseEntity<?> updateRepositoryMaintainer(
             Principal principal, @PathVariable("id") Integer id, @RequestBody JsonPatch jsonPatch) throws ApiException {
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
 
         RepositoryMaintainer repositoryMaintainer = repositoryMaintainerService
@@ -287,7 +287,7 @@ public class ApiV2RepositoryMaintainerController
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(operationId = "deleteRepositoryMaintainer")
     public void deleteRepositoryMaintainer(@PathVariable("id") Integer id, Principal principal) throws ApiException {
-        if (!userService.findByLogin(principal.getName()).isPresent()) {
+        if (!userService.findActiveByLogin(principal.getName()).isPresent()) {
             throw new UserNotAuthorized(messageSource, locale);
         }
 

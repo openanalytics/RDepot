@@ -59,6 +59,11 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
     @Value("${repository-snapshots}")
     private String snapshot;
 
+    private static final String PACKAGES = "PACKAGES";
+    private static final String ARCHIVE_FOLDER = "Archive";
+    private static final String LATEST_FOLDER = "latest";
+    private static final String CONTRIB_FOLDER = "contrib";
+
     @Override
     public Properties getPropertiesFromExtractedFile(final String extractedFile)
             throws ReadPackageDescriptionException {
@@ -81,18 +86,18 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
     }
 
     public String getRepositoryGeneratedPath(File dateStampFolder, String separator) {
-        return dateStampFolder.getAbsolutePath() + separator + "src" + separator + "contrib";
+        return dateStampFolder.getAbsolutePath() + separator + "src" + separator + CONTRIB_FOLDER;
     }
 
     private void createTemporaryFoldersForLatestAndArchive(String path) throws CreateFolderStructureException {
-        File latest = createFolderStructure(path + separator + "latest");
-        File archive = createFolderStructure(path + separator + "Archive");
+        File latest = createFolderStructure(path + separator + LATEST_FOLDER);
+        File archive = createFolderStructure(path + separator + ARCHIVE_FOLDER);
 
         try {
             File packagesLatest =
-                    Files.createFile(latest.toPath().resolve("PACKAGES")).toFile();
+                    Files.createFile(latest.toPath().resolve(PACKAGES)).toFile();
             File packagesArchive =
-                    Files.createFile(archive.toPath().resolve("PACKAGES")).toFile();
+                    Files.createFile(archive.toPath().resolve(PACKAGES)).toFile();
 
             gzipFile(packagesLatest);
             gzipFile(packagesArchive);
@@ -108,7 +113,7 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
                 + separator + repository.getId()
                 + separator + dateStamp
                 + separator + "src"
-                + separator + "contrib";
+                + separator + CONTRIB_FOLDER;
 
         populatePackageFolder(packages, folderPath);
     }
@@ -129,8 +134,8 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
         final File currentDirectory = new File(repositoryGenerationDirectory.getAbsolutePath() + separator
                 + repository.getId()
                 + separator + "current"
-                + separator + "src" + separator + "contrib" + separator + "latest");
-        final File packagesFile = new File(currentDirectory.getAbsolutePath() + separator + "PACKAGES");
+                + separator + "src" + separator + CONTRIB_FOLDER + separator + LATEST_FOLDER);
+        final File packagesFile = new File(currentDirectory.getAbsolutePath() + separator + PACKAGES);
         final File packagesGzFile = new File(currentDirectory.getAbsolutePath() + separator + "PACKAGES.gz");
 
         final List<String> latestToDelete =
@@ -141,8 +146,8 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
         final File archiveDirectory = new File(repositoryGenerationDirectory.getAbsolutePath() + separator
                 + repository.getId()
                 + separator + "current"
-                + separator + "src" + separator + "contrib" + separator + "Archive");
-        final File packagesFileFromArchive = new File(archiveDirectory.getAbsolutePath() + separator + "PACKAGES");
+                + separator + "src" + separator + CONTRIB_FOLDER + separator + ARCHIVE_FOLDER);
+        final File packagesFileFromArchive = new File(archiveDirectory.getAbsolutePath() + separator + PACKAGES);
         final File packagesGzFileFromArchive = new File(archiveDirectory.getAbsolutePath() + separator + "PACKAGES.gz");
 
         final List<String> archiveToDelete =
@@ -225,9 +230,9 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
             populateGeneratedFolder(packages, repository, dateStamp);
 
             final File target = linkCurrentFolderToGeneratedFolder(repository, dateStamp);
-            final Path repoPath = target.toPath().resolve("src").resolve("contrib");
-            final String latestFolderPath = repoPath + separator + "latest";
-            final String archiveFolderPath = repoPath + separator + "Archive";
+            final Path repoPath = target.toPath().resolve("src").resolve(CONTRIB_FOLDER);
+            final String latestFolderPath = repoPath + separator + LATEST_FOLDER;
+            final String archiveFolderPath = repoPath + separator + ARCHIVE_FOLDER;
 
             createTemporaryFoldersForLatestAndArchive(repoPath.toString());
             populatePackageFolder(latestPackages, latestFolderPath);
@@ -248,7 +253,7 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
                     folderPath + separator + packageBag.getName() + "_" + packageBag.getVersion() + ".tar.gz";
 
             try {
-                File packagesFile = new File(folderPath + separator + "PACKAGES");
+                File packagesFile = new File(folderPath + separator + PACKAGES);
 
                 Files.copy(new File(targetFilePath).toPath(), new File(destinationFilePath).toPath());
                 if (!packageBag.getMd5sum().equals(calculateMd5Sum(new File(destinationFilePath)))) {
@@ -409,11 +414,13 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
             Process process = null;
             try {
                 process = pb.start();
-                BufferedReader out = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                String outputLine;
 
+                String outputLine;
                 log.debug("Rd2pdf output: ");
-                while ((outputLine = out.readLine()) != null) log.debug(outputLine.replaceAll("[\r\n]", ""));
+                try (BufferedReader out = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                    while ((outputLine = out.readLine()) != null) log.debug(outputLine.replaceAll("[\r\n]", ""));
+                }
+                ;
 
                 int exitValue = process.waitFor();
                 if (exitValue != 0) {

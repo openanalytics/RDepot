@@ -32,7 +32,7 @@
           "name": "century",
           "active": true,
           "id": 8,
-          "creationDate": "2024-01-19",
+          "creationDate": "2024-01-19T00:00:00Z",
           "value": null,
           "user": {
             "name": "Isaac Newton",
@@ -40,7 +40,7 @@
             "login": "newton",
             "email": "newton@ldap.forumsys.com"
           },
-          "expirationDate": "2124-12-31"
+          "expirationDate": "2124-12-31T00:00:00Z"
         },
         "resourceId": 8,
         "changedProperties": [],
@@ -55,7 +55,7 @@
           }
         ],
         "id": 398,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2024-01-19T13:42:35.326969",
         "eventType": "create",
         "user": {
@@ -72,7 +72,7 @@
           "name": "century",
           "active": true,
           "id": 7,
-          "creationDate": "2024-01-19",
+          "creationDate": "2024-01-19T00:00:00Z",
           "value": null,
           "user": {
             "name": "Galileo Galilei",
@@ -80,7 +80,7 @@
             "login": "galieleo",
             "email": "galieleo@ldap.forumsys.com"
           },
-          "expirationDate": "2124-12-31"
+          "expirationDate": "2124-12-31T00:00:00Z"
         },
         "resourceId": 7,
         "changedProperties": [],
@@ -95,7 +95,7 @@
           }
         ],
         "id": 397,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2024-01-19T13:42:34.341632",
         "eventType": "create",
         "user": {
@@ -112,7 +112,7 @@
           "name": "century",
           "active": true,
           "id": 6,
-          "creationDate": "2024-01-19",
+          "creationDate": "2024-01-19T00:00:00Z",
           "value": null,
           "user": {
             "name": "Nikola Tesla",
@@ -120,7 +120,7 @@
             "login": "tesla",
             "email": "tesla@ldap.forumsys.com"
           },
-          "expirationDate": "2124-12-31"
+          "expirationDate": "2124-12-31T00:00:00Z"
         },
         "resourceId": 6,
         "changedProperties": [],
@@ -135,7 +135,7 @@
           }
         ],
         "id": 396,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2024-01-19T13:42:32.681292",
         "eventType": "create",
         "user": {
@@ -152,7 +152,7 @@
           "name": "century",
           "active": true,
           "id": 5,
-          "creationDate": "2024-01-19",
+          "creationDate": "2024-01-19T00:00:00Z",
           "value": null,
           "user": {
             "name": "Albert Einstein",
@@ -160,7 +160,7 @@
             "login": "einstein",
             "email": "einstein@ldap.forumsys.com"
           },
-          "expirationDate": "2124-12-31"
+          "expirationDate": "2124-12-31T00:00:00Z"
         },
         "resourceId": 5,
         "changedProperties": [],
@@ -175,7 +175,7 @@
           }
         ],
         "id": 395,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2024-01-19T13:42:26.568523",
         "eventType": "create",
         "user": {
@@ -192,7 +192,7 @@
           "name": "expired",
           "active": false,
           "id": 4,
-          "creationDate": "2023-12-06",
+          "creationDate": "2023-12-06T00:00:00Z",
           "value": null,
           "user": {
             "name": "Isaac Newton",
@@ -200,7 +200,7 @@
             "login": "newton",
             "email": "newton@ldap.forumsys.com"
           },
-          "expirationDate": "2023-12-07"
+          "expirationDate": "2023-12-07T00:00:00Z"
         },
         "resourceId": 4,
         "changedProperties": [
@@ -221,7 +221,7 @@
           }
         ],
         "id": 394,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2023-12-07T23:59:59.99999",
         "eventType": "update",
         "user": {
@@ -238,7 +238,7 @@
           "name": "expired",
           "active": false,
           "id": 4,
-          "creationDate": "2023-12-06",
+          "creationDate": "2023-12-06T00:00:00Z",
           "value": null,
           "user": {
             "name": "Isaac Newton",
@@ -246,7 +246,7 @@
             "login": "newton",
             "email": "newton@ldap.forumsys.com"
           },
-          "expirationDate": "2023-12-07"
+          "expirationDate": "2023-12-07T00:00:00Z"
         },
         "resourceId": 4,
         "changedProperties": [],
@@ -261,7 +261,7 @@
           }
         ],
         "id": 393,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2023-12-06T11:49:44.78367",
         "eventType": "create",
         "user": {
@@ -278,7 +278,7 @@
           "name": "deactivated",
           "active": false,
           "id": 3,
-          "creationDate": "2023-12-05",
+          "creationDate": "2023-12-05T00:00:00Z",
           "value": null,
           "user": {
             "name": "Isaac Newton",
@@ -286,7 +286,7 @@
             "login": "newton",
             "email": "newton@ldap.forumsys.com"
           },
-          "expirationDate": "2023-12-10"
+          "expirationDate": "2023-12-10T00:00:00Z"
         },
         "resourceId": 3,
         "changedProperties": [
@@ -307,7 +307,7 @@
           }
         ],
         "id": 392,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2023-12-06T09:13:31.7944",
         "eventType": "update",
         "user": {
@@ -324,7 +324,7 @@
           "name": "deactivated",
           "active": false,
           "id": 3,
-          "creationDate": "2023-12-05",
+          "creationDate": "2023-12-05T00:00:00Z",
           "value": null,
           "user": {
             "name": "Isaac Newton",
@@ -332,7 +332,7 @@
             "login": "newton",
             "email": "newton@ldap.forumsys.com"
           },
-          "expirationDate": "2023-12-10"
+          "expirationDate": "2023-12-10T00:00:00Z"
         },
         "resourceId": 3,
         "changedProperties": [],
@@ -347,7 +347,7 @@
           }
         ],
         "id": 391,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2023-12-05T11:12:54.853912",
         "eventType": "create",
         "user": {
@@ -364,7 +364,7 @@
           "name": "second",
           "active": true,
           "id": 2,
-          "creationDate": "2023-12-04",
+          "creationDate": "2023-12-04T00:00:00Z",
           "value": null,
           "user": {
             "name": "Isaac Newton",
@@ -372,7 +372,7 @@
             "login": "newton",
             "email": "newton@ldap.forumsys.com"
           },
-          "expirationDate": "2024-12-04"
+          "expirationDate": "2024-12-04T00:00:00Z"
         },
         "resourceId": 2,
         "changedProperties": [],
@@ -387,7 +387,7 @@
           }
         ],
         "id": 390,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2023-12-04T11:12:25.346875",
         "eventType": "create",
         "user": {
@@ -404,7 +404,7 @@
           "name": "try",
           "active": true,
           "id": 1,
-          "creationDate": "2023-11-15",
+          "creationDate": "2023-11-15T00:00:00Z",
           "value": null,
           "user": {
             "name": "Albert Einstein",
@@ -412,7 +412,7 @@
             "login": "einstein",
             "email": "einstein@ldap.forumsys.com"
           },
-          "expirationDate": "2024-11-15"
+          "expirationDate": "2024-11-15T00:00:00Z"
         },
         "resourceId": 1,
         "changedProperties": [],
@@ -427,7 +427,7 @@
           }
         ],
         "id": 389,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2023-11-15T11:11:11.951486",
         "eventType": "create",
         "user": {
@@ -447,7 +447,7 @@
             "login": "newton",
             "email": "newton@ldap.forumsys.com"
           },
-          "created": "2023-07-10",
+          "created": "2023-07-10T00:00:00Z",
           "changes": null,
           "id": 46,
           "state": "WAITING",
@@ -493,7 +493,7 @@
           }
         ],
         "id": 388,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2023-07-10T12:36:18.482532",
         "eventType": "upload",
         "user": {
@@ -513,7 +513,7 @@
             "login": "newton",
             "email": "newton@ldap.forumsys.com"
           },
-          "created": "2023-07-10",
+          "created": "2023-07-10T00:00:00Z",
           "changes": null,
           "id": 45,
           "state": "WAITING",
@@ -559,7 +559,7 @@
           }
         ],
         "id": 387,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2023-07-10T12:36:04.077593",
         "eventType": "upload",
         "user": {
@@ -602,7 +602,7 @@
           }
         ],
         "id": 386,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2023-07-10T12:35:21.693706",
         "eventType": "create",
         "user": {
@@ -645,7 +645,7 @@
           }
         ],
         "id": 385,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2023-07-10T12:35:08.081333",
         "eventType": "create",
         "user": {
@@ -688,7 +688,7 @@
           }
         ],
         "id": 384,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2023-07-10T12:35:00.699712",
         "eventType": "create",
         "user": {
@@ -731,7 +731,7 @@
           }
         ],
         "id": 383,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2023-07-10T12:34:38.748343",
         "eventType": "create",
         "user": {
@@ -756,7 +756,7 @@
             "login": "einstein",
             "email": "einstein@ldap.forumsys.com"
           },
-          "created": "2023-07-10",
+          "created": "2023-07-10T00:00:00Z",
           "changes": null,
           "id": 44,
           "state": "ACCEPTED",
@@ -802,7 +802,7 @@
           }
         ],
         "id": 382,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2023-07-10T12:34:02.690264",
         "eventType": "upload",
         "user": {
@@ -827,7 +827,7 @@
             "login": "einstein",
             "email": "einstein@ldap.forumsys.com"
           },
-          "created": "2023-07-10",
+          "created": "2023-07-10T00:00:00Z",
           "changes": null,
           "id": 43,
           "state": "ACCEPTED",
@@ -873,7 +873,7 @@
           }
         ],
         "id": 381,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2023-07-10T12:33:27.912225",
         "eventType": "upload",
         "user": {
@@ -898,7 +898,7 @@
             "login": "einstein",
             "email": "einstein@ldap.forumsys.com"
           },
-          "created": "2023-07-10",
+          "created": "2023-07-10T00:00:00Z",
           "changes": null,
           "id": 42,
           "state": "ACCEPTED",
@@ -944,7 +944,7 @@
           }
         ],
         "id": 380,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2023-07-10T12:32:32.750608",
         "eventType": "upload",
         "user": {
@@ -969,7 +969,7 @@
             "login": "einstein",
             "email": "einstein@ldap.forumsys.com"
           },
-          "created": "2023-07-10",
+          "created": "2023-07-10T00:00:00Z",
           "changes": null,
           "id": 41,
           "state": "ACCEPTED",
@@ -1015,7 +1015,7 @@
           }
         ],
         "id": 379,
-        "technology": "RDepot version: 2.1.1",
+        "technology": "RDepot version: 2.2.0",
         "time": "2023-07-10T12:32:02.044347",
         "eventType": "upload",
         "user": {

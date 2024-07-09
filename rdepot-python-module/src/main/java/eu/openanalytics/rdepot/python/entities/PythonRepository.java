@@ -33,6 +33,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.SecondaryTable;
 import java.io.Serializable;
+import java.time.Instant;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -53,8 +54,8 @@ public class PythonRepository extends Repository implements Serializable {
         super(PythonLanguage.instance);
     }
 
-    public PythonRepository(PythonRepositoryDto dto) {
-        super(PythonLanguage.instance, dto);
+    public PythonRepository(PythonRepositoryDto dto, Instant lastPublicationTimestamp, Instant lastModifiedTimestamp) {
+        super(PythonLanguage.instance, dto, lastPublicationTimestamp, lastModifiedTimestamp);
         if (dto.getHashMethod() != null) {
             this.hashMethod = dto.getHashMethod();
         }

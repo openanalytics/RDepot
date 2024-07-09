@@ -13,7 +13,7 @@
       "login": "einstein",
       "email": "einstein@ldap.forumsys.com"
     },
-    "created": "2024-05-21",
+    "created": "2024-05-21T00:00:00Z",
     "changes": null,
     "links": [
       {
@@ -29,9 +29,9 @@
     "state": "ACCEPTED",
     "technology": "R",
     "packageBag": {
-      "author": "Barret Schloerke [aut, cre], Di Cook [aut, ths],\\n Joseph Larmarange [aut],\\n Francois Briatte [aut],\\n Moritz Marbach [aut],\\n Edwin Thoen [aut],\\n Amos Elberg [aut],\\n Ott Toomet [ctb],\\n Jason Crowley [aut],\\n Heike Hofmann [ths],\\n Hadley Wickham [ths]\\n",
+      "author": "Barret Schloerke [aut, cre],\\n Di Cook [aut, ths],\\n Joseph Larmarange [aut],\\n Francois Briatte [aut],\\n Moritz Marbach [aut],\\n Edwin Thoen [aut],\\n Amos Elberg [aut],\\n Ott Toomet [ctb],\\n Jason Crowley [aut],\\n Heike Hofmann [ths],\\n Hadley Wickham [ths]",
       "active": true,
-      "description": "The R package 'ggplot2' is a plotting system based on the grammar of graphics.\\n 'GGally' extends 'ggplot2' by adding several functions\\n to reduce the complexity of combining geometric objects with transformed data.\\n Some of these functions include a pairwise plot matrix, a two group pairwise plot\\n matrix, a parallel coordinates plot, a survival plot, and several functions to\\n plot networks.\\n",
+      "description": "The R package 'ggplot2' is a plotting system based on the grammar of graphics.\\n 'GGally' extends 'ggplot2' by adding several functions\\n to reduce the complexity of combining geometric objects with transformed data.\\n Some of these functions include a pairwise plot matrix, a two group pairwise plot\\n matrix, a parallel coordinates plot, a survival plot, and several functions to\\n plot networks.",
       "technology": "R",
       "repository": {
         "name": "testrepo2",

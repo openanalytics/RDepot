@@ -20,17 +20,12 @@
  */
 package eu.openanalytics.rdepot.integrationtest.environment;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ArrayUtils;
 
 @Slf4j
 public class BashTestEnvironmentConfigurator implements TestEnvironmentConfigurator {
@@ -38,6 +33,7 @@ public class BashTestEnvironmentConfigurator implements TestEnvironmentConfigura
     private static final int TIMEOUT = 10;
     private static final int MAX_RETRIES = 3;
     private static BashTestEnvironmentConfigurator instance;
+    private static final BashScriptExecutor bashScriptExecutor = new BashScriptExecutor();
 
     private BashTestEnvironmentConfigurator() {}
 
@@ -53,7 +49,7 @@ public class BashTestEnvironmentConfigurator implements TestEnvironmentConfigura
     public void restoreEnvironment() throws Exception {
         executeWithRetries(() -> {
             try {
-                executeBashScript("src/test/resources/scripts/restore.sh");
+                bashScriptExecutor.executeBashScript("src/test/resources/scripts/restore.sh");
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -64,41 +60,18 @@ public class BashTestEnvironmentConfigurator implements TestEnvironmentConfigura
     public void backupEnvironment() throws Exception {
         executeWithRetries(() -> {
             try {
-                executeBashScript("src/test/resources/scripts/backupDeclarative.sh");
+                bashScriptExecutor.executeBashScript("src/test/resources/scripts/backupDeclarative.sh");
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });
     }
 
-    protected void executeBashScript(String... args) {
-        String[] cmd = ArrayUtils.addAll(new String[] {"/bin/bash"}, args);
-        execute(cmd);
-    }
-
-    protected void executeBashCommand(@NonNull final String bashCmd) {
-        String[] cmd = ArrayUtils.addAll(new String[] {"/bin/bash", "-c"}, "\"" + bashCmd + "\"");
-        execute(cmd);
-    }
-
-    protected void execute(String... args) {
-        try {
-            Process process = new ProcessBuilder(args).redirectErrorStream(true).start();
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String msg;
-            while ((msg = reader.readLine()) != null) {}
-            process.waitFor();
-            process.destroy();
-        } catch (InterruptedException | IOException e) {
-            log.error(e.getMessage(), e);
-        }
-    }
-
     @Override
     public void restoreDeclarative() throws Exception {
         executeWithRetries(() -> {
             try {
-                executeBashScript("src/test/resources/scripts/restoreDeclarative.sh");
+                bashScriptExecutor.executeBashScript("src/test/resources/scripts/restoreDeclarative.sh");
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -108,13 +81,13 @@ public class BashTestEnvironmentConfigurator implements TestEnvironmentConfigura
     @Override
     public void blockRepoContainer(Runnable testMethod) throws Exception {
         executeWithRetries(() -> {
-            executeBashScript("src/test/resources/scripts/blockRepo.sh");
+            bashScriptExecutor.executeBashScript("src/test/resources/scripts/blockRepo.sh");
         });
         try {
             testMethod.run();
         } finally {
             executeWithRetries(() -> {
-                executeBashScript("src/test/resources/scripts/unblockRepo.sh");
+                bashScriptExecutor.executeBashScript("src/test/resources/scripts/unblockRepo.sh");
             });
         }
     }
@@ -131,7 +104,7 @@ public class BashTestEnvironmentConfigurator implements TestEnvironmentConfigura
                 break;
             } catch (TimeoutException e) {
                 future.cancel(true);
-                executeBashCommand("pkill -9 -f 'docker exec'");
+                bashScriptExecutor.executeBashCommand("pkill -9 -f 'docker exec'");
 
                 log.warn(
                         "Restore timeout! [ATTEMPT " + (MAX_RETRIES - remainingAttempts + 1) + "/" + MAX_RETRIES + "]");

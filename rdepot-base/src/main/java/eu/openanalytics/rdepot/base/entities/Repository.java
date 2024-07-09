@@ -27,6 +27,7 @@ import eu.openanalytics.rdepot.base.entities.enums.ResourceType;
 import eu.openanalytics.rdepot.base.event.EventableResource;
 import eu.openanalytics.rdepot.base.technology.InternalTechnology;
 import eu.openanalytics.rdepot.base.technology.Technology;
+import eu.openanalytics.rdepot.base.time.DateProvider;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
@@ -37,6 +38,8 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import java.io.Serializable;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Getter;
@@ -55,7 +58,10 @@ import lombok.Setter;
         name = "resource_technology",
         discriminatorType = DiscriminatorType.STRING,
         columnDefinition = "varchar default 'Repository'")
-public abstract class Repository extends EventableResource {
+public abstract class Repository extends EventableResource implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     protected Repository() {
         super(InternalTechnology.instance, ResourceType.REPOSITORY);
     }
@@ -77,6 +83,15 @@ public abstract class Repository extends EventableResource {
 
     @Column(name = "published", nullable = false)
     private Boolean published = false;
+
+    @Column(name = "last_publication_timestamp")
+    private Instant lastPublicationTimestamp = null;
+
+    @Column(name = "last_modified_timestamp")
+    private Instant lastModifiedTimestamp = DateProvider.now();
+
+    @Column(name = "last_publication_successful")
+    private boolean lastPublicationSuccessful = false;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "repository")
     private Set<RepositoryMaintainer> repositoryMaintainers = new HashSet<>(0);
@@ -105,13 +120,17 @@ public abstract class Repository extends EventableResource {
         this.repositoryMaintainers = that.repositoryMaintainers;
         this.resourceTechnology = that.resourceTechnology;
         this.synchronizing = that.synchronizing;
+        this.lastPublicationSuccessful = that.lastPublicationSuccessful;
+        this.lastModifiedTimestamp = that.lastModifiedTimestamp;
+        this.lastPublicationTimestamp = that.lastPublicationTimestamp;
     }
 
     public Repository(Technology technology) {
         super(technology, ResourceType.REPOSITORY);
     }
 
-    public <D extends RepositoryDto> Repository(Technology technology, D repositoryDto) {
+    public <D extends RepositoryDto> Repository(
+            Technology technology, D repositoryDto, Instant lastPublicationTimestamp, Instant lastModifiedTimestamp) {
         this(technology);
         this.id = repositoryDto.getId();
         this.version = repositoryDto.getVersion();
@@ -121,6 +140,8 @@ public abstract class Repository extends EventableResource {
         this.deleted = repositoryDto.isDeleted();
         this.published = repositoryDto.isPublished();
         this.synchronizing = repositoryDto.isSynchronizing();
+        this.lastPublicationTimestamp = lastPublicationTimestamp;
+        this.lastModifiedTimestamp = lastModifiedTimestamp;
     }
 
     @Override

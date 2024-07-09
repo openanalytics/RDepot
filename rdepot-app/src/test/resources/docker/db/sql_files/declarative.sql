@@ -303,7 +303,10 @@ CREATE TABLE public.repository (
     server_address text NOT NULL,
     published boolean DEFAULT false NOT NULL,
     deleted boolean DEFAULT false NOT NULL,
-    resource_technology text NOT NULL
+    resource_technology text NOT NULL,
+    last_publication_successful boolean DEFAULT false NOT NULL,
+    last_publication_timestamp date,
+    last_modified_timestamp date
 );
 
 
@@ -651,14 +654,14 @@ COPY public.pythonrepository (id, hash_method) FROM stdin;
 -- Data for Name: repository; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.repository (id, version, publication_uri, name, server_address, published, deleted, resource_technology) FROM stdin;
-1	0	http://localhost/repo/X	X	http://oa-rdepot-repo:8080/X	t	f	Python
-3	0	http://localhost/repo/D	D	http://oa-rdepot-repo:8080/D	f	f	R
-5	0	http://localhost/repo/G	G	http://oa-rdepot-repo:8080/G	f	f	R
-6	0	http://localhost/repo/H	H	http://oa-rdepot-repo:8080/H	f	t	R
-11	1	http://localhost/repo/testrepo11	testrepo11	http://oa-rdepot-repo:8080/testrepo11	t	t	Python
-12	1	http://localhost/repo/testrepo12	testrepo12	http://oa-rdepot-repo:8080/testrepo12	f	t	Python
-10	7	http://localhost/repo/testrepo10	testrepo10	http://oa-rdepot-repo:8080/testrepo10	f	f	Python
+COPY public.repository (id, version, publication_uri, name, server_address, published, deleted, resource_technology, last_publication_successful, last_publication_timestamp, last_modified_timestamp) FROM stdin;
+1	0	http://localhost/repo/X	X	http://oa-rdepot-repo:8080/X	t	f	Python	t	'2024-06-27 12:30:25'	'2024-06-27 12:30:25'
+3	0	http://localhost/repo/D	D	http://oa-rdepot-repo:8080/D	f	f	R	f	\N	'2024-06-21 12:30:25'
+5	0	http://localhost/repo/G	G	http://oa-rdepot-repo:8080/G	f	f	R	f	\N	'2024-05-21 12:30:25'
+6	0	http://localhost/repo/H	H	http://oa-rdepot-repo:8080/H	f	t	R	f	\N	'2024-04-21 12:30:25'
+11	1	http://localhost/repo/testrepo11	testrepo11	http://oa-rdepot-repo:8080/testrepo11	t	t	Python	t	'2024-06-27 12:30:25'	'2024-06-27 12:30:25'
+12	1	http://localhost/repo/testrepo12	testrepo12	http://oa-rdepot-repo:8080/testrepo12	f	t	Python	f	\N	'2024-03-21 12:30:25'
+10	7	http://localhost/repo/testrepo10	testrepo10	http://oa-rdepot-repo:8080/testrepo10	f	f	Python	f	\N	'2024-02-21 12:30:25'
 \.
 
 

@@ -27,6 +27,7 @@ import eu.openanalytics.rdepot.base.api.v2.resolvers.DtoResolvedPageable;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -45,7 +46,7 @@ public class PageableValidatorImpl implements PageableValidator {
     protected static final Locale locale = LocaleContextHolder.getLocale();
 
     @Override
-    public void validate(Class<? extends IDto> c, DtoResolvedPageable pageable)
+    public void validate(Class<? extends IDto> dtoClass, DtoResolvedPageable pageable)
             throws UnrecognizedQueryParameterException {
 
         if (pageable.getDtoSort().isUnsorted()) return;
@@ -54,7 +55,7 @@ public class PageableValidatorImpl implements PageableValidator {
                 .map(field -> field.toString().substring(0, field.toString().indexOf(":")))
                 .collect(Collectors.toSet());
 
-        Set<String> dtoFields = getDtoFields(c);
+        Set<String> dtoFields = getDtoFields(dtoClass);
 
         for (String field : fieldsToSortBy) {
             if (validateField(field, dtoFields)) continue;
@@ -66,79 +67,92 @@ public class PageableValidatorImpl implements PageableValidator {
         return dtoFields.contains(field);
     }
 
-    private Set<String> getDtoFields(Class<? extends IDto> c) {
-        Set<String> dtoFields = Arrays.asList(c.getDeclaredFields()).stream()
-                .map(f -> f.getName())
+    private Set<String> getDtoFields(Class<? extends IDto> dtoClass) {
+        Set<String> dtoFields = Arrays.asList(dtoClass.getDeclaredFields()).stream()
+                .map(dtoField -> dtoField.getName())
                 .collect(Collectors.toSet());
 
-        if (!c.getSuperclass().equals(Object.class)) {
-            dtoFields.addAll(Arrays.asList(c.getSuperclass().getDeclaredFields()).stream()
-                    .map(f -> f.getName())
+        if (!dtoClass.getSuperclass().equals(Object.class)) {
+            dtoFields.addAll(Arrays.asList(dtoClass.getSuperclass().getDeclaredFields()).stream()
+                    .map(dtoField -> dtoField.getName())
                     .collect(Collectors.toSet()));
         }
 
-        Set<String> projetionFields = Arrays.asList(
-                        c.getSuperclass().equals(Object.class)
-                                ? c.getDeclaredFields()
-                                : c.getSuperclass().getDeclaredFields())
-                .stream()
-                .filter(f -> f.getType().toString().contains("Projection"))
-                .map(f -> f.getName())
-                .collect(Collectors.toSet());
+        dtoFields.addAll(getProjectionFields(dtoClass));
 
-        if (!projetionFields.isEmpty()) {
-            for (String nameOfProjectionField : projetionFields) {
-
-                Field projectionField = null;
-                try {
-                    projectionField = c.getSuperclass().equals(Object.class)
-                            ? c.getDeclaredField(nameOfProjectionField)
-                            : c.getSuperclass().getDeclaredField(nameOfProjectionField);
-                } catch (NoSuchFieldException | SecurityException e) {
-                    log.error(e.getMessage(), e);
-                    throw new IllegalStateException("Reflection error");
-                }
-
-                dtoFields.addAll(Arrays.asList(projectionField.getType().getDeclaredFields()).stream()
-                        .map(f -> nameOfProjectionField + '.' + f.getName())
-                        .collect(Collectors.toSet()));
-            }
-        }
-
-        if (c.equals(SubmissionDto.class)) {
-            ParameterizedType parameterizedType = (ParameterizedType) c.getGenericSuperclass();
-            Class genericClass = (Class<?>) parameterizedType.getActualTypeArguments()[0];
-
-            dtoFields.addAll(Arrays.asList(genericClass.getDeclaredFields()).stream()
-                    .map(f -> "packageBag." + f.getName())
-                    .collect(Collectors.toSet()));
-
-            dtoFields.addAll(Arrays.asList(genericClass.getSuperclass().getDeclaredFields()).stream()
-                    .map(f -> "packageBag." + f.getName())
-                    .collect(Collectors.toSet()));
-
-            Set<String> projectionFieldsOfGenericClass =
-                    Arrays.asList(genericClass.getSuperclass().getDeclaredFields()).stream()
-                            .filter(f -> f.getType().toString().contains("Projection"))
-                            .map(f -> f.getName())
-                            .collect(Collectors.toSet());
-
-            for (String nameOfProjectionField : projectionFieldsOfGenericClass) {
-
-                Field projectionField = null;
-                try {
-                    projectionField = genericClass.getSuperclass().getDeclaredField(nameOfProjectionField);
-                } catch (NoSuchFieldException | SecurityException e) {
-                    log.error(e.getMessage(), e);
-                    throw new IllegalStateException("Reflection error");
-                }
-
-                dtoFields.addAll(Arrays.asList(projectionField.getType().getDeclaredFields()).stream()
-                        .map(f -> "packageBag." + nameOfProjectionField + '.' + f.getName())
-                        .collect(Collectors.toSet()));
-            }
+        if (dtoClass.equals(SubmissionDto.class)) {
+            dtoFields.addAll(getFieldsOfSubmissionDtoClass(dtoClass));
         }
 
         return dtoFields;
+    }
+
+    private Set<String> getProjectionFields(Class<? extends IDto> dtoClass) {
+        Set<String> dtoProjetionFields = Arrays.asList(
+                        dtoClass.getSuperclass().equals(Object.class)
+                                ? dtoClass.getDeclaredFields()
+                                : dtoClass.getSuperclass().getDeclaredFields())
+                .stream()
+                .filter(dtoField -> dtoField.getType().toString().contains("Projection"))
+                .map(dtoField -> dtoField.getName())
+                .collect(Collectors.toSet());
+
+        Set<String> projectionFields = new HashSet<String>();
+
+        if (!dtoProjetionFields.isEmpty()) {
+            for (String nameOfProjectionField : dtoProjetionFields) {
+
+                Field projectionField = null;
+                try {
+                    projectionField = dtoClass.getSuperclass().equals(Object.class)
+                            ? dtoClass.getDeclaredField(nameOfProjectionField)
+                            : dtoClass.getSuperclass().getDeclaredField(nameOfProjectionField);
+                } catch (NoSuchFieldException | SecurityException e) {
+                    log.error(e.getMessage(), e);
+                    throw new IllegalStateException("Reflection error");
+                }
+
+                projectionFields.addAll(Arrays.asList(projectionField.getType().getDeclaredFields()).stream()
+                        .map(dtoField -> nameOfProjectionField + '.' + dtoField.getName())
+                        .collect(Collectors.toSet()));
+            }
+        }
+
+        return projectionFields;
+    }
+
+    private Set<String> getFieldsOfSubmissionDtoClass(Class<? extends IDto> dtoClass) {
+
+        ParameterizedType parameterizedType = (ParameterizedType) dtoClass.getGenericSuperclass();
+        Class<?> genericClass = (Class<?>) parameterizedType.getActualTypeArguments()[0];
+
+        Set<String> submissionDtoFields = Arrays.asList(
+                        genericClass.getSuperclass().getDeclaredFields())
+                .stream()
+                .map(dtoField -> "packageBag." + dtoField.getName())
+                .collect(Collectors.toSet());
+
+        Set<String> projectionFieldsOfGenericClass =
+                Arrays.asList(genericClass.getSuperclass().getDeclaredFields()).stream()
+                        .filter(dtoField -> dtoField.getType().toString().contains("Projection"))
+                        .map(dtoField -> dtoField.getName())
+                        .collect(Collectors.toSet());
+
+        for (String nameOfProjectionField : projectionFieldsOfGenericClass) {
+
+            Field projectionField = null;
+            try {
+                projectionField = genericClass.getSuperclass().getDeclaredField(nameOfProjectionField);
+            } catch (NoSuchFieldException | SecurityException e) {
+                log.error(e.getMessage(), e);
+                throw new IllegalStateException("Reflection error");
+            }
+
+            submissionDtoFields.addAll(Arrays.asList(projectionField.getType().getDeclaredFields()).stream()
+                    .map(dtoField -> "packageBag." + nameOfProjectionField + '.' + dtoField.getName())
+                    .collect(Collectors.toSet()));
+        }
+
+        return submissionDtoFields;
     }
 }

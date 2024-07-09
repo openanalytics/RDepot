@@ -199,7 +199,7 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
         boolean replace = replaceRequestParam;
 
         User uploader = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
         PythonRepository repositoryEntity = repositoryService
                 .findByNameAndDeleted(repository, false)
@@ -211,8 +211,6 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
             return handleValidationError(validationResult);
         }
 
-        if (!replacingPackagesEnabled) replace = false;
-
         PackageUploadRequest<PythonRepository> request =
                 new PackageUploadRequest<>(multipartFile, repositoryEntity, generateManual, replace);
 
@@ -222,7 +220,7 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
             final Submission submission = strategy.perform();
             return handleCreatedForSingleEntity(submission);
         } catch (NonFatalSubmissionStrategyFailure e) {
-            if (e.getReason() instanceof SynchronizeRepositoryException w) {
+            if (e.getReason() instanceof SynchronizeRepositoryException) {
                 log.debug(e.getMessage(), e);
                 return handleWarningForSingleEntity(
                         e.getSubmission(), MessageCodes.WARNING_SYNCHRONIZATION_FAILURE, uploader, true);
@@ -280,7 +278,7 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
         jsonPatch = fixPatch(jsonPatch);
 
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new SubmissionNotFound(messageSource, locale));
         PythonRepository repository = repositoryService
                 .findById(submission.getPackage().getRepository().getId())
@@ -317,6 +315,8 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
         JsonArray jsonArray = jsonPatch.toJsonArray();
         JsonArrayBuilder arrBuilder = Json.createArrayBuilder();
 
+        final String value = "value";
+
         for (int i = 0; i < jsonArray.size(); i++) {
             JsonObject obj = jsonArray.getJsonObject(i);
 
@@ -324,13 +324,13 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
                     && obj.containsKey("path")
                     && obj.getString("op").equals("replace")
                     && obj.getString("path").equals("/state")
-                    && obj.containsKey("value")) {
+                    && obj.containsKey(value)) {
 
                 JsonObjectBuilder builder = Json.createObjectBuilder()
-                        .add("value", obj.getString("value").toUpperCase());
+                        .add(value, obj.getString(value).toUpperCase());
 
                 obj.entrySet().stream()
-                        .filter(e -> !e.getKey().equals("value"))
+                        .filter(e -> !e.getKey().equals(value))
                         .forEach(e -> builder.add(e.getKey(), e.getValue()));
                 obj = builder.build();
             }
@@ -363,7 +363,7 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
             @RequestParam(name = "toDate", required = false) Optional<String> toDate,
             @RequestParam(name = "search", required = false) Optional<String> search)
             throws ApiException {
-        if (!userService.findByLogin(principal.getName()).isPresent()) {
+        if (!userService.findActiveByLogin(principal.getName()).isPresent()) {
             throw new UserNotAuthorized(messageSource, locale);
         }
 
@@ -422,7 +422,7 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
     @Operation(operationId = "getPythonSubmissionById")
     public @ResponseBody ResponseEntity<ResponseDto<EntityModel<SubmissionDto>>> getSubmissionById(
             Principal principal, @PathVariable("id") Integer id) throws SubmissionNotFound, UserNotAuthorized {
-        if (!userService.findByLogin(principal.getName()).isPresent()) {
+        if (!userService.findActiveByLogin(principal.getName()).isPresent()) {
             throw new UserNotAuthorized(messageSource, locale);
         }
         Submission submission =
@@ -450,7 +450,7 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
     @Operation(operationId = "deletePythonSubmission")
     public void deleteSubmission(Principal principal, @PathVariable("id") Integer id)
             throws SubmissionNotFound, UserNotAuthorized, DeleteException {
-        Optional<User> requester = userService.findByLogin(principal.getName());
+        Optional<User> requester = userService.findActiveByLogin(principal.getName());
 
         if (requester.isEmpty() || requester.get().getRole().getValue() != Role.VALUE.ADMIN)
             throw new UserNotAuthorized(messageSource, locale);

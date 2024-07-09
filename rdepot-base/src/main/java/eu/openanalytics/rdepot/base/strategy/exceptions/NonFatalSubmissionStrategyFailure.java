@@ -29,6 +29,7 @@ import lombok.Getter;
 @Getter
 public class NonFatalSubmissionStrategyFailure extends StrategyFailure {
 
+    private static final long serialVersionUID = 1L;
     private final Submission submission;
 
     public NonFatalSubmissionStrategyFailure(Exception reason, Submission submission) {

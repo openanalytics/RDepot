@@ -34,12 +34,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserSettingsService extends eu.openanalytics.rdepot.base.service.Service<UserSettings> {
 
-    private final UserSettingsDao dao;
+    private final UserSettingsDao userSettingsDao;
     private final UserSettingsConfiguration config;
 
-    public UserSettingsService(UserSettingsDao dao, UserSettingsConfiguration config) {
-        super(dao);
-        this.dao = dao;
+    public UserSettingsService(UserSettingsDao userSettingsDao, UserSettingsConfiguration config) {
+        super(userSettingsDao);
+        this.userSettingsDao = userSettingsDao;
         this.config = config;
     }
 
@@ -47,7 +47,7 @@ public class UserSettingsService extends eu.openanalytics.rdepot.base.service.Se
      * Fetches settings for a given user.
      */
     public Optional<UserSettings> findSettingsByUser(User user) {
-        return dao.findByUserId(user.getId());
+        return userSettingsDao.findByUserId(user.getId());
     }
 
     /**

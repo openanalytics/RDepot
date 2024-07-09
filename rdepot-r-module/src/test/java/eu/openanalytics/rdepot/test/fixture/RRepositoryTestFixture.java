@@ -20,6 +20,7 @@
  */
 package eu.openanalytics.rdepot.test.fixture;
 
+import eu.openanalytics.rdepot.base.time.DateProvider;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -37,6 +38,9 @@ public class RRepositoryTestFixture {
         repository1.setSynchronizing(false);
         repository1.setVersion(10);
         repository1.setDeleted(false);
+        repository1.setLastModifiedTimestamp(DateProvider.now());
+        repository1.setLastPublicationTimestamp(DateProvider.now());
+        repository1.setLastPublicationSuccessful(true);
 
         RRepository repository2 = new RRepository();
         repository2.setId(456);
@@ -46,6 +50,8 @@ public class RRepositoryTestFixture {
         repository2.setPublished(false);
         repository2.setSynchronizing(true);
         repository2.setVersion(5);
+        repository2.setLastModifiedTimestamp(DateProvider.now());
+        repository2.setLastPublicationSuccessful(false);
 
         RRepository repository3 = new RRepository();
         repository3.setId(234);
@@ -56,6 +62,8 @@ public class RRepositoryTestFixture {
         repository3.setSynchronizing(false);
         repository3.setVersion(12);
         repository3.setDeleted(true);
+        repository3.setLastModifiedTimestamp(DateProvider.now());
+        repository3.setLastPublicationSuccessful(false);
 
         return List.of(repository1, repository2, repository3);
     }

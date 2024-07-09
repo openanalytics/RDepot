@@ -20,63 +20,58 @@
  */
 package eu.openanalytics.rdepot.base.time;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
+import lombok.NonNull;
+import lombok.Setter;
 
 /**
  * Allows mocking Date for testing.
  */
 public class DateProvider {
 
-    private static Date testDate = null;
-
     /**
-     *  This method should only be used in Unit Tests.
-     *  It makes the test date "current".
+     * -- SETTER --
+     *   This method should only be used in Unit Tests.
+     *   It makes the test date "current".
      */
-    public static void setTestDate(Date date) {
-        testDate = date;
-    }
-
-    /**
-     *  This method should only be used in Unit Tests.
-     *  It makes the test date "current".
-     */
-    public static void setTestDate(LocalDateTime localDateTime) {
-        testDate = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-    }
+    @Setter
+    private static Instant testDate = null;
 
     /**
      * Current date or mocked test date if specified earlier
-     * using {@link #setTestDate(Date)} method.
+     * using {@link #setTestDate(Instant)} method.
      */
-    public static Date now() {
+    public static Instant now() {
         if (testDate != null) {
             return testDate;
         }
-        return new Date();
+        return Instant.now();
     }
 
     /**
      * Current date or mocked test date if specified earlier
-     * using {@link #setTestDate(Date)} method, in "yyyyMMdd" format.
+     * using {@link #setTestDate(Instant)} method, in "yyyyMMdd" format.
      */
     public static String getCurrentDateStamp() {
+        final DateTimeFormatter dtf = DateTimeFormatter.ISO_DATE_TIME;
+        final Instant currentDate = now();
+        return dtf.format(currentDate.atZone(ZoneId.of("UTC")));
+    }
+
+    public static String instantToTimestamp(@NonNull Instant instant) {
+        final DateTimeFormatter dtf = DateTimeFormatter.ISO_INSTANT;
+        return dtf.format(instant);
+    }
+
+    public static String instantToDatestampWithoutHyphens(@NonNull Instant instant) {
         final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
-        final LocalDateTime currentDate = getCurrentDateTime();
-        return dtf.format(currentDate);
+        return dtf.format(instant.atZone(ZoneId.of("UTC")));
     }
 
-    public static LocalDate getCurrentDate() {
-        return getCurrentDateTime().toLocalDate();
-    }
-
-    private static LocalDateTime getCurrentDateTime() {
-        return testDate == null
-                ? LocalDateTime.now()
-                : testDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+    public static Instant timestampToInstant(@NonNull String timestamp) {
+        final DateTimeFormatter dtf = DateTimeFormatter.ISO_INSTANT;
+        return dtf.parse(timestamp, Instant::from);
     }
 }

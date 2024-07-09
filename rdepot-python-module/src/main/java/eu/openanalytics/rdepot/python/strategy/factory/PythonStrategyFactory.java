@@ -44,7 +44,6 @@ import eu.openanalytics.rdepot.python.strategy.update.PythonRepositoryUpdateStra
 import eu.openanalytics.rdepot.python.strategy.upload.PythonPackageUploadStrategy;
 import eu.openanalytics.rdepot.python.synchronization.PythonRepositorySynchronizer;
 import eu.openanalytics.rdepot.python.validation.PythonPackageValidator;
-import eu.openanalytics.rdepot.python.validation.exceptions.PythonRepositoryValidationError;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -119,8 +118,7 @@ public class PythonStrategyFactory {
         return strategy;
     }
 
-    public Strategy<PythonRepository> createRepositoryStrategy(PythonRepository resource, User requester)
-            throws PythonRepositoryValidationError {
+    public Strategy<PythonRepository> createRepositoryStrategy(PythonRepository resource, User requester) {
         Strategy<PythonRepository> strategy =
                 new PythonRepositoryCreateStrategy(resource, newsfeedEventService, repositoryService, requester);
         return strategy;

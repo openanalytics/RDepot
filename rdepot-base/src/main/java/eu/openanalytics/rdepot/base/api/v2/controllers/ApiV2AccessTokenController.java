@@ -157,7 +157,7 @@ public class ApiV2AccessTokenController extends ApiV2Controller<AccessToken, Acc
             throws ApiException {
 
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
 
         final DtoResolvedPageable resolvedPageable = pageableSortResolver.resolve(pageable);
@@ -202,7 +202,7 @@ public class ApiV2AccessTokenController extends ApiV2Controller<AccessToken, Acc
     public @ResponseBody ResponseEntity<ResponseDto<EntityModel<AccessTokenDto>>> getAccessTokenById(
             Principal principal, @PathVariable("id") Integer id) throws AccessTokenNotFound, UserNotAuthorized {
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
         AccessToken accessToken =
                 accessTokenService.findById(id).orElseThrow(() -> new AccessTokenNotFound(messageSource, locale));
@@ -226,7 +226,7 @@ public class ApiV2AccessTokenController extends ApiV2Controller<AccessToken, Acc
             BindingResult bindingResult)
             throws UserNotAuthorized, CreateException {
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
 
         if (bindingResult.hasErrors()) {
@@ -258,7 +258,7 @@ public class ApiV2AccessTokenController extends ApiV2Controller<AccessToken, Acc
         AccessToken accessToken =
                 accessTokenService.findById(id).orElseThrow(() -> new AccessTokenNotFound(messageSource, locale));
 
-        Optional<User> requester = userService.findByLogin(principal.getName());
+        Optional<User> requester = userService.findActiveByLogin(principal.getName());
         User user = userService
                 .findById(accessToken.getUser().getId())
                 .orElseThrow(() -> new UserNotFound(messageSource, locale));
@@ -293,7 +293,7 @@ public class ApiV2AccessTokenController extends ApiV2Controller<AccessToken, Acc
     @PreAuthorize("hasAuthority('user')")
     @Operation(operationId = "deleteAccessToken")
     public void deleteAccessToken(@PathVariable("id") Integer id, Principal principal) throws ApiException {
-        Optional<User> requester = userService.findByLogin(principal.getName());
+        Optional<User> requester = userService.findActiveByLogin(principal.getName());
         if (requester.isEmpty()) throw new UserNotAuthorized(messageSource, locale);
 
         AccessToken token =

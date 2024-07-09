@@ -86,6 +86,7 @@ import org.springframework.web.multipart.MultipartFile;
 public abstract class CommonLocalStorage<R extends Repository, P extends Package> implements Storage<R, P> {
 
     protected final String separator = FileSystems.getDefault().getSeparator();
+    private Random random = new Random();
 
     @Resource(name = "packageUploadDirectory")
     private File packageUploadDirectory;
@@ -126,13 +127,13 @@ public abstract class CommonLocalStorage<R extends Repository, P extends Package
 
     private File generateWaitingRoom(final File packageUploadDirectory, final Repository repository)
             throws IOException {
-        File waitingRoom = new File(packageUploadDirectory.getAbsolutePath() + separator + "new" + separator
-                + (new Random()).nextInt(100000000));
+        File waitingRoom = new File(
+                packageUploadDirectory.getAbsolutePath() + separator + "new" + separator + random.nextInt(100000000));
 
         while (waitingRoom.exists()) {
             waitingRoom = new File(packageUploadDirectory.getAbsolutePath()
                     + separator + "new" + separator + repository.getId()
-                    + (new Random()).nextInt(100000000));
+                    + random.nextInt(100000000));
         }
 
         FileUtils.forceMkdir(waitingRoom);
@@ -145,11 +146,11 @@ public abstract class CommonLocalStorage<R extends Repository, P extends Package
         log.debug("Moving package to the main directory...");
         final Repository repository = packageBag.getRepository();
         File mainDir = new File(packageUploadDirectory.getAbsolutePath() + separator + "repositories" + separator
-                + repository.getId() + separator + (new Random().nextInt(100000000)));
+                + repository.getId() + separator + (random.nextInt(100000000)));
 
         while (mainDir.exists())
             mainDir = new File(packageUploadDirectory.getAbsolutePath() + separator + "repositories" + separator
-                    + repository.getId() + separator + (new Random().nextInt(100000000)));
+                    + repository.getId() + separator + (random.nextInt(100000000)));
 
         final File current = new File(packageBag.getSource());
         if (!current.exists()) {
@@ -225,12 +226,12 @@ public abstract class CommonLocalStorage<R extends Repository, P extends Package
     public String moveToTrashDirectory(Package packageBag) throws MovePackageSourceException {
         File trashDir = new File(packageUploadDirectory.getAbsolutePath() + separator
                 + "trash" + separator + packageBag.getRepository().getId()
-                + separator + (new Random()).nextInt(100000000));
+                + separator + random.nextInt(100000000));
 
         while (trashDir.exists()) {
             trashDir = new File(packageUploadDirectory.getAbsolutePath() + separator
                     + "trash" + separator + packageBag.getRepository().getId()
-                    + separator + (new Random()).nextInt(100000000));
+                    + separator + random.nextInt(100000000));
         }
 
         return moveSource(packageBag, trashDir.getAbsolutePath());
@@ -493,7 +494,9 @@ public abstract class CommonLocalStorage<R extends Repository, P extends Package
         File destination = new File(source.getAbsolutePath() + ".gz");
         try (GzipCompressorOutputStream compressor =
                 new GzipCompressorOutputStream(new FileOutputStream(destination))) {
-            IOUtils.copy(new FileInputStream(source), compressor);
+            try (FileInputStream inputSource = new FileInputStream(source)) {
+                IOUtils.copy(inputSource, compressor);
+            }
         } catch (IOException e) {
             throw new GzipFileException();
         }

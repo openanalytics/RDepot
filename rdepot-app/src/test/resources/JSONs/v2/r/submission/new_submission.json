@@ -13,7 +13,7 @@
       "login": "einstein",
       "email": "einstein@ldap.forumsys.com"
     },
-    "created": "2024-05-21",
+    "created": "2024-05-21T00:00:00Z",
     "changes": null,
     "links": [
       {
@@ -31,7 +31,7 @@
     "packageBag": {
       "author": "Peter Bogetoft and Lars Otto",
       "active": true,
-      "description": "Estimates and graphs deterministic (DEA) frontier models with different technology assumptions (fdh, vrs, drs, crs, irs,\\n add). Also handles possible slacks, peers and their weights\\n (lambdas), optimal cost, revenue and profit allocation,\\n super--efficiency, and mergers. A comparative method for\\n estimating SFA efficiencies is included.\\n",
+      "description": "Estimates and graphs deterministic (DEA) frontier models\\n with different technology assumptions (fdh, vrs, drs, crs, irs,\\n add). Also handles possible slacks, peers and their weights\\n (lambdas), optimal cost, revenue and profit allocation,\\n super--efficiency, and mergers. A comparative method for\\n estimating SFA efficiencies is included.",
       "technology": "R",
       "repository": {
         "name": "testrepo2",

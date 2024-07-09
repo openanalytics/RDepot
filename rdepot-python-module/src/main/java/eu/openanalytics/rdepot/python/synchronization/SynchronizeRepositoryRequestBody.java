@@ -46,7 +46,6 @@ import org.springframework.util.MultiValueMap;
 @Setter
 @AllArgsConstructor
 public class SynchronizeRepositoryRequestBody {
-
     private List<File> filesToUpload;
     private List<String> filesToDelete;
     private String versionBefore;
@@ -78,12 +77,12 @@ public class SynchronizeRepositoryRequestBody {
             throws IOException, CheckSumCalculationException {
         List<MultiValueMap<String, Object>> chunks = new ArrayList<>();
         List<List<File>> recentChunks = new ArrayList<>(ListUtils.partition(filesToUpload, elementsPerChunk));
-        List<FileSystemResource> fileArchives = new ArrayList<FileSystemResource>();
+        List<FileSystemResource> fileArchives;
 
         int pageCount = recentChunks.size();
         int currentPage = 1;
 
-        int currentVersion = Integer.valueOf(this.versionBefore);
+        int currentVersion = Integer.parseInt(this.versionBefore);
         int chunkNo = 0;
 
         while (!recentChunks.isEmpty()) {
@@ -171,6 +170,7 @@ public class SynchronizeRepositoryRequestBody {
             }
             tOut.finish();
             gzOut.close();
+            buffOut.close();
             packagesArchive.close();
             return new FileSystemResource(archivePath);
         }

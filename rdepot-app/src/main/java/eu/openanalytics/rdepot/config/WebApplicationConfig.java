@@ -384,6 +384,7 @@ public class WebApplicationConfig implements WebMvcConfigurer, ApplicationContex
         return new BCryptPasswordEncoder();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
         configurer.setUseTrailingSlashMatch(true);

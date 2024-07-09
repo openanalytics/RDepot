@@ -53,7 +53,7 @@ public class AccessTokenBindAuthenticator extends CustomBindAuthenticator {
 
     public Collection<? extends GrantedAuthority> authenticate(String username, String accessToken, String type)
             throws AuthException {
-        User user = userService.findByLogin(username).orElseThrow(() -> new AuthException("user.notfound"));
+        User user = userService.findActiveByLogin(username).orElseThrow(() -> new AuthException("user.notfound"));
 
         if (accessTokenService.verifyToken(accessToken, user.getId())) {
             return super.authenticate(user.getLogin(), user.getEmail(), user.getName(), type);

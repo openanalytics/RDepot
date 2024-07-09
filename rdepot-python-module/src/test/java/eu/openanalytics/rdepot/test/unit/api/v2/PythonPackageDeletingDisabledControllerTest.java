@@ -133,7 +133,7 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
     public void getAllPackages() throws Exception {
         PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(userService.isAdmin(user.get())).thenReturn(true);
         when(pythonPackageService.findAllBySpecification(any(), any()))
                 .thenReturn(PythonPackageTestFixture.GET_EXAMPLE_PACKAGES_PAGED(repository, user.get()));
@@ -152,7 +152,7 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
 
         when(pythonRepositoryService.findByName(repository.getName()))
                 .thenReturn(Optional.of(PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY()));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         when(pythonPackageService.findAllBySpecification(any(), any())).thenReturn(packagesPage);
 
@@ -169,7 +169,7 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
         Page<PythonPackage> packagesPage = PythonPackageTestFixture.GET_EXAMPLE_PACKAGES_PAGED_DELETED();
 
         when(pythonPackageService.findAllBySpecification(any(), any())).thenReturn(packagesPage);
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/python/packages")
                         .param("deleted", "true")
@@ -184,7 +184,7 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
         final Optional<PythonPackage> packageBag = Optional.of(PythonPackageTestFixture.GET_EXAMPLE_PACKAGE());
 
         when(pythonPackageService.findById(packageBag.get().getId())).thenReturn(packageBag);
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/python/packages/"
                                 + packageBag.get().getId())
@@ -201,7 +201,7 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
         final PythonPackage packageBag = PythonPackageTestFixture.GET_EXAMPLE_PACKAGE();
 
         when(pythonPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/python/packages/" + packageBag.getId())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -214,7 +214,7 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
     public void getPackageById_returns404_WhenPackageIsNotFound() throws Exception {
         final Integer ID = 123;
         when(pythonPackageService.findById(ID)).thenReturn(Optional.ofNullable(null));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/python/packages/" + ID)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -228,7 +228,7 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
         final Integer ID = 123;
 
         when(pythonPackageService.findById(ID)).thenReturn(Optional.ofNullable(null));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v2/manager/python/packages/" + ID)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -253,7 +253,7 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
         packageBag.setDeleted(true);
 
         when(pythonPackageService.findOneDeleted(packageBag.getId())).thenReturn(Optional.of(packageBag));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         doNothing().when(pythonPackageDeleter).delete(packageBag);
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v2/manager/python/packages/" + packageBag.getId()))
@@ -268,7 +268,7 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
         final String patchJson = "[{\"op\":\"replace\",\"path\":\"/active\",\"value\":\"false\"}]";
 
         when(pythonPackageService.findById(ID)).thenReturn(Optional.ofNullable(null));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/python/packages/" + ID)
                         .content(patchJson)
@@ -295,7 +295,7 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/active\",\"value\":\"false\"}]";
 
         when(pythonPackageService.findById(ID)).thenReturn(Optional.ofNullable(null));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/python/packages/" + 123)
                         .content(patchJson)
@@ -320,7 +320,7 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
         when(pythonRepositoryService.findById(anyInt())).thenReturn(Optional.of(repository));
         when(pythonPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
         when(submissionService.findById(anyInt())).thenReturn(Optional.of(submission));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         doNothing().when(pythonPackageValidator).validate(any(), eq(true), any());
         when(securityMediator.isAuthorizedToEdit(packageBag, user.get())).thenReturn(true);
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/python/packages/" + packageBag.getId())
@@ -349,7 +349,7 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
         when(pythonRepositoryService.findById(anyInt())).thenReturn(Optional.of(repository));
         when(pythonPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
         when(submissionService.findById(anyInt())).thenReturn(Optional.of(submission));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         doNothing().when(pythonPackageValidator).validate(any(), eq(true), any());
         when(securityMediator.isAuthorizedToEdit(packageBag, user.get())).thenReturn(true);
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/python/packages/" + packageBag.getId())
@@ -368,7 +368,7 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
         final String patchJson = "[{\"op\":\"replace\",\"path\":\"/actiiiiiive\",\"value\":\"false\"}]";
 
         when(pythonPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(securityMediator.isAuthorizedToEdit(packageBag, user.get())).thenReturn(true);
         doNothing().when(pythonPackageValidator).validate(any(), eq(false), any());
 
@@ -395,9 +395,9 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
         when(userService.findById(anyInt())).thenReturn(user);
         when(pythonPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
         when(submissionService.findById(anyInt())).thenReturn(Optional.of(submission));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(pythonPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(repositoryMaintainerValidator.supports(RepositoryMaintainer.class)).thenReturn(true);
         when(securityMediator.isAuthorizedToEdit(packageBag, user.get())).thenReturn(true);
 
@@ -439,7 +439,7 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
         when(submissionService.findById(anyInt())).thenReturn(Optional.of(submission));
 
         when(pythonPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         doNothing().when(pythonPackageValidator).validate(any(), eq(true), any());
         when(securityMediator.isAuthorizedToEdit(packageBag, user.get())).thenReturn(true);
 

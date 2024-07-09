@@ -49,7 +49,6 @@ public abstract class FileUploadController<R extends SynchronizeRepositoryReques
     }
 
     protected ResponseEntity<SynchronizeRepositoryResponseBody> handleSynchronizeRequest(R requestBody) {
-        final String id = requestBody.getId();
 
         log.info("Received request.");
 

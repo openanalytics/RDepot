@@ -45,6 +45,54 @@ public abstract class DeclarativeIntegrationTest {
         this.apiPath = apiPath;
     }
 
+    protected void removeFields(JsonObject json) {
+        try {
+            final JsonObject jsonData = json.getAsJsonObject("data");
+            if (jsonData == null) return;
+            if (jsonData.has("packageBag")) {
+                JsonObject jsonPackage = (JsonObject) jsonData.get("packageBag");
+                jsonPackage.remove("source");
+            }
+            if (jsonData.has("relatedResource")) {
+                JsonObject jsonRelatedResource = jsonData.getAsJsonObject("relatedResource");
+                jsonRelatedResource.remove("lastLoggedInOn");
+            }
+            jsonData.remove("lastLoggedInOn");
+            jsonData.remove("createdOn");
+            jsonData.remove("creationDate");
+            jsonData.remove("expirationDate");
+            jsonData.remove("value");
+            jsonData.remove("lastPublicationTimestamp");
+            jsonData.remove("lastModifiedTimestamp");
+            jsonData.remove("created");
+
+            JsonArray expectedContent = jsonData.getAsJsonArray("content");
+            if (expectedContent != null) {
+                for (int i = 0; i < expectedContent.size(); i++) {
+                    JsonObject el = expectedContent.get(i).getAsJsonObject();
+                    if (el.has("packageBag")) {
+                        JsonObject jsonPackage = el.getAsJsonObject("packageBag");
+                        jsonPackage.remove("source");
+                    }
+                    if (el.has("relatedResource")) {
+                        JsonObject jsonRelatedResource = el.getAsJsonObject("relatedResource");
+                        jsonRelatedResource.remove("lastLoggedInOn");
+                    }
+                    el.remove("lastLoggedInOn");
+                    el.remove("createdOn");
+                    el.remove("creationDate");
+                    el.remove("expirationDate");
+                    el.remove("value");
+                    el.remove("lastPublicationTimestamp");
+                    el.remove("lastModifiedTimestamp");
+                    el.remove("created");
+                }
+            }
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
+    }
+
     protected void assertPackages(JsonObject expectedJSON, boolean isSynchronized) throws IOException {
         String data = given().header(authorization, bearer + userToken)
                 .accept(ContentType.JSON)
@@ -98,6 +146,9 @@ public abstract class DeclarativeIntegrationTest {
                 .asString();
 
         JsonObject actualJSON = (JsonObject) JsonParser.parseString(data);
+
+        removeFields(actualJSON);
+        removeFields(expectedJSON);
 
         assertEquals("Incorrect JSON output.", expectedJSON, actualJSON);
     }

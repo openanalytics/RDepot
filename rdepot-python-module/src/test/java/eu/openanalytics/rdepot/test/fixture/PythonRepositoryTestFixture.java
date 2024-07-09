@@ -20,6 +20,7 @@
  */
 package eu.openanalytics.rdepot.test.fixture;
 
+import eu.openanalytics.rdepot.base.time.DateProvider;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -36,6 +37,9 @@ public class PythonRepositoryTestFixture {
         repository1.setPublished(true);
         repository1.setSynchronizing(false);
         repository1.setVersion(10);
+        repository1.setLastModifiedTimestamp(DateProvider.now());
+        repository1.setLastPublicationTimestamp(DateProvider.now());
+        repository1.setLastPublicationSuccessful(true);
 
         PythonRepository repository2 = new PythonRepository();
         repository2.setId(456);
@@ -45,6 +49,8 @@ public class PythonRepositoryTestFixture {
         repository2.setPublished(false);
         repository2.setSynchronizing(true);
         repository2.setVersion(5);
+        repository2.setLastModifiedTimestamp(DateProvider.now());
+        repository2.setLastPublicationSuccessful(false);
 
         PythonRepository repository3 = new PythonRepository();
         repository3.setId(321);
@@ -54,6 +60,8 @@ public class PythonRepositoryTestFixture {
         repository3.setPublished(false);
         repository3.setSynchronizing(false);
         repository3.setVersion(2);
+        repository3.setLastModifiedTimestamp(DateProvider.now());
+        repository3.setLastPublicationSuccessful(false);
 
         return List.of(repository1, repository2, repository3);
     }

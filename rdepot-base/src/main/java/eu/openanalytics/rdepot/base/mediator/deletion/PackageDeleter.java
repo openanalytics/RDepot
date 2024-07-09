@@ -32,7 +32,6 @@ import eu.openanalytics.rdepot.base.storage.exceptions.MovePackageSourceExceptio
 import eu.openanalytics.rdepot.base.storage.exceptions.SourceFileDeleteException;
 import eu.openanalytics.rdepot.base.synchronization.RepositorySynchronizer;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
-import eu.openanalytics.rdepot.base.time.DateProvider;
 import eu.openanalytics.rdepot.base.utils.PackageRepositoryResolver;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
@@ -69,7 +68,7 @@ public abstract class PackageDeleter<P extends Package, R extends Repository> ex
     private void synchronizeRepository(P resource) throws SynchronizeRepositoryException {
         if (resource.getRepository().getPublished()) {
             repositorySynchronizer.storeRepositoryOnRemoteServer(
-                    packageRepositoryResolver.getRepositoryForPackage(resource), DateProvider.getCurrentDateStamp());
+                    packageRepositoryResolver.getRepositoryForPackage(resource));
         }
     }
 
@@ -118,12 +117,16 @@ public abstract class PackageDeleter<P extends Package, R extends Repository> ex
     }
 
     @Transactional
-    public void delete(int id) throws DeleteEntityException {
-        delete(resourceService.findById(id).orElseThrow(DeleteEntityException::new));
+    public void deleteTransactional(int id) throws DeleteEntityException {
+        delete(id);
     }
 
     @Transactional
     public void deleteForSubmission(Submission submission) throws DeleteEntityException {
         delete(submission.getPackage().getId());
+    }
+
+    private void delete(int id) throws DeleteEntityException {
+        delete(resourceService.findById(id).orElseThrow(DeleteEntityException::new));
     }
 }

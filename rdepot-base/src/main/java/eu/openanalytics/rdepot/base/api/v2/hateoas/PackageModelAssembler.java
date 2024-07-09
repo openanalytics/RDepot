@@ -47,7 +47,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class PackageModelAssembler extends AbstractRoleAwareModelAssembler<Package, PackageDto> {
 
-    private final DtoConverter<Package, PackageDto> dtoConverter;
     private final SecurityMediator securityMediator;
     private final Map<Technology, Class<? extends ApiV2ReadingController<?, ?>>> packageControllerClassesByTechnology;
 
@@ -60,7 +59,6 @@ public class PackageModelAssembler extends AbstractRoleAwareModelAssembler<Packa
                             packageControllerClassesByTechnology) {
         super(dtoConverter, ApiV2PackageController.class, "package", Optional.empty());
         this.securityMediator = securityMediator;
-        this.dtoConverter = dtoConverter;
         this.packageControllerClassesByTechnology = packageControllerClassesByTechnology;
     }
 
@@ -71,7 +69,6 @@ public class PackageModelAssembler extends AbstractRoleAwareModelAssembler<Packa
             User user) {
         super(dtoConverter, ApiV2PackageController.class, "package", Optional.of(user));
         this.securityMediator = securityMediator;
-        this.dtoConverter = dtoConverter;
         this.packageControllerClassesByTechnology = packageControllerClassesByTechnology;
     }
 

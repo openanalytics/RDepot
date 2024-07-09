@@ -20,7 +20,6 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.controllers;
 
-import eu.openanalytics.rdepot.base.api.v2.converters.SubmissionDtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.dtos.ResponseDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.SubmissionDto;
 import eu.openanalytics.rdepot.base.api.v2.exceptions.ApiException;
@@ -30,12 +29,9 @@ import eu.openanalytics.rdepot.base.api.v2.hateoas.SubmissionModelAssembler;
 import eu.openanalytics.rdepot.base.api.v2.resolvers.CommonPageableSortResolver;
 import eu.openanalytics.rdepot.base.api.v2.resolvers.DtoResolvedPageable;
 import eu.openanalytics.rdepot.base.api.v2.validation.PageableValidator;
-import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.entities.enums.SubmissionState;
-import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
-import eu.openanalytics.rdepot.base.service.PackageService;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.utils.specs.SpecificationUtils;
@@ -81,12 +77,8 @@ public class ApiV2SubmissionController extends ApiV2ReadingController<Submission
             PagedResourcesAssembler<Submission> pagedModelAssembler,
             SubmissionService submissionService,
             UserService userService,
-            PackageService<Package> packageService,
-            PackageMaintainerService packageMaintainerService,
-            SubmissionDtoConverter submissionDtoConverter,
             PageableValidator pageableValidator,
             CommonPageableSortResolver pageableSortResolver) {
-
         super(messageSource, LocaleContextHolder.getLocale(), modelAssembler, pagedModelAssembler);
         this.submissionService = submissionService;
         this.userService = userService;
@@ -117,7 +109,7 @@ public class ApiV2SubmissionController extends ApiV2ReadingController<Submission
             throws ApiException {
 
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
 
         final DtoResolvedPageable resolvedPageable = pageableSortResolver.resolve(pageable);
@@ -171,7 +163,7 @@ public class ApiV2SubmissionController extends ApiV2ReadingController<Submission
     public @ResponseBody ResponseEntity<ResponseDto<EntityModel<SubmissionDto>>> getSubmissionById(
             Principal principal, @PathVariable("id") Integer id) throws SubmissionNotFound, UserNotAuthorized {
 
-        if (!userService.findByLogin(principal.getName()).isPresent()) {
+        if (!userService.findActiveByLogin(principal.getName()).isPresent()) {
             throw new UserNotAuthorized(messageSource, locale);
         }
         Submission submission =

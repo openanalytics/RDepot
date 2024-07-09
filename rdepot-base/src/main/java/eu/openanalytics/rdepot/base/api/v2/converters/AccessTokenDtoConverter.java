@@ -23,6 +23,8 @@ package eu.openanalytics.rdepot.base.api.v2.converters;
 import eu.openanalytics.rdepot.base.api.v2.converters.exceptions.EntityResolutionException;
 import eu.openanalytics.rdepot.base.api.v2.dtos.AccessTokenDto;
 import eu.openanalytics.rdepot.base.entities.AccessToken;
+import eu.openanalytics.rdepot.base.time.DateProvider;
+import java.time.format.DateTimeParseException;
 import org.springframework.stereotype.Component;
 
 /**
@@ -33,7 +35,14 @@ public class AccessTokenDtoConverter implements DtoConverter<AccessToken, Access
 
     @Override
     public AccessToken resolveDtoToEntity(AccessTokenDto dto) throws EntityResolutionException {
-        return new AccessToken(dto);
+        try {
+            return new AccessToken(
+                    dto,
+                    dto.getCreationDate() != null ? DateProvider.timestampToInstant(dto.getCreationDate()) : null,
+                    dto.getExpirationDate() != null ? DateProvider.timestampToInstant(dto.getExpirationDate()) : null);
+        } catch (DateTimeParseException e) {
+            throw new EntityResolutionException(dto);
+        }
     }
 
     @Override

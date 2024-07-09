@@ -28,6 +28,8 @@ import eu.openanalytics.rdepot.base.messaging.MessageCodes;
  * {@link eu.openanalytics.rdepot.base.strategy.upload.DefaultPackageUploadStrategy the Strategy}.
  */
 public class PackageProcessingException extends LocalizedException {
+    private static final long serialVersionUID = 1L;
+
     public PackageProcessingException() {
         super(MessageCodes.PACKAGE_PROCESSING_ERROR);
     }

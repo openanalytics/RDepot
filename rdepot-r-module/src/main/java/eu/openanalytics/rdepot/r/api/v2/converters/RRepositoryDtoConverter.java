@@ -21,10 +21,14 @@
 package eu.openanalytics.rdepot.r.api.v2.converters;
 
 import eu.openanalytics.rdepot.base.api.v2.converters.DtoConverter;
+import eu.openanalytics.rdepot.base.api.v2.converters.exceptions.EntityResolutionException;
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.service.PackageService;
+import eu.openanalytics.rdepot.base.time.DateProvider;
 import eu.openanalytics.rdepot.r.api.v2.dtos.RRepositoryDto;
 import eu.openanalytics.rdepot.r.entities.RRepository;
+import java.time.Instant;
+import java.time.format.DateTimeParseException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -34,12 +38,31 @@ public class RRepositoryDtoConverter implements DtoConverter<RRepository, RRepos
     private final PackageService<Package> packageService;
 
     @Override
-    public RRepository resolveDtoToEntity(RRepositoryDto dto) {
-        return new RRepository(dto);
+    public RRepository resolveDtoToEntity(RRepositoryDto dto) throws EntityResolutionException {
+        try {
+            final Instant lastPublicationTimestamp = dto.getLastPublicationTimestamp() != null
+                            && !dto.getLastPublicationTimestamp().isEmpty()
+                    ? DateProvider.timestampToInstant(dto.getLastPublicationTimestamp())
+                    : null;
+            final Instant lastModifiedTimestamp = dto.getLastModifiedTimestamp() != null
+                            && !dto.getLastModifiedTimestamp().isEmpty()
+                    ? DateProvider.timestampToInstant(dto.getLastModifiedTimestamp())
+                    : DateProvider.now();
+            return new RRepository(dto, lastPublicationTimestamp, lastModifiedTimestamp);
+        } catch (DateTimeParseException e) {
+            throw new EntityResolutionException(dto);
+        }
     }
 
     @Override
     public RRepositoryDto convertEntityToDto(RRepository entity) {
-        return new RRepositoryDto(entity, packageService.countByRepository(entity));
+        return new RRepositoryDto(
+                entity,
+                packageService.countByRepository(entity),
+                entity.getLastPublicationTimestamp() != null
+                        ? DateProvider.instantToTimestamp(entity.getLastPublicationTimestamp())
+                        : "",
+                DateProvider.instantToTimestamp(entity.getLastModifiedTimestamp()),
+                entity.isLastPublicationSuccessful());
     }
 }

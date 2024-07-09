@@ -31,8 +31,13 @@ public class RRepositoryDto extends RepositoryDto {
     @ToStringExclude
     private RRepository entity;
 
-    public RRepositoryDto(RRepository repository, int numberOfPackages) {
-        super(repository, numberOfPackages);
+    public RRepositoryDto(
+            RRepository repository,
+            int numberOfPackages,
+            String lastPublicationTimestamp,
+            String lastModifiedTimestamp,
+            boolean lastPublicationSuccessful) {
+        super(repository, numberOfPackages, lastPublicationTimestamp, lastModifiedTimestamp, lastPublicationSuccessful);
         this.entity = repository;
     }
 

@@ -40,7 +40,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDate;
+import java.io.Serializable;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.Getter;
@@ -51,7 +52,9 @@ import org.hibernate.annotations.Formula;
 @Setter
 @Entity
 @Table(name = "submission", schema = "public")
-public class Submission extends EventableResource {
+public class Submission extends EventableResource implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "submitter_id", nullable = false)
@@ -74,10 +77,10 @@ public class Submission extends EventableResource {
 
     @Formula(
             "(select min(e.date) from newsfeed_event e where e.related_submission_id=id and (e.newsfeed_event_type='CREATE' or e.newsfeed_event_type='UPLOAD'))")
-    private LocalDate createdDate;
+    private Instant createdDate;
 
-    public LocalDate getCreatedDate() {
-        return createdDate == null ? DateProvider.getCurrentDate() : createdDate;
+    public Instant getCreatedDate() {
+        return createdDate == null ? DateProvider.now() : createdDate;
     }
 
     public Submission() {

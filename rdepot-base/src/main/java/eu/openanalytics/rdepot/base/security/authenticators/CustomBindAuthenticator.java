@@ -30,7 +30,7 @@ import eu.openanalytics.rdepot.base.security.exceptions.UserSoftDeletedException
 import eu.openanalytics.rdepot.base.service.RoleService;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.exceptions.CreateEntityException;
-import java.time.LocalDate;
+import eu.openanalytics.rdepot.base.time.DateProvider;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -85,7 +85,7 @@ public abstract class CustomBindAuthenticator {
         User user;
         try {
             Optional<User> tmp;
-            if ((tmp = userService.findByLogin(username)).isPresent()) {
+            if ((tmp = userService.findActiveByLogin(username)).isPresent()) {
                 user = tmp.get();
             } else if ((tmp = userService.findByEmail(useremail)).isPresent()) {
                 user = tmp.get();
@@ -98,7 +98,7 @@ public abstract class CustomBindAuthenticator {
         }
         verifyAndUpdateUser(user, username, fullname, useremail, defaultAdmins.contains(username));
 
-        user.setLastLoggedInOn(LocalDate.now());
+        user.setLastLoggedInOn(DateProvider.now());
 
         return securityMediator.getGrantedAuthorities(username);
     }
@@ -133,7 +133,7 @@ public abstract class CustomBindAuthenticator {
         user.setEmail(email);
         user.setActive(true);
         user.setDeleted(false);
-        user.setCreatedOn(LocalDate.now());
+        user.setCreatedOn(DateProvider.now());
 
         if (isAdmin) {
             user.setRole(roleService.findByValue(Role.VALUE.ADMIN).orElseThrow(RoleNotFoundException::new));

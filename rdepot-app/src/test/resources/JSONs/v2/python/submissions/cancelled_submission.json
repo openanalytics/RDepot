@@ -59,7 +59,7 @@
         },
         "changes": null,
         "state": "CANCELLED",
-        "created": "2023-07-10",
+        "created": "2023-07-10T00:00:00Z",
         "technology": "Python",
         "links": [
             {

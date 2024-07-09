@@ -20,12 +20,16 @@
  */
 package eu.openanalytics.rdepot.repo.storage.implementations;
 
-import eu.openanalytics.rdepot.repo.exception.*;
+import eu.openanalytics.rdepot.repo.exception.EmptyTrashException;
+import eu.openanalytics.rdepot.repo.exception.GetRepositoryVersionException;
+import eu.openanalytics.rdepot.repo.exception.InitTrashDirectoryException;
+import eu.openanalytics.rdepot.repo.exception.MoveToTrashException;
+import eu.openanalytics.rdepot.repo.exception.RestoreRepositoryException;
+import eu.openanalytics.rdepot.repo.exception.SetRepositoryVersionException;
 import eu.openanalytics.rdepot.repo.exception.StorageException;
 import eu.openanalytics.rdepot.repo.model.SynchronizeRepositoryRequestBody;
 import eu.openanalytics.rdepot.repo.storage.StorageProperties;
 import eu.openanalytics.rdepot.repo.storage.StorageService;
-import eu.openanalytics.rdepot.repo.transaction.backup.RepositoryBackup;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -34,14 +38,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Scanner;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
-public abstract class FileSystemStorageService<T extends SynchronizeRepositoryRequestBody, B extends RepositoryBackup>
+public abstract class FileSystemStorageService<T extends SynchronizeRepositoryRequestBody>
         implements StorageService<T> {
 
     protected final Path rootLocation;
@@ -173,30 +183,26 @@ public abstract class FileSystemStorageService<T extends SynchronizeRepositoryRe
 
     public void setRepositoryVersion(String repository, String version) {
         Path versionPath = this.rootLocation.resolve(repository).resolve("VERSION");
-        FileWriter writer = null;
 
         try {
             if (Files.notExists(versionPath)) {
                 Files.createFile(versionPath);
             }
 
-            writer = new FileWriter(versionPath.toFile());
             try {
                 Integer.valueOf(version);
             } catch (NumberFormatException e) {
-                throw e;
+                log.error(e.getMessage(), e);
             }
 
-            writer.write(version);
+            try (FileWriter writer = new FileWriter(versionPath.toFile())) {
+                writer.write(version);
+            }
+            ;
+
         } catch (IOException | NumberFormatException e) {
             log.error(e.getClass().getCanonicalName() + ": " + e.getMessage(), e);
             throw new SetRepositoryVersionException(repository);
-        } finally {
-            try {
-                if (writer != null) writer.close();
-            } catch (IOException e) {
-                log.error(e.getMessage(), e);
-            }
         }
     }
 
@@ -258,7 +264,6 @@ public abstract class FileSystemStorageService<T extends SynchronizeRepositoryRe
 
         Path versionPath = repositoryDirectory.resolve("VERSION");
         String versionStr = "";
-        Scanner scanner = null;
         try {
             if (Files.notExists(repositoryDirectory)) Files.createDirectory(repositoryDirectory);
 
@@ -266,19 +271,18 @@ public abstract class FileSystemStorageService<T extends SynchronizeRepositoryRe
                 versionStr = "1";
                 Files.createFile(versionPath);
 
-                FileWriter writer = new FileWriter(versionPath.toFile());
-                writer.write(versionStr);
-                writer.close();
+                try (FileWriter writer = new FileWriter(versionPath.toFile())) {
+                    writer.write(versionStr);
+                }
             } else {
-                scanner = new Scanner(versionPath);
-                versionStr = scanner.nextLine();
-                Integer.valueOf(versionStr);
+                try (Scanner scanner = new Scanner(versionPath)) {
+                    versionStr = scanner.nextLine();
+                    Integer.valueOf(versionStr);
+                }
             }
         } catch (IOException | NumberFormatException e) {
             log.error(e.getClass().getCanonicalName() + ": " + e.getMessage(), e);
             throw new GetRepositoryVersionException(repository);
-        } finally {
-            if (scanner != null) scanner.close();
         }
 
         return versionStr;

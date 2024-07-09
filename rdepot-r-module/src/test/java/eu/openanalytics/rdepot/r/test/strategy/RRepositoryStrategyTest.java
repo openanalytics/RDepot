@@ -58,7 +58,7 @@ import eu.openanalytics.rdepot.test.fixture.RRepositoryTestFixture;
 import eu.openanalytics.rdepot.test.fixture.RepositoryMaintainerTestFixture;
 import eu.openanalytics.rdepot.test.fixture.UserTestFixture;
 import eu.openanalytics.rdepot.test.strategy.StrategyTest;
-import java.util.Date;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -141,12 +141,12 @@ public class RRepositoryStrategyTest extends StrategyTest {
         User requester = UserTestFixture.GET_ADMIN();
         RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
         repository.setPublished(true);
-        DateProvider.setTestDate(new Date());
+        DateProvider.setTestDate(Instant.now());
         RRepository updatedRepository = new RRepository(repository);
         updatedRepository.setId(0);
         updatedRepository.setPublicationUri("https://newuri");
 
-        doNothing().when(repositorySynchronizer).storeRepositoryOnRemoteServer(eq(repository), anyString());
+        doNothing().when(repositorySynchronizer).storeRepositoryOnRemoteServer(eq(repository));
 
         Strategy<RRepository> strategy = new RRepositoryUpdateStrategy(
                 repository,
@@ -162,7 +162,7 @@ public class RRepositoryStrategyTest extends StrategyTest {
 
         strategy.perform();
 
-        verify(repositorySynchronizer, times(1)).storeRepositoryOnRemoteServer(eq(repository), anyString());
+        verify(repositorySynchronizer, times(1)).storeRepositoryOnRemoteServer(eq(repository));
     }
 
     @Test
@@ -177,7 +177,7 @@ public class RRepositoryStrategyTest extends StrategyTest {
 
         doThrow(new SynchronizeRepositoryException())
                 .when(repositorySynchronizer)
-                .storeRepositoryOnRemoteServer(eq(repository), anyString());
+                .storeRepositoryOnRemoteServer(eq(repository));
 
         Strategy<RRepository> strategy = new RRepositoryUpdateStrategy(
                 repository,
@@ -269,7 +269,7 @@ public class RRepositoryStrategyTest extends StrategyTest {
         expectedValues.add(
                 new EventChangedVariable("serverAddress", "http://192.168.1.100/testrepo123", "192.168.1.101"));
 
-        doNothing().when(repositorySynchronizer).storeRepositoryOnRemoteServer(eq(repository), anyString());
+        doNothing().when(repositorySynchronizer).storeRepositoryOnRemoteServer(eq(repository));
 
         doAnswer(new AssertEventChangedValuesAnswer(expectedValues))
                 .when(eventService)

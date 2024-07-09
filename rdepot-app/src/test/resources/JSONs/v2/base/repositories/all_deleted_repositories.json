@@ -41,6 +41,7 @@
         ],
         "id": 6,
         "published": false,
+        "lastPublicationSuccessful": false,
         "technology": "R",
         "version": 9,
         "publicationUri": "http:\/\/localhost\/repo\/testrepo5",
@@ -73,6 +74,7 @@
         ],
         "id": 7,
         "published": false,
+        "lastPublicationSuccessful": false,
         "technology": "R",
         "version": 6,
         "publicationUri": "http:\/\/localhost\/repo\/testrepo6",
@@ -105,6 +107,7 @@
         ],
         "id": 11,
         "published": true,
+        "lastPublicationSuccessful": true,
         "technology": "Python",
         "version": 1,
         "publicationUri": "http:\/\/localhost\/repo\/testrepo11",
@@ -113,6 +116,7 @@
       {
         "deleted": true,
         "synchronizing": false,
+        "lastPublicationSuccessful": false,
         "name": "testrepo12",
         "serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo12",
         "links": [

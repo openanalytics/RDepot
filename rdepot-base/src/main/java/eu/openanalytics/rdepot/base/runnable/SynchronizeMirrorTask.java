@@ -52,6 +52,6 @@ public class SynchronizeMirrorTask<R extends MirroredRepository<P, M>, P extends
     @Override
     public void run() {
         log.info("Synchronizing repository " + repository.getName() + " with mirror " + mirror.getUri());
-        mirrorService.synchronize(repository, mirror);
+        mirrorService.synchronizeAsync(repository, mirror);
     }
 }

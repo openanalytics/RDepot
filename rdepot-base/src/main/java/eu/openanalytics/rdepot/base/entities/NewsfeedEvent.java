@@ -151,7 +151,7 @@ public class NewsfeedEvent extends Resource {
 
     @Override
     public String toString() {
-        return null;
+        return "";
     }
 
     /**

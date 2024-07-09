@@ -41,6 +41,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -48,7 +49,7 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class RRepositorySynchronizer implements RepositorySynchronizer<RRepository> {
+public class RRepositorySynchronizer extends RepositorySynchronizer<RRepository> {
 
     private final RStorage storage;
     private final RPackageService packageService;
@@ -60,6 +61,7 @@ public class RRepositorySynchronizer implements RepositorySynchronizer<RReposito
     public static final Comparator<RPackage> PACKAGE_COMPARATOR = Comparator.comparingInt(RPackage::getId);
 
     @Override
+    @Transactional
     public void storeRepositoryOnRemoteServer(RRepository repository, String dateStamp)
             throws SynchronizeRepositoryException {
         LinkedHashSet<RPackage> packages = new LinkedHashSet<>(packageService.findActiveByRepository(repository));

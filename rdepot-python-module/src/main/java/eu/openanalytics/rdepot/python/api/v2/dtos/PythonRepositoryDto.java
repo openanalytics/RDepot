@@ -40,8 +40,13 @@ public class PythonRepositoryDto extends RepositoryDto {
     @JsonIgnore
     private PythonRepository pythonRepository;
 
-    public PythonRepositoryDto(PythonRepository repository, int numberOfPackages) {
-        super(repository, numberOfPackages);
+    public PythonRepositoryDto(
+            PythonRepository repository,
+            int numberOfPackages,
+            String lastPublicationTimestamp,
+            String lastModifiedTimestamp,
+            boolean lastPublicationSuccessful) {
+        super(repository, numberOfPackages, lastPublicationTimestamp, lastModifiedTimestamp, lastPublicationSuccessful);
         this.hashMethod = repository.getHashMethod();
         this.pythonRepository = repository;
     }
@@ -49,9 +54,5 @@ public class PythonRepositoryDto extends RepositoryDto {
     @Override
     public PythonRepository getEntity() {
         return pythonRepository;
-    }
-
-    public PythonRepository toEntity() {
-        return new PythonRepository(this);
     }
 }

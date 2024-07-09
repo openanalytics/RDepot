@@ -20,7 +20,6 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.controllers;
 
-import eu.openanalytics.rdepot.base.api.v2.converters.NewsfeedEventDtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.dtos.EventType;
 import eu.openanalytics.rdepot.base.api.v2.dtos.NewsfeedEventDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.ResponseDto;
@@ -79,8 +78,7 @@ public class ApiV2NewsfeedEventController extends ApiV2ReadingController<Newsfee
             NewsfeedEventService eventRetriever,
             UserService userService,
             SecurityMediator securityMediator,
-            NewsfeedEventsRolesFiltration eventsRolesFiltering,
-            NewsfeedEventDtoConverter newsfeedEventDtoConverter) {
+            NewsfeedEventsRolesFiltration eventsRolesFiltering) {
         super(messageSource, LocaleContextHolder.getLocale(), modelAssembler, pagedModelAssembler);
         this.eventRetriever = eventRetriever;
         this.userService = userService;
@@ -118,7 +116,7 @@ public class ApiV2NewsfeedEventController extends ApiV2ReadingController<Newsfee
         Page<NewsfeedEvent> retrievedEvents = null;
 
         User user = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
         boolean isAdmin = user.getRole().getValue() == Role.VALUE.ADMIN;
 
@@ -137,7 +135,7 @@ public class ApiV2NewsfeedEventController extends ApiV2ReadingController<Newsfee
     public @ResponseBody ResponseEntity<ResponseDto<EntityModel<NewsfeedEventDto>>> getEvent(
             Principal principal, @PathVariable("id") Integer id) throws ApiException {
         User user = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
         NewsfeedEvent event = eventRetriever.findById(id).orElseThrow(() -> new EventNotFound(messageSource, locale));
 

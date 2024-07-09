@@ -83,7 +83,7 @@ public class PythonRepositoryControllerDeclarativeTest extends ApiV2ControllerUn
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/serverAddress\",\"value\":\"127.0.0.1\"}]";
 
         when(pythonRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(securityMediator.isAuthorizedToEdit(any(Repository.class), eq(user.get())))
                 .thenReturn(true);
 
@@ -102,7 +102,7 @@ public class PythonRepositoryControllerDeclarativeTest extends ApiV2ControllerUn
         final String exampleJson = Files.readString(path);
 
         when(userService.isAdmin(user.get())).thenReturn(true);
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v2/manager/python/repositories")
                         .content(exampleJson)

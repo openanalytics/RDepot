@@ -159,6 +159,12 @@ public class RRepositoryWithoutSnapshotsIntegrationTest {
                 if (jsonData.get("value") != null) {
                     jsonData.remove("value");
                 }
+                if (jsonData.get("lastPublicationTimestamp") != null) {
+                    jsonData.remove("lastPublicationTimestamp");
+                }
+                if (jsonData.get("lastModifiedTimestamp") != null) {
+                    jsonData.remove("lastModifiedTimestamp");
+                }
             }
 
             JSONArray expectedContent = (JSONArray) jsonData.get("content");
@@ -183,6 +189,12 @@ public class RRepositoryWithoutSnapshotsIntegrationTest {
                     }
                     if (el.get("value") != null) {
                         el.remove("value");
+                    }
+                    if (el.get("lastPublicationTimestamp") != null) {
+                        jsonData.remove("lastPublicationTimestamp");
+                    }
+                    if (el.get("lastModifiedTimestamp") != null) {
+                        jsonData.remove("lastModifiedTimestamp");
                     }
                 }
             }

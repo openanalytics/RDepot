@@ -113,7 +113,7 @@ public class PythonRepositoryStrategyTest extends StrategyTest {
         updatedRepository.setId(0);
         updatedRepository.setPublicationUri("https://newuri");
 
-        doNothing().when(repositorySynchronizer).storeRepositoryOnRemoteServer(eq(repository), anyString());
+        doNothing().when(repositorySynchronizer).storeRepositoryOnRemoteServer(eq(repository));
 
         Strategy<PythonRepository> strategy = new PythonRepositoryUpdateStrategy(
                 repository,
@@ -129,7 +129,7 @@ public class PythonRepositoryStrategyTest extends StrategyTest {
 
         strategy.perform();
 
-        verify(repositorySynchronizer, times(1)).storeRepositoryOnRemoteServer(eq(repository), anyString());
+        verify(repositorySynchronizer, times(1)).storeRepositoryOnRemoteServer(eq(repository));
     }
 
     @Test
@@ -144,7 +144,7 @@ public class PythonRepositoryStrategyTest extends StrategyTest {
 
         doThrow(new SynchronizeRepositoryException())
                 .when(repositorySynchronizer)
-                .storeRepositoryOnRemoteServer(eq(repository), anyString());
+                .storeRepositoryOnRemoteServer(eq(repository));
 
         Strategy<PythonRepository> strategy = new PythonRepositoryUpdateStrategy(
                 repository,
@@ -235,7 +235,7 @@ public class PythonRepositoryStrategyTest extends StrategyTest {
                 new EventChangedVariable("publicationUri", "http://localhost/repo/testrepo", "https://newuri"));
         expectedValues.add(new EventChangedVariable("serverAddress", "http://192.168.1.100/testrepo", "192.168.1.101"));
 
-        doNothing().when(repositorySynchronizer).storeRepositoryOnRemoteServer(eq(repository), anyString());
+        doNothing().when(repositorySynchronizer).storeRepositoryOnRemoteServer(eq(repository));
 
         doAnswer(new AssertEventChangedValuesAnswer(expectedValues))
                 .when(eventService)

@@ -67,6 +67,7 @@ import eu.openanalytics.rdepot.test.unit.api.v2.mockstrategies.SuccessfulStrateg
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -140,7 +141,9 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
     @BeforeEach
     public void initEach() {
         user = Optional.of(UserTestFixture.GET_ADMIN());
-        DateProvider.setTestDate(LocalDateTime.of(2024, 4, 12, 0, 0));
+        DateProvider.setTestDate(LocalDateTime.of(2024, 4, 12, 0, 0)
+                .atZone(ZoneId.systemDefault())
+                .toInstant());
     }
 
     @Test
@@ -162,7 +165,7 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
         final SubmissionDto submissionDto =
                 PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, submission.getPackageBag());
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(pythonRepositoryService.findByNameAndDeleted(any(String.class), eq(false)))
                 .thenReturn(Optional.of(repository));
         doNothing().when(pythonPackageValidator).validate(any(), any(ValidationResult.class));
@@ -212,7 +215,7 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
 
         doReturn(packageDto).when(commonPackageDtoConverter).convertEntityToDto(packageBag);
         doReturn(submissionDto).when(submissionDtoConverter).convertEntityToDto(submission);
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(pythonStrategyFactory.uploadPackageStrategy(any(), any())).thenReturn(strategy);
         when(pythonRepositoryService.findByNameAndDeleted(any(String.class), eq(false)))
                 .thenReturn(Optional.of(repository));
@@ -259,7 +262,7 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
 
         when(pythonRepositoryService.findByNameAndDeleted(REPOSITORY_NAME, false))
                 .thenReturn(Optional.of(repository));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         doAnswer(new Answer<>() {
                     @Override
                     public Object answer(InvocationOnMock invocation) throws Throwable {
@@ -296,7 +299,7 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
                 new FailureStrategy<Submission>(submission, newsfeedEventService, submissionService, user.get()));
 
         when(pythonStrategyFactory.uploadPackageStrategy(any(), eq(user.get()))).thenReturn(strategy);
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(pythonRepositoryService.findByNameAndDeleted(any(String.class), eq(false)))
                 .thenReturn(Optional.of(repository));
 
@@ -355,7 +358,7 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
     @WithMockUser(authorities = {"user", "admin"})
     public void deleteSubmission_returns404_whenSubmissionIsNotFound() throws Exception {
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(submissionService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(null));
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v2/manager/python/submissions/" + 123))
@@ -367,7 +370,7 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
     @WithMockUser(authorities = {"user", "admin"})
     public void getSubmission_returns404_whenSubmissionIsNotFound() throws Exception {
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(submissionService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(null));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/python/submissions/" + 123))
@@ -380,7 +383,7 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
     public void patchSubmission_returns404_whenSubmissionIsNotFound() throws Exception {
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/state\",\"value\":\"ACCEPTED\"}]";
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(submissionService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(null));
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/python/submissions/" + 123)
@@ -398,7 +401,7 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
         final Submission submission = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get())
                 .getSubmission();
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(securityMediator.isAuthorizedToEdit(eq(submission), any(), eq(user.get())))
                 .thenReturn(false);
         when(submissionService.findById(submission.getId())).thenReturn(Optional.of(submission));
@@ -424,7 +427,7 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
         Strategy<Submission> strategy = Mockito.spy(
                 new FailureStrategy<Submission>(submission, newsfeedEventService, submissionService, user.get()));
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(userService.findById(any(Integer.class))).thenReturn(user);
         when(pythonPackageService.findById(any(Integer.class))).thenReturn(Optional.of(packageBag));
         when(pythonRepositoryService.findById(any(Integer.class))).thenReturn(Optional.of(repository));
@@ -453,7 +456,7 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
         final Submission submission = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get())
                 .getSubmission();
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(submissionService.findById(submission.getId())).thenReturn(Optional.of(submission));
         doNothing().when(submissionDeleter).delete(submission);
 
@@ -481,7 +484,7 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
         when(submissionService.findAllBySpecification(
                         ArgumentMatchers.<Specification<Submission>>any(), any(Pageable.class)))
                 .thenReturn(paged);
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(userService.findById(any(Integer.class))).thenReturn(user);
         when(userService.findById(user.get().getId())).thenReturn(user);
         when(commonPackageDtoConverter.convertEntityToDto(submissions.get(0).getPackageBag()))
@@ -520,7 +523,7 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
         packageDto.setSubmission(new SubmissionProjection(submissionDto.getEntity()));
         submissionDto.getEntity().setState(SubmissionState.WAITING);
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(userService.findById(any(Integer.class))).thenReturn(user);
         when(securityMediator.isAuthorizedToEdit(eq(submission), any(), eq(user.get())))
                 .thenReturn(true);
@@ -582,7 +585,7 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
         Strategy<Submission> strategy = Mockito.spy(
                 new SuccessfulStrategy<Submission>(submission, newsfeedEventService, submissionService, user.get()));
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(userService.findById(any(Integer.class))).thenReturn(user);
         when(securityMediator.isAuthorizedToEdit(eq(submission), any(), eq(user.get())))
                 .thenReturn(true);
@@ -613,7 +616,7 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
         final Submission submission = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get())
                 .getSubmission();
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(submissionService.findById(submission.getId())).thenReturn(Optional.of(submission));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/python/submissions/" + submission.getId())
@@ -633,7 +636,7 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
                 PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, submission.getPackageBag());
         final PackageDto packageDto = PythonPackageTestFixture.GET_EXAMPLE_PACKAGE_DTO(submission.getPackageBag());
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(submissionService.findById(submission.getId())).thenReturn(Optional.of(submission));
         when(submissionDtoConverter.convertEntityToDto(submission)).thenReturn(submissionDto);
         when(commonPackageDtoConverter.convertEntityToDto(any())).thenReturn(packageDto);

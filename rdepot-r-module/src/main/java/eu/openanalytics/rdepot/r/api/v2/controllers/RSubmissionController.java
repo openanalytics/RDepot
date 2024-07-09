@@ -176,7 +176,7 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
      * @param multipartFile package file
      * @param repository name of the destination repository
      * @param generateManual specifies if manuals should be generated for the package
-     * @param replace specified if previous version should be replaced
+     * @param replaceRequestParam specified if previous version should be replaced
      * @param principal used for authorization
      * @return DTO with created submission
      * @throws UserNotAuthorized when user could not be authenticated or authorized
@@ -199,7 +199,7 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
         boolean replace = replaceRequestParam;
 
         final User uploader = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
         final RRepository repositoryEntity = repositoryService
                 .findByNameAndDeleted(repository, false)
@@ -222,7 +222,7 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
             final Submission submission = strategy.perform();
             return handleCreatedForSingleEntity(submission, uploader);
         } catch (NonFatalSubmissionStrategyFailure e) {
-            if (e.getReason() instanceof SynchronizeRepositoryException w) {
+            if (e.getReason() instanceof SynchronizeRepositoryException) {
                 log.debug(e.getMessage(), e);
                 return handleWarningForSingleEntity(
                         e.getSubmission(), MessageCodes.WARNING_SYNCHRONIZATION_FAILURE, uploader, true);
@@ -275,7 +275,7 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
             @RequestParam(name = "search", required = false) Optional<String> search)
             throws ApiException {
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
 
         final DtoResolvedPageable resolvedPageable = pageableSortResolver.resolve(pageable);
@@ -330,7 +330,7 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
         jsonPatch = fixPatch(jsonPatch); // So that it doesn't complain when state is written with lower case
 
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new SubmissionNotFound(messageSource, locale));
         RRepository repository = repositoryService
                 .findById(submission.getPackage().getRepository().getId())
@@ -368,6 +368,7 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
         JsonArray jsonArray = jsonPatch.toJsonArray();
         JsonArrayBuilder arrBuilder = Json.createArrayBuilder();
 
+        final String value = "value";
         for (int i = 0; i < jsonArray.size(); i++) {
             JsonObject obj = jsonArray.getJsonObject(i);
 
@@ -375,13 +376,13 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
                     && obj.containsKey("path")
                     && obj.getString("op").equals("replace")
                     && obj.getString("path").equals("/state")
-                    && obj.containsKey("value")) {
+                    && obj.containsKey(value)) {
 
                 JsonObjectBuilder builder = Json.createObjectBuilder()
-                        .add("value", obj.getString("value").toUpperCase());
+                        .add(value, obj.getString(value).toUpperCase());
 
                 obj.entrySet().stream()
-                        .filter(e -> !e.getKey().equals("value"))
+                        .filter(e -> !e.getKey().equals(value))
                         .forEach(e -> builder.add(e.getKey(), e.getValue()));
                 obj = builder.build();
             }
@@ -400,7 +401,7 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
     public @ResponseBody ResponseEntity<ResponseDto<EntityModel<SubmissionDto>>> getSubmissionById(
             Principal principal, @PathVariable("id") Integer id) throws SubmissionNotFound, UserNotAuthorized {
         final User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
         Submission submission =
                 submissionService.findById(id).orElseThrow(() -> new SubmissionNotFound(messageSource, locale));
@@ -417,7 +418,7 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
     @Operation(operationId = "deleteRSubmission")
     public void deleteSubmission(Principal principal, @PathVariable("id") Integer id)
             throws SubmissionNotFound, UserNotAuthorized, DeleteException {
-        Optional<User> requester = userService.findByLogin(principal.getName());
+        Optional<User> requester = userService.findActiveByLogin(principal.getName());
 
         if (requester.isEmpty() || requester.get().getRole().getValue() != Role.VALUE.ADMIN)
             throw new UserNotAuthorized(messageSource, locale);

@@ -40,7 +40,6 @@ import eu.openanalytics.rdepot.base.api.v2.validation.PageableValidator;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.entities.UserSettings;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
-import eu.openanalytics.rdepot.base.service.AccessTokenService;
 import eu.openanalytics.rdepot.base.service.RoleService;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.UserSettingsService;
@@ -110,7 +109,6 @@ public class ApiV2UserController extends ApiV2Controller<User, UserDto> {
             StrategyFactory factory,
             UserDtoConverter userDtoConverter,
             UserSettingsService userSettingsService,
-            AccessTokenService accessTokenService,
             PageableValidator pageableValidator,
             CommonPageableSortResolver pageableSortResolver,
             SecurityMediator securityMediator) {
@@ -148,10 +146,11 @@ public class ApiV2UserController extends ApiV2Controller<User, UserDto> {
             Principal principal,
             @RequestParam(name = "role", required = false) List<String> roles,
             @RequestParam(name = "active", required = false) Optional<Boolean> active,
+            @RequestParam(name = "deleted", required = false) Optional<Boolean> deleted,
             @RequestParam(name = "search", required = false) Optional<String> search)
             throws ApiException {
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
 
         final DtoResolvedPageable resolvedPageable = pageableSortResolver.resolve(pageable);
@@ -165,6 +164,10 @@ public class ApiV2UserController extends ApiV2Controller<User, UserDto> {
 
         if (active.isPresent()) {
             specification = SpecificationUtils.andComponent(specification, UserSpecs.isActive(active.get()));
+        }
+
+        if (deleted.isPresent()) {
+            specification = SpecificationUtils.andComponent(specification, UserSpecs.isDeleted(deleted.get()));
         }
 
         if (search.isPresent()) {
@@ -192,7 +195,7 @@ public class ApiV2UserController extends ApiV2Controller<User, UserDto> {
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody ResponseEntity<ResponseDto<EntityModel<UserDto>>> getUser(
             Principal principal, @PathVariable("id") Integer id) throws UserNotFound, UserNotAuthorized {
-        Optional<User> requester = userService.findByLogin(principal.getName());
+        Optional<User> requester = userService.findActiveByLogin(principal.getName());
         Optional<User> user = userService.findOneNonDeleted(id);
 
         if (requester.isPresent()) {
@@ -219,7 +222,7 @@ public class ApiV2UserController extends ApiV2Controller<User, UserDto> {
     public @ResponseBody ResponseEntity<ResponseDto<EntityModel<UserDto>>> getUser(Principal principal)
             throws UserNotFound, UserNotAuthorized {
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
         UserSettings settings = userSettingsService.getUserSettings(requester);
         requester.setUserSettings(settings);
@@ -247,7 +250,7 @@ public class ApiV2UserController extends ApiV2Controller<User, UserDto> {
     public @ResponseBody ResponseEntity<?> patchUser(
             Principal principal, @PathVariable("id") Integer id, @RequestBody JsonPatch patch)
             throws UserNotFound, ApplyPatchException, UserNotAuthorized, MalformedPatchException {
-        Optional<User> requester = userService.findByLogin(principal.getName());
+        Optional<User> requester = userService.findActiveByLogin(principal.getName());
         User user = userService.findById(id).orElseThrow(() -> new UserNotFound(messageSource, locale));
 
         if (requester.isEmpty()

@@ -37,7 +37,7 @@ import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure;
 import eu.openanalytics.rdepot.base.synchronization.RepositorySynchronizer;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
-import eu.openanalytics.rdepot.base.time.DateProvider;
+import java.time.Instant;
 import java.util.Objects;
 
 /**
@@ -101,6 +101,7 @@ public abstract class UpdateRepositoryStrategy<T extends Repository> extends Upd
             resource.setName(updatedResource.getName());
             changedValues.add(new EventChangedVariable("name", oldResourceCopy.getName(), updatedResource.getName()));
         }
+        resource.setLastModifiedTimestamp(Instant.now());
         repositoryService.incrementVersion(resource);
         return resource;
     }
@@ -135,7 +136,7 @@ public abstract class UpdateRepositoryStrategy<T extends Repository> extends Upd
     protected void postStrategy() throws StrategyFailure {
         if (resource.getPublished()) {
             try {
-                repositorySynchronizer.storeRepositoryOnRemoteServer(resource, DateProvider.getCurrentDateStamp());
+                repositorySynchronizer.storeRepositoryOnRemoteServer(resource);
             } catch (SynchronizeRepositoryException e) {
                 logger.error(e.getMessage(), e);
                 throw new StrategyFailure(e); // TODO: #32973 What about file-system issue in local container?

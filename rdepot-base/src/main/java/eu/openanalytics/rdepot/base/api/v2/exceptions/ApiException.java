@@ -20,7 +20,12 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.exceptions;
 
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serial;
+import java.io.Serializable;
 import java.util.Locale;
 import java.util.Optional;
 import lombok.Getter;
@@ -37,7 +42,7 @@ import org.springframework.http.HttpStatus;
  * {@link eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2ErrorController Error Controller}.
  */
 @Getter
-public class ApiException extends Exception {
+public class ApiException extends Exception implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 7207340302826282335L;
@@ -46,7 +51,7 @@ public class ApiException extends Exception {
     private final HttpStatus httpStatus;
 
     @Setter
-    private Optional<String> details = Optional.empty();
+    private transient Optional<String> details = Optional.empty();
 
     public ApiException(MessageSource messageSource, Locale locale, String messageCode, HttpStatus httpStatus) {
         super(messageSource.getMessage(messageCode, null, messageCode, locale));
@@ -60,5 +65,16 @@ public class ApiException extends Exception {
         this(messageSource, locale, messageCode, httpStatus);
 
         this.setDetails(Optional.of(details));
+    }
+
+    private void writeObject(ObjectOutputStream out)
+            throws IOException, ClassNotFoundException, NotSerializableException {
+        out.defaultWriteObject();
+        out.writeObject(getDetails());
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, NotSerializableException, ClassNotFoundException {
+        in.defaultReadObject();
+        details = Optional.of((String) in.readObject());
     }
 }

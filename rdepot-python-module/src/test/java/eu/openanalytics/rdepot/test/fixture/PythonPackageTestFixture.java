@@ -66,7 +66,7 @@ public class PythonPackageTestFixture {
 
             Submission submission = PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, packageBag);
             submission.setId(i);
-            submission.setCreatedDate(DateProvider.getCurrentDate());
+            submission.setCreatedDate(DateProvider.now());
             packageBag.setSubmission(submission);
             packageBag.setVersion(VERSION);
             packages.add(packageBag);

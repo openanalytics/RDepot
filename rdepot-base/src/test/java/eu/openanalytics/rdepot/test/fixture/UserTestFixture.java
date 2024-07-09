@@ -21,7 +21,8 @@
 package eu.openanalytics.rdepot.test.fixture;
 
 import eu.openanalytics.rdepot.base.entities.User;
-import java.time.LocalDate;
+import java.time.Instant;
+import java.util.Calendar;
 
 public class UserTestFixture {
 
@@ -30,8 +31,13 @@ public class UserTestFixture {
     public static final String NAME = "Test ";
     public static final Boolean ACTIVE = true;
     public static final Boolean DELETED = false;
+    private static final Calendar cal = Calendar.getInstance();
 
     public static User GET_REGULAR_USER() {
+        cal.set(2022, Calendar.JUNE, 6);
+        final Instant lastLoggedInOn = cal.toInstant();
+        cal.set(1970, Calendar.JANUARY, 1);
+        final Instant createdOn = cal.toInstant();
         User user = new User(
                 123,
                 RoleTestFixture.ROLE.USER,
@@ -40,8 +46,8 @@ public class UserTestFixture {
                 LOGIN + "user",
                 ACTIVE,
                 DELETED,
-                LocalDate.of(2022, 06, 06),
-                LocalDate.of(1970, 1, 1));
+                lastLoggedInOn,
+                createdOn);
 
         return user;
     }
@@ -54,6 +60,10 @@ public class UserTestFixture {
     }
 
     public static User GET_PACKAGE_MAINTAINER() {
+        cal.set(2022, Calendar.JUNE, 6);
+        final Instant lastLoggedInOn = cal.toInstant();
+        cal.set(1970, Calendar.JANUARY, 1);
+        final Instant createdOn = cal.toInstant();
         User maintainer = new User(
                 123,
                 RoleTestFixture.ROLE.PACKAGE_MAINTAINER,
@@ -62,8 +72,8 @@ public class UserTestFixture {
                 LOGIN + "packagemaintainer",
                 ACTIVE,
                 DELETED,
-                LocalDate.of(2022, 06, 06),
-                LocalDate.of(1970, 1, 1));
+                lastLoggedInOn,
+                createdOn);
 
         return maintainer;
     }
@@ -76,6 +86,10 @@ public class UserTestFixture {
     }
 
     public static User GET_REPOSITORY_MAINTAINER() {
+        cal.set(2022, Calendar.JUNE, 6);
+        final Instant lastLoggedInOn = cal.toInstant();
+        cal.set(1970, Calendar.JANUARY, 1);
+        final Instant createdOn = cal.toInstant();
         User maintainer = new User(
                 123,
                 RoleTestFixture.ROLE.REPOSITORY_MAINTAINER,
@@ -84,8 +98,8 @@ public class UserTestFixture {
                 LOGIN + "repomaintainer",
                 ACTIVE,
                 DELETED,
-                LocalDate.of(2022, 06, 06),
-                LocalDate.of(1970, 1, 1));
+                lastLoggedInOn,
+                createdOn);
 
         return maintainer;
     }
@@ -98,6 +112,10 @@ public class UserTestFixture {
     }
 
     public static User GET_ADMIN() {
+        cal.set(2022, Calendar.JUNE, 6);
+        final Instant lastLoggedInOn = cal.toInstant();
+        cal.set(1970, Calendar.JANUARY, 1);
+        final Instant createdOn = cal.toInstant();
         User admin = new User(
                 123,
                 RoleTestFixture.ROLE.ADMIN,
@@ -106,8 +124,8 @@ public class UserTestFixture {
                 LOGIN + "admin",
                 ACTIVE,
                 DELETED,
-                LocalDate.of(2022, 06, 06),
-                LocalDate.of(1970, 1, 1));
+                lastLoggedInOn,
+                createdOn);
 
         return admin;
     }

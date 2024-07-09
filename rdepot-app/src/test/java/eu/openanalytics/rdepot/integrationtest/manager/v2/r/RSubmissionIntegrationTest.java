@@ -23,6 +23,7 @@ package eu.openanalytics.rdepot.integrationtest.manager.v2.r;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import eu.openanalytics.rdepot.integrationtest.environment.BashScriptExecutor;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.IntegrationTest;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.RequestType;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.TestRequestBody;
@@ -35,13 +36,16 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.util.Arrays;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.shaded.org.checkerframework.checker.nullness.qual.NonNull;
 
 public class RSubmissionIntegrationTest extends IntegrationTest {
 
     private final SubmissionTestData testData;
     private static String EVENTS_PATH = "/v2/r/events/submissions/";
+    private static final BashScriptExecutor bashScriptExecutor = new BashScriptExecutor();
 
     public RSubmissionIntegrationTest() {
         super("/api/v2/manager/r/submissions");
@@ -65,7 +69,6 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
 
     @Test
     public void submitPackage_createManualsByDefault() throws Exception {
-
         File packageBag = new File("src/test/resources/itestPackages/Benchmarking_0.10.tar.gz");
         SubmissionMultipartBody body = new SubmissionMultipartBody(
                 "testrepo2",
@@ -160,10 +163,50 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getPostEndpointNewEventsAmount())
                 .expectedJsonPath("/v2/r/submission/new_submission.json")
-                .expectedJsonPath("/v2/r/submission/new_submission.json")
+                .expectedEventsJson(EVENTS_PATH + "new_submission_without_manual_events.json")
                 .submissionMultipartBody(body)
                 .build();
         testEndpoint(requestBody);
+    }
+
+    @Test
+    public void submitBigPackage() throws Exception {
+        File packageBag = enlargePackage(new File("src/test/resources/itestPackages/Benchmarking_0.10.tar.gz"));
+        SubmissionMultipartBody body = new SubmissionMultipartBody(
+                "testrepo2",
+                false,
+                true,
+                new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+                        .fileName(packageBag.getName())
+                        .mimeType("application/gzip")
+                        .controlName("file")
+                        .build());
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST_MULTIPART)
+                .urlSuffix("/")
+                .statusCode(201)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getPostEndpointNewEventsAmount())
+                .expectedEventsJson(EVENTS_PATH + "new_big_submission_without_manual_events.json")
+                .expectedJsonPath("/v2/r/submission/new_big_submission.json")
+                .submissionMultipartBody(body)
+                .build();
+        testEndpoint(requestBody);
+        removeEnlargedPackage(packageBag);
+    }
+
+    private void removeEnlargedPackage(File packageBag) throws Exception {
+        FileUtils.forceDelete(packageBag);
+    }
+
+    private File enlargePackage(@NonNull File file) {
+        bashScriptExecutor.executeBashScript(
+                "src/test/resources/scripts/enlargePackage.sh",
+                "src/test/resources/itestPackages",
+                "Benchmarking_0.10.tar.gz");
+
+        return new File("src/test/resources/itestPackages/BigBenchmarking_0.10.tar.gz");
     }
 
     @Test
@@ -208,8 +251,7 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
                 .redirectErrorStream(true)
                 .start();
         final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        String msg;
-        while ((msg = reader.readLine()) != null) {}
+        while (reader.readLine() != null) {}
         process.waitFor();
         final int exitCode = process.exitValue();
         process.destroy();

@@ -40,7 +40,6 @@ public abstract class UpdateStrategy<T extends Resource> extends Strategy<T> {
     protected final Set<EventChangedVariable> changedValues = new HashSet<>();
     protected final T updatedResource;
     protected final T oldResourceCopy;
-    private final NewsfeedEventService newsfeedEventService;
 
     protected UpdateStrategy(
             T resource,
@@ -52,7 +51,6 @@ public abstract class UpdateStrategy<T extends Resource> extends Strategy<T> {
         super(resource, service, requester, newsfeedEventService);
         this.updatedResource = updatedResource;
         this.oldResourceCopy = oldResourceCopy;
-        this.newsfeedEventService = newsfeedEventService;
     }
 
     @Override

@@ -134,7 +134,7 @@ public class RPackageDeletionDisabledControllerTest extends ApiV2ControllerUnitT
     public void getAllPackages() throws Exception {
         RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(userService.isAdmin(user.get())).thenReturn(true);
         when(rPackageService.findAllBySpecification(any(), any()))
                 .thenReturn(RPackageTestFixture.GET_EXAMPLE_PACKAGES_PAGED(repository, user.get()));
@@ -153,7 +153,7 @@ public class RPackageDeletionDisabledControllerTest extends ApiV2ControllerUnitT
 
         when(rRepositoryService.findByName(repository.getName()))
                 .thenReturn(Optional.of(RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY()));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         when(rPackageService.findAllBySpecification(any(), any())).thenReturn(packagesPage);
 
@@ -170,7 +170,7 @@ public class RPackageDeletionDisabledControllerTest extends ApiV2ControllerUnitT
         Page<RPackage> packagesPage = RPackageTestFixture.GET_EXAMPLE_PACKAGES_PAGED_DELETED();
 
         when(rPackageService.findAllBySpecification(any(), any())).thenReturn(packagesPage);
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(userService.isAdmin(user.get())).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/r/packages")
@@ -186,7 +186,7 @@ public class RPackageDeletionDisabledControllerTest extends ApiV2ControllerUnitT
         final Optional<RPackage> packageBag = Optional.of(RPackageTestFixture.GET_EXAMPLE_PACKAGE());
 
         when(rPackageService.findById(packageBag.get().getId())).thenReturn(packageBag);
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders.get(
                                 "/api/v2/manager/r/packages/" + packageBag.get().getId())
@@ -203,7 +203,7 @@ public class RPackageDeletionDisabledControllerTest extends ApiV2ControllerUnitT
         final RPackage packageBag = RPackageTestFixture.GET_EXAMPLE_PACKAGE();
 
         when(rPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/r/packages/" + packageBag.getId())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -216,7 +216,7 @@ public class RPackageDeletionDisabledControllerTest extends ApiV2ControllerUnitT
     public void getPackageById_returns404_WhenPackageIsNotFound() throws Exception {
         final Integer ID = 123;
         when(rPackageService.findById(ID)).thenReturn(Optional.ofNullable(null));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/r/packages/" + ID)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -230,7 +230,7 @@ public class RPackageDeletionDisabledControllerTest extends ApiV2ControllerUnitT
         final Integer ID = 123;
 
         when(rPackageService.findById(ID)).thenReturn(Optional.ofNullable(null));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v2/manager/r/packages/" + ID)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -255,7 +255,7 @@ public class RPackageDeletionDisabledControllerTest extends ApiV2ControllerUnitT
         packageBag.setDeleted(true);
 
         when(rPackageService.findOneDeleted(packageBag.getId())).thenReturn(Optional.of(packageBag));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         doNothing().when(rPackageDeleter).delete(packageBag);
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v2/manager/r/packages/" + packageBag.getId()))
@@ -270,7 +270,7 @@ public class RPackageDeletionDisabledControllerTest extends ApiV2ControllerUnitT
         final String patchJson = "[{\"op\":\"replace\",\"path\":\"/active\",\"value\":\"false\"}]";
 
         when(rPackageService.findById(ID)).thenReturn(Optional.ofNullable(null));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/r/packages/" + ID)
                         .content(patchJson)
@@ -297,7 +297,7 @@ public class RPackageDeletionDisabledControllerTest extends ApiV2ControllerUnitT
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/active\",\"value\":\"false\"}]";
 
         when(rPackageService.findById(ID)).thenReturn(Optional.ofNullable(null));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/r/packages/" + 123)
                         .content(patchJson)
@@ -322,7 +322,7 @@ public class RPackageDeletionDisabledControllerTest extends ApiV2ControllerUnitT
         when(rRepositoryService.findById(anyInt())).thenReturn(Optional.of(repository));
         when(rPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
         when(submissionService.findById(anyInt())).thenReturn(Optional.of(submission));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         doNothing().when(rPackageValidator).validate(any(), eq(true), any());
         when(securityMediator.isAuthorizedToEdit(packageBag, user.get())).thenReturn(true);
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/r/packages/" + packageBag.getId())
@@ -351,7 +351,7 @@ public class RPackageDeletionDisabledControllerTest extends ApiV2ControllerUnitT
         when(rRepositoryService.findById(anyInt())).thenReturn(Optional.of(repository));
         when(rPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
         when(submissionService.findById(anyInt())).thenReturn(Optional.of(submission));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         doNothing().when(rPackageValidator).validate(any(), eq(true), any());
         when(securityMediator.isAuthorizedToEdit(packageBag, user.get())).thenReturn(true);
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/r/packages/" + packageBag.getId())
@@ -370,7 +370,7 @@ public class RPackageDeletionDisabledControllerTest extends ApiV2ControllerUnitT
         final String patchJson = "[{\"op\":\"replace\",\"path\":\"/actiiiiiive\",\"value\":\"false\"}]";
 
         when(rPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(securityMediator.isAuthorizedToEdit(packageBag, user.get())).thenReturn(true);
         doNothing().when(rPackageValidator).validate(any(), eq(false), any());
 
@@ -397,9 +397,9 @@ public class RPackageDeletionDisabledControllerTest extends ApiV2ControllerUnitT
         when(userService.findById(anyInt())).thenReturn(user);
         when(rPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
         when(submissionService.findById(anyInt())).thenReturn(Optional.of(submission));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(rPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(repositoryMaintainerValidator.supports(RepositoryMaintainer.class)).thenReturn(true);
         when(securityMediator.isAuthorizedToEdit(packageBag, user.get())).thenReturn(true);
 
@@ -440,7 +440,7 @@ public class RPackageDeletionDisabledControllerTest extends ApiV2ControllerUnitT
         when(submissionService.findById(anyInt())).thenReturn(Optional.of(submission));
 
         when(rPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         doNothing().when(rPackageValidator).validate(any(), eq(true), any());
         when(securityMediator.isAuthorizedToEdit(packageBag, user.get())).thenReturn(true);
 

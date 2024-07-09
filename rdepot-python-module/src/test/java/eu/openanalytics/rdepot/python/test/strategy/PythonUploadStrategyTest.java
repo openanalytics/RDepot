@@ -94,6 +94,7 @@ public class PythonUploadStrategyTest extends StrategyTest {
     private final String TEST_PACKAGE_FILENAME = "coconutpy-2.2.1.tar.gz";
     private final String TEST_PACKAGE_CONTENTTYPE = "";
 
+    @SuppressWarnings("unchecked")
     @Test
     public void createSubmission_whenUserIsAdmin() throws Exception {
         // Prerequisites
@@ -168,8 +169,7 @@ public class PythonUploadStrategyTest extends StrategyTest {
         String source = packageBag.getSource();
 
         // Assertions
-        assertEquals(
-                expectedDescription(), packageBag.getDescription().replaceAll("\\s+", " "), "Incorrect description");
+        assertEquals(expectedDescription(), packageBag.getDescription(), "Incorrect description");
         assertEquals("MIT License", packageBag.getLicense(), "Incorrect license");
         assertTrue(packageBag.isActive(), "Package should be activated.");
         assertFalse(packageBag.isDeleted(), "Package should not be deleted");
@@ -189,7 +189,8 @@ public class PythonUploadStrategyTest extends StrategyTest {
     }
 
     private String expectedDescription() {
-        return "Client Library for encoding Videos with Coconut \\\\n"
+        return "Client Library for encoding Videos with Coconut\\n"
+                + " \\\\n"
                 + " \\ Coconut is a Video Encoding Web Service built for developers.\\n"
                 + " \\\\n"
                 + " \\ For more information:\\n"
@@ -211,9 +212,10 @@ public class PythonUploadStrategyTest extends StrategyTest {
                 + " \\\\n"
                 + " \\ 1.0.0\\n"
                 + " \\ First version\\n"
-                + " \\\\n";
+                + " \\";
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void createSubmission_shouldSendEmail_whenUserIsNotAllowedToAccept() throws Exception {
         FileInputStream fis = new FileInputStream(new File(TEST_PACKAGE_PATH));
@@ -418,6 +420,7 @@ public class PythonUploadStrategyTest extends StrategyTest {
         verify(storage, times(1)).removeFileIfExists(extracted.getAbsolutePath());
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void createSubmissionAndRemovePackageSource_whenValidationFails() throws Exception {
         FileInputStream fis = new FileInputStream(new File(TEST_PACKAGE_PATH));

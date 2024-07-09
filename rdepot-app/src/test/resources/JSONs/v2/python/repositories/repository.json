@@ -1,27 +1,28 @@
 {
   "code": 200,
   "data": {
+    "serverAddress": "http://oa-rdepot-repo:8080/testrepo9",
+    "lastPublicationSuccessful": false,
+    "published": false,
+    "technology": "Python",
+    "version": 4,
+    "numberOfPackages": 3,
     "hashMethod": "SHA256",
     "deleted": false,
     "synchronizing": false,
     "name": "testrepo9",
-    "serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo9",
     "links": [
       {
         "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/9"
+        "href": "http://localhost:8017/api/v2/manager/python/repositories/9"
       },
       {
         "rel": "repositoryList",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories"
+        "href": "http://localhost:8017/api/v2/manager/python/repositories"
       }
     ],
     "id": 9,
-    "published": false,
-    "technology": "Python",
-    "version": 4,
-    "publicationUri": "http:\/\/localhost\/repo\/testrepo9",
-    "numberOfPackages": 3
+    "publicationUri": "http://localhost/repo/testrepo9"
   },
   "messageCode": "success.request.processed",
   "message": "Your request has been processed successfully.",

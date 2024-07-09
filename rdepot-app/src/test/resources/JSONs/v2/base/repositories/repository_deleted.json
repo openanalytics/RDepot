@@ -27,6 +27,7 @@
     ],
     "id": 6,
     "published": false,
+    "lastPublicationSuccessful": false,
     "technology": "R",
     "version": 9,
     "publicationUri": "http:\/\/localhost\/repo\/testrepo5",

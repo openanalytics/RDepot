@@ -38,18 +38,18 @@ COPY public.api_token (id, token, user_login) FROM stdin;
 -- Data for Name: repository; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.repository (id, version, publication_uri, name, server_address, published, deleted, resource_technology) FROM stdin;
-5	6	http://localhost/repo/testrepo4	testrepo4	http://oa-rdepot-repo:8080/testrepo4	f	f	R
-4	18	http://localhost/repo/testrepo3	testrepo3	http://oa-rdepot-repo:8080/testrepo3	f	f	R
-3	8	http://localhost/repo/testrepo2	testrepo2	http://oa-rdepot-repo:8080/testrepo2	t	f	R
-6	9	http://localhost/repo/testrepo5	testrepo5	http://oa-rdepot-repo:8080/testrepo5	f	t	R
-7	6	http://localhost/repo/testrepo6	testrepo6	http://oa-rdepot-repo:8080/testrepo6	f	t	R
-2	31	http://localhost/repo/testrepo1	testrepo1	http://oa-rdepot-repo:8080/testrepo1	t	f	R
-11	1	http://localhost/repo/testrepo11	testrepo11	http://oa-rdepot-repo:8080/testrepo11	t	t	Python
-12	1	http://localhost/repo/testrepo12	testrepo12	http://oa-rdepot-repo:8080/testrepo12	f	t	Python
-10	7	http://localhost/repo/testrepo10	testrepo10	http://oa-rdepot-repo:8080/testrepo10	f	f	Python
-9	4	http://localhost/repo/testrepo9	testrepo9	http://oa-rdepot-repo:8080/testrepo9	f	f	Python
-8	7	http://localhost/repo/testrepo8	testrepo8	http://oa-rdepot-repo:8080/testrepo8	t	f	Python
+COPY public.repository (id, version, publication_uri, name, server_address, published, deleted, resource_technology, last_publication_successful, last_publication_timestamp, last_modified_timestamp) FROM stdin;
+5	6	http://localhost/repo/testrepo4	testrepo4	http://oa-rdepot-repo:8080/testrepo4	f	f	R	f	\N	'2024-06-21 12:30:25'
+4	18	http://localhost/repo/testrepo3	testrepo3	http://oa-rdepot-repo:8080/testrepo3	f	f	R	f	\N	'2024-04-27 12:30:25'
+3	8	http://localhost/repo/testrepo2	testrepo2	http://oa-rdepot-repo:8080/testrepo2	t	f	R	t	'2024-06-27 12:30:25'	'2024-06-27 12:30:25'
+6	9	http://localhost/repo/testrepo5	testrepo5	http://oa-rdepot-repo:8080/testrepo5	f	t	R	f	\N	'2024-06-27 12:30:25'
+7	6	http://localhost/repo/testrepo6	testrepo6	http://oa-rdepot-repo:8080/testrepo6	f	t	R	f	\N	'2024-04-27 12:30:25'
+2	31	http://localhost/repo/testrepo1	testrepo1	http://oa-rdepot-repo:8080/testrepo1	t	f	R	t	'2020-03-28 12:30:25'	'2024-04-24 12:30:25'
+11	1	http://localhost/repo/testrepo11	testrepo11	http://oa-rdepot-repo:8080/testrepo11	t	t	Python	t	'2020-03-28 12:30:25'	'2020-03-28 12:30:25'
+12	1	http://localhost/repo/testrepo12	testrepo12	http://oa-rdepot-repo:8080/testrepo12	f	t	Python	f	\N	'2024-03-23 12:30:25'
+10	7	http://localhost/repo/testrepo10	testrepo10	http://oa-rdepot-repo:8080/testrepo10	f	f	Python	f	\N	'2024-03-23 12:30:25'
+9	4	http://localhost/repo/testrepo9	testrepo9	http://oa-rdepot-repo:8080/testrepo9	f	f	Python	f	\N	'2024-04-27 12:30:25'
+8	7	http://localhost/repo/testrepo8	testrepo8	http://oa-rdepot-repo:8080/testrepo8	t	f	Python	t	'2020-03-28 12:30:25'	'2018-04-01 12:30:25'
 \.
 
 --

@@ -25,9 +25,10 @@ import eu.openanalytics.rdepot.base.daos.AccessTokenDao;
 import eu.openanalytics.rdepot.base.entities.AccessToken;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.service.exceptions.CreateEntityException;
+import eu.openanalytics.rdepot.base.time.DateProvider;
 import java.nio.CharBuffer;
 import java.security.SecureRandom;
-import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,7 +36,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @org.springframework.stereotype.Service
 public class AccessTokenService extends Service<AccessToken> {
 
-    private final AccessTokenDao dao;
+    private final AccessTokenDao accessTokenDao;
     private final PasswordEncoder encoder;
 
     @Value("${access-token.length}")
@@ -50,9 +51,9 @@ public class AccessTokenService extends Service<AccessToken> {
     @Value("${access-token.lifetime-configurable}")
     private Boolean lifetimeConfigurable;
 
-    public AccessTokenService(AccessTokenDao dao, PasswordEncoder encoder) {
-        super(dao);
-        this.dao = dao;
+    public AccessTokenService(AccessTokenDao accessTokenDao, PasswordEncoder encoder) {
+        super(accessTokenDao);
+        this.accessTokenDao = accessTokenDao;
         this.encoder = encoder;
     }
 
@@ -66,8 +67,8 @@ public class AccessTokenService extends Service<AccessToken> {
 
         AccessToken accessToken = new AccessToken();
         accessToken.setName(dto.getName());
-        accessToken.setCreationDate(LocalDate.now());
-        accessToken.setExpirationDate(LocalDate.now().plusDays(lifetime));
+        accessToken.setCreationDate(DateProvider.now());
+        accessToken.setExpirationDate(DateProvider.now().plus(lifetime, ChronoUnit.DAYS));
         accessToken.setUser(requester);
         accessToken.setActive(true);
 
@@ -95,11 +96,11 @@ public class AccessTokenService extends Service<AccessToken> {
     }
 
     public boolean verifyToken(CharSequence token, int userId) {
-        List<AccessToken> userTokens = dao.findByUserId(userId);
+        List<AccessToken> userTokens = accessTokenDao.findByUserId(userId);
         for (AccessToken userToken : userTokens) {
             if (encoder.matches(token, userToken.getValue())
-                    && (LocalDate.now().isBefore(userToken.getExpirationDate())
-                            || LocalDate.now().isEqual(userToken.getExpirationDate()))
+                    && (DateProvider.now().isBefore(userToken.getExpirationDate())
+                            || DateProvider.now().equals(userToken.getExpirationDate()))
                     && userToken.isActive()) {
                 return true;
             }

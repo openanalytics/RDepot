@@ -58,6 +58,7 @@ import eu.openanalytics.rdepot.test.unit.api.v2.mockstrategies.SuccessfulStrateg
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Locale;
 import java.util.Optional;
 import org.apache.http.entity.ContentType;
@@ -119,7 +120,9 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
     @BeforeEach
     public void initEach() {
         user = Optional.of(UserTestFixture.GET_ADMIN());
-        DateProvider.setTestDate(LocalDateTime.of(2024, 4, 12, 0, 0));
+        DateProvider.setTestDate(LocalDateTime.of(2024, 4, 12, 0, 0)
+                .atZone(ZoneId.systemDefault())
+                .toInstant());
     }
 
     @Test
@@ -141,7 +144,7 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
         final SubmissionDto submissionDto =
                 PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, submission.getPackageBag());
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(pythonRepositoryService.findByNameAndDeleted(any(String.class), eq(false)))
                 .thenReturn(Optional.of(repository));
         doNothing().when(pythonPackageValidator).validate(any(), any(ValidationResult.class));
@@ -191,7 +194,7 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
 
         doReturn(packageDto).when(commonPackageDtoConverter).convertEntityToDto(packageBag);
         doReturn(submissionDto).when(submissionDtoConverter).convertEntityToDto(submission);
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(pythonStrategyFactory.uploadPackageStrategy(any(), any())).thenReturn(strategy);
         when(pythonRepositoryService.findByNameAndDeleted(any(String.class), eq(false)))
                 .thenReturn(Optional.of(repository));
@@ -228,7 +231,7 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
 
         doReturn(packageDto).when(commonPackageDtoConverter).convertEntityToDto(packageBag);
         doReturn(submissionDto).when(submissionDtoConverter).convertEntityToDto(submission);
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(pythonStrategyFactory.uploadPackageStrategy(any(), any())).thenReturn(strategy);
         when(pythonRepositoryService.findByNameAndDeleted(any(String.class), eq(false)))
                 .thenReturn(Optional.of(repository));
@@ -275,7 +278,7 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
 
         when(pythonRepositoryService.findByNameAndDeleted(REPOSITORY_NAME, false))
                 .thenReturn(Optional.of(repository));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         doAnswer(new Answer<>() {
                     @Override
                     public Object answer(InvocationOnMock invocation) throws Throwable {
@@ -312,7 +315,7 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
                 new FailureStrategy<Submission>(submission, newsfeedEventService, submissionService, user.get()));
 
         when(pythonStrategyFactory.uploadPackageStrategy(any(), eq(user.get()))).thenReturn(strategy);
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(pythonRepositoryService.findByNameAndDeleted(any(String.class), eq(false)))
                 .thenReturn(Optional.of(repository));
 

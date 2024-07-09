@@ -170,7 +170,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
             throws ApiException {
 
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
 
         if ((!userService.isAdmin(requester) && deleted)) throw new UserNotAuthorized(messageSource, locale);
@@ -201,7 +201,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
     public @ResponseBody ResponseEntity<ResponseDto<EntityModel<RRepositoryDto>>> getRepositoryById(
             Principal principal, @PathVariable("id") Integer id) throws UserNotAuthorized, RepositoryNotFound {
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
 
         RRepository repository =
@@ -228,7 +228,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
             Principal principal, @RequestBody RRepositoryDto repositoryDto)
             throws NotAllowedInDeclarativeMode, UserNotAuthorized, CreateException {
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
         if (!userService.isAdmin(requester)) throw new UserNotAuthorized(messageSource, locale);
 
@@ -272,7 +272,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
                 repositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
 
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
         if (!securityMediator.isAuthorizedToEdit(repository, requester))
             throw new UserNotAuthorized(messageSource, locale);
@@ -316,7 +316,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(operationId = "deleteRRepository")
     public void deleteRepository(Principal principal, @PathVariable("id") Integer id) throws ApiException {
-        Optional<User> requester = userService.findByLogin(principal.getName());
+        Optional<User> requester = userService.findActiveByLogin(principal.getName());
 
         if (requester.isEmpty() || requester.get().getRole().getValue() != Role.VALUE.ADMIN)
             throw new UserNotAuthorized(messageSource, locale);
@@ -343,13 +343,15 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/{id}/synchronize-mirrors")
     public void synchronizeWithMirrors(@PathVariable("id") Integer id, Principal principal) throws ApiException {
-        if (!userService.findByLogin(principal.getName()).isPresent()) {
+        if (!userService.findActiveByLogin(principal.getName()).isPresent()) {
             throw new UserNotAuthorized(messageSource, locale);
         }
         RRepository repository =
                 repositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
 
-        mirrorSynchronizer.findByRepository(repository).forEach(m -> mirrorSynchronizer.synchronize(repository, m));
+        mirrorSynchronizer
+                .findByRepository(repository)
+                .forEach(m -> mirrorSynchronizer.synchronizeAsync(repository, m));
     }
 
     /**
@@ -361,7 +363,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
     public ResponseDto<?> getSynchronizationStatus(@PathVariable("id") Integer id, Principal principal)
             throws ApiException {
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
         RRepository repository =
                 repositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));

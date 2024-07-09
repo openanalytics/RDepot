@@ -22,17 +22,28 @@ package eu.openanalytics.rdepot.test.fixture;
 
 import eu.openanalytics.rdepot.base.entities.AccessToken;
 import eu.openanalytics.rdepot.base.entities.User;
-import java.time.LocalDate;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class AccessTokenTestFixture {
+    private static final Calendar cal = Calendar.getInstance();
 
     public static final String NAME = "test token";
     public static final String VALUE =
             "sJqAopeLsh2BBjI8gPkd73NFtWK6RwF"; // 31 characters, cause one char is added in function
-    public static final LocalDate CREATION_DATE = LocalDate.of(2023, 11, 24);
-    public static final LocalDate EXPIRATION_DATE = LocalDate.of(2023, 12, 23);
+    public static final Instant CREATION_DATE; // Instant.of(2023, 11, 24);
+    public static final Instant EXPIRATION_DATE; // = LocalDate.of(2023, 12, 23);
+
+    static {
+        cal.set(2023, Calendar.NOVEMBER, 24);
+        CREATION_DATE = cal.toInstant();
+        cal.set(2023, Calendar.DECEMBER, 23);
+        EXPIRATION_DATE = cal.toInstant();
+    }
+
     public static final boolean ACTIVE = true;
     public static final boolean DELETED = false;
 
@@ -45,8 +56,8 @@ public class AccessTokenTestFixture {
                     i,
                     NAME + Integer.toString(i),
                     VALUE + Integer.toString(i),
-                    CREATION_DATE.plusDays(i),
-                    EXPIRATION_DATE.plusDays(i),
+                    CREATION_DATE.plus(i, ChronoUnit.DAYS),
+                    EXPIRATION_DATE.plus(i, ChronoUnit.DAYS),
                     ACTIVE,
                     DELETED,
                     user);

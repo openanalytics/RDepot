@@ -39,6 +39,10 @@ public class UserSpecs {
         return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("active"), active);
     }
 
+    public static Specification<User> isDeleted(boolean deleted) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("deleted"), deleted);
+    }
+
     public static Specification<User> byName(String name) {
         return (root, query, criteriaBuilder) ->
                 criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + name.toLowerCase() + "%");

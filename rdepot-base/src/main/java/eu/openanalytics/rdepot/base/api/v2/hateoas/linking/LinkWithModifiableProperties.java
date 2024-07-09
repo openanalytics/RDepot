@@ -21,6 +21,10 @@
 package eu.openanalytics.rdepot.base.api.v2.hateoas.linking;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.util.Arrays;
 import java.util.List;
@@ -40,7 +44,7 @@ public class LinkWithModifiableProperties extends Link {
 
     private final List<String> modifiableProperties;
     private final String href;
-    private final LinkRelation rel;
+    private transient LinkRelation rel;
     private final String type;
 
     public LinkWithModifiableProperties(Link baseLink, String... modifiableProperties) {
@@ -72,5 +76,16 @@ public class LinkWithModifiableProperties extends Link {
     @Override
     public String getType() {
         return this.type;
+    }
+
+    private void writeObject(ObjectOutputStream out)
+            throws IOException, ClassNotFoundException, NotSerializableException {
+        out.defaultWriteObject();
+        out.writeObject(getRel());
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, NotSerializableException, ClassNotFoundException {
+        in.defaultReadObject();
+        rel = (LinkRelation) in.readObject();
     }
 }

@@ -29,6 +29,8 @@ import eu.openanalytics.rdepot.base.messaging.MessageCodes;
  */
 public class CreatePackageException extends LocalizedException {
 
+    private static final long serialVersionUID = 1L;
+
     public CreatePackageException() {
         super(MessageCodes.PACKAGE_CREATE_ERROR);
     }

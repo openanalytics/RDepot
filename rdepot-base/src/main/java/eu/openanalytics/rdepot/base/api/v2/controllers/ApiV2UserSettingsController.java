@@ -103,7 +103,7 @@ public class ApiV2UserSettingsController extends ApiV2Controller<UserSettings, U
     @Operation(operationId = "getUserSettingsByUserId")
     public @ResponseBody ResponseEntity<?> getUserSettings(@PathVariable("userId") int userId, Principal principal)
             throws UserNotFound, UserNotAuthorized {
-        Optional<User> requester = userService.findByLogin(principal.getName());
+        Optional<User> requester = userService.findActiveByLogin(principal.getName());
         Optional<User> user = userService.findOneNonDeleted(userId);
 
         if (requester.isPresent()) {
@@ -130,7 +130,7 @@ public class ApiV2UserSettingsController extends ApiV2Controller<UserSettings, U
             throws UserNotFound, UserNotAuthorized, MalformedPatchException, ApplyPatchException {
         boolean toCreate = false;
         UserSettings settings;
-        Optional<User> requester = userService.findByLogin(principal.getName());
+        Optional<User> requester = userService.findActiveByLogin(principal.getName());
         User user = userService.findById(userId).orElseThrow(() -> new UserNotFound(messageSource, locale));
         Optional<UserSettings> settingsOptional = userSettingsService.findSettingsByUser(user);
 

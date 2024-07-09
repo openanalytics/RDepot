@@ -26,7 +26,6 @@ import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.storage.Storage;
 import eu.openanalytics.rdepot.base.strategy.update.UpdatePackageStrategy;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
-import eu.openanalytics.rdepot.base.time.DateProvider;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.services.RPackageService;
 import eu.openanalytics.rdepot.r.synchronization.RRepositorySynchronizer;
@@ -58,7 +57,6 @@ public class RPackageUpdateStrategy extends UpdatePackageStrategy<RPackage> {
 
     @Override
     protected void publishPackageRepository(RPackage packageBag) throws SynchronizeRepositoryException {
-        repositorySynchronizer.storeRepositoryOnRemoteServer(
-                packageBag.getRepository(), DateProvider.getCurrentDateStamp());
+        repositorySynchronizer.storeRepositoryOnRemoteServer(packageBag.getRepository());
     }
 }

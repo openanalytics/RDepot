@@ -22,7 +22,19 @@ package eu.openanalytics.rdepot.python.storage.implementations;
 
 import eu.openanalytics.rdepot.base.PropertiesParser;
 import eu.openanalytics.rdepot.base.entities.Package;
-import eu.openanalytics.rdepot.base.storage.exceptions.*;
+import eu.openanalytics.rdepot.base.storage.exceptions.CheckSumCalculationException;
+import eu.openanalytics.rdepot.base.storage.exceptions.CleanUpAfterSynchronizationException;
+import eu.openanalytics.rdepot.base.storage.exceptions.CreateFolderStructureException;
+import eu.openanalytics.rdepot.base.storage.exceptions.DeleteFileException;
+import eu.openanalytics.rdepot.base.storage.exceptions.GenerateManualException;
+import eu.openanalytics.rdepot.base.storage.exceptions.GetReferenceManualException;
+import eu.openanalytics.rdepot.base.storage.exceptions.InvalidSourceException;
+import eu.openanalytics.rdepot.base.storage.exceptions.LinkFoldersException;
+import eu.openanalytics.rdepot.base.storage.exceptions.Md5MismatchException;
+import eu.openanalytics.rdepot.base.storage.exceptions.OrganizePackagesException;
+import eu.openanalytics.rdepot.base.storage.exceptions.PackageFolderPopulationException;
+import eu.openanalytics.rdepot.base.storage.exceptions.ReadPackageDescriptionException;
+import eu.openanalytics.rdepot.base.storage.exceptions.ReadPackageVignetteException;
 import eu.openanalytics.rdepot.base.storage.implementations.CommonLocalStorage;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
@@ -41,7 +53,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -71,6 +88,8 @@ public class PythonLocalStorage extends CommonLocalStorage<PythonRepository, Pyt
     private Path current;
 
     private final Pattern pythonPackageVersion = Pattern.compile("-([0-9]+[.][0-9]+[.][0-9])");
+
+    private static final String INDEX_FILE = "index.html";
 
     @Override
     public Properties getPropertiesFromExtractedFile(final String extractedFile)
@@ -178,7 +197,7 @@ public class PythonLocalStorage extends CommonLocalStorage<PythonRepository, Pyt
 
     private void addPackageFiles(PythonPackage packageBag, List<File> toUpload, Map<String, String> checksums) {
         String packageFilePath = this.current + separator + packageBag.getName() + separator + packageBag.getFileName();
-        String indexFilePath = this.current + separator + packageBag.getName() + separator + "index.html";
+        String indexFilePath = this.current + separator + packageBag.getName() + separator + INDEX_FILE;
         final File indexFile = new File(indexFilePath);
         final File packageFile = new File(packageFilePath);
         toUpload.add(packageFile);
@@ -217,7 +236,7 @@ public class PythonLocalStorage extends CommonLocalStorage<PythonRepository, Pyt
 
         if (!remotePackagesNames.containsAll(localPackagesNames)
                 || !localPackagesNames.containsAll(remotePackagesNames)) {
-            String indexFilePath = this.current + separator + "index.html";
+            String indexFilePath = this.current + separator + INDEX_FILE;
             File indexFile = new File(indexFilePath);
             if (!toUpload.contains(indexFile)) {
                 toUpload.add(indexFile);
@@ -269,8 +288,8 @@ public class PythonLocalStorage extends CommonLocalStorage<PythonRepository, Pyt
             List<PythonPackage> localPackages, String packagePath, List<File> toUpload) {
         String packageName = packagePath.substring(0, packagePath.indexOf('/'));
 
-        File packageIndexFile = new File(this.current + separator + packageName + separator + "index.html");
-        File repositoryIndexFile = new File(this.current + separator + "index.html");
+        File packageIndexFile = new File(this.current + separator + packageName + separator + INDEX_FILE);
+        File repositoryIndexFile = new File(this.current + separator + INDEX_FILE);
 
         if (packageIndexFile.exists()) {
             toUpload.add(packageIndexFile);

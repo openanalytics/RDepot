@@ -18,7 +18,7 @@
  * You should have received a copy of the Apache License
  * along with this program. If not, see <http://www.apache.org/licenses/>
  */
-package eu.openanalytics.rdepot.integrationtest.manager.v2.declarative;
+package eu.openanalytics.rdepot.integrationtest.manager.v2.r;
 
 import static io.restassured.RestAssured.given;
 import static org.awaitility.Awaitility.await;
@@ -32,6 +32,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import eu.openanalytics.rdepot.integrationtest.IntegrationTestContainers;
 import eu.openanalytics.rdepot.integrationtest.environment.TestEnvironmentConfigurator;
+import eu.openanalytics.rdepot.integrationtest.manager.v2.declarative.DeclarativeIntegrationTest;
 import io.restassured.RestAssured;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.http.ContentType;
@@ -193,7 +194,7 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
     }
 
     @Test
-    public void shouldUploadPackageToUnublishedRRepository() throws IOException, ParseException, InterruptedException {
+    public void shouldUploadPackageToUnpublishedRRepository() throws IOException, ParseException, InterruptedException {
         File packageBag = new File("src/test/resources/itestPackages/A3_0.9.1.tar.gz");
 
         given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)

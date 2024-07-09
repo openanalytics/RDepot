@@ -90,6 +90,10 @@ public class ArchiveIndex {
 
             ArrayList<String> names = new ArrayList<>();
 
+            final String classAttr = "class";
+            final String posixct = "POSIXct";
+            final String posixt = "POSIXt";
+
             for (Map.Entry<String, List<ArchiveInfo>> entry : archives.entrySet()) {
 
                 names.add(entry.getKey());
@@ -110,7 +114,7 @@ public class ArchiveIndex {
                 for (ArchiveInfo archive : entry.getValue()) {
                     dos.writeInt(archive.mode);
                 }
-                writeAttrHeader(dos, "class");
+                writeAttrHeader(dos, classAttr);
                 writeVecHeader(dos, STRSXP, 1);
                 writeStr(dos, "octmode");
                 dos.write(CLOSE);
@@ -119,30 +123,30 @@ public class ArchiveIndex {
                 for (ArchiveInfo archive : entry.getValue()) {
                     dos.writeDouble(archive.mtime);
                 }
-                writeAttrHeader(dos, "class");
+                writeAttrHeader(dos, classAttr);
                 writeVecHeader(dos, STRSXP, 2);
-                writeStr(dos, "POSIXct");
-                writeStr(dos, "POSIXt");
+                writeStr(dos, posixct);
+                writeStr(dos, posixt);
                 dos.write(CLOSE);
 
                 writeVecHeader(dos, (REALSXP + (3 << 8)), entry.getValue().size());
                 for (ArchiveInfo archive : entry.getValue()) {
                     dos.writeDouble(archive.ctime);
                 }
-                writeAttrHeader(dos, "class");
+                writeAttrHeader(dos, classAttr);
                 writeVecHeader(dos, STRSXP, 2);
-                writeStr(dos, "POSIXct");
-                writeStr(dos, "POSIXt");
+                writeStr(dos, posixct);
+                writeStr(dos, posixt);
                 dos.write(CLOSE);
 
                 writeVecHeader(dos, (REALSXP + (3 << 8)), entry.getValue().size());
                 for (ArchiveInfo archive : entry.getValue()) {
                     dos.writeDouble(archive.atime);
                 }
-                writeAttrHeader(dos, "class");
+                writeAttrHeader(dos, classAttr);
                 writeVecHeader(dos, STRSXP, 2);
-                writeStr(dos, "POSIXct");
-                writeStr(dos, "POSIXt");
+                writeStr(dos, posixct);
+                writeStr(dos, posixt);
                 dos.write(CLOSE);
 
                 writeVecHeader(dos, INTSXP, entry.getValue().size());

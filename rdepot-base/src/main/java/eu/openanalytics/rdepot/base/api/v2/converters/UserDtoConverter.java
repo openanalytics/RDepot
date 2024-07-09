@@ -25,6 +25,8 @@ import eu.openanalytics.rdepot.base.api.v2.dtos.UserDto;
 import eu.openanalytics.rdepot.base.entities.Role;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.service.RoleService;
+import eu.openanalytics.rdepot.base.time.DateProvider;
+import java.time.format.DateTimeParseException;
 import org.springframework.stereotype.Component;
 
 /**
@@ -42,7 +44,15 @@ public class UserDtoConverter implements DtoConverter<User, UserDto> {
     @Override
     public User resolveDtoToEntity(UserDto dto) throws EntityResolutionException {
         Role role = roleService.findById(dto.getRoleId()).orElseThrow(() -> new EntityResolutionException(dto));
-        return new User(dto, role);
+        try {
+            return new User(
+                    dto,
+                    role,
+                    DateProvider.timestampToInstant(dto.getLastLoggedInOn()),
+                    DateProvider.timestampToInstant(dto.getCreatedOn()));
+        } catch (DateTimeParseException e) {
+            throw new EntityResolutionException(dto);
+        }
     }
 
     @Override

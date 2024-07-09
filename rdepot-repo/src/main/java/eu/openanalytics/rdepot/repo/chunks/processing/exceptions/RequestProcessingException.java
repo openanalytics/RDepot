@@ -20,4 +20,13 @@
  */
 package eu.openanalytics.rdepot.repo.chunks.processing.exceptions;
 
-public class RequestProcessingException extends Exception {}
+import eu.openanalytics.rdepot.repo.messaging.SharedMessageCodes;
+
+public class RequestProcessingException extends Exception {
+
+    private static final long serialVersionUID = 1L;
+
+    public RequestProcessingException() {
+        super(SharedMessageCodes.REQUEST_PROCESSING_EXCEPTION);
+    }
+}

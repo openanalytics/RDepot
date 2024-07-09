@@ -134,8 +134,7 @@ public class PythonSubmissionIntegrationTest extends IntegrationTest {
                 .redirectErrorStream(true)
                 .start();
         final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        String msg;
-        while ((msg = reader.readLine()) != null) {}
+        while (reader.readLine() != null) {}
         process.waitFor();
         final int exitCode = process.exitValue();
         process.destroy();

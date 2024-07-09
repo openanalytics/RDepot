@@ -85,25 +85,6 @@ public class CranStorageTest {
         return getTestPackages(true);
     }
 
-    private void assertFiles(File[] expectedFiles, File actualDirectory) throws IOException {
-        for (File expectedFile : expectedFiles) {
-            byte[] expectedBytes = null;
-            byte[] actualBytes = null;
-
-            expectedBytes = Files.readAllBytes(expectedFile.toPath());
-
-            Path actualDirectoryPath = actualDirectory.toPath();
-            actualDirectoryPath = actualDirectory.getName().equals("Archive")
-                            && !expectedFile.getName().startsWith("PACKAGES")
-                    ? actualDirectoryPath.resolve(expectedFile.getName().split("_")[0])
-                    : actualDirectoryPath;
-            Path actual = actualDirectoryPath.resolve(expectedFile.getName());
-            actualBytes = Files.readAllBytes(actual);
-
-            assertArrayEquals(actualBytes, expectedBytes, "Uploaded file is not correct");
-        }
-    }
-
     private void assertFiles(MultipartFile[] expectedFiles, File actualDirectory) throws IOException {
         for (MultipartFile expectedFile : expectedFiles) {
             byte[] expectedBytes = null;

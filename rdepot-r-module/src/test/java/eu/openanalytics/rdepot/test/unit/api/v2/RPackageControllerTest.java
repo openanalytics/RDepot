@@ -135,7 +135,7 @@ public class RPackageControllerTest extends ApiV2ControllerUnitTest {
     public void getAllPackages() throws Exception {
         RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(userService.isAdmin(user.get())).thenReturn(true);
         when(rPackageService.findAllBySpecification(any(), any()))
                 .thenReturn(RPackageTestFixture.GET_EXAMPLE_PACKAGES_PAGED(repository, user.get()));
@@ -154,7 +154,7 @@ public class RPackageControllerTest extends ApiV2ControllerUnitTest {
 
         when(rRepositoryService.findByName(repository.getName()))
                 .thenReturn(Optional.of(RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY()));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         when(rPackageService.findAllBySpecification(any(), any())).thenReturn(packagesPage);
 
@@ -171,7 +171,7 @@ public class RPackageControllerTest extends ApiV2ControllerUnitTest {
         Page<RPackage> packagesPage = RPackageTestFixture.GET_EXAMPLE_PACKAGES_PAGED_DELETED();
 
         when(rPackageService.findAllBySpecification(any(), any())).thenReturn(packagesPage);
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(userService.isAdmin(user.get())).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/r/packages")
@@ -187,7 +187,7 @@ public class RPackageControllerTest extends ApiV2ControllerUnitTest {
         final Optional<RPackage> packageBag = Optional.of(RPackageTestFixture.GET_EXAMPLE_PACKAGE());
 
         when(rPackageService.findById(packageBag.get().getId())).thenReturn(packageBag);
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders.get(
                                 "/api/v2/manager/r/packages/" + packageBag.get().getId())
@@ -204,7 +204,7 @@ public class RPackageControllerTest extends ApiV2ControllerUnitTest {
         final RPackage packageBag = RPackageTestFixture.GET_EXAMPLE_PACKAGE();
 
         when(rPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/r/packages/" + packageBag.getId())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -217,7 +217,7 @@ public class RPackageControllerTest extends ApiV2ControllerUnitTest {
     public void getPackageById_returns404_WhenPackageIsNotFound() throws Exception {
         final Integer ID = 123;
         when(rPackageService.findById(ID)).thenReturn(Optional.ofNullable(null));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/r/packages/" + ID)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -231,7 +231,7 @@ public class RPackageControllerTest extends ApiV2ControllerUnitTest {
         final Integer ID = 123;
 
         when(rPackageService.findById(ID)).thenReturn(Optional.ofNullable(null));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v2/manager/r/packages/" + ID)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -256,7 +256,7 @@ public class RPackageControllerTest extends ApiV2ControllerUnitTest {
         packageBag.setDeleted(true);
 
         when(rPackageService.findOneDeleted(packageBag.getId())).thenReturn(Optional.of(packageBag));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         doNothing().when(rPackageDeleter).delete(packageBag);
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v2/manager/r/packages/" + packageBag.getId()))
@@ -270,7 +270,7 @@ public class RPackageControllerTest extends ApiV2ControllerUnitTest {
         final String patchJson = "[{\"op\":\"replace\",\"path\":\"/active\",\"value\":\"false\"}]";
 
         when(rPackageService.findById(ID)).thenReturn(Optional.ofNullable(null));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/r/packages/" + ID)
                         .content(patchJson)
@@ -297,7 +297,7 @@ public class RPackageControllerTest extends ApiV2ControllerUnitTest {
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/active\",\"value\":\"false\"}]";
 
         when(rPackageService.findById(ID)).thenReturn(Optional.ofNullable(null));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/r/packages/" + 123)
                         .content(patchJson)
@@ -322,7 +322,7 @@ public class RPackageControllerTest extends ApiV2ControllerUnitTest {
         when(rRepositoryService.findById(anyInt())).thenReturn(Optional.of(repository));
         when(rPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
         when(submissionService.findById(anyInt())).thenReturn(Optional.of(submission));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         doNothing().when(rPackageValidator).validate(any(), eq(true), any());
         when(securityMediator.isAuthorizedToEdit(packageBag, user.get())).thenReturn(true);
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/r/packages/" + packageBag.getId())
@@ -342,7 +342,7 @@ public class RPackageControllerTest extends ApiV2ControllerUnitTest {
         final String patchJson = "[{\"op\":\"replace\",\"path\":\"/actiiiiiive\",\"value\":\"false\"}]";
 
         when(rPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(securityMediator.isAuthorizedToEdit(packageBag, user.get())).thenReturn(true);
         doNothing().when(rPackageValidator).validate(any(), eq(false), any());
 
@@ -369,9 +369,9 @@ public class RPackageControllerTest extends ApiV2ControllerUnitTest {
         when(userService.findById(anyInt())).thenReturn(user);
         when(rPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
         when(submissionService.findById(anyInt())).thenReturn(Optional.of(submission));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(rPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(repositoryMaintainerValidator.supports(RepositoryMaintainer.class)).thenReturn(true);
         when(securityMediator.isAuthorizedToEdit(packageBag, user.get())).thenReturn(true);
 
@@ -412,7 +412,7 @@ public class RPackageControllerTest extends ApiV2ControllerUnitTest {
         when(submissionService.findById(anyInt())).thenReturn(Optional.of(submission));
 
         when(rPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         doNothing().when(rPackageValidator).validate(any(), eq(true), any());
         when(securityMediator.isAuthorizedToEdit(packageBag, user.get())).thenReturn(true);
 
@@ -432,7 +432,7 @@ public class RPackageControllerTest extends ApiV2ControllerUnitTest {
         final RPackage packageBag = RPackageTestFixture.GET_EXAMPLE_PACKAGE();
         packageBag.setDeleted(true);
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         doThrow(new DeleteEntityException()).when(rPackageDeleter).delete(packageBag);
         when(rPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
 

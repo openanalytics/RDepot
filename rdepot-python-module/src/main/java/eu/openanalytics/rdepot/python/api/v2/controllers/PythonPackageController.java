@@ -64,7 +64,6 @@ import jakarta.json.JsonException;
 import jakarta.json.JsonPatch;
 import java.security.Principal;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -102,8 +101,6 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
     @Value("${deleting.packages.enabled}")
     private Boolean packagesDeletionEnabled;
 
-    private final Locale locale = LocaleContextHolder.getLocale();
-    private final MessageSource messageSource;
     private final PythonPackageService packageService;
     private final UserService userService;
     private final PythonPackageValidator packageValidator;
@@ -173,7 +170,7 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
             @RequestParam(name = "name", required = false) Optional<String> name)
             throws ApiException {
         final User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
 
         final DtoResolvedPageable resolvedPageable = pageableSortResolver.resolve(pageable);
@@ -229,7 +226,7 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
     public @ResponseBody ResponseEntity<ResponseDto<EntityModel<PythonPackageDto>>> getPackageById(
             Principal principal, @PathVariable("id") Integer id) throws PackageNotFound, UserNotAuthorized {
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
         PythonPackage packageBag =
                 packageService.findById(id).orElseThrow(() -> new PackageNotFound(messageSource, locale));
@@ -256,7 +253,7 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
         PythonPackage packageBag =
                 packageService.findById(id).orElseThrow(() -> new PackageNotFound(messageSource, locale));
         final User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
 
         if (!securityMediator.isAuthorizedToEdit(packageBag, requester))
@@ -271,7 +268,7 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
                     throw new PackageDeletionException(messageSource, locale);
 
             final DataSpecificValidationResult<Submission> validationResult =
-                    ValidationResultImpl.createDataSpecificResult(Submission.class);
+                    ValidationResultImpl.createDataSpecificResult();
             packageValidator.validate(updatedPackage, true, validationResult);
 
             if (validationResult.hasErrors()) return handleValidationError(validationResult);
@@ -309,7 +306,7 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
             throws ApiException, SynchronizeRepositoryException {
         final PythonPackage packageBag =
                 packageService.findOneDeleted(id).orElseThrow(() -> new PackageNotFound(messageSource, locale));
-        if (!userService.findByLogin(principal.getName()).isPresent()) {
+        if (!userService.findActiveByLogin(principal.getName()).isPresent()) {
             throw new UserNotAuthorized(messageSource, locale);
         }
 

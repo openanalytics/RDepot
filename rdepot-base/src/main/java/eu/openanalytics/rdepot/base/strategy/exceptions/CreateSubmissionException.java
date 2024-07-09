@@ -24,6 +24,8 @@ import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 
 public class CreateSubmissionException extends LocalizedException {
+    private static final long serialVersionUID = 1L;
+
     public CreateSubmissionException() {
         super(MessageCodes.SUBMISSION_CREATE_ERROR);
     }

@@ -123,7 +123,7 @@ public class ApiV2PackageController extends ApiV2ReadingController<Package, Pack
             @RequestParam(name = "maintainer", required = false) List<String> maintainers)
             throws ApiException {
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
         if ((!userService.isAdmin(requester) && deleted.isPresent() && deleted.get()))
             throw new UserNotAuthorized(messageSource, locale);
@@ -177,7 +177,7 @@ public class ApiV2PackageController extends ApiV2ReadingController<Package, Pack
             Principal principal, @PathVariable("id") Integer id) throws ApiException {
 
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
         Package packageBag = packageService.findById(id).orElseThrow(() -> new PackageNotFound(messageSource, locale));
 

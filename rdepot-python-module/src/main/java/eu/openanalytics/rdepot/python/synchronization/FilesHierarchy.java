@@ -26,11 +26,11 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class FilesHierarchy {
-    private static final String separator = FileSystems.getDefault().getSeparator();
+    private static final String SEPARATOR = FileSystems.getDefault().getSeparator();
 
     public static boolean isRepositoryDir(File file) {
         File repositoryIndex =
-                new File(file.getParentFile().getParentFile().getAbsolutePath() + separator + "index.html");
+                new File(file.getParentFile().getParentFile().getAbsolutePath() + SEPARATOR + "index.html");
         if (repositoryIndex.exists()) {
             return false;
         }
@@ -41,9 +41,9 @@ public class FilesHierarchy {
         File archiveDirectory;
         if (!isRepositoryDir(file)) {
             archiveDirectory = new File(
-                    file.getParentFile().getParentFile().getParentFile().getAbsolutePath() + separator + chunkNo);
+                    file.getParentFile().getParentFile().getParentFile().getAbsolutePath() + SEPARATOR + chunkNo);
         } else {
-            archiveDirectory = new File(file.getParentFile().getParentFile().getAbsolutePath() + separator + chunkNo);
+            archiveDirectory = new File(file.getParentFile().getParentFile().getAbsolutePath() + SEPARATOR + chunkNo);
         }
 
         if (!archiveDirectory.exists()) {

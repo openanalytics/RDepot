@@ -40,8 +40,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
-    private final String TOKEN_PREFIX = "Bearer ";
-    private final String HEADER_STRING = "Authorization";
+
+    private static final String TOKEN_PREFIX = "Bearer ";
+    private static final String HEADER_STRING = "Authorization";
     private final ApiTokenProperties apiTokenProperties;
     private final SimpleCustomBindAuthenticator authenticator;
 

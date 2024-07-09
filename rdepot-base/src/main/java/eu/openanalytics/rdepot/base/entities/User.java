@@ -27,7 +27,8 @@ import eu.openanalytics.rdepot.base.entities.enums.ResourceType;
 import eu.openanalytics.rdepot.base.event.EventableResource;
 import eu.openanalytics.rdepot.base.technology.InternalTechnology;
 import jakarta.persistence.*;
-import java.time.LocalDate;
+import java.io.Serializable;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.EqualsAndHashCode;
@@ -42,7 +43,9 @@ import lombok.Setter;
         name = "user",
         schema = "public",
         uniqueConstraints = {@UniqueConstraint(columnNames = "login"), @UniqueConstraint(columnNames = "email")})
-public class User extends EventableResource {
+public class User extends EventableResource implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id", nullable = false)
@@ -61,10 +64,10 @@ public class User extends EventableResource {
     private boolean active;
 
     @Column(name = "last_logged_in_on")
-    private LocalDate lastLoggedInOn;
+    private Instant lastLoggedInOn;
 
     @Column(name = "created_on")
-    private LocalDate createdOn;
+    private Instant createdOn;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private Set<AccessToken> accessTokens = new HashSet<>(0);
@@ -76,7 +79,7 @@ public class User extends EventableResource {
         super(InternalTechnology.instance, ResourceType.USER);
     }
 
-    public User(UserDto userDto, Role role) {
+    public User(UserDto userDto, Role role, Instant lastLoggedInOn, Instant createdOn) {
         this();
         this.id = userDto.getId();
         this.name = userDto.getName();
@@ -84,9 +87,9 @@ public class User extends EventableResource {
         this.login = userDto.getLogin();
         this.active = userDto.isActive();
         this.deleted = userDto.isDeleted();
-        this.lastLoggedInOn = LocalDate.parse(userDto.getLastLoggedInOn());
+        this.lastLoggedInOn = lastLoggedInOn;
         this.role = role;
-        this.createdOn = LocalDate.parse(userDto.getCreatedOn());
+        this.createdOn = createdOn;
     }
 
     public User(int id, Role role, String name, String email, String login, boolean active, boolean deleted) {
@@ -108,8 +111,8 @@ public class User extends EventableResource {
             String login,
             boolean active,
             boolean deleted,
-            LocalDate lastLoggedInOn,
-            LocalDate createdOn) {
+            Instant lastLoggedInOn,
+            Instant createdOn) {
         this();
         this.id = id;
         this.role = role;

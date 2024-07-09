@@ -68,7 +68,7 @@ public class PackageTestFixture {
 
             Submission submission = SubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, packageBag);
             submission.setId(i);
-            submission.setCreatedDate(DateProvider.getCurrentDate());
+            submission.setCreatedDate(DateProvider.now());
             packageBag.setSubmission(submission);
             packages.add(packageBag);
         }

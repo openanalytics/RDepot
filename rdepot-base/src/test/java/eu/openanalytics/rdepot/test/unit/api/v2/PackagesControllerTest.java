@@ -98,7 +98,7 @@ public class PackagesControllerTest extends ApiV2ControllerUnitTest {
         final Integer ID = 1234;
         final PackageDto packageDto = PackageTestFixture.GET_EXAMPLE_PACKAGE_DTO();
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(commonPackageService.findById(ID)).thenReturn(Optional.of(packageBag));
         when(commonPackageDtoConverter.convertEntityToDto(any())).thenReturn(packageDto);
 
@@ -121,7 +121,7 @@ public class PackagesControllerTest extends ApiV2ControllerUnitTest {
     public void getPackage_returns404_whenRepositoryIsNotFound() throws Exception {
 
         when(commonRepositoryService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(null));
-        when(userService.findByLogin("user")).thenReturn(Optional.of(UserTestFixture.GET_ADMIN()));
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(UserTestFixture.GET_ADMIN()));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/packages/" + 123)
                         .contentType(MediaType.APPLICATION_JSON))

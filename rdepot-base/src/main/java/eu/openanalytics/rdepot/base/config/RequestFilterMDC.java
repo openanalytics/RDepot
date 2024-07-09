@@ -34,9 +34,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class RequestFilterMDC extends OncePerRequestFilter {
 
-    public static String MDC_UUID_KEY = "traceIdMDC";
-    public static String MDC_REQUEST_URI_KEY = "requestURI";
-    public static String MDC_QUERY_PARAMS_KEY = "queryParams";
+    public static final String MDC_UUID_KEY = "traceIdMDC";
+    public static final String MDC_REQUEST_URI_KEY = "requestURI";
+    public static final String MDC_QUERY_PARAMS_KEY = "queryParams";
 
     @Override
     protected void doFilterInternal(

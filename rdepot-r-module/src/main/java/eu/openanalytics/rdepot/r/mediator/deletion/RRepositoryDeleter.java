@@ -24,7 +24,6 @@ import eu.openanalytics.rdepot.base.mediator.deletion.RepositoryDeleter;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
-import eu.openanalytics.rdepot.base.storage.Storage;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.services.RPackageService;
@@ -39,7 +38,6 @@ public class RRepositoryDeleter extends RepositoryDeleter<RRepository, RPackage>
             RRepositoryService resourceService,
             PackageMaintainerService packageMaintainerService,
             RepositoryMaintainerService repositoryMaintainerService,
-            Storage<RRepository, RPackage> storage,
             RSubmissionDeleter submissionDeleter,
             RPackageService rPackageService) {
         super(
@@ -47,7 +45,6 @@ public class RRepositoryDeleter extends RepositoryDeleter<RRepository, RPackage>
                 resourceService,
                 packageMaintainerService,
                 repositoryMaintainerService,
-                storage,
                 submissionDeleter,
                 rPackageService);
     }

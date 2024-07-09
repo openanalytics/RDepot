@@ -1,0 +1,43 @@
+databaseChangeLog:
+  - changeSet:
+      id: 08_01_add_timestamp_column_repository
+      author: wgorczak
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: repository
+            schemaName: public
+        - not:
+            - columnExists:
+                tableName: repository
+                schemaName: public
+                columnName: last_publication_successful
+            - columnExists:
+                tableName: repository
+                schemaName: public
+                columnName: last_modified_timestamp
+            - columnExists:
+                tableName: repository
+                schemaName: public
+                columnName: last_publication_timestamp
+      changes:
+        - addColumn:
+            tableName: repository
+            schemaName: public
+            columns:
+            - column:
+                name: last_publication_successful
+                type: boolean
+                defaultValueBoolean: false
+                constraints:
+                  nullable: false
+            - column:
+                name: last_modified_timestamp
+                type: timestamp
+                constraints:
+                  nullable: false
+            - column:
+                name: last_publication_timestamp
+                type: timestamp
+                constraints:
+                  nullable: true

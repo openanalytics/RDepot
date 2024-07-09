@@ -59,7 +59,6 @@ import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure;
 import eu.openanalytics.rdepot.base.synchronization.RepositorySynchronizer;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
-import eu.openanalytics.rdepot.base.time.DateProvider;
 import eu.openanalytics.rdepot.base.validation.DataSpecificValidationResult;
 import eu.openanalytics.rdepot.base.validation.PackageValidator;
 import eu.openanalytics.rdepot.base.validation.ValidationResultImpl;
@@ -295,7 +294,7 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
             storage.calculateCheckSum(packageBag);
 
             final DataSpecificValidationResult<Submission> validationResult =
-                    ValidationResultImpl.createDataSpecificResult(Submission.class);
+                    ValidationResultImpl.createDataSpecificResult();
             packageValidator.validateUploadPackage(packageBag, request.isReplace(), validationResult);
 
             try {
@@ -320,7 +319,8 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
                         .toList();
 
         for (ValidationResultItem<Submission> packageDuplicateWarning : packageDuplicateWarnings) {
-            packageDeleter.delete(packageDuplicateWarning.data().getPackage().getId());
+            packageDeleter.deleteTransactional(
+                    packageDuplicateWarning.data().getPackage().getId());
         }
     }
 
@@ -361,8 +361,7 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
     protected void postStrategy() throws StrategyFailure {
         if (request.getRepository().getPublished()) {
             try {
-                repositorySynchronizer.storeRepositoryOnRemoteServer(
-                        request.getRepository(), DateProvider.getCurrentDateStamp());
+                repositorySynchronizer.storeRepositoryOnRemoteServer(request.getRepository());
             } catch (SynchronizeRepositoryException e) {
                 log.error(e.getMessage(), e);
                 throw new NonFatalSubmissionStrategyFailure(e, processedResource);

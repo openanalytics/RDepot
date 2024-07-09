@@ -24,8 +24,11 @@ import eu.openanalytics.rdepot.base.api.v2.converters.DtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.converters.exceptions.EntityResolutionException;
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.service.PackageService;
+import eu.openanalytics.rdepot.base.time.DateProvider;
 import eu.openanalytics.rdepot.python.api.v2.dtos.PythonRepositoryDto;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
+import java.time.Instant;
+import java.time.format.DateTimeParseException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -37,11 +40,30 @@ public class PythonRepositoryDtoConverter implements DtoConverter<PythonReposito
 
     @Override
     public PythonRepository resolveDtoToEntity(PythonRepositoryDto dto) throws EntityResolutionException {
-        return new PythonRepository(dto);
+        try {
+            final Instant lastPublicationTimestamp = dto.getLastPublicationTimestamp() != null
+                            && !dto.getLastPublicationTimestamp().isEmpty()
+                    ? DateProvider.timestampToInstant(dto.getLastPublicationTimestamp())
+                    : null;
+            final Instant lastModifiedTimestamp = dto.getLastModifiedTimestamp() != null
+                            && !dto.getLastModifiedTimestamp().isEmpty()
+                    ? DateProvider.timestampToInstant(dto.getLastModifiedTimestamp())
+                    : DateProvider.now();
+            return new PythonRepository(dto, lastPublicationTimestamp, lastModifiedTimestamp);
+        } catch (DateTimeParseException e) {
+            throw new EntityResolutionException(dto);
+        }
     }
 
     @Override
     public PythonRepositoryDto convertEntityToDto(PythonRepository entity) {
-        return new PythonRepositoryDto(entity, packageService.countByRepository(entity));
+        return new PythonRepositoryDto(
+                entity,
+                packageService.countByRepository(entity),
+                entity.getLastPublicationTimestamp() != null
+                        ? DateProvider.instantToTimestamp(entity.getLastPublicationTimestamp())
+                        : "",
+                DateProvider.instantToTimestamp(entity.getLastModifiedTimestamp()),
+                entity.isLastPublicationSuccessful());
     }
 }

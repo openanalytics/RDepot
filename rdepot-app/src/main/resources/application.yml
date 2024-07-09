@@ -18,6 +18,16 @@ deleting:
 
 repository-snapshots: false
 
+default-user-configuration:
+  language: en-US
+  theme: light
+  page-size: 10
+  supported-languages:
+    - en-US
+  supported-themes:
+    - light
+    - dark
+
 replacing:
    packages:
       enabled: true
@@ -102,8 +112,8 @@ repository:
 spring:
   servlet:
     multipart:
-      max-file-size: 100MB
-      max-request-size: 100MB
+      max-file-size: 1000MB
+      max-request-size: 1000MB
   mvc:
     view:
       suffix: .html

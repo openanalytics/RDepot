@@ -105,17 +105,17 @@ public abstract class UpdatePackageStrategy<P extends Package> extends UpdateStr
     }
 
     protected void activatePackage(P resource) {
-        changedValues.add(new EventChangedVariable("active", "false", "true"));
+        changedValues.add(new EventChangedVariable("active", Boolean.FALSE.toString(), Boolean.TRUE.toString()));
         resource.setActive(true);
     }
 
     protected void deactivatePackage(P resource) {
-        changedValues.add(new EventChangedVariable("active", "true", "false"));
+        changedValues.add(new EventChangedVariable("active", Boolean.TRUE.toString(), Boolean.FALSE.toString()));
         resource.setActive(false);
     }
 
     protected void delete(P packageBag) {
-        changedValues.add(new EventChangedVariable("deleted", "false", "true"));
+        changedValues.add(new EventChangedVariable("deleted", Boolean.FALSE.toString(), Boolean.TRUE.toString()));
         packageBag.setActive(false);
         packageBag.setDeleted(true);
     }

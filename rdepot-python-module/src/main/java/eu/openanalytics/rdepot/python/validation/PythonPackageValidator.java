@@ -112,20 +112,21 @@ public class PythonPackageValidator implements PackageValidator<PythonPackage> {
 
     private void validateVersion(
             PythonPackage packageBag, boolean replace, DataSpecificValidationResult<Submission> validationResult) {
-        String version = packageBag.getVersion();
-        validateNotEmpty("version", version, MessageCodes.EMPTY_VERSION, validationResult);
+        String packageVersion = packageBag.getVersion();
+        final String version = "version";
+        validateNotEmpty(version, packageVersion, MessageCodes.EMPTY_VERSION, validationResult);
 
-        String[] tokens = version.split("-|\\.");
+        String[] tokens = packageVersion.split("-|\\.");
         String name = packageBag.getName();
         PythonRepository repository = packageBag.getRepository();
-        int maxLength = Integer.valueOf(env.getProperty("package.version.max-numbers", "10"));
+        int maxLength = Integer.parseInt(env.getProperty("package.version.max-numbers", "10"));
 
         if (tokens.length > maxLength) {
-            validationResult.error("version", MessageCodes.INVALID_VERSION);
+            validationResult.error(version, MessageCodes.INVALID_VERSION);
         }
 
         Optional<PythonPackage> sameVersionOpt =
-                packageService.findByNameAndVersionAndRepositoryAndDeleted(name, version, repository, false);
+                packageService.findByNameAndVersionAndRepositoryAndDeleted(name, packageVersion, repository, false);
 
         if (sameVersionOpt.isPresent() && packageBag.getId() <= 0) {
             Submission submission = submissionService
@@ -133,7 +134,7 @@ public class PythonPackageValidator implements PackageValidator<PythonPackage> {
                     .orElseThrow(() -> new IllegalStateException(
                             "There is a package without submission which is not allowed: " + sameVersionOpt.get()));
             validationResult.warning(
-                    "version",
+                    version,
                     replace ? MessageCodes.DUPLICATE_VERSION_REPLACE_ON : MessageCodes.DUPLICATE_VERSION_REPLACE_OFF,
                     submission);
         }

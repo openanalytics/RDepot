@@ -25,6 +25,7 @@ import eu.openanalytics.rdepot.base.api.v2.dtos.RepositoryDto;
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.service.PackageService;
+import eu.openanalytics.rdepot.base.time.DateProvider;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.stereotype.Component;
@@ -45,6 +46,13 @@ public class RepositoryDtoConverter implements DtoConverter<Repository, Reposito
 
     @Override
     public RepositoryDto convertEntityToDto(Repository entity) {
-        return new RepositoryDto(entity, packageService.countByRepository(entity));
+        return new RepositoryDto(
+                entity,
+                packageService.countByRepository(entity),
+                entity.getLastPublicationTimestamp() != null
+                        ? DateProvider.instantToTimestamp(entity.getLastPublicationTimestamp())
+                        : "",
+                DateProvider.instantToTimestamp(entity.getLastModifiedTimestamp()),
+                entity.isLastPublicationSuccessful());
     }
 }

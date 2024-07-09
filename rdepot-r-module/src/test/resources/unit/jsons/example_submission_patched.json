@@ -44,7 +44,7 @@
 		},
 		"changes": "Some changes 123",
 		"state": "ACCEPTED",
-		"created": "2024-03-19",
+		"created": "2024-03-19T00:00:00Z",
 		"links": [
 			{
 				"rel": "self",

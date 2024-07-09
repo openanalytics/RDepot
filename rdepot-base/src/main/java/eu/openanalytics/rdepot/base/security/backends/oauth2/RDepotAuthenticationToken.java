@@ -20,6 +20,10 @@
  */
 package eu.openanalytics.rdepot.base.security.backends.oauth2;
 
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.util.Collection;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -30,7 +34,7 @@ public class RDepotAuthenticationToken extends AbstractAuthenticationToken {
     @Serial
     private static final long serialVersionUID = 9166146980914094009L;
 
-    private final Object principal;
+    private transient Object principal;
 
     public RDepotAuthenticationToken(Object principal, Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
@@ -46,5 +50,16 @@ public class RDepotAuthenticationToken extends AbstractAuthenticationToken {
     @Override
     public Object getPrincipal() {
         return principal;
+    }
+
+    private void writeObject(ObjectOutputStream out)
+            throws IOException, ClassNotFoundException, NotSerializableException {
+        out.defaultWriteObject();
+        out.writeObject(getPrincipal());
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, NotSerializableException, ClassNotFoundException {
+        in.defaultReadObject();
+        principal = in.readObject();
     }
 }

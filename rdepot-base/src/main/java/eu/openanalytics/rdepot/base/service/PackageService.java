@@ -31,11 +31,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PackageService<E extends Package> extends Service<E> {
 
-    private final PackageDao<E> dao;
+    private final PackageDao<E> packageDao;
 
-    public PackageService(PackageDao<E> dao) {
-        super(dao);
-        this.dao = dao;
+    public PackageService(PackageDao<E> packageDao) {
+        super(packageDao);
+        this.packageDao = packageDao;
     }
 
     @Override
@@ -45,23 +45,23 @@ public class PackageService<E extends Package> extends Service<E> {
     }
 
     public List<E> findAllByRepository(Repository repository) {
-        return dao.findByRepositoryGenericAndDeleted(repository, false);
+        return packageDao.findByRepositoryGenericAndDeleted(repository, false);
     }
 
     public int countByRepository(Repository repository) {
-        return dao.countByRepositoryGenericAndDeleted(repository, false);
+        return packageDao.countByRepositoryGenericAndDeleted(repository, false);
     }
 
     public List<E> findAllByRepositoryIncludeDeleted(Repository repository) {
-        return dao.findByRepositoryGeneric(repository);
+        return packageDao.findByRepositoryGeneric(repository);
     }
 
     public List<E> findActiveByRepository(Repository repository) {
-        return dao.findByRepositoryGenericAndDeletedAndActive(repository, false, true);
+        return packageDao.findByRepositoryGenericAndDeletedAndActive(repository, false, true);
     }
 
     private void deleteSameVersion(E entity) {
-        List<E> samePackages = dao.findAllByNameAndRepositoryGenericAndDeletedAndVersionIn(
+        List<E> samePackages = packageDao.findAllByNameAndRepositoryGenericAndDeletedAndVersionIn(
                 entity.getName(), entity.getRepository(), false, generateVariantsOfVersion(entity.getVersion()));
 
         if (!samePackages.isEmpty()) log.debug("Found non-deleted packages of the same name, version and repository.");
@@ -73,24 +73,24 @@ public class PackageService<E extends Package> extends Service<E> {
     }
 
     public List<E> findAllByNameAndRepository(String name, Repository repository) {
-        return dao.findByNameAndRepositoryGenericAndDeleted(name, repository, false);
+        return packageDao.findByNameAndRepositoryGenericAndDeleted(name, repository, false);
     }
 
     public Optional<E> findByNameAndVersionAndRepositoryAndDeleted(
             String name, String version, Repository repository, Boolean deleted) {
-        return dao.findByNameAndRepositoryGenericAndDeletedAndVersionIn(
+        return packageDao.findByNameAndRepositoryGenericAndDeletedAndVersionIn(
                 name, repository, deleted, generateVariantsOfVersion(version));
     }
 
     public Optional<E> findNonDeletedNewestByNameAndRepository(String name, Repository repository) {
-        List<E> packages = dao.findByNameAndRepositoryGenericAndDeleted(name, repository, false);
+        List<E> packages = packageDao.findByNameAndRepositoryGenericAndDeleted(name, repository, false);
         if (packages.isEmpty()) return Optional.empty();
 
         return Optional.of(Collections.max(packages, new PackageComparator<>()));
     }
 
     public Optional<E> findNonDeletedByNameAndVersionAndRepository(String name, String version, Repository repository) {
-        List<E> packages = dao.findAllByNameAndRepositoryGenericAndDeletedAndVersionIn(
+        List<E> packages = packageDao.findAllByNameAndRepositoryGenericAndDeletedAndVersionIn(
                 name, repository, false, generateVariantsOfVersion(version));
 
         if (packages.isEmpty()) return Optional.empty();

@@ -111,7 +111,7 @@ public class RPackageValidator implements PackageValidator<RPackage> {
                         && !existingPackage.getUrl().equals(packageBag.getUrl()))
                     errors.error("url", MessageCodes.FORBIDDEN_UPDATE);
                 if (packageBag.getSubmission() != null
-                        && !(existingPackage.getSubmission() == packageBag.getSubmission()))
+                        && !(existingPackage.getSubmission().equals(packageBag.getSubmission())))
                     errors.error("submission", MessageCodes.FORBIDDEN_UPDATE);
                 if (packageBag.getSource() != null && !packageBag.getSource().equals(existingPackage.getSource()))
                     errors.error("source", MessageCodes.FORBIDDEN_UPDATE);
@@ -146,20 +146,21 @@ public class RPackageValidator implements PackageValidator<RPackage> {
 
     private void validateVersion(
             RPackage packageBag, boolean replace, DataSpecificValidationResult<Submission> validationResult) {
-        String version = packageBag.getVersion();
-        validateNotEmpty("version", version, MessageCodes.EMPTY_VERSION, validationResult);
+        String packageVersion = packageBag.getVersion();
+        final String version = "version";
+        validateNotEmpty(version, packageVersion, MessageCodes.EMPTY_VERSION, validationResult);
 
-        String[] tokens = version.split("[-.]");
+        String[] tokens = packageVersion.split("[-.]");
         String name = packageBag.getName();
         RRepository repository = packageBag.getRepository();
         int maxLength = Integer.parseInt(env.getProperty("package.version.max-numbers", "10"));
 
         if (tokens.length > maxLength) {
-            validationResult.error("version", MessageCodes.INVALID_VERSION);
+            validationResult.error(version, MessageCodes.INVALID_VERSION);
         }
 
         Optional<RPackage> sameVersionOpt =
-                packageService.findByNameAndVersionAndRepositoryAndDeleted(name, version, repository, false);
+                packageService.findByNameAndVersionAndRepositoryAndDeleted(name, packageVersion, repository, false);
         if (sameVersionOpt.isPresent() && packageBag.getId() <= 0) {
             // TODO: #32883 It is better to fetch submission immediately but it probably requires a custom SQL query
             Submission submission = submissionService
@@ -167,7 +168,7 @@ public class RPackageValidator implements PackageValidator<RPackage> {
                     .orElseThrow(() -> new IllegalStateException(
                             "There is a package without submission which is not allowed: " + sameVersionOpt.get()));
             validationResult.warning(
-                    "version",
+                    version,
                     replace ? MessageCodes.DUPLICATE_VERSION_REPLACE_ON : MessageCodes.DUPLICATE_VERSION_REPLACE_OFF,
                     submission);
         }

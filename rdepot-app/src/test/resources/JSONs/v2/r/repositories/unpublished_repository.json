@@ -1,36 +1,39 @@
 {
   "code": 200,
   "data": {
+    "serverAddress": "http://oa-rdepot-repo:8080/testrepo1",
+    "lastPublicationSuccessful": true,
+    "published": false,
+    "technology": "R",
+    "version": 32,
+    "numberOfPackages": 9,
+    "lastModifiedTimestamp": "2024-06-28T11:16:58.596837206Z",
+    "lastPublicationTimestamp": "2020-03-28T12:30:25Z",
     "deleted": false,
     "synchronizing": false,
     "name": "testrepo1",
-    "serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo1",
     "links": [
       {
         "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories\/2"
+        "href": "http://localhost:8017/api/v2/manager/r/repositories/2"
       },
       {
         "rel": "repositoryList",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories"
+        "href": "http://localhost:8017/api/v2/manager/r/repositories"
       },
       {
         "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories\/2",
+        "href": "http://localhost:8017/api/v2/manager/r/repositories/2",
         "type": "PATCH"
       },
       {
         "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories\/2",
+        "href": "http://localhost:8017/api/v2/manager/r/repositories/2",
         "type": "DELETE"
       }
     ],
     "id": 2,
-    "published": false,
-    "technology": "R",
-    "version": 32,
-    "publicationUri": "http:\/\/localhost\/repo\/testrepo1",
-    "numberOfPackages": 9
+    "publicationUri": "http://localhost/repo/testrepo1"
   },
   "messageCode": "success.request.processed",
   "message": "Your request has been processed successfully.",

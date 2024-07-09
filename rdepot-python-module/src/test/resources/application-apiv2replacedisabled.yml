@@ -1,4 +1,8 @@
 declarative: true
+generate-manuals: true
+access-token:
+  lifetime-default: 30
+  lifetime-configurable: true
 replacing:
    packages:
       enabled: false

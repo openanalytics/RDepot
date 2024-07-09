@@ -20,10 +20,18 @@
  */
 package eu.openanalytics.rdepot.r.test.strategy;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import eu.openanalytics.rdepot.base.PropertiesParser;
 import eu.openanalytics.rdepot.base.api.v2.dtos.PackageUploadRequest;
@@ -85,6 +93,7 @@ public class RUploadStrategyTest extends StrategyTest {
     private final String TEST_PACKAGE_FILENAME = "abc_1.3.tar.gz";
     private final String TEST_PACKAGE_CONTENTTYPE = "";
 
+    @SuppressWarnings("unchecked")
     @Test
     public void createSubmission_whenUserIsAdmin() throws Exception {
         // Prerequisites
@@ -162,11 +171,11 @@ public class RUploadStrategyTest extends StrategyTest {
         // Assertions
         assertEquals("R (>= 2.10), nnet, quantreg, locfit", packageBag.getDepends(), "Incorrect depends property");
         assertEquals(
-                "The package implements several ABC algorithms "
-                        + "for performing parameter estimation and model selection.\\n "
+                "The package implements several ABC algorithms for\\n "
+                        + "performing parameter estimation and model selection.\\n "
                         + "Cross-validation tools are also available for measuring the\\n "
                         + "accuracy of ABC estimates, and to calculate the\\n "
-                        + "misclassification probabilities of different models.\\n",
+                        + "misclassification probabilities of different models.",
                 packageBag.getDescription(),
                 "Incorrect description");
         assertEquals("GPL (>= 3)", packageBag.getLicense(), "Incorrect license");
@@ -186,6 +195,7 @@ public class RUploadStrategyTest extends StrategyTest {
         assertEquals("Katalin Csillery, Michael Blum and Olivier Francois", packageBag.getAuthor(), "Incorrect author");
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void createSubmission_deletesDanglingSource_whenUncheckedExceptionIsThrown() throws Exception {
         // Prerequisites
@@ -242,6 +252,7 @@ public class RUploadStrategyTest extends StrategyTest {
         verify(storage).removeFileIfExists(uploadedFile.getAbsolutePath());
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void createSubmission_shouldSendEmail_whenUserIsNotAllowedToAccept() throws Exception {
         FileInputStream fis = new FileInputStream(new File(TEST_PACKAGE_PATH));
@@ -448,6 +459,7 @@ public class RUploadStrategyTest extends StrategyTest {
         verify(storage, times(1)).removeFileIfExists(extracted.getAbsolutePath());
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void createSubmissionAndRemovePackageSource_whenValidationFails() throws Exception {
         FileInputStream fis = new FileInputStream(new File(TEST_PACKAGE_PATH));
@@ -511,6 +523,7 @@ public class RUploadStrategyTest extends StrategyTest {
         verify(storage, times(1)).removeFileIfExists(extracted.getAbsolutePath());
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void createSubmission_shouldGenerateManual() throws Exception {
         FileInputStream fis = new FileInputStream(new File(TEST_PACKAGE_PATH));

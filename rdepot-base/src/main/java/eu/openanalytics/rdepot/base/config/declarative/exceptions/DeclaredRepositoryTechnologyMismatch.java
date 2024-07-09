@@ -30,6 +30,8 @@ import java.io.IOException;
  */
 public class DeclaredRepositoryTechnologyMismatch extends IOException {
 
+    private static final long serialVersionUID = 1L;
+
     public DeclaredRepositoryTechnologyMismatch(String repositoryName) {
         super(StaticMessageResolver.getMessage(MessageCodes.DECLARED_REPOSITORY_TECHNOLOGY_MISMATCH) + repositoryName);
     }

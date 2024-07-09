@@ -24,4 +24,7 @@ public record PublicConfigurationDto(
         boolean declarativeModeEnabled,
         boolean deletingPackagesEnabled,
         boolean deletingRepositoriesEnabled,
-        boolean replacingPackagesEnabled) {}
+        boolean replacingPackagesEnabled,
+        boolean accessTokenLifetimeConfigurable,
+        int accessTokenLifetimeDefault,
+        boolean generateManuals) {}

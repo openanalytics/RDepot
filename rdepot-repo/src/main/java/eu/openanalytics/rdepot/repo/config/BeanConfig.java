@@ -28,7 +28,6 @@ import eu.openanalytics.rdepot.repo.storage.InitializableStorageService;
 import eu.openanalytics.rdepot.repo.transaction.Transaction;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -38,12 +37,9 @@ import org.springframework.context.annotation.Profile;
 @Profile({"production"})
 public class BeanConfig {
 
-    @Autowired
-    CranFileSystemStorageService cranFileSystemStorageService;
-
     @Bean
     @Primary
-    InitializableStorageService initializableStorageService() {
+    InitializableStorageService initializableStorageService(CranFileSystemStorageService cranFileSystemStorageService) {
         return new InitializableStorageService() {
 
             @Override

@@ -23,17 +23,10 @@ package eu.openanalytics.rdepot.python.api.v2.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2Controller;
+import eu.openanalytics.rdepot.base.api.v2.converters.exceptions.EntityResolutionException;
 import eu.openanalytics.rdepot.base.api.v2.dtos.RepositoryDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.ResponseDto;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.ApiException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.ApplyPatchException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.CreateException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.DeleteException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.MalformedPatchException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.NotAllowedInDeclarativeMode;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.RepositoryDeletionException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.RepositoryNotFound;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.UserNotAuthorized;
+import eu.openanalytics.rdepot.base.api.v2.exceptions.*;
 import eu.openanalytics.rdepot.base.api.v2.hateoas.RoleAwareRepresentationModelAssembler;
 import eu.openanalytics.rdepot.base.api.v2.resolvers.CommonPageableSortResolver;
 import eu.openanalytics.rdepot.base.api.v2.resolvers.DtoResolvedPageable;
@@ -75,17 +68,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * REST controller implementation for Python repositories.
@@ -184,7 +167,7 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
     public @ResponseBody ResponseEntity<ResponseDto<EntityModel<PythonRepositoryDto>>> getRepositoryById(
             Principal principal, @PathVariable("id") Integer id) throws UserNotAuthorized, RepositoryNotFound {
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
 
         PythonRepository repository =
@@ -216,7 +199,7 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
         checkIfUserIsAdmin(requester);
         checkDeclarative();
         try {
-            PythonRepository repositoryEntity = repositoryDto.toEntity();
+            PythonRepository repositoryEntity = dtoConverter.resolveDtoToEntity(repositoryDto);
             validate(repositoryEntity);
             Strategy<PythonRepository> strategy = factory.createRepositoryStrategy(repositoryEntity, requester);
             PythonRepository repository = strategy.perform();
@@ -226,6 +209,8 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
         } catch (StrategyFailure e) {
             log.error(e.getClass().getName() + ": " + e.getMessage(), e);
             throw new CreateException(messageSource, LocaleContextHolder.getLocale());
+        } catch (EntityResolutionException e) {
+            return handleValidationError(e);
         }
     }
 
@@ -246,7 +231,7 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
         checkDeclarative();
         try {
             PythonRepositoryDto repositoryDto = applyPatchToEntity(jsonPatch, repository);
-            PythonRepository updated = repositoryDto.toEntity();
+            PythonRepository updated = dtoConverter.resolveDtoToEntity(repositoryDto);
 
             if (!repositoriesDeletionEnabled)
                 if (updated.getDeleted() && !repository.getDeleted())
@@ -262,6 +247,8 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
             throw new ApplyPatchException(messageSource, locale);
         } catch (PythonRepositoryValidationError e) {
             return handleValidationError(e.getBindingResult());
+        } catch (EntityResolutionException e) {
+            return handleValidationError(e);
         }
 
         return handleSuccessForSingleEntity(repository, requester);
@@ -272,7 +259,7 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(operationId = "deletePythonRepository")
     public void deleteRepository(Principal principal, @PathVariable("id") Integer id) throws ApiException {
-        Optional<User> requester = userService.findByLogin(principal.getName());
+        Optional<User> requester = userService.findActiveByLogin(principal.getName());
         if (requester.isEmpty() || requester.get().getRole().getValue() != Role.VALUE.ADMIN)
             throw new UserNotAuthorized(messageSource, locale);
 
@@ -303,7 +290,7 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
 
     private User getRequester(Principal principal) throws UserNotAuthorized {
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, LocaleContextHolder.getLocale()));
         return requester;
     }

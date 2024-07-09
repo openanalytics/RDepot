@@ -25,15 +25,24 @@ import eu.openanalytics.rdepot.repo.exception.MoveToTrashException;
 import eu.openanalytics.rdepot.repo.exception.RestoreRepositoryException;
 import eu.openanalytics.rdepot.repo.exception.StorageException;
 import eu.openanalytics.rdepot.repo.python.model.SynchronizePythonRepositoryRequestBody;
-import eu.openanalytics.rdepot.repo.python.transaction.backup.PythonRepositoryBackup;
 import eu.openanalytics.rdepot.repo.storage.StorageProperties;
 import eu.openanalytics.rdepot.repo.storage.implementations.FileSystemStorageService;
 import io.micrometer.common.util.StringUtils;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -48,13 +57,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
-public class PythonFileSystemStorageService
-        extends FileSystemStorageService<SynchronizePythonRepositoryRequestBody, PythonRepositoryBackup>
+public class PythonFileSystemStorageService extends FileSystemStorageService<SynchronizePythonRepositoryRequestBody>
         implements PythonStorageService {
 
-    private static final String packagesIndexFileName = "index.html";
+    private static final String PACKAGES_INDEX_FILE_NAME = "index.html";
 
-    private final Set<String> excludedFiles = new HashSet<String>(List.of(packagesIndexFileName));
+    private final Set<String> excludedFiles = new HashSet<String>(List.of(PACKAGES_INDEX_FILE_NAME));
 
     public PythonFileSystemStorageService(StorageProperties properties) {
         super(properties);
@@ -92,11 +100,11 @@ public class PythonFileSystemStorageService
         } catch (ArchiveException e) {
             throw new StorageException("Failed to untar packages" + saveLocation.getFileName(), e);
         } finally {
-            cleanSpace(file, packageDir);
+            cleanSpace(packageDir);
         }
     }
 
-    private void cleanSpace(MultipartFile file, Path packageDir) {
+    private void cleanSpace(Path packageDir) {
         if (packageDir.toFile().isDirectory()) {
             for (File packageFile : packageDir.toFile().listFiles()) {
                 boolean isTarFile = packageFile.getName().contains(".tar")
@@ -183,13 +191,14 @@ public class PythonFileSystemStorageService
         return files;
     }
 
-    public void getRecentPackagesFromRepository(ArrayList<File> files, Path location) {
+    public void getRecentPackagesFromRepository(List<File> files, Path location) {
         if (location.toFile().exists()) {
             for (File file : location.toFile().listFiles()) {
                 if (file.isDirectory()) {
                     getRecentPackagesFromRepository(files, file.toPath());
                 } else if (!excludedFiles.contains(file.getName())) {
-                    if (!file.getName().equals("index.html") && !file.getName().equals("VERSION")) {
+                    if (!file.getName().equals(PACKAGES_INDEX_FILE_NAME)
+                            && !file.getName().equals("VERSION")) {
                         files.add(file);
                     }
                 }
@@ -248,7 +257,7 @@ public class PythonFileSystemStorageService
                     String[] filesInParentDirectory = parentDirectory.list();
                     if (filesInParentDirectory != null
                             && filesInParentDirectory.length == 1
-                            && filesInParentDirectory[0].equals("index.html")) {
+                            && filesInParentDirectory[0].equals(PACKAGES_INDEX_FILE_NAME)) {
                         moveToTrash(
                                 requestId,
                                 location.resolve(filesInParentDirectory[0]).toFile());

@@ -32,7 +32,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
-import java.time.LocalDate;
+import java.io.Serializable;
+import java.time.Instant;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -43,7 +44,9 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "access_token", schema = "public")
-public class AccessToken extends EventableResource {
+public class AccessToken extends EventableResource implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -52,10 +55,10 @@ public class AccessToken extends EventableResource {
     private String value;
 
     @Column(name = "creation_date", nullable = false)
-    private LocalDate creationDate;
+    private Instant creationDate;
 
     @Column(name = "expiration_date", nullable = false)
-    private LocalDate expirationDate;
+    private Instant expirationDate;
 
     @Column(name = "active", nullable = false)
     private boolean active;
@@ -72,12 +75,7 @@ public class AccessToken extends EventableResource {
     }
 
     public AccessToken(
-            String name,
-            String value,
-            LocalDate creationDate,
-            LocalDate expirationDate,
-            boolean active,
-            boolean deleted) {
+            String name, String value, Instant creationDate, Instant expirationDate, boolean active, boolean deleted) {
         this();
         this.name = name;
         this.value = value;
@@ -91,8 +89,8 @@ public class AccessToken extends EventableResource {
             int id,
             String name,
             String value,
-            LocalDate creationDate,
-            LocalDate expirationDate,
+            Instant creationDate,
+            Instant expirationDate,
             boolean active,
             boolean deleted) {
         this();
@@ -109,8 +107,8 @@ public class AccessToken extends EventableResource {
             int id,
             String name,
             String value,
-            LocalDate creationDate,
-            LocalDate expirationDate,
+            Instant creationDate,
+            Instant expirationDate,
             boolean active,
             boolean deleted,
             User user) {
@@ -125,13 +123,13 @@ public class AccessToken extends EventableResource {
         this.deleted = deleted;
     }
 
-    public AccessToken(AccessTokenDto dto) {
+    public AccessToken(AccessTokenDto dto, Instant creationDate, Instant expirationDate) {
         this();
         this.id = dto.getId();
         this.name = dto.getName();
         this.value = dto.getValue();
-        this.creationDate = LocalDate.parse(dto.getCreationDate());
-        this.expirationDate = LocalDate.parse(dto.getExpirationDate());
+        this.creationDate = creationDate;
+        this.expirationDate = expirationDate;
         this.active = dto.isActive();
         this.deleted = dto.isDeleted();
     }

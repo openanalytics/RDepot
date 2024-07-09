@@ -5,8 +5,11 @@
   "messageCode": "success.request.processed",
   "data": {
     "declarativeModeEnabled": false,
-    "deletingPackagesEnabled":true,
-    "deletingRepositoriesEnabled":true,
-    "replacingPackagesEnabled":true
+    "deletingPackagesEnabled": true,
+    "deletingRepositoriesEnabled": true,
+    "replacingPackagesEnabled": true,
+    "accessTokenLifetimeConfigurable": true,
+    "accessTokenLifetimeDefault": 30,
+    "generateManuals": true
   }
 }

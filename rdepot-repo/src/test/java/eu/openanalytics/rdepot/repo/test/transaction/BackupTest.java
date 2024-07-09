@@ -121,7 +121,6 @@ public class BackupTest {
     @Test
     public void backupTransaction_shouldAbort_ifInitTrashDirectoryIsNotCreated() throws Exception {
         final Transaction mockTransaction = new Transaction(TEST_REPO, "123abc", 1);
-        final File testTrash = File.createTempFile("TRASH_", "430482309482309");
 
         doReturn(Arrays.stream(getTestPackages(false)).toList())
                 .when(storageService)

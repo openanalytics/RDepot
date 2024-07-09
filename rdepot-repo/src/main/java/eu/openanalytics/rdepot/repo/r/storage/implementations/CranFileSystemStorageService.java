@@ -28,34 +28,49 @@ import eu.openanalytics.rdepot.repo.r.archive.ArchiveIndex;
 import eu.openanalytics.rdepot.repo.r.archive.ArchiveInfo;
 import eu.openanalytics.rdepot.repo.r.model.SynchronizeCranRepositoryRequestBody;
 import eu.openanalytics.rdepot.repo.r.storage.CranStorageService;
-import eu.openanalytics.rdepot.repo.r.transaction.backup.CranRepositoryBackup;
 import eu.openanalytics.rdepot.repo.storage.StorageProperties;
 import eu.openanalytics.rdepot.repo.storage.implementations.FileSystemStorageService;
 import io.micrometer.common.util.StringUtils;
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-@Slf4j
 @Service
-public class CranFileSystemStorageService
-        extends FileSystemStorageService<SynchronizeCranRepositoryRequestBody, CranRepositoryBackup>
+public class CranFileSystemStorageService extends FileSystemStorageService<SynchronizeCranRepositoryRequestBody>
         implements CranStorageService {
 
     Logger logger = LoggerFactory.getLogger(CranFileSystemStorageService.class);
 
-    private final Set<String> excludedFiles = new HashSet<String>(Arrays.asList("PACKAGES", "PACKAGES.gz"));
+    private static final String PACKAGES = "PACKAGES";
+    private static final String PACKAGES_GZ = "PACKAGES.gz";
+    private static final String SRC_FOLDER = "src";
+    private static final String CONTRIB_FOLDER = "contrib";
+    private static final String ARCHIVE_FOLDER = "Archive";
+    private static final String ARCHIVE_RDS = "archive.rds";
+
+    private final Set<String> excludedFiles = new HashSet<String>(Arrays.asList(PACKAGES, PACKAGES_GZ));
 
     public CranFileSystemStorageService(StorageProperties properties) {
         super(properties);
@@ -65,14 +80,15 @@ public class CranFileSystemStorageService
         Path latestLocation = ((repository != null) && (!repository.trim().isEmpty()))
                 ? this.rootLocation.resolve(repository)
                 : this.rootLocation;
-        Path archiveLocation = latestLocation.resolve("src").resolve("contrib").resolve("Archive");
+        Path archiveLocation =
+                latestLocation.resolve(SRC_FOLDER).resolve(CONTRIB_FOLDER).resolve(ARCHIVE_FOLDER);
 
         if (Files.notExists(archiveLocation)) {
             Path archiveRds = latestLocation
-                    .resolve("src")
-                    .resolve("contrib")
+                    .resolve(SRC_FOLDER)
+                    .resolve(CONTRIB_FOLDER)
                     .resolve("Meta")
-                    .resolve("archive.rds");
+                    .resolve(ARCHIVE_RDS);
             Files.deleteIfExists(archiveRds);
             return;
         }
@@ -127,20 +143,21 @@ public class CranFileSystemStorageService
         }
         if (archives.isEmpty()) {
             Path archiveRds = latestLocation
-                    .resolve("src")
-                    .resolve("contrib")
+                    .resolve(SRC_FOLDER)
+                    .resolve(CONTRIB_FOLDER)
                     .resolve("Meta")
-                    .resolve("archive.rds");
+                    .resolve(ARCHIVE_RDS);
             Files.deleteIfExists(archiveRds);
             return;
         }
 
         ArchiveIndex archiveIndex = new ArchiveIndex(archives);
-        Path metaLocation = latestLocation.resolve("src").resolve("contrib").resolve("Meta");
+        Path metaLocation =
+                latestLocation.resolve(SRC_FOLDER).resolve(CONTRIB_FOLDER).resolve("Meta");
         if (Files.notExists(metaLocation)) {
             Files.createDirectories(metaLocation);
         }
-        Path archiveRds = metaLocation.resolve("archive.rds");
+        Path archiveRds = metaLocation.resolve(ARCHIVE_RDS);
         FileOutputStream archiveRdsStrean = new FileOutputStream(archiveRds.toFile());
         BufferedOutputStream outputStream = new BufferedOutputStream(archiveRdsStrean);
         archiveIndex.serialize(outputStream);
@@ -190,7 +207,7 @@ public class CranFileSystemStorageService
         Path saveLocation = ((repository != null) && (!repository.trim().isEmpty()))
                 ? this.rootLocation.resolve(repository)
                 : this.rootLocation;
-        saveLocation = saveLocation.resolve("src").resolve("contrib").resolve("Archive");
+        saveLocation = saveLocation.resolve(SRC_FOLDER).resolve(CONTRIB_FOLDER).resolve(ARCHIVE_FOLDER);
         logger.debug("Saving to location {}", saveLocation.toString());
         try {
             if (!Files.exists(saveLocation)) {
@@ -202,8 +219,8 @@ public class CranFileSystemStorageService
         }
         for (MultipartFile file : files) {
             try {
-                if (Objects.equals(file.getOriginalFilename(), "PACKAGES")
-                        || file.getOriginalFilename().equals("PACKAGES.gz")) {
+                if (Objects.equals(file.getOriginalFilename(), PACKAGES)
+                        || file.getOriginalFilename().equals(PACKAGES_GZ)) {
                     Path destination = saveLocation.resolve(file.getOriginalFilename());
                     if (Files.exists(destination)) {
                         moveToTrash(id, destination.toFile());
@@ -222,7 +239,7 @@ public class CranFileSystemStorageService
         Path saveLocation = ((repository != null) && (!repository.trim().isEmpty()))
                 ? this.rootLocation.resolve(repository)
                 : this.rootLocation;
-        saveLocation = saveLocation.resolve("src").resolve("contrib");
+        saveLocation = saveLocation.resolve(SRC_FOLDER).resolve(CONTRIB_FOLDER);
         store(files, saveLocation, id);
     }
 
@@ -231,7 +248,7 @@ public class CranFileSystemStorageService
         Path location = ((repository != null) && (!repository.trim().isEmpty()))
                 ? this.rootLocation.resolve(repository)
                 : this.rootLocation;
-        location = location.resolve("src").resolve("contrib");
+        location = location.resolve(SRC_FOLDER).resolve(CONTRIB_FOLDER);
 
         if (location.toFile().exists()) {
             for (File file : location.toFile().listFiles()) {
@@ -248,7 +265,7 @@ public class CranFileSystemStorageService
         Path location = ((repository != null) && (!repository.trim().isEmpty()))
                 ? this.rootLocation.resolve(repository)
                 : this.rootLocation;
-        location = location.resolve("src").resolve("contrib").resolve("Archive");
+        location = location.resolve(SRC_FOLDER).resolve(CONTRIB_FOLDER).resolve(ARCHIVE_FOLDER);
 
         List<Path> directories = new ArrayList<>();
         Map<String, List<File>> archive = new HashMap<>();
@@ -281,9 +298,9 @@ public class CranFileSystemStorageService
         Path trash = this.rootLocation.resolve(TRASH_PREFIX + requestId);
         File archive = this.rootLocation
                 .resolve(repository)
-                .resolve("src")
-                .resolve("contrib")
-                .resolve("Archive")
+                .resolve(SRC_FOLDER)
+                .resolve(CONTRIB_FOLDER)
+                .resolve(ARCHIVE_FOLDER)
                 .toFile();
         try {
             if (Files.exists(trash)) FileUtils.forceDelete(trash.toFile());
@@ -296,9 +313,8 @@ public class CranFileSystemStorageService
 
                     if (Objects.requireNonNull(archive.listFiles()).length == 2) {
                         for (File packagesFile : archive.listFiles()) {
-                            if (packagesFile.getName().equals("PACKAGES")
-                                    || packagesFile.getName().equals("PACKAGES.gz"))
-                                FileUtils.forceDelete(packagesFile);
+                            if (packagesFile.getName().equals(PACKAGES)
+                                    || packagesFile.getName().equals(PACKAGES_GZ)) FileUtils.forceDelete(packagesFile);
                         }
                     }
                 }
@@ -314,7 +330,7 @@ public class CranFileSystemStorageService
             throws RestoreRepositoryException {
         final Path latestLocation =
                 !StringUtils.isBlank(repository) ? this.rootLocation.resolve(repository) : this.rootLocation;
-        final Path packagesLocation = latestLocation.resolve("src").resolve("contrib");
+        final Path packagesLocation = latestLocation.resolve(SRC_FOLDER).resolve(CONTRIB_FOLDER);
         removePackagesFromLocation(packages, packagesLocation, repository);
     }
 
@@ -324,7 +340,7 @@ public class CranFileSystemStorageService
         final Path archiveLocation =
                 !StringUtils.isBlank(repository) ? this.rootLocation.resolve(repository) : this.rootLocation;
         final Path packagesLocation =
-                archiveLocation.resolve("src").resolve("contrib").resolve("Archive");
+                archiveLocation.resolve(SRC_FOLDER).resolve(CONTRIB_FOLDER).resolve(ARCHIVE_FOLDER);
         removePackagesFromLocation(archivePackages, packagesLocation, repository);
     }
 
@@ -333,8 +349,8 @@ public class CranFileSystemStorageService
         Path location = ((repository != null) && (!repository.trim().isEmpty()))
                 ? this.rootLocation.resolve(repository)
                 : this.rootLocation;
-        location = location.resolve("src").resolve("contrib");
-        location = fromArchive ? location.resolve("Archive") : location;
+        location = location.resolve(SRC_FOLDER).resolve(CONTRIB_FOLDER);
+        location = fromArchive ? location.resolve(ARCHIVE_FOLDER) : location;
 
         try {
             if ((packageName == null || packageName.isBlank()) && !fromArchive) {
@@ -362,9 +378,9 @@ public class CranFileSystemStorageService
     @Override
     protected boolean isPackageFile(File file) {
         final String fileName = file.getName();
-        return !(Objects.equals(fileName, "Archive")
-                || Objects.equals(fileName, "PACKAGES")
-                || Objects.equals(fileName, "PACKAGES.gz"));
+        return !(Objects.equals(fileName, ARCHIVE_FOLDER)
+                || Objects.equals(fileName, PACKAGES)
+                || Objects.equals(fileName, PACKAGES_GZ));
     }
 
     private void delete(String[] packageNames, String repository, String requestId, Boolean fromArchive)
@@ -389,15 +405,15 @@ public class CranFileSystemStorageService
         Map<String, File> files = new HashMap<>();
 
         Path packagesFilesRoot =
-                this.rootLocation.resolve(repository).resolve("src").resolve("contrib");
-        packagesFilesRoot = archive ? packagesFilesRoot.resolve("Archive") : packagesFilesRoot;
+                this.rootLocation.resolve(repository).resolve(SRC_FOLDER).resolve(CONTRIB_FOLDER);
+        packagesFilesRoot = archive ? packagesFilesRoot.resolve(ARCHIVE_FOLDER) : packagesFilesRoot;
 
-        File packages = packagesFilesRoot.resolve("PACKAGES").toFile();
-        File packagesGZ = packagesFilesRoot.resolve("PACKAGES.gz").toFile();
+        File packages = packagesFilesRoot.resolve(PACKAGES).toFile();
+        File packagesGZ = packagesFilesRoot.resolve(PACKAGES_GZ).toFile();
 
         if (packages.exists() && packagesGZ.exists()) {
-            files.put("PACKAGES", packages);
-            files.put("PACKAGES.gz", packagesGZ);
+            files.put(PACKAGES, packages);
+            files.put(PACKAGES_GZ, packagesGZ);
         }
 
         return files;

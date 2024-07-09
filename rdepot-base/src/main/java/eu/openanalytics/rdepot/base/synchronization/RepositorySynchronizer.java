@@ -21,6 +21,9 @@
 package eu.openanalytics.rdepot.base.synchronization;
 
 import eu.openanalytics.rdepot.base.entities.Repository;
+import eu.openanalytics.rdepot.base.time.DateProvider;
+import java.time.Instant;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Synchronizer publishes repository on a server
@@ -30,11 +33,25 @@ import eu.openanalytics.rdepot.base.entities.Repository;
  * so this interface should be implemented by each extension module.
  * @param <T>
  */
-public interface RepositorySynchronizer<T extends Repository> {
+public abstract class RepositorySynchronizer<T extends Repository> {
     /**
      * Stores repository on a public server.
      * @param repository to publish
-     * @param dateStamp in the format "yyyyMMdd"
      */
-    void storeRepositoryOnRemoteServer(T repository, String dateStamp) throws SynchronizeRepositoryException;
+    @Transactional
+    public void storeRepositoryOnRemoteServer(T repository) throws SynchronizeRepositoryException {
+        final Instant timestamp = DateProvider.now();
+        repository.setLastPublicationTimestamp(timestamp);
+
+        try {
+            storeRepositoryOnRemoteServer(repository, DateProvider.instantToDatestampWithoutHyphens(timestamp));
+            repository.setLastPublicationSuccessful(true);
+        } catch (SynchronizeRepositoryException e) {
+            repository.setLastPublicationSuccessful(false);
+            throw e;
+        }
+    }
+
+    protected abstract void storeRepositoryOnRemoteServer(T repository, String datestamp)
+            throws SynchronizeRepositoryException;
 }

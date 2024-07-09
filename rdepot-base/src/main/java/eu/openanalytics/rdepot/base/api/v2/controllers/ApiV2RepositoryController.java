@@ -110,7 +110,7 @@ public class ApiV2RepositoryController extends ApiV2ReadingController<Repository
             throws ApiException {
 
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
 
         final DtoResolvedPageable resolvedPageable = pageableSortResolver.resolve(pageable);
@@ -157,7 +157,7 @@ public class ApiV2RepositoryController extends ApiV2ReadingController<Repository
     public @ResponseBody ResponseEntity<ResponseDto<EntityModel<RepositoryDto>>> getRepositoryById(
             Principal principal, @PathVariable("id") Integer id) throws UserNotAuthorized, RepositoryNotFound {
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
 
         Repository repository =

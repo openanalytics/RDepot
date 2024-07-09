@@ -38,6 +38,7 @@ import eu.openanalytics.rdepot.base.service.UserService;
 import jakarta.json.JsonPatch;
 import java.util.*;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -45,6 +46,7 @@ import org.springframework.stereotype.Component;
 
 @AllArgsConstructor
 @Component
+@Slf4j
 public class SecurityMediatorImpl implements SecurityMediator {
 
     private final RepositoryMaintainerService repositoryMaintainerService;
@@ -156,21 +158,25 @@ public class SecurityMediatorImpl implements SecurityMediator {
 
     @Override
     public Collection<? extends GrantedAuthority> getGrantedAuthorities(String userLogin) {
-        User user = userService
-                .findByLogin(userLogin)
-                .orElseThrow(IllegalStateException::new); // TODO: #32970 Check scenarios when it's thrown
         Collection<SimpleGrantedAuthority> authorities;
         if (Objects.equals(env.getProperty("app.authentication"), "simple")) {
             authorities = new ArrayList<>(0);
         } else {
             authorities = new HashSet<>(0);
         }
-        for (int i = 0, v = user.getRole().getValue(); i <= v; i++) {
-            authorities.add(new SimpleGrantedAuthority(roleService
-                    .findByValue(i)
-                    .orElseThrow(IllegalStateException::new)
-                    .getName()));
+
+        Optional<User> user = userService.findActiveByLogin(userLogin);
+        if (user.isPresent()) {
+            for (int i = 0, v = user.get().getRole().getValue(); i <= v; i++) {
+                authorities.add(new SimpleGrantedAuthority(roleService
+                        .findByValue(i)
+                        .orElseThrow(IllegalStateException::new)
+                        .getName()));
+            }
+        } else {
+            log.error(userLogin + " has been deactivated or deleted");
         }
+
         return authorities;
     }
 

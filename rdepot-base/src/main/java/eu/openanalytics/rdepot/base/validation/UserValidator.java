@@ -39,6 +39,9 @@ public class UserValidator implements Validator {
 
     private final Pattern emailPattern = Pattern.compile("^.+@.+$");
 
+    private static final String LOGIN = "login";
+    private static final String EMAIL = "email";
+
     @Override
     public boolean supports(Class<?> clazz) {
         return clazz.isAssignableFrom(User.class);
@@ -62,29 +65,29 @@ public class UserValidator implements Validator {
                 if (user.getName() != null && !existingUser.getName().equals(user.getName()))
                     errors.rejectValue("name", MessageCodes.FORBIDDEN_UPDATE);
                 if (user.getLogin() != null && !existingUser.getLogin().equals(user.getLogin()))
-                    errors.rejectValue("login", MessageCodes.FORBIDDEN_UPDATE);
+                    errors.rejectValue(LOGIN, MessageCodes.FORBIDDEN_UPDATE);
                 if (user.getEmail() != null && !existingUser.getEmail().equals(user.getEmail()))
-                    errors.rejectValue("email", MessageCodes.FORBIDDEN_UPDATE);
+                    errors.rejectValue(EMAIL, MessageCodes.FORBIDDEN_UPDATE);
             }
         } else {
             if (user.getEmail() == null || user.getEmail().isBlank()) {
-                errors.rejectValue("email", MessageCodes.ERROR_EMPTY_EMAIL);
+                errors.rejectValue(EMAIL, MessageCodes.ERROR_EMPTY_EMAIL);
             } else {
                 if (!emailPattern.matcher(user.getEmail()).matches()) {
-                    errors.rejectValue("email", MessageCodes.ERROR_INVALID_EMAIL);
+                    errors.rejectValue(EMAIL, MessageCodes.ERROR_INVALID_EMAIL);
                 } else {
                     Optional<User> duplicateEmail = userService.findByEmail(user.getEmail());
                     if (duplicateEmail.isPresent() && duplicateEmail.get().getId() != user.getId()) {
-                        errors.rejectValue("email", MessageCodes.ERROR_DUPLICATE_EMAIL);
+                        errors.rejectValue(EMAIL, MessageCodes.ERROR_DUPLICATE_EMAIL);
                     }
                 }
             }
             if (user.getLogin() == null || user.getLogin().isBlank()) {
-                errors.rejectValue("login", MessageCodes.ERROR_EMPTY_LOGIN);
+                errors.rejectValue(LOGIN, MessageCodes.ERROR_EMPTY_LOGIN);
             } else {
-                Optional<User> duplicateLogin = userService.findByLogin(user.getLogin());
+                Optional<User> duplicateLogin = userService.findActiveByLogin(user.getLogin());
                 if (duplicateLogin.isPresent() && duplicateLogin.get().getId() != user.getId()) {
-                    errors.rejectValue("login", MessageCodes.ERROR_DUPLICATE_LOGIN);
+                    errors.rejectValue(LOGIN, MessageCodes.ERROR_DUPLICATE_LOGIN);
                 }
             }
             if (user.getName() == null || user.getName().isBlank()) {

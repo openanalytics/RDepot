@@ -22,6 +22,7 @@ package eu.openanalytics.rdepot.base.api.v2.dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import eu.openanalytics.rdepot.base.entities.User;
+import eu.openanalytics.rdepot.base.time.DateProvider;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringExclude;
@@ -58,8 +59,8 @@ public class UserDto implements IDto {
         this.login = user.getLogin();
         this.active = user.isActive();
         this.lastLoggedInOn =
-                user.getLastLoggedInOn() != null ? user.getLastLoggedInOn().toString() : "";
-        this.createdOn = user.getCreatedOn().toString();
+                user.getLastLoggedInOn() != null ? DateProvider.instantToTimestamp(user.getLastLoggedInOn()) : "";
+        this.createdOn = user.getCreatedOn() != null ? DateProvider.instantToTimestamp(user.getCreatedOn()) : "";
         this.roleId = user.getRole().getId();
         this.role = user.getRole().getName();
         this.deleted = user.isDeleted();

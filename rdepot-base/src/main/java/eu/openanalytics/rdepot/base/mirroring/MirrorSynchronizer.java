@@ -59,7 +59,7 @@ public abstract class MirrorSynchronizer<
      * @param repository repository to synchronize
      */
     @Async
-    public abstract void synchronize(R repository, M mirror);
+    public abstract void synchronizeAsync(R repository, M mirror);
 
     /**
      * Fetches mirrors from configuration file for a given repository

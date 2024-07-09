@@ -115,7 +115,7 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
     @WithMockUser(authorities = {"admin", "user"})
     public void getAllRepositories() throws Exception {
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         when(userService.isAdmin(user.get())).thenReturn(true);
         when(securityMediator.isAuthorizedToEdit(any(RRepository.class), eq(user.get())))
@@ -144,7 +144,7 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
         final Integer ID = repository.getId();
 
         when(rRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/r/repositories/" + ID)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -159,7 +159,7 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
         final Integer ID = repository.getId();
 
         when(rRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(securityMediator.isAuthorizedToEdit(repository, user.get())).thenReturn(true);
         when(userService.isAdmin(user.get())).thenReturn(true);
 
@@ -182,7 +182,7 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
     public void getRepository_returns404_whenRepositoryIsNotFound() throws Exception {
 
         when(rRepositoryService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(null));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/r/repositories/" + 123)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -204,7 +204,7 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
         when(rStrategyFactory.createRepositoryStrategy(any(), eq(user.get()))).thenReturn(strategy);
         when(userService.findById(anyInt())).thenReturn(user);
         when(userService.isAdmin(user.get())).thenReturn(true);
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(rRepositoryValidator.supports(RRepository.class)).thenReturn(true);
         doNothing().when(rRepositoryValidator).validate(any(), any());
         when(rRepositoryValidator.supports(Repository.class)).thenReturn(true);
@@ -238,7 +238,7 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
         final Path path = Path.of(EXAMPLE_NEW_REPOSITORY_PATH);
         final String exampleJson = Files.readString(path);
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v2/manager/r/repositories")
                         .contentType("application/json")
@@ -254,7 +254,7 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
         final Path path = Path.of(EXAMPLE_NEW_REPOSITORY_PATH);
         final String exampleJson = Files.readString(path);
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(userService.isAdmin(user.get())).thenReturn(true);
         doAnswer(invocation -> {
                     Errors errors = (Errors) invocation.getArgument(1);
@@ -287,7 +287,7 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
                 new FailureStrategy<RRepository>(newRepository, newsfeedEventService, rRepositoryService, user.get()));
 
         when(userService.isAdmin(user.get())).thenReturn(true);
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(rStrategyFactory.createRepositoryStrategy(any(), eq(user.get()))).thenReturn(strategy);
         doNothing().when(rRepositoryValidator).validate(any(), any());
         when(rRepositoryValidator.supports(RRepository.class)).thenReturn(true);
@@ -311,7 +311,7 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
 
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/serverAddress\",\"value\":\"127.0.0.1\"}]";
         when(rRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(securityMediator.isAuthorizedToEdit(any(RRepository.class), eq(user.get())))
                 .thenReturn(true);
         when(rStrategyFactory.updateRepositoryStrategy(any(), eq(user.get()), any()))
@@ -338,7 +338,7 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
 
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/deleted\",\"value\":true}]";
         when(rRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(securityMediator.isAuthorizedToEdit(any(RRepository.class), eq(user.get())))
                 .thenReturn(true);
         when(rStrategyFactory.updateRepositoryStrategy(any(), eq(user.get()), any()))
@@ -370,7 +370,7 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
     @WithMockUser(authorities = "user")
     public void patchRepository_returns403_whenUserIsNotAuthorized() throws Exception {
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(securityMediator.isAuthorizedToEdit(any(Repository.class), eq(user.get())))
                 .thenReturn(false);
 
@@ -388,7 +388,7 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
     public void patchRepository_returns404_whenRepositoryIsNotFound() throws Exception {
 
         when(rRepositoryService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(null));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         String patchJson = "[{\"op\": \"replace\",\"path\":\"/serverAddress\",\"value\":\"127.0.0.1\"}]";
 
@@ -408,7 +408,7 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/nameeeeee\",\"value\":\"Test Repo 123\"}]";
 
         when(rRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(securityMediator.isAuthorizedToEdit(any(Repository.class), eq(user.get())))
                 .thenReturn(true);
 
@@ -427,7 +427,7 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/name\",\"value\":\"Test Repo 123\"}]";
 
         when(rRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(securityMediator.isAuthorizedToEdit(repository, user.get())).thenReturn(true);
         when(rRepositoryValidator.supports(RRepository.class)).thenReturn(true);
         doAnswer(invocation -> {
@@ -459,7 +459,7 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
 
         when(rRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
         doNothing().when(rRepositoryDeleter).delete(repository);
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(userService.isAdmin(user.get())).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v2/manager/r/repositories/" + ID))
@@ -488,7 +488,7 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
     public void deleteRepository_returns404_whenRepositoryIsNotFound() throws Exception {
 
         when(rRepositoryService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(null));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(userService.isAdmin(user.get())).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v2/manager/r/repositories/" + 123))

@@ -294,6 +294,24 @@ public class UserIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    public void patchUser_delete() throws Exception {
+        final String patch =
+                "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/deleted\"," + "\"value\":true" + "}" + "]";
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.PATCH)
+                .urlSuffix("/7")
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getChangeEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/base/user/soft_delete_user.json")
+                .expectedEventsJson("/v2/base/events/users/soft_delete_user_event.json")
+                .body(patch)
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
     public void patchUser_changeRole() throws Exception, ParseException {
         final String patch = "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/roleId\"," + "\"value\":2" + "}" + "]";
 
@@ -333,7 +351,7 @@ public class UserIntegrationTest extends IntegrationTest {
                 + "{"
                 + "\"op\": \"replace\","
                 + "\"path\":\"/lastLoggedInOn\","
-                + "\"value\":\"2017-12-03\""
+                + "\"value\":\"2017-12-03T00:00:00Z\""
                 + "}"
                 + "]";
 

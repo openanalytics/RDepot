@@ -57,18 +57,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class NewsfeedEventService extends eu.openanalytics.rdepot.base.service.Service<NewsfeedEvent> {
 
-    private final NewsfeedEventDao dao;
+    private final NewsfeedEventDao newsfeedEventDao;
     private final EventChangedVariableDao eventChangedVariableDao;
 
-    public NewsfeedEventService(
-            EventChangedVariableDao eventChangedVariableDao,
-            NewsfeedEventDao newsfeedEventDao,
-            PackageMaintainerService packageMaintainerService,
-            RepositoryMaintainerService repositoryMaintainerService,
-            SubmissionService submissionService) {
+    public NewsfeedEventService(EventChangedVariableDao eventChangedVariableDao, NewsfeedEventDao newsfeedEventDao) {
         super(newsfeedEventDao);
         this.eventChangedVariableDao = eventChangedVariableDao;
-        this.dao = newsfeedEventDao;
+        this.newsfeedEventDao = newsfeedEventDao;
     }
 
     /**
@@ -199,11 +194,11 @@ public class NewsfeedEventService extends eu.openanalytics.rdepot.base.service.S
     }
 
     public List<NewsfeedEvent> findAllByResource(Resource resource) {
-        return dao.findAll(NewsfeedEventSpecs.hasRelatedResource(resource));
+        return newsfeedEventDao.findAll(NewsfeedEventSpecs.hasRelatedResource(resource));
     }
 
     public List<NewsfeedEvent> findAllByRelatedResourceType(ResourceType resourceType) {
-        return dao.findAll(NewsfeedEventSpecs.hasResourceOfType(resourceType));
+        return newsfeedEventDao.findAll(NewsfeedEventSpecs.hasResourceOfType(resourceType));
     }
 
     public void attachVariables(NewsfeedEvent entity, Set<EventChangedVariable> eventChangedVariables) {
@@ -214,17 +209,17 @@ public class NewsfeedEventService extends eu.openanalytics.rdepot.base.service.S
     }
 
     public List<NewsfeedEvent> findByDateAndResource(LocalDate date, Resource resource) {
-        return dao.findAll(SpecificationUtils.andComponent(
+        return newsfeedEventDao.findAll(SpecificationUtils.andComponent(
                 NewsfeedEventSpecs.byDate(date), NewsfeedEventSpecs.hasRelatedResource(resource)));
     }
 
     public List<NewsfeedEvent> findByDateAndRepository(LocalDate date, Repository repository) {
-        return dao.findAll(SpecificationUtils.andComponent(
+        return newsfeedEventDao.findAll(SpecificationUtils.andComponent(
                 NewsfeedEventSpecs.byDate(date), NewsfeedEventSpecs.relatedResourceHasRelatedRepository(repository)));
     }
 
     public List<NewsfeedEvent> findByRepository(Repository repository) {
-        return dao.findAll(NewsfeedEventSpecs.relatedResourceHasRelatedRepository(repository));
+        return newsfeedEventDao.findAll(NewsfeedEventSpecs.relatedResourceHasRelatedRepository(repository));
     }
 
     public void deleteRelatedEvents(Resource resource) throws DeleteEntityException {
@@ -234,7 +229,7 @@ public class NewsfeedEventService extends eu.openanalytics.rdepot.base.service.S
     }
 
     private List<NewsfeedEvent> findAllForPackage(int id) {
-        return dao.findAllForPackageWithId(id);
+        return newsfeedEventDao.findAllForPackageWithId(id);
     }
 
     public void deleteRelatedPackageEvents(int resourceId) throws DeleteEntityException {

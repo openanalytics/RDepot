@@ -5,6 +5,7 @@ repos:
   - id: check-merge-conflict
   - id: end-of-file-fixer
   - id: trailing-whitespace
+    exclude: ^.+\/DESCRIPTION_.+$
 - repo: https://github.com/ejba/pre-commit-maven
   rev: v0.3.4
   hooks:
@@ -22,3 +23,8 @@ repos:
     always_run: true
     language: script
     entry: /bin/sh -c 'grep -Fxq "    private static final boolean RUN_CONTAINERS = true;" rdepot-app/src/test/java/eu/openanalytics/rdepot/integrationtest/manager/v2/IntegrationTest.java'
+  - id: check-description-ggally-trailing-space
+    name: "DESCRIPTION_ggally file should contain 'Description: '"
+    always_run: true
+    language: script
+    entry: "/bin/sh -c 'grep -Fxq \"Description: \" rdepot-r-module/src/test/resources/unit/test_files/properties_files/DESCRIPTION_ggally'"

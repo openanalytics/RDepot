@@ -20,13 +20,30 @@
  */
 package eu.openanalytics.rdepot.python.validation.exceptions;
 
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.validation.BindingResult;
 
 @AllArgsConstructor
 @Getter
+@Setter
 public class PythonRepositoryValidationError extends Exception {
     private static final long serialVersionUID = 1L;
-    private final BindingResult bindingResult;
+    private transient BindingResult bindingResult;
+
+    private void writeObject(ObjectOutputStream out)
+            throws IOException, ClassNotFoundException, NotSerializableException {
+        out.defaultWriteObject();
+        out.writeObject(getBindingResult());
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, NotSerializableException, ClassNotFoundException {
+        in.defaultReadObject();
+        bindingResult = (BindingResult) in.readObject();
+    }
 }

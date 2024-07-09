@@ -31,8 +31,6 @@ import eu.openanalytics.rdepot.base.service.PackageService;
 import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
-import eu.openanalytics.rdepot.base.storage.Storage;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Permanently deletes {@link Repository Repositories}.
@@ -40,13 +38,10 @@ import lombok.extern.slf4j.Slf4j;
  * @param <R> technology-specific {@link Repository}
  * @param <P> technology-specific {@link Package}
  */
-@Slf4j
 public abstract class RepositoryDeleter<R extends Repository, P extends Package> extends ResourceDeleter<R> {
 
     private final PackageMaintainerService packageMaintainerService;
     private final RepositoryMaintainerService repositoryMaintainerService;
-    private final Storage<R, P> storage;
-    private final NewsfeedEventService newsfeedEventService;
     private final SubmissionDeleter submissionDeleter;
     private final PackageService<P> packageService;
 
@@ -55,14 +50,11 @@ public abstract class RepositoryDeleter<R extends Repository, P extends Package>
             RepositoryService<R> resourceService,
             PackageMaintainerService packageMaintainerService,
             RepositoryMaintainerService repositoryMaintainerService,
-            Storage<R, P> storage,
             SubmissionDeleter submissionDeleter,
             PackageService<P> packageService) {
         super(newsfeedEventService, resourceService);
         this.packageMaintainerService = packageMaintainerService;
         this.repositoryMaintainerService = repositoryMaintainerService;
-        this.storage = storage;
-        this.newsfeedEventService = newsfeedEventService;
         this.submissionDeleter = submissionDeleter;
         this.packageService = packageService;
     }

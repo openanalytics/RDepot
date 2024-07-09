@@ -31,53 +31,54 @@ import org.springframework.transaction.annotation.Transactional;
 @org.springframework.stereotype.Service
 public class PackageMaintainerService extends Service<PackageMaintainer> {
 
-    private final PackageMaintainerDao dao;
+    private final PackageMaintainerDao packageMaintainerDao;
 
-    public PackageMaintainerService(PackageMaintainerDao dao) {
-        super(dao);
-        this.dao = dao;
+    public PackageMaintainerService(PackageMaintainerDao packageMaintainerDao) {
+        super(packageMaintainerDao);
+        this.packageMaintainerDao = packageMaintainerDao;
     }
 
     @Transactional
     public Optional<PackageMaintainer> findByPackageAndRepositoryAndNonDeleted(
             String packageName, Repository repository) {
-        return dao.findByPackageNameAndRepositoryIdAndDeleted(packageName, repository.getId(), false);
+        return packageMaintainerDao.findByPackageNameAndRepositoryIdAndDeleted(packageName, repository.getId(), false);
     }
 
     public List<PackageMaintainer> findAllByPackageAndRepositoryAndNonDeleted(
             String packageName, Repository repository) {
-        return dao.findAllByPackageNameAndRepositoryIdAndDeleted(packageName, repository.getId(), false);
+        return packageMaintainerDao.findAllByPackageNameAndRepositoryIdAndDeleted(
+                packageName, repository.getId(), false);
     }
 
     public Optional<PackageMaintainer> findByUserAndPackageNameAndRepositoryAndNonDeleted(
             User user, String packageName, Repository repository) {
-        return dao.findByUserIdAndPackageNameAndRepositoryIdAndDeleted(
+        return packageMaintainerDao.findByUserIdAndPackageNameAndRepositoryIdAndDeleted(
                 user.getId(), packageName, repository.getId(), false);
     }
 
     public boolean existsByUserAndPackageNameAndRepositoryAndNonDeleted(
             User user, String packageName, Repository repository) {
-        return dao.existsByUserIdAndPackageNameAndRepositoryIdAndDeleted(
+        return packageMaintainerDao.existsByUserIdAndPackageNameAndRepositoryIdAndDeleted(
                 user.getId(), packageName, repository.getId(), false);
     }
 
     public Optional<PackageMaintainer> findByPackageAndRepositoryAndDeleted(String packageName, Repository repository) {
-        return dao.findByPackageNameAndRepositoryIdAndDeleted(packageName, repository.getId(), true);
+        return packageMaintainerDao.findByPackageNameAndRepositoryIdAndDeleted(packageName, repository.getId(), true);
     }
 
     public List<PackageMaintainer> findByUser(User user) {
-        return dao.findByUser(user);
+        return packageMaintainerDao.findByUser(user);
     }
 
     public List<PackageMaintainer> findByRepository(Repository repository) {
-        return dao.findByRepository(repository);
+        return packageMaintainerDao.findByRepository(repository);
     }
 
     public List<PackageMaintainer> findByRepositoryNonDeleted(Repository repository) {
-        return dao.findByRepositoryAndDeleted(repository, false);
+        return packageMaintainerDao.findByRepositoryAndDeleted(repository, false);
     }
 
     public List<PackageMaintainer> findNonDeletedByUser(User user) {
-        return dao.findByUserAndDeleted(user, false);
+        return packageMaintainerDao.findByUserAndDeleted(user, false);
     }
 }

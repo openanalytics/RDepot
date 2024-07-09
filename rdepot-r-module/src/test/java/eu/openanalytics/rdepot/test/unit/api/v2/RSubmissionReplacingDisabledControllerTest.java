@@ -58,6 +58,7 @@ import eu.openanalytics.rdepot.test.unit.api.v2.mockstrategies.SuccessfulStrateg
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Locale;
 import java.util.Optional;
 import org.apache.http.entity.ContentType;
@@ -118,7 +119,9 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
     @BeforeEach
     public void initEach() {
         user = Optional.of(UserTestFixture.GET_ADMIN());
-        DateProvider.setTestDate(LocalDateTime.of(2024, 3, 19, 0, 0));
+        DateProvider.setTestDate(LocalDateTime.of(2024, 3, 19, 0, 0)
+                .atZone(ZoneId.systemDefault())
+                .toInstant());
     }
 
     @Test
@@ -140,7 +143,7 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
         final SubmissionDto submissionDto =
                 RSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, submission.getPackageBag());
 
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(rRepositoryService.findByNameAndDeleted(any(String.class), eq(false)))
                 .thenReturn(Optional.of(repository));
         doNothing().when(rPackageValidator).validate(any(), any(ValidationResult.class));
@@ -184,7 +187,7 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
 
         doReturn(packageDto).when(commonPackageDtoConverter).convertEntityToDto(packageBag);
         doReturn(submissionDto).when(submissionDtoConverter).convertEntityToDto(submission);
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         doAnswer((i) -> {
                     final PackageUploadRequest<?> request = i.getArgument(0);
@@ -228,7 +231,7 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
 
         doReturn(packageDto).when(commonPackageDtoConverter).convertEntityToDto(packageBag);
         doReturn(submissionDto).when(submissionDtoConverter).convertEntityToDto(submission);
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
 
         doAnswer((i) -> {
                     final PackageUploadRequest<?> request = i.getArgument(0);
@@ -282,7 +285,7 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
                 new SuccessfulStrategy<Submission>(submission, newsfeedEventService, submissionService, user.get()));
 
         when(rRepositoryService.findByNameAndDeleted(REPOSITORY_NAME, false)).thenReturn(Optional.of(repository));
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         doAnswer(new Answer<>() {
                     @Override
                     public Object answer(InvocationOnMock invocation) throws Throwable {
@@ -319,7 +322,7 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
                 new FailureStrategy<Submission>(submission, newsfeedEventService, submissionService, user.get()));
 
         when(rStrategyFactory.uploadPackageStrategy(any(), eq(user.get()))).thenReturn(strategy);
-        when(userService.findByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(user);
         when(rRepositoryService.findByNameAndDeleted(any(String.class), eq(false)))
                 .thenReturn(Optional.of(repository));
 

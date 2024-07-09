@@ -162,7 +162,7 @@ public class ApiV2PackageMaintainerController extends ApiV2Controller<PackageMai
             @RequestParam(name = "search", required = false) Optional<String> search)
             throws ApiException {
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
 
         final DtoResolvedPageable resolvedPageable = pageableSortResolver.resolve(pageable);
@@ -219,7 +219,7 @@ public class ApiV2PackageMaintainerController extends ApiV2Controller<PackageMai
     public @ResponseBody ResponseEntity<ResponseDto<EntityModel<PackageMaintainerDto>>> getMaintainer(
             Principal principal, @PathVariable("id") Integer id) throws ApiException {
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
 
         PackageMaintainer maintainer = packageMaintainerService
@@ -242,7 +242,7 @@ public class ApiV2PackageMaintainerController extends ApiV2Controller<PackageMai
     public @ResponseBody ResponseEntity<?> createMaintainer(
             Principal principal, @RequestBody PackageMaintainerDto packageMaintainerDto) throws ApiException {
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
 
         PackageMaintainer packageMaintainer;
@@ -283,7 +283,7 @@ public class ApiV2PackageMaintainerController extends ApiV2Controller<PackageMai
             Principal principal, @PathVariable("id") Integer id, @RequestBody JsonPatch jsonPatch) throws ApiException {
 
         User requester = userService
-                .findByLogin(principal.getName())
+                .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
         PackageMaintainer packageMaintainer = packageMaintainerService
                 .findById(id)
@@ -327,7 +327,7 @@ public class ApiV2PackageMaintainerController extends ApiV2Controller<PackageMai
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(operationId = "deletePackageMaintainer")
     public void deletePackageMaintainer(Principal principal, @PathVariable("id") Integer id) throws ApiException {
-        Optional<User> requester = userService.findByLogin(principal.getName());
+        Optional<User> requester = userService.findActiveByLogin(principal.getName());
 
         if (requester.isEmpty() || requester.get().getRole().getValue() != Role.VALUE.ADMIN) {
             throw new UserNotAuthorized(messageSource, locale);

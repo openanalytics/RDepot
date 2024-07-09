@@ -376,7 +376,7 @@ public class RPackageValidatorTest {
 
     @Test
     public void validateUploadMultipartFile_shouldSucced() throws Exception {
-        errors = Mockito.spy(ValidationResultImpl.createDataSpecificResult(Submission.class));
+        errors = Mockito.spy(ValidationResultImpl.createDataSpecificResult());
         final File newPackage = new File("src/test/resources/unit/test_packages/accrued_1.2.tar.gz");
         final byte[] fileContent = Files.readAllBytes(newPackage.toPath());
         final MultipartFile multipart =
@@ -387,7 +387,7 @@ public class RPackageValidatorTest {
 
     @Test
     public void validateUploadMultipartFileWithWrongContentType_shouldFail() throws Exception {
-        errors = Mockito.spy(ValidationResultImpl.createDataSpecificResult(Submission.class));
+        errors = Mockito.spy(ValidationResultImpl.createDataSpecificResult());
         final File newPackage = new File("src/test/resources/unit/test_packages/accrued_1.2.tar.gz");
         final byte[] fileContent = Files.readAllBytes(newPackage.toPath());
         final MultipartFile multipart = new MockMultipartFile(
@@ -402,7 +402,7 @@ public class RPackageValidatorTest {
 
     @Test
     public void validateUploadMultipartFileWithNoContentType_shouldFail() throws Exception {
-        errors = Mockito.spy(ValidationResultImpl.createDataSpecificResult(Submission.class));
+        errors = Mockito.spy(ValidationResultImpl.createDataSpecificResult());
         final MultipartFile multipart = new MockMultipartFile("boto3-1.26.156.tar.gz", new byte[] {});
         packageValidator.validate(multipart, errors);
         assertTrue(errors.hasErrors(), "Validation should return empty file error");
@@ -411,7 +411,7 @@ public class RPackageValidatorTest {
 
     @Test
     public void validateUploadMultipartFileWithEmptyName_shouldFail() throws Exception {
-        errors = Mockito.spy(ValidationResultImpl.createDataSpecificResult(Submission.class));
+        errors = Mockito.spy(ValidationResultImpl.createDataSpecificResult());
         final File newPackage = new File("src/test/resources/unit/test_packages/accrued_1.2.tar.gz");
         final byte[] fileContent = Files.readAllBytes(newPackage.toPath());
         final MultipartFile multipart = new MockMultipartFile(
@@ -422,7 +422,7 @@ public class RPackageValidatorTest {
     }
 
     private void prepareTest() throws PackageValidationException, PackageDuplicateWithReplaceOff {
-        errors = Mockito.spy(ValidationResultImpl.createDataSpecificResult(Submission.class));
+        errors = Mockito.spy(ValidationResultImpl.createDataSpecificResult());
         when(env.getProperty("package.version.max-numbers", "10")).thenReturn("1");
     }
 

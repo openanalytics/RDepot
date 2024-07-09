@@ -70,7 +70,7 @@
     "approver": null,
     "changes": "Some changes 123",
     "state": "WAITING",
-    "created": "2024-04-12",
+    "created": "2024-04-12T00:00:00Z",
     "technology": "Python",
     "links": [
       {

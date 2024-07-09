@@ -28,7 +28,6 @@ import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -68,7 +67,6 @@ public abstract class UnitTest {
     }
 
     protected void executeBashCommand(String... args) throws Exception {
-        String[] cmd = ArrayUtils.addAll(new String[] {"/bin/bash"}, args);
         Process process = new ProcessBuilder(args).redirectErrorStream(true).start();
         final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         while (reader.readLine() != null) {}

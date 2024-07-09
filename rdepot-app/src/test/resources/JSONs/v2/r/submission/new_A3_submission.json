@@ -13,7 +13,7 @@
       "login": "einstein",
       "email": "einstein@ldap.forumsys.com"
     },
-    "created": "2024-05-21",
+    "created": "2024-05-2100:00:00Z",
     "changes": null,
     "links": [
       {
@@ -31,7 +31,7 @@
     "packageBag": {
       "author": "Scott Fortmann-Roe",
       "active": true,
-      "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are\\n applicable to virtually any predictive model and make\\n comparisons between different methodologies straightforward.\\n",
+      "description": "This package supplies tools for tabulating and analyzing\\n the results of predictive models. The methods employed are\\n applicable to virtually any predictive model and make\\n comparisons between different methodologies straightforward.",
       "technology": "R",
       "repository": {
         "name": "testrepo2",
@@ -40,7 +40,7 @@
         "technology": "R",
         "publicationUri": "http://localhost/repo/testrepo2"
       },
-      "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models\\n",
+      "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for\\n Predictive Models",
       "version": "0.9.1",
       "url": null,
       "deleted": false,

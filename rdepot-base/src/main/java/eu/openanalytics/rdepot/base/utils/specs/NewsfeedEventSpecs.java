@@ -20,12 +20,26 @@
  */
 package eu.openanalytics.rdepot.base.utils.specs;
 
-import eu.openanalytics.rdepot.base.entities.*;
+import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
 import eu.openanalytics.rdepot.base.entities.Package;
+import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
+import eu.openanalytics.rdepot.base.entities.Repository;
+import eu.openanalytics.rdepot.base.entities.RepositoryMaintainer;
+import eu.openanalytics.rdepot.base.entities.Resource;
+import eu.openanalytics.rdepot.base.entities.Submission;
+import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.entities.enums.ResourceType;
 import eu.openanalytics.rdepot.base.event.NewsfeedEventType;
 import eu.openanalytics.rdepot.base.utils.TechnologyResolver;
-import jakarta.persistence.criteria.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -48,13 +62,16 @@ public class NewsfeedEventSpecs {
             ResourceType.USER, "user",
             ResourceType.ACCESS_TOKEN, "accessToken");
 
+    private static final String AUTHOR = "author";
+    private static final String RESOURCE_TECHNOLOGY = "resourceTechnology";
+
     private static class RelatedResourceSpecification implements Specification<NewsfeedEvent> {
 
         @Serial
         private static final long serialVersionUID = -7861657472204796715L;
 
         protected final String resourceName;
-        protected final Object value;
+        protected transient Object value;
         protected final String property;
 
         public RelatedResourceSpecification(String resourceName, String property, Object value) {
@@ -63,10 +80,26 @@ public class NewsfeedEventSpecs {
             this.value = value;
         }
 
+        public Object getValue() {
+            return this.value;
+        }
+
         @Override
         public Predicate toPredicate(
                 Root<NewsfeedEvent> root, @NonNull CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
             return criteriaBuilder.equal(root.get(resourceName).get(property), value);
+        }
+
+        private void writeObject(ObjectOutputStream out)
+                throws IOException, ClassNotFoundException, NotSerializableException {
+            out.defaultWriteObject();
+            out.writeObject(getValue());
+        }
+
+        private void readObject(ObjectInputStream in)
+                throws IOException, NotSerializableException, ClassNotFoundException {
+            in.defaultReadObject();
+            value = in.readObject();
         }
     }
 
@@ -75,12 +108,12 @@ public class NewsfeedEventSpecs {
     }
 
     public static Specification<NewsfeedEvent> byUser(User user) {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("author"), user);
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(AUTHOR), user);
     }
 
     public static Specification<NewsfeedEvent> byUserName(List<String> userNames) {
         return (root, query, criteriaBuilder) ->
-                criteriaBuilder.in(root.get("author").get("name")).value(userNames);
+                criteriaBuilder.in(root.get(AUTHOR).get("name")).value(userNames);
     }
 
     public static Specification<NewsfeedEvent> ofType(List<NewsfeedEventType> newsfeedEventType) {
@@ -119,12 +152,20 @@ public class NewsfeedEventSpecs {
             List<Submission> submissions) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-            predicates.addAll(resourcePredicates(repositoryMaintainers, "repositoryMaintainer", criteriaBuilder, root));
-            predicates.addAll(resourcePredicates(packageMaintainers, "packageMaintainer", criteriaBuilder, root));
-            predicates.addAll(resourcePredicates(rRepositories, "repository", criteriaBuilder, root));
-            predicates.addAll(resourcePredicates(packages, "packageBag", criteriaBuilder, root));
-            predicates.addAll(resourcePredicates(submissions, "submission", criteriaBuilder, root));
-            predicates.add(criteriaBuilder.equal(root.get("author"), requester));
+            predicates.addAll(resourcePredicates(
+                    repositoryMaintainers,
+                    RESOURCE_TYPES.get(ResourceType.REPOSITORY_MAINTAINER),
+                    criteriaBuilder,
+                    root));
+            predicates.addAll(resourcePredicates(
+                    packageMaintainers, RESOURCE_TYPES.get(ResourceType.PACKAGE_MAINTAINER), criteriaBuilder, root));
+            predicates.addAll(resourcePredicates(
+                    rRepositories, RESOURCE_TYPES.get(ResourceType.REPOSITORY), criteriaBuilder, root));
+            predicates.addAll(
+                    resourcePredicates(packages, RESOURCE_TYPES.get(ResourceType.PACKAGE), criteriaBuilder, root));
+            predicates.addAll(resourcePredicates(
+                    submissions, RESOURCE_TYPES.get(ResourceType.SUBMISSION), criteriaBuilder, root));
+            predicates.add(criteriaBuilder.equal(root.get(AUTHOR), requester));
 
             return criteriaBuilder.or(predicates.toArray(new Predicate[predicates.size()]));
         };
@@ -138,10 +179,13 @@ public class NewsfeedEventSpecs {
 
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-            predicates.addAll(resourcePredicates(packageMaintainers, "packageMaintainer", criteriaBuilder, root));
-            predicates.addAll(resourcePredicates(rPackages, "packageBag", criteriaBuilder, root));
-            predicates.addAll(resourcePredicates(submissions, "submission", criteriaBuilder, root));
-            predicates.add(criteriaBuilder.equal(root.get("author"), requester));
+            predicates.addAll(resourcePredicates(
+                    packageMaintainers, RESOURCE_TYPES.get(ResourceType.PACKAGE_MAINTAINER), criteriaBuilder, root));
+            predicates.addAll(
+                    resourcePredicates(rPackages, RESOURCE_TYPES.get(ResourceType.PACKAGE), criteriaBuilder, root));
+            predicates.addAll(resourcePredicates(
+                    submissions, RESOURCE_TYPES.get(ResourceType.SUBMISSION), criteriaBuilder, root));
+            predicates.add(criteriaBuilder.equal(root.get(AUTHOR), requester));
 
             return criteriaBuilder.or(predicates.toArray(new Predicate[predicates.size()]));
         };
@@ -155,25 +199,27 @@ public class NewsfeedEventSpecs {
 
             List<Predicate> predicates = new ArrayList<>();
             predicates.add(criteriaBuilder
-                    .in(root.join("packageBag", JoinType.LEFT).get("resourceTechnology"))
+                    .in(root.join(RESOURCE_TYPES.get(ResourceType.PACKAGE), JoinType.LEFT)
+                            .get(RESOURCE_TECHNOLOGY))
                     .value(updatedTechnologies));
             predicates.add(criteriaBuilder
-                    .in(root.join("repository", JoinType.LEFT).get("resourceTechnology"))
+                    .in(root.join(RESOURCE_TYPES.get(ResourceType.REPOSITORY), JoinType.LEFT)
+                            .get(RESOURCE_TECHNOLOGY))
                     .value(updatedTechnologies));
             predicates.add(criteriaBuilder
-                    .in(root.join("submission", JoinType.LEFT)
-                            .join("packageBag", JoinType.LEFT)
-                            .get("resourceTechnology"))
+                    .in(root.join(RESOURCE_TYPES.get(ResourceType.SUBMISSION), JoinType.LEFT)
+                            .join(RESOURCE_TYPES.get(ResourceType.PACKAGE), JoinType.LEFT)
+                            .get(RESOURCE_TECHNOLOGY))
                     .value(updatedTechnologies));
             predicates.add(criteriaBuilder
-                    .in(root.join("packageMaintainer", JoinType.LEFT)
-                            .join("repository", JoinType.LEFT)
-                            .get("resourceTechnology"))
+                    .in(root.join(RESOURCE_TYPES.get(ResourceType.PACKAGE_MAINTAINER), JoinType.LEFT)
+                            .join(RESOURCE_TYPES.get(ResourceType.REPOSITORY), JoinType.LEFT)
+                            .get(RESOURCE_TECHNOLOGY))
                     .value(updatedTechnologies));
             predicates.add(criteriaBuilder
-                    .in(root.join("repositoryMaintainer", JoinType.LEFT)
-                            .join("repository", JoinType.LEFT)
-                            .get("resourceTechnology"))
+                    .in(root.join(RESOURCE_TYPES.get(ResourceType.REPOSITORY_MAINTAINER), JoinType.LEFT)
+                            .join(RESOURCE_TYPES.get(ResourceType.REPOSITORY), JoinType.LEFT)
+                            .get(RESOURCE_TECHNOLOGY))
                     .value(updatedTechnologies));
 
             return criteriaBuilder.or(predicates.toArray(new Predicate[predicates.size()]));
@@ -224,7 +270,11 @@ public class NewsfeedEventSpecs {
 
     public static Specification<NewsfeedEvent> relatedResourceHasRelatedRepository(Repository repository) {
         return hasResourceWithResourcePropertyAndOneOfTypes(
-                        "repository", repository, "packageMaintainer", "repositoryMaintainer", "packageBag")
+                        RESOURCE_TYPES.get(ResourceType.REPOSITORY),
+                        repository,
+                        RESOURCE_TYPES.get(ResourceType.PACKAGE_MAINTAINER),
+                        RESOURCE_TYPES.get(ResourceType.REPOSITORY_MAINTAINER),
+                        RESOURCE_TYPES.get(ResourceType.PACKAGE))
                 .or(hasResourceOfType(ResourceType.REPOSITORY).and(hasRelatedResource(repository)));
     }
 

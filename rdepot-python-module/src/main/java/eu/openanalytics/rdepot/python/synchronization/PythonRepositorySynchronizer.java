@@ -45,6 +45,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -52,7 +53,7 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class PythonRepositorySynchronizer implements RepositorySynchronizer<PythonRepository> {
+public class PythonRepositorySynchronizer extends RepositorySynchronizer<PythonRepository> {
     private final PythonStorage storage;
     private final PythonPackageService packageService;
     private final RestTemplate rest;
@@ -68,6 +69,7 @@ public class PythonRepositorySynchronizer implements RepositorySynchronizer<Pyth
     public static final Comparator<PythonPackage> PACKAGE_COMPARATOR = Comparator.comparingInt(PythonPackage::getId);
 
     @Override
+    @Transactional
     public void storeRepositoryOnRemoteServer(PythonRepository repository, String dateStamp)
             throws SynchronizeRepositoryException {
         LinkedHashSet<PythonPackage> packages = new LinkedHashSet<>(packageService.findActiveByRepository(repository));

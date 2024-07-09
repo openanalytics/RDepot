@@ -32,6 +32,7 @@ import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.validation.ValidationResult;
 import jakarta.json.Json;
 import jakarta.json.JsonPatch;
+import jakarta.json.JsonReader;
 import jakarta.json.JsonStructure;
 import jakarta.json.JsonWriter;
 import jakarta.json.JsonWriterFactory;
@@ -239,10 +240,12 @@ public abstract class ApiV2Controller<E extends Resource, D extends IDto> extend
         IDto dto = dtoConverter.convertEntityToDto(entity);
 
         // Convert DTO to JSON
-
         String dtoJsonStr = objectMapper.writeValueAsString(dto);
         StringReader reader = new StringReader(dtoJsonStr);
-        JsonStructure target = Json.createReader(reader).read();
+        JsonStructure target;
+        try (JsonReader r = Json.createReader(reader)) {
+            target = r.read();
+        }
 
         // Apply patch
         JsonStructure patched = patch.apply(target);

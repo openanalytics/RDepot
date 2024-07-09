@@ -31,32 +31,32 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class RepositoryService<E extends Repository> extends eu.openanalytics.rdepot.base.service.Service<E> {
 
-    private final RepositoryDao<E> dao;
+    private final RepositoryDao<E> repositoryDao;
 
-    public RepositoryService(RepositoryDao<E> dao) {
-        super(dao);
-        this.dao = dao;
+    public RepositoryService(RepositoryDao<E> repositoryDao) {
+        super(repositoryDao);
+        this.repositoryDao = repositoryDao;
     }
 
     public Optional<E> findByName(String name) {
-        return dao.findByName(name);
+        return repositoryDao.findByName(name);
     }
 
     public Optional<E> findByNameAndDeleted(String name, boolean deleted) {
-        return dao.findByNameAndDeleted(name, deleted);
+        return repositoryDao.findByNameAndDeleted(name, deleted);
     }
 
     @Override
     public void delete(E entity) {
-        dao.delete(entity);
+        repositoryDao.delete(entity);
     }
 
     public Optional<E> findByPublicationUri(String publicationUri) {
-        return dao.findByPublicationUri(publicationUri);
+        return repositoryDao.findByPublicationUri(publicationUri);
     }
 
     public Optional<E> findByServerAddress(String serverAddress) {
-        return dao.findByServerAddress(serverAddress);
+        return repositoryDao.findByServerAddress(serverAddress);
     }
 
     @Transactional
@@ -64,7 +64,7 @@ public class RepositoryService<E extends Repository> extends eu.openanalytics.rd
         Optional<E> currentRepositoryOpt = Optional.empty();
         int attempts = 0;
         while (attempts < 3) {
-            currentRepositoryOpt = dao.findByNameAcquirePessimisticWriteLock(repository.getName());
+            currentRepositoryOpt = repositoryDao.findByNameAcquirePessimisticWriteLock(repository.getName());
 
             if (currentRepositoryOpt.isEmpty()) {
                 log.warn("Could not acquire lock on repository " + repository.getName() + "! Trying again...");
@@ -82,6 +82,6 @@ public class RepositoryService<E extends Repository> extends eu.openanalytics.rd
                 () -> new IllegalStateException("Could not acquire lock on repository " + repository.getName()));
         log.debug("Incrementing version from " + currentRepository.getVersion());
         currentRepository.setVersion(currentRepository.getVersion() + 1);
-        dao.saveAndFlush(currentRepository);
+        repositoryDao.saveAndFlush(currentRepository);
     }
 }

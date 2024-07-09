@@ -24,6 +24,8 @@ import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.storage.exceptions.ReadPackageDescriptionException;
 
 public class ReadRPackageDescriptionException extends ReadPackageDescriptionException {
+    private static final long serialVersionUID = 1L;
+
     public ReadRPackageDescriptionException() {
         super(MessageCodes.READ_R_PACKAGE_DESCRIPTION_EXCEPTION);
     }

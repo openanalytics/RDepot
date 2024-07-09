@@ -22,6 +22,7 @@ package eu.openanalytics.rdepot.base.api.v2.dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import eu.openanalytics.rdepot.base.entities.AccessToken;
+import eu.openanalytics.rdepot.base.time.DateProvider;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -46,8 +47,8 @@ public class AccessTokenDto implements IDto {
         this.id = entity.getId();
         this.name = entity.getName();
         this.value = entity.getPlainValue();
-        this.creationDate = entity.getCreationDate().toString();
-        this.expirationDate = entity.getExpirationDate().toString();
+        this.creationDate = DateProvider.instantToTimestamp(entity.getCreationDate());
+        this.expirationDate = DateProvider.instantToTimestamp(entity.getExpirationDate());
         this.active = entity.isActive();
         this.deleted = entity.isDeleted();
         this.user = new UserProjection(entity.getUser());

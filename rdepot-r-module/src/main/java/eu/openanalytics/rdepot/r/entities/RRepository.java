@@ -30,6 +30,7 @@ import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.SecondaryTable;
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.Instant;
 
 @Entity
 @DiscriminatorValue("R")
@@ -43,8 +44,8 @@ public class RRepository extends Repository implements Serializable {
         super(RLanguage.instance);
     }
 
-    public RRepository(RRepositoryDto dto) {
-        super(RLanguage.instance, dto);
+    public RRepository(RRepositoryDto dto, Instant lastPublicationTimestamp, Instant lastModifiedTimestamp) {
+        super(RLanguage.instance, dto, lastPublicationTimestamp, lastModifiedTimestamp);
     }
 
     public RRepository(RRepository that) {

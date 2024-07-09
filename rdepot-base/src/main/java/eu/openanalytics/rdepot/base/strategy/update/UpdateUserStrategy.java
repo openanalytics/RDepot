@@ -68,6 +68,9 @@ public class UpdateUserStrategy extends UpdateStrategy<User> {
             if (updatedResource.isActive()) activateUser(resource);
             else deactivateUser(resource);
         }
+        if (!resource.isDeleted() && updatedResource.isDeleted()) {
+            softDeleteUser(resource);
+        }
         return resource;
     }
 
@@ -131,7 +134,7 @@ public class UpdateUserStrategy extends UpdateStrategy<User> {
 
     private void activateUser(User user) {
         user.setActive(true);
-        changedValues.add(new EventChangedVariable("active", "false", "true"));
+        changedValues.add(new EventChangedVariable("active", Boolean.FALSE.toString(), Boolean.TRUE.toString()));
     }
 
     private void deactivateUser(User user) throws StrategyFailure {
@@ -155,7 +158,13 @@ public class UpdateUserStrategy extends UpdateStrategy<User> {
                 token.setActive(false);
             }
         }
-        changedValues.add(new EventChangedVariable("active", "true", "false"));
+        changedValues.add(new EventChangedVariable("active", Boolean.TRUE.toString(), Boolean.FALSE.toString()));
+    }
+
+    private void softDeleteUser(User user) throws StrategyFailure {
+        if (user.isActive()) deactivateUser(user);
+        user.setDeleted(true);
+        changedValues.add(new EventChangedVariable("deleted", Boolean.FALSE.toString(), Boolean.TRUE.toString()));
     }
 
     @Override

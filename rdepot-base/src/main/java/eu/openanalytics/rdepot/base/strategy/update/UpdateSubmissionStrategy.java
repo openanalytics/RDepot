@@ -42,7 +42,6 @@ import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure
 import eu.openanalytics.rdepot.base.strategy.exceptions.WrongServiceException;
 import eu.openanalytics.rdepot.base.synchronization.RepositorySynchronizer;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
-import eu.openanalytics.rdepot.base.time.DateProvider;
 
 /**
  * Updates submission state.
@@ -59,6 +58,9 @@ public class UpdateSubmissionStrategy<P extends Package, R extends Repository> e
     private final RepositorySynchronizer<R> repositorySynchronizer;
     private boolean requiresRepublishing = false;
     private final R repository;
+
+    private static final String STATE = "state";
+    private static final String APPROVER_ID = "approver_id";
 
     public UpdateSubmissionStrategy(
             Submission resource,
@@ -104,9 +106,9 @@ public class UpdateSubmissionStrategy<P extends Package, R extends Repository> e
 
         submission.setState(SubmissionState.REJECTED);
         submission.setApprover(requester);
-        changedValues.add(new EventChangedVariable(
-                "state", submission.getState().getValue(), SubmissionState.REJECTED.getValue()));
-        changedValues.add(new EventChangedVariable("approver_id", "", String.valueOf(requester.getId())));
+        changedValues.add(
+                new EventChangedVariable(STATE, submission.getState().getValue(), SubmissionState.REJECTED.getValue()));
+        changedValues.add(new EventChangedVariable(APPROVER_ID, "", String.valueOf(requester.getId())));
     }
 
     /**
@@ -123,8 +125,8 @@ public class UpdateSubmissionStrategy<P extends Package, R extends Repository> e
         submission.setState(SubmissionState.CANCELLED);
         submission.setApprover(requester);
         changedValues.add(new EventChangedVariable(
-                "state", submission.getState().getValue(), SubmissionState.CANCELLED.getValue()));
-        changedValues.add(new EventChangedVariable("approver_id", "", String.valueOf(requester.getId())));
+                STATE, submission.getState().getValue(), SubmissionState.CANCELLED.getValue()));
+        changedValues.add(new EventChangedVariable(APPROVER_ID, "", String.valueOf(requester.getId())));
     }
 
     /**
@@ -166,15 +168,14 @@ public class UpdateSubmissionStrategy<P extends Package, R extends Repository> e
         submission.setState(SubmissionState.ACCEPTED);
         submission.setApprover(requester);
         changedValues.add(new EventChangedVariable(
-                "state", SubmissionState.WAITING.getValue(), SubmissionState.ACCEPTED.getValue()));
-        changedValues.add(new EventChangedVariable("approver_id", "", String.valueOf(requester.getId())));
+                STATE, SubmissionState.WAITING.getValue(), SubmissionState.ACCEPTED.getValue()));
+        changedValues.add(new EventChangedVariable(APPROVER_ID, "", String.valueOf(requester.getId())));
     }
 
     @Override
     protected void postStrategy() throws StrategyFailure {
         try {
-            if (requiresRepublishing)
-                repositorySynchronizer.storeRepositoryOnRemoteServer(repository, DateProvider.getCurrentDateStamp());
+            if (requiresRepublishing) repositorySynchronizer.storeRepositoryOnRemoteServer(repository);
         } catch (SynchronizeRepositoryException e) {
             logger.error(e.getMessage(), e);
             throw new StrategyFailure(e, false);

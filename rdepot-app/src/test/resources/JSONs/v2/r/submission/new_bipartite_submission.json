@@ -8,7 +8,7 @@
       "login": "galieleo",
       "email": "galieleo@ldap.forumsys.com"
     },
-    "created": "2024-05-21",
+    "created": "2024-05-21T00:00:00Z",
     "changes": null,
     "links": [
       {
@@ -43,7 +43,7 @@
         "technology": "R",
         "publicationUri": "http://localhost/repo/testrepo3"
       },
-      "title": "Visualising Bipartite Networks and Calculating Some (Ecological) Indices\\n",
+      "title": "Visualising Bipartite Networks and Calculating Some (Ecological)\\n Indices",
       "version": "2.13",
       "url": "https://github.com/biometry/bipartite",
       "deleted": false,

@@ -30,35 +30,35 @@ import java.util.Optional;
 @org.springframework.stereotype.Service
 public class RepositoryMaintainerService extends Service<RepositoryMaintainer> {
 
-    private final RepositoryMaintainerDao dao;
+    private final RepositoryMaintainerDao repositoryMaintainerDao;
 
-    public RepositoryMaintainerService(RepositoryMaintainerDao dao) {
-        super(dao);
-        this.dao = dao;
+    public RepositoryMaintainerService(RepositoryMaintainerDao repositoryMaintainerDao) {
+        super(repositoryMaintainerDao);
+        this.repositoryMaintainerDao = repositoryMaintainerDao;
     }
 
     public List<RepositoryMaintainer> findByRepository(Repository repository) {
-        return dao.findByRepository(repository);
+        return repositoryMaintainerDao.findByRepository(repository);
     }
 
     public Optional<RepositoryMaintainer> findByRepositoryAndUserAndDeleted(
             Repository repository, User user, boolean deleted) {
-        return dao.findByRepositoryAndUserAndDeleted(repository, user, deleted);
+        return repositoryMaintainerDao.findByRepositoryAndUserAndDeleted(repository, user, deleted);
     }
 
     public boolean existsByRepositoryAndUserAndDeleted(Repository repository, User user, boolean deleted) {
-        return dao.existsByRepositoryAndUserAndDeleted(repository, user, deleted);
+        return repositoryMaintainerDao.existsByRepositoryAndUserAndDeleted(repository, user, deleted);
     }
 
     public List<RepositoryMaintainer> findByUserWithoutDeleted(User user) {
-        return dao.findByUserAndDeleted(user, false);
+        return repositoryMaintainerDao.findByUserAndDeleted(user, false);
     }
 
     public List<RepositoryMaintainer> findByUserAndRepository(User user, Repository repository) {
-        return dao.findByUserAndRepository(user, repository);
+        return repositoryMaintainerDao.findByUserAndRepository(user, repository);
     }
 
     public List<RepositoryMaintainer> findByRepositoryNonDeleted(Repository repository) {
-        return dao.findByRepositoryAndDeleted(repository, false);
+        return repositoryMaintainerDao.findByRepositoryAndDeleted(repository, false);
     }
 }

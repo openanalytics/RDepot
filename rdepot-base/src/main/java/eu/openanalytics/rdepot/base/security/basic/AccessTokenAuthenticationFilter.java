@@ -35,8 +35,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 public class AccessTokenAuthenticationFilter extends OncePerRequestFilter {
 
-    private final String TOKEN_PREFIX = "Basic ";
-    private final String HEADER_STRING = "Authorization";
+    private static final String TOKEN_PREFIX = "Basic ";
+    private static final String HEADER_STRING = "Authorization";
     private final String type;
     private final AccessTokenBindAuthenticator authenticator;
 

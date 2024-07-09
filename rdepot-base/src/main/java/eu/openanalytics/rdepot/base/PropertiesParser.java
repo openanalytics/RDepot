@@ -34,8 +34,8 @@ public class PropertiesParser extends Properties {
     @Serial
     private static final long serialVersionUID = 356227594180997607L;
 
-    private final Pattern isKeyValue = Pattern.compile("^[a-zA-Z][a-zA-Z-/@_]*:(.*|\\n)$");
-    private final Pattern isPartOfValue = Pattern.compile("^(\\t+|\\ {1,})");
+    private final Pattern isKeyValue = Pattern.compile("^[a-zA-Z][a-zA-Z-/@_]*:(?:.*|\\n)$");
+    private final Pattern isPartOfValue = Pattern.compile("^(?:[\\t ]+.*|)$");
 
     public PropertiesParser(File descriptionFile) throws IOException {
         super();
@@ -79,7 +79,7 @@ public class PropertiesParser extends Properties {
                 saveKeyValue(currentKey, currentValue);
                 int index = line.indexOf(':');
                 currentKey = line.substring(0, index);
-                currentValue = line.substring(index + 1);
+                currentValue = line.substring(index + 1) + "\\n";
             } else if (isPartOfValue.matcher(line).find()) {
                 currentValue += line + "\\n";
             } else {
@@ -91,7 +91,11 @@ public class PropertiesParser extends Properties {
 
     private void saveKeyValue(String key, String value) {
         if (Objects.nonNull(key) && Objects.nonNull(value)) {
-            value = value.replaceAll("\\s{2,}", " ").trim();
+            value = value.replaceAll("\\s{2,}", " ")
+                    .replaceAll(" *(?:\\\\n)+ *$", "")
+                    .replaceAll("^ *(?:\\\\n)+ *", "")
+                    .replaceAll("\\t", " ")
+                    .strip();
             if (containsKey(key)) {
                 value = get(key).toString() + ", " + value;
             }

@@ -35,7 +35,8 @@ import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.create.CreateAccessTokenStrategy;
 import eu.openanalytics.rdepot.test.fixture.UserTestFixture;
 import eu.openanalytics.rdepot.test.strategy.StrategyTest;
-import java.time.LocalDate;
+import java.time.Instant;
+import java.util.Calendar;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -65,8 +66,15 @@ public class CreateAccessTokenStrategyTest extends StrategyTest {
         expectedToken.setId(7);
         expectedToken.setName("expected test token");
         expectedToken.setValue("$2b$10$0hClsEu3CHpEC00DwE6wTeYZhEwuzJ.SvbJuG9ZuQ56ry7VpvczOK");
-        expectedToken.setCreationDate(LocalDate.of(2023, 11, 27));
-        expectedToken.setExpirationDate(LocalDate.of(2023, 12, 11));
+
+        final Calendar cal = Calendar.getInstance();
+        cal.set(2023, Calendar.NOVEMBER, 27);
+        final Instant creationDate = cal.toInstant();
+        cal.set(2023, Calendar.DECEMBER, 11);
+        final Instant expirationDate = cal.toInstant();
+
+        expectedToken.setCreationDate(creationDate);
+        expectedToken.setExpirationDate(expirationDate);
         expectedToken.setActive(true);
         expectedToken.setDeleted(false);
         expectedToken.setPlainValue("ECPPn5HcNubvqIp39mF5VbIfdBEvjTQh");

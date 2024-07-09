@@ -41,6 +41,9 @@ public class ApiV2ConfigController {
     private final boolean deletingPackagesEnabled;
     private final boolean deletingRepositoriesEnabled;
     private final boolean replacingPackagesEnabled;
+    private final boolean accessTokenLifetimeConfigurable;
+    private final boolean generateManuals;
+    private final int accessTokenLifetimeDefault;
     private final MessageSource messageSource;
     private final Locale locale = LocaleContextHolder.getLocale();
 
@@ -49,12 +52,18 @@ public class ApiV2ConfigController {
             @Value("${declarative}") String declarative,
             @Value("${deleting.packages.enabled}") String deletingPackagesEnabled,
             @Value("${deleting.repositories.enabled}") String deletingRepositoriesEnabled,
-            @Value("${replacing.packages.enabled}") String replacingPackagesEnabled) {
+            @Value("${replacing.packages.enabled}") String replacingPackagesEnabled,
+            @Value("${access-token.lifetime-configurable}") String accessTokenLifetimeConfigurable,
+            @Value("${access-token.lifetime-default}") String accessTokenLifetimeDefault,
+            @Value("${generate-manuals}") String generateManuals) {
         this.messageSource = messageSource;
         this.declarative = Boolean.parseBoolean(declarative);
         this.deletingPackagesEnabled = Boolean.parseBoolean(deletingPackagesEnabled);
         this.deletingRepositoriesEnabled = Boolean.parseBoolean(deletingRepositoriesEnabled);
         this.replacingPackagesEnabled = Boolean.parseBoolean(replacingPackagesEnabled);
+        this.accessTokenLifetimeConfigurable = Boolean.parseBoolean(accessTokenLifetimeConfigurable);
+        this.accessTokenLifetimeDefault = Integer.parseInt(accessTokenLifetimeDefault);
+        this.generateManuals = Boolean.parseBoolean(generateManuals);
     }
 
     @GetMapping
@@ -63,7 +72,13 @@ public class ApiV2ConfigController {
                 messageSource,
                 locale,
                 new PublicConfigurationDto(
-                        declarative, deletingPackagesEnabled, deletingRepositoriesEnabled, replacingPackagesEnabled));
+                        declarative,
+                        deletingPackagesEnabled,
+                        deletingRepositoriesEnabled,
+                        replacingPackagesEnabled,
+                        accessTokenLifetimeConfigurable,
+                        accessTokenLifetimeDefault,
+                        generateManuals));
 
         return ResponseEntity.ok(dto);
     }

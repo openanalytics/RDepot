@@ -97,7 +97,7 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
 
     @Override
     @Async
-    public void synchronize(MirroredRRepository mirroredRepository, CranMirror mirror) {
+    public void synchronizeAsync(MirroredRRepository mirroredRepository, CranMirror mirror) {
         RRepository repositoryEntity = repositoryService
                 .findByName(mirroredRepository.getName())
                 .orElseThrow(() -> new IllegalStateException("Cannot synchronize non-existing repository."));
@@ -105,7 +105,11 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
     }
 
     @Async
-    public void synchronize(RRepository repository, CranMirror mirror) {
+    public void synchronizeAsync(RRepository repository, CranMirror mirror) {
+        synchronize(repository, mirror);
+    }
+
+    private void synchronize(RRepository repository, CranMirror mirror) {
         if (isPendingAddNewStatusIfFinished(repository)) {
             log.warn("Cannot start synchronization "
                     + "because it is already pending for this repository: "
