@@ -68,15 +68,11 @@ public class CreateRepositoryMaintainerStrategy extends CreateStrategy<Repositor
             try {
                 packageBag.setUser(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag));
             } catch (NoSuitableMaintainerFound e) {
-                logger.error(e.getMessage(), e);
                 throw new StrategyFailure(e);
             }
         }
         return maintainer;
     }
-
-    @Override
-    protected void postStrategy() throws StrategyFailure {}
 
     @Override
     protected NewsfeedEvent generateEvent(RepositoryMaintainer resource) {

@@ -23,12 +23,15 @@ package eu.openanalytics.rdepot.base.time;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 
 /**
  * Allows mocking Date for testing.
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DateProvider {
 
     /**

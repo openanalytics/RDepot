@@ -34,11 +34,11 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public abstract class EventableResource extends Resource implements HavingSimpleDtoRepresentation {
 
-    public EventableResource(Technology technology, ResourceType resourceType) {
+    protected EventableResource(Technology technology, ResourceType resourceType) {
         super(technology, resourceType);
     }
 
-    public EventableResource(int id, Technology technology, ResourceType resourceType) {
+    protected EventableResource(int id, Technology technology, ResourceType resourceType) {
         super(id, technology, resourceType);
     }
 }

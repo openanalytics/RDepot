@@ -22,8 +22,16 @@ package eu.openanalytics.rdepot.base.storage;
 
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.Repository;
-import eu.openanalytics.rdepot.base.storage.exceptions.*;
-import java.io.File;
+import eu.openanalytics.rdepot.base.storage.exceptions.CheckSumCalculationException;
+import eu.openanalytics.rdepot.base.storage.exceptions.DeleteFileException;
+import eu.openanalytics.rdepot.base.storage.exceptions.ExtractFileException;
+import eu.openanalytics.rdepot.base.storage.exceptions.InvalidSourceException;
+import eu.openanalytics.rdepot.base.storage.exceptions.MovePackageSourceException;
+import eu.openanalytics.rdepot.base.storage.exceptions.PackageFolderPopulationException;
+import eu.openanalytics.rdepot.base.storage.exceptions.ReadPackageDescriptionException;
+import eu.openanalytics.rdepot.base.storage.exceptions.SourceFileDeleteException;
+import eu.openanalytics.rdepot.base.storage.exceptions.SourceNotFoundException;
+import eu.openanalytics.rdepot.base.storage.exceptions.WriteToWaitingRoomException;
 import java.util.Properties;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -52,9 +60,6 @@ public interface Storage<R extends Repository, P extends Package> {
      */
     String extractTarGzPackageFile(String storedFile) throws ExtractFileException;
 
-    // return whole package path (with getAbsolutePath)
-    String generateSubmissionWaitingRoomLocation(File file);
-
     /**
      * Fetches properties from extracted package file.
      */
@@ -75,11 +80,6 @@ public interface Storage<R extends Repository, P extends Package> {
      * Can be used in case of failure during package creation.
      */
     void removeFileIfExists(String path) throws DeleteFileException;
-
-    /**
-     * Ensures that updated source path leads to a correct package.
-     */
-    void verifySource(P packageBag, String newSource) throws InvalidSourceException;
 
     /**
      * Moves package source to a new location.

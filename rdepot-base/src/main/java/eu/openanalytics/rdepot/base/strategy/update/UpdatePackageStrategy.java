@@ -75,10 +75,10 @@ public abstract class UpdatePackageStrategy<P extends Package> extends UpdateStr
             if (updatedResource.isDeleted() && !resource.isDeleted()) {
                 delete(resource);
             }
-            if (updatedResource.getSource() != null && resource.getSource() != null) {
-                if (!updatedResource.getSource().equals(resource.getSource())) {
-                    updateSource(resource, updatedResource.getSource());
-                }
+            if (updatedResource.getSource() != null
+                    && resource.getSource() != null
+                    && !updatedResource.getSource().equals(resource.getSource())) {
+                updateSource(resource, updatedResource.getSource());
             }
 
             if (shouldRefreshMaintainer) {
@@ -99,7 +99,6 @@ public abstract class UpdatePackageStrategy<P extends Package> extends UpdateStr
     }
 
     protected void updateSource(P resource, String source) throws InvalidSourceException {
-        storage.verifySource(resource, source);
         changedValues.add(new EventChangedVariable("source", resource.getSource(), source));
         resource.setSource(source);
     }
@@ -125,7 +124,6 @@ public abstract class UpdatePackageStrategy<P extends Package> extends UpdateStr
         try {
             if (processedResource.getRepository().getPublished()) publishPackageRepository(processedResource);
         } catch (SynchronizeRepositoryException e) {
-            logger.error(e.getMessage(), e);
             throw new StrategyFailure(e, false);
         }
     }

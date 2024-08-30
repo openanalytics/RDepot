@@ -1,85 +1,77 @@
 {
-    "status": "SUCCESS",
-    "code": 200,
-    "message": "Your request has been processed successfully.",
-    "messageCode": "success.request.processed",
-    "data": {
-        "id": 31,
-        "packageBag": {
-            "id": 31,
-            "user": {
-                "id": 8,
-                "name": "Local Admin User",
-                "login": "admin",
-                "email": "admin@localhost"
-            },
-            "repository": {
-                "id": 5,
-                "name": "testrepo4",
-                "publicationUri": "http://localhost/repo/testrepo4",
-                "technology": "R",
-                "published": false
-            },
-            "submission": {
-                "id": 31,
-                "state": "CANCELLED"
-            },
-            "name": "abc",
-            "version": "1.0",
-            "source": "/opt/rdepot/trash/5/27295939/abc_1.0.tar.gz",
-            "active": false,
-            "deleted": true,
-            "technology": "R",
-            "description": "The 'abc' package provides various functions for parameter estimation and model selection in an ABC framework. Three main",
-            "author": "Katalin Csillery, with contributions from Michael Blum and Olivier Francois",
-            "title": "Functions to perform Approximate Bayesian Computation (ABC) using simulated data",
-            "url": null,
-            "links": [
-                {
-                    "rel": "self",
-                    "href": "http://localhost:8017/api/v2/manager/r/packages/31"
-                },
-                {
-                    "rel": "packageList",
-                    "href": "http://localhost:8017/api/v2/manager/packages"
-                },
-                {
-                    "rel": "self",
-                    "href": "http://localhost:8017/api/v2/manager/r/packages/31",
-                    "type": "PATCH"
-                },
-                {
-                    "rel": "self",
-                    "href": "http://localhost:8017/api/v2/manager/r/packages/31",
-                    "type": "DELETE"
-                }
-            ]
-        },
-        "submitter": {
-            "id": 6,
-            "name": "Galileo Galilei",
-            "login": "galieleo",
-            "email": "galieleo@ldap.forumsys.com"
-        },
-        "approver": {
-            "id": 6,
-            "name": "Galileo Galilei",
-            "login": "galieleo",
-            "email": "galieleo@ldap.forumsys.com"
-        },
-        "changes": null,
-        "state": "CANCELLED",
-        "created": "2020-03-28T00:00:00Z",
+  "code": 200,
+  "data": {
+    "approver": {
+      "name": "Galileo Galilei",
+      "id": 6,
+      "login": "galieleo",
+      "email": "galieleo@ldap.forumsys.com"
+    },
+    "submitter": {
+      "name": "Galileo Galilei",
+      "id": 6,
+      "login": "galieleo",
+      "email": "galieleo@ldap.forumsys.com"
+    },
+    "created": "2020-03-28T00:00:00Z",
+    "changes": null,
+    "links": [{
+      "rel": "self",
+      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/31"
+    }, {
+      "rel": "submissionList",
+      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions"
+    }],
+    "id": 31,
+    "state": "CANCELLED",
+    "technology": "R",
+    "packageBag": {
+      "author": "Katalin Csillery, with contributions from Michael Blum and Olivier Francois",
+      "active": false,
+      "description": "The 'abc' package provides various functions for parameter estimation and model selection in an ABC framework. Three main",
+      "technology": "R",
+      "repository": {
+        "name": "testrepo4",
+        "id": 5,
+        "published": false,
         "technology": "R",
-        "links": [
-            {
-                "rel": "self",
-                "href": "http://localhost:8017/api/v2/manager/r/submissions/31"
-            },
-            {
-                "rel": "submissionList",
-                "href": "http://localhost:8017/api/v2/manager/r/submissions"
-            }
-        ]
+        "publicationUri": "http:\/\/localhost\/repo\/testrepo4"
+      },
+      "title": "Functions to perform Approximate Bayesian Computation (ABC) using simulated data",
+      "version": "1.0",
+      "url": null,
+      "deleted": true,
+      "binary": false,
+      "name": "abc",
+      "submission": {
+        "id": 31,
+        "state": "CANCELLED"
+      },
+      "links": [{
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/31"
+      }, {
+        "rel": "packageList",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+      }, {
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/31",
+        "type": "PATCH"
+      }, {
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/31",
+        "type": "DELETE"
+      }],
+      "id": 31,
+      "user": {
+        "name": "Local Admin User",
+        "id": 8,
+        "login": "admin",
+        "email": "admin@localhost"
+      }
     }
+  },
+  "messageCode": "success.request.processed",
+  "message": "Your request has been processed successfully.",
+  "status": "SUCCESS"
 }

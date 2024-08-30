@@ -1,300 +1,276 @@
 {
   "code": 200,
   "data": {
-    "links": [
-      {
-        "rel": "self",
-        "href": "http://localhost:8017/api/v2/manager/packages?search=acc&page=0&size=20&sort=id,asc"
-      }
-    ],
+    "links": [{
+      "rel": "self",
+      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages?search=acc&page=0&size=20&sort=id,asc"
+    }],
     "page": {
       "number": 0,
       "size": 20,
       "totalPages": 1,
       "totalElements": 7
     },
-    "content": [
-      {
-        "author": "Julie Eaton and Ian Painter",
-        "active": true,
-        "description": "Package for visualizing data quality of partially accruing data.",
-        "source": "/opt/rdepot/repositories/3/99077116/accrued_1.3.5.tar.gz",
+    "content": [{
+      "author": "Julie Eaton and Ian Painter",
+      "active": true,
+      "description": "Package for visualizing data quality of partially accruing data.",
+      "source": "\/opt\/rdepot\/repositories\/3\/99077116\/accrued_1.3.5.tar.gz",
+      "technology": "R",
+      "repository": {
+        "name": "testrepo2",
+        "id": 3,
+        "published": true,
         "technology": "R",
-        "repository": {
-          "name": "testrepo2",
-          "id": 3,
-          "published": true,
-          "technology": "R",
-          "publicationUri": "http://localhost/repo/testrepo2"
-        },
-        "title": "Data Quality Visualization Tools for Partially Accruing Data",
-        "version": "1.3.5",
-        "url": null,
-        "deleted": false,
-        "name": "accrued",
-        "submission": {
-          "id": 5,
-          "state": "ACCEPTED"
-        },
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/4"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/packages"
-          }
-        ],
-        "id": 4,
-        "user": {
-          "name": "Albert Einstein",
-          "id": 4,
-          "login": "einstein",
-          "email": "einstein@ldap.forumsys.com"
-        }
+        "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
       },
-      {
-        "author": "Julie Eaton and Ian Painter",
-        "active": true,
-        "description": "Package for visualizing data quality of partially accruing data.",
-        "source": "/opt/rdepot/repositories/3/82197810/accrued_1.3.tar.gz",
-        "technology": "R",
-        "repository": {
-          "name": "testrepo2",
-          "id": 3,
-          "published": true,
-          "technology": "R",
-          "publicationUri": "http://localhost/repo/testrepo2"
-        },
-        "title": "Data Quality Visualization Tools for Partially Accruing Data",
-        "version": "1.3",
-        "url": null,
-        "deleted": false,
-        "name": "accrued",
-        "submission": {
-          "id": 7,
-          "state": "ACCEPTED"
-        },
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/5"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/packages"
-          }
-        ],
+      "title": "Data Quality Visualization Tools for Partially Accruing Data",
+      "version": "1.3.5",
+      "url": null,
+      "deleted": false,
+      "binary": false,
+      "name": "accrued",
+      "submission": {
         "id": 5,
-        "user": {
-          "name": "Albert Einstein",
-          "id": 4,
-          "login": "einstein",
-          "email": "einstein@ldap.forumsys.com"
-        }
+        "state": "ACCEPTED"
       },
-      {
-        "author": "Julie Eaton and Ian Painter",
-        "active": false,
-        "description": "Package for visualizing data quality of partially accruing time series.",
-        "source": "/opt/rdepot/repositories/3/46950998/accrued_1.1.tar.gz",
-        "technology": "R",
-        "repository": {
-          "name": "testrepo2",
-          "id": 3,
-          "published": true,
-          "technology": "R",
-          "publicationUri": "http://localhost/repo/testrepo2"
-        },
-        "title": "Visualization tools for partially accruing data",
-        "version": "1.1",
-        "url": null,
-        "deleted": true,
-        "name": "accrued",
-        "submission": {
-          "id": 4,
-          "state": "ACCEPTED"
-        },
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/6"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/packages"
-          }
-        ],
-        "id": 6,
-        "user": {
-          "name": "Albert Einstein",
-          "id": 4,
-          "login": "einstein",
-          "email": "einstein@ldap.forumsys.com"
-        }
-      },
-      {
-        "author": "Julie Eaton and Ian Painter",
-        "active": false,
-        "description": "Package for visualizing data quality of partially accruing data.",
-        "source": "/opt/rdepot/repositories/3/28075835/accrued_1.4.tar.gz",
-        "technology": "R",
-        "repository": {
-          "name": "testrepo2",
-          "id": 3,
-          "published": true,
-          "technology": "R",
-          "publicationUri": "http://localhost/repo/testrepo2"
-        },
-        "title": "Data Quality Visualization Tools for Partially Accruing Data",
-        "version": "1.4",
-        "url": null,
-        "deleted": false,
-        "name": "accrued",
-        "submission": {
-          "id": 8,
-          "state": "ACCEPTED"
-        },
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/7"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/packages"
-          }
-        ],
-        "id": 7,
-        "user": {
-          "name": "Albert Einstein",
-          "id": 4,
-          "login": "einstein",
-          "email": "einstein@ldap.forumsys.com"
-        }
-      },
-      {
-        "author": "Julie Eaton and Ian Painter",
-        "active": true,
-        "description": "Package for visualizing data quality of partially accruing time series.",
-        "source": "/opt/rdepot/repositories/3/83118397/accrued_1.2.tar.gz",
-        "technology": "R",
-        "repository": {
-          "name": "testrepo2",
-          "id": 3,
-          "published": true,
-          "technology": "R",
-          "publicationUri": "http://localhost/repo/testrepo2"
-        },
-        "title": "Visualization tools for partially accruing data",
-        "version": "1.2",
-        "url": null,
-        "deleted": false,
-        "name": "accrued",
-        "submission": {
-          "id": 6,
-          "state": "ACCEPTED"
-        },
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/8"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/packages"
-          }
-        ],
-        "id": 8,
-        "user": {
-          "name": "Albert Einstein",
-          "id": 4,
-          "login": "einstein",
-          "email": "einstein@ldap.forumsys.com"
-        }
-      },
-      {
-        "author": "Julie Eaton and Ian Painter",
-        "active": false,
-        "description": "Package for visualizing data quality of partially accruing time series.",
-        "source": "/opt/rdepot/repositories/2/40553654/accrued_1.0.tar.gz",
-        "technology": "R",
-        "repository": {
-          "name": "testrepo1",
-          "id": 2,
-          "published": true,
-          "technology": "R",
-          "publicationUri": "http://localhost/repo/testrepo1"
-        },
-        "title": "Visualization tools for partially accruing data",
-        "version": "1.0",
-        "url": null,
-        "deleted": false,
-        "name": "accrued",
-        "submission": {
-          "id": 14,
-          "state": "ACCEPTED"
-        },
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/13"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/packages"
-          }
-        ],
-        "id": 13,
-        "user": {
-          "name": "Galileo Galilei",
-          "id": 6,
-          "login": "galieleo",
-          "email": "galieleo@ldap.forumsys.com"
-        }
-      },
-      {
-        "author": "Matti Picus",
-        "active": true,
-        "description": "# numpy-threading-extensions Faster loops for NumPy using multithreading and other tricks. The first release\n will target NumPy binary and unary ufuncs. Eventually we will enable overriding\n other NumPy functions, and provide an C-based (non-Python) API for extending\n via third-party functions.\n \n [![Travis CI Build Status](https://api.travis-ci.org/Quansight/numpy-threading-extensions.svg)](https://travis-ci.org/Quansight/numpy-threading-extensions)\n \n [![Coverage Status](https://codecov.io/gh/Quansight/numpy-threading-extensions/branch/main/graphs/badge.svg)](https://codecov.io/github/Quansight/numpy-threading-extensions)\n \n [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)\n \n ## Installation\n ```\n pip install accelerated_numpy\n ```\n \n You can also install the in-development version 0.0.1 with:\n ```\n pip install https://github.com/Quansight/numpy-threading-extensions/archive/v0.0.1.zip\n ```\n or latest with\n ```\n pip install https://github.com/Quansight/numpy-threading-extensions/archive/main.zip\n ```\n \n ## Documentation\n \n To use the project:\n \n ```python\n import accelerated_numpy\n accelerated_numpy.initialize()\n ```\n \n ## Development\n \n To run all the tests run::\n \n ```\n tox\n ```\n \n Note, to combine the coverage data from all the tox environments run:\n \n OS | Command\n ----|----\n Windows | `set PYTEST_ADDOPTS=--cov-append`\n | | `tox`\n Other | `PYTEST_ADDOPTS=--cov-append tox`\n \n",
-        "source": "/opt/rdepot/repositories/8/25558329/accelerated-numpy-0.1.0.tar.gz",
-        "technology": "Python",
-        "repository": {
-          "name": "testrepo8",
-          "id": 8,
-          "published": true,
-          "technology": "Python",
-          "publicationUri": "http://localhost/repo/testrepo8"
-        },
-        "title": "Faster loops for NumPy using multithreading and other tricks",
-        "version": "0.1.0",
-        "url": "Changelog, https://github.com/Quansight/numpy-threading-extensions/blob/master/CHANGELOG.rst, Issue Tracker, https://github.com/Quansight/numpy-threading-extensions/issues",
-        "deleted": false,
-        "name": "accelerated-numpy",
-        "submission": {
-          "id": 43,
-          "state": "ACCEPTED"
-        },
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/python/packages/43"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/packages"
-          }
-        ],
-        "id": 43,
-        "user": {
-          "name": "Galileo Galilei",
-          "id": 6,
-          "login": "galieleo",
-          "email": "galieleo@ldap.forumsys.com"
-        }
+      "links": [{
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/4"
+      }, {
+        "rel": "packageList",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+      }],
+      "id": 4,
+      "user": {
+        "name": "Albert Einstein",
+        "id": 4,
+        "login": "einstein",
+        "email": "einstein@ldap.forumsys.com"
       }
-    ]
+    }, {
+      "author": "Julie Eaton and Ian Painter",
+      "active": true,
+      "description": "Package for visualizing data quality of partially accruing data.",
+      "source": "\/opt\/rdepot\/repositories\/3\/82197810\/accrued_1.3.tar.gz",
+      "technology": "R",
+      "repository": {
+        "name": "testrepo2",
+        "id": 3,
+        "published": true,
+        "technology": "R",
+        "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
+      },
+      "title": "Data Quality Visualization Tools for Partially Accruing Data",
+      "version": "1.3",
+      "url": null,
+      "deleted": false,
+      "binary": false,
+      "name": "accrued",
+      "submission": {
+        "id": 7,
+        "state": "ACCEPTED"
+      },
+      "links": [{
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/5"
+      }, {
+        "rel": "packageList",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+      }],
+      "id": 5,
+      "user": {
+        "name": "Albert Einstein",
+        "id": 4,
+        "login": "einstein",
+        "email": "einstein@ldap.forumsys.com"
+      }
+    }, {
+      "author": "Julie Eaton and Ian Painter",
+      "active": false,
+      "description": "Package for visualizing data quality of partially accruing time series.",
+      "source": "\/opt\/rdepot\/repositories\/3\/46950998\/accrued_1.1.tar.gz",
+      "technology": "R",
+      "repository": {
+        "name": "testrepo2",
+        "id": 3,
+        "published": true,
+        "technology": "R",
+        "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
+      },
+      "title": "Visualization tools for partially accruing data",
+      "version": "1.1",
+      "url": null,
+      "deleted": true,
+      "binary": false,
+      "name": "accrued",
+      "submission": {
+        "id": 4,
+        "state": "ACCEPTED"
+      },
+      "links": [{
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/6"
+      }, {
+        "rel": "packageList",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+      }],
+      "id": 6,
+      "user": {
+        "name": "Albert Einstein",
+        "id": 4,
+        "login": "einstein",
+        "email": "einstein@ldap.forumsys.com"
+      }
+    }, {
+      "author": "Julie Eaton and Ian Painter",
+      "active": false,
+      "description": "Package for visualizing data quality of partially accruing data.",
+      "source": "\/opt\/rdepot\/repositories\/3\/28075835\/accrued_1.4.tar.gz",
+      "technology": "R",
+      "repository": {
+        "name": "testrepo2",
+        "id": 3,
+        "published": true,
+        "technology": "R",
+        "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
+      },
+      "title": "Data Quality Visualization Tools for Partially Accruing Data",
+      "version": "1.4",
+      "url": null,
+      "deleted": false,
+      "binary": false,
+      "name": "accrued",
+      "submission": {
+        "id": 8,
+        "state": "ACCEPTED"
+      },
+      "links": [{
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/7"
+      }, {
+        "rel": "packageList",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+      }],
+      "id": 7,
+      "user": {
+        "name": "Albert Einstein",
+        "id": 4,
+        "login": "einstein",
+        "email": "einstein@ldap.forumsys.com"
+      }
+    }, {
+      "author": "Julie Eaton and Ian Painter",
+      "active": true,
+      "description": "Package for visualizing data quality of partially accruing time series.",
+      "source": "\/opt\/rdepot\/repositories\/3\/83118397\/accrued_1.2.tar.gz",
+      "technology": "R",
+      "repository": {
+        "name": "testrepo2",
+        "id": 3,
+        "published": true,
+        "technology": "R",
+        "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
+      },
+      "title": "Visualization tools for partially accruing data",
+      "version": "1.2",
+      "url": null,
+      "deleted": false,
+      "binary": false,
+      "name": "accrued",
+      "submission": {
+        "id": 6,
+        "state": "ACCEPTED"
+      },
+      "links": [{
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/8"
+      }, {
+        "rel": "packageList",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+      }],
+      "id": 8,
+      "user": {
+        "name": "Albert Einstein",
+        "id": 4,
+        "login": "einstein",
+        "email": "einstein@ldap.forumsys.com"
+      }
+    }, {
+      "author": "Julie Eaton and Ian Painter",
+      "active": false,
+      "description": "Package for visualizing data quality of partially accruing time series.",
+      "source": "\/opt\/rdepot\/repositories\/2\/40553654\/accrued_1.0.tar.gz",
+      "technology": "R",
+      "repository": {
+        "name": "testrepo1",
+        "id": 2,
+        "published": true,
+        "technology": "R",
+        "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+      },
+      "title": "Visualization tools for partially accruing data",
+      "version": "1.0",
+      "url": null,
+      "deleted": false,
+      "binary": false,
+      "name": "accrued",
+      "submission": {
+        "id": 14,
+        "state": "ACCEPTED"
+      },
+      "links": [{
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/13"
+      }, {
+        "rel": "packageList",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+      }],
+      "id": 13,
+      "user": {
+        "name": "Galileo Galilei",
+        "id": 6,
+        "login": "galieleo",
+        "email": "galieleo@ldap.forumsys.com"
+      }
+    }, {
+      "author": "Matti Picus",
+      "active": true,
+      "description": "# numpy-threading-extensions Faster loops for NumPy using multithreading and other tricks. The first release\n will target NumPy binary and unary ufuncs. Eventually we will enable overriding\n other NumPy functions, and provide an C-based (non-Python) API for extending\n via third-party functions.\n \n [![Travis CI Build Status](https:\/\/api.travis-ci.org\/Quansight\/numpy-threading-extensions.svg)](https:\/\/travis-ci.org\/Quansight\/numpy-threading-extensions)\n \n [![Coverage Status](https:\/\/codecov.io\/gh\/Quansight\/numpy-threading-extensions\/branch\/main\/graphs\/badge.svg)](https:\/\/codecov.io\/github\/Quansight\/numpy-threading-extensions)\n \n [![License: MIT](https:\/\/img.shields.io\/badge\/License-MIT-yellow.svg)](https:\/\/opensource.org\/licenses\/MIT)\n \n ## Installation\n ```\n pip install accelerated_numpy\n ```\n \n You can also install the in-development version 0.0.1 with:\n ```\n pip install https:\/\/github.com\/Quansight\/numpy-threading-extensions\/archive\/v0.0.1.zip\n ```\n or latest with\n ```\n pip install https:\/\/github.com\/Quansight\/numpy-threading-extensions\/archive\/main.zip\n ```\n \n ## Documentation\n \n To use the project:\n \n ```python\n import accelerated_numpy\n accelerated_numpy.initialize()\n ```\n \n ## Development\n \n To run all the tests run::\n \n ```\n tox\n ```\n \n Note, to combine the coverage data from all the tox environments run:\n \n OS | Command\n ----|----\n Windows | `set PYTEST_ADDOPTS=--cov-append`\n | | `tox`\n Other | `PYTEST_ADDOPTS=--cov-append tox`\n \n",
+      "source": "\/opt\/rdepot\/repositories\/8\/25558329\/accelerated-numpy-0.1.0.tar.gz",
+      "technology": "Python",
+      "repository": {
+        "name": "testrepo8",
+        "id": 8,
+        "published": true,
+        "technology": "Python",
+        "publicationUri": "http:\/\/localhost\/repo\/testrepo8"
+      },
+      "title": "Faster loops for NumPy using multithreading and other tricks",
+      "version": "0.1.0",
+      "url": "Changelog, https:\/\/github.com\/Quansight\/numpy-threading-extensions\/blob\/master\/CHANGELOG.rst, Issue Tracker, https:\/\/github.com\/Quansight\/numpy-threading-extensions\/issues",
+      "deleted": false,
+      "binary": false,
+      "name": "accelerated-numpy",
+      "submission": {
+        "id": 43,
+        "state": "ACCEPTED"
+      },
+      "links": [{
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/43"
+      }, {
+        "rel": "packageList",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+      }],
+      "id": 43,
+      "user": {
+        "name": "Galileo Galilei",
+        "id": 6,
+        "login": "galieleo",
+        "email": "galieleo@ldap.forumsys.com"
+      }
+    }]
   },
   "messageCode": "success.request.processed",
   "message": "Your request has been processed successfully.",

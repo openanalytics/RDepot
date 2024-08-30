@@ -35,6 +35,7 @@ import eu.openanalytics.rdepot.base.entities.UserSettings;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.UserSettingsService;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
+import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.factory.StrategyFactory;
 import eu.openanalytics.rdepot.base.validation.UserSettingsValidator;
@@ -69,6 +70,7 @@ public class ApiV2UserSettingsController extends ApiV2Controller<UserSettings, U
     private final UserSettingsService userSettingsService;
     private final StrategyFactory factory;
     private final UserSettingsValidator userSettingsValidator;
+    private final StrategyExecutor strategyExecutor;
 
     public ApiV2UserSettingsController(
             MessageSource messageSource,
@@ -79,7 +81,8 @@ public class ApiV2UserSettingsController extends ApiV2Controller<UserSettings, U
             StrategyFactory factory,
             UserService userService,
             UserSettingsService userSettingsService,
-            UserSettingsValidator validator) {
+            UserSettingsValidator validator,
+            StrategyExecutor strategyExecutor) {
         super(
                 messageSource,
                 LocaleContextHolder.getLocale(),
@@ -93,6 +96,7 @@ public class ApiV2UserSettingsController extends ApiV2Controller<UserSettings, U
         this.userSettingsService = userSettingsService;
         this.factory = factory;
         this.userSettingsValidator = validator;
+        this.strategyExecutor = strategyExecutor;
     }
 
     /**
@@ -157,7 +161,7 @@ public class ApiV2UserSettingsController extends ApiV2Controller<UserSettings, U
             Strategy<UserSettings> strategy =
                     factory.updateUserSettingsStrategy(settings, requester.get(), entity, toCreate);
 
-            strategy.perform();
+            strategyExecutor.execute(strategy);
         } catch (JsonException | JsonProcessingException | EntityResolutionException e) {
             throw new MalformedPatchException(messageSource, locale, e);
         } catch (StrategyFailure e) {

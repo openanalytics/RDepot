@@ -43,6 +43,7 @@ public class PackageSimpleDto implements IDto {
     protected Boolean active;
     protected Boolean deleted;
     private String technology;
+    protected boolean binary;
 
     @ToStringExclude
     protected Package entity;
@@ -59,6 +60,7 @@ public class PackageSimpleDto implements IDto {
         this.deleted = packageBag.isDeleted();
         this.technology = packageBag.getTechnology().getName();
         this.entity = packageBag;
+        this.binary = packageBag.isBinary();
     }
 
     @Override

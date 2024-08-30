@@ -27,7 +27,8 @@ import eu.openanalytics.rdepot.repo.python.storage.PythonFileSystemStorageServic
 import eu.openanalytics.rdepot.repo.transaction.Transaction;
 import eu.openanalytics.rdepot.repo.transaction.UploadTransactionManager;
 import eu.openanalytics.rdepot.repo.transaction.backup.implementations.AbstractRepositoryBackupService;
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 import lombok.extern.slf4j.Slf4j;
@@ -51,18 +52,18 @@ public class PythonRepositoryBackupService extends AbstractRepositoryBackupServi
 
     @Override
     public void backupForTransaction(Transaction transaction) {
-        final List<String> recentPackages =
-                storageService.getRecentPackagesFromRepository(transaction.getRepositoryName()).stream()
-                        .map(File::getName)
-                        .toList();
-
         try {
+            final List<String> recentPackages =
+                    storageService.getRecentPackagesFromRepository(transaction.getRepositoryName()).stream()
+                            .map(Path::getFileName)
+                            .map(Path::toString)
+                            .toList();
             final PythonRepositoryBackup backup = new PythonRepositoryBackup(
                     recentPackages,
                     storageService.initTrashDirectory(transaction.getId()),
                     storageService.getRepositoryVersion(transaction.getRepositoryName()));
             backups.put(transaction, backup);
-        } catch (InitTrashDirectoryException | GetRepositoryVersionException e) {
+        } catch (InitTrashDirectoryException | GetRepositoryVersionException | IOException e) {
             transactionManager.abortTransaction(transaction);
             log.error(e.getMessage(), e);
             throw new RuntimeException(e);

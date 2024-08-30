@@ -138,7 +138,6 @@ public abstract class UpdateRepositoryStrategy<T extends Repository> extends Upd
             try {
                 repositorySynchronizer.storeRepositoryOnRemoteServer(resource);
             } catch (SynchronizeRepositoryException e) {
-                logger.error(e.getMessage(), e);
                 throw new StrategyFailure(e); // TODO: #32973 What about file-system issue in local container?
             }
         }

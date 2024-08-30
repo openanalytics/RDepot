@@ -23,91 +23,83 @@
             }
         ],
         "content": [
-            {
-                "id": 399,
-                "technology": "RDepot version: 2.2.0",
-                "time": "2024-03-05T08:19:44.530741",
-                "user": {
-                    "id": 4,
-                    "name": "Albert Einstein",
-                    "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
-                },
-                "eventType": "update",
-                "resourceId": 46,
-                "resourceType": "SUBMISSION",
-                "changedProperties": [
-                    {
-                        "property": "approver_id",
-                        "valueBefore": "",
-                        "valueAfter": "4"
-                    },
-                    {
-                        "property": "state",
-                        "valueBefore": "rejected",
-                        "valueAfter": "rejected"
-                    }
-                ],
-                "relatedResource": {
-                    "id": 46,
-                    "packageBag": {
-                        "id": 46,
-                        "user": {
-                            "id": 5,
-                            "name": "Nikola Tesla",
-                            "login": "tesla",
-                            "email": "tesla@ldap.forumsys.com"
-                        },
-                        "repository": {
-                            "id": 8,
-                            "name": "testrepo8",
-                            "publicationUri": "http://localhost/repo/testrepo8",
-                            "technology": "Python",
-                            "published": true
-                        },
-                        "submission": {
-                            "id": 46,
-                            "state": "REJECTED"
-                        },
-                        "name": "requests",
-                        "version": "2.28.1",
-                        "source": "/opt/rdepot/trash/8/29684758/requests-2.28.1.tar.gz",
-                        "active": false,
-                        "deleted": true,
-                        "technology": "Python",
-                        "links": []
-                    },
-                    "submitter": {
-                        "id": 7,
-                        "name": "Isaac Newton",
-                        "login": "newton",
-                        "email": "newton@ldap.forumsys.com"
-                    },
-                    "approver": {
-                        "id": 4,
-                        "name": "Albert Einstein",
-                        "login": "einstein",
-                        "email": "einstein@ldap.forumsys.com"
-                    },
-                    "changes": null,
-                    "state": "REJECTED",
-                    "created": "2024-03-05",
-                    "technology": "Python"
-                },
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http://localhost:8017/api/v2/manager/events/399"
-                    },
-                    {
-                        "rel": "eventList",
-                        "href": "http://localhost:8017/api/v2/manager/events"
-                    }
-                ]
+        	{
+			  "id": 399,
+			  "technology": "RDepot version: 2.3.0",
+			  "user": {
+			    "id": 4,
+			    "name": "Albert Einstein",
+			    "login": "einstein",
+			    "email": "einstein@ldap.forumsys.com"
+			  },
+			  "eventType": "update",
+			  "resourceId": 46,
+			  "resourceType": "SUBMISSION",
+			  "changedProperties": [{
+			    "property": "approver_id",
+			    "valueBefore": "",
+			    "valueAfter": "4"
+			  }, {
+			    "property": "state",
+			    "valueBefore": "rejected",
+			    "valueAfter": "rejected"
+			  }],
+			  "relatedResource": {
+			    "id": 46,
+			    "packageBag": {
+			      "id": 46,
+			      "user": {
+			        "id": 5,
+			        "name": "Nikola Tesla",
+			        "login": "tesla",
+			        "email": "tesla@ldap.forumsys.com"
+			      },
+			      "repository": {
+			        "id": 8,
+			        "name": "testrepo8",
+			        "publicationUri": "http://localhost/repo/testrepo8",
+			        "published": true,
+			        "technology": "Python"
+			      },
+			      "submission": {
+			        "id": 46,
+			        "state": "REJECTED"
+			      },
+			      "name": "requests",
+			      "version": "2.28.1",
+			      "active": false,
+			      "deleted": true,
+			      "technology": "Python",
+			      "binary": false,
+			      "links": []
+			    },
+			    "submitter": {
+			      "id": 7,
+			      "name": "Isaac Newton",
+			      "login": "newton",
+			      "email": "newton@ldap.forumsys.com"
+			    },
+			    "approver": {
+			      "id": 4,
+			      "name": "Albert Einstein",
+			      "login": "einstein",
+			      "email": "einstein@ldap.forumsys.com"
+			    },
+			    "changes": null,
+			    "state": "REJECTED",
+			    "technology": "Python"
+			  },
+			  "links": [{
+			    "rel": "self",
+			    "href": "http://localhost:8017/api/v2/manager/events/399"
+			  }, {
+			    "rel": "eventList",
+			    "href": "http://localhost:8017/api/v2/manager/events"
+			  }]
             },
             {
                 "id": 398,
-                "technology": "RDepot version: 2.2.0",
+                "technology": "RDepot version: 2.3.0",
                 "time": "2024-01-19T13:42:35.326969",
                 "user": {
                     "id": 7,
@@ -147,7 +139,7 @@
             },
             {
                 "id": 397,
-                "technology": "RDepot version: 2.2.0",
+                "technology": "RDepot version: 2.3.0",
                 "time": "2024-01-19T13:42:34.341632",
                 "user": {
                     "id": 6,
@@ -187,7 +179,7 @@
             },
             {
                 "id": 396,
-                "technology": "RDepot version: 2.2.0",
+                "technology": "RDepot version: 2.3.0",
                 "time": "2024-01-19T13:42:32.681292",
                 "user": {
                     "id": 5,
@@ -227,7 +219,7 @@
             },
             {
                 "id": 395,
-                "technology": "RDepot version: 2.2.0",
+                "technology": "RDepot version: 2.3.0",
                 "time": "2024-01-19T13:42:26.568523",
                 "user": {
                     "id": 4,
@@ -267,7 +259,7 @@
             },
             {
                 "id": 394,
-                "technology": "RDepot version: 2.2.0",
+                "technology": "RDepot version: 2.3.0",
                 "time": "2023-12-07T23:59:59.99999",
                 "user": {
                     "id": 7,
@@ -313,7 +305,7 @@
             },
             {
                 "id": 393,
-                "technology": "RDepot version: 2.2.0",
+                "technology": "RDepot version: 2.3.0",
                 "time": "2023-12-06T11:49:44.78367",
                 "user": {
                     "id": 7,
@@ -353,7 +345,7 @@
             },
             {
                 "id": 392,
-                "technology": "RDepot version: 2.2.0",
+                "technology": "RDepot version: 2.3.0",
                 "time": "2023-12-06T09:13:31.7944",
                 "user": {
                     "id": 7,
@@ -399,7 +391,7 @@
             },
             {
                 "id": 391,
-                "technology": "RDepot version: 2.2.0",
+                "technology": "RDepot version: 2.3.0",
                 "time": "2023-12-05T11:12:54.853912",
                 "user": {
                     "id": 7,
@@ -439,7 +431,7 @@
             },
             {
                 "id": 390,
-                "technology": "RDepot version: 2.2.0",
+                "technology": "RDepot version: 2.3.0",
                 "time": "2023-12-04T11:12:25.346875",
                 "user": {
                     "id": 7,
@@ -479,7 +471,7 @@
             },
             {
                 "id": 389,
-                "technology": "RDepot version: 2.2.0",
+                "technology": "RDepot version: 2.3.0",
                 "time": "2023-11-15T11:11:11.951486",
                 "user": {
                     "id": 4,
@@ -519,7 +511,7 @@
             },
             {
                 "id": 388,
-                "technology": "RDepot version: 2.2.0",
+                "technology": "RDepot version: 2.3.0",
                 "time": "2023-07-10T12:36:18.482532",
                 "user": {
                     "id": 7,
@@ -589,7 +581,7 @@
             },
             {
                 "id": 387,
-                "technology": "RDepot version: 2.2.0",
+                "technology": "RDepot version: 2.3.0",
                 "time": "2023-07-10T12:36:04.077593",
                 "user": {
                     "id": 7,
@@ -654,7 +646,7 @@
             },
             {
                 "id": 386,
-                "technology": "RDepot version: 2.2.0",
+                "technology": "RDepot version: 2.3.0",
                 "time": "2023-07-10T12:35:21.693706",
                 "user": {
                     "id": 4,
@@ -696,7 +688,7 @@
             },
             {
                 "id": 385,
-                "technology": "RDepot version: 2.2.0",
+                "technology": "RDepot version: 2.3.0",
                 "time": "2023-07-10T12:35:08.081333",
                 "user": {
                     "id": 4,
@@ -738,7 +730,7 @@
             },
             {
                 "id": 384,
-                "technology": "RDepot version: 2.2.0",
+                "technology": "RDepot version: 2.3.0",
                 "time": "2023-07-10T12:35:00.699712",
                 "user": {
                     "id": 4,
@@ -780,7 +772,7 @@
             },
             {
                 "id": 383,
-                "technology": "RDepot version: 2.2.0",
+                "technology": "RDepot version: 2.3.0",
                 "time": "2023-07-10T12:34:38.748343",
                 "user": {
                     "id": 4,
@@ -822,7 +814,7 @@
             },
             {
                 "id": 382,
-                "technology": "RDepot version: 2.2.0",
+                "technology": "RDepot version: 2.3.0",
                 "time": "2023-07-10T12:34:02.690264",
                 "user": {
                     "id": 4,
@@ -892,7 +884,7 @@
             },
             {
                 "id": 381,
-                "technology": "RDepot version: 2.2.0",
+                "technology": "RDepot version: 2.3.0",
                 "time": "2023-07-10T12:33:27.912225",
                 "user": {
                     "id": 4,
@@ -962,7 +954,7 @@
             },
             {
                 "id": 380,
-                "technology": "RDepot version: 2.2.0",
+                "technology": "RDepot version: 2.3.0",
                 "time": "2023-07-10T12:32:32.750608",
                 "user": {
                     "id": 4,

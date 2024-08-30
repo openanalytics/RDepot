@@ -62,19 +62,19 @@ public abstract class Resource {
     @Column(name = "deleted", nullable = false)
     protected Boolean deleted = false;
 
-    public Resource(Resource that) {
+    protected Resource(Resource that) {
         this.technology = that.technology;
         this.id = that.id;
         this.resourceType = that.resourceType;
         this.deleted = that.deleted;
     }
 
-    public Resource(Technology technology, ResourceType resourceType) {
+    protected Resource(Technology technology, ResourceType resourceType) {
         this.technology = technology;
         this.resourceType = resourceType;
     }
 
-    public Resource(int id, Technology technology, ResourceType resourceType) {
+    protected Resource(int id, Technology technology, ResourceType resourceType) {
         this(technology, resourceType);
         this.id = id;
     }

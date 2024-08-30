@@ -44,8 +44,7 @@ public class BashScriptExecutor {
             final Process process =
                     new ProcessBuilder(args).redirectErrorStream(true).start();
             final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String msg;
-            while ((msg = reader.readLine()) != null) {}
+            while (reader.readLine() != null) {}
             process.waitFor();
             process.destroy();
         } catch (InterruptedException | IOException e) {

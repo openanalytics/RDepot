@@ -101,29 +101,6 @@ services:
           - oa-rdepot-app
         ipv4_address: 192.168.49.21
 ##
-  app-migrations:
-    build: ./docker/app
-    hostname: oa-rdepot-app-migrations
-    labels:
-      eu.openanalytics.rdepot.container.name: "oa-rdepot-app-migrations"
-    volumes:
-      - ./docker/app/test_configs/test_migration.yml:/opt/rdepot/application.yml
-      - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
-      - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
-    depends_on:
-      - db
-    environment:
-      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/migrations
-      - DB_USERNAME=postgres
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health -H 'Accept: application/json' || exit 1"]
-      interval: 10s
-      timeout: 10s
-      retries: 100
-    networks:
-      oa-rdepot:
-        aliases:
-          - oa-rdepot-app-migrations
   r-test-container:
     build: ./docker/r
     stdin_open: true

@@ -20,6 +20,10 @@
  */
 package eu.openanalytics.rdepot.base.messaging;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MessageCodes {
 
     // API - Success messages
@@ -59,6 +63,9 @@ public class MessageCodes {
     public static final String ERROR_VALIDATION = "error.validation";
     public static final String ERROR_MALFORMED_PATCH = "error.malformed.patch";
     public static final String ERROR_INVALID_SUBMISSION = "error.invalid.submission";
+    public static final String ERROR_MISSING_DATA_FOR_BINARY_PACKAGE = "error.missing.data.for.binary.package";
+    public static final String ERROR_PARAMETERS_NOT_ALLOWED_FOR_NON_BINARY_PACKAGE =
+            "error.parameters.not.allowed.for.non.binary.package";
 
     // Storage
     public static final String ERROR_CLEAN_FS = "error.clean.fs";
@@ -92,6 +99,7 @@ public class MessageCodes {
     public static final String COULD_NOT_RESOLVE_EVENT_TYPE = "could.not.resolve.event.type";
     public static final String COULD_NOT_RESOLVE_RESOURCE_TYPE = "could.not.resolve.resource.type";
     public static final String COULD_NOT_SEND_SYNCHRONIZE_REQUEST = "could.not.send.synchronize.request";
+    public static final String EMPTY_ARCHIVE = "empty.archive";
 
     // validation - multipart
     public static final String INVALID_CONTENTTYPE = "invalid.contenttype";
@@ -110,6 +118,14 @@ public class MessageCodes {
     public static final String INVALID_VERSION = "invalid.version";
     public static final String DUPLICATE_VERSION_REPLACE_ON = "duplicate.version.replace.on";
     public static final String DUPLICATE_VERSION_REPLACE_OFF = "duplicate.version.replace.off";
+
+    // validation - R binary package
+    public static final String R_VERSION_NOT_ALLOWED = "r.version.not.allowed";
+    public static final String INVALID_R_VERSION = "invalid.r.version";
+    public static final String ARCHITECTURE_NOT_ALLOWED = "architecture.not.allowed";
+    public static final String INVALID_ARCHITECTURE = "invalid.architecture";
+    public static final String DISTRIBUTION_NOT_ALLOWED = "distribution.not.allowed";
+    public static final String EMPTY_BUILT = "empty.built";
 
     // PACKAGES
     public static final String COULD_NOT_PARSE_PACKAGES_FILE = "could.not.parse.packages.file";

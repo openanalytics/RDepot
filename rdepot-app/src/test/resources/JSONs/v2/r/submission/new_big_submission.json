@@ -13,18 +13,14 @@
       "login": "einstein",
       "email": "einstein@ldap.forumsys.com"
     },
-    "created": "2024-05-21T00:00:00Z",
     "changes": null,
-    "links": [
-      {
-        "rel": "self",
-        "href": "http://localhost:8017/api/v2/manager/r/submissions/47"
-      },
-      {
-        "rel": "submissionList",
-        "href": "http://localhost:8017/api/v2/manager/r/submissions"
-      }
-    ],
+    "links": [{
+      "rel": "self",
+      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/47"
+    }, {
+      "rel": "submissionList",
+      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions"
+    }],
     "id": 47,
     "state": "ACCEPTED",
     "technology": "R",
@@ -38,37 +34,33 @@
         "id": 3,
         "published": true,
         "technology": "R",
-        "publicationUri": "http://localhost/repo/testrepo2"
+        "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
       },
       "title": "Benchmark and frontier analysis using DEA and SFA",
       "version": "0.10",
       "url": null,
       "deleted": false,
+      "binary": false,
       "name": "BigBenchmarking",
       "submission": {
         "id": 47,
         "state": "ACCEPTED"
       },
-      "links": [
-        {
-          "rel": "self",
-          "href": "http://localhost:8017/api/v2/manager/r/packages/47"
-        },
-        {
-          "rel": "packageList",
-          "href": "http://localhost:8017/api/v2/manager/packages"
-        },
-        {
-          "rel": "self",
-          "href": "http://localhost:8017/api/v2/manager/r/packages/47",
-          "type": "PATCH"
-        },
-        {
-          "rel": "self",
-          "href": "http://localhost:8017/api/v2/manager/r/packages/47",
-          "type": "DELETE"
-        }
-      ],
+      "links": [{
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/47"
+      }, {
+        "rel": "packageList",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+      }, {
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/47",
+        "type": "PATCH"
+      }, {
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/47",
+        "type": "DELETE"
+      }],
       "id": 47,
       "user": {
         "name": "Albert Einstein",

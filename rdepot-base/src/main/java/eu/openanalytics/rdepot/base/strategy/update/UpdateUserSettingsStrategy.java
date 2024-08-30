@@ -28,7 +28,6 @@ import eu.openanalytics.rdepot.base.service.UserSettingsService;
 import eu.openanalytics.rdepot.base.service.exceptions.CreateEntityException;
 import eu.openanalytics.rdepot.base.strategy.exceptions.FatalStrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
-import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -51,7 +50,10 @@ public class UpdateUserSettingsStrategy extends UpdateStrategy<UserSettings> {
     }
 
     @Override
-    protected void registerEvent(NewsfeedEvent event) {}
+    protected void registerEvent(NewsfeedEvent event) {
+        // this method is empty in order not to register events when a user changes their general settings like
+        // language, theme or page size
+    }
 
     @Override
     @Transactional(rollbackFor = FatalStrategyFailure.class)
@@ -79,10 +81,4 @@ public class UpdateUserSettingsStrategy extends UpdateStrategy<UserSettings> {
     protected NewsfeedEvent generateEvent(UserSettings resource) {
         return null;
     }
-
-    @Override
-    protected void postStrategy() throws StrategyFailure {}
-
-    @Override
-    public void revertChanges() throws StrategyReversionFailure {}
 }

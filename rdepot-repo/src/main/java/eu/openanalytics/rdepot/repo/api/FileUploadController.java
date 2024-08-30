@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 public abstract class FileUploadController<R extends SynchronizeRepositoryRequestBody> {
     protected final UploadRequestProcessor<R> uploadRequestProcessor;
 
-    public FileUploadController(UploadRequestProcessor<R> uploadRequestProcessor) {
+    protected FileUploadController(UploadRequestProcessor<R> uploadRequestProcessor) {
         this.uploadRequestProcessor = uploadRequestProcessor;
     }
 

@@ -109,6 +109,9 @@ public abstract class Package extends EventableResource implements Comparable<Pa
     @Column(name = "active", nullable = false)
     private boolean active;
 
+    @Column(name = "binary_package", nullable = false, table = "package")
+    private boolean binary;
+
     protected Package(Package packageBag) {
         super(packageBag.id, packageBag.getTechnology(), ResourceType.PACKAGE);
         this.user = packageBag.user;
@@ -124,6 +127,7 @@ public abstract class Package extends EventableResource implements Comparable<Pa
         this.version = packageBag.version;
         this.resourceTechnology = packageBag.resourceTechnology;
         this.repositoryGeneric = packageBag.repositoryGeneric;
+        this.binary = packageBag.binary;
     }
 
     protected Package(Technology technology) {
@@ -144,6 +148,7 @@ public abstract class Package extends EventableResource implements Comparable<Pa
         this.active = packageDto.getActive();
         this.deleted = packageDto.getDeleted();
         this.version = packageDto.getVersion();
+        this.binary = packageDto.isBinary();
     }
 
     protected Package(
@@ -157,7 +162,8 @@ public abstract class Package extends EventableResource implements Comparable<Pa
             String source,
             String title,
             boolean active,
-            boolean deleted) {
+            boolean deleted,
+            boolean binary) {
         super(id, technology, ResourceType.PACKAGE);
         this.user = user;
         this.name = name;
@@ -183,6 +189,7 @@ public abstract class Package extends EventableResource implements Comparable<Pa
             String title,
             boolean active,
             boolean deleted,
+            boolean binary,
             Submission submission) {
         super(id, technology, ResourceType.PACKAGE);
         this.user = user;

@@ -33,7 +33,7 @@ public abstract class SubmissionDeleter extends ResourceDeleter<Submission> {
 
     protected final PackageDeleter<?, ?> packageDeleter;
 
-    public SubmissionDeleter(
+    protected SubmissionDeleter(
             NewsfeedEventService newsfeedEventService,
             Service<Submission> resourceService,
             PackageDeleter<?, ?> packageDeleter) {

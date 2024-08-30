@@ -47,7 +47,7 @@ public abstract class MirrorSynchronizer<
     @Getter
     private final List<SynchronizationStatus> synchronizationStatusList;
 
-    public MirrorSynchronizer(DeclarativeConfigurationSource<R, P, M> declarativeConfigurationSource) {
+    protected MirrorSynchronizer(DeclarativeConfigurationSource<R, P, M> declarativeConfigurationSource) {
         this.synchronizationStatusList = new ArrayList<>();
         this.declarativeConfigurationSource = declarativeConfigurationSource;
     }

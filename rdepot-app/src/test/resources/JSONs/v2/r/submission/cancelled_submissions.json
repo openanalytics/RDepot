@@ -1,88 +1,79 @@
 {
   "code": 200,
   "data": {
-    "links": [
-      {
-        "rel": "self",
-        "href": "http://localhost:8017/api/v2/manager/r/submissions?state=cancelled&page=0&size=20&sort=id,asc"
-      }
-    ],
+    "links": [{
+      "rel": "self",
+      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions?state=cancelled&page=0&size=20&sort=id,asc"
+    }],
     "page": {
       "number": 0,
       "size": 20,
       "totalPages": 1,
       "totalElements": 1
     },
-    "content": [
-      {
-        "approver": {
-          "name": "Galileo Galilei",
-          "id": 6,
-          "login": "galieleo",
-          "email": "galieleo@ldap.forumsys.com"
-        },
-        "submitter": {
-          "name": "Galileo Galilei",
-          "id": 6,
-          "login": "galieleo",
-          "email": "galieleo@ldap.forumsys.com"
-        },
-        "created": "2020-03-28T00:00:00Z",
-        "changes": null,
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/submissions/23"
-          },
-          {
-            "rel": "submissionList",
-            "href": "http://localhost:8017/api/v2/manager/r/submissions"
-          }
-        ],
-        "id": 23,
-        "state": "CANCELLED",
+    "content": [{
+      "approver": {
+        "name": "Galileo Galilei",
+        "id": 6,
+        "login": "galieleo",
+        "email": "galieleo@ldap.forumsys.com"
+      },
+      "submitter": {
+        "name": "Galileo Galilei",
+        "id": 6,
+        "login": "galieleo",
+        "email": "galieleo@ldap.forumsys.com"
+      },
+      "created": "2020-03-28T00:00:00Z",
+      "changes": null,
+      "links": [{
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/23"
+      }, {
+        "rel": "submissionList",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions"
+      }],
+      "id": 23,
+      "state": "CANCELLED",
+      "technology": "R",
+      "packageBag": {
+        "author": "Cedric Landerer [aut, cre], Gabriel Hanas [ctb], Jeremy Rogers [ctb], Alex Cope [ctb], Denizhan Pak [ctb]",
+        "active": false,
+        "description": "Is a collection of models to analyze genome scale codon data using a Bayesian framework. Provides visualization routines and checkpointing for model fittings. Currently published models to analyze gene data for selection on codon",
         "technology": "R",
-        "packageBag": {
-          "author": "Cedric Landerer [aut, cre], Gabriel Hanas [ctb], Jeremy Rogers [ctb], Alex Cope [ctb], Denizhan Pak [ctb]",
-          "active": false,
-          "description": "Is a collection of models to analyze genome scale codon data using a Bayesian framework. Provides visualization routines and checkpointing for model fittings. Currently published models to analyze gene data for selection on codon",
+        "repository": {
+          "name": "testrepo1",
+          "id": 2,
+          "published": true,
           "technology": "R",
-          "repository": {
-            "name": "testrepo1",
-            "id": 2,
-            "published": true,
-            "technology": "R",
-            "publicationUri": "http://localhost/repo/testrepo1"
-          },
-          "title": "Analysis of Codon Data under Stationarity using a Bayesian Framework",
-          "version": "0.1.2.3",
-          "url": "https://github.com/clandere/AnaCoDa",
-          "deleted": false,
-          "name": "AnaCoDa",
-          "submission": {
-            "id": 23,
-            "state": "CANCELLED"
-          },
-          "links": [
-            {
-              "rel": "self",
-              "href": "http://localhost:8017/api/v2/manager/r/packages/22"
-            },
-            {
-              "rel": "packageList",
-              "href": "http://localhost:8017/api/v2/manager/packages"
-            }
-          ],
-          "id": 22,
-          "user": {
-            "name": "Albert Einstein",
-            "id": 4,
-            "login": "einstein",
-            "email": "einstein@ldap.forumsys.com"
-          }
+          "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+        },
+        "title": "Analysis of Codon Data under Stationarity using a Bayesian Framework",
+        "version": "0.1.2.3",
+        "url": "https:\/\/github.com\/clandere\/AnaCoDa",
+        "deleted": false,
+        "binary": false,
+        "name": "AnaCoDa",
+        "submission": {
+          "id": 23,
+          "state": "CANCELLED"
+        },
+        "links": [{
+          "rel": "self",
+          "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/22"
+        }, {
+          "rel": "packageList",
+          "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+        }],
+        "id": 22,
+        "user": {
+          "name": "Albert Einstein",
+          "id": 4,
+          "login": "einstein",
+          "email": "einstein@ldap.forumsys.com"
         }
       }
-    ]
+    }]
   },
   "messageCode": "success.request.processed",
   "message": "Your request has been processed successfully.",

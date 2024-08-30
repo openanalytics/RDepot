@@ -15,16 +15,13 @@
     },
     "created": "2020-03-28T00:00:00Z",
     "changes": null,
-    "links": [
-      {
-        "rel": "self",
-        "href": "http://localhost:8017/api/v2/manager/r/submissions/31"
-      },
-      {
-        "rel": "submissionList",
-        "href": "http://localhost:8017/api/v2/manager/r/submissions"
-      }
-    ],
+    "links": [{
+      "rel": "self",
+      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/31"
+    }, {
+      "rel": "submissionList",
+      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions"
+    }],
     "id": 31,
     "state": "CANCELLED",
     "technology": "R",
@@ -38,27 +35,25 @@
         "id": 5,
         "published": false,
         "technology": "R",
-        "publicationUri": "http://localhost/repo/testrepo4"
+        "publicationUri": "http:\/\/localhost\/repo\/testrepo4"
       },
       "title": "Functions to perform Approximate Bayesian Computation (ABC) using simulated data",
       "version": "1.0",
       "url": null,
       "deleted": true,
+      "binary": false,
       "name": "abc",
       "submission": {
         "id": 31,
         "state": "CANCELLED"
       },
-      "links": [
-        {
-          "rel": "self",
-          "href": "http://localhost:8017/api/v2/manager/r/packages/31"
-        },
-        {
-          "rel": "packageList",
-          "href": "http://localhost:8017/api/v2/manager/packages"
-        }
-      ],
+      "links": [{
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/31"
+      }, {
+        "rel": "packageList",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+      }],
       "id": 31,
       "user": {
         "name": "Local Admin User",

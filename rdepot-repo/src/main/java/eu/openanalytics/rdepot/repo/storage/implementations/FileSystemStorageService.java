@@ -34,10 +34,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -56,7 +53,7 @@ public abstract class FileSystemStorageService<T extends SynchronizeRepositoryRe
 
     protected final Path rootLocation;
 
-    public FileSystemStorageService(StorageProperties properties) {
+    protected FileSystemStorageService(StorageProperties properties) {
         this.rootLocation = Paths.get(properties.getLocation());
     }
 
@@ -68,20 +65,20 @@ public abstract class FileSystemStorageService<T extends SynchronizeRepositoryRe
 
     public File initTrashDirectory(String id) throws InitTrashDirectoryException {
         Path trash = this.rootLocation.resolve(TRASH_PREFIX + id);
-        File trashDatabase = trash.resolve(TRASH_DATABASE_FILE).toFile();
+        Path trashDatabase = trash.resolve(TRASH_DATABASE_FILE);
 
         try {
             if (Files.exists(trash)) {
                 FileUtils.forceDelete(trash.toFile());
             }
-
             Files.createDirectory(trash);
-            trashDatabase.createNewFile();
+            Files.createFile(trashDatabase);
+        } catch (FileAlreadyExistsException ignored) {
+            // ignore if the trash database file already exists
         } catch (IOException e) {
-            log.error("Error while creating trash directory: " + e.getMessage(), e);
+            log.error("Error while creating trash directory: {}", e.getMessage(), e);
             throw new InitTrashDirectoryException(id);
         }
-
         return trash.toFile();
     }
 
@@ -94,25 +91,30 @@ public abstract class FileSystemStorageService<T extends SynchronizeRepositoryRe
         return Arrays.stream(dirs).map(File::getName).collect(Collectors.toList());
     }
 
-    public void moveToTrash(String id, File packageFile) throws MoveToTrashException {
+    public void moveToTrash(String id, Path packageFile) throws MoveToTrashException {
+        if (!Files.exists(packageFile)) throw new MoveToTrashException(id, packageFile.toFile());
         Path trash = this.rootLocation.resolve(TRASH_PREFIX + id);
         File trashDatabase = trash.resolve(TRASH_DATABASE_FILE).toFile();
 
         if (Files.notExists(trash)) {
-            log.error("No trash directory for transaction: " + id);
-            throw new MoveToTrashException(id, packageFile);
+            log.error("No trash directory for transaction: {}", id);
+            throw new MoveToTrashException(id, packageFile.toFile());
         }
 
         try {
             UUID uuid = UUID.randomUUID();
             FileWriter fileWriter = new FileWriter(trashDatabase, true);
-            fileWriter.append(uuid.toString() + ":" + packageFile.getAbsolutePath() + System.lineSeparator());
+            fileWriter
+                    .append(uuid.toString())
+                    .append(":")
+                    .append(String.valueOf(packageFile.toAbsolutePath()))
+                    .append(System.lineSeparator());
             fileWriter.close();
 
-            Files.move(packageFile.toPath(), trash.resolve(uuid.toString()));
+            Files.move(packageFile, trash.resolve(uuid.toString()));
         } catch (IOException e) {
-            log.error("Error while moving file: " + e.getMessage(), e);
-            throw new MoveToTrashException(id, packageFile);
+            log.error("Error while moving file: {}", e.getMessage(), e);
+            throw new MoveToTrashException(id, packageFile.toFile());
         }
     }
 
@@ -126,7 +128,7 @@ public abstract class FileSystemStorageService<T extends SynchronizeRepositoryRe
         }
     }
 
-    protected void store(MultipartFile[] files, Path saveLocation, String id) {
+    protected void store(MultipartFile[] files, Path saveLocation, String id) throws IOException {
         log.debug("Saving to location {}", saveLocation.toString());
         try {
             if (!Files.exists(saveLocation)) {
@@ -139,7 +141,7 @@ public abstract class FileSystemStorageService<T extends SynchronizeRepositoryRe
             Path destination = saveLocation.resolve(Objects.requireNonNull(file.getOriginalFilename()));
             try {
                 if (Files.exists(destination)) {
-                    moveToTrash(id, destination.toFile());
+                    moveToTrash(id, destination);
                 }
                 Files.copy(file.getInputStream(), destination);
             } catch (IOException | MoveToTrashException e) {
@@ -198,10 +200,9 @@ public abstract class FileSystemStorageService<T extends SynchronizeRepositoryRe
             try (FileWriter writer = new FileWriter(versionPath.toFile())) {
                 writer.write(version);
             }
-            ;
 
         } catch (IOException | NumberFormatException e) {
-            log.error(e.getClass().getCanonicalName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getCanonicalName(), e.getMessage(), e);
             throw new SetRepositoryVersionException(repository);
         }
     }
@@ -263,7 +264,7 @@ public abstract class FileSystemStorageService<T extends SynchronizeRepositoryRe
         Path repositoryDirectory = this.rootLocation.resolve(repository);
 
         Path versionPath = repositoryDirectory.resolve("VERSION");
-        String versionStr = "";
+        String versionStr;
         try {
             if (Files.notExists(repositoryDirectory)) Files.createDirectory(repositoryDirectory);
 
@@ -281,7 +282,7 @@ public abstract class FileSystemStorageService<T extends SynchronizeRepositoryRe
                 }
             }
         } catch (IOException | NumberFormatException e) {
-            log.error(e.getClass().getCanonicalName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getCanonicalName(), e.getMessage(), e);
             throw new GetRepositoryVersionException(repository);
         }
 
@@ -296,7 +297,7 @@ public abstract class FileSystemStorageService<T extends SynchronizeRepositoryRe
 
             setRepositoryVersion(repository, newVersion);
         } catch (GetRepositoryVersionException | NumberFormatException e) {
-            log.error(e.getClass().getCanonicalName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getCanonicalName(), e.getMessage(), e);
             throw new SetRepositoryVersionException(repository);
         }
     }

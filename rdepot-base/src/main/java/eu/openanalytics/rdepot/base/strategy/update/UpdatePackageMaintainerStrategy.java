@@ -33,7 +33,6 @@ import eu.openanalytics.rdepot.base.service.CommonPackageService;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.Service;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
-import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -82,7 +81,6 @@ public class UpdatePackageMaintainerStrategy extends UpdateStrategy<PackageMaint
                 packageBag.setUser(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag));
             }
         } catch (NoSuitableMaintainerFound e) {
-            logger.error(e.getMessage(), e);
             throw new StrategyFailure(e);
         }
 
@@ -121,18 +119,11 @@ public class UpdatePackageMaintainerStrategy extends UpdateStrategy<PackageMaint
                 try {
                     packageBag.setUser(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag));
                 } catch (NoSuitableMaintainerFound e) {
-                    logger.error(e.getMessage(), e);
                     throw new StrategyFailure(e);
                 }
             }
         }
     }
-
-    @Override
-    protected void postStrategy() throws StrategyFailure {}
-
-    @Override
-    public void revertChanges() throws StrategyReversionFailure {}
 
     @Override
     protected NewsfeedEvent generateEvent(PackageMaintainer resource) {

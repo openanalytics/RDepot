@@ -26,7 +26,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import java.io.Serializable;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -45,7 +47,9 @@ public class Role extends Resource implements Serializable {
     /**
      * Numeric values representing roles.
      */
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class VALUE {
+
         public static final int USER = 0;
         public static final int PACKAGEMAINTAINER = 1;
         public static final int REPOSITORYMAINTAINER = 2;

@@ -1,75 +1,69 @@
 {
-    "status": "SUCCESS",
-    "code": 200,
-    "message": "Your request has been processed successfully.",
-    "messageCode": "success.request.processed",
-    "data": {
-        "id": 46,
-        "packageBag": {
-            "id": 46,
-            "user": {
-                "id": 5,
-                "name": "Nikola Tesla",
-                "login": "tesla",
-                "email": "tesla@ldap.forumsys.com"
-            },
-            "repository": {
-                "id": 8,
-                "name": "testrepo8",
-                "publicationUri": "http://localhost/repo/testrepo8",
-                "technology": "Python",
-                "published": true
-            },
-            "submission": {
-                "id": 46,
-                "state": "CANCELLED"
-            },
-            "name": "requests",
-            "version": "2.28.1",
-            "source": "/opt/rdepot/trash/8/73844474/requests-2.28.1.tar.gz",
-            "active": false,
-            "deleted": true,
-            "technology": "Python",
-            "description": null,
-            "author": "Kenneth Reitz",
-            "title": "Python HTTP for Humans.",
-            "url": "Documentation, https://requests.readthedocs.io, Source, https://github.com/psf/requests",
-            "links": [
-                {
-                    "rel": "self",
-                    "href": "http://localhost:8017/api/v2/manager/python/packages/46"
-                },
-                {
-                    "rel": "packageList",
-                    "href": "http://localhost:8017/api/v2/manager/packages"
-                }
-            ]
-        },
-        "submitter": {
-            "id": 7,
-            "name": "Isaac Newton",
-            "login": "newton",
-            "email": "newton@ldap.forumsys.com"
-        },
-        "approver": {
-            "id": 7,
-            "name": "Isaac Newton",
-            "login": "newton",
-            "email": "newton@ldap.forumsys.com"
-        },
-        "changes": null,
-        "state": "CANCELLED",
-        "created": "2023-07-10T00:00:00Z",
+  "code": 200,
+  "data": {
+    "approver": {
+      "name": "Isaac Newton",
+      "id": 7,
+      "login": "newton",
+      "email": "newton@ldap.forumsys.com"
+    },
+    "submitter": {
+      "name": "Isaac Newton",
+      "id": 7,
+      "login": "newton",
+      "email": "newton@ldap.forumsys.com"
+    },
+    "created": "2023-07-10T00:00:00Z",
+    "changes": null,
+    "links": [{
+      "rel": "self",
+      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/submissions\/46"
+    }, {
+      "rel": "submissionList",
+      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/submissions"
+    }],
+    "id": 46,
+    "state": "CANCELLED",
+    "technology": "Python",
+    "packageBag": {
+      "author": "Kenneth Reitz",
+      "active": false,
+      "description": null,
+      "technology": "Python",
+      "repository": {
+        "name": "testrepo8",
+        "id": 8,
+        "published": true,
         "technology": "Python",
-        "links": [
-            {
-                "rel": "self",
-                "href": "http://localhost:8017/api/v2/manager/python/submissions/46"
-            },
-            {
-                "rel": "submissionList",
-                "href": "http://localhost:8017/api/v2/manager/python/submissions"
-            }
-        ]
+        "publicationUri": "http:\/\/localhost\/repo\/testrepo8"
+      },
+      "title": "Python HTTP for Humans.",
+      "version": "2.28.1",
+      "url": "Documentation, https:\/\/requests.readthedocs.io, Source, https:\/\/github.com\/psf\/requests",
+      "deleted": true,
+      "binary": false,
+      "name": "requests",
+      "submission": {
+        "id": 46,
+        "state": "CANCELLED"
+      },
+      "links": [{
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/46"
+      }, {
+        "rel": "packageList",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+      }],
+      "id": 46,
+      "user": {
+        "name": "Nikola Tesla",
+        "id": 5,
+        "login": "tesla",
+        "email": "tesla@ldap.forumsys.com"
+      }
     }
+  },
+  "messageCode": "success.request.processed",
+  "message": "Your request has been processed successfully.",
+  "status": "SUCCESS"
 }

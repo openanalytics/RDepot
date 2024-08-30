@@ -56,43 +56,55 @@ public class UserValidator implements Validator {
             if (existingUserOptional.isEmpty()) errors.rejectValue("id", MessageCodes.ERROR_USER_NOT_FOUND);
             else {
                 User existingUser = existingUserOptional.get();
-                if (user.getLastLoggedInOn() != null
-                        && existingUser.getLastLoggedInOn() != null
-                        && !existingUser.getLastLoggedInOn().equals(user.getLastLoggedInOn()))
-                    errors.rejectValue("lastLoggedInOn", MessageCodes.FORBIDDEN_UPDATE);
-                if (user.getCreatedOn() != null && !existingUser.getCreatedOn().equals(user.getCreatedOn()))
-                    errors.rejectValue("createdOn", MessageCodes.FORBIDDEN_UPDATE);
-                if (user.getName() != null && !existingUser.getName().equals(user.getName()))
-                    errors.rejectValue("name", MessageCodes.FORBIDDEN_UPDATE);
-                if (user.getLogin() != null && !existingUser.getLogin().equals(user.getLogin()))
-                    errors.rejectValue(LOGIN, MessageCodes.FORBIDDEN_UPDATE);
-                if (user.getEmail() != null && !existingUser.getEmail().equals(user.getEmail()))
-                    errors.rejectValue(EMAIL, MessageCodes.FORBIDDEN_UPDATE);
+                validateUserUpdate(user, existingUser, errors);
             }
         } else {
-            if (user.getEmail() == null || user.getEmail().isBlank()) {
-                errors.rejectValue(EMAIL, MessageCodes.ERROR_EMPTY_EMAIL);
+            validateEmail(user, errors);
+            validateLogin(user, errors);
+        }
+    }
+
+    private void validateUserUpdate(User user, User existingUser, @NonNull Errors errors) {
+        if (user.getLastLoggedInOn() != null
+                && existingUser.getLastLoggedInOn() != null
+                && !existingUser.getLastLoggedInOn().equals(user.getLastLoggedInOn()))
+            errors.rejectValue("lastLoggedInOn", MessageCodes.FORBIDDEN_UPDATE);
+        if (user.getCreatedOn() != null && !existingUser.getCreatedOn().equals(user.getCreatedOn()))
+            errors.rejectValue("createdOn", MessageCodes.FORBIDDEN_UPDATE);
+        if (user.getName() != null && !existingUser.getName().equals(user.getName()))
+            errors.rejectValue("name", MessageCodes.FORBIDDEN_UPDATE);
+        if (user.getLogin() != null && !existingUser.getLogin().equals(user.getLogin()))
+            errors.rejectValue(LOGIN, MessageCodes.FORBIDDEN_UPDATE);
+        if (user.getEmail() != null && !existingUser.getEmail().equals(user.getEmail()))
+            errors.rejectValue(EMAIL, MessageCodes.FORBIDDEN_UPDATE);
+    }
+
+    private void validateEmail(User user, @NonNull Errors errors) {
+        if (user.getEmail() == null || user.getEmail().isBlank()) {
+            errors.rejectValue(EMAIL, MessageCodes.ERROR_EMPTY_EMAIL);
+        } else {
+            if (!emailPattern.matcher(user.getEmail()).matches()) {
+                errors.rejectValue(EMAIL, MessageCodes.ERROR_INVALID_EMAIL);
             } else {
-                if (!emailPattern.matcher(user.getEmail()).matches()) {
-                    errors.rejectValue(EMAIL, MessageCodes.ERROR_INVALID_EMAIL);
-                } else {
-                    Optional<User> duplicateEmail = userService.findByEmail(user.getEmail());
-                    if (duplicateEmail.isPresent() && duplicateEmail.get().getId() != user.getId()) {
-                        errors.rejectValue(EMAIL, MessageCodes.ERROR_DUPLICATE_EMAIL);
-                    }
+                Optional<User> duplicateEmail = userService.findByEmail(user.getEmail());
+                if (duplicateEmail.isPresent() && duplicateEmail.get().getId() != user.getId()) {
+                    errors.rejectValue(EMAIL, MessageCodes.ERROR_DUPLICATE_EMAIL);
                 }
             }
-            if (user.getLogin() == null || user.getLogin().isBlank()) {
-                errors.rejectValue(LOGIN, MessageCodes.ERROR_EMPTY_LOGIN);
-            } else {
-                Optional<User> duplicateLogin = userService.findActiveByLogin(user.getLogin());
-                if (duplicateLogin.isPresent() && duplicateLogin.get().getId() != user.getId()) {
-                    errors.rejectValue(LOGIN, MessageCodes.ERROR_DUPLICATE_LOGIN);
-                }
+        }
+    }
+
+    private void validateLogin(User user, @NonNull Errors errors) {
+        if (user.getLogin() == null || user.getLogin().isBlank()) {
+            errors.rejectValue(LOGIN, MessageCodes.ERROR_EMPTY_LOGIN);
+        } else {
+            Optional<User> duplicateLogin = userService.findActiveByLogin(user.getLogin());
+            if (duplicateLogin.isPresent() && duplicateLogin.get().getId() != user.getId()) {
+                errors.rejectValue(LOGIN, MessageCodes.ERROR_DUPLICATE_LOGIN);
             }
-            if (user.getName() == null || user.getName().isBlank()) {
-                errors.rejectValue("name", MessageCodes.ERROR_EMPTY_NAME);
-            }
+        }
+        if (user.getName() == null || user.getName().isBlank()) {
+            errors.rejectValue("name", MessageCodes.ERROR_EMPTY_NAME);
         }
     }
 }

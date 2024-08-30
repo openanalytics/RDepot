@@ -26,13 +26,14 @@ import eu.openanalytics.rdepot.repo.r.model.SynchronizeCranRepositoryRequestBody
 import eu.openanalytics.rdepot.repo.storage.StorageService;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
 public interface CranStorageService extends StorageService<SynchronizeCranRepositoryRequestBody> {
     Map<String, File> getPackagesFiles(String repository, boolean archive);
 
-    Map<String, List<File>> getArchiveFromRepository(String repository);
+    Map<String, List<Path>> getArchiveFromRepository(String repository) throws IOException;
 
     void removeNonExistingArchivePackagesFromRepo(List<String> packages, String repository)
             throws RestoreRepositoryException;

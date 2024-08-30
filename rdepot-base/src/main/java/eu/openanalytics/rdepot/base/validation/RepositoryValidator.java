@@ -36,7 +36,7 @@ public abstract class RepositoryValidator<R extends Repository> implements Valid
     private final NameValidation<R> nameValidation;
     private final IdValidation<R> idValidation;
 
-    public RepositoryValidator(RepositoryService<R> service) {
+    protected RepositoryValidator(RepositoryService<R> service) {
         publicationUriValidation = new PublicationUriValidation<>(service);
         serverAddressValidation = new ServerAddressValidation<>(service);
         nameValidation = new NameValidation<>(service);

@@ -33,7 +33,6 @@ import eu.openanalytics.rdepot.base.service.CommonPackageService;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
-import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -80,7 +79,6 @@ public class UpdateRepositoryMaintainerStrategy extends UpdateStrategy<Repositor
             bestMaintainerChooser.refreshMaintainerForPackages(
                     new ArrayList<>(packageService.findAllByRepository(resource.getRepository())));
         } catch (NoSuitableMaintainerFound e) {
-            logger.error(e.getMessage(), e);
             throw new StrategyFailure(e);
         }
 
@@ -99,18 +97,11 @@ public class UpdateRepositoryMaintainerStrategy extends UpdateStrategy<Repositor
         try {
             bestMaintainerChooser.refreshMaintainerForPackages(packages);
         } catch (NoSuitableMaintainerFound e) {
-            logger.error(e.getMessage(), e);
             throw new StrategyFailure(e);
         }
 
         changedValues.add(new EventChangedVariable("repository", oldRepository.toString(), repository.toString()));
     }
-
-    @Override
-    protected void postStrategy() throws StrategyFailure {}
-
-    @Override
-    public void revertChanges() throws StrategyReversionFailure {}
 
     @Override
     protected NewsfeedEvent generateEvent(RepositoryMaintainer resource) {

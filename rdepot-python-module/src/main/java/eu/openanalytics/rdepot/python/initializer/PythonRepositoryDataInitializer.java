@@ -27,6 +27,8 @@ import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.exceptions.CreateEntityException;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
+import eu.openanalytics.rdepot.base.strategy.Strategy;
+import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.technology.Technology;
 import eu.openanalytics.rdepot.python.config.declarative.DeclarativePythonRepository;
@@ -56,6 +58,7 @@ public class PythonRepositoryDataInitializer implements IRepositoryDataInitializ
     private final PythonRepositoryValidator repositoryValidator;
     private final PythonRepositoryDeleter repositoryDeleter;
     private final PythonYamlDeclarativeConfigurationSource declarativeConfigurationSource;
+    private final StrategyExecutor strategyExecutor;
     private final Technology technology = PythonLanguage.instance;
 
     @Override
@@ -63,28 +66,50 @@ public class PythonRepositoryDataInitializer implements IRepositoryDataInitializ
         final List<DeclarativePythonRepository> repositories =
                 declarativeConfigurationSource.retrieveDeclaredRepositories();
         if (repositories == null || repositories.isEmpty()) {
-            log.info("There are no declared repositories for technology: " + technology.getName() + " "
-                    + technology.getVersion());
+            log.info(
+                    "There are no declared repositories for technology: {} {}",
+                    technology.getName(),
+                    technology.getVersion());
             return;
         }
 
-        List<PythonRepository> existingRepositories = repositoryService.findAll();
+        List<PythonRepository> existingRepositories = manageDeclaredRepositories(repositories, declarative);
+
+        if (declarative) {
+            log.info("Declarative mode enabled - removing all non-declared Python repositories...");
+            existingRepositories.forEach(r -> {
+                log.info("Removing repository: {}", r.getName());
+                try {
+                    repositoryDeleter.delete(r);
+                } catch (DeleteEntityException e) {
+                    log.error(e.getMessage(), e);
+                    throw new IllegalStateException();
+                }
+            });
+        }
+    }
+
+    private List<PythonRepository> manageDeclaredRepositories(
+            List<DeclarativePythonRepository> repositories, boolean declarative) {
+        List<PythonRepository> remainingRepositories = repositoryService.findAll();
         for (DeclarativePythonRepository declaredRepository : repositories) {
             PythonRepository newRepository = declaredRepositoryToEntity(declaredRepository, declarative);
 
-            Optional<PythonRepository> possiblyExistingRepository = existingRepositories.stream()
+            Optional<PythonRepository> possiblyExistingRepository = remainingRepositories.stream()
                     .filter(r -> r.getName().equals(newRepository.getName()))
                     .findFirst();
             if (possiblyExistingRepository.isPresent()) {
                 PythonRepository existingRepository = possiblyExistingRepository.get();
-                existingRepositories.remove(existingRepository);
+
+                // remove declared repository from the "remaining" list
+                remainingRepositories.remove(existingRepository);
 
                 if (declarative) {
                     updateRepository(newRepository, existingRepository);
                 } else {
-                    log.warn("We tried to create one of the preconfigured repositories but "
-                            + "there already is such a repository with the following properties: "
-                            + existingRepository.toString());
+                    log.warn(
+                            "We tried to create one of the preconfigured repositories but there already is such a repository with the following properties: {}",
+                            existingRepository);
                 }
             } else {
                 if (newRepository.isDeleted() == null) {
@@ -94,36 +119,30 @@ public class PythonRepositoryDataInitializer implements IRepositoryDataInitializ
                     newRepository.setPublished(true);
                 }
 
-                BindException bindException = new BindException(newRepository, newRepository.getName());
-                repositoryValidator.validate(newRepository, bindException);
-
-                if (!bindException.hasErrors()) {
-                    try {
-                        repositoryService.create(newRepository);
-                    } catch (CreateEntityException e) {
-                        log.error(e.getMessage(), e);
-                    }
-                } else {
-                    String errorMessage = "Creating a preconfigured repository failed: ";
-                    for (ObjectError error : bindException.getAllErrors()) {
-                        errorMessage += StaticMessageResolver.getMessage(error.getCode());
-                    }
-
-                    log.error(errorMessage);
-                }
+                validateNewRepository(newRepository);
             }
         }
-        if (declarative) {
-            log.info("Declarative mode enabled - removing all non-declared Python repositories...");
-            existingRepositories.forEach(r -> {
-                log.info("Removing repository: " + r.getName());
-                try {
-                    repositoryDeleter.delete(r);
-                } catch (DeleteEntityException e) {
-                    log.error(e.getMessage(), e);
-                    throw new IllegalStateException();
-                }
-            });
+        // return the remaining (i.e. undeclared) repositories
+        return remainingRepositories;
+    }
+
+    private void validateNewRepository(PythonRepository newRepository) {
+        BindException bindException = new BindException(newRepository, newRepository.getName());
+        repositoryValidator.validate(newRepository, bindException);
+
+        if (!bindException.hasErrors()) {
+            try {
+                repositoryService.create(newRepository);
+            } catch (CreateEntityException e) {
+                log.error(e.getMessage(), e);
+            }
+        } else {
+            StringBuilder errorMessage = new StringBuilder("Creating a preconfigured repository failed: ");
+            for (ObjectError error : bindException.getAllErrors()) {
+                errorMessage.append(StaticMessageResolver.getMessage(error.getCode()));
+            }
+
+            log.error(errorMessage.toString());
         }
     }
 
@@ -151,13 +170,14 @@ public class PythonRepositoryDataInitializer implements IRepositoryDataInitializ
     protected void updateRepository(PythonRepository newRepository, PythonRepository existingRepository) {
         try {
             User requester = userService.findFirstAdmin();
-            factory.updateRepositoryStrategy(existingRepository, requester, newRepository)
-                    .perform();
+            final Strategy<?> strategy = factory.updateRepositoryStrategy(existingRepository, requester, newRepository);
+            strategyExecutor.execute(strategy);
         } catch (AdminNotFound e1) {
             log.error("When trying to create a preconfigured repositories, we couldn't find any valid administrator");
         } catch (StrategyFailure e) {
-            log.error("We tried to update " + existingRepository.getName() + " repository from preconfigured "
-                    + "repositories but unexpected error occurred");
+            log.error(
+                    "We tried to update {} repository from preconfigured repositories but unexpected error occurred",
+                    existingRepository.getName());
         }
     }
 }

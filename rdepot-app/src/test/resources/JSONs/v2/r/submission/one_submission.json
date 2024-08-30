@@ -15,16 +15,13 @@
     },
     "created": "2020-03-28T00:00:00Z",
     "changes": null,
-    "links": [
-      {
-        "rel": "self",
-        "href": "http://localhost:8017/api/v2/manager/r/submissions/5"
-      },
-      {
-        "rel": "submissionList",
-        "href": "http://localhost:8017/api/v2/manager/r/submissions"
-      }
-    ],
+    "links": [{
+      "rel": "self",
+      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/5"
+    }, {
+      "rel": "submissionList",
+      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions"
+    }],
     "id": 5,
     "state": "ACCEPTED",
     "technology": "R",
@@ -38,37 +35,33 @@
         "id": 3,
         "published": true,
         "technology": "R",
-        "publicationUri": "http://localhost/repo/testrepo2"
+        "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
       },
       "title": "Data Quality Visualization Tools for Partially Accruing Data",
       "version": "1.3.5",
       "url": null,
       "deleted": false,
+      "binary": false,
       "name": "accrued",
       "submission": {
         "id": 5,
         "state": "ACCEPTED"
       },
-      "links": [
-        {
-          "rel": "self",
-          "href": "http://localhost:8017/api/v2/manager/r/packages/4"
-        },
-        {
-          "rel": "packageList",
-          "href": "http://localhost:8017/api/v2/manager/packages"
-        },
-        {
-          "rel": "self",
-          "href": "http://localhost:8017/api/v2/manager/r/packages/4",
-          "type": "PATCH"
-        },
-        {
-          "rel": "self",
-          "href": "http://localhost:8017/api/v2/manager/r/packages/4",
-          "type": "DELETE"
-        }
-      ],
+      "links": [{
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/4"
+      }, {
+        "rel": "packageList",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+      }, {
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/4",
+        "type": "PATCH"
+      }, {
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/4",
+        "type": "DELETE"
+      }],
       "id": 4,
       "user": {
         "name": "Albert Einstein",

@@ -22,6 +22,8 @@ package eu.openanalytics.rdepot.base.utils.specs;
 
 import eu.openanalytics.rdepot.base.entities.User;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -29,7 +31,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * Used to build {@link Specification} to fetch
  * {@link User Users} from {@link JpaRepository DAOs}.
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserSpecs {
+
     public static Specification<User> ofRole(List<String> role) {
         return (root, query, criteriaBuilder) ->
                 criteriaBuilder.in(root.get("role").get("name")).value(role);

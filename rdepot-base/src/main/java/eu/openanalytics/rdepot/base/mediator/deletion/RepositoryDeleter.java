@@ -45,7 +45,7 @@ public abstract class RepositoryDeleter<R extends Repository, P extends Package>
     private final SubmissionDeleter submissionDeleter;
     private final PackageService<P> packageService;
 
-    public RepositoryDeleter(
+    protected RepositoryDeleter(
             NewsfeedEventService newsfeedEventService,
             RepositoryService<R> resourceService,
             PackageMaintainerService packageMaintainerService,

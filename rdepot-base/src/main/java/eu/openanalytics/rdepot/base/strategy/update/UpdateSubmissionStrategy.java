@@ -38,7 +38,6 @@ import eu.openanalytics.rdepot.base.storage.Storage;
 import eu.openanalytics.rdepot.base.storage.exceptions.InvalidSourceException;
 import eu.openanalytics.rdepot.base.storage.exceptions.MovePackageSourceException;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
-import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.WrongServiceException;
 import eu.openanalytics.rdepot.base.synchronization.RepositorySynchronizer;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
@@ -141,7 +140,6 @@ public class UpdateSubmissionStrategy<P extends Package, R extends Repository> e
             packageBag.setActive(false);
             packageBag.setDeleted(true);
         } catch (WrongServiceException | MovePackageSourceException e) {
-            logger.error(e.getMessage(), e);
             throw new StrategyFailure(e);
         }
     }
@@ -161,7 +159,6 @@ public class UpdateSubmissionStrategy<P extends Package, R extends Repository> e
             requiresRepublishing = packageBag.getRepository().getPublished();
             repositoryService.incrementVersion(repository);
         } catch (InvalidSourceException | MovePackageSourceException | WrongServiceException e) {
-            logger.error(e.getMessage(), e);
             throw new StrategyFailure(e);
         }
 
@@ -177,13 +174,9 @@ public class UpdateSubmissionStrategy<P extends Package, R extends Repository> e
         try {
             if (requiresRepublishing) repositorySynchronizer.storeRepositoryOnRemoteServer(repository);
         } catch (SynchronizeRepositoryException e) {
-            logger.error(e.getMessage(), e);
             throw new StrategyFailure(e, false);
         }
     }
-
-    @Override
-    public void revertChanges() throws StrategyReversionFailure {}
 
     @Override
     protected NewsfeedEvent generateEvent(Submission resource) {

@@ -69,62 +69,19 @@ public abstract class RepositoryDataInitializer<
     public void createRepositoriesFromConfig(boolean declarative) {
         final List<R> repositories = declarativeConfigurationSource.retrieveDeclaredRepositories();
         if (repositories == null || repositories.isEmpty()) {
-            log.info("There are no declared repositories for technology: " + technology.getName() + " "
-                    + technology.getVersion());
+            log.info(
+                    "There are no declared repositories for technology: {} {}",
+                    technology.getName(),
+                    technology.getVersion());
             return;
         }
 
-        List<E> existingRepositories = repositoryService.findAll();
-        for (R declaredRepository : repositories) {
-            E newRepository = declaredRepositoryToEntity(declaredRepository, declarative);
+        List<E> undeclaredRepositories = manageDeclaredRepositories(repositories, declarative);
 
-            Optional<E> possiblyExistingRepository = existingRepositories.stream()
-                    .filter(r -> r.getName().equals(newRepository.getName()))
-                    .findFirst();
-            if (possiblyExistingRepository.isPresent()) {
-                E existingRepository = possiblyExistingRepository.get();
-                existingRepositories.remove(existingRepository);
-
-                if (declarative) {
-                    updateRepository(newRepository, existingRepository);
-                } else {
-                    log.warn("We tried to create one of the preconfigured repositories but "
-                            + "there already is such a repository with the following properties: "
-                            + existingRepository);
-                }
-            } else {
-                if (newRepository.isDeleted() == null) {
-                    newRepository.setDeleted(false);
-                }
-                if (newRepository.getPublished() == null) {
-                    newRepository.setPublished(true);
-                }
-
-                BindException bindException = new BindException(newRepository, newRepository.getName());
-                repositoryValidator.validate(newRepository, bindException);
-
-                if (!bindException.hasErrors()) {
-                    try {
-                        log.debug("Creating R repository {}", newRepository.toString());
-                        E created = repositoryService.create(newRepository);
-                        log.debug("Created R repository {}", created.toString());
-                    } catch (CreateEntityException e) {
-                        log.error(e.getMessage(), e);
-                    }
-                } else {
-                    String errorMessage = "Creating a preconfigured repository failed: ";
-                    for (ObjectError error : bindException.getAllErrors()) {
-                        errorMessage += StaticMessageResolver.getMessage(error.getCode());
-                    }
-
-                    log.error(errorMessage);
-                }
-            }
-        }
         if (declarative) {
-            existingRepositories.forEach(r -> {
+            undeclaredRepositories.forEach(r -> {
                 log.info(
-                        "Declarative mode enabled - deleting {} repository...",
+                        "Declarative mode enabled - deleting undeclared repository '{}'...",
                         r.getTechnology().getName());
                 try {
                     repositoryDeleter.delete(r);
@@ -133,9 +90,66 @@ public abstract class RepositoryDataInitializer<
                     throw new IllegalStateException();
                 }
             });
-            log.info("All non-declared repositories deleted successfully.");
+            log.info("All undeclared repositories deleted successfully.");
         }
         scheduleMirroring(repositories);
+    }
+
+    private List<E> manageDeclaredRepositories(List<R> repositories, boolean declarative) {
+        List<E> remainingRepositories = repositoryService.findAll();
+        for (R declaredRepository : repositories) {
+            E newRepository = declaredRepositoryToEntity(declaredRepository, declarative);
+
+            Optional<E> possiblyExistingRepository = remainingRepositories.stream()
+                    .filter(r -> r.getName().equals(newRepository.getName()))
+                    .findFirst();
+            if (possiblyExistingRepository.isPresent()) {
+                E existingRepository = possiblyExistingRepository.get();
+
+                // remove declared repository from the "remaining" list
+                remainingRepositories.remove(existingRepository);
+
+                if (declarative) {
+                    updateRepository(newRepository, existingRepository);
+                } else {
+                    log.warn(
+                            "We tried to create one of the preconfigured repositories but there already is such a repository with the following properties: {}",
+                            existingRepository);
+                }
+            } else {
+                if (newRepository.isDeleted() == null) {
+                    newRepository.setDeleted(false);
+                }
+                if (newRepository.getPublished() == null) {
+                    newRepository.setPublished(true);
+                }
+                validateNewRepository(newRepository);
+            }
+        }
+        // return the remaining (i.e. undeclared) repositories
+        return remainingRepositories;
+    }
+
+    private void validateNewRepository(E newRepository) {
+        BindException bindException = new BindException(newRepository, newRepository.getName());
+        repositoryValidator.validate(newRepository, bindException);
+
+        if (!bindException.hasErrors()) {
+            try {
+                log.debug("Creating R repository {}", newRepository);
+                E created = repositoryService.create(newRepository);
+                log.debug("Created R repository {}", created.toString());
+            } catch (CreateEntityException e) {
+                log.error(e.getMessage(), e);
+            }
+        } else {
+            StringBuilder errorMessage = new StringBuilder("Creating a preconfigured repository failed: ");
+            for (ObjectError error : bindException.getAllErrors()) {
+                errorMessage.append(StaticMessageResolver.getMessage(error.getCode()));
+            }
+
+            log.error(errorMessage.toString());
+        }
     }
 
     protected void scheduleMirroring(List<R> repositories) {

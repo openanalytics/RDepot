@@ -24,6 +24,8 @@ import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.exception.AdminNotFound;
 import eu.openanalytics.rdepot.base.initializer.RepositoryDataInitializer;
 import eu.openanalytics.rdepot.base.service.UserService;
+import eu.openanalytics.rdepot.base.strategy.Strategy;
+import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.r.config.declarative.RYamlDeclarativeConfigurationSource;
 import eu.openanalytics.rdepot.r.entities.RRepository;
@@ -47,6 +49,7 @@ public class RRepositoryDataInitializer
 
     private final RStrategyFactory factory;
     private final UserService userService;
+    private final StrategyExecutor strategyExecutor;
 
     public RRepositoryDataInitializer(
             RRepositoryService repositoryService,
@@ -56,7 +59,8 @@ public class RRepositoryDataInitializer
             CranMirrorSynchronizer cranMirrorSynchronizer,
             RStrategyFactory factory,
             UserService userService,
-            RYamlDeclarativeConfigurationSource rYamlDeclarativeConfigurationSource) {
+            RYamlDeclarativeConfigurationSource rYamlDeclarativeConfigurationSource,
+            StrategyExecutor strategyExecutor) {
         super(
                 repositoryService,
                 repositoryValidator,
@@ -67,6 +71,7 @@ public class RRepositoryDataInitializer
                 RLanguage.instance);
         this.factory = factory;
         this.userService = userService;
+        this.strategyExecutor = strategyExecutor;
     }
 
     @Override
@@ -93,9 +98,9 @@ public class RRepositoryDataInitializer
     @Override
     protected void updateRepository(RRepository newRepository, RRepository existingRepository) {
         try {
-            User requester = userService.findFirstAdmin();
-            factory.updateRepositoryStrategy(existingRepository, requester, newRepository)
-                    .perform();
+            final User requester = userService.findFirstAdmin();
+            final Strategy<?> strategy = factory.updateRepositoryStrategy(existingRepository, requester, newRepository);
+            strategyExecutor.execute(strategy);
         } catch (AdminNotFound e1) {
             log.error("When trying to create a preconfigured repositories, we couldn't find any valid administrator");
         } catch (StrategyFailure e) {

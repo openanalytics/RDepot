@@ -40,7 +40,7 @@ public abstract class SpringDataJpaCapableRetriever<E extends Resource> implemen
     /**
      * @param dao Data Access Object to interact with external data source.
      */
-    public SpringDataJpaCapableRetriever(Dao<E> dao) {
+    protected SpringDataJpaCapableRetriever(Dao<E> dao) {
         this.dao = dao;
     }
 

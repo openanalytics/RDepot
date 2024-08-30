@@ -126,6 +126,10 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
         this.packageDeleter = packageDeleter;
     }
 
+    protected File extractPackageFile(File stored) throws ExtractFileException {
+        return new File(storage.extractTarGzPackageFile(stored.getAbsolutePath()));
+    }
+
     @Override
     protected Submission actualStrategy() throws StrategyFailure {
         log.debug("Package upload strategy started.");
@@ -139,7 +143,7 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
         Properties packageProperties;
         try {
             stored = new File(storage.writeToWaitingRoom(fileData, repository));
-            extracted = new File(storage.extractTarGzPackageFile(stored.getAbsolutePath()));
+            extracted = extractPackageFile(stored);
             packageProperties = storage.getPropertiesFromExtractedFile(extracted.getAbsolutePath());
             packageBag = createPackage(name, stored, packageProperties);
             submission = createSubmission(packageBag);
@@ -199,11 +203,11 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
      * @return submission created submission
      */
     private Submission createSubmission(P packageBag) throws CreateSubmissionException {
-        log.debug("Creating submission for package " + packageBag.toString());
+        log.debug("Creating submission for package {}", packageBag.toString());
         Submission submission = new Submission();
         submission.setSubmitter(requester);
         submission.setPackage(packageBag);
-        log.debug("Submission " + submission + " created.");
+        log.debug("Submission {} created.", submission);
 
         if (securityMediator.canUpload(packageBag.getName(), packageBag.getRepository(), requester)) {
             log.debug("Privileged requester - submission is being automatically accepted...");
@@ -220,12 +224,12 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
             packageBag.setActive(true);
             submission.setState(SubmissionState.ACCEPTED);
             submission.setApprover(requester);
-            log.debug("Package " + packageBag + " accepted.");
+            log.debug("Package {} accepted.", packageBag);
         } else {
             log.debug("Requester is not allowed to accept this package. Submission set to WAITING.");
             submission.setState(SubmissionState.WAITING);
             emailService.sendAcceptSubmissionEmail(submission);
-            log.debug("Submission email for submission " + submission + " sent.");
+            log.debug("Submission email for submission {} sent.", submission);
         }
 
         try {
@@ -267,7 +271,7 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
             }
 
             packageBag = packageService.create(packageBag);
-            log.debug("Package " + packageBag.toString() + " created.");
+            log.debug("Package {} created.", packageBag.toString());
 
             return packageBag;
         } catch (PackageProcessingException
@@ -350,6 +354,14 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
      * @return newly created, technology-specific package object
      */
     protected abstract P parseTechnologySpecificPackageProperties(Properties properties)
+            throws ParsePackagePropertiesException;
+
+    /**
+     * Parses binary package properties that are technology-specific.
+     * @param properties parsed {@link Properties} object
+     * @return newly created, technology-specific package object
+     */
+    protected abstract P parseTechnologySpecificBinaryPackageProperties(Properties properties)
             throws ParsePackagePropertiesException;
 
     /**

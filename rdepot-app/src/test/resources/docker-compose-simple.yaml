@@ -25,7 +25,7 @@ services:
 ##
   repo:
     build: ./docker/repo
-    # image: registry.openanalytics.eu/openanalytics/rdepot-repo-it:2.2.0
+    # image: registry.openanalytics.eu/openanalytics/rdepot-repo-it:2.3.0
     restart: always
     labels:
       eu.openanalytics.rdepot.container.name: "oa-rdepot-repo"
@@ -61,7 +61,7 @@ services:
 ##
   app:
     build: ./docker/app
-    # image: registry.openanalytics.eu/openanalytics/rdepot-app-it:2.2.0
+    # image: registry.openanalytics.eu/openanalytics/rdepot-app-it:2.3.0
     restart: always
     hostname: oa-rdepot-app
     labels:
@@ -88,6 +88,31 @@ services:
         aliases:
           - oa-rdepot-app
         ipv4_address: 192.168.49.21
+  r-test-container:
+    build: ./docker/r
+    stdin_open: true
+    hostname: oa-rdepot-r-test-container
+    labels:
+      eu.openanalytics.rdepot.container.name: "oa-rdepot-r-test-container"
+    networks:
+      oa-rdepot:
+        aliases:
+          - oa-rdepot-r-test-container
+    volumes:
+      - ./itestRepo:/opt/itestRepo:ro
+  python-test-container:
+    image: registry.openanalytics.eu/proxy/python:3.9.19
+    working_dir: /opt/itestRepo
+    stdin_open: true
+    hostname: oa-rdepot-python-test-container
+    labels:
+      eu.openanalytics.rdepot.container.name: "oa-rdepot-python-test-container"
+    networks:
+      oa-rdepot:
+        aliases:
+          - oa-rdepot-python-test-container
+    volumes:
+      - ./itestRepo:/opt/itestRepo:ro
 networks:
   oa-rdepot:
     ipam:

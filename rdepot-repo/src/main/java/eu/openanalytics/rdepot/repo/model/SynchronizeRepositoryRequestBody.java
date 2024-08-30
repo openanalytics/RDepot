@@ -48,7 +48,7 @@ public abstract class SynchronizeRepositoryRequestBody {
 
     public abstract Technology getTechnology();
 
-    public SynchronizeRepositoryRequestBody(
+    protected SynchronizeRepositoryRequestBody(
             String page,
             String repository,
             String id,

@@ -30,13 +30,11 @@ import eu.openanalytics.rdepot.repo.r.model.SynchronizeCranRepositoryRequestBody
 import eu.openanalytics.rdepot.repo.r.storage.CranStorageService;
 import eu.openanalytics.rdepot.repo.storage.StorageProperties;
 import eu.openanalytics.rdepot.repo.storage.implementations.FileSystemStorageService;
-import io.micrometer.common.util.StringUtils;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileFilter;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -50,7 +48,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 import lombok.NonNull;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,10 +70,52 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
     private static final String ARCHIVE_FOLDER = "Archive";
     private static final String ARCHIVE_RDS = "archive.rds";
 
-    private final Set<String> excludedFiles = new HashSet<String>(Arrays.asList(PACKAGES, PACKAGES_GZ));
+    private final Set<String> excludedFiles = new HashSet<>(Arrays.asList(PACKAGES, PACKAGES_GZ));
 
     public CranFileSystemStorageService(StorageProperties properties) {
         super(properties);
+    }
+
+    private boolean noExcludedFiles(Path path) {
+        return !excludedFiles.contains(path.getFileName().toString());
+    }
+
+    private boolean noExcludedFilesAndDirectories(Path path) {
+        return noExcludedFiles(path) && !Files.isDirectory(path);
+    }
+
+    private boolean onlyReadableDirectories(Path path) {
+        return Files.isReadable(path) && Files.isDirectory(path);
+    }
+
+    private boolean onlyReadableFiles(Path path) {
+        return Files.isReadable(path) && !Files.isDirectory(path);
+    }
+
+    private ArchiveInfo getArchiveInfoFromPath(Path path) throws IOException {
+        LocalDateTime modifiedTime = null;
+        LocalDateTime accessTime = null;
+        LocalDateTime createdTime = null;
+        try {
+            BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
+            modifiedTime = LocalDateTime.ofInstant(attr.lastModifiedTime().toInstant(), ZoneId.systemDefault());
+            accessTime = LocalDateTime.ofInstant(attr.lastAccessTime().toInstant(), ZoneId.systemDefault());
+            createdTime = LocalDateTime.ofInstant(attr.creationTime().toInstant(), ZoneId.systemDefault());
+        } catch (Exception e) {
+            logger.debug("Exception when querying for basic file attributes of path {}: {}", path, e.getMessage(), e);
+        }
+        return new ArchiveInfo(
+                path.getParent().getFileName().toString() + "/"
+                        + path.getFileName().toString(),
+                Long.valueOf(Files.size(path)).intValue(),
+                436,
+                modifiedTime,
+                createdTime,
+                accessTime,
+                1000,
+                1000,
+                null,
+                null);
     }
 
     public void generateArchiveRds(String repository) throws IOException {
@@ -83,7 +125,7 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
         Path archiveLocation =
                 latestLocation.resolve(SRC_FOLDER).resolve(CONTRIB_FOLDER).resolve(ARCHIVE_FOLDER);
 
-        if (Files.notExists(archiveLocation)) {
+        if (Files.notExists(archiveLocation) || !Files.isDirectory(archiveLocation)) {
             Path archiveRds = latestLocation
                     .resolve(SRC_FOLDER)
                     .resolve(CONTRIB_FOLDER)
@@ -93,54 +135,26 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
             return;
         }
 
-        Map<String, List<ArchiveInfo>> archives = new HashMap<>();
-
-        File[] directories = archiveLocation.toFile().listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File file) {
-                return file.canRead() && file.isDirectory();
-            }
-        });
-        for (File dir : directories) {
-            List<ArchiveInfo> infos = new ArrayList<>();
-            File[] packages = dir.listFiles(new FileFilter() {
-                @Override
-                public boolean accept(File file) {
-                    return file.canRead() && file.isFile();
-                }
-            });
-            for (File file : packages) {
-                LocalDateTime modifiedTime = null;
-                LocalDateTime accessTime = null;
-                LocalDateTime createdTime = null;
-                try {
-                    BasicFileAttributes attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
-                    modifiedTime =
-                            LocalDateTime.ofInstant(attr.lastModifiedTime().toInstant(), ZoneId.systemDefault());
-                    accessTime = LocalDateTime.ofInstant(attr.lastAccessTime().toInstant(), ZoneId.systemDefault());
-                    createdTime = LocalDateTime.ofInstant(attr.creationTime().toInstant(), ZoneId.systemDefault());
-                } catch (Exception e) {
-                    logger.debug(
-                            "Exception when querying for basic file attributes of path " + file.toString() + ": "
-                                    + e.getMessage(),
-                            e);
-                }
-                infos.add(new ArchiveInfo(
-                        dir.getName() + "/" + file.getName(),
-                        Long.valueOf(file.length()).intValue(),
-                        436,
-                        modifiedTime,
-                        createdTime,
-                        accessTime,
-                        1000,
-                        1000,
-                        null,
-                        null));
-            }
-            if (!infos.isEmpty()) {
-                archives.put(dir.getName(), infos);
-            }
+        List<Path> directories = new ArrayList<>();
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(archiveLocation, this::onlyReadableDirectories)) {
+            stream.forEach(directories::add);
         }
+        Map<String, List<ArchiveInfo>> archives = new HashMap<>();
+        for (Path directory : directories) {
+            List<Path> packages = new ArrayList<>();
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory, this::onlyReadableFiles)) {
+                stream.forEach(packages::add);
+            }
+            if (packages.isEmpty()) {
+                continue;
+            }
+            List<ArchiveInfo> infos = new ArrayList<>();
+            for (Path packageFile : packages) {
+                infos.add(getArchiveInfoFromPath(packageFile));
+            }
+            archives.put(directory.getFileName().toString(), infos);
+        }
+
         if (archives.isEmpty()) {
             Path archiveRds = latestLocation
                     .resolve(SRC_FOLDER)
@@ -158,14 +172,13 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
             Files.createDirectories(metaLocation);
         }
         Path archiveRds = metaLocation.resolve(ARCHIVE_RDS);
-        FileOutputStream archiveRdsStrean = new FileOutputStream(archiveRds.toFile());
-        BufferedOutputStream outputStream = new BufferedOutputStream(archiveRdsStrean);
+        FileOutputStream archiveRdsStream = new FileOutputStream(archiveRds.toFile());
+        BufferedOutputStream outputStream = new BufferedOutputStream(archiveRdsStream);
         archiveIndex.serialize(outputStream);
     }
 
     @Override
-    public void storeAndDeleteFiles(SynchronizeCranRepositoryRequestBody request)
-            throws StorageException, FileNotFoundException {
+    public void storeAndDeleteFiles(SynchronizeCranRepositoryRequestBody request) throws StorageException, IOException {
         final String repository = request.getRepository();
         MultipartFile[] filesToUpload = request.getFilesToUpload();
         MultipartFile[] filesToUploadToArchive = request.getFilesToUploadToArchive();
@@ -184,7 +197,6 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
         try {
             generateArchiveRds(repository);
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
             throw new StorageException(e.getMessage(), e);
         }
         super.handleLastChunk(request, repository);
@@ -192,15 +204,17 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
 
     private void copyToDedicatedDirectory(MultipartFile file, Path rootDirectory, String id)
             throws IOException, MoveToTrashException {
-        Path saveLocation = rootDirectory.resolve(file.getOriginalFilename().split("_")[0]);
+        String fileName = file.getOriginalFilename();
+        assert !StringUtils.isBlank(fileName);
+        Path saveLocation = rootDirectory.resolve(fileName.split("_")[0]);
         if (!Files.exists(saveLocation)) {
             Files.createDirectory(saveLocation);
         }
-        Path destination = saveLocation.resolve(file.getOriginalFilename());
+        Path destination = saveLocation.resolve(fileName);
         if (Files.exists(destination)) {
-            moveToTrash(id, destination.toFile());
+            moveToTrash(id, destination);
         }
-        Files.copy(file.getInputStream(), saveLocation.resolve(file.getOriginalFilename()));
+        Files.copy(file.getInputStream(), saveLocation.resolve(fileName));
     }
 
     private void storeInArchive(MultipartFile[] files, String repository, String id) {
@@ -208,34 +222,33 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
                 ? this.rootLocation.resolve(repository)
                 : this.rootLocation;
         saveLocation = saveLocation.resolve(SRC_FOLDER).resolve(CONTRIB_FOLDER).resolve(ARCHIVE_FOLDER);
-        logger.debug("Saving to location {}", saveLocation.toString());
+        logger.debug("Saving to location {}", saveLocation);
         try {
-            if (!Files.exists(saveLocation)) {
-                Files.createDirectories(saveLocation);
-            }
+            Files.createDirectories(saveLocation);
         } catch (IOException e) {
             throw new StorageException(
                     "Failed to create directory " + saveLocation.toFile().getAbsolutePath(), e);
         }
         for (MultipartFile file : files) {
+            String fileName = file.getOriginalFilename();
+            assert !StringUtils.isBlank(fileName);
             try {
-                if (Objects.equals(file.getOriginalFilename(), PACKAGES)
-                        || file.getOriginalFilename().equals(PACKAGES_GZ)) {
-                    Path destination = saveLocation.resolve(file.getOriginalFilename());
+                if (fileName.equals(PACKAGES) || fileName.equals(PACKAGES_GZ)) {
+                    Path destination = saveLocation.resolve(fileName);
                     if (Files.exists(destination)) {
-                        moveToTrash(id, destination.toFile());
+                        moveToTrash(id, destination);
                     }
                     Files.copy(file.getInputStream(), destination);
                 } else {
                     copyToDedicatedDirectory(file, saveLocation, id);
                 }
             } catch (IOException | MoveToTrashException e) {
-                throw new StorageException("Failed to store file " + file.getOriginalFilename(), e);
+                throw new StorageException("Failed to store file " + fileName, e);
             }
         }
     }
 
-    private void store(MultipartFile[] files, String repository, String id) {
+    private void store(MultipartFile[] files, String repository, String id) throws IOException {
         Path saveLocation = ((repository != null) && (!repository.trim().isEmpty()))
                 ? this.rootLocation.resolve(repository)
                 : this.rootLocation;
@@ -243,52 +256,45 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
         store(files, saveLocation, id);
     }
 
-    public List<File> getRecentPackagesFromRepository(String repository) {
-        ArrayList<File> files = new ArrayList<>();
+    public List<Path> getRecentPackagesFromRepository(String repository) throws IOException {
         Path location = ((repository != null) && (!repository.trim().isEmpty()))
                 ? this.rootLocation.resolve(repository)
                 : this.rootLocation;
         location = location.resolve(SRC_FOLDER).resolve(CONTRIB_FOLDER);
-
-        if (location.toFile().exists()) {
-            for (File file : location.toFile().listFiles()) {
-                if (!file.isDirectory() && !excludedFiles.contains(file.getName())) {
-                    files.add(file);
-                }
-            }
+        List<Path> files = new ArrayList<>();
+        if (Files.notExists(location) || !Files.isDirectory(location)) {
+            return files;
         }
-
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(location, this::noExcludedFilesAndDirectories)) {
+            stream.forEach(files::add);
+        }
         return files;
     }
 
-    public Map<String, List<File>> getArchiveFromRepository(String repository) {
+    public Map<String, List<Path>> getArchiveFromRepository(String repository) throws IOException {
         Path location = ((repository != null) && (!repository.trim().isEmpty()))
                 ? this.rootLocation.resolve(repository)
                 : this.rootLocation;
         location = location.resolve(SRC_FOLDER).resolve(CONTRIB_FOLDER).resolve(ARCHIVE_FOLDER);
 
-        List<Path> directories = new ArrayList<>();
-        Map<String, List<File>> archive = new HashMap<>();
+        Map<String, List<Path>> archive = new HashMap<>();
 
-        if (location.toFile().exists()) {
-            for (File file : Objects.requireNonNull(location.toFile().listFiles())) {
-                if (!excludedFiles.contains(file.getName())) {
-                    directories.add(file.toPath());
-                }
-            }
+        if (Files.notExists(location) || !Files.isDirectory(location)) {
+            return archive;
+        }
+
+        List<Path> directories = new ArrayList<>();
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(location, this::onlyReadableDirectories)) {
+            stream.forEach(directories::add);
         }
 
         for (Path directory : directories) {
-            List<File> files = new ArrayList<>();
-
-            if (directory.toFile().exists()) {
-                for (File file : Objects.requireNonNull(directory.toFile().listFiles())) {
-                    if (!file.isDirectory() && !excludedFiles.contains(file.getName())) {
-                        files.add(file);
-                    }
-                }
-                archive.put(directory.getFileName().toString(), files);
+            List<Path> files = new ArrayList<>();
+            try (DirectoryStream<Path> stream =
+                    Files.newDirectoryStream(directory, this::noExcludedFilesAndDirectories)) {
+                stream.forEach(files::add);
             }
+            archive.put(directory.getFileName().toString(), files);
         }
 
         return archive;
@@ -296,26 +302,35 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
 
     public void emptyTrash(String repository, String requestId) throws EmptyTrashException {
         Path trash = this.rootLocation.resolve(TRASH_PREFIX + requestId);
-        File archive = this.rootLocation
-                .resolve(repository)
-                .resolve(SRC_FOLDER)
-                .resolve(CONTRIB_FOLDER)
-                .resolve(ARCHIVE_FOLDER)
-                .toFile();
         try {
             if (Files.exists(trash)) FileUtils.forceDelete(trash.toFile());
-
-            if (archive.isDirectory()) {
-                for (File file : Objects.requireNonNull(archive.listFiles())) {
-                    if (file.isDirectory() && Objects.requireNonNull(file.listFiles()).length == 0) {
-                        FileUtils.forceDelete(file);
+            Path archive = this.rootLocation
+                    .resolve(repository)
+                    .resolve(SRC_FOLDER)
+                    .resolve(CONTRIB_FOLDER)
+                    .resolve(ARCHIVE_FOLDER);
+            if (Files.notExists(archive) || !Files.isDirectory(archive)) {
+                return;
+            }
+            try (DirectoryStream<Path> archiveFiles = Files.newDirectoryStream(archive)) {
+                for (Path archiveFile : archiveFiles) {
+                    if (!Files.isDirectory(archiveFile)) {
+                        continue;
                     }
-
-                    if (Objects.requireNonNull(archive.listFiles()).length == 2) {
-                        for (File packagesFile : archive.listFiles()) {
-                            if (packagesFile.getName().equals(PACKAGES)
-                                    || packagesFile.getName().equals(PACKAGES_GZ)) FileUtils.forceDelete(packagesFile);
+                    try (Stream<Path> files = Files.list(archiveFile)) {
+                        if (files.findAny().isEmpty()) {
+                            FileUtils.forceDelete(archiveFile.toFile());
                         }
+                    }
+                }
+            }
+            try (Stream<Path> archiveFiles = Files.list(archive)) {
+                if (archiveFiles.count() == 2) {
+                    if (Files.exists(archive.resolve(PACKAGES))) {
+                        FileUtils.forceDelete(archive.resolve(PACKAGES).toFile());
+                    }
+                    if (Files.exists(archive.resolve(PACKAGES_GZ))) {
+                        FileUtils.forceDelete(archive.resolve(PACKAGES_GZ).toFile());
                     }
                 }
             }
@@ -345,32 +360,32 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
     }
 
     private void delete(String packageName, String repository, String requestId, Boolean fromArchive)
-            throws FileNotFoundException, StorageException {
+            throws StorageException {
         Path location = ((repository != null) && (!repository.trim().isEmpty()))
                 ? this.rootLocation.resolve(repository)
                 : this.rootLocation;
         location = location.resolve(SRC_FOLDER).resolve(CONTRIB_FOLDER);
         location = fromArchive ? location.resolve(ARCHIVE_FOLDER) : location;
 
-        try {
-            if ((packageName == null || packageName.isBlank()) && !fromArchive) {
-                for (File packageFile : Objects.requireNonNull(location.toFile().listFiles())) {
-                    if (!Files.exists(packageFile.toPath())) throw new FileNotFoundException();
+        if (Files.notExists(location) || !Files.isDirectory(location)) {
+            return;
+        }
 
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(location)) {
+            if (StringUtils.isBlank(packageName) && !fromArchive) {
+                for (Path packageFile : stream) {
                     moveToTrash(requestId, packageFile);
                 }
             } else {
-                if (fromArchive) location = location.resolve(packageName.split("_")[0]);
+                if (!StringUtils.isBlank(packageName) && fromArchive) {
+                    location = location.resolve(packageName.split("_")[0]);
+                }
 
                 Path packageFilePath = location.resolve(packageName);
 
-                if (!Files.exists(packageFilePath)) throw new FileNotFoundException(packageFilePath.toString());
-
-                moveToTrash(requestId, packageFilePath.toFile());
+                moveToTrash(requestId, packageFilePath);
             }
-        } catch (FileNotFoundException e) {
-            throw e;
-        } catch (MoveToTrashException e) {
+        } catch (MoveToTrashException | IOException e) {
             throw new StorageException("Could not delete package file", e);
         }
     }
@@ -384,19 +399,17 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
     }
 
     private void delete(String[] packageNames, String repository, String requestId, Boolean fromArchive)
-            throws FileNotFoundException, StorageException {
+            throws StorageException {
         for (String packageName : packageNames) {
             delete(packageName, repository, requestId, fromArchive);
         }
     }
 
-    private void delete(String[] packageNames, String repository, String requestId)
-            throws FileNotFoundException, StorageException {
+    private void delete(String[] packageNames, String repository, String requestId) throws StorageException {
         delete(packageNames, repository, requestId, false);
     }
 
-    private void deleteFromArchive(String[] packageNames, String repository, String requestId)
-            throws FileNotFoundException, StorageException {
+    private void deleteFromArchive(String[] packageNames, String repository, String requestId) throws StorageException {
         delete(packageNames, repository, requestId, true);
     }
 

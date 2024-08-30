@@ -20,7 +20,7 @@
  */
 package eu.openanalytics.rdepot.test.unit.api.v2;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
@@ -65,7 +65,6 @@ import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -133,12 +132,13 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
                 "file", "abc_1.3.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
         final boolean generateManuals = true;
         final boolean replace = true;
+        final boolean binary = false;
 
         final Submission submission =
                 RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get()).getSubmission();
         submission.setState(SubmissionState.WAITING);
-        Strategy<Submission> strategy = Mockito.spy(
-                new SuccessfulStrategy<Submission>(submission, newsfeedEventService, submissionService, user.get()));
+        Strategy<Submission> strategy =
+                Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user.get()));
         final PackageDto packageDto = RPackageTestFixture.GET_EXAMPLE_PACKAGE_DTO(submission.getPackageBag());
         final SubmissionDto submissionDto =
                 RSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, submission.getPackageBag());
@@ -151,7 +151,7 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
         when(submissionDtoConverter.convertEntityToDto(submission)).thenReturn(submissionDto);
         doAnswer((i) -> {
                     final PackageUploadRequest<?> request = i.getArgument(0);
-                    assertEquals(false, request.isReplace());
+                    assertFalse(request.isReplace());
                     return strategy;
                 })
                 .when(rStrategyFactory)
@@ -161,7 +161,8 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
                         .file(multipartFile)
                         .param("repository", repository.getName())
                         .param("generateManual", Boolean.toString(generateManuals))
-                        .param("replace", Boolean.toString(replace)))
+                        .param("replace", Boolean.toString(replace))
+                        .param("binary", Boolean.toString(binary)))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(Files.readString(Path.of(EXAMPLE_SUBMISSION_CREATED_PATH))));
     }
@@ -175,6 +176,7 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
                 "file", "abc_1.3.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
         final boolean generateManuals = true;
         final boolean replace = false;
+        final boolean binary = false;
 
         final RPackage packageBag = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get());
         final Submission submission = packageBag.getSubmission();
@@ -191,7 +193,7 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
 
         doAnswer((i) -> {
                     final PackageUploadRequest<?> request = i.getArgument(0);
-                    assertEquals(false, request.isReplace());
+                    assertFalse(request.isReplace());
                     return strategy;
                 })
                 .when(rStrategyFactory)
@@ -205,7 +207,8 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
                         .file(multipartFile)
                         .param("repository", repository.getName())
                         .param("generateManual", Boolean.toString(generateManuals))
-                        .param("replace", Boolean.toString(replace)))
+                        .param("replace", Boolean.toString(replace))
+                        .param("binary", Boolean.toString(binary)))
                 .andExpect(status().isOk())
                 .andExpect(content().json(Files.readString(Path.of(WARNING_SUBMISSION_DUPLICATE_PATH))));
     }
@@ -219,6 +222,7 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
                 "file", "abc_1.3.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
         final boolean generateManuals = true;
         final boolean replace = true;
+        final boolean binary = false;
 
         final RPackage packageBag = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get());
         final Submission submission = packageBag.getSubmission();
@@ -235,7 +239,7 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
 
         doAnswer((i) -> {
                     final PackageUploadRequest<?> request = i.getArgument(0);
-                    assertEquals(false, request.isReplace());
+                    assertFalse(request.isReplace());
                     return strategy;
                 })
                 .when(rStrategyFactory)
@@ -249,7 +253,8 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
                         .file(multipartFile)
                         .param("repository", repository.getName())
                         .param("generateManual", Boolean.toString(generateManuals))
-                        .param("replace", Boolean.toString(replace)))
+                        .param("replace", Boolean.toString(replace))
+                        .param("binary", Boolean.toString(binary)))
                 .andExpect(status().isOk())
                 .andExpect(content().json(Files.readString(Path.of(WARNING_PACKAGE_REPLACE_DISABLED_PATH))));
     }
@@ -277,22 +282,19 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
         final byte[] packageFile = Files.readAllBytes(Path.of(TEST_PACKAGE_PATH));
         final MockMultipartFile multipartFile = new MockMultipartFile(
                 "file", "abc_1.3.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
-        final Boolean generateManuals = true;
-        final Boolean replace = false;
+        final boolean generateManuals = true;
+        final boolean replace = false;
         final Submission submission =
                 RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get()).getSubmission();
-        Strategy<Submission> strategy = Mockito.spy(
-                new SuccessfulStrategy<Submission>(submission, newsfeedEventService, submissionService, user.get()));
+        Strategy<Submission> strategy =
+                Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user.get()));
 
         when(rRepositoryService.findByNameAndDeleted(REPOSITORY_NAME, false)).thenReturn(Optional.of(repository));
         when(userService.findActiveByLogin("user")).thenReturn(user);
-        doAnswer(new Answer<>() {
-                    @Override
-                    public Object answer(InvocationOnMock invocation) throws Throwable {
-                        ValidationResult validationResult = invocation.getArgument(1, ValidationResult.class);
-                        validationResult.error("MULTIPART-FILE", MessageCodes.INVALID_FILENAME);
-                        return null;
-                    }
+        doAnswer((Answer<Object>) invocation -> {
+                    ValidationResult validationResult = invocation.getArgument(1, ValidationResult.class);
+                    validationResult.error("MULTIPART-FILE", MessageCodes.INVALID_FILENAME);
+                    return null;
                 })
                 .when(rPackageValidator)
                 .validate(any(), any());
@@ -301,8 +303,8 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v2/manager/r/submissions")
                         .file(multipartFile)
                         .param("repository", REPOSITORY_NAME)
-                        .param("generateManual", generateManuals.toString())
-                        .param("replace", replace.toString()))
+                        .param("generateManual", Boolean.toString(generateManuals))
+                        .param("replace", Boolean.toString(replace)))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().json(Files.readString(Path.of(ERROR_SUBMISSION_INVALID_PATH))));
     }
@@ -314,12 +316,13 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
         final byte[] packageFile = Files.readAllBytes(Path.of(TEST_PACKAGE_PATH));
         final MockMultipartFile multipartFile = new MockMultipartFile(
                 "file", "abc_1.3.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
-        final Boolean generateManuals = true;
-        final Boolean replace = false;
+        final boolean generateManuals = true;
+        final boolean replace = false;
+        final boolean binary = false;
         final Submission submission =
                 RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get()).getSubmission();
-        Strategy<Submission> strategy = Mockito.spy(
-                new FailureStrategy<Submission>(submission, newsfeedEventService, submissionService, user.get()));
+        Strategy<Submission> strategy =
+                Mockito.spy(new FailureStrategy<>(submission, newsfeedEventService, submissionService, user.get()));
 
         when(rStrategyFactory.uploadPackageStrategy(any(), eq(user.get()))).thenReturn(strategy);
         when(userService.findActiveByLogin("user")).thenReturn(user);
@@ -329,8 +332,9 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
         ResultActions result = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v2/manager/r/submissions")
                         .file(multipartFile)
                         .param("repository", repository.getName())
-                        .param("generateManual", generateManuals.toString())
-                        .param("replace", replace.toString()))
+                        .param("generateManual", Boolean.toString(generateManuals))
+                        .param("replace", Boolean.toString(replace))
+                        .param("binary", Boolean.toString(binary)))
                 .andExpect(status().isInternalServerError());
         TestUtils.matchInternalServerErrorCreate(result);
     }

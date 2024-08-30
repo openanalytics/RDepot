@@ -76,18 +76,6 @@ services:
     networks:
       - oa-rdepot
 
-  ldap:
-    build: ./docker/ldap
-    restart: unless-stopped
-    hostname: oa-rdepot-ldap
-    environment:
-      - LDAP_TLS=false
-      - LDAP_ORGANISATION=Test Company
-      - LDAP_DOMAIN=example.org
-      - LDAP_ADMIN_PASSWORD=testpassword
-    networks:
-      - oa-rdepot
-
 networks:
   oa-rdepot:
     ipam:

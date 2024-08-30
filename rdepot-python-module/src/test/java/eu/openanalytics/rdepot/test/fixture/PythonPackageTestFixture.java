@@ -44,6 +44,7 @@ public class PythonPackageTestFixture {
     public static final String VERSION = "4.5.6";
     public static final Boolean ACTIVATED = true;
     public static final Boolean DELETED = false;
+    public static final Boolean BINARY = false;
 
     public static List<PythonPackage> GET_FIXTURE_PACKAGES(
             PythonRepository repository, User user, int packageCount, int idShift) {
@@ -62,7 +63,8 @@ public class PythonPackageTestFixture {
                     TITLE + Integer.toString(i),
                     HASH + Integer.toString(i),
                     ACTIVATED,
-                    DELETED);
+                    DELETED,
+                    BINARY);
 
             Submission submission = PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, packageBag);
             submission.setId(i);

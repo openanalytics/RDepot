@@ -13,18 +13,14 @@
       "login": "einstein",
       "email": "einstein@ldap.forumsys.com"
     },
-    "created": "2024-05-21T00:00:00Z",
     "changes": null,
-    "links": [
-      {
-        "rel": "self",
-        "href": "http://localhost:8017/api/v2/manager/python/submissions/47"
-      },
-      {
-        "rel": "submissionList",
-        "href": "http://localhost:8017/api/v2/manager/python/submissions"
-      }
-    ],
+    "links": [{
+      "rel": "self",
+      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/submissions\/47"
+    }, {
+      "rel": "submissionList",
+      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/submissions"
+    }],
     "id": 47,
     "state": "ACCEPTED",
     "technology": "Python",
@@ -38,27 +34,25 @@
         "id": 9,
         "published": false,
         "technology": "Python",
-        "publicationUri": "http://localhost/repo/testrepo9"
+        "publicationUri": "http:\/\/localhost\/repo\/testrepo9"
       },
       "title": "A built-package format for Python",
       "version": "0.40.0",
-      "url": "Changelog, https://wheel.readthedocs.io/en/stable/news.html, Documentation, https://wheel.readthedocs.io/, Issue Tracker, https://github.com/pypa/wheel/issues",
+      "url": "Changelog, https:\/\/wheel.readthedocs.io\/en\/stable\/news.html, Documentation, https:\/\/wheel.readthedocs.io\/, Issue Tracker, https:\/\/github.com\/pypa\/wheel\/issues",
       "deleted": false,
+      "binary": false,
       "name": "wheel",
       "submission": {
         "id": 47,
         "state": "ACCEPTED"
       },
-      "links": [
-        {
-          "rel": "self",
-          "href": "http://localhost:8017/api/v2/manager/python/packages/47"
-        },
-        {
-          "rel": "packageList",
-          "href": "http://localhost:8017/api/v2/manager/packages"
-        }
-      ],
+      "links": [{
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/47"
+      }, {
+        "rel": "packageList",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+      }],
       "id": 47,
       "user": {
         "name": "Nikola Tesla",

@@ -43,6 +43,7 @@ public class RPackageTestFixture {
     public static final String VERSION = "4.5.6";
     public static final Boolean ACTIVATED = true;
     public static final Boolean DELETED = false;
+    public static final Boolean BINARY = false;
 
     public static List<RPackage> GET_FIXTURE_PACKAGES(
             RRepository repository, User user, int packageCount, int idShift) {
@@ -53,15 +54,16 @@ public class RPackageTestFixture {
                     i,
                     repository,
                     user,
-                    NAME + Integer.toString(i),
-                    DESCRIPTION + Integer.toString(i),
-                    AUTHOR + Integer.toString(i),
-                    LICENSE + Integer.toString(i),
-                    Integer.toString(i) + SOURCE,
-                    TITLE + Integer.toString(i),
-                    MD5SUM + Integer.toString(i),
+                    NAME + i,
+                    DESCRIPTION + i,
+                    AUTHOR + i,
+                    LICENSE + i,
+                    i + SOURCE,
+                    TITLE + i,
+                    MD5SUM + i,
                     ACTIVATED,
-                    DELETED);
+                    DELETED,
+                    BINARY);
 
             packageBag.setVersion(VERSION);
             packageBag.setGenerateManuals(false);
@@ -83,6 +85,21 @@ public class RPackageTestFixture {
         return GET_FIXTURE_PACKAGE(repository, user, 1);
     }
 
+    public static RPackage GET_FIXTURE_BINARY_PACKAGE(RRepository repository, User user) {
+        RPackage binaryPackage = GET_FIXTURE_PACKAGE(repository, user);
+        binaryPackage.setBinary(true);
+        binaryPackage.setBuilt("R 4.2; x86_64-pc-linux-gnu; 2022-06-07 00:49:30 UTC; unix");
+        binaryPackage.setRVersion("4.2");
+        binaryPackage.setArchitecture("x86_64");
+        binaryPackage.setDistribution("centos7");
+
+        Submission submission = RSubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, binaryPackage);
+        submission.setId(binaryPackage.getSubmission().getId());
+        submission.setCreatedDate(DateProvider.now());
+        binaryPackage.setSubmission(submission);
+        return binaryPackage;
+    }
+
     public static Page<RPackage> GET_EXAMPLE_PACKAGES_PAGED(RRepository repository, User user) {
         return new PageImpl<>(GET_FIXTURE_PACKAGES(repository, user, 3, 100));
     }
@@ -101,21 +118,16 @@ public class RPackageTestFixture {
         RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
         User user = UserTestFixture.GET_PACKAGE_MAINTAINER();
 
-        RPackage packageBag = GET_FIXTURE_PACKAGES(repository, user, 3, 100).get(0);
-
-        return packageBag;
+        return GET_FIXTURE_PACKAGES(repository, user, 3, 100).get(0);
     }
 
     public static PackageDto GET_EXAMPLE_PACKAGE_DTO(Package packageBag) {
-        PackageDto packageDto = new PackageDto(packageBag);
-        return packageDto;
+        return new PackageDto(packageBag);
     }
 
     public static List<PackageDto> GET_EXAMPLE_PACKAGE_DTOS(List<Submission> submissions) {
-        List<PackageDto> packageDtos = new ArrayList<PackageDto>();
-        submissions.forEach(submission -> {
-            packageDtos.add(new PackageDto(submission.getPackageBag()));
-        });
+        List<PackageDto> packageDtos = new ArrayList<>();
+        submissions.forEach(submission -> packageDtos.add(new PackageDto(submission.getPackageBag())));
         return packageDtos;
     }
 
@@ -226,15 +238,14 @@ public class RPackageTestFixture {
 
         User user = UserTestFixture.GET_ADMIN();
 
-        for (int i = 0; i < names.length; i++) {
-            String name = names[i];
+        for (String name : names) {
             String[] tokens = name.split("_");
             String id = tokens[0];
             String packageName = tokens[1];
             String version = tokens[2];
 
             RPackage packageBag = GET_FIXTURE_PACKAGE(repository, user);
-            packageBag.setId(Integer.valueOf(id));
+            packageBag.setId(Integer.parseInt(id));
             packageBag.setName(packageName);
             packageBag.setAuthor("Author of package " + name);
             packageBag.setVersion(version);

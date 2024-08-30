@@ -20,16 +20,25 @@
  */
 package eu.openanalytics.rdepot.base.strategy.update;
 
-import eu.openanalytics.rdepot.base.entities.*;
+import eu.openanalytics.rdepot.base.entities.AccessToken;
+import eu.openanalytics.rdepot.base.entities.EventChangedVariable;
+import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
 import eu.openanalytics.rdepot.base.entities.Package;
+import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
+import eu.openanalytics.rdepot.base.entities.RepositoryMaintainer;
+import eu.openanalytics.rdepot.base.entities.Role;
+import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.event.NewsfeedEventType;
 import eu.openanalytics.rdepot.base.exception.AdminNotFound;
 import eu.openanalytics.rdepot.base.exception.NoAdminLeftException;
 import eu.openanalytics.rdepot.base.mediator.BestMaintainerChooser;
 import eu.openanalytics.rdepot.base.mediator.deletion.exceptions.NoSuitableMaintainerFound;
-import eu.openanalytics.rdepot.base.service.*;
+import eu.openanalytics.rdepot.base.service.CommonPackageService;
+import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
+import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
+import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
+import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
-import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure;
 
 /**
  * Updates {@link User}.
@@ -99,7 +108,6 @@ public class UpdateUserStrategy extends UpdateStrategy<User> {
                     break;
             }
         } catch (AdminNotFound | NoSuitableMaintainerFound e) {
-            logger.error(e.getMessage(), e);
             throw new StrategyFailure(e);
         }
 
@@ -148,7 +156,6 @@ public class UpdateUserStrategy extends UpdateStrategy<User> {
             // has role of packageMaintainer, then we should check if there exists some PackageMaintainer
             // objects with him (the same situation for RepositoryMaintainer)
         } catch (NoAdminLeftException e) {
-            logger.error(e.getMessage(), e);
             throw new StrategyFailure(e);
         }
 
@@ -166,12 +173,6 @@ public class UpdateUserStrategy extends UpdateStrategy<User> {
         user.setDeleted(true);
         changedValues.add(new EventChangedVariable("deleted", Boolean.FALSE.toString(), Boolean.TRUE.toString()));
     }
-
-    @Override
-    protected void postStrategy() throws StrategyFailure {}
-
-    @Override
-    public void revertChanges() throws StrategyReversionFailure {}
 
     @Override
     protected NewsfeedEvent generateEvent(User resource) {

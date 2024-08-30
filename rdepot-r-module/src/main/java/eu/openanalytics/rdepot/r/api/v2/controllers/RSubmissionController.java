@@ -25,14 +25,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2Controller;
 import eu.openanalytics.rdepot.base.api.v2.converters.SubmissionDtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.converters.exceptions.EntityResolutionException;
-import eu.openanalytics.rdepot.base.api.v2.dtos.PackageUploadRequest;
 import eu.openanalytics.rdepot.base.api.v2.dtos.ResponseDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.SubmissionDto;
 import eu.openanalytics.rdepot.base.api.v2.exceptions.ApiException;
 import eu.openanalytics.rdepot.base.api.v2.exceptions.ApplyPatchException;
 import eu.openanalytics.rdepot.base.api.v2.exceptions.CreateException;
 import eu.openanalytics.rdepot.base.api.v2.exceptions.DeleteException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.InvalidSubmission;
 import eu.openanalytics.rdepot.base.api.v2.exceptions.MalformedPatchException;
 import eu.openanalytics.rdepot.base.api.v2.exceptions.RepositoryNotFound;
 import eu.openanalytics.rdepot.base.api.v2.exceptions.SubmissionNotFound;
@@ -52,6 +50,7 @@ import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
 import eu.openanalytics.rdepot.base.storage.exceptions.GenerateManualException;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
+import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.exceptions.NonFatalSubmissionStrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
@@ -64,6 +63,7 @@ import eu.openanalytics.rdepot.base.validation.ValidationResultImpl;
 import eu.openanalytics.rdepot.base.validation.exceptions.PackageDuplicateWithReplaceOff;
 import eu.openanalytics.rdepot.base.validation.exceptions.PackageValidationException;
 import eu.openanalytics.rdepot.base.validation.exceptions.PatchValidationException;
+import eu.openanalytics.rdepot.r.api.v2.dtos.RPackageUploadRequest;
 import eu.openanalytics.rdepot.r.api.v2.hateoas.RSubmissionModelAssembler;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
@@ -80,7 +80,6 @@ import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonPatch;
 import jakarta.json.spi.JsonProvider;
 import java.security.Principal;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -130,6 +129,7 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
     private final SubmissionPatchValidator submissionPatchValidator;
     private final PageableValidator pageableValidator;
     private final CommonPageableSortResolver pageableSortResolver;
+    private final StrategyExecutor strategyExecutor;
 
     @Value("${replacing.packages.enabled}")
     private boolean replacingPackagesEnabled;
@@ -149,7 +149,8 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
             SubmissionDtoConverter submissionDtoConverter,
             SubmissionPatchValidator submissionPatchValidator,
             PageableValidator pageableValidator,
-            CommonPageableSortResolver pageableSortResolver) {
+            CommonPageableSortResolver pageableSortResolver,
+            StrategyExecutor strategyExecutor) {
         super(
                 messageSource,
                 LocaleContextHolder.getLocale(),
@@ -169,6 +170,7 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
         this.submissionPatchValidator = submissionPatchValidator;
         this.pageableValidator = pageableValidator;
         this.pageableSortResolver = pageableSortResolver;
+        this.strategyExecutor = strategyExecutor;
     }
 
     /**
@@ -181,7 +183,6 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
      * @return DTO with created submission
      * @throws UserNotAuthorized when user could not be authenticated or authorized
      * @throws CreateException if there was an error on the server side
-     * @throws InvalidSubmission if user provided invalid file or parameters
      * @throws RepositoryNotFound when no repository was found
      */
     @PreAuthorize("hasAuthority('user')")
@@ -193,8 +194,12 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
             @RequestParam("repository") final String repository,
             @RequestParam(name = "generateManual", defaultValue = "${generate-manuals}") final Boolean generateManual,
             @RequestParam(name = "replace", defaultValue = "false") final Boolean replaceRequestParam,
+            @RequestParam(name = "binary", defaultValue = "false") final Boolean binaryPackage,
+            @RequestParam(name = "rVersion") Optional<String> rVersion,
+            @RequestParam(name = "architecture") Optional<String> architecture,
+            @RequestParam(name = "distribution") Optional<String> distribution,
             Principal principal)
-            throws UserNotAuthorized, CreateException, InvalidSubmission, RepositoryNotFound {
+            throws UserNotAuthorized, CreateException, RepositoryNotFound {
 
         boolean replace = replaceRequestParam;
 
@@ -214,25 +219,38 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
 
         if (!replacingPackagesEnabled) replace = false;
 
-        final PackageUploadRequest<RRepository> request =
-                new PackageUploadRequest<>(multipartFile, repositoryEntity, generateManual, replace);
+        if (binaryPackage && (rVersion.isEmpty() || architecture.isEmpty() || distribution.isEmpty()))
+            return handleValidationError(MessageCodes.ERROR_MISSING_DATA_FOR_BINARY_PACKAGE);
+
+        if (!binaryPackage && (rVersion.isPresent() || architecture.isPresent() || distribution.isPresent()))
+            return handleValidationError(MessageCodes.ERROR_PARAMETERS_NOT_ALLOWED_FOR_NON_BINARY_PACKAGE);
+
+        final RPackageUploadRequest request = new RPackageUploadRequest(
+                multipartFile,
+                repositoryEntity,
+                generateManual,
+                replace,
+                binaryPackage,
+                rVersion.orElse(""),
+                architecture.orElse(""),
+                distribution.orElse(""));
         final Strategy<Submission> strategy = strategyFactory.uploadPackageStrategy(request, uploader);
 
         try {
-            final Submission submission = strategy.perform();
+            final Submission submission = strategyExecutor.execute(strategy);
             return handleCreatedForSingleEntity(submission, uploader);
         } catch (NonFatalSubmissionStrategyFailure e) {
-            if (e.getReason() instanceof SynchronizeRepositoryException) {
-                log.debug(e.getMessage(), e);
-                return handleWarningForSingleEntity(
-                        e.getSubmission(), MessageCodes.WARNING_SYNCHRONIZATION_FAILURE, uploader, true);
-            } else {
-                log.warn(e.getMessage(), e);
-                return handleWarningForSingleEntity(e.getSubmission(), MessageCodes.WARNING_UNKNOWN, uploader, true);
-            }
+            log.debug(e.getMessage(), e);
+            return handleWarningForSingleEntity(
+                    e.getSubmission(),
+                    e.getReason() instanceof SynchronizeRepositoryException
+                            ? MessageCodes.WARNING_SYNCHRONIZATION_FAILURE
+                            : MessageCodes.WARNING_UNKNOWN,
+                    uploader,
+                    true);
         } catch (StrategyFailure e) {
             if (e.getReason() instanceof PackageDuplicateWithReplaceOff warningException) {
-                log.debug(e.getMessage() + ": " + multipartFile.getOriginalFilename(), e);
+                log.debug("{}: {}", e.getMessage(), multipartFile.getOriginalFilename(), e);
                 if (!replacingPackagesEnabled && replaceRequestParam)
                     return handleWarningForSingleEntity(
                             warningException.getSubmission(),
@@ -242,12 +260,8 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
                 else
                     return handleWarningForSingleEntity(
                             warningException.getSubmission(), MessageCodes.WARNING_PACKAGE_DUPLICATE, uploader, false);
-            }
-            if (e.getReason() instanceof PackageValidationException) {
-                log.debug(e.getMessage(), e);
-                return handleValidationError(e.getReason());
-            }
-            if (e.getReason() instanceof GenerateManualException) {
+            } else if (e.getReason() instanceof PackageValidationException
+                    || e.getReason() instanceof GenerateManualException) {
                 log.debug(e.getMessage(), e);
                 return handleValidationError(e.getReason());
             }
@@ -281,7 +295,7 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
         final DtoResolvedPageable resolvedPageable = pageableSortResolver.resolve(pageable);
         pageableValidator.validate(SubmissionDto.class, resolvedPageable);
 
-        Specification<Submission> specification = Specification.where(SubmissionSpecs.ofTechnology(Arrays.asList("R")));
+        Specification<Submission> specification = Specification.where(SubmissionSpecs.ofTechnology(List.of("R")));
 
         if (Objects.nonNull(states)) {
             specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.ofState(states));
@@ -348,9 +362,9 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
 
             Strategy<Submission> strategy = strategyFactory.updateSubmissionStrategy(
                     submission, dtoConverter.resolveDtoToEntity(submissionDto), repository, requester);
-            submission = strategy.perform();
+            submission = strategyExecutor.execute(strategy);
         } catch (StrategyFailure | EntityResolutionException e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new ApplyPatchException(messageSource, locale);
         } catch (JsonProcessingException | JsonException | PatchValidationException e) {
             throw new MalformedPatchException(messageSource, locale, e);
@@ -360,7 +374,7 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
     }
 
     /**
-     * This method is supposed to make state field case insensitive.
+     * This method is supposed to make state field case-insensitive.
      * @param jsonPatch to fix
      * @return fixed patch
      */
@@ -429,7 +443,7 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
         try {
             submissionDeleter.delete(submission);
         } catch (DeleteEntityException e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new DeleteException(messageSource, locale);
         }
     }

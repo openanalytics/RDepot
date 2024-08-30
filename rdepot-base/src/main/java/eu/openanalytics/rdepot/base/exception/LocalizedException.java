@@ -33,7 +33,7 @@ public abstract class LocalizedException extends Exception {
 
     private final String messageCode;
 
-    public LocalizedException(String messageCode) {
+    protected LocalizedException(String messageCode) {
         super(StaticMessageResolver.getMessage(messageCode));
         this.messageCode = messageCode;
     }

@@ -86,28 +86,32 @@ public class PythonPackageValidator implements PackageValidator<PythonPackage> {
                 errors.error("id", MessageCodes.NO_SUCH_PACKAGE_ERROR);
             } else {
                 PythonPackage existingPackage = exsitingPackageOptional.get();
-                if (existingPackage.getName() != null
-                        && !existingPackage.getName().equals(packageBag.getName()))
-                    errors.error("name", MessageCodes.FORBIDDEN_UPDATE);
-                if (existingPackage.getVersion() != null
-                        && !existingPackage.getVersion().equals(packageBag.getVersion()))
-                    errors.error("version", MessageCodes.FORBIDDEN_UPDATE);
-                if (existingPackage.getLicense() != null
-                        && !existingPackage.getLicense().equals(packageBag.getLicense()))
-                    errors.error("license", MessageCodes.FORBIDDEN_UPDATE);
-                if (packageBag.getSource() != null && !packageBag.getSource().equals(existingPackage.getSource()))
-                    errors.error("source", MessageCodes.FORBIDDEN_UPDATE);
-                if (existingPackage.getUser() != null
-                        && !existingPackage.getUser().equals(packageBag.getUser()))
-                    errors.error("user", MessageCodes.FORBIDDEN_UPDATE);
-                if (existingPackage.getRepository() != null
-                        && !existingPackage.getRepository().equals(packageBag.getRepository()))
-                    errors.error("repository", MessageCodes.FORBIDDEN_UPDATE);
-                if (existingPackage.getHash() != null
-                        && !existingPackage.getHash().equals(packageBag.getHash()))
-                    errors.error("hash", MessageCodes.FORBIDDEN_UPDATE);
+                validatePropertyChange(existingPackage, packageBag, errors);
             }
         }
+    }
+
+    private void validatePropertyChange(
+            PythonPackage existingPackage,
+            PythonPackage uploadedPackage,
+            DataSpecificValidationResult<Submission> errors) {
+        if (existingPackage.getName() != null && !existingPackage.getName().equals(uploadedPackage.getName()))
+            errors.error("name", MessageCodes.FORBIDDEN_UPDATE);
+        if (existingPackage.getVersion() != null
+                && !existingPackage.getVersion().equals(uploadedPackage.getVersion()))
+            errors.error("version", MessageCodes.FORBIDDEN_UPDATE);
+        if (existingPackage.getLicense() != null
+                && !existingPackage.getLicense().equals(uploadedPackage.getLicense()))
+            errors.error("license", MessageCodes.FORBIDDEN_UPDATE);
+        if (uploadedPackage.getSource() != null && !uploadedPackage.getSource().equals(existingPackage.getSource()))
+            errors.error("source", MessageCodes.FORBIDDEN_UPDATE);
+        if (existingPackage.getUser() != null && !existingPackage.getUser().equals(uploadedPackage.getUser()))
+            errors.error("user", MessageCodes.FORBIDDEN_UPDATE);
+        if (existingPackage.getRepository() != null
+                && !existingPackage.getRepository().equals(uploadedPackage.getRepository()))
+            errors.error("repository", MessageCodes.FORBIDDEN_UPDATE);
+        if (existingPackage.getHash() != null && !existingPackage.getHash().equals(uploadedPackage.getHash()))
+            errors.error("hash", MessageCodes.FORBIDDEN_UPDATE);
     }
 
     private void validateVersion(

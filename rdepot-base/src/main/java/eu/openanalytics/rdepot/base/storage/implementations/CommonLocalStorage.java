@@ -22,6 +22,7 @@ package eu.openanalytics.rdepot.base.storage.implementations;
 
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.Repository;
+import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.storage.Storage;
 import eu.openanalytics.rdepot.base.storage.exceptions.CreateFolderStructureException;
 import eu.openanalytics.rdepot.base.storage.exceptions.CreateTemporaryFolderException;
@@ -63,6 +64,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -86,7 +88,7 @@ import org.springframework.web.multipart.MultipartFile;
 public abstract class CommonLocalStorage<R extends Repository, P extends Package> implements Storage<R, P> {
 
     protected final String separator = FileSystems.getDefault().getSeparator();
-    private Random random = new Random();
+    private final Random random = new Random();
 
     @Resource(name = "packageUploadDirectory")
     private File packageUploadDirectory;
@@ -311,10 +313,11 @@ public abstract class CommonLocalStorage<R extends Repository, P extends Package
         final File storedFile = new File(storedFilePath);
         final File outputDir = storedFile.getParentFile();
         File unGzippedFile = null;
+        List<String> filesInArchive;
 
         try {
             unGzippedFile = unGzip(storedFile, outputDir);
-            unTar(unGzippedFile, outputDir);
+            filesInArchive = unTar(unGzippedFile, outputDir);
         } catch (IOException | ArchiveException e) {
             try {
                 if (storedFile.getParentFile().exists())
@@ -333,7 +336,9 @@ public abstract class CommonLocalStorage<R extends Repository, P extends Package
                 log.error(e.getMessage(), e);
             }
         }
-        return generateSubmissionWaitingRoomLocation(storedFile);
+
+        return Path.of(outputDir.getAbsolutePath(), StringUtils.substringBefore(filesInArchive.get(0), "/"))
+                .toString();
     }
 
     /**
@@ -372,33 +377,40 @@ public abstract class CommonLocalStorage<R extends Repository, P extends Package
      * @param inputFile     the input .tar file
      * @param outputDir     the output directory file.
      */
-    private void unTar(final File inputFile, final File outputDir) throws IOException, ArchiveException {
+    private List<String> unTar(final File inputFile, final File outputDir) throws IOException, ArchiveException {
         log.debug(String.format("Extracting %s to dir %s.", inputFile.getAbsolutePath(), outputDir.getAbsolutePath()));
         final InputStream is = new FileInputStream(inputFile);
-        final TarArchiveInputStream debInputStream = new ArchiveStreamFactory().createArchiveInputStream("tar", is);
         TarArchiveEntry entry;
+        List<String> filesInArchive = new ArrayList<>();
 
-        while ((entry = debInputStream.getNextEntry()) != null) {
-            final File outputFile = new File(outputDir, entry.getName());
-            File outputFileParentDir = outputFile.getParentFile();
+        try (final TarArchiveInputStream debInputStream =
+                new ArchiveStreamFactory().createArchiveInputStream("tar", is)) {
+            while ((entry = debInputStream.getNextEntry()) != null) {
+                filesInArchive.add(entry.getName());
+                final File outputFile = new File(outputDir, entry.getName());
+                File outputFileParentDir = outputFile.getParentFile();
 
-            if (!outputFileParentDir.exists() && !outputFileParentDir.mkdirs()) {
-                throw new IllegalStateException(
-                        String.format("Couldn't create directory %s.", outputFileParentDir.getAbsolutePath()));
-            }
-
-            if (entry.isDirectory()) {
-                if (!outputFile.exists() && !outputFile.mkdirs()) {
+                if (!outputFileParentDir.exists() && !outputFileParentDir.mkdirs()) {
                     throw new IllegalStateException(
-                            String.format("Couldn't create directory %s.", outputFile.getAbsolutePath()));
+                            String.format("Couldn't create directory %s.", outputFileParentDir.getAbsolutePath()));
                 }
-            } else {
-                final OutputStream outputFileStream = new FileOutputStream(outputFile);
-                IOUtils.copy(debInputStream, outputFileStream);
-                outputFileStream.close();
+
+                if (entry.isDirectory()) {
+                    if (!outputFile.exists() && !outputFile.mkdirs()) {
+                        throw new IllegalStateException(
+                                String.format("Couldn't create directory %s.", outputFile.getAbsolutePath()));
+                    }
+                } else {
+                    try (OutputStream outputFileStream = new FileOutputStream(outputFile)) {
+                        IOUtils.copy(debInputStream, outputFileStream);
+                    }
+                }
             }
         }
-        debInputStream.close();
+
+        if (filesInArchive.isEmpty()) throw new ArchiveException(MessageCodes.EMPTY_ARCHIVE);
+
+        return filesInArchive;
     }
     /**
      * Extract an input gzip file into an output file.

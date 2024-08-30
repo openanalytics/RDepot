@@ -20,7 +20,7 @@
  */
 package eu.openanalytics.rdepot.test.unit.api.v2;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
@@ -38,17 +38,18 @@ import eu.openanalytics.rdepot.base.api.v2.dtos.SubmissionDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.SubmissionProjection;
 import eu.openanalytics.rdepot.base.api.v2.dtos.UserProjection;
 import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
+import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.entities.enums.SubmissionState;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
-import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure;
 import eu.openanalytics.rdepot.base.time.DateProvider;
 import eu.openanalytics.rdepot.base.validation.ValidationResult;
 import eu.openanalytics.rdepot.r.api.v2.controllers.RSubmissionController;
 import eu.openanalytics.rdepot.r.api.v2.dtos.RPackageDto;
+import eu.openanalytics.rdepot.r.api.v2.dtos.RPackageUploadRequest;
 import eu.openanalytics.rdepot.r.api.v2.hateoas.RSubmissionModelAssembler;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
@@ -74,7 +75,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -83,7 +83,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -122,13 +121,19 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
 
     private static final String JSON_PATH = "src/test/resources/unit/jsons";
     private static final String TEST_PACKAGE_PATH = "src/test/resources/unit/test_packages/abc_1.3.tar.gz";
+    private static final String TEST_BINARY_PACKAGE_PATH =
+            "src/test/resources/unit/test_packages/binary_package/arrow_8.0.0.tar.gz";
     private static final String EXAMPLE_SUBMISSION_CREATED_PATH = JSON_PATH + "/example_submission_created.json";
+    private static final String EXAMPLE_BINARY_SUBMISSION_CREATED_PATH =
+            JSON_PATH + "/example_binary_submission_created.json";
     private static final String ERROR_SUBMISSION_NOT_FOUND_PATH = JSON_PATH + "/error_submission_notfound.json";
     private static final String EXAMPLE_SUBMISSIONS_PATH = JSON_PATH + "/example_submissions.json";
     private static final String EXAMPLE_SUBMISSION_PATCHED_PATH = JSON_PATH + "/example_submission_patched.json";
     private static final String EXAMPLE_SUBMISSION_PATH = JSON_PATH + "/example_submission.json";
     private static final String WARNING_SUBMISSION_DUPLICATE_PATH = JSON_PATH + "/warning_submission_duplicate.json";
     private static final String ERROR_SUBMISSION_INVALID_PATH = JSON_PATH + "/error_submission_invalid.json";
+    private static final String ERROR_MISSING_BINARY_PARAMETERS_PATH =
+            JSON_PATH + "/error_missing_binary_parameters.json";
 
     private static final String ERROR_UPDATE_NOT_ALLOWED_SUBMISSION_PATH =
             JSON_PATH + "/error_update_notallowed_submission.json";
@@ -150,12 +155,13 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
                 "file", "abc_1.3.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
         final boolean generateManuals = true;
         final boolean replace = true;
+        final boolean binary = false;
 
         final Submission submission =
                 RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get()).getSubmission();
         submission.setState(SubmissionState.WAITING);
-        Strategy<Submission> strategy = Mockito.spy(
-                new SuccessfulStrategy<Submission>(submission, newsfeedEventService, submissionService, user.get()));
+        Strategy<Submission> strategy =
+                Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user.get()));
         final PackageDto packageDto = RPackageTestFixture.GET_EXAMPLE_PACKAGE_DTO(submission.getPackageBag());
         final SubmissionDto submissionDto =
                 RSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, submission.getPackageBag());
@@ -168,7 +174,7 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
         when(submissionDtoConverter.convertEntityToDto(submission)).thenReturn(submissionDto);
         doAnswer((i) -> {
                     final PackageUploadRequest<?> request = i.getArgument(0);
-                    assertEquals(true, request.isReplace());
+                    assertTrue(request.isReplace());
                     return strategy;
                 })
                 .when(rStrategyFactory)
@@ -178,9 +184,57 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
                         .file(multipartFile)
                         .param("repository", repository.getName())
                         .param("generateManual", Boolean.toString(generateManuals))
-                        .param("replace", Boolean.toString(replace)))
+                        .param("replace", Boolean.toString(replace))
+                        .param("binary", Boolean.toString(binary)))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(Files.readString(Path.of(EXAMPLE_SUBMISSION_CREATED_PATH))));
+    }
+
+    @Test
+    @WithMockUser(authorities = "user")
+    public void submitBinaryPackage() throws Exception {
+        final RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
+        final byte[] packageFile = Files.readAllBytes(Path.of(TEST_BINARY_PACKAGE_PATH));
+        final MockMultipartFile multipartFile = new MockMultipartFile(
+                "file", "arrow_8.0.0.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
+        final boolean generateManuals = true;
+        final boolean replace = true;
+        final boolean binary = true;
+
+        final Submission submission = RPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user.get())
+                .getSubmission();
+        submission.setState(SubmissionState.WAITING);
+        Strategy<Submission> strategy =
+                Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user.get()));
+        final PackageDto packageDto = RPackageTestFixture.GET_EXAMPLE_PACKAGE_DTO(submission.getPackageBag());
+        final SubmissionDto submissionDto =
+                RSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, submission.getPackageBag());
+
+        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(rRepositoryService.findByNameAndDeleted(any(String.class), eq(false)))
+                .thenReturn(Optional.of(repository));
+        doNothing().when(rPackageValidator).validate(any(), any(ValidationResult.class));
+        when(commonPackageDtoConverter.convertEntityToDto(any())).thenReturn(packageDto);
+        when(submissionDtoConverter.convertEntityToDto(submission)).thenReturn(submissionDto);
+        doAnswer((i) -> {
+                    final RPackageUploadRequest request = i.getArgument(0);
+                    assertTrue(request.isReplace());
+                    return strategy;
+                })
+                .when(rStrategyFactory)
+                .uploadPackageStrategy(any(), any());
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v2/manager/r/submissions")
+                        .file(multipartFile)
+                        .param("repository", repository.getName())
+                        .param("generateManual", Boolean.toString(generateManuals))
+                        .param("replace", Boolean.toString(replace))
+                        .param("binary", Boolean.toString(binary))
+                        .param("rVersion", "4.2.0")
+                        .param("architecture", "x86_64")
+                        .param("distribution", "centos7"))
+                .andExpect(status().isCreated())
+                .andExpect(content().json(Files.readString(Path.of(EXAMPLE_BINARY_SUBMISSION_CREATED_PATH))));
     }
 
     @Test
@@ -192,6 +246,7 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
                 "file", "abc_1.3.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
         final boolean generateManuals = true;
         final boolean replace = false;
+        final boolean binary = false;
 
         final RPackage packageBag = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get());
         final Submission submission = packageBag.getSubmission();
@@ -208,7 +263,7 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
 
         doAnswer((i) -> {
                     final PackageUploadRequest<?> request = i.getArgument(0);
-                    assertEquals(false, request.isReplace());
+                    assertFalse(request.isReplace());
                     return strategy;
                 })
                 .when(rStrategyFactory)
@@ -222,7 +277,8 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
                         .file(multipartFile)
                         .param("repository", repository.getName())
                         .param("generateManual", Boolean.toString(generateManuals))
-                        .param("replace", Boolean.toString(replace)))
+                        .param("replace", Boolean.toString(replace))
+                        .param("binary", Boolean.toString(binary)))
                 .andExpect(status().isOk())
                 .andExpect(content().json(Files.readString(Path.of(WARNING_SUBMISSION_DUPLICATE_PATH))));
     }
@@ -250,22 +306,19 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
         final byte[] packageFile = Files.readAllBytes(Path.of(TEST_PACKAGE_PATH));
         final MockMultipartFile multipartFile = new MockMultipartFile(
                 "file", "abc_1.3.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
-        final Boolean generateManuals = true;
-        final Boolean replace = false;
+        final boolean generateManuals = true;
+        final boolean replace = false;
         final Submission submission =
                 RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get()).getSubmission();
-        Strategy<Submission> strategy = Mockito.spy(
-                new SuccessfulStrategy<Submission>(submission, newsfeedEventService, submissionService, user.get()));
+        Strategy<Submission> strategy =
+                Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user.get()));
 
         when(rRepositoryService.findByNameAndDeleted(REPOSITORY_NAME, false)).thenReturn(Optional.of(repository));
         when(userService.findActiveByLogin("user")).thenReturn(user);
-        doAnswer(new Answer<>() {
-                    @Override
-                    public Object answer(InvocationOnMock invocation) throws Throwable {
-                        ValidationResult validationResult = invocation.getArgument(1, ValidationResult.class);
-                        validationResult.error("MULTIPART-FILE", MessageCodes.INVALID_FILENAME);
-                        return null;
-                    }
+        doAnswer((Answer<Object>) invocation -> {
+                    ValidationResult validationResult = invocation.getArgument(1, ValidationResult.class);
+                    validationResult.error("MULTIPART-FILE", MessageCodes.INVALID_FILENAME);
+                    return null;
                 })
                 .when(rPackageValidator)
                 .validate(any(), any());
@@ -274,10 +327,40 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v2/manager/r/submissions")
                         .file(multipartFile)
                         .param("repository", REPOSITORY_NAME)
-                        .param("generateManual", generateManuals.toString())
-                        .param("replace", replace.toString()))
+                        .param("generateManual", Boolean.toString(generateManuals))
+                        .param("replace", Boolean.toString(replace)))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().json(Files.readString(Path.of(ERROR_SUBMISSION_INVALID_PATH))));
+    }
+
+    @Test
+    @WithMockUser(authorities = "user")
+    public void submitBinaryPackage_returns422_whenParametersAreMissing() throws Exception {
+        final RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
+        final byte[] packageFile = Files.readAllBytes(Path.of(TEST_BINARY_PACKAGE_PATH));
+        final MockMultipartFile multipartFile = new MockMultipartFile(
+                "file", "arrow_8.0.0.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
+        final boolean generateManuals = true;
+        final boolean replace = false;
+        final boolean binary = true;
+        final String architecture = "x86_64";
+        final String distribution = "testDistro";
+
+        when(rRepositoryService.findByNameAndDeleted(repository.getName(), false))
+                .thenReturn(Optional.of(repository));
+        when(userService.findActiveByLogin("user")).thenReturn(user);
+        doNothing().when(rPackageValidator).validate(any(), any(ValidationResult.class));
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v2/manager/r/submissions")
+                        .file(multipartFile)
+                        .param("repository", repository.getName())
+                        .param("generateManual", Boolean.toString(generateManuals))
+                        .param("replace", Boolean.toString(replace))
+                        .param("binary", Boolean.toString(binary))
+                        .param("architecture", architecture)
+                        .param("distribution", distribution))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(content().json(Files.readString(Path.of(ERROR_MISSING_BINARY_PARAMETERS_PATH))));
     }
 
     @Test
@@ -287,12 +370,13 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
         final byte[] packageFile = Files.readAllBytes(Path.of(TEST_PACKAGE_PATH));
         final MockMultipartFile multipartFile = new MockMultipartFile(
                 "file", "abc_1.3.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
-        final Boolean generateManuals = true;
-        final Boolean replace = false;
+        final boolean generateManuals = true;
+        final boolean replace = false;
+        final boolean binary = false;
         final Submission submission =
                 RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get()).getSubmission();
-        Strategy<Submission> strategy = Mockito.spy(
-                new FailureStrategy<Submission>(submission, newsfeedEventService, submissionService, user.get()));
+        Strategy<Submission> strategy =
+                Mockito.spy(new FailureStrategy<>(submission, newsfeedEventService, submissionService, user.get()));
 
         when(rStrategyFactory.uploadPackageStrategy(any(), eq(user.get()))).thenReturn(strategy);
         when(userService.findActiveByLogin("user")).thenReturn(user);
@@ -302,8 +386,9 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
         ResultActions result = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v2/manager/r/submissions")
                         .file(multipartFile)
                         .param("repository", repository.getName())
-                        .param("generateManual", generateManuals.toString())
-                        .param("replace", replace.toString()))
+                        .param("generateManual", Boolean.toString(generateManuals))
+                        .param("replace", Boolean.toString(replace))
+                        .param("binary", Boolean.toString(binary)))
                 .andExpect(status().isInternalServerError());
         TestUtils.matchInternalServerErrorCreate(result);
     }
@@ -355,7 +440,7 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
     public void deleteSubmission_returns404_whenSubmissionIsNotFound() throws Exception {
 
         when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(submissionService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(null));
+        when(submissionService.findById(any(Integer.class))).thenReturn(Optional.empty());
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v2/manager/r/submissions/" + 123))
                 .andExpect(status().isNotFound())
@@ -367,7 +452,7 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
     public void getSubmission_returns404_whenSubmissionIsNotFound() throws Exception {
 
         when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(submissionService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(null));
+        when(submissionService.findById(any(Integer.class))).thenReturn(Optional.empty());
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/r/submissions/" + 123))
                 .andExpect(status().isNotFound())
@@ -380,7 +465,7 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/state\",\"value\":\"ACCEPTED\"}]";
 
         when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(submissionService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(null));
+        when(submissionService.findById(any(Integer.class))).thenReturn(Optional.empty());
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/r/submissions/" + 123)
                         .contentType("application/json-patch+json")
@@ -430,17 +515,16 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
         RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
 
         List<Submission> submissions = RPackageTestFixture.GET_FIXTURE_PACKAGES(repository, user.get(), 3, 100).stream()
-                .map(p -> p.getSubmission())
+                .map(Package::getSubmission)
                 .collect(Collectors.toList());
         submissions.get(0).setState(SubmissionState.WAITING);
         submissions.get(1).setState(SubmissionState.WAITING);
         submissions.get(2).setState(SubmissionState.WAITING);
-        Page<Submission> paged = new PageImpl<Submission>(submissions);
+        Page<Submission> paged = new PageImpl<>(submissions);
         List<PackageDto> packageDtos = RPackageTestFixture.GET_EXAMPLE_PACKAGE_DTOS(submissions);
         List<SubmissionDto> submissionDtos = RSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTOS(submissions);
 
-        when(submissionService.findAllBySpecification(
-                        ArgumentMatchers.<Specification<Submission>>any(), any(Pageable.class)))
+        when(submissionService.findAllBySpecification(ArgumentMatchers.any(), any(Pageable.class)))
                 .thenReturn(paged);
         when(userService.findActiveByLogin("user")).thenReturn(user);
         when(userService.findById(any(Integer.class))).thenReturn(user);
@@ -493,32 +577,28 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
         when(rRepositoryService.findById(any(Integer.class))).thenReturn(Optional.of(repository));
         when(commonPackageDtoConverter.convertEntityToDto(any())).thenReturn(packageDto);
         when(rStrategyFactory.updateSubmissionStrategy(eq(submission), any(), eq(repository), eq(user.get())))
-                .thenAnswer(new Answer<Strategy<Submission>>() {
+                .thenAnswer((Answer<Strategy<Submission>>) invocation -> {
+                    Submission entity = invocation.getArgument(0);
+                    return new Strategy<>(entity, submissionService, null, newsfeedEventService) {
 
-                    @Override
-                    public Strategy<Submission> answer(InvocationOnMock invocation) throws Throwable {
-                        Submission entity = invocation.getArgument(0);
-                        return new Strategy<Submission>(entity, submissionService, null, newsfeedEventService) {
+                        @Override
+                        protected Submission actualStrategy() {
+                            entity.setState(SubmissionState.ACCEPTED);
+                            entity.setApprover(requester);
+                            return entity;
+                        }
 
-                            @Override
-                            protected Submission actualStrategy() throws StrategyFailure {
-                                entity.setState(SubmissionState.ACCEPTED);
-                                entity.setApprover(requester);
-                                return entity;
-                            }
+                        @Override
+                        protected NewsfeedEvent generateEvent(Submission resource) {
+                            return null;
+                        }
 
-                            @Override
-                            protected NewsfeedEvent generateEvent(Submission resource) {
-                                return null;
-                            }
+                        @Override
+                        protected void postStrategy() {}
 
-                            @Override
-                            protected void postStrategy() throws StrategyFailure {}
-
-                            @Override
-                            public void revertChanges() throws StrategyReversionFailure {}
-                        };
-                    }
+                        @Override
+                        public void revertChanges() {}
+                    };
                 });
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/r/submissions/" + submission.getId())
@@ -539,8 +619,8 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
         final SubmissionDto submissionDto = RSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, packageBag);
 
         submission.setState(SubmissionState.CANCELLED);
-        Strategy<Submission> strategy = Mockito.spy(
-                new SuccessfulStrategy<Submission>(submission, newsfeedEventService, submissionService, user.get()));
+        Strategy<Submission> strategy =
+                Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user.get()));
 
         when(userService.findActiveByLogin("user")).thenReturn(user);
         when(userService.findById(any(Integer.class))).thenReturn(user);

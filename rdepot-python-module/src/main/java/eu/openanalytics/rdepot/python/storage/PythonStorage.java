@@ -21,13 +21,9 @@
 package eu.openanalytics.rdepot.python.storage;
 
 import eu.openanalytics.rdepot.base.storage.exceptions.CleanUpAfterSynchronizationException;
-import eu.openanalytics.rdepot.base.storage.exceptions.GenerateManualException;
-import eu.openanalytics.rdepot.base.storage.exceptions.GetReferenceManualException;
 import eu.openanalytics.rdepot.base.storage.exceptions.OrganizePackagesException;
-import eu.openanalytics.rdepot.base.storage.exceptions.ReadPackageVignetteException;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
-import eu.openanalytics.rdepot.python.entities.Vignette;
 import eu.openanalytics.rdepot.python.storage.utils.PopulatedRepositoryContent;
 import eu.openanalytics.rdepot.python.synchronization.SynchronizeRepositoryRequestBody;
 import java.util.List;
@@ -64,40 +60,4 @@ public interface PythonStorage {
      */
     void cleanUpAfterSynchronization(PopulatedRepositoryContent populatedRepositoryContent)
             throws CleanUpAfterSynchronizationException;
-
-    /**
-     * Fetches reference manual file from the storage.
-     * @param packageBag
-     * @return
-     */
-    byte[] getReferenceManual(PythonPackage packageBag) throws GetReferenceManualException;
-
-    /**
-     * Checks if a package provides reference manual.
-     * @param packageBag
-     * @return
-     */
-    boolean isReferenceManualAvailable(PythonPackage packageBag);
-
-    /**
-     * Fetches links to available vignettes for a given package.
-     * @param packageBag
-     * @return
-     */
-    List<Vignette> getAvailableVignettes(PythonPackage packageBag);
-
-    /**
-     * Reads vignette from storage.
-     * @param packageBag
-     * @param filename
-     * @return
-     */
-    byte[] readVignette(PythonPackage packageBag, String filename) throws ReadPackageVignetteException;
-
-    /**
-     * Creates manual for a package and puts it in the local storage.
-     * @param packageBag
-     * @throws GenerateManualException
-     */
-    void generateManual(PythonPackage packageBag) throws GenerateManualException;
 }

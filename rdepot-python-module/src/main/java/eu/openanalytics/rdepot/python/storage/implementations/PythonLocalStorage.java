@@ -26,19 +26,14 @@ import eu.openanalytics.rdepot.base.storage.exceptions.CheckSumCalculationExcept
 import eu.openanalytics.rdepot.base.storage.exceptions.CleanUpAfterSynchronizationException;
 import eu.openanalytics.rdepot.base.storage.exceptions.CreateFolderStructureException;
 import eu.openanalytics.rdepot.base.storage.exceptions.DeleteFileException;
-import eu.openanalytics.rdepot.base.storage.exceptions.GenerateManualException;
-import eu.openanalytics.rdepot.base.storage.exceptions.GetReferenceManualException;
-import eu.openanalytics.rdepot.base.storage.exceptions.InvalidSourceException;
 import eu.openanalytics.rdepot.base.storage.exceptions.LinkFoldersException;
 import eu.openanalytics.rdepot.base.storage.exceptions.Md5MismatchException;
 import eu.openanalytics.rdepot.base.storage.exceptions.OrganizePackagesException;
 import eu.openanalytics.rdepot.base.storage.exceptions.PackageFolderPopulationException;
 import eu.openanalytics.rdepot.base.storage.exceptions.ReadPackageDescriptionException;
-import eu.openanalytics.rdepot.base.storage.exceptions.ReadPackageVignetteException;
 import eu.openanalytics.rdepot.base.storage.implementations.CommonLocalStorage;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
-import eu.openanalytics.rdepot.python.entities.Vignette;
 import eu.openanalytics.rdepot.python.entities.enums.HashMethod;
 import eu.openanalytics.rdepot.python.mediator.hash.HashCalculator;
 import eu.openanalytics.rdepot.python.storage.PythonStorage;
@@ -64,7 +59,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -105,12 +99,6 @@ public class PythonLocalStorage extends CommonLocalStorage<PythonRepository, Pyt
             log.error(e.getMessage(), e);
             throw new ReadPythonPackagePkgInfoException();
         }
-    }
-
-    @Override
-    public String generateSubmissionWaitingRoomLocation(File file) {
-        return new File(file.getParent() + separator + StringUtils.substringBeforeLast(file.getName(), ".tar.gz"))
-                .getAbsolutePath();
     }
 
     public String getRepositoryGeneratedPath(File dateStampFolder, String separator) {
@@ -169,9 +157,6 @@ public class PythonLocalStorage extends CommonLocalStorage<PythonRepository, Pyt
             throw new CreateFolderStructureException();
         }
     }
-
-    @Override
-    public void verifySource(PythonPackage packageBag, String newSource) throws InvalidSourceException {}
 
     @Override
     public SynchronizeRepositoryRequestBody buildSynchronizeRequestBody(
@@ -370,33 +355,10 @@ public class PythonLocalStorage extends CommonLocalStorage<PythonRepository, Pyt
     }
 
     @Override
-    public byte[] getReferenceManual(PythonPackage packageBag) throws GetReferenceManualException {
-        return new byte[] {};
-    }
-
-    @Override
-    public List<Vignette> getAvailableVignettes(PythonPackage packageBag) {
-        return List.of();
-    }
-
-    @Override
-    public byte[] readVignette(PythonPackage packageBag, String filename) throws ReadPackageVignetteException {
-        return new byte[] {};
-    }
-
-    @Override
-    public boolean isReferenceManualAvailable(PythonPackage packageBag) {
-        return false;
-    }
-
-    @Override
     public void calculateCheckSum(PythonPackage packageBag) throws CheckSumCalculationException {
         log.debug("Calculating checksum for package: {}", packageBag.toString());
         final File sourceFile = new File(packageBag.getSource());
         final HashMethod hashMethod = packageBag.getRepository().getHashMethod();
         packageBag.setHash(calculateCheckSum(sourceFile, hashMethod));
     }
-
-    @Override
-    public void generateManual(PythonPackage packageBag) throws GenerateManualException {}
 }

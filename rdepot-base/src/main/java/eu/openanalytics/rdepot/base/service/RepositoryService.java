@@ -22,6 +22,8 @@ package eu.openanalytics.rdepot.base.service;
 
 import eu.openanalytics.rdepot.base.daos.RepositoryDao;
 import eu.openanalytics.rdepot.base.entities.Repository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class RepositoryService<E extends Repository> extends eu.openanalytics.rdepot.base.service.Service<E> {
 
     private final RepositoryDao<E> repositoryDao;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public RepositoryService(RepositoryDao<E> repositoryDao) {
         super(repositoryDao);
@@ -61,27 +66,15 @@ public class RepositoryService<E extends Repository> extends eu.openanalytics.rd
 
     @Transactional
     public void incrementVersion(E repository) {
-        Optional<E> currentRepositoryOpt = Optional.empty();
-        int attempts = 0;
-        while (attempts < 3) {
-            currentRepositoryOpt = repositoryDao.findByNameAcquirePessimisticWriteLock(repository.getName());
-
-            if (currentRepositoryOpt.isEmpty()) {
-                log.warn("Could not acquire lock on repository " + repository.getName() + "! Trying again...");
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    throw new IllegalStateException("Error while acquiring lock on repository.", e);
-                }
-                attempts++;
-            } else {
-                break;
-            }
+        final String repoName = repository.getName();
+        final int updated = repositoryDao.incrementRepositoryVersion(repoName);
+        entityManager.refresh(entityManager.merge(repository));
+        if (updated < 1) {
+            throw new IllegalStateException(
+                    String.format("No repository version has been updated. Repository name: %s", repoName));
+        } else if (updated > 1) {
+            throw new IllegalStateException(
+                    String.format("Too many repositories have been updated. Repository name: %s", repoName));
         }
-        E currentRepository = currentRepositoryOpt.orElseThrow(
-                () -> new IllegalStateException("Could not acquire lock on repository " + repository.getName()));
-        log.debug("Incrementing version from " + currentRepository.getVersion());
-        currentRepository.setVersion(currentRepository.getVersion() + 1);
-        repositoryDao.saveAndFlush(currentRepository);
     }
 }

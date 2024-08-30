@@ -22,10 +22,12 @@ package eu.openanalytics.rdepot.python.synchronization;
 
 import java.io.File;
 import java.nio.file.FileSystems;
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FilesHierarchy {
+
     private static final String SEPARATOR = FileSystems.getDefault().getSeparator();
 
     public static boolean isRepositoryDir(File file) {

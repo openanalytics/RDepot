@@ -34,6 +34,7 @@ import java.nio.file.Path;
 import java.util.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -47,9 +48,6 @@ public class CranStorageTest {
 
     private static final String TEST_PACKAGES_DIR = "src/test/resources/eu/openanalytics/rdepot/repo/testpackages/";
 
-    private final String TRASH_PREFIX = "TRASH_";
-    private final String TRASH_DATABASE_FILE = "TRASH_DATABASE.txt";
-
     private CranFileSystemStorageService storageService;
 
     private File testPackagesDir;
@@ -58,7 +56,7 @@ public class CranStorageTest {
     private static final String NON_EXISTING_REPO = "testrepo234";
 
     private MultipartFile[] getTestPackages(boolean archive) throws IOException {
-        ArrayList<MultipartFile> files = new ArrayList<MultipartFile>();
+        ArrayList<MultipartFile> files = new ArrayList<>();
 
         String subDir = archive ? "archive" : "recent";
 
@@ -66,7 +64,6 @@ public class CranStorageTest {
                 testPackagesDir.toPath().resolve(subDir).toFile().listFiles())) {
             MultipartFile multipartFile =
                     new MockMultipartFile("files", file.getName(), null, Files.readAllBytes(file.toPath()));
-            ;
 
             files.add(multipartFile);
         }
@@ -87,19 +84,18 @@ public class CranStorageTest {
 
     private void assertFiles(MultipartFile[] expectedFiles, File actualDirectory) throws IOException {
         for (MultipartFile expectedFile : expectedFiles) {
-            byte[] expectedBytes = null;
-            byte[] actualBytes = null;
+            byte[] expectedBytes;
+            byte[] actualBytes;
 
             expectedBytes = expectedFile.getBytes();
 
             Path actualDirectoryPath = actualDirectory.toPath();
-            actualDirectoryPath = actualDirectory.getName().equals("Archive")
-                            && !Objects.requireNonNull(expectedFile.getOriginalFilename())
-                                    .startsWith("PACKAGES")
-                    ? actualDirectoryPath.resolve(
-                            expectedFile.getOriginalFilename().split("_")[0])
+            String fileName = expectedFile.getOriginalFilename();
+            assertFalse(StringUtils.isBlank(fileName), "Filename should not be blank");
+            actualDirectoryPath = actualDirectory.getName().equals("Archive") && !fileName.startsWith("PACKAGES")
+                    ? actualDirectoryPath.resolve(fileName.split("_")[0])
                     : actualDirectoryPath;
-            Path actual = actualDirectoryPath.resolve(Objects.requireNonNull(expectedFile.getOriginalFilename()));
+            Path actual = actualDirectoryPath.resolve(fileName);
             actualBytes = Files.readAllBytes(actual);
 
             assertArrayEquals(actualBytes, expectedBytes, "Uploaded file is not correct");
@@ -182,19 +178,19 @@ public class CranStorageTest {
     }
 
     @Test
-    public void getPackages_WhenRepositoryIsEmpty() {
-        List<File> files = storageService.getRecentPackagesFromRepository(NON_EXISTING_REPO);
-        Map<String, List<File>> archive = storageService.getArchiveFromRepository(NON_EXISTING_REPO);
-
+    public void getPackages_WhenRepositoryIsEmpty() throws IOException {
+        List<Path> files = storageService.getRecentPackagesFromRepository(NON_EXISTING_REPO);
         assertTrue(files.isEmpty(), "File list should be empty.");
+
+        Map<String, List<Path>> archive = storageService.getArchiveFromRepository(NON_EXISTING_REPO);
         assertTrue(archive.isEmpty(), "Archive map should be empty.");
     }
 
     @Test
     public void deletePackages() throws Exception {
         final String randomId = RandomStringUtils.randomAlphabetic(16);
-        final Path trash = Files.createDirectory(tempDir.resolve(TRASH_PREFIX + randomId));
-        Files.createFile(trash.resolve(TRASH_DATABASE_FILE));
+        final Path trash = Files.createDirectory(tempDir.resolve("TRASH_" + randomId));
+        Files.createFile(trash.resolve("TRASH_DATABASE.txt"));
 
         final File recentTestPackagesDir =
                 new File(TEST_PACKAGES_DIR).toPath().resolve("recent").toFile();
@@ -235,7 +231,7 @@ public class CranStorageTest {
     }
 
     private String[] getPackagesToDelete(File[] files) {
-        ArrayList<String> filenameList = new ArrayList<String>();
+        ArrayList<String> filenameList = new ArrayList<>();
 
         for (File file : files) {
             if (!file.getName().startsWith("PACKAGES")) filenameList.add(file.getName());
@@ -259,7 +255,7 @@ public class CranStorageTest {
         Files.createDirectories(archiveDir.toPath());
 
         FileUtils.copyDirectory(recentTestPackagesDir, recentDir);
-        for (File file : archiveTestPackagesDir.listFiles()) {
+        for (File file : Objects.requireNonNull(archiveTestPackagesDir.listFiles())) {
             if (!file.getName().startsWith("PACKAGES")) {
                 String packageName = file.getName().split("_")[0];
                 Path packageDedicatedDir = archiveDir.toPath().resolve(packageName);

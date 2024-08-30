@@ -33,8 +33,7 @@ import eu.openanalytics.rdepot.base.service.SubmissionService;
 import eu.openanalytics.rdepot.base.validation.DataSpecificValidationResult;
 import eu.openanalytics.rdepot.base.validation.PackageValidator;
 import eu.openanalytics.rdepot.base.validation.ValidationResultImpl;
-import eu.openanalytics.rdepot.base.validation.exceptions.PackageDuplicateWithReplaceOff;
-import eu.openanalytics.rdepot.base.validation.exceptions.PackageValidationException;
+import eu.openanalytics.rdepot.r.config.RBinaryProperties;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.services.RPackageService;
@@ -45,6 +44,7 @@ import eu.openanalytics.rdepot.test.fixture.RSubmissionTestFixture;
 import eu.openanalytics.rdepot.test.fixture.UserTestFixture;
 import java.io.File;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.entity.ContentType;
@@ -72,37 +72,40 @@ public class RPackageValidatorTest {
     Environment env;
 
     private PackageValidator<RPackage> packageValidator;
-    private Optional<User> user;
-    private RRepository repository;
+    private User user;
     private RPackage packageBag;
     private RPackage updatedPackageBag;
     private RPackage duplicatedPackageBag;
+    private RPackage binaryPackage;
     private Submission submission;
     private DataSpecificValidationResult<Submission> errors;
 
     @BeforeEach
     public void initEach() {
-        user = Optional.of(UserTestFixture.GET_ADMIN());
-        repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        packageBag = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get());
+        user = UserTestFixture.GET_ADMIN();
+        RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
+        packageBag = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
         packageBag.setTitle("someTitle");
         packageBag.setVersion("1");
         packageBag.setName("someName");
         updatedPackageBag = new RPackage(packageBag);
         duplicatedPackageBag = new RPackage(packageBag);
-        submission = RSubmissionTestFixture.GET_FIXTURE_SUBMISSION(user.get(), duplicatedPackageBag);
-        packageValidator = new RPackageValidator(submissionService, rPackageService, env);
+        binaryPackage = RPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user);
+        binaryPackage.setVersion("1");
+        submission = RSubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, duplicatedPackageBag);
+        packageValidator =
+                new RPackageValidator(submissionService, rPackageService, env, setAllowedRBinaryProperties());
     }
 
     @Test
-    public void validateUploadPackage_shouldSucceed() throws Exception {
+    public void validateUploadPackage_shouldSucceed() {
         prepareTest();
         packageValidator.validateUploadPackage(packageBag, true, errors);
         assertFalse(errors.hasErrors(), "Validation results should be empty for a standard package");
     }
 
     @Test
-    public void validateUploadPackageWithDashInName_shouldFail() throws Exception {
+    public void validateUploadPackageWithDashInName_shouldFail() {
         prepareTest();
         packageBag.setName("accrued-smth");
         packageValidator.validateUploadPackage(packageBag, true, errors);
@@ -112,7 +115,7 @@ public class RPackageValidatorTest {
     }
 
     @Test
-    public void validateUploadPackageWithUnderscoreInName_shouldFail() throws Exception {
+    public void validateUploadPackageWithUnderscoreInName_shouldFail() {
         prepareTest();
         packageBag.setName("accrued_smth");
         packageValidator.validateUploadPackage(packageBag, true, errors);
@@ -122,7 +125,7 @@ public class RPackageValidatorTest {
     }
 
     @Test
-    public void validateUploadPackageWithNonAsciiChar_shouldFail() throws Exception {
+    public void validateUploadPackageWithNonAsciiChar_shouldFail() {
         prepareTest();
         packageBag.setName("accrued€");
         packageValidator.validateUploadPackage(packageBag, true, errors);
@@ -132,7 +135,7 @@ public class RPackageValidatorTest {
     }
 
     @Test
-    public void validateUploadPackageEndingWithDot_shouldFail() throws Exception {
+    public void validateUploadPackageEndingWithDot_shouldFail() {
         prepareTest();
         packageBag.setName("newPackage.");
         packageValidator.validateUploadPackage(packageBag, true, errors);
@@ -142,7 +145,7 @@ public class RPackageValidatorTest {
     }
 
     @Test
-    public void validateUploadPackageStartingWithNonLetter_shouldFail() throws Exception {
+    public void validateUploadPackageStartingWithNonLetter_shouldFail() {
         prepareTest();
         packageBag.setName("1newPackage");
         packageValidator.validateUploadPackage(packageBag, true, errors);
@@ -152,7 +155,7 @@ public class RPackageValidatorTest {
     }
 
     @Test
-    public void validateUploadPackageWithEmptyName_shouldFail() throws Exception {
+    public void validateUploadPackageWithEmptyName_shouldFail() {
         prepareTest();
         packageBag.setName("");
         packageValidator.validateUploadPackage(packageBag, true, errors);
@@ -162,7 +165,7 @@ public class RPackageValidatorTest {
     }
 
     @Test
-    public void validateUploadPackageWithEmptyLicense_shouldFail() throws Exception {
+    public void validateUploadPackageWithEmptyLicense_shouldFail() {
         prepareTest();
         packageBag.setLicense("");
         packageValidator.validateUploadPackage(packageBag, true, errors);
@@ -171,43 +174,112 @@ public class RPackageValidatorTest {
     }
 
     @Test
-    public void validateUploadPackageWithEmptyMd5sum_shouldFail() throws Exception {
+    public void validateUploadPackageWithEmptyMd5sum_shouldFail() {
         prepareTest();
         packageBag.setMd5sum("");
         packageValidator.validateUploadPackage(packageBag, true, errors);
-        assertTrue(errors.hasErrors(), "Validation should return hash error");
+        assertTrue(errors.hasErrors(), "Validation should return md5sum error");
         verify(errors, times(1)).error("md5sum", MessageCodes.EMPTY_MD5SUM);
     }
 
     @Test
-    public void validateUploadPackageWithEmptyDescription_shouldFail() throws Exception {
+    public void validateUploadPackageWithEmptyDescription_shouldFail() {
         prepareTest();
         packageBag.setDescription("");
         packageValidator.validateUploadPackage(packageBag, true, errors);
-        assertTrue(errors.hasErrors(), "Validation should return hash error");
+        assertTrue(errors.hasErrors(), "Validation should return description error");
         verify(errors, times(1)).error("description", MessageCodes.EMPTY_DESCRIPTION);
     }
 
     @Test
-    public void validateUploadPackageWithEmptyAuthor_shouldFail() throws Exception {
+    public void validateUploadPackageWithEmptyAuthor_shouldFail() {
         prepareTest();
         packageBag.setAuthor("");
         packageValidator.validateUploadPackage(packageBag, true, errors);
-        assertTrue(errors.hasErrors(), "Validation should return hash error");
+        assertTrue(errors.hasErrors(), "Validation should return author error");
         verify(errors, times(1)).error("author", MessageCodes.EMPTY_AUTHOR);
     }
 
     @Test
-    public void validateUploadPackageWithEmptyTitle_shouldFail() throws Exception {
+    public void validateUploadPackageWithEmptyTitle_shouldFail() {
         prepareTest();
         packageBag.setTitle("");
         packageValidator.validateUploadPackage(packageBag, true, errors);
-        assertTrue(errors.hasErrors(), "Validation should return hash error");
+        assertTrue(errors.hasErrors(), "Validation should return title error");
         verify(errors, times(1)).error("title", MessageCodes.EMPTY_TITLE);
     }
 
     @Test
-    public void validateUploadPackageThatExistsWithReplaceSetToTrue_shouldWarn() throws Exception {
+    public void validateUploadBinaryPackage_shouldSucceed() {
+        prepareTest();
+        packageValidator.validateUploadPackage(binaryPackage, true, errors);
+        assertFalse(errors.hasErrors(), "Validation results should be empty for a standard binary package");
+    }
+
+    @Test
+    public void validateUploadBinaryPackageWithoutBuilt_shouldFail() {
+        prepareTest();
+        binaryPackage.setBuilt("");
+        packageValidator.validateUploadPackage(binaryPackage, true, errors);
+        assertTrue(errors.hasErrors(), "Validation should return built error");
+        verify(errors, times(1)).error("built", MessageCodes.EMPTY_BUILT);
+    }
+
+    @Test
+    public void validateUploadBinaryPackageWithDifferentRVersions_shouldSucceed() {
+        prepareTest();
+        binaryPackage.setRVersion("4.2.1");
+        packageValidator.validateUploadPackage(binaryPackage, true, errors);
+        assertFalse(errors.hasErrors(), "Validation should be empty for more specific rVersion than in built");
+    }
+
+    @Test
+    public void validateUploadBinaryPackageWithDifferentRVersions_shouldFail() {
+        prepareTest();
+        binaryPackage.setRVersion("4.3");
+        packageValidator.validateUploadPackage(binaryPackage, true, errors);
+        assertTrue(errors.hasErrors(), "Validation should return rVersion error");
+        verify(errors, times(1)).error("rVersion", MessageCodes.INVALID_R_VERSION);
+    }
+
+    @Test
+    public void validateUploadBinaryPackageWhenRVersionNotAllowed_shouldFail() {
+        prepareTest();
+        binaryPackage.setRVersion("4.3");
+        packageValidator.validateUploadPackage(binaryPackage, true, errors);
+        assertTrue(errors.hasErrors(), "Validation should return rVersion error");
+        verify(errors, times(1)).error("rVersion", MessageCodes.R_VERSION_NOT_ALLOWED);
+    }
+
+    @Test
+    public void validateUploadBinaryPackageWithDifferentArchitectures_shouldFail() {
+        prepareTest();
+        binaryPackage.setArchitecture("x86");
+        packageValidator.validateUploadPackage(binaryPackage, true, errors);
+        assertTrue(errors.hasErrors(), "Validation should return architecture error");
+        verify(errors, times(1)).error("architecture", MessageCodes.INVALID_ARCHITECTURE);
+    }
+
+    @Test
+    public void validateUploadBinaryPackageWhenArchitectureNotAllowed_shouldFail() {
+        prepareTest();
+        binaryPackage.setArchitecture("x86_32");
+        packageValidator.validateUploadPackage(binaryPackage, true, errors);
+        assertTrue(errors.hasErrors(), "Validation should return architecture error");
+        verify(errors, times(1)).error("architecture", MessageCodes.ARCHITECTURE_NOT_ALLOWED);
+    }
+
+    @Test
+    public void validateUploadBinaryPackageWhenDistributionNotAllowed_shouldFail() {
+        prepareTest();
+        binaryPackage.setDistribution("opensuse155");
+        packageValidator.validateUploadPackage(binaryPackage, true, errors);
+        assertTrue(errors.hasErrors(), "Validation should return distribution error");
+        verify(errors, times(1)).error("distribution", MessageCodes.DISTRIBUTION_NOT_ALLOWED);
+    }
+
+    @Test
+    public void validateUploadPackageThatExistsWithReplaceSetToTrue_shouldWarn() {
         prepareTest();
         packageBag.setId(-1);
         when(rPackageService.findByNameAndVersionAndRepositoryAndDeleted(
@@ -223,7 +295,7 @@ public class RPackageValidatorTest {
     }
 
     @Test
-    public void validateUploadPackageThatExistsWithReplaceSetToFalse_shouldWarn() throws Exception {
+    public void validateUploadPackageThatExistsWithReplaceSetToFalse_shouldWarn() {
         prepareTest();
         packageBag.setId(-1);
         when(rPackageService.findByNameAndVersionAndRepositoryAndDeleted(
@@ -239,7 +311,15 @@ public class RPackageValidatorTest {
     }
 
     @Test
-    public void updatePackage_shouldNotAllowChangingPackageName() throws Exception {
+    public void validateUploadNotExistingPackage_shouldFail() {
+        prepareTest();
+        updatedPackageBag.setId(100);
+        packageValidator.validate(updatedPackageBag, true, errors);
+        verify(errors, times(1)).error("id", MessageCodes.NO_SUCH_PACKAGE_ERROR);
+    }
+
+    @Test
+    public void updatePackage_shouldNotAllowChangingPackageName() {
         prepareTest();
         updatedPackageBag.setName("newName");
         validateUpdatedPackageBag();
@@ -247,7 +327,7 @@ public class RPackageValidatorTest {
     }
 
     @Test
-    public void updatePackage_shouldNotAllowChangingPackageDescription() throws Exception {
+    public void updatePackage_shouldNotAllowChangingPackageDescription() {
         prepareTest();
         updatedPackageBag.setDescription("newDesc");
         validateUpdatedPackageBag();
@@ -255,7 +335,7 @@ public class RPackageValidatorTest {
     }
 
     @Test
-    public void updatePackage_shouldNotAllowChangingPackageVersion() throws Exception {
+    public void updatePackage_shouldNotAllowChangingPackageVersion() {
         prepareTest();
         updatedPackageBag.setVersion("100");
         validateUpdatedPackageBag();
@@ -263,7 +343,7 @@ public class RPackageValidatorTest {
     }
 
     @Test
-    public void updatePackage_shouldNotAllowChangingPackageAuthor() throws Exception {
+    public void updatePackage_shouldNotAllowChangingPackageAuthor() {
         prepareTest();
         updatedPackageBag.setAuthor("newAuthor");
         validateUpdatedPackageBag();
@@ -271,7 +351,7 @@ public class RPackageValidatorTest {
     }
 
     @Test
-    public void updatePackage_shouldNotAllowChangingPackageLicense() throws Exception {
+    public void updatePackage_shouldNotAllowChangingPackageLicense() {
         prepareTest();
         updatedPackageBag.setLicense("newLicense");
         validateUpdatedPackageBag();
@@ -279,7 +359,7 @@ public class RPackageValidatorTest {
     }
 
     @Test
-    public void updatePackage_shouldNotAllowChangingPackageTitle() throws Exception {
+    public void updatePackage_shouldNotAllowChangingPackageTitle() {
         prepareTest();
         updatedPackageBag.setTitle("newTitle");
         validateUpdatedPackageBag();
@@ -287,7 +367,7 @@ public class RPackageValidatorTest {
     }
 
     @Test
-    public void updatePackage_shouldNotAllowChangingPackageUrl() throws Exception {
+    public void updatePackage_shouldNotAllowChangingPackageUrl() {
         prepareTest();
         updatedPackageBag.setUrl("newUrl");
         validateUpdatedPackageBag();
@@ -295,15 +375,15 @@ public class RPackageValidatorTest {
     }
 
     @Test
-    public void updatePackage_shouldNotAllowChangingPackageSubmission() throws Exception {
+    public void updatePackage_shouldNotAllowChangingPackageSubmission() {
         prepareTest();
-        updatedPackageBag.setSubmission(RSubmissionTestFixture.GET_FIXTURE_SUBMISSION(user.get(), updatedPackageBag));
+        updatedPackageBag.setSubmission(RSubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, updatedPackageBag));
         validateUpdatedPackageBag();
         verify(errors, times(1)).error("submission", MessageCodes.FORBIDDEN_UPDATE);
     }
 
     @Test
-    public void updatePackage_shouldNotAllowChangingPackageSource() throws Exception {
+    public void updatePackage_shouldNotAllowChangingPackageSource() {
         prepareTest();
         updatedPackageBag.setSource("newSource");
         validateUpdatedPackageBag();
@@ -311,7 +391,7 @@ public class RPackageValidatorTest {
     }
 
     @Test
-    public void updatePackage_shouldNotAllowChangingPackageMaintainer() throws Exception {
+    public void updatePackage_shouldNotAllowChangingPackageMaintainer() {
         prepareTest();
         updatedPackageBag.setUser(UserTestFixture.GET_REGULAR_USER());
         validateUpdatedPackageBag();
@@ -319,7 +399,7 @@ public class RPackageValidatorTest {
     }
 
     @Test
-    public void updatePackage_shouldNotAllowChangingPackageRepository() throws Exception {
+    public void updatePackage_shouldNotAllowChangingPackageRepository() {
         prepareTest();
         updatedPackageBag.setRepository(new RRepository());
         validateUpdatedPackageBag();
@@ -327,7 +407,7 @@ public class RPackageValidatorTest {
     }
 
     @Test
-    public void updatePackage_shouldNotAllowChangingPackageMd5sum() throws Exception {
+    public void updatePackage_shouldNotAllowChangingPackageMd5sum() {
         prepareTest();
         updatedPackageBag.setMd5sum("newSum");
         validateUpdatedPackageBag();
@@ -335,7 +415,7 @@ public class RPackageValidatorTest {
     }
 
     @Test
-    public void updatePackage_shouldNotAllowChangingPackageDepends() throws Exception {
+    public void updatePackage_shouldNotAllowChangingPackageDepends() {
         prepareTest();
         updatedPackageBag.setDepends("newDepends");
         validateUpdatedPackageBag();
@@ -343,7 +423,7 @@ public class RPackageValidatorTest {
     }
 
     @Test
-    public void updatePackage_shouldNotAllowChangingPackageImports() throws Exception {
+    public void updatePackage_shouldNotAllowChangingPackageImports() {
         prepareTest();
         updatedPackageBag.setImports("newImports");
         validateUpdatedPackageBag();
@@ -351,7 +431,7 @@ public class RPackageValidatorTest {
     }
 
     @Test
-    public void updatePackage_shouldNotAllowChangingPackageSuggests() throws Exception {
+    public void updatePackage_shouldNotAllowChangingPackageSuggests() {
         prepareTest();
         updatedPackageBag.setSuggests("newSuggests");
         validateUpdatedPackageBag();
@@ -359,7 +439,7 @@ public class RPackageValidatorTest {
     }
 
     @Test
-    public void updatePackage_shouldNotAllowChangingPackageSystemRequirements() throws Exception {
+    public void updatePackage_shouldNotAllowChangingPackageSystemRequirements() {
         prepareTest();
         updatedPackageBag.setSystemRequirements("newSystemRequirements");
         validateUpdatedPackageBag();
@@ -367,7 +447,7 @@ public class RPackageValidatorTest {
     }
 
     @Test
-    public void updatePackage_shouldNotAllowChangingPackageGenerateManuals() throws Exception {
+    public void updatePackage_shouldNotAllowChangingPackageGenerateManuals() {
         prepareTest();
         updatedPackageBag.setGenerateManuals(true);
         validateUpdatedPackageBag();
@@ -375,7 +455,7 @@ public class RPackageValidatorTest {
     }
 
     @Test
-    public void validateUploadMultipartFile_shouldSucced() throws Exception {
+    public void validateUploadMultipartFile_shouldSucceed() throws Exception {
         errors = Mockito.spy(ValidationResultImpl.createDataSpecificResult());
         final File newPackage = new File("src/test/resources/unit/test_packages/accrued_1.2.tar.gz");
         final byte[] fileContent = Files.readAllBytes(newPackage.toPath());
@@ -396,12 +476,12 @@ public class RPackageValidatorTest {
                 ContentType.MULTIPART_FORM_DATA.toString(),
                 fileContent);
         packageValidator.validate(multipart, errors);
-        assertTrue(errors.hasErrors(), "Validation should return contetnt type error");
+        assertTrue(errors.hasErrors(), "Validation should return content type error");
         verify(errors, times(1)).error("CONTENT-TYPE", MessageCodes.INVALID_CONTENTTYPE);
     }
 
     @Test
-    public void validateUploadMultipartFileWithNoContentType_shouldFail() throws Exception {
+    public void validateUploadMultipartFileWithNoContentType_shouldFail() {
         errors = Mockito.spy(ValidationResultImpl.createDataSpecificResult());
         final MultipartFile multipart = new MockMultipartFile("boto3-1.26.156.tar.gz", new byte[] {});
         packageValidator.validate(multipart, errors);
@@ -421,7 +501,7 @@ public class RPackageValidatorTest {
         verify(errors, times(1)).error("MULTIPART-FILE", MessageCodes.INVALID_FILENAME);
     }
 
-    private void prepareTest() throws PackageValidationException, PackageDuplicateWithReplaceOff {
+    private void prepareTest() {
         errors = Mockito.spy(ValidationResultImpl.createDataSpecificResult());
         when(env.getProperty("package.version.max-numbers", "10")).thenReturn("1");
     }
@@ -429,5 +509,13 @@ public class RPackageValidatorTest {
     private void validateUpdatedPackageBag() {
         when(rPackageService.findOneNonDeleted(packageBag.getId())).thenReturn(Optional.of(packageBag));
         packageValidator.validate(updatedPackageBag, true, errors);
+    }
+
+    private RBinaryProperties setAllowedRBinaryProperties() {
+        RBinaryProperties binaryProperties = new RBinaryProperties();
+        binaryProperties.setRVersions(Arrays.asList("3.6", "4.0", "4.1.0", "4.1.1", "4.2"));
+        binaryProperties.setArchitectures(Arrays.asList("x86_64", "x86"));
+        binaryProperties.setDistributions(Arrays.asList("centos7", "rhel9", "focal"));
+        return binaryProperties;
     }
 }

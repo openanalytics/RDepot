@@ -59,7 +59,7 @@ public abstract class UploadRequestChunkCoordinator<REQ extends SynchronizeRepos
     @Value("${transaction.timeout}")
     private int transactionTimeout;
 
-    public UploadRequestChunkCoordinator(
+    protected UploadRequestChunkCoordinator(
             UploadTransactionManager transactionManager,
             ChunkValidator<REQ> chunkValidator,
             RepositoryService repositoryService,

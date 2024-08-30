@@ -21,10 +21,9 @@
 package eu.openanalytics.rdepot.base.daos;
 
 import eu.openanalytics.rdepot.base.entities.Repository;
-import jakarta.persistence.LockModeType;
 import java.util.Optional;
 import org.springframework.context.annotation.Primary;
-import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -37,9 +36,13 @@ import org.springframework.data.repository.query.Param;
 public interface RepositoryDao<T extends Repository> extends Dao<T> {
     Optional<T> findByName(String name);
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT r FROM Repository r WHERE r.name = :name")
-    Optional<T> findByNameAcquirePessimisticWriteLock(@Param("name") String name);
+    //    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    //    @Query("SELECT r FROM Repository r WHERE r.name = :name")
+    //    Optional<T> findByNameAcquirePessimisticWriteLock(@Param("name") String name);
+
+    @Modifying
+    @Query("UPDATE Repository r SET r.version = r.version + 1 WHERE r.name = :name")
+    int incrementRepositoryVersion(@Param("name") String name);
 
     Optional<T> findByNameAndDeleted(String name, boolean deleted);
 

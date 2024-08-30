@@ -65,8 +65,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/api/v2/manager/submissions")
 public class ApiV2SubmissionController extends ApiV2ReadingController<Submission, SubmissionDto> {
 
-    private SubmissionService submissionService;
-    private UserService userService;
+    private final SubmissionService submissionService;
+    private final UserService userService;
     private final PageableValidator pageableValidator;
 
     private final CommonPageableSortResolver pageableSortResolver;

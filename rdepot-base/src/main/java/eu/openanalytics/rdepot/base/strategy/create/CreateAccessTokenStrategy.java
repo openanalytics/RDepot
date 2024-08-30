@@ -26,7 +26,6 @@ import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.event.NewsfeedEventType;
 import eu.openanalytics.rdepot.base.service.AccessTokenService;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
-import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 
 /**
  * Creates {@link AccessToken Access Token} for a certain {@link User}.
@@ -45,7 +44,4 @@ public class CreateAccessTokenStrategy extends CreateStrategy<AccessToken> {
     protected NewsfeedEvent generateEvent(AccessToken resource) {
         return new NewsfeedEvent(requester, NewsfeedEventType.CREATE, resource);
     }
-
-    @Override
-    protected void postStrategy() throws StrategyFailure {}
 }

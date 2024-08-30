@@ -47,6 +47,7 @@ import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
+import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.factory.StrategyFactory;
 import eu.openanalytics.rdepot.base.utils.specs.PackageMaintainerSpecs;
@@ -103,6 +104,7 @@ public class ApiV2PackageMaintainerController extends ApiV2Controller<PackageMai
     private final SecurityMediator securityMediator;
     private final PageableValidator pageableValidator;
     private final CommonPageableSortResolver pageableSortResolver;
+    private final StrategyExecutor strategyExecutor;
 
     public ApiV2PackageMaintainerController(
             MessageSource messageSource,
@@ -118,7 +120,8 @@ public class ApiV2PackageMaintainerController extends ApiV2Controller<PackageMai
             SecurityMediator securityMediator,
             PackageMaintainerDtoConverter packageMaintainerDtoConverter,
             PageableValidator pageableValidator,
-            CommonPageableSortResolver pageableSortResolver) {
+            CommonPageableSortResolver pageableSortResolver,
+            StrategyExecutor strategyExecutor) {
 
         super(
                 messageSource,
@@ -138,6 +141,7 @@ public class ApiV2PackageMaintainerController extends ApiV2Controller<PackageMai
         this.securityMediator = securityMediator;
         this.pageableValidator = pageableValidator;
         this.pageableSortResolver = pageableSortResolver;
+        this.strategyExecutor = strategyExecutor;
     }
 
     /**
@@ -264,7 +268,7 @@ public class ApiV2PackageMaintainerController extends ApiV2Controller<PackageMai
         Strategy<PackageMaintainer> strategy = factory.createPackageMaintainerStrategy(packageMaintainer, requester);
 
         try {
-            PackageMaintainer created = strategy.perform();
+            PackageMaintainer created = strategyExecutor.execute(strategy);
             return handleCreatedForSingleEntity(created, requester);
         } catch (StrategyFailure e) {
             log.error(e.getClass().getName() + ": " + e.getMessage(), e);
@@ -306,7 +310,7 @@ public class ApiV2PackageMaintainerController extends ApiV2Controller<PackageMai
             Strategy<PackageMaintainer> strategy =
                     factory.updatePackageMaintainerStrategy(packageMaintainer, requester, entity);
 
-            updated = strategy.perform();
+            updated = strategyExecutor.execute(strategy);
         } catch (StrategyFailure e) {
             log.error(e.getClass().getName() + ": " + e.getMessage(), e);
             throw new ApplyPatchException(messageSource, locale);

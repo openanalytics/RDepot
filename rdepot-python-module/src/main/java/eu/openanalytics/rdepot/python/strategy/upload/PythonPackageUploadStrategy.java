@@ -31,7 +31,6 @@ import eu.openanalytics.rdepot.base.service.PackageService;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
 import eu.openanalytics.rdepot.base.storage.Storage;
-import eu.openanalytics.rdepot.base.strategy.exceptions.ParsePackagePropertiesException;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.upload.DefaultPackageUploadStrategy;
 import eu.openanalytics.rdepot.base.validation.PackageValidator;
@@ -78,16 +77,15 @@ public class PythonPackageUploadStrategy extends DefaultPackageUploadStrategy<Py
     }
 
     @Override
-    protected PythonPackage parseTechnologySpecificPackageProperties(Properties properties)
-            throws ParsePackagePropertiesException {
+    protected PythonPackage parseTechnologySpecificPackageProperties(Properties properties) {
         PythonPackage packageBag = new PythonPackage();
 
         packageBag.setDescription(properties.getProperty("Description"));
-        String author = (properties.getProperty("Author") + ", " + properties.getProperty("Auhtor-Email")).trim();
+        String author = (properties.getProperty("Author") + ", " + properties.getProperty("Author-Email")).trim();
         packageBag.setAuthor(author);
         packageBag.setAuthorEmail(properties.getProperty("Author-Email"));
         packageBag.setClassifiers(properties.getProperty("Classifier"));
-        packageBag.setDescriptionContentType(properties.getProperty("Description-Conent-Type"));
+        packageBag.setDescriptionContentType(properties.getProperty("Description-Content-Type"));
         packageBag.setKeywords(properties.getProperty("Keywords"));
         packageBag.setLicense(properties.getProperty("License"));
         if (StringUtils.isAllEmpty(packageBag.getLicense())) {
@@ -95,7 +93,7 @@ public class PythonPackageUploadStrategy extends DefaultPackageUploadStrategy<Py
         }
         packageBag.setMaintainer(properties.getProperty("Maintainer"));
         packageBag.setMaintainerEmail(properties.getProperty("Maintainer-Email"));
-        packageBag.setPlatform(properties.getProperty("Platfor"));
+        packageBag.setPlatform(properties.getProperty("Platform"));
         packageBag.setProjectUrl(properties.getProperty("Project-URL"));
         packageBag.setUrl(properties.getProperty("Project-URL"));
         packageBag.setProvidesExtra(properties.getProperty("Provides-Extra"));
@@ -111,7 +109,7 @@ public class PythonPackageUploadStrategy extends DefaultPackageUploadStrategy<Py
         String classifiers = packageBag.getClassifiers();
         String classifierName = "License :: ";
         int classifierStartIndex = classifiers.indexOf(classifierName) + classifierName.length();
-        if (classifierStartIndex != -1) {
+        if (classifiers.contains(classifierName)) {
             String nextClassifier = ",";
             String classifiersWithLicense = classifiers.substring(classifierStartIndex);
             int classifierEndIndex = classifiersWithLicense.indexOf(nextClassifier);
@@ -126,12 +124,16 @@ public class PythonPackageUploadStrategy extends DefaultPackageUploadStrategy<Py
 
     @Override
     protected Submission actualStrategy() throws StrategyFailure {
-        Submission submission = super.actualStrategy();
-        return submission;
+        return super.actualStrategy();
     }
 
     @Override
     protected void assignRepositoryToPackage(PythonRepository repository, PythonPackage packageBag) {
         packageBag.setRepository(repository);
+    }
+
+    @Override
+    protected PythonPackage parseTechnologySpecificBinaryPackageProperties(Properties properties) {
+        throw new UnsupportedOperationException();
     }
 }

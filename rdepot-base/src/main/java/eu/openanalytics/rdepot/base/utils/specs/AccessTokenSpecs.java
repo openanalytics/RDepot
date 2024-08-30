@@ -24,9 +24,13 @@ import eu.openanalytics.rdepot.base.entities.AccessToken;
 import eu.openanalytics.rdepot.base.entities.User;
 import java.time.LocalDate;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AccessTokenSpecs {
+
     public static Specification<AccessToken> ofName(String name) {
         return (root, query, criteriaBuilder) ->
                 criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + name.toLowerCase() + "%");

@@ -35,11 +35,15 @@ import eu.openanalytics.rdepot.repo.transaction.UploadTransactionManager;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -63,19 +67,21 @@ public class BackupTest {
     CranRepositoryBackupServiceImpl cranRepositoryBackupService;
 
     private static final String TEST_PACKAGES_DIR = "src/test/resources/eu/openanalytics/rdepot/repo/testpackages/";
-    private File testPackagesDir;
+    private Path testPackagesDir;
     private static final String TEST_REPO = "testrepo123";
 
-    private File[] getTestPackages(boolean archive) throws IOException {
+    private List<Path> getTestPackages(boolean archive) throws IOException {
         String subDir = archive ? "archive" : "recent";
-        return testPackagesDir.toPath().resolve(subDir).toFile().listFiles();
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(testPackagesDir.resolve(subDir))) {
+            return StreamSupport.stream(stream.spliterator(), false).toList();
+        }
     }
 
     @BeforeEach
     public void setUp() throws Exception {
-        this.testPackagesDir = new File(TEST_PACKAGES_DIR);
-        if (!testPackagesDir.exists() || !testPackagesDir.isDirectory())
-            throw new FileNotFoundException(testPackagesDir.getAbsolutePath());
+        this.testPackagesDir = Paths.get(TEST_PACKAGES_DIR);
+        if (Files.notExists(testPackagesDir) || !Files.isDirectory(testPackagesDir))
+            throw new FileNotFoundException(testPackagesDir.toAbsolutePath().toString());
     }
 
     @Test
@@ -83,10 +89,8 @@ public class BackupTest {
         final Transaction mockTransaction = new Transaction(TEST_REPO, "123abc", 1);
         final File testTrash = File.createTempFile("TRASH_", "430482309482309");
 
-        doReturn(Arrays.stream(getTestPackages(false)).toList())
-                .when(storageService)
-                .getRecentPackagesFromRepository(TEST_REPO);
-        doReturn(Arrays.stream(getTestPackages(true)).collect(Collectors.groupingBy(File::getName)))
+        doReturn(getTestPackages(false)).when(storageService).getRecentPackagesFromRepository(TEST_REPO);
+        doReturn(getTestPackages(true).stream().collect(Collectors.groupingBy(Path::getFileName)))
                 .when(storageService)
                 .getArchiveFromRepository(TEST_REPO);
         doReturn(testTrash).when(storageService).initTrashDirectory(anyString());
@@ -94,14 +98,16 @@ public class BackupTest {
         doAnswer(invocationOnMock -> {
                     final CranRepositoryBackup backup = invocationOnMock.getArgument(1);
                     assertEquals(
-                            Arrays.stream(getTestPackages(true))
-                                    .map(File::getName)
+                            getTestPackages(true).stream()
+                                    .map(Path::getFileName)
+                                    .map(Path::toString)
                                     .collect(Collectors.toSet()),
                             new HashSet<>(backup.getArchivePackages()),
                             "archive packages were not backed-up");
                     assertEquals(
-                            Arrays.stream(getTestPackages(false))
-                                    .map(File::getName)
+                            getTestPackages(false).stream()
+                                    .map(Path::getFileName)
+                                    .map(Path::toString)
                                     .collect(Collectors.toSet()),
                             new HashSet<>(backup.getRecentPackages()),
                             "recent packages were not backed-up");
@@ -121,13 +127,6 @@ public class BackupTest {
     @Test
     public void backupTransaction_shouldAbort_ifInitTrashDirectoryIsNotCreated() throws Exception {
         final Transaction mockTransaction = new Transaction(TEST_REPO, "123abc", 1);
-
-        doReturn(Arrays.stream(getTestPackages(false)).toList())
-                .when(storageService)
-                .getRecentPackagesFromRepository(TEST_REPO);
-        doReturn(Arrays.stream(getTestPackages(true)).collect(Collectors.groupingBy(File::getName)))
-                .when(storageService)
-                .getArchiveFromRepository(TEST_REPO);
         doNothing().when(transactionManager).abortTransaction(mockTransaction);
         doThrow(new InitTrashDirectoryException("")).when(storageService).initTrashDirectory(anyString());
 
@@ -145,13 +144,6 @@ public class BackupTest {
     public void backupForTransaction_abortsTransaction_ifVersionCouldNotBeRetrieved() throws Exception {
         final Transaction mockTransaction = new Transaction(TEST_REPO, "123abc", 1);
         final File testTrash = File.createTempFile("TRASH_", "430482309482309");
-
-        doReturn(Arrays.stream(getTestPackages(false)).toList())
-                .when(storageService)
-                .getRecentPackagesFromRepository(TEST_REPO);
-        doReturn(Arrays.stream(getTestPackages(true)).collect(Collectors.groupingBy(File::getName)))
-                .when(storageService)
-                .getArchiveFromRepository(TEST_REPO);
         doReturn(testTrash).when(storageService).initTrashDirectory(anyString());
         doThrow(new GetRepositoryVersionException("")).when(storageService).getRepositoryVersion(TEST_REPO);
 
@@ -169,10 +161,14 @@ public class BackupTest {
     @Test
     public void restoreForTransaction() throws Exception {
         final Transaction mockTransaction = new Transaction(TEST_REPO, "123abc", 1);
-        final List<String> recentPackages =
-                Arrays.stream(getTestPackages(false)).map(File::getName).toList();
-        final List<String> archivePackages =
-                Arrays.stream(getTestPackages(true)).map(File::getName).toList();
+        final List<String> recentPackages = getTestPackages(false).stream()
+                .map(Path::getFileName)
+                .map(Path::toString)
+                .toList();
+        final List<String> archivePackages = getTestPackages(true).stream()
+                .map(Path::getFileName)
+                .map(Path::toString)
+                .toList();
         final File testTrash = File.createTempFile("TRASH_", "430482309482309");
 
         final CranRepositoryBackup backup = new CranRepositoryBackup(recentPackages, archivePackages, testTrash, "23");
@@ -204,10 +200,14 @@ public class BackupTest {
     @Test
     public void removeBackupAfterSuccess() throws Exception {
         final Transaction mockTransaction = new Transaction(TEST_REPO, "123abc", 1);
-        final List<String> recentPackages =
-                Arrays.stream(getTestPackages(false)).map(File::getName).toList();
-        final List<String> archivePackages =
-                Arrays.stream(getTestPackages(true)).map(File::getName).toList();
+        final List<String> recentPackages = getTestPackages(false).stream()
+                .map(Path::getFileName)
+                .map(Path::toString)
+                .toList();
+        final List<String> archivePackages = getTestPackages(true).stream()
+                .map(Path::getFileName)
+                .map(Path::toString)
+                .toList();
         final File testTrash = File.createTempFile("TRASH_", "430482309482309");
 
         final CranRepositoryBackup backup = new CranRepositoryBackup(recentPackages, archivePackages, testTrash, "23");

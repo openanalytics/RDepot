@@ -46,6 +46,7 @@ import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
+import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.utils.specs.RepositorySpecs;
 import eu.openanalytics.rdepot.base.utils.specs.SpecificationUtils;
@@ -109,6 +110,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
     private final RRepositoryDeleter deleter;
     private final PageableValidator pageableValidator;
     private final CommonPageableSortResolver pageableSortResolver;
+    private final StrategyExecutor strategyExecutor;
 
     @Value("${declarative}")
     private String declarative;
@@ -130,7 +132,8 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
             SecurityMediator securityMediator,
             RRepositoryDtoConverter rRepositoryDtoConverter,
             PageableValidator pageableValidator,
-            CommonPageableSortResolver pageableSortResolver) {
+            CommonPageableSortResolver pageableSortResolver,
+            StrategyExecutor strategyExecutor) {
         super(
                 messageSource,
                 LocaleContextHolder.getLocale(),
@@ -149,6 +152,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
         this.securityMediator = securityMediator;
         this.pageableValidator = pageableValidator;
         this.pageableSortResolver = pageableSortResolver;
+        this.strategyExecutor = strategyExecutor;
     }
 
     /**
@@ -244,7 +248,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
 
             Strategy<RRepository> strategy = factory.createRepositoryStrategy(repositoryEntity, requester);
 
-            RRepository repository = strategy.perform();
+            RRepository repository = strategyExecutor.execute(strategy);
             return handleCreatedForSingleEntity(repository, requester);
         } catch (StrategyFailure e) {
             log.error(e.getClass().getName() + ": " + e.getMessage(), e);
@@ -284,9 +288,8 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
             RRepository updated = dtoConverter.resolveDtoToEntity(repositoryDto);
             BindingResult bindingResult = createBindingResult(updated);
 
-            if (!repositoriesDeletionEnabled)
-                if (updated.getDeleted() && !repository.getDeleted())
-                    throw new RepositoryDeletionException(messageSource, locale);
+            if (!repositoriesDeletionEnabled && updated.getDeleted() && !repository.getDeleted())
+                throw new RepositoryDeletionException(messageSource, locale);
 
             repositoryValidator.validate(updated, bindingResult);
 
@@ -294,7 +297,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
 
             Strategy<RRepository> strategy = factory.updateRepositoryStrategy(repository, requester, updated);
 
-            repository = strategy.perform();
+            repository = strategyExecutor.execute(strategy);
         } catch (JsonException | JsonProcessingException e) {
             throw new MalformedPatchException(messageSource, locale, e);
         } catch (StrategyFailure e) {

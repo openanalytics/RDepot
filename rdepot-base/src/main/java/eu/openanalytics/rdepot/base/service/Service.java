@@ -43,7 +43,7 @@ public abstract class Service<E extends Resource> extends SpringDataJpaCapableRe
      * @param dao Data Access Object to interact
      *  with external data source, e.g. a {@link JpaRepository}
      */
-    public Service(Dao<E> dao) {
+    protected Service(Dao<E> dao) {
         super(dao);
     }
 

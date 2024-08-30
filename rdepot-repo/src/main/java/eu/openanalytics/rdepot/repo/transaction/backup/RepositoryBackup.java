@@ -38,7 +38,7 @@ public abstract class RepositoryBackup {
     File trashDirectory;
     String version;
 
-    public RepositoryBackup(List<String> packages, File trashDirectory, String version) {
+    protected RepositoryBackup(List<String> packages, File trashDirectory, String version) {
         this.packages = packages;
         this.trashDirectory = trashDirectory;
         this.version = version;

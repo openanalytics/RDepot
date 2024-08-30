@@ -83,11 +83,10 @@ public class RepositoryMaintainerValidator implements Validator {
                         .isEmpty()) {
             errors.rejectValue("repository", MessageCodes.EMPTY_REPOSITORY);
         }
-        if (maintainer.getId() <= 0) {
-            if (repositoryMaintainerService.existsByRepositoryAndUserAndDeleted(
-                    maintainer.getRepository(), maintainer.getUser(), false)) {
-                errors.rejectValue("repository", MessageCodes.REPOSITORYMAINTAINER_DUPLICATE);
-            }
+        if (maintainer.getId() <= 0
+                && repositoryMaintainerService.existsByRepositoryAndUserAndDeleted(
+                        maintainer.getRepository(), maintainer.getUser(), false)) {
+            errors.rejectValue("repository", MessageCodes.REPOSITORYMAINTAINER_DUPLICATE);
         }
     }
 }

@@ -30,6 +30,7 @@ import eu.openanalytics.rdepot.repo.transaction.UploadTransactionManager;
 import eu.openanalytics.rdepot.repo.transaction.backup.implementations.AbstractRepositoryBackupService;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
@@ -57,30 +58,28 @@ public class CranRepositoryBackupServiceImpl extends AbstractRepositoryBackupSer
 
     @Override
     public void backupForTransaction(Transaction transaction) {
-        final List<String> recentPackages =
-                storageService.getRecentPackagesFromRepository(transaction.getRepositoryName()).stream()
-                        .map(File::getName)
-                        .toList();
-        final List<String> archivePackages =
-                storageService.getArchiveFromRepository(transaction.getRepositoryName()).values().stream()
-                        .flatMap(Collection::stream)
-                        .map(File::getName)
-                        .toList();
-
-        File trashDirectory;
-        String repositoryVersion;
         try {
-            trashDirectory = storageService.initTrashDirectory(transaction.getId());
-            repositoryVersion = storageService.getRepositoryVersion(transaction.getRepositoryName());
-        } catch (InitTrashDirectoryException | GetRepositoryVersionException e) {
+            File trashDirectory = storageService.initTrashDirectory(transaction.getId());
+            String repositoryVersion = storageService.getRepositoryVersion(transaction.getRepositoryName());
+            final List<String> recentPackages =
+                    storageService.getRecentPackagesFromRepository(transaction.getRepositoryName()).stream()
+                            .map(Path::getFileName)
+                            .map(Path::toString)
+                            .toList();
+            final List<String> archivePackages =
+                    storageService.getArchiveFromRepository(transaction.getRepositoryName()).values().stream()
+                            .flatMap(Collection::stream)
+                            .map(Path::getFileName)
+                            .map(Path::toString)
+                            .toList();
+            final CranRepositoryBackup backup =
+                    new CranRepositoryBackup(recentPackages, archivePackages, trashDirectory, repositoryVersion);
+            backups.put(transaction, backup);
+        } catch (InitTrashDirectoryException | GetRepositoryVersionException | IOException e) {
             transactionManager.abortTransaction(transaction);
             log.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
-
-        final CranRepositoryBackup backup =
-                new CranRepositoryBackup(recentPackages, archivePackages, trashDirectory, repositoryVersion);
-        backups.put(transaction, backup);
     }
 
     @Override

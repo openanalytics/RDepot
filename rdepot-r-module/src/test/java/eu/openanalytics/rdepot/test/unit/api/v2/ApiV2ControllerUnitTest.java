@@ -46,6 +46,8 @@ import eu.openanalytics.rdepot.base.service.RoleService;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.UserSettingsService;
+import eu.openanalytics.rdepot.base.strategy.Strategy;
+import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.factory.StrategyFactory;
 import eu.openanalytics.rdepot.base.validation.AccessTokenPatchValidator;
 import eu.openanalytics.rdepot.base.validation.PackageMaintainerValidator;
@@ -67,7 +69,10 @@ import java.security.Principal;
 import java.util.Optional;
 import org.eclipse.parsson.JsonProviderImpl;
 import org.junit.jupiter.api.BeforeEach;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -191,12 +196,18 @@ public abstract class ApiV2ControllerUnitTest {
     @MockBean
     PageableValidator pageableValidator;
 
+    @MockBean
+    StrategyExecutor strategyExecutor;
+
     @Mock
     protected BestMaintainerChooser bestMaintainerChooser;
 
     @BeforeEach
-    public void clearContext() {
+    public void clearContext() throws Exception {
         SecurityContextHolder.clearContext();
+        Mockito.doAnswer((Answer<Object>) invocationOnMock -> ((Strategy<?>) invocationOnMock.getArgument(0)).perform())
+                .when(strategyExecutor)
+                .execute(ArgumentMatchers.any());
     }
 
     public static final String JSON_PATH_COMMON =

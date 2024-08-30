@@ -51,7 +51,7 @@ public abstract class PackageDeleter<P extends Package, R extends Repository> ex
     protected final RepositorySynchronizer<R> repositorySynchronizer;
     protected final PackageRepositoryResolver<R, P> packageRepositoryResolver;
 
-    public PackageDeleter(
+    protected PackageDeleter(
             NewsfeedEventService newsfeedEventService,
             PackageService<P> resourceService,
             Storage<?, P> storage,

@@ -34,6 +34,7 @@ databaseChangeLog:
             - column:
                 name: last_modified_timestamp
                 type: timestamp
+                defaultValueDate: now()
                 constraints:
                   nullable: false
             - column:
@@ -41,3 +42,8 @@ databaseChangeLog:
                 type: timestamp
                 constraints:
                   nullable: true
+        - sql:
+            sql: "UPDATE repository AS r SET last_modified_timestamp = mt.max_timestamp \
+              FROM (select ne.related_repository_id, max(concat(ne.date, ' ', ne.time)::timestamp) \
+                AS max_timestamp FROM newsfeed_event ne GROUP BY ne.related_repository_id)
+              AS mt WHERE mt.related_repository_id = r.id;"

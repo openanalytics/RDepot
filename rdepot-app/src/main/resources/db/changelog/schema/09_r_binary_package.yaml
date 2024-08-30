@@ -1,0 +1,55 @@
+databaseChangeLog:
+  - changeSet:
+      id: 09_01_update_package
+      author: dglebowska
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: package
+            schemaName: public
+        - not:
+            - columnExists:
+                tableName: package
+                schemaName: public
+                columnName: binary_package
+      changes:
+        - addColumn:
+            tableName: package
+            schemaName: public
+            columns:
+              - column:
+                  name: binary_package
+                  type: boolean
+                  constraints:
+                     nullable: false
+                  defaultValueBoolean: false
+  - changeSet:
+      id: 09_02_update_r_package
+      author: dglebowska
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: rpackage
+            schemaName: public
+        - not:
+            - columnExists:
+                tableName: rpackage
+                schemaName: public
+                columnName: r_version
+      changes:
+        - addColumn:
+            tableName: rpackage
+            schemaName: public
+            columns:
+              - column:
+                  name: r_version
+                  type: text
+              - column:
+                  name: architecture
+                  type: text
+              - column:
+                  name: distribution
+                  type: text
+              - column:
+                  name: built
+                  type: text

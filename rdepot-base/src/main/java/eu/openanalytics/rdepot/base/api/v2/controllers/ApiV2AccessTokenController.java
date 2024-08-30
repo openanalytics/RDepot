@@ -46,6 +46,7 @@ import eu.openanalytics.rdepot.base.service.AccessTokenService;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
+import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.factory.StrategyFactory;
 import eu.openanalytics.rdepot.base.utils.specs.AccessTokenSpecs;
@@ -101,6 +102,7 @@ public class ApiV2AccessTokenController extends ApiV2Controller<AccessToken, Acc
     private final AccessTokenPatchValidator accessTokenPatchValidator;
     private final PageableValidator pageableValidator;
     private final CommonPageableSortResolver pageableSortResolver;
+    private final StrategyExecutor strategyExecutor;
 
     public ApiV2AccessTokenController(
             MessageSource messageSource,
@@ -114,7 +116,8 @@ public class ApiV2AccessTokenController extends ApiV2Controller<AccessToken, Acc
             AccessTokenDeleter accessTokenDeleter,
             AccessTokenPatchValidator accessTokenPatchValidator,
             PageableValidator pageableValidator,
-            CommonPageableSortResolver pageableSortResolver) {
+            CommonPageableSortResolver pageableSortResolver,
+            StrategyExecutor strategyExecutor) {
         super(
                 messageSource,
                 LocaleContextHolder.getLocale(),
@@ -131,6 +134,7 @@ public class ApiV2AccessTokenController extends ApiV2Controller<AccessToken, Acc
         this.accessTokenPatchValidator = accessTokenPatchValidator;
         this.pageableValidator = pageableValidator;
         this.pageableSortResolver = pageableSortResolver;
+        this.strategyExecutor = strategyExecutor;
     }
 
     /**
@@ -238,7 +242,7 @@ public class ApiV2AccessTokenController extends ApiV2Controller<AccessToken, Acc
         Strategy<AccessToken> strategy = factory.createAccessTokenStrategy(accessToken, requester);
 
         try {
-            return handleSuccessForSingleEntity(strategy.perform(), requester);
+            return handleSuccessForSingleEntity(strategyExecutor.execute(strategy), requester);
         } catch (StrategyFailure e) {
             log.error(e.getClass().getName() + ": " + e.getMessage(), e);
             throw new CreateException(messageSource, locale);
@@ -275,7 +279,7 @@ public class ApiV2AccessTokenController extends ApiV2Controller<AccessToken, Acc
 
             Strategy<AccessToken> strategy = factory.updateAccessTokenStrategy(accessToken, requester.get(), updated);
 
-            updated = strategy.perform();
+            updated = strategyExecutor.execute(strategy);
         } catch (StrategyFailure e) {
             throw new ApplyPatchException(messageSource, locale);
         } catch (JsonProcessingException | EntityResolutionException | PatchValidationException e) {

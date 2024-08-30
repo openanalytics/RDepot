@@ -23,9 +23,13 @@ package eu.openanalytics.rdepot.base.utils.specs;
 import eu.openanalytics.rdepot.base.entities.RepositoryMaintainer;
 import eu.openanalytics.rdepot.base.utils.TechnologyResolver;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RepositoryMaintainerSpecs {
+
     public static Specification<RepositoryMaintainer> ofRepository(String repository) {
         return (root, query, criteriaBuilder) -> criteriaBuilder.like(
                 criteriaBuilder.lower(root.get("repository").get("name")), "%" + repository.toLowerCase() + "%");

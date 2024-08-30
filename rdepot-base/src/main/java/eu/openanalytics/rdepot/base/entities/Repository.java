@@ -109,7 +109,7 @@ public abstract class Repository extends EventableResource implements Serializab
         this.synchronizing = synchronizing;
     }
 
-    public Repository(Repository that) {
+    protected Repository(Repository that) {
         super(that.id, that.getTechnology(), ResourceType.REPOSITORY);
         this.version = that.version;
         this.publicationUri = that.publicationUri;
@@ -125,11 +125,11 @@ public abstract class Repository extends EventableResource implements Serializab
         this.lastPublicationTimestamp = that.lastPublicationTimestamp;
     }
 
-    public Repository(Technology technology) {
+    protected Repository(Technology technology) {
         super(technology, ResourceType.REPOSITORY);
     }
 
-    public <D extends RepositoryDto> Repository(
+    protected <D extends RepositoryDto> Repository(
             Technology technology, D repositoryDto, Instant lastPublicationTimestamp, Instant lastModifiedTimestamp) {
         this(technology);
         this.id = repositoryDto.getId();

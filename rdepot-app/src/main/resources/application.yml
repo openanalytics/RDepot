@@ -101,6 +101,26 @@ package:
     max-numbers: 10
   upload:
     dir: /opt/rdepot
+  rVersions:
+    - 3.6
+    - 4.0
+    - 4.1
+    - 4.2
+    - 4.3
+    - 4.4
+  architectures:
+    - x86_64
+    - x86
+  distributions:
+    - centos7
+    - centos8
+    - rhel9
+    - opensuse155
+    - focal
+    - jammy
+    - noble
+    - bullseye
+    - bookworm
 
 # Repository generation related properties
 repository:

@@ -20,6 +20,8 @@
  */
 package eu.openanalytics.rdepot.base.utils.specs;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.lang.Nullable;
@@ -28,6 +30,7 @@ import org.springframework.lang.Nullable;
  * Methods declared in this class are used to build
  * {@link Specification Specifications} for {@link JpaRepository DAOs}.
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SpecificationUtils {
 
     /**

@@ -122,7 +122,12 @@ CREATE TABLE public.package (
     title text NOT NULL,
     active boolean DEFAULT false NOT NULL,
     deleted boolean DEFAULT false NOT NULL,
-    md5sum text
+    md5sum text,
+    binary_package boolean DEFAULT false NOT NULL,
+    r_version text,
+    architecture text,
+    distribution text,
+    built text
 );
 
 

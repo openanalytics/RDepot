@@ -29,12 +29,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,61 +53,66 @@ public class FileListingController {
 
     @GetMapping("/{repository}/")
     public ResponseEntity<List<String>> recentUploads(@PathVariable("repository") String repository) {
-        ArrayList<String> uploads = new ArrayList<String>();
+        ArrayList<String> uploads = new ArrayList<>();
         try {
             uploads.add(storageService.getRepositoryVersion(repository));
         } catch (GetRepositoryVersionException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
-        List<File> files = storageService.getRecentPackagesFromRepository(repository);
-        files.forEach(file -> uploads.add(file.getName()));
+        try {
+            List<Path> files = storageService.getRecentPackagesFromRepository(repository);
+            files.forEach(file -> uploads.add(file.getFileName().toString()));
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
 
         return ResponseEntity.ok(uploads);
     }
 
     @GetMapping("/{repository}/archive/")
     public ResponseEntity<List<String>> archiveUploads(@PathVariable("repository") String repository) {
-
-        Map<String, List<File>> files = storageService.getArchiveFromRepository(repository);
-        ArrayList<String> uploads = new ArrayList<>();
-
-        for (Entry<String, List<File>> entry : files.entrySet()) {
-            entry.getValue().forEach(file -> uploads.add(file.getName()));
+        try {
+            List<String> uploads = storageService.getArchiveFromRepository(repository).values().stream()
+                    .flatMap(List::stream)
+                    .map(Path::getFileName)
+                    .map(Path::toString)
+                    .toList();
+            return ResponseEntity.ok(uploads);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-
-        return ResponseEntity.ok(uploads);
     }
 
     @GetMapping("/{repository}/checksum")
     public ResponseEntity<String> checksum(@PathVariable("repository") String repository) {
-        List<String> recentUploads = new ArrayList<String>();
-        List<String> archiveUploads = new ArrayList<String>();
-
-        List<File> recentFiles = storageService.getRecentPackagesFromRepository(repository);
-        recentFiles.forEach(file -> recentUploads.add(file.getName()));
-
-        Map<String, List<File>> archiveFiles = storageService.getArchiveFromRepository(repository);
-        for (Entry<String, List<File>> entry : archiveFiles.entrySet()) {
-            entry.getValue().forEach(file -> archiveUploads.add(file.getName()));
-        }
-
-        Gson gson = new Gson();
-        String recentJson = gson.toJson(recentUploads);
-        String archiveJson = gson.toJson(archiveUploads);
-
-        MessageDigest digest;
         try {
-            digest = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
+            List<String> recentUploads = storageService.getRecentPackagesFromRepository(repository).stream()
+                    .map(Path::getFileName)
+                    .map(Path::toString)
+                    .toList();
+            List<String> archiveUploads = storageService.getArchiveFromRepository(repository).values().stream()
+                    .flatMap(List::stream)
+                    .map(Path::getFileName)
+                    .map(Path::toString)
+                    .toList();
+
+            Gson gson = new Gson();
+            String recentJson = gson.toJson(recentUploads);
+            String archiveJson = gson.toJson(archiveUploads);
+
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+
+            String recentChecksum = DatatypeConverter.printHexBinary(digest.digest(recentJson.getBytes()));
+            String archiveChecksum = DatatypeConverter.printHexBinary(digest.digest(archiveJson.getBytes()));
+
+            return ResponseEntity.ok().body(recentChecksum + archiveChecksum);
+        } catch (NoSuchAlgorithmException | IOException e) {
             log.error(e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-
-        String recentChecksum = DatatypeConverter.printHexBinary(digest.digest(recentJson.getBytes()));
-        String archiveChecksum = DatatypeConverter.printHexBinary(digest.digest(archiveJson.getBytes()));
-
-        return ResponseEntity.ok().body(recentChecksum + archiveChecksum);
     }
 
     @GetMapping("/{repository}/{source}/{packagesFile}")
@@ -127,7 +132,7 @@ public class FileListingController {
                 IOUtils.copy(is, response.getOutputStream());
                 response.flushBuffer();
             } catch (IOException e) {
-                log.error("Could not write file to output stream! Filename: " + returnedFile.getName(), e);
+                log.error("Could not write file to output stream! Filename: {}", returnedFile.getName(), e);
             }
         } else {
             try {

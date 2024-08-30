@@ -123,8 +123,21 @@ public class PythonPackage extends Package {
             String title,
             String hash,
             boolean active,
-            boolean deleted) {
-        super(PythonLanguage.instance, id, repository, user, name, description, author, source, title, active, deleted);
+            boolean deleted,
+            boolean binary) {
+        super(
+                PythonLanguage.instance,
+                id,
+                repository,
+                user,
+                name,
+                description,
+                author,
+                source,
+                title,
+                active,
+                deleted,
+                binary);
         this.license = license;
         this.hash = hash;
         this.repository = repository;

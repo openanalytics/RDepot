@@ -20,7 +20,6 @@
  */
 package eu.openanalytics.rdepot.r.strategy.factory;
 
-import eu.openanalytics.rdepot.base.api.v2.dtos.PackageUploadRequest;
 import eu.openanalytics.rdepot.base.email.EmailService;
 import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.User;
@@ -34,6 +33,7 @@ import eu.openanalytics.rdepot.base.storage.Storage;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.update.UpdateSubmissionStrategy;
 import eu.openanalytics.rdepot.base.validation.PackageValidator;
+import eu.openanalytics.rdepot.r.api.v2.dtos.RPackageUploadRequest;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.mediator.deletion.RPackageDeleter;
@@ -67,7 +67,7 @@ public class RStrategyFactory {
     private final RStorage rStorage;
     private final RPackageDeleter rPackageDeleter;
 
-    public Strategy<Submission> uploadPackageStrategy(PackageUploadRequest<RRepository> request, User requester) {
+    public Strategy<Submission> uploadPackageStrategy(RPackageUploadRequest request, User requester) {
         return new RPackageUploadStrategy(
                 request,
                 requester,
@@ -82,7 +82,8 @@ public class RStrategyFactory {
                 repositorySynchronizer,
                 securityMediator,
                 rStorage,
-                rPackageDeleter);
+                rPackageDeleter,
+                request);
     }
 
     public Strategy<RPackage> updatePackageStrategy(RPackage resource, User requester, RPackage updatedPackage) {

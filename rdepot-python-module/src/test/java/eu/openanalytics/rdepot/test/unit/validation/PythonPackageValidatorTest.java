@@ -321,4 +321,12 @@ public class PythonPackageValidatorTest {
         when(packageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
         packageValidator.validate(updatedPackageBag, true, errors);
     }
+
+    @Test
+    public void validateUploadNotExistingPackage_shouldFail() throws Exception {
+        prepareTest();
+        updatedPackageBag.setId(100);
+        packageValidator.validate(updatedPackageBag, true, errors);
+        verify(errors, times(1)).error("id", MessageCodes.NO_SUCH_PACKAGE_ERROR);
+    }
 }

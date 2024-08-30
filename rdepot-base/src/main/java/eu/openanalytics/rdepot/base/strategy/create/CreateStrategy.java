@@ -47,7 +47,6 @@ public abstract class CreateStrategy<T extends Resource> extends Strategy<T> {
         try {
             return service.create(resource);
         } catch (CreateEntityException e) {
-            logger.error(e.getMessage(), e);
             throw new FatalStrategyFailure(e);
         }
     }
@@ -57,7 +56,6 @@ public abstract class CreateStrategy<T extends Resource> extends Strategy<T> {
         try {
             service.delete(processedResource);
         } catch (DeleteEntityException e) {
-            logger.error(e.getMessage(), e);
             throw new StrategyReversionFailure(e);
         }
     }

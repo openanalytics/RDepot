@@ -67,6 +67,30 @@ public class RPackage extends Package {
     @JoinColumn(name = "repository_id", nullable = false)
     private RRepository repository;
 
+    @Column(name = "r_version", table = "rpackage")
+    private String rVersion;
+
+    @Column(name = "architecture", table = "rpackage")
+    private String architecture;
+
+    @Column(name = "distribution", table = "rpackage")
+    private String distribution;
+
+    @Column(name = "built", table = "rpackage")
+    private String built;
+
+    @Column(name = "enhances", table = "rpackage")
+    private String enhances;
+
+    @Column(name = "linking_to", table = "rpackage")
+    private String linkingTo;
+
+    @Column(name = "priority", table = "rpackage")
+    private String priority;
+
+    @Column(name = "needs_compilation", table = "rpackage")
+    private boolean needsCompilation = false;
+
     @Transient
     private Boolean generateManuals;
 
@@ -95,6 +119,14 @@ public class RPackage extends Package {
         this.md5sum = packageBag.md5sum;
         this.repository = packageBag.repository;
         this.generateManuals = packageBag.generateManuals;
+        this.rVersion = packageBag.rVersion;
+        this.architecture = packageBag.architecture;
+        this.distribution = packageBag.distribution;
+        this.built = packageBag.built;
+        this.enhances = packageBag.enhances;
+        this.linkingTo = packageBag.linkingTo;
+        this.priority = packageBag.priority;
+        this.needsCompilation = packageBag.needsCompilation;
     }
 
     public RPackage() {
@@ -110,6 +142,14 @@ public class RPackage extends Package {
         this.license = dto.getLicense();
         this.depends = dto.getDepends();
         this.imports = dto.getImports();
+        this.rVersion = dto.getRVersion();
+        this.architecture = dto.getArchitecture();
+        this.distribution = dto.getDistribution();
+        this.built = dto.getBuilt();
+        this.enhances = dto.getEnhances();
+        this.linkingTo = dto.getLinkingTo();
+        this.priority = dto.getPriority();
+        this.needsCompilation = dto.getNeedsCompilation().equals("yes");
     }
 
     public RPackage(
@@ -120,36 +160,12 @@ public class RPackage extends Package {
             String description,
             String author,
             String license,
-            String source,
-            String title,
-            String md5sum,
-            boolean active,
-            boolean deleted) {
-        super(RLanguage.instance, id, repository, user, name, description, author, source, title, active, deleted);
-        this.license = license;
-        this.md5sum = md5sum;
-        this.repository = repository;
-    }
-
-    public RPackage(
-            int id,
-            RRepository repository,
-            User user,
-            String name,
-            String description,
-            String author,
-            String depends,
-            String imports,
-            String suggests,
-            String systemRequirements,
-            String license,
-            String url,
             String source,
             String title,
             String md5sum,
             boolean active,
             boolean deleted,
-            Submission submission) {
+            boolean binary) {
         super(
                 RLanguage.instance,
                 id,
@@ -158,18 +174,61 @@ public class RPackage extends Package {
                 name,
                 description,
                 author,
-                url,
                 source,
                 title,
                 active,
                 deleted,
-                submission);
-        this.depends = depends;
-        this.imports = imports;
-        this.suggests = suggests;
-        this.systemRequirements = systemRequirements;
+                binary);
         this.license = license;
         this.md5sum = md5sum;
         this.repository = repository;
+    }
+
+    public RPackage(
+            int id,
+            RRepository repository,
+            User user,
+            String name,
+            String description,
+            String author,
+            String license,
+            String source,
+            String title,
+            String md5sum,
+            boolean binary,
+            String rVersion,
+            String architecture,
+            String distribution,
+            String built,
+            String enhances,
+            String linkingTo,
+            String priority,
+            boolean needsCompilation,
+            boolean active,
+            boolean deleted) {
+        super(
+                RLanguage.instance,
+                id,
+                repository,
+                user,
+                name,
+                description,
+                author,
+                source,
+                title,
+                active,
+                deleted,
+                binary);
+        this.license = license;
+        this.md5sum = md5sum;
+        this.repository = repository;
+        this.rVersion = rVersion;
+        this.architecture = architecture;
+        this.distribution = distribution;
+        this.built = built;
+        this.enhances = enhances;
+        this.linkingTo = linkingTo;
+        this.priority = priority;
+        this.needsCompilation = needsCompilation;
     }
 }

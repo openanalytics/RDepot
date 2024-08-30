@@ -28,7 +28,6 @@ import eu.openanalytics.rdepot.base.event.NewsfeedEventType;
 import eu.openanalytics.rdepot.base.service.AccessTokenService;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
-import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure;
 import javax.naming.OperationNotSupportedException;
 
 /**
@@ -73,10 +72,4 @@ public class UpdateAccessTokenStrategy extends UpdateStrategy<AccessToken> {
     protected NewsfeedEvent generateEvent(AccessToken resource) {
         return new NewsfeedEvent(requester, NewsfeedEventType.UPDATE, resource);
     }
-
-    @Override
-    protected void postStrategy() throws StrategyFailure {}
-
-    @Override
-    public void revertChanges() throws StrategyReversionFailure {}
 }

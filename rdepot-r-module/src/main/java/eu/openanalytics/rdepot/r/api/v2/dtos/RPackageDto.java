@@ -38,6 +38,14 @@ public class RPackageDto extends PackageDto {
     private String systemRequirements;
     private String license;
     private String md5sum;
+    private String built;
+    private String rVersion;
+    private String architecture;
+    private String distribution;
+    private String enhances;
+    private String linkingTo;
+    private String priority;
+    private String needsCompilation;
 
     public RPackageDto(RPackage packageBag) {
         super(packageBag);
@@ -47,6 +55,14 @@ public class RPackageDto extends PackageDto {
         this.systemRequirements = packageBag.getSystemRequirements();
         this.license = packageBag.getLicense();
         this.md5sum = packageBag.getMd5sum();
+        this.built = packageBag.getBuilt();
+        this.rVersion = packageBag.getRVersion();
+        this.architecture = packageBag.getArchitecture();
+        this.distribution = packageBag.getDistribution();
+        this.enhances = packageBag.getEnhances();
+        this.linkingTo = packageBag.getLinkingTo();
+        this.priority = packageBag.getPriority();
+        this.needsCompilation = packageBag.isNeedsCompilation() ? "yes" : "no";
     }
 
     @Override

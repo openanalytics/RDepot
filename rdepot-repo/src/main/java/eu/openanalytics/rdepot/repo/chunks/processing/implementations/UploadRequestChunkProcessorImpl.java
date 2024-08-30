@@ -28,7 +28,7 @@ import eu.openanalytics.rdepot.repo.exception.StorageException;
 import eu.openanalytics.rdepot.repo.model.SynchronizeRepositoryRequestBody;
 import eu.openanalytics.rdepot.repo.storage.StorageService;
 import eu.openanalytics.rdepot.repo.transaction.Transaction;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,7 +41,7 @@ public abstract class UploadRequestChunkProcessorImpl<REQ extends SynchronizeRep
 
     private final StorageService<REQ> storageService;
 
-    public UploadRequestChunkProcessorImpl(StorageService<REQ> storageService) {
+    protected UploadRequestChunkProcessorImpl(StorageService<REQ> storageService) {
         this.storageService = storageService;
     }
 
@@ -60,8 +60,8 @@ public abstract class UploadRequestChunkProcessorImpl<REQ extends SynchronizeRep
         } catch (GetRepositoryVersionException
                 | RepositoryVersionMismatchException
                 | StorageException
-                | FileNotFoundException e) {
-            log.error(e.getClass().getCanonicalName() + ": " + e.getMessage(), e);
+                | IOException e) {
+            log.error("{}: {}", e.getClass().getCanonicalName(), e.getMessage(), e);
             log.debug("Trying to restore repository...");
             throw new RequestProcessingException();
         }

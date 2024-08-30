@@ -44,6 +44,7 @@ import eu.openanalytics.rdepot.base.service.RoleService;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.UserSettingsService;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
+import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.factory.StrategyFactory;
 import eu.openanalytics.rdepot.base.utils.specs.SpecificationUtils;
@@ -96,6 +97,7 @@ public class ApiV2UserController extends ApiV2Controller<User, UserDto> {
     private final PageableValidator pageableValidator;
     private final CommonPageableSortResolver pageableSortResolver;
     private final SecurityMediator securityMediator;
+    private final StrategyExecutor strategyExecutor;
 
     public ApiV2UserController(
             MessageSource messageSource,
@@ -111,7 +113,8 @@ public class ApiV2UserController extends ApiV2Controller<User, UserDto> {
             UserSettingsService userSettingsService,
             PageableValidator pageableValidator,
             CommonPageableSortResolver pageableSortResolver,
-            SecurityMediator securityMediator) {
+            SecurityMediator securityMediator,
+            StrategyExecutor strategyExecutor) {
 
         super(
                 messageSource,
@@ -131,6 +134,7 @@ public class ApiV2UserController extends ApiV2Controller<User, UserDto> {
         this.pageableValidator = pageableValidator;
         this.pageableSortResolver = pageableSortResolver;
         this.securityMediator = securityMediator;
+        this.strategyExecutor = strategyExecutor;
     }
 
     /**
@@ -269,7 +273,7 @@ public class ApiV2UserController extends ApiV2Controller<User, UserDto> {
 
             Strategy<User> strategy = factory.updateUserStrategy(user, requester.get(), entity);
 
-            strategy.perform();
+            strategyExecutor.execute(strategy);
         } catch (JsonException | JsonProcessingException | EntityResolutionException e) {
             throw new MalformedPatchException(messageSource, locale, e);
         } catch (StrategyFailure e) {

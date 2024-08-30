@@ -1,0 +1,58 @@
+{
+	"status": "SUCCESS",
+	"code": 201,
+	"message": "Your resource has been created successfully.",
+	"messageCode": "success.resource.created",
+	"data": {
+		"id": 1,
+		"submitter": {
+			"id": 123,
+			"name": "Test Admin",
+			"login": "testadmin",
+			"email": "admin@example.org"
+		},
+		"approver": null,
+		"packageBag": {
+			"id": 1,
+			"version": "4.5.6",
+			"repository": {
+				"name": "Test R Repository",
+				"id": 123,
+				"publicationUri": "http://localhost/repo/testrepo123"
+			},
+			"submission": {"id": 1, "state":  "WAITING"},
+			"name": "TestPackage1",
+			"description": "Simple test package1",
+			"author": "Albert Einstein1",
+			"title": "Test Package1",
+			"url": "",
+			"source": "1test_package.tar.gz",
+			"active": true,
+			"deleted": false,
+			"binary": true,
+			"links": [
+				{
+					"rel": "self",
+					"href": "http://localhost/api/v2/manager/r/packages/1"
+				},
+				{
+					"rel": "packageList",
+					"href": "http://localhost/api/v2/manager/packages"
+				}
+			]
+		},
+		"changes": "Some changes 123",
+		"state": "WAITING",
+		"created": "2024-03-19T00:00:00Z",
+		"links": [
+			{
+				"rel": "self",
+				"href": "http://localhost/api/v2/manager/r/submissions/1"
+			},
+			{
+				"rel": "submissionList",
+				"href": "http://localhost/api/v2/manager/r/submissions"
+			}
+		]
+	}
+}

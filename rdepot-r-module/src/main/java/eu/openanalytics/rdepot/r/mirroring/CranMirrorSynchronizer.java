@@ -20,7 +20,6 @@
  */
 package eu.openanalytics.rdepot.r.mirroring;
 
-import eu.openanalytics.rdepot.base.api.v2.dtos.PackageUploadRequest;
 import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.exception.AdminNotFound;
@@ -31,7 +30,9 @@ import eu.openanalytics.rdepot.base.storage.exceptions.CreateTemporaryFolderExce
 import eu.openanalytics.rdepot.base.storage.exceptions.DeleteFileException;
 import eu.openanalytics.rdepot.base.storage.exceptions.DownloadFileException;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
+import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
+import eu.openanalytics.rdepot.r.api.v2.dtos.RPackageUploadRequest;
 import eu.openanalytics.rdepot.r.config.declarative.RYamlDeclarativeConfigurationSource;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
@@ -77,6 +78,7 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
     private final BestMaintainerChooser bestMaintainerChooser;
     private final RStrategyFactory strategyFactory;
     private final RRepositoryService repositoryService;
+    private final StrategyExecutor strategyExecutor;
 
     public CranMirrorSynchronizer(
             RPackageService packageService,
@@ -85,7 +87,8 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
             BestMaintainerChooser bestMaintainerChooser,
             RStrategyFactory strategyFactory,
             RRepositoryService repositoryService,
-            RYamlDeclarativeConfigurationSource rYamlDeclarativeConfigurationSource) {
+            RYamlDeclarativeConfigurationSource rYamlDeclarativeConfigurationSource,
+            StrategyExecutor strategyExecutor) {
         super(rYamlDeclarativeConfigurationSource);
         this.packageService = packageService;
         this.messageSource = messageSource;
@@ -93,6 +96,7 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
         this.bestMaintainerChooser = bestMaintainerChooser;
         this.strategyFactory = strategyFactory;
         this.repositoryService = repositoryService;
+        this.strategyExecutor = strategyExecutor;
     }
 
     @Override
@@ -111,13 +115,13 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
 
     private void synchronize(RRepository repository, CranMirror mirror) {
         if (isPendingAddNewStatusIfFinished(repository)) {
-            log.warn("Cannot start synchronization "
-                    + "because it is already pending for this repository: "
-                    + repository.getId());
+            log.warn(
+                    "Cannot start synchronization because it is already pending for this repository: {}",
+                    repository.getId());
             return;
         }
 
-        log.info("Synchronization started for repository: " + repository.getId());
+        log.info("Synchronization started for repository: {}", repository.getId());
 
         try {
             List<RPackage> remotePackages = getPackageListFromRemoteRepository(mirror);
@@ -135,16 +139,11 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
                             packageBag.getName(), packageBag.getVersion(), repository);
                 }
 
-                if (localPackage.isEmpty()) {
-                    if (packageBag.getVersion() != null) {
-                        updatePackage(
-                                packageBag.getName(),
-                                packageBag.getVersion(),
-                                mirror,
-                                repository,
-                                isOutdated(packageBag, remotePackages),
-                                packageBag.getGenerateManuals());
-                    } else {
+                if (packageBag.getVersion() == null) {
+                    if (localPackage.isEmpty()
+                            || (!localPackage.isEmpty()
+                                    && !getPackageMd5(packageBag.getName(), remotePackages)
+                                            .equals(localPackage.get().getMd5sum()))) {
                         updatePackage(
                                 packageBag.getName(),
                                 getVersion(packageBag.getName(), remotePackages),
@@ -153,19 +152,14 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
                                 false,
                                 packageBag.getGenerateManuals());
                     }
-                } else {
-                    if (packageBag.getVersion() == null
-                            && !getPackageMd5(packageBag.getName(), remotePackages)
-                                    .equals(localPackage.get().getMd5sum())) {
-
-                        updatePackage(
-                                packageBag.getName(),
-                                getVersion(packageBag.getName(), remotePackages),
-                                mirror,
-                                repository,
-                                false,
-                                packageBag.getGenerateManuals());
-                    }
+                } else if (localPackage.isEmpty()) {
+                    updatePackage(
+                            packageBag.getName(),
+                            packageBag.getVersion(),
+                            mirror,
+                            repository,
+                            isOutdated(packageBag, remotePackages),
+                            packageBag.getGenerateManuals());
                 }
             }
 
@@ -173,10 +167,10 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
                 | ParsePackagesFileException
                 | UpdatePackageException
                 | DownloadPackagesFileException e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             registerSynchronizationError(repository, e);
         } finally {
-            log.info("Synchronization finished for repository: " + repository.getId());
+            log.info("Synchronization finished for repository: {}", repository.getId());
             registerFinishedSynchronization(repository);
         }
     }
@@ -240,14 +234,21 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
             MultipartFile downloadedFile = storage.downloadFile(downloadURL, downloadDestination);
             User uploader = bestMaintainerChooser.findFirstAdmin();
 
-            PackageUploadRequest<RRepository> request =
-                    new PackageUploadRequest<>(downloadedFile, repository, generateManuals, false);
+            RPackageUploadRequest request = new RPackageUploadRequest(
+                    downloadedFile,
+                    repository,
+                    generateManuals,
+                    false,
+                    false,
+                    null,
+                    null,
+                    null); // TODO #33470 Allow mirroring of binary R packages
             Strategy<Submission> strategy = strategyFactory.uploadPackageStrategy(request, uploader);
-            strategy.perform();
+            strategyExecutor.execute(strategy);
 
             log.info("Package mirrored.");
         } catch (CreateTemporaryFolderException | AdminNotFound | DownloadFileException | StrategyFailure e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new UpdatePackageException(name, version, mirror);
         } finally {
             try {
@@ -255,8 +256,10 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
 
             } catch (DeleteFileException ioe) {
                 log.error(
-                        messageSource.getMessage(MessageCodes.ERROR_CLEAN_FS, null, MessageCodes.ERROR_CLEAN_FS, locale)
-                                + "\nLocation: " + remotePackageDir.toPath().toAbsolutePath());
+                        "{}\nLocation: {}",
+                        messageSource.getMessage(
+                                MessageCodes.ERROR_CLEAN_FS, null, MessageCodes.ERROR_CLEAN_FS, locale),
+                        remotePackageDir.toPath().toAbsolutePath());
             }
         }
     }
@@ -271,16 +274,18 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
             remotePackagesFilePath = storage.downloadFile(downloadUrl).toPath();
             remotePackages = parser.parse(remotePackagesFilePath.toFile());
         } catch (DownloadFileException | ParsePackagesFileException e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new DownloadPackagesFileException(mirror);
         } finally {
             if (remotePackagesFilePath != null) {
                 try {
                     storage.removeFileIfExists(remotePackagesFilePath.toFile().getAbsolutePath());
                 } catch (DeleteFileException e) {
-                    log.error(messageSource.getMessage(
-                                    MessageCodes.ERROR_CLEAN_FS, null, MessageCodes.ERROR_CLEAN_FS, locale)
-                            + "\nLocation: " + remotePackagesFilePath.toAbsolutePath());
+                    log.error(
+                            "{}\nLocation: {}",
+                            messageSource.getMessage(
+                                    MessageCodes.ERROR_CLEAN_FS, null, MessageCodes.ERROR_CLEAN_FS, locale),
+                            remotePackagesFilePath.toAbsolutePath());
                 }
             }
         }

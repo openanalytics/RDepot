@@ -1,0 +1,40 @@
+databaseChangeLog:
+  - changeSet:
+      id: 10_01_update_r_package
+      author: wgorczak
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: rpackage
+            schemaName: public
+        - not:
+            - columnExists:
+                tableName: rpackage
+                schemaName: public
+                columnName: enhances
+      changes:
+        - addColumn:
+            tableName: rpackage
+            schemaName: public
+            columns:
+              - column:
+                  name: enhances
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: linking_to
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: priority
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: needs_compilation
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false

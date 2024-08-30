@@ -70,7 +70,7 @@ public abstract class ApiV2Controller<E extends Resource, D extends IDto> extend
     private final Optional<Validator> validator;
     protected final DtoConverter<E, D> dtoConverter;
 
-    public ApiV2Controller(
+    protected ApiV2Controller(
             MessageSource messageSource,
             Locale locale,
             RoleAwareRepresentationModelAssembler<E, EntityModel<D>> modelAssembler,

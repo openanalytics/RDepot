@@ -14,16 +14,13 @@
       "email": "einstein@ldap.forumsys.com"
     },
     "changes": null,
-    "links": [
-      {
-        "rel": "self",
-        "href": "http://localhost:8017/api/v2/manager/python/submissions/47"
-      },
-      {
-        "rel": "submissionList",
-        "href": "http://localhost:8017/api/v2/manager/python/submissions"
-      }
-    ],
+    "links": [{
+      "rel": "self",
+      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/submissions\/47"
+    }, {
+      "rel": "submissionList",
+      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/submissions"
+    }],
     "id": 47,
     "state": "ACCEPTED",
     "technology": "Python",
@@ -37,27 +34,25 @@
         "id": 8,
         "published": true,
         "technology": "Python",
-        "publicationUri": "http://localhost/repo/testrepo8"
+        "publicationUri": "http:\/\/localhost\/repo\/testrepo8"
       },
       "title": "A python wrapper around the Coconut API",
       "version": "2.2.1",
       "url": "",
       "deleted": false,
+      "binary": false,
       "name": "coconutpy",
       "submission": {
         "id": 47,
         "state": "ACCEPTED"
       },
-      "links": [
-        {
-          "rel": "self",
-          "href": "http://localhost:8017/api/v2/manager/python/packages/47"
-        },
-        {
-          "rel": "packageList",
-          "href": "http://localhost:8017/api/v2/manager/packages"
-        }
-      ],
+      "links": [{
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/47"
+      }, {
+        "rel": "packageList",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+      }],
       "id": 47,
       "user": {
         "name": "Nikola Tesla",

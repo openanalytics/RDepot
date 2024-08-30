@@ -25,8 +25,11 @@ import eu.openanalytics.rdepot.base.utils.TechnologyResolver;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RepositorySpecs {
 
     public static <P extends Repository> Specification<P> isDeleted(boolean deleted) {

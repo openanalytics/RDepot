@@ -189,35 +189,35 @@ COPY public.submission (id, submitter_id, package_id, deleted, changes, state, a
 -- Data for Name: rpackage; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.rpackage (id, depends, imports, suggests, system_requirements, license, md5sum) FROM stdin;
-8	R (>= 3.0), grid	\N	\N	\N	GPL-3	70d295115295a4718593f6a39d77add9
-4	R (>= 2.14.1), grid	\N	\N	\N	GPL-3	19f8aec67250bd2ac481b14b50413d03
-10	R (>= 2.15.0), xtable, pbapply	\N	randomForest, e1071	\N	GPL (>= 2)	76d726aee8dd7c6ed94d150d5718015b
-5	R (>= 2.14.1), grid	\N	\N	\N	GPL-3	a05e4ca44438c0d9e7d713d7e3890423
-9	xtable, pbapply	\N	randomForest, e1071	\N	GPL (>= 2)	8eb4760cd574f5489e61221dc9bb0076
-19	R (>= 3.2.2)	ggplot2, tidyr, dplyr, purrr, magrittr, stats	plotly (>= 4.5.6), testthat, knitr, rmarkdown, vdiffr	\N	MIT + file LICENSE	f343fa3a01dcd9546fa0947877f58f36
-7	R (>= 2.14.1), grid	\N	\N	\N	GPL-3	97c2930a9dd7ca9fc1409d5340c06470
-14	R (>= 2.15.0)	\N	\N	\N	GPL (>= 2)	da8be1247d3145b757bd62e01fc6eb8b
-17	R (>= 2.15.0), xtable, pbapply	\N	randomForest, e1071	\N	GPL (>= 2)	76d726aee8dd7c6ed94d150d5718015b
-13	R (>= 3.0), grid	\N	\N	\N	GPL-3	1c75d59b18e554a285a9b156a06a288c
-11	R (>= 2.10), nnet, quantreg, locfit	\N	\N	\N	GPL (>= 3)	c47d18b86b331a5023dcd62b74fedbb6
-12	R (>= 1.8.0), nnet, quantreg, locfit, methods	\N	\N	\N	Unlimited	91599204c92275ed4b36d55e8d7c144b
-18	R (>= 2.10), nnet, quantreg, locfit	\N	\N	\N	GPL (>= 3)	c47d18b86b331a5023dcd62b74fedbb6
-20	R (>= 3.3.0), Rcpp (>= 0.11.3), methods		knitr, Hmisc, VGAM, coda, testthat, lmodel2	\N	GPL (>= 2)	41026e4157a0b3b6d909f0c6f72fa65c
-6	R (>= 3.0), grid	\N	\N	\N	GPL-3	24b8cec280424dfc6a9e444fa57ba9f3
-22	R (>= 3.3.0), Rcpp (>= 0.11.3), methods		knitr, Hmisc, VGAM, coda, testthat, lmodel2	\N	GPL (>= 2)	41026e4157a0b3b6d909f0c6f72fa65c
-26	R (>= 3.0), methods	graphics, stats, nlsr	knitr	\N	BSD_2_clause + file LICENSE	868140a3c3c29327eef5d5a485aee5b6
-25	R (>= 3.0), methods	graphics, stats, nlsr	knitr	\N	BSD_2_clause + file LICENSE	868140a3c3c29327eef5d5a485aee5b6
-16	xtable, pbapply	\N	randomForest, e1071	\N	GPL (>= 2)	8eb4760cd574f5489e61221dc9bb0076
-21	lpSolveAPI, ucminf	\N	\N	\N	GPL (>= 2)	9a99c2ebefa6d49422ca7893c1f4ead8
-23	R (>= 3.2.2)	ggplot2, tidyr, dplyr, purrr, magrittr, stats	plotly (>= 4.5.6), testthat, knitr, rmarkdown, vdiffr	\N	MIT + file LICENSE	f343fa3a01dcd9546fa0947877f58f36
-24	lpSolveAPI, ucminf	\N	\N	\N	GPL (>= 2)	9a99c2ebefa6d49422ca7893c1f4ead8
-30	xtable, pbapply	\N	randomForest, e1071	\N	GPL (>= 2)	8eb4760cd574f5489e61221dc9bb0076
-31	R (>= 1.8.0), nnet, quantreg, locfit, methods	\N	\N	\N	Unlimited	91599204c92275ed4b36d55e8d7c144b
-28	R (>= 3.2.2)	ggplot2, tidyr, dplyr, purrr, magrittr, stats	plotly (>= 4.5.6), testthat, knitr, rmarkdown, vdiffr	\N	MIT + file LICENSE	f343fa3a01dcd9546fa0947877f58f36
-27	R (>= 3.0), methods	graphics, stats, nlsr	knitr	\N	BSD_2_clause + file LICENSE	868140a3c3c29327eef5d5a485aee5b6
-29	xtable, pbapply	\N	randomForest, e1071	\N	GPL (>= 2)	8eb4760cd574f5489e61221dc9bb0076
-15	R (>= 3.2.1), data.table	httr, DT, shiny, jsonlite, googleVis, shinydashboard, ggplot2, stringr, chron, gtable, scales, htmltools, httpuv, xtable, stringi, magrittr, htmlwidgets, Rcpp, munsell, colorspace, plyr, yaml	\N	\N	CC0	5e664f320c7cc884138d64467f6b0e49
+COPY public.rpackage (id, depends, imports, suggests, system_requirements, license, md5sum, enhances, linking_to, priority, needs_compilation) FROM stdin;
+8	R (>= 3.0), grid	\N	\N	\N	GPL-3	70d295115295a4718593f6a39d77add9	\N	\N	\N	f
+4	R (>= 2.14.1), grid	\N	\N	\N	GPL-3	19f8aec67250bd2ac481b14b50413d03	\N	\N	\N	f
+10	R (>= 2.15.0), xtable, pbapply	\N	randomForest, e1071	\N	GPL (>= 2)	76d726aee8dd7c6ed94d150d5718015b	\N	\N	\N	f
+5	R (>= 2.14.1), grid	\N	\N	\N	GPL-3	a05e4ca44438c0d9e7d713d7e3890423	\N	\N	\N	f
+9	xtable, pbapply	\N	randomForest, e1071	\N	GPL (>= 2)	8eb4760cd574f5489e61221dc9bb0076	\N	\N	\N	f
+19	R (>= 3.2.2)	ggplot2, tidyr, dplyr, purrr, magrittr, stats	plotly (>= 4.5.6), testthat, knitr, rmarkdown, vdiffr	\N	MIT + file LICENSE	f343fa3a01dcd9546fa0947877f58f36	\N	\N	\N	f
+7	R (>= 2.14.1), grid	\N	\N	\N	GPL-3	97c2930a9dd7ca9fc1409d5340c06470	\N	\N	\N	f
+14	R (>= 2.15.0)	\N	\N	\N	GPL (>= 2)	da8be1247d3145b757bd62e01fc6eb8b	\N	\N	\N	f
+17	R (>= 2.15.0), xtable, pbapply	\N	randomForest, e1071	\N	GPL (>= 2)	76d726aee8dd7c6ed94d150d5718015b	\N	\N	\N	f
+13	R (>= 3.0), grid	\N	\N	\N	GPL-3	1c75d59b18e554a285a9b156a06a288c	\N	\N	\N	f
+11	R (>= 2.10), nnet, quantreg, locfit	\N	\N	\N	GPL (>= 3)	c47d18b86b331a5023dcd62b74fedbb6	\N	\N	\N	f
+12	R (>= 1.8.0), nnet, quantreg, locfit, methods	\N	\N	\N	Unlimited	91599204c92275ed4b36d55e8d7c144b	\N	\N	\N	f
+18	R (>= 2.10), nnet, quantreg, locfit	\N	\N	\N	GPL (>= 3)	c47d18b86b331a5023dcd62b74fedbb6	\N	\N	\N	f
+20	R (>= 3.3.0), Rcpp (>= 0.11.3), methods		knitr, Hmisc, VGAM, coda, testthat, lmodel2	\N	GPL (>= 2)	41026e4157a0b3b6d909f0c6f72fa65c	\N	Rcpp	\N	f
+6	R (>= 3.0), grid	\N	\N	\N	GPL-3	24b8cec280424dfc6a9e444fa57ba9f3	\N	\N	\N	f
+22	R (>= 3.3.0), Rcpp (>= 0.11.3), methods		knitr, Hmisc, VGAM, coda, testthat, lmodel2	\N	GPL (>= 2)	41026e4157a0b3b6d909f0c6f72fa65c	\N	Rcpp	\N	f
+26	R (>= 3.0), methods	graphics, stats, nlsr	knitr	\N	BSD_2_clause + file LICENSE	868140a3c3c29327eef5d5a485aee5b6	\N	\N	\N	f
+25	R (>= 3.0), methods	graphics, stats, nlsr	knitr	\N	BSD_2_clause + file LICENSE	868140a3c3c29327eef5d5a485aee5b6	\N	\N	\N	f
+16	xtable, pbapply	\N	randomForest, e1071	\N	GPL (>= 2)	8eb4760cd574f5489e61221dc9bb0076	\N	\N	\N	f
+21	lpSolveAPI, ucminf	\N	\N	\N	GPL (>= 2)	9a99c2ebefa6d49422ca7893c1f4ead8	\N	\N	\N	f
+23	R (>= 3.2.2)	ggplot2, tidyr, dplyr, purrr, magrittr, stats	plotly (>= 4.5.6), testthat, knitr, rmarkdown, vdiffr	\N	MIT + file LICENSE	f343fa3a01dcd9546fa0947877f58f36	\N	\N	\N	f
+24	lpSolveAPI, ucminf	\N	\N	\N	GPL (>= 2)	9a99c2ebefa6d49422ca7893c1f4ead8	\N	\N	\N	f
+30	xtable, pbapply	\N	randomForest, e1071	\N	GPL (>= 2)	8eb4760cd574f5489e61221dc9bb0076	\N	\N	\N	f
+31	R (>= 1.8.0), nnet, quantreg, locfit, methods	\N	\N	\N	Unlimited	91599204c92275ed4b36d55e8d7c144b	\N	\N	\N	f
+28	R (>= 3.2.2)	ggplot2, tidyr, dplyr, purrr, magrittr, stats	plotly (>= 4.5.6), testthat, knitr, rmarkdown, vdiffr	\N	MIT + file LICENSE	f343fa3a01dcd9546fa0947877f58f36	\N	\N	\N	f
+27	R (>= 3.0), methods	graphics, stats, nlsr	knitr	\N	BSD_2_clause + file LICENSE	868140a3c3c29327eef5d5a485aee5b6	\N	\N	\N	f
+29	xtable, pbapply	\N	randomForest, e1071	\N	GPL (>= 2)	8eb4760cd574f5489e61221dc9bb0076	\N	\N	\N	f
+15	R (>= 3.2.1), data.table	httr, DT, shiny, jsonlite, googleVis, shinydashboard, ggplot2, stringr, chron, gtable, scales, htmltools, httpuv, xtable, stringi, magrittr, htmlwidgets, Rcpp, munsell, colorspace, plyr, yaml	\N	\N	CC0	5e664f320c7cc884138d64467f6b0e49	\N	\N	\N	f
 \.
 
 

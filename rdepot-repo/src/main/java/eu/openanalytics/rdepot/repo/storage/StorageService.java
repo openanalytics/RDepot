@@ -24,7 +24,8 @@ import eu.openanalytics.rdepot.repo.exception.*;
 import eu.openanalytics.rdepot.repo.model.SynchronizeRepositoryRequestBody;
 import eu.openanalytics.rdepot.repo.model.Technology;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -42,7 +43,7 @@ public interface StorageService<T extends SynchronizeRepositoryRequestBody> exte
     /**
      * Returns list of recent packages for given repository based on storage contents.
      */
-    List<File> getRecentPackagesFromRepository(String repository);
+    List<Path> getRecentPackagesFromRepository(String repository) throws IOException;
 
     /**
      * Initializes trash directory for transaction backup.
@@ -57,7 +58,7 @@ public interface StorageService<T extends SynchronizeRepositoryRequestBody> exte
      * of given id.
      * @param id {@link eu.openanalytics.rdepot.repo.transaction.Transaction transaction} id.
      */
-    void moveToTrash(String id, File packageFile) throws MoveToTrashException;
+    void moveToTrash(String id, Path packageFile) throws MoveToTrashException;
 
     /**
      * Removes contents of trash directory when backup is being removed.
@@ -96,7 +97,7 @@ public interface StorageService<T extends SynchronizeRepositoryRequestBody> exte
     /**
      * Saves and deletes package files according to given request.
      */
-    void storeAndDeleteFiles(T requestBody) throws StorageException, FileNotFoundException;
+    void storeAndDeleteFiles(T requestBody) throws StorageException, IOException;
 
     /**
      * Should be called for the last chunk.

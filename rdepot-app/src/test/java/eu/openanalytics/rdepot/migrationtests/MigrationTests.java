@@ -22,12 +22,46 @@ package eu.openanalytics.rdepot.migrationtests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import eu.openanalytics.rdepot.integrationtest.IntegrationTestContainers;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.util.Collections;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.DockerComposeContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
 
 public class MigrationTests {
+
+    public static DockerComposeContainer<?> container = new DockerComposeContainer<>(
+                    new File("src/test/resources/docker-compose-migrations.yaml"))
+            .withLocalCompose(true)
+            .withOptions("--compatibility")
+            .waitingFor(
+                    "proxy",
+                    Wait.forHttp("/actuator/health")
+                            .forStatusCode(200)
+                            .withHeaders(Collections.singletonMap("Accept", "application/json"))
+                            .withStartupTimeout(Duration.ofMinutes(5)));
+
+    @BeforeAll
+    public static void configureRestAssured() throws IOException, InterruptedException {
+        IntegrationTestContainers.stopContainers();
+        System.out.println("===Starting containers for migrations tests...");
+        container.start();
+        System.out.println("===Migrations containers started.");
+    }
+
+    @AfterAll
+    public static void tearDownContainer() {
+        System.out.println("===Stopping containers for migrations...");
+        container.stop();
+        System.out.println("===Migrations containers stopped.");
+    }
 
     @Test
     public void migrationModulesTest() throws IOException, InterruptedException {

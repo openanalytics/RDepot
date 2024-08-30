@@ -74,14 +74,10 @@ public class CreatePackageMaintainerStrategy extends CreateStrategy<PackageMaint
                 }
             }
         } catch (NoSuitableMaintainerFound e) {
-            logger.error(e.getMessage(), e);
             throw new StrategyFailure(e);
         }
         return maintainer;
     }
-
-    @Override
-    protected void postStrategy() throws StrategyFailure {}
 
     @Override
     protected NewsfeedEvent generateEvent(PackageMaintainer resource) {

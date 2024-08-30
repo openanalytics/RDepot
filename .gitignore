@@ -43,3 +43,4 @@ target/
 .factorypath
 .metadata
 =
+.theia

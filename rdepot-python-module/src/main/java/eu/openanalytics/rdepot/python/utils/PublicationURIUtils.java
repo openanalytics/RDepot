@@ -24,9 +24,13 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PublicationURIUtils {
+
     public static @NonNull String resolveToRelativeURL(@NonNull final String url)
             throws MalformedURLException, URISyntaxException {
         final String hostStr = getHostFromURL(url);

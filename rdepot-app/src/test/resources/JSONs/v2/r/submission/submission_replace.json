@@ -14,16 +14,13 @@
       "email": "einstein@ldap.forumsys.com"
     },
     "changes": null,
-    "links": [
-      {
-        "rel": "self",
-        "href": "http://localhost:8017/api/v2/manager/r/submissions/48"
-      },
-      {
-        "rel": "submissionList",
-        "href": "http://localhost:8017/api/v2/manager/r/submissions"
-      }
-    ],
+    "links": [{
+      "rel": "self",
+      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/48"
+    }, {
+      "rel": "submissionList",
+      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions"
+    }],
     "id": 48,
     "state": "ACCEPTED",
     "technology": "R",
@@ -37,37 +34,33 @@
         "id": 3,
         "published": true,
         "technology": "R",
-        "publicationUri": "http://localhost/repo/testrepo2"
+        "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
       },
       "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for\\n Predictive Models",
       "version": "0-9-1",
       "url": null,
       "deleted": false,
+      "binary": false,
       "name": "A3",
       "submission": {
         "id": 48,
         "state": "ACCEPTED"
       },
-      "links": [
-        {
-          "rel": "self",
-          "href": "http://localhost:8017/api/v2/manager/r/packages/48"
-        },
-        {
-          "rel": "packageList",
-          "href": "http://localhost:8017/api/v2/manager/packages"
-        },
-        {
-          "rel": "self",
-          "href": "http://localhost:8017/api/v2/manager/r/packages/48",
-          "type": "PATCH"
-        },
-        {
-          "rel": "self",
-          "href": "http://localhost:8017/api/v2/manager/r/packages/48",
-          "type": "DELETE"
-        }
-      ],
+      "links": [{
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/48"
+      }, {
+        "rel": "packageList",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+      }, {
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/48",
+        "type": "PATCH"
+      }, {
+        "rel": "self",
+        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/48",
+        "type": "DELETE"
+      }],
       "id": 48,
       "user": {
         "name": "Albert Einstein",

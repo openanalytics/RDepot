@@ -31,7 +31,6 @@ import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Strategy is an object that coordinates RDepot's business logic.
@@ -81,14 +80,16 @@ public abstract class Strategy<T extends Resource> {
      * Operations performed after the event is registered and operation performed.
      * May be used to link another strategy that
      * would be performed as the next operation in the chain.
+     * Override this method if its needed
      */
-    protected abstract void postStrategy() throws StrategyFailure;
+    protected void postStrategy() throws StrategyFailure {}
 
     /**
      * Rolls back every operation performed in the strategy.
      * May be used for failure recovery.
+     * Override this method if its needed
      */
-    public abstract void revertChanges() throws StrategyReversionFailure;
+    public void revertChanges() throws StrategyReversionFailure {}
 
     /**
      * Performs the strategy.
@@ -96,13 +97,11 @@ public abstract class Strategy<T extends Resource> {
      * @return created, modified or unchanged (in case of deletion) object
      * @throws StrategyFailure contains information about what went wrong in the strategy
      */
-    @Transactional(rollbackFor = FatalStrategyFailure.class)
     public T perform() throws StrategyFailure {
         processedResource = actualStrategy();
         try {
             registerEvent(generateEvent(processedResource));
         } catch (CreateEntityException e) {
-            logger.error(e.getMessage(), e);
             throw new FatalStrategyFailure(e);
         }
         postStrategy();

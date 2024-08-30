@@ -50,6 +50,7 @@ import eu.openanalytics.rdepot.base.storage.exceptions.GetReferenceManualExcepti
 import eu.openanalytics.rdepot.base.storage.exceptions.ReadPackageVignetteException;
 import eu.openanalytics.rdepot.base.storage.exceptions.SourceNotFoundException;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
+import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.utils.specs.PackageSpecs;
 import eu.openanalytics.rdepot.base.utils.specs.SpecificationUtils;
@@ -121,6 +122,7 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
     private final RStorage storage;
     private final PageableValidator pageableValidator;
     private final PackagePageableSortResolver pageableSortResolver;
+    private final StrategyExecutor strategyExecutor;
 
     public RPackageController(
             MessageSource messageSource,
@@ -136,7 +138,8 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
             RStorage storage,
             PageableValidator pageableValidator,
             PackagePageableSortResolver pageableSortResolver,
-            RPackageDtoConverter rPackageDtoConverter) {
+            RPackageDtoConverter rPackageDtoConverter,
+            StrategyExecutor strategyExecutor) {
         super(
                 messageSource,
                 LocaleContextHolder.getLocale(),
@@ -147,6 +150,7 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
                 Optional.empty(),
                 rPackageDtoConverter);
         this.packageService = packageService;
+        this.strategyExecutor = strategyExecutor;
         this.messageSource = messageSource;
         this.userService = userService;
         this.packageValidator = packageValidator;
@@ -266,9 +270,8 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
             final RPackageDto packageDto = applyPatchToEntity(patch, packageBag);
             final RPackage updatedPackage = dtoConverter.resolveDtoToEntity(packageDto);
 
-            if (!packagesDeletionEnabled)
-                if (updatedPackage.getDeleted() && !packageBag.getDeleted())
-                    throw new PackageDeletionException(messageSource, locale);
+            if (!packagesDeletionEnabled && updatedPackage.getDeleted() && !packageBag.getDeleted())
+                throw new PackageDeletionException(messageSource, locale);
 
             final DataSpecificValidationResult<Submission> validationResult =
                     ValidationResultImpl.createDataSpecificResult();
@@ -278,7 +281,7 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
 
             Strategy<RPackage> strategy = strategyFactory.updatePackageStrategy(packageBag, requester, updatedPackage);
 
-            packageBag = strategy.perform();
+            packageBag = strategyExecutor.execute(strategy);
         } catch (EntityResolutionException e) {
             log.error(e.getClass().getName() + ": " + e.getMessage(), e);
             return handleValidationError(e.getMessage());

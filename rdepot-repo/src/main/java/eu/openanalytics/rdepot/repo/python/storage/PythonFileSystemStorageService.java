@@ -27,22 +27,18 @@ import eu.openanalytics.rdepot.repo.exception.StorageException;
 import eu.openanalytics.rdepot.repo.python.model.SynchronizePythonRepositoryRequestBody;
 import eu.openanalytics.rdepot.repo.storage.StorageProperties;
 import eu.openanalytics.rdepot.repo.storage.implementations.FileSystemStorageService;
-import io.micrometer.common.util.StringUtils;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
+import java.util.stream.StreamSupport;
 import java.util.zip.GZIPInputStream;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +46,7 @@ import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.stereotype.Service;
@@ -62,37 +59,40 @@ public class PythonFileSystemStorageService extends FileSystemStorageService<Syn
 
     private static final String PACKAGES_INDEX_FILE_NAME = "index.html";
 
-    private final Set<String> excludedFiles = new HashSet<String>(List.of(PACKAGES_INDEX_FILE_NAME));
+    private final Set<String> excludedFiles = new HashSet<>(List.of(PACKAGES_INDEX_FILE_NAME, "VERSION"));
 
     public PythonFileSystemStorageService(StorageProperties properties) {
         super(properties);
     }
 
     @Override
-    protected void store(MultipartFile[] files, Path saveLocation, String id) {
+    protected void store(MultipartFile[] files, Path saveLocation, String id) throws IOException {
         log.debug("Saving to location {}", saveLocation.toString());
         for (MultipartFile file : files) {
             extractFiles(file, saveLocation);
         }
     }
 
-    private void extractFiles(MultipartFile file, Path saveLocation) {
+    private void extractFiles(MultipartFile file, Path saveLocation) throws IOException {
         Path packageDir = saveLocation;
         try {
-            String dirName = file.getOriginalFilename();
-            if (!Objects.equals(dirName, "index.tar.gz")) {
-                packageDir = Paths.get(saveLocation.toString() + "/" + dirName.substring(0, dirName.length() - 7));
+            String fileName = file.getOriginalFilename();
+            assert !StringUtils.isBlank(fileName);
+            if (!fileName.equals("index.tar.gz")) {
+                packageDir = Paths.get(saveLocation.toString(), fileName.substring(0, fileName.length() - 7));
             }
             if (!Files.exists(packageDir)) {
                 Files.createDirectories(packageDir);
             }
-            File fileToUnpack = new File(packageDir.toString() + "/" + file.getOriginalFilename());
-            if (!fileToUnpack.exists()) {
-                fileToUnpack.createNewFile();
+            File fileToUnpack = new File(packageDir + "/" + file.getOriginalFilename());
+            try {
+                Files.createFile(fileToUnpack.toPath());
+            } catch (FileAlreadyExistsException ignored) {
+                // ignore if the file to transfer to already exists
             }
             file.transferTo(fileToUnpack);
 
-            File unGzippedFile = null;
+            File unGzippedFile;
             unGzippedFile = unGzip(fileToUnpack, new File(packageDir.toString()));
             unTar(unGzippedFile, new File(packageDir.toString()));
         } catch (IOException e) {
@@ -104,14 +104,13 @@ public class PythonFileSystemStorageService extends FileSystemStorageService<Syn
         }
     }
 
-    private void cleanSpace(Path packageDir) {
-        if (packageDir.toFile().isDirectory()) {
-            for (File packageFile : packageDir.toFile().listFiles()) {
-                boolean isTarFile = packageFile.getName().contains(".tar")
-                        && !packageFile.getName().contains(".gz");
-                if (isTarFile) {
-                    packageFile.delete();
-                }
+    private void cleanSpace(Path packageDir) throws IOException {
+        if (!Files.isDirectory(packageDir)) {
+            return;
+        }
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(packageDir, "*.tar")) {
+            for (Path packageFile : stream) {
+                Files.delete(packageFile);
             }
         }
     }
@@ -129,34 +128,25 @@ public class PythonFileSystemStorageService extends FileSystemStorageService<Syn
 
         in.close();
         out.close();
-        inputFile.delete();
+        Files.delete(inputFile.toPath());
         return outputFile;
     }
 
     private void unTar(final File inputFile, final File outputDir) throws IOException, ArchiveException {
         log.debug(String.format("Untarring %s to dir %s.", inputFile.getAbsolutePath(), outputDir.getAbsolutePath()));
         final InputStream is = new FileInputStream(inputFile);
-        final TarArchiveInputStream debInputStream =
-                (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream("tar", is);
-        TarArchiveEntry entry = null;
+        final TarArchiveInputStream debInputStream = new ArchiveStreamFactory().createArchiveInputStream("tar", is);
+        TarArchiveEntry entry;
 
-        while ((entry = (TarArchiveEntry) debInputStream.getNextEntry()) != null) {
-            final File outputFile = new File(outputDir, entry.getName());
-            File outputFileParentDir = outputFile.getParentFile();
+        while ((entry = debInputStream.getNextEntry()) != null) {
+            final Path outputFile = Paths.get(outputDir.getAbsolutePath(), entry.getName());
 
-            if (!outputFileParentDir.exists()) {
-                outputFileParentDir.mkdirs();
-            }
+            Files.createDirectories(outputFile.getParent());
 
             if (entry.isDirectory()) {
-                if (!outputFile.exists()) {
-                    if (!outputFile.mkdirs()) {
-                        throw new IllegalStateException(
-                                String.format("Couldn't create directory %s.", outputFile.getAbsolutePath()));
-                    }
-                }
+                Files.createDirectories(outputFile);
             } else {
-                final OutputStream outputFileStream = new FileOutputStream(outputFile);
+                final OutputStream outputFileStream = new FileOutputStream(outputFile.toFile());
                 IOUtils.copy(debInputStream, outputFileStream);
                 outputFileStream.close();
             }
@@ -166,7 +156,7 @@ public class PythonFileSystemStorageService extends FileSystemStorageService<Syn
 
     @Override
     public void storeAndDeleteFiles(SynchronizePythonRepositoryRequestBody request)
-            throws FileNotFoundException, StorageException {
+            throws IOException, StorageException {
         final String repository = request.getRepository();
         final MultipartFile[] filesToUpload = request.getFilesToUpload();
         final String[] filesToDelete = request.getFilesToDelete();
@@ -175,15 +165,15 @@ public class PythonFileSystemStorageService extends FileSystemStorageService<Syn
         if (filesToDelete != null) delete(filesToDelete, repository, request.getId());
     }
 
-    private void store(MultipartFile[] files, String repository, String id) {
+    private void store(MultipartFile[] files, String repository, String id) throws IOException {
         final Path saveLocation = ((repository != null) && (!repository.trim().isEmpty()))
                 ? this.rootLocation.resolve(repository)
                 : this.rootLocation;
         store(files, saveLocation, id);
     }
 
-    public List<File> getRecentPackagesFromRepository(String repository) {
-        final ArrayList<File> files = new ArrayList<>();
+    public List<Path> getRecentPackagesFromRepository(String repository) throws IOException {
+        final ArrayList<Path> files = new ArrayList<>();
         final Path location = ((repository != null) && (!repository.trim().isEmpty()))
                 ? this.rootLocation.resolve(repository)
                 : this.rootLocation;
@@ -191,16 +181,16 @@ public class PythonFileSystemStorageService extends FileSystemStorageService<Syn
         return files;
     }
 
-    public void getRecentPackagesFromRepository(List<File> files, Path location) {
-        if (location.toFile().exists()) {
-            for (File file : location.toFile().listFiles()) {
-                if (file.isDirectory()) {
-                    getRecentPackagesFromRepository(files, file.toPath());
-                } else if (!excludedFiles.contains(file.getName())) {
-                    if (!file.getName().equals(PACKAGES_INDEX_FILE_NAME)
-                            && !file.getName().equals("VERSION")) {
-                        files.add(file);
-                    }
+    public void getRecentPackagesFromRepository(List<Path> files, Path location) throws IOException {
+        if (Files.notExists(location) || !Files.isDirectory(location)) {
+            return;
+        }
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(location)) {
+            for (Path file : stream) {
+                if (Files.isDirectory(file)) {
+                    getRecentPackagesFromRepository(files, file);
+                } else if (!excludedFiles.contains(file.getFileName().toString())) {
+                    files.add(file);
                 }
             }
         }
@@ -231,49 +221,43 @@ public class PythonFileSystemStorageService extends FileSystemStorageService<Syn
         return packageArchives != null && packageArchives.length > 0;
     }
 
-    private void delete(String packageName, String repository, String requestId)
-            throws FileNotFoundException, StorageException {
+    private void delete(String packageName, String repository, String requestId) throws StorageException {
         Path location = ((repository != null) && (!repository.trim().isEmpty()))
                 ? this.rootLocation.resolve(repository)
                 : this.rootLocation;
-
-        try {
-            if ((packageName == null || packageName.isBlank())) {
-                for (File packageFile : Objects.requireNonNull(location.toFile().listFiles())) {
-                    if (!Files.exists(packageFile.toPath())) throw new FileNotFoundException();
-
+        if (!Files.isDirectory(location)) {
+            return;
+        }
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(location)) {
+            if (StringUtils.isBlank(packageName)) {
+                for (Path packageFile : stream) {
                     moveToTrash(requestId, packageFile);
                 }
             } else {
                 location = location.resolve(packageName.substring(0, packageName.indexOf('/')));
                 Path packageFilePath = location.resolve(packageName.substring(packageName.indexOf('/') + 1));
-
-                if (!Files.exists(packageFilePath)) throw new FileNotFoundException(packageFilePath.toString());
-
-                moveToTrash(requestId, packageFilePath.toFile());
-
-                File parentDirectory = location.toFile();
-                if (parentDirectory.isDirectory()) {
-                    String[] filesInParentDirectory = parentDirectory.list();
-                    if (filesInParentDirectory != null
-                            && filesInParentDirectory.length == 1
-                            && filesInParentDirectory[0].equals(PACKAGES_INDEX_FILE_NAME)) {
-                        moveToTrash(
-                                requestId,
-                                location.resolve(filesInParentDirectory[0]).toFile());
-                        parentDirectory.delete();
-                    }
+                moveToTrash(requestId, packageFilePath);
+                if (!Files.isDirectory(location)) {
+                    return;
+                }
+                List<Path> filesInParentDirectory =
+                        StreamSupport.stream(stream.spliterator(), false).toList();
+                if (filesInParentDirectory.size() == 1
+                        && filesInParentDirectory
+                                .get(0)
+                                .getFileName()
+                                .toString()
+                                .equals(PACKAGES_INDEX_FILE_NAME)) {
+                    moveToTrash(requestId, location.resolve(filesInParentDirectory.get(0)));
+                    Files.delete(location);
                 }
             }
-        } catch (FileNotFoundException e) {
-            throw e;
-        } catch (MoveToTrashException e) {
+        } catch (MoveToTrashException | IOException e) {
             throw new StorageException("Could not delete package file", e);
         }
     }
 
-    private void delete(String[] packageNames, String repository, String requestId)
-            throws FileNotFoundException, StorageException {
+    private void delete(String[] packageNames, String repository, String requestId) throws StorageException {
         for (String packageName : packageNames) {
             delete(packageName, repository, requestId);
         }

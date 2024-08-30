@@ -59,7 +59,7 @@ public abstract class AbstractSubmissionDto<T extends PackageSimpleDto> implemen
 
     protected String technology;
 
-    public AbstractSubmissionDto(Submission submission, T packageDto) {
+    protected AbstractSubmissionDto(Submission submission, T packageDto) {
         this.entity = submission;
         this.id = submission.getId();
         this.packageBagDto = packageDto;

@@ -44,6 +44,7 @@ import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
 import eu.openanalytics.rdepot.base.storage.exceptions.SourceNotFoundException;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
+import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
 import eu.openanalytics.rdepot.base.utils.specs.PackageSpecs;
@@ -110,6 +111,7 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
     private final PythonLocalStorage storage;
     private final PageableValidator pageableValidator;
     private final PackagePageableSortResolver pageableSortResolver;
+    private final StrategyExecutor strategyExecutor;
 
     public PythonPackageController(
             MessageSource messageSource,
@@ -125,7 +127,8 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
             PythonPackageDtoConverter converter,
             PageableValidator pageableValidator,
             PythonLocalStorage storage,
-            PackagePageableSortResolver pageableSortResolver) {
+            PackagePageableSortResolver pageableSortResolver,
+            StrategyExecutor strategyExecutor) {
         super(
                 messageSource,
                 LocaleContextHolder.getLocale(),
@@ -136,6 +139,7 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
                 Optional.empty(),
                 converter);
         this.packageService = packageService;
+        this.strategyExecutor = strategyExecutor;
         this.messageSource = messageSource;
         this.userService = userService;
         this.packageValidator = packageValidator;
@@ -263,9 +267,8 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
             final PythonPackageDto packageDto = applyPatchToEntity(patch, packageBag);
             final PythonPackage updatedPackage = dtoConverter.resolveDtoToEntity(packageDto);
 
-            if (!packagesDeletionEnabled)
-                if (updatedPackage.getDeleted() && !packageBag.getDeleted())
-                    throw new PackageDeletionException(messageSource, locale);
+            if ((!packagesDeletionEnabled) && updatedPackage.getDeleted() && !packageBag.getDeleted())
+                throw new PackageDeletionException(messageSource, locale);
 
             final DataSpecificValidationResult<Submission> validationResult =
                     ValidationResultImpl.createDataSpecificResult();
@@ -276,7 +279,7 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
             Strategy<PythonPackage> strategy =
                     strategyFactory.updatePackageStrategy(packageBag, requester, updatedPackage);
 
-            packageBag = strategy.perform();
+            packageBag = strategyExecutor.execute(strategy);
         } catch (EntityResolutionException e) {
             log.error(e.getClass().getName() + ": " + e.getMessage(), e);
             return handleValidationError(e.getMessage());

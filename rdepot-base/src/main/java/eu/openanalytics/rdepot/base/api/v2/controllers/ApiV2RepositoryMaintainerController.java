@@ -44,6 +44,7 @@ import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
+import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.factory.StrategyFactory;
 import eu.openanalytics.rdepot.base.utils.specs.RepositoryMaintainerSpecs;
@@ -102,6 +103,7 @@ public class ApiV2RepositoryMaintainerController
     private final RepositoryMaintainerDeleter repositoryMaintainerDeleter;
     private final PageableValidator pageableValidator;
     private final CommonPageableSortResolver pageableSortResolver;
+    private final StrategyExecutor strategyExecutor;
 
     public ApiV2RepositoryMaintainerController(
             MessageSource messageSource,
@@ -115,7 +117,8 @@ public class ApiV2RepositoryMaintainerController
             RepositoryMaintainerDeleter repositoryMaintainerDeleter,
             RepositoryMaintainerDtoConverter repositoryMaintainerDtoConverter,
             PageableValidator pageableValidator,
-            CommonPageableSortResolver pageableSortResolver) {
+            CommonPageableSortResolver pageableSortResolver,
+            StrategyExecutor strategyExecutor) {
         super(
                 messageSource,
                 LocaleContextHolder.getLocale(),
@@ -132,6 +135,7 @@ public class ApiV2RepositoryMaintainerController
         this.repositoryMaintainerDeleter = repositoryMaintainerDeleter;
         this.pageableValidator = pageableValidator;
         this.pageableSortResolver = pageableSortResolver;
+        this.strategyExecutor = strategyExecutor;
     }
 
     /**
@@ -228,7 +232,7 @@ public class ApiV2RepositoryMaintainerController
         try {
             Strategy<RepositoryMaintainer> strategy =
                     factory.createRepositoryMaintainerStrategy(repositoryMaintainer, requester);
-            RepositoryMaintainer created = strategy.perform();
+            RepositoryMaintainer created = strategyExecutor.execute(strategy);
             return handleCreatedForSingleEntity(created, requester);
         } catch (StrategyFailure e) {
             log.error(e.getClass().getName() + ": " + e.getMessage(), e);
@@ -267,7 +271,7 @@ public class ApiV2RepositoryMaintainerController
             Strategy<RepositoryMaintainer> strategy =
                     factory.updateRepositoryMaintainerStrategy(repositoryMaintainer, requester, entity);
 
-            updated = strategy.perform();
+            updated = strategyExecutor.execute(strategy);
         } catch (StrategyFailure e) {
             log.error(e.getClass().getName() + ": " + e.getMessage(), e);
             throw new ApplyPatchException(messageSource, locale);

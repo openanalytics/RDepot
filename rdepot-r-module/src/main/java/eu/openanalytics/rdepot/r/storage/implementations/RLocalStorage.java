@@ -80,11 +80,6 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
         }
     }
 
-    @Override
-    public String generateSubmissionWaitingRoomLocation(File file) {
-        return new File(file.getParent() + separator + file.getName().split("_")[0]).getAbsolutePath();
-    }
-
     public String getRepositoryGeneratedPath(File dateStampFolder, String separator) {
         return dateStampFolder.getAbsolutePath() + separator + "src" + separator + CONTRIB_FOLDER;
     }
@@ -117,9 +112,6 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
 
         populatePackageFolder(packages, folderPath);
     }
-
-    @Override
-    public void verifySource(RPackage packageBag, String newSource) {}
 
     @Override
     public SynchronizeRepositoryRequestBody buildSynchronizeRequestBody(
@@ -273,21 +265,32 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
     }
 
     private String generatePackageString(RPackage packageBag) {
-        String packageString = "";
-        String lineSeparator = System.lineSeparator();
+        final StringBuilder packageString = new StringBuilder(500);
+        final String lineSeparator = System.lineSeparator();
 
-        packageString += "Package: " + packageBag.getName() + lineSeparator;
-        packageString += "Version: " + packageBag.getVersion() + lineSeparator;
+        packageString.append("Package: ").append(packageBag.getName()).append(lineSeparator);
+        packageString.append("Version: ").append(packageBag.getVersion()).append(lineSeparator);
         if (packageBag.getDepends() != null && !packageBag.getDepends().trim().isEmpty())
-            packageString += "Depends: " + packageBag.getDepends() + lineSeparator;
+            packageString.append("Depends: ").append(packageBag.getDepends()).append(lineSeparator);
         if (packageBag.getImports() != null && !packageBag.getImports().trim().isEmpty())
-            packageString += "Imports: " + packageBag.getImports() + lineSeparator;
-        packageString += "License: " + packageBag.getLicense() + lineSeparator;
-        packageString += "MD5Sum: " + packageBag.getMd5sum() + lineSeparator;
-        packageString += "NeedsCompilation: no" + lineSeparator;
-        packageString += lineSeparator;
+            packageString.append("Imports: ").append(packageBag.getImports()).append(lineSeparator);
+        if (packageBag.getSuggests() != null && !packageBag.getSuggests().trim().isEmpty())
+            packageString.append("Suggests: ").append(packageBag.getSuggests()).append(lineSeparator);
+        packageString.append("License: ").append(packageBag.getLicense()).append(lineSeparator);
+        if (packageBag.getLinkingTo() != null && !packageBag.getLinkingTo().isEmpty())
+            packageString.append("LinkingTo: ").append(packageBag.getLinkingTo());
+        if (packageBag.getEnhances() != null && !packageBag.getEnhances().isEmpty())
+            packageString.append("Enhances: ").append(packageBag.getEnhances());
+        if (packageBag.getPriority() != null && !packageBag.getPriority().isEmpty())
+            packageString.append("Priority: ").append(packageBag.getPriority());
+        packageString.append("MD5Sum: ").append(packageBag.getMd5sum()).append(lineSeparator);
+        packageString
+                .append("NeedsCompilation: ")
+                .append(packageBag.isNeedsCompilation() ? "yes" : "no")
+                .append(lineSeparator);
+        packageString.append(lineSeparator);
 
-        return packageString;
+        return packageString.toString();
     }
 
     @Override
@@ -420,7 +423,6 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
                 try (BufferedReader out = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                     while ((outputLine = out.readLine()) != null) log.debug(outputLine.replaceAll("[\r\n]", ""));
                 }
-                ;
 
                 int exitValue = process.waitFor();
                 if (exitValue != 0) {

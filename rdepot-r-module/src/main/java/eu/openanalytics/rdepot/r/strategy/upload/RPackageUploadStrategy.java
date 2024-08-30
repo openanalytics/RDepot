@@ -35,6 +35,7 @@ import eu.openanalytics.rdepot.base.storage.exceptions.GenerateManualException;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.upload.DefaultPackageUploadStrategy;
 import eu.openanalytics.rdepot.base.validation.PackageValidator;
+import eu.openanalytics.rdepot.r.api.v2.dtos.RPackageUploadRequest;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.mediator.deletion.RPackageDeleter;
@@ -48,6 +49,7 @@ import java.util.Properties;
 public class RPackageUploadStrategy extends DefaultPackageUploadStrategy<RRepository, RPackage> {
 
     private final RStorage rStorage;
+    private final RPackageUploadRequest rPackageRequest;
 
     public RPackageUploadStrategy(
             PackageUploadRequest<RRepository> request,
@@ -63,7 +65,8 @@ public class RPackageUploadStrategy extends DefaultPackageUploadStrategy<RReposi
             RRepositorySynchronizer repositorySynchronizer,
             SecurityMediator securityMediator,
             RStorage rStorage,
-            RPackageDeleter packageDeleter) {
+            RPackageDeleter packageDeleter,
+            RPackageUploadRequest rPackageRequest) {
         super(
                 request,
                 requester,
@@ -79,11 +82,13 @@ public class RPackageUploadStrategy extends DefaultPackageUploadStrategy<RReposi
                 securityMediator,
                 packageDeleter);
         this.rStorage = rStorage;
+        this.rPackageRequest = rPackageRequest;
     }
 
     @Override
     protected RPackage parseTechnologySpecificPackageProperties(Properties properties) {
         RPackage packageBag = new RPackage();
+        if (rPackageRequest.isBinaryPackage()) packageBag = parseTechnologySpecificBinaryPackageProperties(properties);
 
         packageBag.setDescription(properties.getProperty("Description"));
         packageBag.setDepends(properties.getProperty("Depends"));
@@ -93,6 +98,24 @@ public class RPackageUploadStrategy extends DefaultPackageUploadStrategy<RReposi
         packageBag.setLicense(properties.getProperty("License"));
         packageBag.setUrl(properties.getProperty("URL"));
         packageBag.setTitle(properties.getProperty("Title"));
+        packageBag.setEnhances(properties.getProperty("Enhances"));
+        packageBag.setLinkingTo(properties.getProperty("LinkingTo"));
+        packageBag.setNeedsCompilation(
+                properties.getProperty("NeedsCompilation", "no").equalsIgnoreCase("yes"));
+        packageBag.setPriority(properties.getProperty("Priority"));
+
+        return packageBag;
+    }
+
+    @Override
+    protected RPackage parseTechnologySpecificBinaryPackageProperties(Properties properties) {
+        RPackage packageBag = new RPackage();
+
+        packageBag.setBinary(true);
+        packageBag.setBuilt(properties.getProperty("Built"));
+        packageBag.setRVersion(rPackageRequest.getRVersion());
+        packageBag.setArchitecture(rPackageRequest.getArchitecture());
+        packageBag.setDistribution(rPackageRequest.getDistribution());
 
         return packageBag;
     }

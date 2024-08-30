@@ -27,10 +27,12 @@ import eu.openanalytics.rdepot.repo.model.SynchronizeRepositoryResponseBody;
 import eu.openanalytics.rdepot.repo.python.chunks.coordination.PythonUploadRequestChunkCoordinator;
 import eu.openanalytics.rdepot.repo.python.model.SynchronizePythonRepositoryRequestBody;
 import eu.openanalytics.rdepot.repo.python.storage.PythonFileSystemStorageService;
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+@Slf4j
 @RestController
 @RequestMapping(value = "/python")
 public class PythonFileUploadController extends FileUploadController<SynchronizePythonRepositoryRequestBody> {
@@ -79,9 +82,14 @@ public class PythonFileUploadController extends FileUploadController<Synchronize
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
-        List<File> files = storageService.getRecentPackagesFromRepository(repository);
-        files.forEach(file -> uploads.add(file.getParentFile().getName() + "/" + file.getName()));
-
+        try {
+            List<Path> files = storageService.getRecentPackagesFromRepository(repository);
+            files.forEach(file -> uploads.add(file.getParent().getFileName().toString() + "/"
+                    + file.getFileName().toString()));
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
         return ResponseEntity.ok(uploads);
     }
 }

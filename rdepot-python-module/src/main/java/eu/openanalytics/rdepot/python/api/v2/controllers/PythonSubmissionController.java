@@ -50,6 +50,7 @@ import eu.openanalytics.rdepot.base.service.SubmissionService;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
+import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.exceptions.NonFatalSubmissionStrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
@@ -128,6 +129,7 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
     private final SubmissionPatchValidator submissionPatchValidator;
     private final PageableValidator pageableValidator;
     private final CommonPageableSortResolver pageableSortResolver;
+    private final StrategyExecutor strategyExecutor;
 
     @Value("${replacing.packages.enabled}")
     private boolean replacingPackagesEnabled;
@@ -147,7 +149,8 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
             PythonStrategyFactory strategyFactory,
             SubmissionPatchValidator submissionPatchValidator,
             PageableValidator pageableValidator,
-            CommonPageableSortResolver pageableSortResolver) {
+            CommonPageableSortResolver pageableSortResolver,
+            StrategyExecutor strategyExecutor) {
         super(
                 messageSource,
                 LocaleContextHolder.getLocale(),
@@ -167,6 +170,7 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
         this.submissionPatchValidator = submissionPatchValidator;
         this.pageableValidator = pageableValidator;
         this.pageableSortResolver = pageableSortResolver;
+        this.strategyExecutor = strategyExecutor;
     }
 
     /**
@@ -217,7 +221,7 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
         Strategy<Submission> strategy = strategyFactory.uploadPackageStrategy(request, uploader);
 
         try {
-            final Submission submission = strategy.perform();
+            final Submission submission = strategyExecutor.execute(strategy);
             return handleCreatedForSingleEntity(submission);
         } catch (NonFatalSubmissionStrategyFailure e) {
             if (e.getReason() instanceof SynchronizeRepositoryException) {
@@ -294,7 +298,7 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
 
             Strategy<Submission> strategy = strategyFactory.updateSubmissionStrategy(
                     submission, dtoConverter.resolveDtoToEntity(submissionDto), repository, requester);
-            submission = strategy.perform();
+            submission = strategyExecutor.execute(strategy);
         } catch (StrategyFailure | EntityResolutionException e) {
             log.error(e.getClass().getName() + ": " + e.getMessage(), e);
             throw new ApplyPatchException(messageSource, locale);

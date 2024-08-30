@@ -45,12 +45,15 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.springframework.data.jpa.domain.Specification;
 
 /**
  * Class that simplifies building {@link Specification} to perform a search.
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class NewsfeedEventSpecs {
 
     private static final Map<ResourceType, String> RESOURCE_TYPES = Map.of(

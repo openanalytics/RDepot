@@ -48,7 +48,7 @@ public abstract class YamlDeclarativeConfigurationSource<
     protected final Class<R> repositoryClass;
     protected final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 
-    public YamlDeclarativeConfigurationSource(
+    protected YamlDeclarativeConfigurationSource(
             DeclaredRepositoryDirectoriesProps declaredRepositoryDirectoriesProps, Class<R> repositoryClass) {
         super();
         this.declaredRepositoryDirectoriesProps = declaredRepositoryDirectoriesProps;

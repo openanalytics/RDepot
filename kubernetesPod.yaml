@@ -10,11 +10,11 @@ spec:
       resources:
         limits:
           memory: "8Gi"
-          ephemeral-storage: "6Gi"
+          ephemeral-storage: "8Gi"
           cpu: 2
         requests:
           memory: "6Gi"
-          ephemeral-storage: "4Gi"
+          ephemeral-storage: "6Gi"
           cpu: 1
       tty: true
       securityContext:

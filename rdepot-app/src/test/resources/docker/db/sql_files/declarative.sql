@@ -203,7 +203,8 @@ CREATE TABLE public.package (
     title text,
     active boolean DEFAULT false NOT NULL,
     deleted boolean DEFAULT false NOT NULL,
-    resource_technology text NOT NULL
+    resource_technology text NOT NULL,
+    binary_package boolean DEFAULT false NOT NULL
 );
 
 
@@ -394,7 +395,15 @@ CREATE TABLE public.rpackage (
     suggests text,
     system_requirements text,
     license text,
-    md5sum text
+    md5sum text,
+    r_version text,
+    architecture text,
+    distribution text,
+    built text,
+    enhances text,
+    linking_to text,
+    priority text,
+    needs_compilation boolean
 );
 
 
@@ -620,7 +629,7 @@ COPY public.newsfeed_event (id, "time", date, newsfeed_event_type, author_id, re
 -- Data for Name: package; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.package (id, name, version, description, author, maintainer_id, repository_id, url, source, title, active, deleted, resource_technology) FROM stdin;
+COPY public.package (id, name, version, description, author, user_maintainer_id, repository_id, url, source, title, active, deleted, resource_technology) FROM stdin;
 \.
 
 
@@ -689,7 +698,7 @@ COPY public.role (id, value, name, description, deleted) FROM stdin;
 -- Data for Name: rpackage; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.rpackage (id, depends, imports, suggests, system_requirements, license, md5sum) FROM stdin;
+COPY public.rpackage (id, depends, imports, suggests, system_requirements, license, md5sum, enhances, linking_to, priority, needs_compilation) FROM stdin;
 \.
 
 

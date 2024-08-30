@@ -34,7 +34,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import eu.openanalytics.rdepot.base.PropertiesParser;
-import eu.openanalytics.rdepot.base.api.v2.dtos.PackageUploadRequest;
 import eu.openanalytics.rdepot.base.email.EmailService;
 import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.User;
@@ -47,6 +46,7 @@ import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.validation.DataSpecificValidationResult;
 import eu.openanalytics.rdepot.base.validation.PackageValidator;
+import eu.openanalytics.rdepot.r.api.v2.dtos.RPackageUploadRequest;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.services.RRepositoryService;
@@ -61,7 +61,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.mock.web.MockMultipartFile;
 
@@ -97,7 +96,7 @@ public class RUploadStrategyTest extends StrategyTest {
     @Test
     public void createSubmission_whenUserIsAdmin() throws Exception {
         // Prerequisites
-        FileInputStream fis = new FileInputStream(new File(TEST_PACKAGE_PATH));
+        FileInputStream fis = new FileInputStream(TEST_PACKAGE_PATH);
         byte[] packageBytes = fis.readAllBytes();
         fis.close();
 
@@ -111,35 +110,27 @@ public class RUploadStrategyTest extends StrategyTest {
         boolean generateManual = true;
         boolean replace = false;
 
-        PackageUploadRequest<RRepository> request =
-                new PackageUploadRequest<>(multipartFile, repository, generateManual, replace);
+        RPackageUploadRequest request =
+                new RPackageUploadRequest(multipartFile, repository, generateManual, replace, false, null, null, null);
 
         when(storage.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
         when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath())).thenReturn(extracted.getAbsolutePath());
         when(storage.getPropertiesFromExtractedFile(extracted.getAbsolutePath()))
                 .thenReturn(new PropertiesParser(new File(TEST_PACKAGE_EXTRACTED + "/DESCRIPTION")));
-        doAnswer(new Answer<Submission>() {
-
-                    @Override
-                    public Submission answer(InvocationOnMock invocation) throws Throwable {
-                        Submission submission = invocation.getArgument(0);
-                        submission.setId(123);
-                        return submission;
-                    }
+        doAnswer((Answer<Submission>) invocation -> {
+                    Submission submission = invocation.getArgument(0);
+                    submission.setId(123);
+                    return submission;
                 })
                 .when(submissionService)
                 .create(any());
         when(storage.moveToMainDirectory(any())).thenReturn(uploadedFile.getAbsolutePath());
         when(bestMaintainerChooser.chooseBestPackageMaintainer(any())).thenReturn(requester);
         when(securityMediator.canUpload("abc", repository, requester)).thenReturn(true);
-        doAnswer(new Answer<RPackage>() {
-
-                    @Override
-                    public RPackage answer(InvocationOnMock invocation) throws Throwable {
-                        RPackage packageBag = invocation.getArgument(0);
-                        packageBag.setId(123);
-                        return packageBag;
-                    }
+        doAnswer((Answer<RPackage>) invocation -> {
+                    RPackage packageBag = invocation.getArgument(0);
+                    packageBag.setId(123);
+                    return packageBag;
                 })
                 .when(packageService)
                 .create(any());
@@ -162,7 +153,8 @@ public class RUploadStrategyTest extends StrategyTest {
                 repositorySynchronizer,
                 securityMediator,
                 storage,
-                rPackageDeleter);
+                rPackageDeleter,
+                request);
 
         Submission submission = strategy.perform();
         RPackage packageBag = (RPackage) submission.getPackage();
@@ -199,7 +191,7 @@ public class RUploadStrategyTest extends StrategyTest {
     @Test
     public void createSubmission_deletesDanglingSource_whenUncheckedExceptionIsThrown() throws Exception {
         // Prerequisites
-        FileInputStream fis = new FileInputStream(new File(TEST_PACKAGE_PATH));
+        FileInputStream fis = new FileInputStream(TEST_PACKAGE_PATH);
         byte[] packageBytes = fis.readAllBytes();
         fis.close();
 
@@ -213,8 +205,8 @@ public class RUploadStrategyTest extends StrategyTest {
         boolean generateManual = true;
         boolean replace = false;
 
-        PackageUploadRequest<RRepository> request =
-                new PackageUploadRequest<>(multipartFile, repository, generateManual, replace);
+        RPackageUploadRequest request =
+                new RPackageUploadRequest(multipartFile, repository, generateManual, replace, false, null, null, null);
 
         when(storage.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
         when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath())).thenReturn(extracted.getAbsolutePath());
@@ -241,7 +233,8 @@ public class RUploadStrategyTest extends StrategyTest {
                 repositorySynchronizer,
                 securityMediator,
                 storage,
-                rPackageDeleter);
+                rPackageDeleter,
+                request);
 
         assertThrows(
                 IllegalStateException.class,
@@ -255,7 +248,7 @@ public class RUploadStrategyTest extends StrategyTest {
     @SuppressWarnings("unchecked")
     @Test
     public void createSubmission_shouldSendEmail_whenUserIsNotAllowedToAccept() throws Exception {
-        FileInputStream fis = new FileInputStream(new File(TEST_PACKAGE_PATH));
+        FileInputStream fis = new FileInputStream(TEST_PACKAGE_PATH);
         byte[] packageBytes = fis.readAllBytes();
         fis.close();
 
@@ -269,21 +262,17 @@ public class RUploadStrategyTest extends StrategyTest {
         boolean generateManual = true;
         boolean replace = false;
 
-        PackageUploadRequest<RRepository> request =
-                new PackageUploadRequest<>(multipartFile, repository, generateManual, replace);
+        RPackageUploadRequest request =
+                new RPackageUploadRequest(multipartFile, repository, generateManual, replace, false, null, null, null);
 
         when(storage.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
         when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath())).thenReturn(extracted.getAbsolutePath());
         when(storage.getPropertiesFromExtractedFile(extracted.getAbsolutePath()))
                 .thenReturn(new PropertiesParser(new File(TEST_PACKAGE_EXTRACTED + "/DESCRIPTION")));
-        doAnswer(new Answer<Submission>() {
-
-                    @Override
-                    public Submission answer(InvocationOnMock invocation) throws Throwable {
-                        Submission submission = invocation.getArgument(0);
-                        submission.setId(123);
-                        return submission;
-                    }
+        doAnswer((Answer<Submission>) invocation -> {
+                    Submission submission = invocation.getArgument(0);
+                    submission.setId(123);
+                    return submission;
                 })
                 .when(submissionService)
                 .create(any());
@@ -315,7 +304,8 @@ public class RUploadStrategyTest extends StrategyTest {
                 repositorySynchronizer,
                 securityMediator,
                 storage,
-                rPackageDeleter);
+                rPackageDeleter,
+                request);
         Submission submission = strategy.perform();
 
         assertFalse(submission.getPackage().isActive(), "Package should not be activated.");
@@ -324,7 +314,7 @@ public class RUploadStrategyTest extends StrategyTest {
 
     @Test
     public void createSubmission_whenStorageFailsToWriteToWaitingRoom() throws Exception {
-        FileInputStream fis = new FileInputStream(new File(TEST_PACKAGE_PATH));
+        FileInputStream fis = new FileInputStream(TEST_PACKAGE_PATH);
         byte[] packageBytes = fis.readAllBytes();
         fis.close();
 
@@ -336,8 +326,8 @@ public class RUploadStrategyTest extends StrategyTest {
         boolean generateManual = true;
         boolean replace = false;
 
-        PackageUploadRequest<RRepository> request =
-                new PackageUploadRequest<>(multipartFile, repository, generateManual, replace);
+        RPackageUploadRequest request =
+                new RPackageUploadRequest(multipartFile, repository, generateManual, replace, false, null, null, null);
 
         doThrow(new WriteToWaitingRoomException()).when(storage).writeToWaitingRoom(multipartFile, repository);
 
@@ -355,17 +345,18 @@ public class RUploadStrategyTest extends StrategyTest {
                 repositorySynchronizer,
                 securityMediator,
                 storage,
-                rPackageDeleter);
+                rPackageDeleter,
+                request);
 
         assertThrows(
                 StrategyFailure.class,
-                () -> strategy.perform(),
+                strategy::perform,
                 "Exception should be thrown when storage fails to " + "write package to the waiting room.");
     }
 
     @Test
     public void createSubmissionAndAttemptToCleanUp_whenExtractionFails() throws Exception {
-        FileInputStream fis = new FileInputStream(new File(TEST_PACKAGE_PATH));
+        FileInputStream fis = new FileInputStream(TEST_PACKAGE_PATH);
         byte[] packageBytes = fis.readAllBytes();
         fis.close();
 
@@ -378,8 +369,8 @@ public class RUploadStrategyTest extends StrategyTest {
         boolean generateManual = true;
         boolean replace = false;
 
-        PackageUploadRequest<RRepository> request =
-                new PackageUploadRequest<>(multipartFile, repository, generateManual, replace);
+        RPackageUploadRequest request =
+                new RPackageUploadRequest(multipartFile, repository, generateManual, replace, false, null, null, null);
 
         when(storage.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
         doThrow(new ExtractFileException()).when(storage).extractTarGzPackageFile(uploadedFile.getAbsolutePath());
@@ -399,18 +390,17 @@ public class RUploadStrategyTest extends StrategyTest {
                 repositorySynchronizer,
                 securityMediator,
                 storage,
-                rPackageDeleter);
+                rPackageDeleter,
+                request);
 
         assertThrows(
-                StrategyFailure.class,
-                () -> strategy.perform(),
-                "Exception should be thrown when package extraction fails.");
+                StrategyFailure.class, strategy::perform, "Exception should be thrown when package extraction fails.");
         verify(storage, times(1)).removeFileIfExists(uploadedFile.getAbsolutePath());
     }
 
     @Test
     public void createSubmissionAndAttemptToCleanUp_whenReadingPropertiesFails() throws Exception {
-        FileInputStream fis = new FileInputStream(new File(TEST_PACKAGE_PATH));
+        FileInputStream fis = new FileInputStream(TEST_PACKAGE_PATH);
         byte[] packageBytes = fis.readAllBytes();
         fis.close();
 
@@ -424,8 +414,8 @@ public class RUploadStrategyTest extends StrategyTest {
         boolean generateManual = true;
         boolean replace = false;
 
-        PackageUploadRequest<RRepository> request =
-                new PackageUploadRequest<>(multipartFile, repository, generateManual, replace);
+        RPackageUploadRequest request =
+                new RPackageUploadRequest(multipartFile, repository, generateManual, replace, false, null, null, null);
 
         when(storage.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
         when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath())).thenReturn(extracted.getAbsolutePath());
@@ -449,11 +439,12 @@ public class RUploadStrategyTest extends StrategyTest {
                 repositorySynchronizer,
                 securityMediator,
                 storage,
-                rPackageDeleter);
+                rPackageDeleter,
+                request);
 
         assertThrows(
                 StrategyFailure.class,
-                () -> strategy.perform(),
+                strategy::perform,
                 "Exception should be thrown when reading package description fails.");
         verify(storage, times(1)).removeFileIfExists(uploadedFile.getAbsolutePath());
         verify(storage, times(1)).removeFileIfExists(extracted.getAbsolutePath());
@@ -462,7 +453,7 @@ public class RUploadStrategyTest extends StrategyTest {
     @SuppressWarnings("unchecked")
     @Test
     public void createSubmissionAndRemovePackageSource_whenValidationFails() throws Exception {
-        FileInputStream fis = new FileInputStream(new File(TEST_PACKAGE_PATH));
+        FileInputStream fis = new FileInputStream(TEST_PACKAGE_PATH);
         byte[] packageBytes = fis.readAllBytes();
         fis.close();
 
@@ -476,22 +467,19 @@ public class RUploadStrategyTest extends StrategyTest {
         boolean generateManual = true;
         boolean replace = false;
 
-        PackageUploadRequest<RRepository> request =
-                new PackageUploadRequest<>(multipartFile, repository, generateManual, replace);
+        RPackageUploadRequest request =
+                new RPackageUploadRequest(multipartFile, repository, generateManual, replace, false, null, null, null);
 
         when(storage.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
         when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath())).thenReturn(extracted.getAbsolutePath());
         when(storage.getPropertiesFromExtractedFile(extracted.getAbsolutePath()))
                 .thenReturn(new PropertiesParser(new File(TEST_PACKAGE_EXTRACTED + "/DESCRIPTION")));
         when(bestMaintainerChooser.chooseBestPackageMaintainer(any())).thenReturn(requester);
-        doAnswer(new Answer<>() {
-                    @Override
-                    public Object answer(InvocationOnMock invocation) throws Throwable {
-                        DataSpecificValidationResult<?> validationResult =
-                                invocation.getArgument(2, DataSpecificValidationResult.class);
-                        validationResult.error("author", "invalid.property");
-                        return null;
-                    }
+        doAnswer((Answer<Object>) invocation -> {
+                    DataSpecificValidationResult<?> validationResult =
+                            invocation.getArgument(2, DataSpecificValidationResult.class);
+                    validationResult.error("author", "invalid.property");
+                    return null;
                 })
                 .when(packageValidator)
                 .validateUploadPackage(any(), eq(replace), any(DataSpecificValidationResult.class));
@@ -513,12 +501,11 @@ public class RUploadStrategyTest extends StrategyTest {
                 repositorySynchronizer,
                 securityMediator,
                 storage,
-                rPackageDeleter);
+                rPackageDeleter,
+                request);
 
         assertThrows(
-                StrategyFailure.class,
-                () -> strategy.perform(),
-                "Exception should be thrown when package validation fails.");
+                StrategyFailure.class, strategy::perform, "Exception should be thrown when package validation fails.");
         verify(storage, times(1)).removeFileIfExists(uploadedFile.getAbsolutePath());
         verify(storage, times(1)).removeFileIfExists(extracted.getAbsolutePath());
     }
@@ -526,7 +513,7 @@ public class RUploadStrategyTest extends StrategyTest {
     @SuppressWarnings("unchecked")
     @Test
     public void createSubmission_shouldGenerateManual() throws Exception {
-        FileInputStream fis = new FileInputStream(new File(TEST_PACKAGE_PATH));
+        FileInputStream fis = new FileInputStream(TEST_PACKAGE_PATH);
         byte[] packageBytes = fis.readAllBytes();
         fis.close();
 
@@ -540,35 +527,27 @@ public class RUploadStrategyTest extends StrategyTest {
         boolean generateManual = true;
         boolean replace = false;
 
-        PackageUploadRequest<RRepository> request =
-                new PackageUploadRequest<>(multipartFile, repository, generateManual, replace);
+        RPackageUploadRequest request =
+                new RPackageUploadRequest(multipartFile, repository, generateManual, replace, false, null, null, null);
 
         when(storage.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
         when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath())).thenReturn(extracted.getAbsolutePath());
         when(storage.getPropertiesFromExtractedFile(extracted.getAbsolutePath()))
                 .thenReturn(new PropertiesParser(new File(TEST_PACKAGE_EXTRACTED + "/DESCRIPTION")));
-        doAnswer(new Answer<Submission>() {
-
-                    @Override
-                    public Submission answer(InvocationOnMock invocation) throws Throwable {
-                        Submission submission = invocation.getArgument(0);
-                        submission.setId(123);
-                        return submission;
-                    }
+        doAnswer((Answer<Submission>) invocation -> {
+                    Submission submission = invocation.getArgument(0);
+                    submission.setId(123);
+                    return submission;
                 })
                 .when(submissionService)
                 .create(any());
         when(storage.moveToMainDirectory(any())).thenReturn(uploadedFile.getAbsolutePath());
         when(bestMaintainerChooser.chooseBestPackageMaintainer(any())).thenReturn(requester);
         when(securityMediator.canUpload("abc", repository, requester)).thenReturn(true);
-        doAnswer(new Answer<RPackage>() {
-
-                    @Override
-                    public RPackage answer(InvocationOnMock invocation) throws Throwable {
-                        RPackage packageBag = invocation.getArgument(0);
-                        packageBag.setId(123);
-                        return packageBag;
-                    }
+        doAnswer((Answer<RPackage>) invocation -> {
+                    RPackage packageBag = invocation.getArgument(0);
+                    packageBag.setId(123);
+                    return packageBag;
                 })
                 .when(packageService)
                 .create(any());
@@ -589,7 +568,8 @@ public class RUploadStrategyTest extends StrategyTest {
                 repositorySynchronizer,
                 securityMediator,
                 storage,
-                rPackageDeleter);
+                rPackageDeleter,
+                request);
 
         Submission submission = strategy.perform();
         RPackage packageBag = (RPackage) submission.getPackage();

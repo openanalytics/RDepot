@@ -37,6 +37,7 @@ import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
+import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.utils.specs.RepositorySpecs;
 import eu.openanalytics.rdepot.base.utils.specs.SpecificationUtils;
@@ -86,6 +87,7 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
     private final PythonRepositoryDeleter deleter;
     private final PageableValidator pageableValidator;
     private final CommonPageableSortResolver pageableSortResolver;
+    private final StrategyExecutor strategyExecutor;
 
     @Value("${declarative}")
     private String declarative;
@@ -106,7 +108,8 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
             PythonRepositoryDtoConverter dtoConverter,
             PythonRepositoryDeleter deleter,
             PageableValidator pageableValidator,
-            CommonPageableSortResolver pageableSortResolver) {
+            CommonPageableSortResolver pageableSortResolver,
+            StrategyExecutor strategyExecutor) {
         super(
                 messageSource,
                 LocaleContextHolder.getLocale(),
@@ -124,6 +127,7 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
         this.deleter = deleter;
         this.pageableValidator = pageableValidator;
         this.pageableSortResolver = pageableSortResolver;
+        this.strategyExecutor = strategyExecutor;
     }
 
     @PreAuthorize("hasAuthority('user')")
@@ -202,7 +206,7 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
             PythonRepository repositoryEntity = dtoConverter.resolveDtoToEntity(repositoryDto);
             validate(repositoryEntity);
             Strategy<PythonRepository> strategy = factory.createRepositoryStrategy(repositoryEntity, requester);
-            PythonRepository repository = strategy.perform();
+            PythonRepository repository = strategyExecutor.execute(strategy);
             return handleCreatedForSingleEntity(repository, requester);
         } catch (PythonRepositoryValidationError e) {
             return handleValidationError(e.getBindingResult());
@@ -233,13 +237,12 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
             PythonRepositoryDto repositoryDto = applyPatchToEntity(jsonPatch, repository);
             PythonRepository updated = dtoConverter.resolveDtoToEntity(repositoryDto);
 
-            if (!repositoriesDeletionEnabled)
-                if (updated.getDeleted() && !repository.getDeleted())
-                    throw new RepositoryDeletionException(messageSource, locale);
+            if (!repositoriesDeletionEnabled && updated.getDeleted() && !repository.getDeleted())
+                throw new RepositoryDeletionException(messageSource, locale);
 
             validate(updated);
             Strategy<PythonRepository> strategy = factory.updateRepositoryStrategy(repository, requester, updated);
-            repository = strategy.perform();
+            repository = strategyExecutor.execute(strategy);
         } catch (JsonException | JsonProcessingException e) {
             throw new MalformedPatchException(messageSource, locale, e);
         } catch (StrategyFailure e) {
