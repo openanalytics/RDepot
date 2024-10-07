@@ -171,7 +171,7 @@ public class RPackageDeletionDisabledControllerTest extends ApiV2ControllerUnitT
 
         when(rPackageService.findAllBySpecification(any(), any())).thenReturn(packagesPage);
         when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(userService.isAdmin(user.get())).thenReturn(true);
+        when(securityMediator.canSeeDeleted(user.get(), RPackage.class)).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/r/packages")
                         .param("deleted", "true")

@@ -28,6 +28,7 @@ import eu.openanalytics.rdepot.base.validation.PackageValidator;
 import eu.openanalytics.rdepot.base.validation.ValidationResult;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
+import eu.openanalytics.rdepot.python.messaging.PythonMessageCodes;
 import eu.openanalytics.rdepot.python.services.PythonPackageService;
 import java.util.Objects;
 import java.util.Optional;
@@ -68,7 +69,7 @@ public class PythonPackageValidator implements PackageValidator<PythonPackage> {
             PythonPackage packageBag, boolean replace, DataSpecificValidationResult<Submission> validationResult) {
         validateName(packageBag.getName(), validationResult);
         validateNotEmpty("license", packageBag.getLicense(), MessageCodes.EMPTY_LICENSE, validationResult);
-        validateNotEmpty("hash", packageBag.getHash(), MessageCodes.EMPTY_HASH, validationResult);
+        validateNotEmpty("hash", packageBag.getHash(), PythonMessageCodes.EMPTY_HASH, validationResult);
         validateVersion(packageBag, replace, validationResult);
     }
 

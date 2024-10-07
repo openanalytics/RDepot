@@ -20,13 +20,13 @@
  */
 package eu.openanalytics.rdepot.python.storage.exceptions;
 
-import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.storage.exceptions.ReadPackageDescriptionException;
+import eu.openanalytics.rdepot.python.messaging.PythonMessageCodes;
 
 public class ReadPythonPackagePkgInfoException extends ReadPackageDescriptionException {
     private static final long serialVersionUID = 1L;
 
     public ReadPythonPackagePkgInfoException() {
-        super(MessageCodes.READ_PYTHON_PKG_INFO_EXCEPTION);
+        super(PythonMessageCodes.READ_PYTHON_PKG_INFO_EXCEPTION);
     }
 }

@@ -54,6 +54,7 @@ import eu.openanalytics.rdepot.base.validation.PackageMaintainerValidator;
 import eu.openanalytics.rdepot.base.validation.RepositoryMaintainerValidator;
 import eu.openanalytics.rdepot.base.validation.UserSettingsValidator;
 import eu.openanalytics.rdepot.base.validation.UserValidator;
+import eu.openanalytics.rdepot.r.config.RBinaryProperties;
 import eu.openanalytics.rdepot.r.mediator.deletion.RPackageDeleter;
 import eu.openanalytics.rdepot.r.mediator.deletion.RRepositoryDeleter;
 import eu.openanalytics.rdepot.r.mediator.deletion.RSubmissionDeleter;
@@ -198,6 +199,9 @@ public abstract class ApiV2ControllerUnitTest {
 
     @MockBean
     StrategyExecutor strategyExecutor;
+
+    @MockBean
+    RBinaryProperties rBinaryProperties;
 
     @Mock
     protected BestMaintainerChooser bestMaintainerChooser;

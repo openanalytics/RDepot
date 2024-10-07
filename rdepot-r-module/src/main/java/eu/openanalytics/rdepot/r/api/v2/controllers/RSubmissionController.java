@@ -48,7 +48,6 @@ import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
-import eu.openanalytics.rdepot.base.storage.exceptions.GenerateManualException;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.exceptions.NonFatalSubmissionStrategyFailure;
@@ -68,7 +67,9 @@ import eu.openanalytics.rdepot.r.api.v2.hateoas.RSubmissionModelAssembler;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.mediator.deletion.RSubmissionDeleter;
+import eu.openanalytics.rdepot.r.messaging.RMessageCodes;
 import eu.openanalytics.rdepot.r.services.RRepositoryService;
+import eu.openanalytics.rdepot.r.storage.exceptions.GenerateManualException;
 import eu.openanalytics.rdepot.r.strategy.factory.RStrategyFactory;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.json.Json;
@@ -220,10 +221,10 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
         if (!replacingPackagesEnabled) replace = false;
 
         if (binaryPackage && (rVersion.isEmpty() || architecture.isEmpty() || distribution.isEmpty()))
-            return handleValidationError(MessageCodes.ERROR_MISSING_DATA_FOR_BINARY_PACKAGE);
+            return handleValidationError(RMessageCodes.ERROR_MISSING_DATA_FOR_BINARY_PACKAGE);
 
         if (!binaryPackage && (rVersion.isPresent() || architecture.isPresent() || distribution.isPresent()))
-            return handleValidationError(MessageCodes.ERROR_PARAMETERS_NOT_ALLOWED_FOR_NON_BINARY_PACKAGE);
+            return handleValidationError(RMessageCodes.ERROR_PARAMETERS_NOT_ALLOWED_FOR_NON_BINARY_PACKAGE);
 
         final RPackageUploadRequest request = new RPackageUploadRequest(
                 multipartFile,

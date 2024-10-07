@@ -52,7 +52,7 @@ services:
       - oa-rdepot
 
   db:
-    image: registry.openanalytics.eu/proxy/library/postgres:alpine
+    image: registry.openanalytics.eu/proxy/library/postgres:16.4-alpine
 #    image: postgres:alpine
     restart: always
     hostname: oa-rdepot-db

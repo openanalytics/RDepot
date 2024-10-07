@@ -24,7 +24,6 @@ import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.exception.AdminNotFound;
 import eu.openanalytics.rdepot.base.mediator.BestMaintainerChooser;
-import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.mirroring.MirrorSynchronizer;
 import eu.openanalytics.rdepot.base.storage.exceptions.CreateTemporaryFolderException;
 import eu.openanalytics.rdepot.base.storage.exceptions.DeleteFileException;
@@ -36,6 +35,7 @@ import eu.openanalytics.rdepot.r.api.v2.dtos.RPackageUploadRequest;
 import eu.openanalytics.rdepot.r.config.declarative.RYamlDeclarativeConfigurationSource;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
+import eu.openanalytics.rdepot.r.messaging.RMessageCodes;
 import eu.openanalytics.rdepot.r.mirroring.exceptions.DownloadPackagesFileException;
 import eu.openanalytics.rdepot.r.mirroring.exceptions.NoSuchPackageException;
 import eu.openanalytics.rdepot.r.mirroring.exceptions.UpdatePackageException;
@@ -258,7 +258,7 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
                 log.error(
                         "{}\nLocation: {}",
                         messageSource.getMessage(
-                                MessageCodes.ERROR_CLEAN_FS, null, MessageCodes.ERROR_CLEAN_FS, locale),
+                                RMessageCodes.ERROR_CLEAN_FS, null, RMessageCodes.ERROR_CLEAN_FS, locale),
                         remotePackageDir.toPath().toAbsolutePath());
             }
         }
@@ -284,7 +284,7 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
                     log.error(
                             "{}\nLocation: {}",
                             messageSource.getMessage(
-                                    MessageCodes.ERROR_CLEAN_FS, null, MessageCodes.ERROR_CLEAN_FS, locale),
+                                    RMessageCodes.ERROR_CLEAN_FS, null, RMessageCodes.ERROR_CLEAN_FS, locale),
                             remotePackagesFilePath.toAbsolutePath());
                 }
             }

@@ -34,6 +34,7 @@ import eu.openanalytics.rdepot.base.validation.exceptions.PackageDuplicateWithRe
 import eu.openanalytics.rdepot.base.validation.exceptions.PackageValidationException;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
+import eu.openanalytics.rdepot.python.messaging.PythonMessageCodes;
 import eu.openanalytics.rdepot.python.services.PythonPackageService;
 import eu.openanalytics.rdepot.python.validation.PythonPackageValidator;
 import eu.openanalytics.rdepot.test.fixture.PythonPackageTestFixture;
@@ -174,7 +175,7 @@ public class PythonPackageValidatorTest {
         packageBag.setHash("");
         packageValidator.validateUploadPackage(packageBag, true, errors);
         assertTrue(errors.hasErrors(), "Validation should return hash error");
-        verify(errors, times(1)).error("hash", MessageCodes.EMPTY_HASH);
+        verify(errors, times(1)).error("hash", PythonMessageCodes.EMPTY_HASH);
     }
 
     @Test

@@ -18,10 +18,10 @@
  * You should have received a copy of the Apache License
  * along with this program. If not, see <http://www.apache.org/licenses/>
  */
-package eu.openanalytics.rdepot.base.storage.exceptions;
+package eu.openanalytics.rdepot.r.storage.exceptions;
 
-import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
+import eu.openanalytics.rdepot.r.messaging.RMessageCodes;
 import java.io.Serial;
 import lombok.Getter;
 
@@ -37,7 +37,7 @@ public class GetReferenceManualException extends Exception {
     private final Exception reason;
 
     public GetReferenceManualException(Exception reason) {
-        super(StaticMessageResolver.getMessage(MessageCodes.COULD_NOT_GET_REFERENCE_MANUAL) + ": "
+        super(StaticMessageResolver.getMessage(RMessageCodes.COULD_NOT_GET_REFERENCE_MANUAL) + ": "
                 + reason.getMessage());
         this.reason = reason;
     }

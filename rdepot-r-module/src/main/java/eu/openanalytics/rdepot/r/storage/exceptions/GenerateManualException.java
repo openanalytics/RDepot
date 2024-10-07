@@ -18,28 +18,22 @@
  * You should have received a copy of the Apache License
  * along with this program. If not, see <http://www.apache.org/licenses/>
  */
-package eu.openanalytics.rdepot.base.storage.exceptions;
+package eu.openanalytics.rdepot.r.storage.exceptions;
 
 import eu.openanalytics.rdepot.base.entities.Package;
-import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
+import eu.openanalytics.rdepot.r.messaging.RMessageCodes;
 import java.io.Serial;
-import lombok.Getter;
 
 /**
- * Thrown when {@link Package Package's}
- * vignette file is invalid or cannot be read for another reason.
+ * Thrown when a manual file cannot be generated.
  */
-@Getter
-public class ReadPackageVignetteException extends Exception {
+public class GenerateManualException extends Exception {
 
     @Serial
-    private static final long serialVersionUID = 620016799696468192L;
+    private static final long serialVersionUID = -657347737809814573L;
 
-    private final Exception reason;
-
-    public ReadPackageVignetteException(Exception reason) {
-        super(StaticMessageResolver.getMessage(MessageCodes.COULD_NOT_GET_VIGNETTE) + ": " + reason.getMessage());
-        this.reason = reason;
+    public GenerateManualException(Package packageBag) {
+        super(StaticMessageResolver.getMessage(RMessageCodes.COULD_NOT_GENERATE_MANUAL) + ": " + packageBag.toString());
     }
 }

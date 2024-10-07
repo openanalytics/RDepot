@@ -22,6 +22,7 @@ package eu.openanalytics.rdepot.test.unit;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
+import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import org.springframework.test.web.servlet.ResultActions;
 
 public class TestUtils {
@@ -42,7 +43,8 @@ public class TestUtils {
     }
 
     public static void matchInternalServerErrorPatch(ResultActions result) throws Exception {
-        matchInternalServerError(result, "Could not apply patch to requested resource.", "error.apply.patch");
+        matchInternalServerError(
+                result, "Could not apply patch to requested resource.", MessageCodes.ERROR_APPLY_PATCH);
     }
 
     public static void matchInternalServerErrorDelete(ResultActions result) throws Exception {

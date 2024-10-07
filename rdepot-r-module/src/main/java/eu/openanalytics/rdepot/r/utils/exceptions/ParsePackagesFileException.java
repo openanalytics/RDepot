@@ -20,14 +20,14 @@
  */
 package eu.openanalytics.rdepot.r.utils.exceptions;
 
-import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
+import eu.openanalytics.rdepot.r.messaging.RMessageCodes;
 
 public class ParsePackagesFileException extends Exception {
 
     private static final long serialVersionUID = -7221220068660991883L;
 
     public ParsePackagesFileException(String line) {
-        super(StaticMessageResolver.getMessage(MessageCodes.COULD_NOT_PARSE_PACKAGES_FILE) + ": line '" + line + "'");
+        super(StaticMessageResolver.getMessage(RMessageCodes.COULD_NOT_PARSE_PACKAGES_FILE) + ": line '" + line + "'");
     }
 }

@@ -21,14 +21,8 @@
 package eu.openanalytics.rdepot.base.security.authorization;
 
 import eu.openanalytics.rdepot.base.api.v2.dtos.SubmissionDto;
-import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
+import eu.openanalytics.rdepot.base.entities.*;
 import eu.openanalytics.rdepot.base.entities.Package;
-import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
-import eu.openanalytics.rdepot.base.entities.Repository;
-import eu.openanalytics.rdepot.base.entities.RepositoryMaintainer;
-import eu.openanalytics.rdepot.base.entities.Role;
-import eu.openanalytics.rdepot.base.entities.Submission;
-import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.entities.enums.ResourceType;
 import eu.openanalytics.rdepot.base.entities.enums.SubmissionState;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
@@ -213,5 +207,10 @@ public class SecurityMediatorImpl implements SecurityMediator {
     @Override
     public boolean isAuthorizedToEditWithPatch(JsonPatch patch, User user, User requester) {
         return requester.getRole().getValue() == Role.VALUE.ADMIN && requester.getId() != user.getId();
+    }
+
+    @Override
+    public <T extends Resource> boolean canSeeDeleted(User user, Class<T> resourceType) {
+        return userService.isAdmin(user);
     }
 }

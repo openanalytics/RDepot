@@ -22,13 +22,13 @@ package eu.openanalytics.rdepot.r.storage;
 
 import eu.openanalytics.rdepot.base.storage.Storage;
 import eu.openanalytics.rdepot.base.storage.exceptions.CleanUpAfterSynchronizationException;
-import eu.openanalytics.rdepot.base.storage.exceptions.GenerateManualException;
-import eu.openanalytics.rdepot.base.storage.exceptions.GetReferenceManualException;
 import eu.openanalytics.rdepot.base.storage.exceptions.OrganizePackagesException;
-import eu.openanalytics.rdepot.base.storage.exceptions.ReadPackageVignetteException;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.entities.Vignette;
+import eu.openanalytics.rdepot.r.storage.exceptions.GenerateManualException;
+import eu.openanalytics.rdepot.r.storage.exceptions.GetReferenceManualException;
+import eu.openanalytics.rdepot.r.storage.exceptions.ReadPackageVignetteException;
 import eu.openanalytics.rdepot.r.storage.utils.PopulatedRepositoryContent;
 import eu.openanalytics.rdepot.r.synchronization.SynchronizeRepositoryRequestBody;
 import java.util.List;

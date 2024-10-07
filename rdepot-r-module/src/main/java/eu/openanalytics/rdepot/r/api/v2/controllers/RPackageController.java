@@ -46,8 +46,6 @@ import eu.openanalytics.rdepot.base.entities.enums.SubmissionState;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
-import eu.openanalytics.rdepot.base.storage.exceptions.GetReferenceManualException;
-import eu.openanalytics.rdepot.base.storage.exceptions.ReadPackageVignetteException;
 import eu.openanalytics.rdepot.base.storage.exceptions.SourceNotFoundException;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
@@ -64,6 +62,8 @@ import eu.openanalytics.rdepot.r.entities.Vignette;
 import eu.openanalytics.rdepot.r.mediator.deletion.RPackageDeleter;
 import eu.openanalytics.rdepot.r.services.RPackageService;
 import eu.openanalytics.rdepot.r.storage.RStorage;
+import eu.openanalytics.rdepot.r.storage.exceptions.GetReferenceManualException;
+import eu.openanalytics.rdepot.r.storage.exceptions.ReadPackageVignetteException;
 import eu.openanalytics.rdepot.r.strategy.factory.RStrategyFactory;
 import eu.openanalytics.rdepot.r.validation.RPackageValidator;
 import io.swagger.v3.oas.annotations.Operation;
@@ -202,7 +202,7 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
             specification = SpecificationUtils.andComponent(specification, component);
 
             // TODO: #32882 This is a temporary fix for 2.0; We should think of better solution.
-            if (deleted.get().equals(true) && !userService.isAdmin(requester)) {
+            if (deleted.get().equals(true) && !securityMediator.canSeeDeleted(requester, RPackage.class)) {
                 return emptyPage();
             }
         }

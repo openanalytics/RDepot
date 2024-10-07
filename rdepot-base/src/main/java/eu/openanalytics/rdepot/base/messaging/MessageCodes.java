@@ -63,15 +63,10 @@ public class MessageCodes {
     public static final String ERROR_VALIDATION = "error.validation";
     public static final String ERROR_MALFORMED_PATCH = "error.malformed.patch";
     public static final String ERROR_INVALID_SUBMISSION = "error.invalid.submission";
-    public static final String ERROR_MISSING_DATA_FOR_BINARY_PACKAGE = "error.missing.data.for.binary.package";
-    public static final String ERROR_PARAMETERS_NOT_ALLOWED_FOR_NON_BINARY_PACKAGE =
-            "error.parameters.not.allowed.for.non.binary.package";
 
     // Storage
-    public static final String ERROR_CLEAN_FS = "error.clean.fs";
 
     public static final String REPOSITORY_NOT_FOUND = "repository.not.found";
-    public static final String PACKAGE_VALIDATION_ERROR = "package.validation.error";
     public static final String NO_SUITABLE_MAINTAINER_FOUND = "no.suitable.maintainer.found";
     public static final String STRATEGY_FAILURE = "strategy.failure";
     public static final String MULTIPART_FILE_VALIDATION_EXCEPTION = "multipart.file.validation.exception";
@@ -79,7 +74,6 @@ public class MessageCodes {
     public static final String COULD_NOT_WRITE_TO_WAITING_ROOM = "could.not.write.to.waiting.room";
     public static final String COULD_NOT_DELETE_FILE = "could.not.delete.file";
     public static final String COULD_NOT_EXTRACT_FILE = "could.not.extract.file";
-    public static final String READ_R_PACKAGE_DESCRIPTION_EXCEPTION = "read.r.package.description.exception";
     public static final String SOURCE_FILE_DELETE_EXCEPTION = "source.file.delete.exception";
     public static final String COULD_NOT_MOVE_FILE = "could.not.move.file";
     public static final String COULD_NOT_MOVE_PACKAGE_SOURCE = "could.not.move.package.source";
@@ -109,26 +103,15 @@ public class MessageCodes {
     public static final String EMPTY_NAME = "empty.name";
     public static final String EMPTY_VERSION = "empty.version";
     public static final String EMPTY_DESCRIPTION = "empty.description";
-    public static final String EMPTY_AUTHOR = "empty.author";
+
     public static final String EMPTY_LICENSE = "empty.license";
-    public static final String EMPTY_TITLE = "empty.title";
-    public static final String EMPTY_MD5SUM = "empty.md5sum";
-    public static final String EMPTY_HASH = "empty.hash";
+
     public static final String INVALID_PACKAGE_NAME = "invalid.package.name";
     public static final String INVALID_VERSION = "invalid.version";
     public static final String DUPLICATE_VERSION_REPLACE_ON = "duplicate.version.replace.on";
     public static final String DUPLICATE_VERSION_REPLACE_OFF = "duplicate.version.replace.off";
 
-    // validation - R binary package
-    public static final String R_VERSION_NOT_ALLOWED = "r.version.not.allowed";
-    public static final String INVALID_R_VERSION = "invalid.r.version";
-    public static final String ARCHITECTURE_NOT_ALLOWED = "architecture.not.allowed";
-    public static final String INVALID_ARCHITECTURE = "invalid.architecture";
-    public static final String DISTRIBUTION_NOT_ALLOWED = "distribution.not.allowed";
-    public static final String EMPTY_BUILT = "empty.built";
-
     // PACKAGES
-    public static final String COULD_NOT_PARSE_PACKAGES_FILE = "could.not.parse.packages.file";
 
     // validation - repository maintainer
     public static final String EMPTY_USER = "empty.user";
@@ -162,14 +145,10 @@ public class MessageCodes {
     public static final String PAGE_SIZE_BIGGER_THAN_MAX_LIMIT = "page.size.bigger.than.max.limit";
     public static final String COULD_NOT_CREATE_TEMPORARY_FOLDER = "could.not.create.temporary.folder";
     public static final String ERROR_DOWNLOAD_FILE = "error.download.file";
-    public static final String UPDATE_PACKAGE_EXCEPTION = "error.update.package";
     public static final String NO_SUCH_PACKAGE_ERROR = "error.no.such.package";
-    public static final String COULD_NOT_DOWNLOAD_PACKAGES_FILE = "could.not.download.packages.file";
     public static final String RESOLVE_RELATED_ENTITIES_EXCEPTION = "could.not.resolve.related.entities";
 
     // R-related
-    public static final String COULD_NOT_GET_REFERENCE_MANUAL = "could.not.get.reference.manual";
-    public static final String COULD_NOT_GET_VIGNETTE = "could.not.get.vignette";
     public static final String ERROR_ORGANIZE_PACKAGES_IN_STORAGE = "error.organize.packages.in.storage";
 
     // security
@@ -185,7 +164,7 @@ public class MessageCodes {
     public static final String COULD_NOT_DELETE_ENTITY = "could.not.delete.entity";
     public static final String COULD_NOT_PARSE_PACKAGE_PROPERTIES = "could.not.parse.package.properties";
     public static final String COULD_NOT_CALCULATE_CHECKSUM = "could.not.calculate.checksum";
-    public static final String COULD_NOT_GENERATE_MANUAL = "could.not.generate.manual";
+
     public static final String FORBIDDEN_UPDATE = "forbidden.update";
     public static final String COULD_NOT_CHANGE_SUBMISSION = "could.not.change.submission";
     // access tokens
@@ -213,5 +192,4 @@ public class MessageCodes {
     public static final String WARNING_REPLACING_PACKAGES_DISABLED = "warning.replacing.packages.disabled";
     public static final String WARNING_SYNCHRONIZATION_FAILURE = "warning.synchronization.failure";
     public static final String WARNING_UNKNOWN = "warning.unknown";
-    public static final String READ_PYTHON_PKG_INFO_EXCEPTION = "read.python.pkg.info.exception";
 }

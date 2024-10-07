@@ -36,6 +36,7 @@ import eu.openanalytics.rdepot.base.validation.ValidationResultImpl;
 import eu.openanalytics.rdepot.r.config.RBinaryProperties;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
+import eu.openanalytics.rdepot.r.messaging.RMessageCodes;
 import eu.openanalytics.rdepot.r.services.RPackageService;
 import eu.openanalytics.rdepot.r.validation.RPackageValidator;
 import eu.openanalytics.rdepot.test.fixture.RPackageTestFixture;
@@ -179,7 +180,7 @@ public class RPackageValidatorTest {
         packageBag.setMd5sum("");
         packageValidator.validateUploadPackage(packageBag, true, errors);
         assertTrue(errors.hasErrors(), "Validation should return md5sum error");
-        verify(errors, times(1)).error("md5sum", MessageCodes.EMPTY_MD5SUM);
+        verify(errors, times(1)).error("md5sum", RMessageCodes.EMPTY_MD5SUM);
     }
 
     @Test
@@ -197,7 +198,7 @@ public class RPackageValidatorTest {
         packageBag.setAuthor("");
         packageValidator.validateUploadPackage(packageBag, true, errors);
         assertTrue(errors.hasErrors(), "Validation should return author error");
-        verify(errors, times(1)).error("author", MessageCodes.EMPTY_AUTHOR);
+        verify(errors, times(1)).error("author", RMessageCodes.EMPTY_AUTHOR);
     }
 
     @Test
@@ -206,7 +207,7 @@ public class RPackageValidatorTest {
         packageBag.setTitle("");
         packageValidator.validateUploadPackage(packageBag, true, errors);
         assertTrue(errors.hasErrors(), "Validation should return title error");
-        verify(errors, times(1)).error("title", MessageCodes.EMPTY_TITLE);
+        verify(errors, times(1)).error("title", RMessageCodes.EMPTY_TITLE);
     }
 
     @Test
@@ -222,7 +223,7 @@ public class RPackageValidatorTest {
         binaryPackage.setBuilt("");
         packageValidator.validateUploadPackage(binaryPackage, true, errors);
         assertTrue(errors.hasErrors(), "Validation should return built error");
-        verify(errors, times(1)).error("built", MessageCodes.EMPTY_BUILT);
+        verify(errors, times(1)).error("built", RMessageCodes.EMPTY_BUILT);
     }
 
     @Test
@@ -239,7 +240,7 @@ public class RPackageValidatorTest {
         binaryPackage.setRVersion("4.3");
         packageValidator.validateUploadPackage(binaryPackage, true, errors);
         assertTrue(errors.hasErrors(), "Validation should return rVersion error");
-        verify(errors, times(1)).error("rVersion", MessageCodes.INVALID_R_VERSION);
+        verify(errors, times(1)).error("rVersion", RMessageCodes.INVALID_R_VERSION);
     }
 
     @Test
@@ -248,7 +249,7 @@ public class RPackageValidatorTest {
         binaryPackage.setRVersion("4.3");
         packageValidator.validateUploadPackage(binaryPackage, true, errors);
         assertTrue(errors.hasErrors(), "Validation should return rVersion error");
-        verify(errors, times(1)).error("rVersion", MessageCodes.R_VERSION_NOT_ALLOWED);
+        verify(errors, times(1)).error("rVersion", RMessageCodes.R_VERSION_NOT_ALLOWED);
     }
 
     @Test
@@ -257,7 +258,7 @@ public class RPackageValidatorTest {
         binaryPackage.setArchitecture("x86");
         packageValidator.validateUploadPackage(binaryPackage, true, errors);
         assertTrue(errors.hasErrors(), "Validation should return architecture error");
-        verify(errors, times(1)).error("architecture", MessageCodes.INVALID_ARCHITECTURE);
+        verify(errors, times(1)).error("architecture", RMessageCodes.INVALID_ARCHITECTURE);
     }
 
     @Test
@@ -266,7 +267,7 @@ public class RPackageValidatorTest {
         binaryPackage.setArchitecture("x86_32");
         packageValidator.validateUploadPackage(binaryPackage, true, errors);
         assertTrue(errors.hasErrors(), "Validation should return architecture error");
-        verify(errors, times(1)).error("architecture", MessageCodes.ARCHITECTURE_NOT_ALLOWED);
+        verify(errors, times(1)).error("architecture", RMessageCodes.ARCHITECTURE_NOT_ALLOWED);
     }
 
     @Test
@@ -275,7 +276,7 @@ public class RPackageValidatorTest {
         binaryPackage.setDistribution("opensuse155");
         packageValidator.validateUploadPackage(binaryPackage, true, errors);
         assertTrue(errors.hasErrors(), "Validation should return distribution error");
-        verify(errors, times(1)).error("distribution", MessageCodes.DISTRIBUTION_NOT_ALLOWED);
+        verify(errors, times(1)).error("distribution", RMessageCodes.DISTRIBUTION_NOT_ALLOWED);
     }
 
     @Test

@@ -75,7 +75,7 @@ SET row_security = off; SET default_tablespace = ''; SET default_table_access_me
 -- Name: UserEvent_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 -- CREATE SEQUENCE public."UserEvent_id_seq" START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1; ALTER SEQUENCE public."UserEvent_id_seq" OWNER TO postgres; --
 -- Name: user; Type: TABLE; Schema: public; Owner: postgres
--- CREATE TABLE public."user" ( id integer NOT NULL, role_id integer DEFAULT 4 NOT NULL, name text NOT NULL, email text NOT NULL, login text NOT NULL, active boolean NOT NULL, last_logged_in_on date, deleted boolean DEFAULT false NOT NULL, created_on date DEFAULT now() NOT NULL
+-- CREATE TABLE public."user" ( id integer NOT NULL, role_id integer DEFAULT 4 NOT NULL, name text NOT NULL, email text NOT NULL, login text NOT NULL, active boolean NOT NULL, last_logged_in_on timestamp without time zone, deleted boolean DEFAULT false NOT NULL, created_on date DEFAULT now() NOT NULL
 ); ALTER TABLE public."user" OWNER TO postgres; --
 -- Name: User_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 -- CREATE SEQUENCE public."User_id_seq" START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1; ALTER SEQUENCE public."User_id_seq" OWNER TO postgres; --
@@ -1028,12 +1028,12 @@ SET row_security = off; SET default_tablespace = ''; SET default_table_access_me
 -- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: postgres
 -- COPY public."user" (id, role_id, name, email, login, active, last_logged_in_on, deleted, created_on) FROM stdin;
 8 4 Local Admin User admin@localhost admin f \N f 1970-01-01
-7 1 Isaac Newton newton@ldap.forumsys.com newton t 2020-03-28 f 1970-01-01
-6 2 Galileo Galilei galieleo@ldap.forumsys.com galieleo t 2020-03-28 f 1970-01-01
-5 3 Nikola Tesla tesla@ldap.forumsys.com tesla t 2020-03-29 f 1970-01-01
-4 4 Albert Einstein einstein@ldap.forumsys.com einstein t 2020-08-20 f 1970-01-01
-9 1 John Doe doe@localhost doe f 2020-08-20 f 1970-01-01
-10 1 Alfred Tarski tarski@localhost tarski t 2020-08-25 f 1970-01-01
+7 1 Isaac Newton newton@ldap.forumsys.com newton t 2020-03-28 00:00:00 f 1970-01-01
+6 2 Galileo Galilei galieleo@ldap.forumsys.com galieleo t 2020-03-28 00:00:00 f 1970-01-01
+5 3 Nikola Tesla tesla@ldap.forumsys.com tesla t 2020-03-29 00:00:00 f 1970-01-01
+4 4 Albert Einstein einstein@ldap.forumsys.com einstein t 2020-08-20 00:00:00 f 1970-01-01
+9 1 John Doe doe@localhost doe f 2020-08-20 00:00:00 f 1970-01-01
+10 1 Alfred Tarski tarski@localhost tarski t 2020-08-25 00:00:00 f 1970-01-01
 \. --
 -- Data for Name: user_settings; Type: TABLE DATA; Schema: public; Owner: postgres
 -- COPY public.user_settings (id, deleted, language, theme, page_size, user_id) FROM stdin;

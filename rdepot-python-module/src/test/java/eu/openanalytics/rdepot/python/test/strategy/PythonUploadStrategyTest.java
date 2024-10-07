@@ -38,7 +38,6 @@ import eu.openanalytics.rdepot.base.api.v2.dtos.PackageUploadRequest;
 import eu.openanalytics.rdepot.base.email.EmailService;
 import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.User;
-import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
@@ -51,6 +50,7 @@ import eu.openanalytics.rdepot.base.validation.DataSpecificValidationResult;
 import eu.openanalytics.rdepot.base.validation.PackageValidator;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
+import eu.openanalytics.rdepot.python.messaging.PythonMessageCodes;
 import eu.openanalytics.rdepot.python.services.PythonRepositoryService;
 import eu.openanalytics.rdepot.python.storage.implementations.PythonLocalStorage;
 import eu.openanalytics.rdepot.python.strategy.upload.PythonPackageUploadStrategy;
@@ -391,7 +391,7 @@ public class PythonUploadStrategyTest extends StrategyTest {
 
         when(storage.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
         when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath())).thenReturn(extracted.getAbsolutePath());
-        doThrow(new ReadPackageDescriptionException(MessageCodes.READ_PYTHON_PKG_INFO_EXCEPTION))
+        doThrow(new ReadPackageDescriptionException(PythonMessageCodes.READ_PYTHON_PKG_INFO_EXCEPTION))
                 .when(storage)
                 .getPropertiesFromExtractedFile(extracted.getAbsolutePath());
         doNothing().when(storage).removeFileIfExists(uploadedFile.getAbsolutePath());

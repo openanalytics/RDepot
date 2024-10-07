@@ -123,4 +123,12 @@ public interface SecurityMediator {
     default Collection<? extends GrantedAuthority> getGrantedAuthorities(String userLogin) {
         return Set.of();
     }
+
+    /**
+     * Checks if a given user can see resource of given type if it has been deleted.
+     * @param <T> type of resource
+     */
+    default <T extends Resource> boolean canSeeDeleted(User user, Class<T> resourceType) {
+        return false;
+    }
 }

@@ -29,6 +29,7 @@ import eu.openanalytics.rdepot.base.validation.ValidationResult;
 import eu.openanalytics.rdepot.r.config.RBinaryProperties;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
+import eu.openanalytics.rdepot.r.messaging.RMessageCodes;
 import eu.openanalytics.rdepot.r.services.RPackageService;
 import java.util.List;
 import java.util.Objects;
@@ -75,10 +76,10 @@ public class RPackageValidator implements PackageValidator<RPackage> {
             RPackage packageBag, boolean replace, DataSpecificValidationResult<Submission> validationResult) {
         validateName(packageBag.getName(), validationResult);
         validateNotEmpty("description", packageBag.getDescription(), MessageCodes.EMPTY_DESCRIPTION, validationResult);
-        validateNotEmpty("author", packageBag.getAuthor(), MessageCodes.EMPTY_AUTHOR, validationResult);
+        validateNotEmpty("author", packageBag.getAuthor(), RMessageCodes.EMPTY_AUTHOR, validationResult);
         validateNotEmpty("license", packageBag.getLicense(), MessageCodes.EMPTY_LICENSE, validationResult);
-        validateNotEmpty("title", packageBag.getTitle(), MessageCodes.EMPTY_TITLE, validationResult);
-        validateNotEmpty("md5sum", packageBag.getMd5sum(), MessageCodes.EMPTY_MD5SUM, validationResult);
+        validateNotEmpty("title", packageBag.getTitle(), RMessageCodes.EMPTY_TITLE, validationResult);
+        validateNotEmpty("md5sum", packageBag.getMd5sum(), RMessageCodes.EMPTY_MD5SUM, validationResult);
         validateVersion(packageBag, replace, validationResult);
 
         if (packageBag.isBinary()) validateBinaryProperties(packageBag, validationResult);
@@ -219,12 +220,12 @@ public class RPackageValidator implements PackageValidator<RPackage> {
     }
 
     public void validateBinaryProperties(RPackage binaryPackage, DataSpecificValidationResult<Submission> result) {
-        validateNotEmpty("built", binaryPackage.getBuilt(), MessageCodes.EMPTY_BUILT, result);
+        validateNotEmpty("built", binaryPackage.getBuilt(), RMessageCodes.EMPTY_BUILT, result);
         if (!result.getErrors().isEmpty()
                 && result.getErrors()
                         .get(result.getErrors().size() - 1)
                         .messageCode()
-                        .equals(MessageCodes.EMPTY_BUILT)) return;
+                        .equals(RMessageCodes.EMPTY_BUILT)) return;
         validateRVersion(binaryPackage.getRVersion(), binaryPackage.getBuilt(), result);
         validateArchitecture(binaryPackage.getArchitecture(), binaryPackage.getBuilt(), result);
         validateDistribution(binaryPackage.getDistribution(), result);
@@ -235,11 +236,11 @@ public class RPackageValidator implements PackageValidator<RPackage> {
             final String built,
             final DataSpecificValidationResult<Submission> validationResult) {
         if (!compareRVersions(rBinaryProperties.getRVersions(), rVersion))
-            validationResult.error("rVersion", MessageCodes.R_VERSION_NOT_ALLOWED);
+            validationResult.error("rVersion", RMessageCodes.R_VERSION_NOT_ALLOWED);
 
         String builtRVersion = built.split(";")[0].replace("R", "").trim();
         if (!compareRVersions(builtRVersion, rVersion))
-            validationResult.error("rVersion", MessageCodes.INVALID_R_VERSION);
+            validationResult.error("rVersion", RMessageCodes.INVALID_R_VERSION);
     }
 
     private boolean compareRVersions(List<String> allowedRVersions, final String rVersion) {
@@ -274,19 +275,19 @@ public class RPackageValidator implements PackageValidator<RPackage> {
             final String built,
             final DataSpecificValidationResult<Submission> validationResult) {
         if (!rBinaryProperties.getArchitectures().contains(architecture))
-            validationResult.error("architecture", MessageCodes.ARCHITECTURE_NOT_ALLOWED);
+            validationResult.error("architecture", RMessageCodes.ARCHITECTURE_NOT_ALLOWED);
 
         String builtOSinfo = built.split(";")[1].trim();
         if (!builtOSinfo.isEmpty()) {
             String builtArch = builtOSinfo.split("-")[0];
             if (!builtArch.equals(architecture))
-                validationResult.error("architecture", MessageCodes.INVALID_ARCHITECTURE);
+                validationResult.error("architecture", RMessageCodes.INVALID_ARCHITECTURE);
         }
     }
 
     private void validateDistribution(
             final String distribution, final DataSpecificValidationResult<Submission> validationResult) {
         if (!rBinaryProperties.getDistributions().contains(distribution))
-            validationResult.error("distribution", MessageCodes.DISTRIBUTION_NOT_ALLOWED);
+            validationResult.error("distribution", RMessageCodes.DISTRIBUTION_NOT_ALLOWED);
     }
 }

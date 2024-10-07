@@ -25,7 +25,7 @@
     "content": [
     	{
 		  "id": 399,
-		  "technology": "RDepot version: 2.3.0",
+		  "technology": "RDepot version: 2.4.0",
 		  "user": {
 		    "id": 6,
 		    "name": "Galileo Galilei",
@@ -87,7 +87,7 @@
       },
       {
         "id": 364,
-        "technology": "RDepot version: 2.3.0",
+        "technology": "RDepot version: 2.4.0",
         "time": "2022-09-09T07:18:28.512",
         "user": {
           "id": 4,
@@ -110,7 +110,7 @@
       },
       {
         "id": 78,
-        "technology": "RDepot version: 2.3.0",
+        "technology": "RDepot version: 2.4.0",
         "time": "2020-08-25T12:35:38.788",
         "user": {
           "id": 8,
@@ -139,7 +139,7 @@
       },
       {
         "id": 77,
-        "technology": "RDepot version: 2.3.0",
+        "technology": "RDepot version: 2.4.0",
         "time": "2020-08-25T12:35:38.689",
         "user": {
           "id": 8,
@@ -168,7 +168,7 @@
       },
       {
         "id": 76,
-        "technology": "RDepot version: 2.3.0",
+        "technology": "RDepot version: 2.4.0",
         "time": "2020-08-20T09:59:21.132",
         "user": {
           "id": 4,
@@ -197,7 +197,7 @@
       },
       {
         "id": 75,
-        "technology": "RDepot version: 2.3.0",
+        "technology": "RDepot version: 2.4.0",
         "time": "2020-08-20T09:59:08.9",
         "user": {
           "id": 8,
@@ -226,7 +226,7 @@
       },
       {
         "id": 74,
-        "technology": "RDepot version: 2.3.0",
+        "technology": "RDepot version: 2.4.0",
         "time": "2020-08-20T09:58:52.09",
         "user": {
           "id": 8,
@@ -255,7 +255,7 @@
       },
       {
         "id": 73,
-        "technology": "RDepot version: 2.3.0",
+        "technology": "RDepot version: 2.4.0",
         "time": "2020-08-20T09:58:51.784",
         "user": {
           "id": 8,
@@ -284,7 +284,7 @@
       },
       {
         "id": 183,
-        "technology": "RDepot version: 2.3.0",
+        "technology": "RDepot version: 2.4.0",
         "time": "2020-03-29T10:43:10.333",
         "user": {
           "id": 4,
@@ -313,7 +313,7 @@
       },
       {
         "id": 359,
-        "technology": "RDepot version: 2.3.0",
+        "technology": "RDepot version: 2.4.0",
         "time": "2020-03-29T10:43:10.123",
         "user": {
           "id": 4,
@@ -342,7 +342,7 @@
       },
       {
         "id": 358,
-        "technology": "RDepot version: 2.3.0",
+        "technology": "RDepot version: 2.4.0",
         "time": "2020-03-29T10:43:10.117",
         "user": {
           "id": 4,
@@ -371,7 +371,7 @@
       },
       {
         "id": 357,
-        "technology": "RDepot version: 2.3.0",
+        "technology": "RDepot version: 2.4.0",
         "time": "2020-03-29T10:43:10.091",
         "user": {
           "id": 4,
@@ -400,7 +400,7 @@
       },
       {
         "id": 178,
-        "technology": "RDepot version: 2.3.0",
+        "technology": "RDepot version: 2.4.0",
         "time": "2020-03-29T10:43:10.081",
         "user": {
           "id": 4,
@@ -429,7 +429,7 @@
       },
       {
         "id": 182,
-        "technology": "RDepot version: 2.3.0",
+        "technology": "RDepot version: 2.4.0",
         "time": "2020-03-29T10:43:05.991",
         "user": {
           "id": 4,
@@ -458,7 +458,7 @@
       },
       {
         "id": 356,
-        "technology": "RDepot version: 2.3.0",
+        "technology": "RDepot version: 2.4.0",
         "time": "2020-03-29T10:43:05.331",
         "user": {
           "id": 4,
@@ -487,7 +487,7 @@
       },
       {
         "id": 355,
-        "technology": "RDepot version: 2.3.0",
+        "technology": "RDepot version: 2.4.0",
         "time": "2020-03-29T10:43:05.321",
         "user": {
           "id": 4,
@@ -516,7 +516,7 @@
       },
       {
         "id": 354,
-        "technology": "RDepot version: 2.3.0",
+        "technology": "RDepot version: 2.4.0",
         "time": "2020-03-29T10:43:05.272",
         "user": {
           "id": 4,
@@ -545,7 +545,7 @@
       },
       {
         "id": 177,
-        "technology": "RDepot version: 2.3.0",
+        "technology": "RDepot version: 2.4.0",
         "time": "2020-03-29T10:43:05.243",
         "user": {
           "id": 4,
@@ -574,7 +574,7 @@
       },
       {
         "id": 72,
-        "technology": "RDepot version: 2.3.0",
+        "technology": "RDepot version: 2.4.0",
         "time": "2020-03-29T10:42:45.4",
         "user": {
           "id": 8,
@@ -603,7 +603,7 @@
       },
       {
         "id": 353,
-        "technology": "RDepot version: 2.3.0",
+        "technology": "RDepot version: 2.4.0",
         "time": "2020-03-28T20:14:45.738",
         "user": {
           "id": 6,

@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: 12_01_convert_last_logged_in_on_into_datetime
+      author: pgleska
+      changes:
+        - modifyDataType:
+           schemaName: public
+           tableName: user
+           columnName: last_logged_in_on
+           newDataType: datetime

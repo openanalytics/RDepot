@@ -191,7 +191,7 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
             specification = SpecificationUtils.andComponent(specification, component);
 
             // TODO: #32882 This is a temporary fix for 2.0; We should think of better solution.
-            if (deleted.get().equals(true) && !userService.isAdmin(requester)) {
+            if (deleted.get().equals(true) && !securityMediator.canSeeDeleted(requester, PythonPackage.class)) {
                 return emptyPage();
             }
         }

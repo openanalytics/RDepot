@@ -1,0 +1,82 @@
+services:
+  proxy:
+    image: nginx:alpine
+    container_name: oa-rdepot-proxy
+    restart: unless-stopped
+    volumes:
+    - ./docker/compose/proxy/nginx.conf:/etc/nginx/nginx.conf:ro
+    - ./docker/compose/proxy/rdepot.conf:/etc/nginx/sites-enabled/rdepot:ro
+    - repository:/opt/rdepot/repo/:ro
+    - logs:/var/log/nginx/
+    ports:
+    - ${RDEPOT_PORT}:80
+    depends_on:
+    - backend
+    - repo
+    - frontend
+    networks:
+    - oa-rdepot
+  db:
+    image: postgres:alpine
+    restart: unless-stopped
+    hostname: oa-rdepot-db
+    container_name: oa-rdepot-db
+    environment:
+    - POSTGRES_DB=rdepot
+    - POSTGRES_USER=rdepot
+    - POSTGRES_PASSWORD=mysecretpassword
+    networks:
+    - oa-rdepot
+  backend:
+    image: openanalytics/rdepot-app:2.4.0
+    restart: unless-stopped
+    hostname: oa-rdepot-backend
+    container_name: oa-rdepot-backend
+    volumes:
+    - repositories:/opt/rdepot/repositories/
+    - snapshots:/opt/rdepot/generated/
+    - queue:/opt/rdepot/new/
+    - ./docker/compose/backend/application.yaml:/opt/rdepot/application.yml
+    networks:
+    - oa-rdepot
+    depends_on:
+    - db
+    environment:
+    - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/rdepot
+    - DB_USERNAME=rdepot
+    - DB_PASSWORD=mysecretpassword
+    - ALLOWED-ORIGIN=http://localhost:${RDEPOT_PORT}
+    healthcheck:
+      test: ["CMD-SHELL", "if [ \"$$(curl -I localhost:8080 2>/dev/null | grep HTTP/1.1 | cut -d\" \" -f2)\" != \"302\" ]; then exit 1; else exit 0; fi;"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+  repo:
+    image: openanalytics/rdepot-repo:2.4.0
+    restart: unless-stopped
+    hostname: oa-rdepot-repo
+    container_name: oa-rdepot-repo
+    volumes:
+    - repository:/opt/rdepot/
+    - ./docker/compose/repo/application.yaml:/opt/repo/application.yml
+    networks:
+    - oa-rdepot
+  frontend:
+    container_name: oa-rdepot-frontend
+    image: openanalytics/rdepot-client:2.4.0
+    restart: unless-stopped
+    networks:
+    - oa-rdepot
+    environment:
+    - VITE_LOGIN_SIMPLE=true
+    - VITE_LOGIN_OIDC=false
+    - VITE_URL_PREFIX=/
+    - VITE_SERVER_ADDRESS=http://localhost:${RDEPOT_PORT}/backend
+networks:
+  oa-rdepot:
+volumes:
+  repository:
+  repositories:
+  snapshots:
+  queue:
+  logs:

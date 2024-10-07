@@ -31,7 +31,6 @@ import eu.openanalytics.rdepot.base.service.PackageService;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
 import eu.openanalytics.rdepot.base.storage.Storage;
-import eu.openanalytics.rdepot.base.storage.exceptions.GenerateManualException;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.upload.DefaultPackageUploadStrategy;
 import eu.openanalytics.rdepot.base.validation.PackageValidator;
@@ -40,6 +39,7 @@ import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.mediator.deletion.RPackageDeleter;
 import eu.openanalytics.rdepot.r.storage.RStorage;
+import eu.openanalytics.rdepot.r.storage.exceptions.GenerateManualException;
 import eu.openanalytics.rdepot.r.synchronization.RRepositorySynchronizer;
 import java.util.Properties;
 

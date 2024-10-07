@@ -18,22 +18,9 @@
  * You should have received a copy of the Apache License
  * along with this program. If not, see <http://www.apache.org/licenses/>
  */
-package eu.openanalytics.rdepot.base.storage.exceptions;
+package eu.openanalytics.rdepot.python.messaging;
 
-import eu.openanalytics.rdepot.base.entities.Package;
-import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
-import java.io.Serial;
-
-/**
- * Thrown when a manual file cannot be generated.
- */
-public class GenerateManualException extends Exception {
-
-    @Serial
-    private static final long serialVersionUID = -657347737809814573L;
-
-    public GenerateManualException(Package packageBag) {
-        super(StaticMessageResolver.getMessage(MessageCodes.COULD_NOT_GENERATE_MANUAL) + ": " + packageBag.toString());
-    }
+public class PythonMessageCodes {
+    public static final String EMPTY_HASH = "empty.hash";
+    public static final String READ_PYTHON_PKG_INFO_EXCEPTION = "read.python.pkg.info.exception";
 }

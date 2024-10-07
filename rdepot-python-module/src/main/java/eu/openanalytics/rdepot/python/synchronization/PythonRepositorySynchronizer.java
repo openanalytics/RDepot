@@ -77,6 +77,24 @@ public class PythonRepositorySynchronizer extends RepositorySynchronizer<PythonR
         storeRepositoryOnRemoteServer(repository, dateStamp, allPackages);
     }
 
+    /**
+     * Triggers a series of actions to generate necessary files and synchronize the remote repository
+     * with the current state of the local repository.
+     * <p>
+     * This process involves organizing the provided packages into the correct storage structure,
+     * generating required files, and sending them to the repo application for synchronization.
+     * The {@code dateStamp} parameter acts as a unique identifier to differentiate synchronizations that
+     * occur at the same time.
+     * </p>
+     *
+     * <p><b>Note:</b> The {@code organizePackagesInStorage} method is responsible for organizing the
+     * Python-related folder structure and linking it as the latest version of the repository.</p>
+     *
+     * @param repository the repository that needs to be synchronized
+     * @param dateStamp  a unique timestamp used as a hash to differentiate synchronization instances
+     * @param packages   the packages to be stored and synchronized in the remote repository
+     * @throws SynchronizeRepositoryException if there is an issue during the synchronization process
+     */
     private synchronized void storeRepositoryOnRemoteServer(
             PythonRepository repository, String dateStamp, List<PythonPackage> packages)
             throws SynchronizeRepositoryException {
@@ -88,6 +106,20 @@ public class PythonRepositorySynchronizer extends RepositorySynchronizer<PythonR
         }
     }
 
+    /**
+     * Generates a request to be sent to the repository application, specifying which packages
+     * should be uploaded or deleted in the remote repository.
+     * <p>
+     * The request will include the packages that need to be uploaded or removed. If a package has
+     * been modified, it should be marked for upload as well. Once the request is successfully sent,
+     * the {@code cleanUpAfterSynchronization} method will be invoked to remove all temporary files
+     * generated during the synchronization process from the storage.
+     * </p>
+     *
+     * @param populatedRepositoryContent the current content of the repository that has been populated
+     * @param repository the repository that is being synchronized
+     * @throws SynchronizeRepositoryException if an error occurs during the synchronization process
+     */
     private void synchronizeRepository(
             PopulatedRepositoryContent populatedRepositoryContent, PythonRepository repository)
             throws SynchronizeRepositoryException {
@@ -120,10 +152,26 @@ public class PythonRepositorySynchronizer extends RepositorySynchronizer<PythonR
             throw new SynchronizeRepositoryException();
         } catch (CleanUpAfterSynchronizationException e) {
             // TODO #32884 We should somehow inform the administrator that it failed and/or revert it
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
+    /**
+     * Divides the given request into smaller chunks if it exceeds the maximum allowed request size,
+     * and sends each chunk as a separate request to the repository application.
+     * <p>
+     * If the size of the request exceeds the maximum request size, the method will partition the request
+     * into manageable chunks. Each chunk is then sent in a separate request to the remote repo app
+     * at the provided server address. The packages will be stored in the specified repository directory.
+     * </p>
+     *
+     * @param request the request body prepared in the {@code synchronizeRepository} method
+     * @param serverAddress the address of the remote server where the repository resides
+     * @param repositoryDirectory the directory where the repository's packages should be stored remotely
+     * @throws SendSynchronizeRequestException if there is an issue with sending the synchronization request
+     * @throws IOException if there is an I/O issue during communication with the server
+     * @throws CheckSumCalculationException if an error occurs while calculating the checksum for verification
+     */
     private void sendSynchronizeRequest(
             SynchronizeRepositoryRequestBody request, String serverAddress, String repositoryDirectory)
             throws SendSynchronizeRequestException, IOException, CheckSumCalculationException {

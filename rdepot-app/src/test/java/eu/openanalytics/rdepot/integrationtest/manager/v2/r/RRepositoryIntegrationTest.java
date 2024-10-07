@@ -20,11 +20,18 @@
  */
 package eu.openanalytics.rdepot.integrationtest.manager.v2.r;
 
+import static io.restassured.RestAssured.given;
+import static org.junit.Assert.assertEquals;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.IntegrationTest;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.RequestType;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.TestRequestBody;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.testData.RepositoryTechnologyTestData;
+import io.restassured.http.ContentType;
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.InputStreamReader;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
@@ -53,6 +60,33 @@ public class RRepositoryIntegrationTest extends IntegrationTest {
                 .deleteEndpointNewEventsAmount(-35)
                 .changeEndpointNewEventsAmount(1)
                 .build();
+    }
+
+    @Test
+    public void getConfig() throws Exception {
+        final String response = given().accept(ContentType.JSON)
+                .header(AUTHORIZATION, BASIC + USER_TOKEN)
+                .when()
+                .get("/api/v2/manager/r/config")
+                .then()
+                .statusCode(200)
+                .extract()
+                .asString();
+
+        final FileReader reader = new FileReader(JSON_PATH + "/v2/r/repositories/r_config.json");
+        final JsonObject expectedResponse = (JsonObject) JsonParser.parseReader(reader);
+        final JsonObject actualResponse = (JsonObject) JsonParser.parseString(response);
+
+        assertEquals("Incorrect public configuration returned.", expectedResponse, actualResponse);
+    }
+
+    @Test
+    public void getConfig_returns401_whenUnauthenticated() throws Exception {
+        given().accept(ContentType.JSON)
+                .when()
+                .get("/api/v2/manager/r/config")
+                .then()
+                .statusCode(401);
     }
 
     @Test
