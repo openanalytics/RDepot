@@ -21,21 +21,39 @@
 package eu.openanalytics.rdepot.r.test.storage;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
+import eu.openanalytics.rdepot.base.email.EmailService;
 import eu.openanalytics.rdepot.base.entities.User;
+import eu.openanalytics.rdepot.base.mediator.BestMaintainerChooser;
+import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
+import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
+import eu.openanalytics.rdepot.base.service.SubmissionService;
 import eu.openanalytics.rdepot.base.storage.implementations.CommonLocalStorage;
+import eu.openanalytics.rdepot.base.validation.PackageValidator;
+import eu.openanalytics.rdepot.r.api.v2.dtos.RPackageUploadRequest;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
+import eu.openanalytics.rdepot.r.mediator.deletion.RPackageDeleter;
+import eu.openanalytics.rdepot.r.services.RPackageService;
+import eu.openanalytics.rdepot.r.services.RRepositoryService;
 import eu.openanalytics.rdepot.r.storage.implementations.RLocalStorage;
 import eu.openanalytics.rdepot.r.storage.utils.PopulatedRepositoryContent;
+import eu.openanalytics.rdepot.r.strategy.upload.RPackageUploadStrategy;
+import eu.openanalytics.rdepot.r.synchronization.RRepositorySynchronizer;
 import eu.openanalytics.rdepot.r.synchronization.SynchronizeRepositoryRequestBody;
+import eu.openanalytics.rdepot.r.validation.RPackageValidator;
 import eu.openanalytics.rdepot.test.fixture.RPackageTestFixture;
 import eu.openanalytics.rdepot.test.fixture.RRepositoryTestFixture;
 import eu.openanalytics.rdepot.test.fixture.UserTestFixture;
 import eu.openanalytics.rdepot.test.unit.UnitTest;
 import java.io.File;
+import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Properties;
+
 import org.apache.http.entity.ContentType;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -196,6 +214,56 @@ public class RLocalStorageTest extends UnitTest {
             }
         }
         return false;
+    }
+
+    @Test
+    public void generateInstallablePackagesFile() throws Exception {
+        final String benchmarkingName = "bea.R";
+        final String benchmarkingLocation = "/repositories/2/89565416/";
+        final File benchmarkingFolder = new File(packageUploadDirectory + benchmarkingLocation + benchmarkingName);
+        final Properties packageProperties = storage.getPropertiesFromExtractedFile(benchmarkingFolder.getAbsolutePath());
+        final String benchmarkingFileName = benchmarkingName + "_1.0.5.tar.gz";
+        final File benchmarkingFile = new File(packageUploadDirectory + benchmarkingLocation + benchmarkingFileName);
+        final FileInputStream fis = new FileInputStream(benchmarkingFile);
+        final byte[] packageBytes = fis.readAllBytes();
+        fis.close();
+        MultipartFile multipartFile = new MockMultipartFile(benchmarkingFileName, benchmarkingFileName, "", packageBytes);
+        RPackageUploadRequest request =
+                new RPackageUploadRequest(multipartFile, RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY(), false, true, false, null, null, null);
+        final RPackageService rPackageService = mock(RPackageService.class);
+        doAnswer(invocation -> invocation.getArgument(0)).when(rPackageService).create(any());
+        final RPackageUploadStrategy rPackageUploadStrategy = new RPackageUploadStrategy(
+                request,
+                UserTestFixture.GET_PACKAGE_MAINTAINER(),
+                mock(NewsfeedEventService.class),
+                mock(SubmissionService.class),
+                mock(RPackageValidator.class),
+                mock(RRepositoryService.class),
+                storage,
+                rPackageService,
+                mock(EmailService.class),
+                mock(BestMaintainerChooser.class),
+                mock(RRepositorySynchronizer.class),
+                mock(SecurityMediator.class),
+                storage,
+                mock(RPackageDeleter.class),
+                request
+        );
+        final RPackage benchmarkingPackage = ReflectionTestUtils.invokeMethod(rPackageUploadStrategy, "createPackage", benchmarkingName, benchmarkingFile, packageProperties);
+        final String packageString = ReflectionTestUtils.invokeMethod(storage, "generatePackageString", benchmarkingPackage);
+        assertEquals("""
+                Package: bea.R
+                Version: 1.0.5
+                Depends: R (>= 3.2.1), data.table
+                Imports: httr, DT, shiny, jsonlite, googleVis, shinydashboard, ggplot2,
+                 stringr, chron, gtable, scales, htmltools, httpuv, xtable,
+                 stringi, magrittr, htmlwidgets, Rcpp, munsell, colorspace,
+                 plyr, yaml
+                License: CC0
+                MD5Sum: 5e664f320c7cc884138d64467f6b0e49
+                NeedsCompilation: no
+                
+                """, packageString);
     }
 
     @Test

@@ -40,6 +40,9 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -271,22 +274,22 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
         final StringBuilder packageString = new StringBuilder(500);
         final String lineSeparator = System.lineSeparator();
 
-        packageString.append("Package: ").append(packageBag.getName()).append(lineSeparator);
-        packageString.append("Version: ").append(packageBag.getVersion()).append(lineSeparator);
+        packageString.append("Package: ").append(separateLines(packageBag.getName(), lineSeparator)).append(lineSeparator);
+        packageString.append("Version: ").append(separateLines(packageBag.getVersion(), lineSeparator)).append(lineSeparator);
         if (packageBag.getDepends() != null && !packageBag.getDepends().trim().isEmpty())
-            packageString.append("Depends: ").append(packageBag.getDepends()).append(lineSeparator);
+            packageString.append("Depends: ").append(separateLines(packageBag.getDepends(), lineSeparator)).append(lineSeparator);
         if (packageBag.getImports() != null && !packageBag.getImports().trim().isEmpty())
-            packageString.append("Imports: ").append(packageBag.getImports()).append(lineSeparator);
+            packageString.append("Imports: ").append(separateLines(packageBag.getImports(), lineSeparator)).append(lineSeparator);
         if (packageBag.getSuggests() != null && !packageBag.getSuggests().trim().isEmpty())
-            packageString.append("Suggests: ").append(packageBag.getSuggests()).append(lineSeparator);
-        packageString.append("License: ").append(packageBag.getLicense()).append(lineSeparator);
+            packageString.append("Suggests: ").append(separateLines(packageBag.getSuggests(), lineSeparator)).append(lineSeparator);
+        packageString.append("License: ").append(separateLines(packageBag.getLicense(), lineSeparator)).append(lineSeparator);
         if (packageBag.getLinkingTo() != null && !packageBag.getLinkingTo().isEmpty())
-            packageString.append("LinkingTo: ").append(packageBag.getLinkingTo());
+            packageString.append("LinkingTo: ").append(separateLines(packageBag.getLinkingTo(), lineSeparator));
         if (packageBag.getEnhances() != null && !packageBag.getEnhances().isEmpty())
-            packageString.append("Enhances: ").append(packageBag.getEnhances());
+            packageString.append("Enhances: ").append(separateLines(packageBag.getEnhances(), lineSeparator));
         if (packageBag.getPriority() != null && !packageBag.getPriority().isEmpty())
-            packageString.append("Priority: ").append(packageBag.getPriority());
-        packageString.append("MD5Sum: ").append(packageBag.getMd5sum()).append(lineSeparator);
+            packageString.append("Priority: ").append(separateLines(packageBag.getPriority(), lineSeparator));
+        packageString.append("MD5Sum: ").append(separateLines(packageBag.getMd5sum(), lineSeparator)).append(lineSeparator);
         packageString
                 .append("NeedsCompilation: ")
                 .append(packageBag.isNeedsCompilation() ? "yes" : "no")
@@ -294,6 +297,10 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
         packageString.append(lineSeparator);
 
         return packageString.toString();
+    }
+
+    private String separateLines(String lines, String lineSeparator) {
+        return lines.replace("\\n", lineSeparator);
     }
 
     @Override

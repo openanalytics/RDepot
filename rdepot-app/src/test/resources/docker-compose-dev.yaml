@@ -19,7 +19,7 @@ services:
 
   app:
     build: ./docker/app
-    # image: openanalytics/rdepot-app-it:2.4.0
+    # image: openanalytics/rdepot-app-it:2.4.1
     restart: always
     hostname: oa-rdepot-app
     # container_name: oa-rdepot-app
@@ -55,7 +55,7 @@ services:
       - oa-rdepot
 
   repo:
-    # image: openanalytics/rdepot-repo-it:2.4.0
+    # image: openanalytics/rdepot-repo-it:2.4.1
     build: ./docker/repo/
     restart: always
     hostname: oa-rdepot-repo
@@ -123,7 +123,7 @@ services:
         #ipv4_address: 192.168.49.17
 
   ldap:
-    image: openanalytics/rdepot-ldap-it:2.4.0
+    image: openanalytics/rdepot-ldap-it:2.4.1
     restart: unless-stopped
     hostname: oa-rdepot-ldap
     # container_name: oa-rdepot-ldap

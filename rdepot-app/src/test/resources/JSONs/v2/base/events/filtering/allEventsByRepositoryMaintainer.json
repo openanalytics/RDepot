@@ -46,7 +46,7 @@
         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
       }],
       "id": 396,
-      "technology": "RDepot version: 2.4.0",
+      "technology": "RDepot version: 2.4.1",
       "time": "2024-01-19T13:42:32.681292",
       "eventType": "create",
       "user": {
@@ -109,7 +109,7 @@
         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
       }],
       "id": 388,
-      "technology": "RDepot version: 2.4.0",
+      "technology": "RDepot version: 2.4.1",
       "time": "2023-07-10T12:36:18.482532",
       "eventType": "upload",
       "user": {
@@ -172,7 +172,7 @@
         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
       }],
       "id": 387,
-      "technology": "RDepot version: 2.4.0",
+      "technology": "RDepot version: 2.4.1",
       "time": "2023-07-10T12:36:04.077593",
       "eventType": "upload",
       "user": {
@@ -211,7 +211,7 @@
         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
       }],
       "id": 386,
-      "technology": "RDepot version: 2.4.0",
+      "technology": "RDepot version: 2.4.1",
       "time": "2023-07-10T12:35:21.693706",
       "eventType": "create",
       "user": {
@@ -250,7 +250,7 @@
         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
       }],
       "id": 385,
-      "technology": "RDepot version: 2.4.0",
+      "technology": "RDepot version: 2.4.1",
       "time": "2023-07-10T12:35:08.081333",
       "eventType": "create",
       "user": {
@@ -289,7 +289,7 @@
         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
       }],
       "id": 384,
-      "technology": "RDepot version: 2.4.0",
+      "technology": "RDepot version: 2.4.1",
       "time": "2023-07-10T12:35:00.699712",
       "eventType": "create",
       "user": {
@@ -328,7 +328,7 @@
         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
       }],
       "id": 383,
-      "technology": "RDepot version: 2.4.0",
+      "technology": "RDepot version: 2.4.1",
       "time": "2023-07-10T12:34:38.748343",
       "eventType": "create",
       "user": {
@@ -396,7 +396,7 @@
         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
       }],
       "id": 382,
-      "technology": "RDepot version: 2.4.0",
+      "technology": "RDepot version: 2.4.1",
       "time": "2023-07-10T12:34:02.690264",
       "eventType": "upload",
       "user": {
@@ -464,7 +464,7 @@
         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
       }],
       "id": 381,
-      "technology": "RDepot version: 2.4.0",
+      "technology": "RDepot version: 2.4.1",
       "time": "2023-07-10T12:33:27.912225",
       "eventType": "upload",
       "user": {
@@ -532,7 +532,7 @@
         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
       }],
       "id": 380,
-      "technology": "RDepot version: 2.4.0",
+      "technology": "RDepot version: 2.4.1",
       "time": "2023-07-10T12:32:32.750608",
       "eventType": "upload",
       "user": {
@@ -600,7 +600,7 @@
         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
       }],
       "id": 379,
-      "technology": "RDepot version: 2.4.0",
+      "technology": "RDepot version: 2.4.1",
       "time": "2023-07-10T12:32:02.044347",
       "eventType": "upload",
       "user": {
@@ -639,7 +639,7 @@
         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
       }],
       "id": 378,
-      "technology": "RDepot version: 2.4.0",
+      "technology": "RDepot version: 2.4.1",
       "time": "2023-07-10T12:25:15.661083",
       "eventType": "create",
       "user": {
@@ -678,7 +678,7 @@
         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
       }],
       "id": 377,
-      "technology": "RDepot version: 2.4.0",
+      "technology": "RDepot version: 2.4.1",
       "time": "2023-07-10T12:24:58.048102",
       "eventType": "create",
       "user": {
@@ -746,7 +746,7 @@
         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
       }],
       "id": 376,
-      "technology": "RDepot version: 2.4.0",
+      "technology": "RDepot version: 2.4.1",
       "time": "2023-07-10T12:22:15.570171",
       "eventType": "upload",
       "user": {
@@ -814,7 +814,7 @@
         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
       }],
       "id": 375,
-      "technology": "RDepot version: 2.4.0",
+      "technology": "RDepot version: 2.4.1",
       "time": "2023-07-10T12:21:47.181563",
       "eventType": "upload",
       "user": {
@@ -882,7 +882,7 @@
         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
       }],
       "id": 374,
-      "technology": "RDepot version: 2.4.0",
+      "technology": "RDepot version: 2.4.1",
       "time": "2023-07-10T12:21:37.544706",
       "eventType": "upload",
       "user": {
@@ -921,7 +921,7 @@
         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
       }],
       "id": 364,
-      "technology": "RDepot version: 2.4.0",
+      "technology": "RDepot version: 2.4.1",
       "time": "2022-09-09T07:18:28.512",
       "eventType": "create",
       "user": {
@@ -964,7 +964,7 @@
         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
       }],
       "id": 183,
-      "technology": "RDepot version: 2.4.0",
+      "technology": "RDepot version: 2.4.1",
       "time": "2020-03-29T10:43:10.333",
       "eventType": "delete",
       "user": {
@@ -1000,7 +1000,7 @@
         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
       }],
       "id": 359,
-      "technology": "RDepot version: 2.4.0",
+      "technology": "RDepot version: 2.4.1",
       "time": "2020-03-29T10:43:10.123",
       "eventType": "update",
       "user": {
@@ -1036,7 +1036,7 @@
         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
       }],
       "id": 358,
-      "technology": "RDepot version: 2.4.0",
+      "technology": "RDepot version: 2.4.1",
       "time": "2020-03-29T10:43:10.117",
       "eventType": "update",
       "user": {
