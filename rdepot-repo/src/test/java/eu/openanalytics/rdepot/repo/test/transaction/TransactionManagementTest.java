@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -75,15 +75,15 @@ public class TransactionManagementTest {
     static final Map<String, String> checksums = new HashMap<>();
 
     static {
-        checksums.put("Benchmarking_0.10.tar.gz", "9a99c2ebefa6d49422ca7893c1f4ead8");
-        checksums.put("PACKAGES", "b9edcc805d4a7f435c18ba670d488d19");
-        checksums.put("PACKAGES.gz", "c4fd38fcf43cce22fa16f61add39960b");
-        checksums.put("usl_2.0.0.tar.gz", "868140a3c3c29327eef5d5a485aee5b6");
-        checksums.put("abc_1.3.tar.gz", "c47d18b86b331a5023dcd62b74fedbb6");
-        checksums.put("accrued_1.2.tar.gz", "70d295115295a4718593f6a39d77add9");
-        checksums.put("accrued_1.3.tar.gz", "a05e4ca44438c0d9e7d713d7e3890423");
-        checksums.put("PACKAGES_ARCHIVE", "11a6d192748004e42797862505409102");
-        checksums.put("PACKAGES_ARCHIVE.gz", "d198474d73e5cc542aa7a0348b104d72");
+        checksums.put("12345_Benchmarking_0.10.tar.gz", "9a99c2ebefa6d49422ca7893c1f4ead8");
+        checksums.put("12346_PACKAGES", "b9edcc805d4a7f435c18ba670d488d19");
+        checksums.put("12347_PACKAGES.gz", "c4fd38fcf43cce22fa16f61add39960b");
+        checksums.put("12348_usl_2.0.0.tar.gz", "868140a3c3c29327eef5d5a485aee5b6");
+        checksums.put("12349_abc_1.3.tar.gz", "c47d18b86b331a5023dcd62b74fedbb6");
+        checksums.put("12340_accrued_1.2.tar.gz", "70d295115295a4718593f6a39d77add9");
+        checksums.put("23456_accrued_1.3.tar.gz", "a05e4ca44438c0d9e7d713d7e3890423");
+        checksums.put("23457_PACKAGES", "11a6d192748004e42797862505409102");
+        checksums.put("23458_PACKAGES.gz", "d198474d73e5cc542aa7a0348b104d72");
     }
 
     private class SubmitFirstChunkCallable implements Callable<MvcResult> {
@@ -119,6 +119,26 @@ public class TransactionManagementTest {
                                     "",
                                     "application/json",
                                     new JSONObject(checksums).toString().getBytes(StandardCharsets.UTF_8)))
+                            .file(new MockMultipartFile(
+                                    "paths",
+                                    "",
+                                    "application/json",
+                                    new JSONObject(Map.of()).toString().getBytes(StandardCharsets.UTF_8)))
+                            .file(new MockMultipartFile(
+                                    "paths_archive",
+                                    "",
+                                    "application/json",
+                                    new JSONObject(Map.of()).toString().getBytes(StandardCharsets.UTF_8)))
+                            .file(new MockMultipartFile(
+                                    "to_delete_paths",
+                                    "",
+                                    "application/json",
+                                    new JSONObject(Map.of()).toString().getBytes(StandardCharsets.UTF_8)))
+                            .file(new MockMultipartFile(
+                                    "to_delete_paths_archive",
+                                    "",
+                                    "application/json",
+                                    new JSONObject(Map.of()).toString().getBytes(StandardCharsets.UTF_8)))
                             .param("version_before", "23")
                             .param("version_after", "24")
                             .param("page", "1/5")
@@ -130,16 +150,17 @@ public class TransactionManagementTest {
     @Test
     public void fourFirstChunksAtOnceForTheSameRepo_onlyOneShouldSucceed() throws Exception {
         final Map<String, byte[]> packages = Map.of(
-                "Benchmarking_0.10.tar.gz", TestUtils.readTestPackage("recent/Benchmarking_0.10.tar.gz"),
-                "usl_2.0.0.tar.gz", TestUtils.readTestPackage("recent/usl_2.0.0.tar.gz"),
-                "accrued_1.3.tar.gz", TestUtils.readTestPackage("archive/accrued_1.3.tar.gz"),
-                "abc_1.3.tar.gz", TestUtils.readTestPackage("archive/abc_1.3.tar.gz"));
+                "Benchmarking_0.10.tar.gz", TestUtils.readTestPackage("recent/12345_Benchmarking_0.10.tar.gz"),
+                "usl_2.0.0.tar.gz", TestUtils.readTestPackage("recent/12348_usl_2.0.0.tar.gz"),
+                "accrued_1.3.tar.gz", TestUtils.readTestPackage("archive/23456_accrued_1.3.tar.gz"),
+                "abc_1.3.tar.gz", TestUtils.readTestPackage("archive/12349_abc_1.3.tar.gz"));
 
         doReturn(List.of(TEST_REPO.getName()))
                 .when(cranFileSystemStorageService)
                 .getAllRepositoryDirectories();
         doReturn(List.of()).when(pythonFileSystemStorageService).getAllRepositoryDirectories();
         doReturn(List.of()).when(cranFileSystemStorageService).getRecentPackagesFromRepository(anyString());
+        doReturn(Map.of()).when(cranFileSystemStorageService).getRecentBinaryPackagesFromRepository(anyString());
         doReturn(Map.of()).when(cranFileSystemStorageService).getArchiveFromRepository(anyString());
         doReturn(File.createTempFile("TRASH_", "430482309482309"))
                 .when(cranFileSystemStorageService)
@@ -163,7 +184,9 @@ public class TransactionManagementTest {
 
         for (Future<MvcResult> f : futures) {
             final MvcResult result = f.get();
-
+            result.getResponse().getContentAsString();
+            result.getResponse().getErrorMessage();
+            result.getRequest();
             if (result.getResponse().getStatus() == MockHttpServletResponse.SC_OK) succeded++;
             else if (result.getResponse().getStatus() == MockHttpServletResponse.SC_BAD_REQUEST) failed++;
             else fail("Wrong status code returned.");
@@ -181,10 +204,10 @@ public class TransactionManagementTest {
     @Test
     public void fourFirstChunksAtOnceForDifferentRepos_allShouldSucceed_andBeProcessed() throws Exception {
         final Map<String, byte[]> packages = Map.of(
-                "Benchmarking_0.10.tar.gz", TestUtils.readTestPackage("recent/Benchmarking_0.10.tar.gz"),
-                "usl_2.0.0.tar.gz", TestUtils.readTestPackage("recent/usl_2.0.0.tar.gz"),
-                "accrued_1.3.tar.gz", TestUtils.readTestPackage("archive/accrued_1.3.tar.gz"),
-                "abc_1.3.tar.gz", TestUtils.readTestPackage("archive/abc_1.3.tar.gz"));
+                "Benchmarking_0.10.tar.gz", TestUtils.readTestPackage("recent/12345_Benchmarking_0.10.tar.gz"),
+                "usl_2.0.0.tar.gz", TestUtils.readTestPackage("recent/12348_usl_2.0.0.tar.gz"),
+                "accrued_1.3.tar.gz", TestUtils.readTestPackage("archive/23456_accrued_1.3.tar.gz"),
+                "abc_1.3.tar.gz", TestUtils.readTestPackage("archive/12349_abc_1.3.tar.gz"));
 
         final List<Repository> repositories = List.of(
                 new Repository(Technology.R, "testrepo123"),
@@ -199,6 +222,7 @@ public class TransactionManagementTest {
         doReturn(Technology.R).when(cranFileSystemStorageService).getTechnology();
         doReturn(Technology.PYTHON).when(pythonFileSystemStorageService).getTechnology();
         doReturn(List.of()).when(cranFileSystemStorageService).getRecentPackagesFromRepository(anyString());
+        doReturn(Map.of()).when(cranFileSystemStorageService).getRecentBinaryPackagesFromRepository(anyString());
         doReturn(Map.of()).when(cranFileSystemStorageService).getArchiveFromRepository(anyString());
         doReturn(File.createTempFile("TRASH_", "430482309482309"))
                 .when(cranFileSystemStorageService)
@@ -242,7 +266,7 @@ public class TransactionManagementTest {
         mockMvc.perform(MockMvcRequestBuilders.multipart("/r/testrepo1")
                         .file(new MockMultipartFile(
                                 "Benchmarking_0.10.tar.gz",
-                                TestUtils.readTestPackage("recent/Benchmarking_0.10.tar.gz")))
+                                TestUtils.readTestPackage("recent/12345_Benchmarking_0.10.tar.gz")))
                         .param("version_before", "23")
                         .param("version_after", "24")
                         .param("page", "3/5")
@@ -264,14 +288,15 @@ public class TransactionManagementTest {
                 true);
         TestConfig.CRAN_BACKUPS.put(
                 transaction,
-                new CranRepositoryBackup(List.of(), List.of(), File.createTempFile("TRASH_", "OLD1234"), "23"));
+                new CranRepositoryBackup(
+                        List.of(), Map.of(), Map.of(), File.createTempFile("TRASH_", "OLD1234"), "23"));
 
         // abort previous transaction
-        doNothing().when(cranFileSystemStorageService).removeNonExistingArchivePackagesFromRepo(anyList(), anyString());
+        doNothing().when(cranFileSystemStorageService).removeNonExistingArchivePackagesFromRepo(anyMap(), anyString());
         doNothing().when(cranFileSystemStorageService).removeNonExistingPackagesFromRepo(anyList(), anyString());
         doNothing().when(cranFileSystemStorageService).restoreTrash(any());
         doNothing().when(cranFileSystemStorageService).setRepositoryVersion(eq(TEST_REPO.getName()), anyString());
-        doNothing().when(cranFileSystemStorageService).generateArchiveRds(TEST_REPO.getName());
+        doNothing().when(cranFileSystemStorageService).generateArchiveRds(eq(TEST_REPO.getName()), anyString());
 
         // handle chunk
         doReturn(List.of(TEST_REPO.getName()))
@@ -279,6 +304,7 @@ public class TransactionManagementTest {
                 .getAllRepositoryDirectories();
         doReturn(List.of()).when(pythonFileSystemStorageService).getAllRepositoryDirectories();
         doReturn(List.of()).when(cranFileSystemStorageService).getRecentPackagesFromRepository(anyString());
+        doReturn(Map.of()).when(cranFileSystemStorageService).getRecentBinaryPackagesFromRepository(anyString());
         doReturn(Map.of()).when(cranFileSystemStorageService).getArchiveFromRepository(anyString());
         doReturn(File.createTempFile("TRASH_", "430482309482309"))
                 .when(cranFileSystemStorageService)
@@ -292,12 +318,32 @@ public class TransactionManagementTest {
         mockMvc.perform(MockMvcRequestBuilders.multipart("/r/" + TEST_REPO.getName())
                         .file(new MockMultipartFile(
                                 "Benchmarking_0.10.tar.gz",
-                                TestUtils.readTestPackage("recent/Benchmarking_0.10.tar.gz")))
+                                TestUtils.readTestPackage("recent/12345_Benchmarking_0.10.tar.gz")))
                         .file(new MockMultipartFile(
                                 "checksums",
                                 "",
                                 "application/json",
                                 new JSONObject(checksums).toString().getBytes(StandardCharsets.UTF_8)))
+                        .file(new MockMultipartFile(
+                                "paths",
+                                "",
+                                "application/json",
+                                new JSONObject(Map.of()).toString().getBytes(StandardCharsets.UTF_8)))
+                        .file(new MockMultipartFile(
+                                "paths_archive",
+                                "",
+                                "application/json",
+                                new JSONObject(Map.of()).toString().getBytes(StandardCharsets.UTF_8)))
+                        .file(new MockMultipartFile(
+                                "to_delete_paths",
+                                "",
+                                "application/json",
+                                new JSONObject(Map.of()).toString().getBytes(StandardCharsets.UTF_8)))
+                        .file(new MockMultipartFile(
+                                "to_delete_paths_archive",
+                                "",
+                                "application/json",
+                                new JSONObject(Map.of()).toString().getBytes(StandardCharsets.UTF_8)))
                         .param("version_before", "23")
                         .param("version_after", "24")
                         .param("page", "1/5")
@@ -305,11 +351,11 @@ public class TransactionManagementTest {
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
 
         // abort previous transaction - verifications
-        verify(cranFileSystemStorageService).removeNonExistingArchivePackagesFromRepo(anyList(), anyString());
+        verify(cranFileSystemStorageService).removeNonExistingArchivePackagesFromRepo(anyMap(), anyString());
         verify(cranFileSystemStorageService).removeNonExistingPackagesFromRepo(anyList(), anyString());
         verify(cranFileSystemStorageService).restoreTrash(any());
         verify(cranFileSystemStorageService).setRepositoryVersion(eq(TEST_REPO.getName()), anyString());
-        verify(cranFileSystemStorageService).generateArchiveRds(TEST_REPO.getName());
+        verify(cranFileSystemStorageService, times(0)).generateArchiveRds(eq(TEST_REPO.getName()), anyString());
 
         // process chunk
         verify(cranFileSystemStorageService).initTrashDirectory(anyString());
@@ -335,7 +381,7 @@ public class TransactionManagementTest {
                                 "filesToUpload",
                                 "Benchmarking_0.10.tar.gz",
                                 "application/gzip",
-                                TestUtils.readTestPackage("recent/Benchmarking_0.10.tar.gz")))
+                                TestUtils.readTestPackage("recent/12345_Benchmarking_0.10.tar.gz")))
                         .param("version_before", "23")
                         .param("version_after", "24")
                         .param("page", "3/5")
@@ -348,7 +394,7 @@ public class TransactionManagementTest {
         mockMvc.perform(MockMvcRequestBuilders.multipart("/r/" + TEST_REPO.getName())
                         .file(new MockMultipartFile(
                                 "Benchmarking_0.10.tar.gz",
-                                TestUtils.readTestPackage("recent/Benchmarking_0.10.tar.gz")))
+                                TestUtils.readTestPackage("recent/12345_Benchmarking_0.10.tar.gz")))
                         .param("version_before", "23")
                         .param("version_after", "24")
                         .param("page", "4/5")
@@ -374,12 +420,32 @@ public class TransactionManagementTest {
                                 "filesToUpload",
                                 "Benchmarking_0.10.tar.gz",
                                 "application/gzip",
-                                TestUtils.readTestPackage("recent/Benchmarking_0.10.tar.gz")))
+                                TestUtils.readTestPackage("recent/12345_Benchmarking_0.10.tar.gz")))
                         .file(new MockMultipartFile(
                                 "checksums",
                                 "",
                                 "application/json",
                                 new JSONObject(checksums).toString().getBytes(StandardCharsets.UTF_8)))
+                        .file(new MockMultipartFile(
+                                "paths",
+                                "",
+                                "application/json",
+                                new JSONObject(Map.of()).toString().getBytes(StandardCharsets.UTF_8)))
+                        .file(new MockMultipartFile(
+                                "paths_archive",
+                                "",
+                                "application/json",
+                                new JSONObject(Map.of()).toString().getBytes(StandardCharsets.UTF_8)))
+                        .file(new MockMultipartFile(
+                                "to_delete_paths",
+                                "",
+                                "application/json",
+                                new JSONObject(Map.of()).toString().getBytes(StandardCharsets.UTF_8)))
+                        .file(new MockMultipartFile(
+                                "to_delete_paths_archive",
+                                "",
+                                "application/json",
+                                new JSONObject(Map.of()).toString().getBytes(StandardCharsets.UTF_8)))
                         .param("version_before", "23")
                         .param("version_after", "24")
                         .param("page", "2/2")
@@ -406,14 +472,34 @@ public class TransactionManagementTest {
         mockMvc.perform(MockMvcRequestBuilders.multipart("/r/" + TEST_REPO.getName())
                         .file(new MockMultipartFile(
                                 "files",
-                                "Benchmarking_0.10.tar.gz",
+                                "12345_Benchmarking_0.10.tar.gz",
                                 "application/gzip",
-                                TestUtils.readTestPackage("recent/Benchmarking_0.10.tar.gz")))
+                                TestUtils.readTestPackage("recent/12345_Benchmarking_0.10.tar.gz")))
                         .file(new MockMultipartFile(
                                 "checksums",
                                 "",
                                 "application/json",
                                 new JSONObject(checksums).toString().getBytes(StandardCharsets.UTF_8)))
+                        .file(new MockMultipartFile(
+                                "paths",
+                                "",
+                                "application/json",
+                                new JSONObject(Map.of()).toString().getBytes(StandardCharsets.UTF_8)))
+                        .file(new MockMultipartFile(
+                                "paths_archive",
+                                "",
+                                "application/json",
+                                new JSONObject(Map.of()).toString().getBytes(StandardCharsets.UTF_8)))
+                        .file(new MockMultipartFile(
+                                "to_delete_paths",
+                                "",
+                                "application/json",
+                                new JSONObject(Map.of()).toString().getBytes(StandardCharsets.UTF_8)))
+                        .file(new MockMultipartFile(
+                                "to_delete_paths_archive",
+                                "",
+                                "application/json",
+                                new JSONObject(Map.of()).toString().getBytes(StandardCharsets.UTF_8)))
                         .param("version_before", "23")
                         .param("version_after", "24")
                         .param("page", "2/3")

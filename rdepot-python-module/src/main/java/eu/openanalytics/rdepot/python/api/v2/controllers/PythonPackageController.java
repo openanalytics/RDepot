@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -26,13 +26,7 @@ import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2Controller;
 import eu.openanalytics.rdepot.base.api.v2.converters.exceptions.EntityResolutionException;
 import eu.openanalytics.rdepot.base.api.v2.dtos.PackageDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.ResponseDto;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.ApiException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.ApplyPatchException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.DeleteException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.MalformedPatchException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.PackageDeletionException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.PackageNotFound;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.UserNotAuthorized;
+import eu.openanalytics.rdepot.base.api.v2.exceptions.*;
 import eu.openanalytics.rdepot.base.api.v2.resolvers.DtoResolvedPageable;
 import eu.openanalytics.rdepot.base.api.v2.resolvers.PackagePageableSortResolver;
 import eu.openanalytics.rdepot.base.api.v2.validation.PageableValidator;
@@ -80,16 +74,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * REST controller implementation for Python packages.
@@ -281,12 +266,12 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
 
             packageBag = strategyExecutor.execute(strategy);
         } catch (EntityResolutionException e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             return handleValidationError(e.getMessage());
         } catch (JsonProcessingException | JsonException e) {
             throw new MalformedPatchException(messageSource, locale, e);
         } catch (StrategyFailure e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new ApplyPatchException(messageSource, locale);
         }
 
@@ -309,7 +294,7 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
             throws ApiException, SynchronizeRepositoryException {
         final PythonPackage packageBag =
                 packageService.findOneDeleted(id).orElseThrow(() -> new PackageNotFound(messageSource, locale));
-        if (!userService.findActiveByLogin(principal.getName()).isPresent()) {
+        if (userService.findActiveByLogin(principal.getName()).isEmpty()) {
             throw new UserNotAuthorized(messageSource, locale);
         }
 
@@ -318,10 +303,10 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
         try {
             deleter.deleteAndSynchronize(packageBag);
         } catch (DeleteEntityException e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new DeleteException(messageSource, locale);
         } catch (SynchronizeRepositoryException e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new SynchronizeRepositoryException();
         }
     }
@@ -339,7 +324,7 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
             throws ApiException {
         PythonPackage packageBag =
                 packageService.findOneNonDeleted(id).orElseThrow(() -> new PackageNotFound(messageSource, locale));
-        byte[] bytes = null;
+        byte[] bytes;
         HttpHeaders httpHeaders = new HttpHeaders();
         HttpStatus httpStatus = HttpStatus.OK;
 

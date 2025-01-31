@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -133,6 +133,71 @@ public class EventsFilteringIntegrationTest extends IntegrationTest {
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
                 .expectedJsonPath("/v2/base/events/filtering/byDates.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getEventsByPackageName() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .urlSuffix("?packageName=abc&sort=id,desc")
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/base/events/filtering/byPackageName.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getEventsByPackageNameAndPackageVersion() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .urlSuffix("?packageName=A3&packageVersion=0.9.2&sort=id,desc")
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/base/events/filtering/byPackageNameAndPackageVersion.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getEventsByRepositoryName() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .urlSuffix("?repositoryName=testrepo1&sort=id,desc")
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/base/events/filtering/byRepositoryName.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getEventsByRepositoryNameAndPackageName() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .urlSuffix("?repositoryName=testrepo3&packageName=A3&sort=id,desc")
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/base/events/filtering/byRepositoryNameAndPackageName.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getEventsByRepositoryNameAndPackageNameAndPackageVersion() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .urlSuffix("?repositoryName=testrepo1&packageName=A3&packageVersion=0.9.1&sort=id,desc")
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/base/events/filtering/byRepositoryNameAndPackageNameAndPackageVersion.json")
                 .build();
         testEndpoint(requestBody);
     }

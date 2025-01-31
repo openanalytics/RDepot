@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -24,6 +24,7 @@ import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.synchronization.RepoResponse;
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
 import org.mockito.invocation.InvocationOnMock;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
@@ -55,7 +56,7 @@ public class UploadMultipleChunksRequestAssertionAnswer extends UploadChunkReque
     @Override
     public ResponseEntity<RepoResponse> answer(InvocationOnMock invocation) throws Throwable {
         final List<List<FileSystemResource>> files = packagesToUpload.stream()
-                .map(l -> l.stream().map(f -> new FileSystemResource(f)).toList())
+                .map(l -> l.stream().map(FileSystemResource::new).toList())
                 .toList();
 
         @SuppressWarnings("unchecked")
@@ -73,7 +74,7 @@ public class UploadMultipleChunksRequestAssertionAnswer extends UploadChunkReque
                         callCount < files.size() ? files.get(callCount) : null));
 
         ResponseEntity<RepoResponse> response = super.answer(invocation);
-        expectedId = response.getBody().getId();
+        expectedId = Objects.requireNonNull(response.getBody()).getId();
         return response;
     }
 }

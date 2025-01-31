@@ -1,76 +1,86 @@
 {
-  "code": 201,
-  "data": {
-    "approver": {
-      "name": "Albert Einstein",
-      "id": 4,
-      "login": "einstein",
-      "email": "einstein@ldap.forumsys.com"
-    },
-    "submitter": {
-      "name": "Albert Einstein",
-      "id": 4,
-      "login": "einstein",
-      "email": "einstein@ldap.forumsys.com"
-    },
-    "changes": null,
-    "links": [{
-      "rel": "self",
-      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/47"
-    }, {
-      "rel": "submissionList",
-      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions"
-    }],
-    "id": 47,
-    "state": "ACCEPTED",
-    "technology": "R",
-    "packageBag": {
-      "author": "Barret Schloerke [aut, cre],\\n Di Cook [aut, ths],\\n Joseph Larmarange [aut],\\n Francois Briatte [aut],\\n Moritz Marbach [aut],\\n Edwin Thoen [aut],\\n Amos Elberg [aut],\\n Ott Toomet [ctb],\\n Jason Crowley [aut],\\n Heike Hofmann [ths],\\n Hadley Wickham [ths]",
-      "active": true,
-      "description": "The R package 'ggplot2' is a plotting system based on the grammar of graphics.\\n 'GGally' extends 'ggplot2' by adding several functions\\n to reduce the complexity of combining geometric objects with transformed data.\\n Some of these functions include a pairwise plot matrix, a two group pairwise plot\\n matrix, a parallel coordinates plot, a survival plot, and several functions to\\n plot networks.",
-      "technology": "R",
-      "repository": {
-        "name": "testrepo2",
-        "id": 3,
-        "published": true,
-        "technology": "R",
-        "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
-      },
-      "title": "Extension to 'ggplot2'",
-      "version": "2.2.1",
-      "url": "https:\/\/ggobi.github.io\/ggally\/, https:\/\/github.com\/ggobi\/ggally",
-      "deleted": false,
-      "binary": false,
-      "name": "GGally",
-      "submission": {
-        "id": 47,
-        "state": "ACCEPTED"
-      },
-      "links": [{
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/47"
-      }, {
-        "rel": "packageList",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
-      }, {
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/47",
-        "type": "PATCH"
-      }, {
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/47",
-        "type": "DELETE"
-      }],
-      "id": 47,
-      "user": {
-        "name": "Albert Einstein",
-        "id": 4,
-        "login": "einstein",
-        "email": "einstein@ldap.forumsys.com"
-      }
-    }
-  },
-  "messageCode": "success.resource.created",
-  "message": "Your resource has been created successfully.",
-  "status": "SUCCESS"
+	"code": 201,
+	"data": {
+		"approver": {
+			"name": "Albert Einstein",
+			"id": 4,
+			"login": "einstein",
+			"email": "einstein@ldap.forumsys.com"
+		},
+		"submitter": {
+			"name": "Albert Einstein",
+			"id": 4,
+			"login": "einstein",
+			"email": "einstein@ldap.forumsys.com"
+		},
+		"changes": "",
+		"links": [
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/48"
+			},
+			{
+				"rel": "submissionList",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions"
+			}
+		],
+		"id": 48,
+		"state": "ACCEPTED",
+		"technology": "R",
+		"packageBag": {
+			"author": "Barret Schloerke [aut, cre],\\n Di Cook [aut, ths],\\n Joseph Larmarange [aut],\\n Francois Briatte [aut],\\n Moritz Marbach [aut],\\n Edwin Thoen [aut],\\n Amos Elberg [aut],\\n Ott Toomet [ctb],\\n Jason Crowley [aut],\\n Heike Hofmann [ths],\\n Hadley Wickham [ths]",
+			"active": true,
+			"description": "The R package 'ggplot2' is a plotting system based on the grammar of graphics.\\n 'GGally' extends 'ggplot2' by adding several functions\\n to reduce the complexity of combining geometric objects with transformed data.\\n Some of these functions include a pairwise plot matrix, a two group pairwise plot\\n matrix, a parallel coordinates plot, a survival plot, and several functions to\\n plot networks.",
+			"technology": "R",
+			"repository": {
+				"name": "testrepo2",
+				"lastPublicationSuccessful": true,
+				"id": 3,
+				"published": true,
+				"technology": "R",
+				"requiresAuthentication": true,
+				"publicationUri": "http:\/\/localhost\/repo\/testrepo2"
+			},
+			"title": "Extension to 'ggplot2'",
+			"version": "2.2.1",
+			"url": "https:\/\/ggobi.github.io\/ggally\/, https:\/\/github.com\/ggobi\/ggally",
+			"deleted": false,
+			"binary": false,
+			"name": "GGally",
+			"submission": {
+				"id": 48,
+				"state": "ACCEPTED"
+			},
+			"links": [
+				{
+					"rel": "self",
+					"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/48"
+				},
+				{
+					"rel": "packageList",
+					"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+				},
+				{
+					"rel": "self",
+					"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/48",
+					"type": "PATCH"
+				},
+				{
+					"rel": "self",
+					"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/48",
+					"type": "DELETE"
+				}
+			],
+			"id": 48,
+			"user": {
+				"name": "Albert Einstein",
+				"id": 4,
+				"login": "einstein",
+				"email": "einstein@ldap.forumsys.com"
+			}
+		}
+	},
+	"messageCode": "success.resource.created",
+	"message": "Your resource has been created successfully.",
+	"status": "SUCCESS"
 }

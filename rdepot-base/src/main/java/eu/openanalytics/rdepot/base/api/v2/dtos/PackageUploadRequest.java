@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -38,4 +38,5 @@ public class PackageUploadRequest<T extends Repository> {
     private T repository;
     private boolean generateManual = true;
     private boolean replace = false;
+    private String changes;
 }

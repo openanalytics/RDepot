@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -40,6 +40,7 @@ public class PythonRepositoryTestFixture {
         repository1.setLastModifiedTimestamp(DateProvider.now());
         repository1.setLastPublicationTimestamp(DateProvider.now());
         repository1.setLastPublicationSuccessful(true);
+        repository1.setRequiresAuthentication(true);
 
         PythonRepository repository2 = new PythonRepository();
         repository2.setId(456);
@@ -51,6 +52,7 @@ public class PythonRepositoryTestFixture {
         repository2.setVersion(5);
         repository2.setLastModifiedTimestamp(DateProvider.now());
         repository2.setLastPublicationSuccessful(false);
+        repository2.setRequiresAuthentication(false);
 
         PythonRepository repository3 = new PythonRepository();
         repository3.setId(321);
@@ -62,6 +64,7 @@ public class PythonRepositoryTestFixture {
         repository3.setVersion(2);
         repository3.setLastModifiedTimestamp(DateProvider.now());
         repository3.setLastPublicationSuccessful(false);
+        repository3.setRequiresAuthentication(false);
 
         return List.of(repository1, repository2, repository3);
     }

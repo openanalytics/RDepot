@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -22,6 +22,7 @@ package eu.openanalytics.rdepot.base.api.v2.controllers;
 
 import eu.openanalytics.rdepot.base.api.v2.dtos.PublicConfigurationDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.ResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
 import java.util.Locale;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -67,6 +68,7 @@ public class ApiV2ConfigController {
     }
 
     @GetMapping
+    @Operation(operationId = "getPublicConfig")
     public ResponseEntity<ResponseDto<PublicConfigurationDto>> getPublicConfig() {
         final ResponseDto<PublicConfigurationDto> dto = ResponseDto.generateSuccessBody(
                 messageSource,

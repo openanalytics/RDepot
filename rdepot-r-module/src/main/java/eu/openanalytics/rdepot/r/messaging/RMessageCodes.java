@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -42,4 +42,5 @@ public class RMessageCodes {
     public static final String COULD_NOT_GET_REFERENCE_MANUAL = "could.not.get.reference.manual";
     public static final String COULD_NOT_GET_VIGNETTE = "could.not.get.vignette";
     public static final String COULD_NOT_GENERATE_MANUAL = "could.not.generate.manual";
+    public static final String GENERATE_MANUAL_NOT_SUPPORTED = "generate.manual.not.supported";
 }

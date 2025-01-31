@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -36,12 +36,15 @@ public class AccessTokenTestFixture {
             "sJqAopeLsh2BBjI8gPkd73NFtWK6RwF"; // 31 characters, cause one char is added in function
     public static final Instant CREATION_DATE; // Instant.of(2023, 11, 24);
     public static final Instant EXPIRATION_DATE; // = LocalDate.of(2023, 12, 23);
+    public static final Instant LAST_USED;
 
     static {
         cal.set(2023, Calendar.NOVEMBER, 24);
         CREATION_DATE = cal.toInstant();
         cal.set(2023, Calendar.DECEMBER, 23);
         EXPIRATION_DATE = cal.toInstant();
+        cal.set(2023, Calendar.DECEMBER, 21, 12, 30);
+        LAST_USED = cal.toInstant();
     }
 
     public static final boolean ACTIVE = true;
@@ -60,7 +63,8 @@ public class AccessTokenTestFixture {
                     EXPIRATION_DATE.plus(i, ChronoUnit.DAYS),
                     ACTIVE,
                     DELETED,
-                    user);
+                    user,
+                    LAST_USED);
 
             accessTokens.add(token);
         }

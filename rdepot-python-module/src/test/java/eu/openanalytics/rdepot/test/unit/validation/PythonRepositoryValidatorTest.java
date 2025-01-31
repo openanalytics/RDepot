@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,9 +20,7 @@
  */
 package eu.openanalytics.rdepot.test.unit.validation;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.validation.RepositoryValidator;
@@ -45,11 +43,10 @@ public class PythonRepositoryValidatorTest {
     @Mock
     PythonRepositoryService pythonRepositoryService;
 
-    private RepositoryValidator<PythonRepository> repositoryValidator;
-
     @Test
-    public void updateRepository_shouldNotAllowChangingRepositoryVersion() throws Exception {
-        repositoryValidator = new PythonRepositoryValidator(pythonRepositoryService);
+    public void updateRepository_shouldNotAllowChangingRepositoryVersion() {
+        RepositoryValidator<PythonRepository> repositoryValidator =
+                new PythonRepositoryValidator(pythonRepositoryService);
         PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
         PythonRepository updatedRepository = new PythonRepository(repository);
         updatedRepository.setVersion(100);

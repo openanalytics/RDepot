@@ -1,44 +1,46 @@
 {
-  "code": 200,
-  "data": {
-    "deleted": false,
-    "links": [
-      {
-        "rel": "self",
-        "href": "http://localhost:8017/api/v2/manager/package-maintainers/3"
-      },
-      {
-        "rel": "packageMaintainerList",
-        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
-      },
-      {
-        "rel": "self",
-        "href": "http://localhost:8017/api/v2/manager/package-maintainers/3",
-        "type": "PATCH"
-      },
-      {
-        "rel": "self",
-        "href": "http://localhost:8017/api/v2/manager/package-maintainers/3",
-        "type": "DELETE"
-      }
-    ],
-    "id": 3,
-    "packageName": "A3",
-    "repository": {
-      "name": "testrepo3",
-      "id": 4,
-      "published": false,
-      "technology": "R",
-      "publicationUri": "http://localhost/repo/testrepo3"
-    },
-    "user": {
-      "name": "Galileo Galilei",
-      "id": 6,
-      "login": "galieleo",
-      "email": "galieleo@ldap.forumsys.com"
-    }
-  },
-  "messageCode": "success.request.processed",
-  "message": "Your request has been processed successfully.",
-  "status": "SUCCESS"
+	"code": 200,
+	"data": {
+		"deleted": false,
+		"links": [
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/3"
+			},
+			{
+				"rel": "packageMaintainerList",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers"
+			},
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/3",
+				"type": "PATCH"
+			},
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/3",
+				"type": "DELETE"
+			}
+		],
+		"id": 3,
+		"packageName": "A3",
+		"repository": {
+			"name": "testrepo3",
+			"lastPublicationSuccessful": false,
+			"id": 4,
+			"published": false,
+			"technology": "R",
+			"requiresAuthentication": true,
+			"publicationUri": "http:\/\/localhost\/repo\/testrepo3"
+		},
+		"user": {
+			"name": "Galileo Galilei",
+			"id": 6,
+			"login": "galieleo",
+			"email": "galieleo@ldap.forumsys.com"
+		}
+	},
+	"messageCode": "success.request.processed",
+	"message": "Your request has been processed successfully.",
+	"status": "SUCCESS"
 }

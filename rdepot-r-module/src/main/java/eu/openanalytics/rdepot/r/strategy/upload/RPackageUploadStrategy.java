@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -124,7 +124,7 @@ public class RPackageUploadStrategy extends DefaultPackageUploadStrategy<RReposi
     protected Submission actualStrategy() throws StrategyFailure {
         Submission submission = super.actualStrategy();
         try {
-            if (request.isGenerateManual()) {
+            if (request.isGenerateManual() && !rPackageRequest.isBinaryPackage()) {
                 rStorage.generateManual(packageBag);
             }
         } catch (GenerateManualException e) {

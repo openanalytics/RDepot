@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -34,11 +34,8 @@ import eu.openanalytics.rdepot.python.api.v2.controllers.PythonPackageController
 import eu.openanalytics.rdepot.python.api.v2.controllers.PythonRepositoryController;
 import eu.openanalytics.rdepot.python.api.v2.controllers.PythonSubmissionController;
 import eu.openanalytics.rdepot.python.technology.PythonLanguage;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
+import java.io.Serial;
+import java.util.*;
 import lombok.NonNull;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.MessageSource;
@@ -57,6 +54,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -94,7 +92,7 @@ public class ApiTestConfig implements WebMvcConfigurer {
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
+        http.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(requests -> requests.requestMatchers("/api/accessdenied")
                         .permitAll()
@@ -184,10 +182,11 @@ public class ApiTestConfig implements WebMvcConfigurer {
     public MessageCodesResolver getMessageCodesResolver() {
         return new DefaultMessageCodesResolver() {
 
+            @Serial
             private static final long serialVersionUID = 1L;
 
             @Override
-            public String[] resolveMessageCodes(String errorCode, String objectName) {
+            public @NonNull String[] resolveMessageCodes(@NonNull String errorCode, @NonNull String objectName) {
                 return new String[] {errorCode};
             }
         };

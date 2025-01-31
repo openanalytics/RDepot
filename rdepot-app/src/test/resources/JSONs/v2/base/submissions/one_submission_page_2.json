@@ -1,0 +1,109 @@
+{
+	"code": 200,
+	"data": {
+		"links": [
+			{
+				"rel": "first",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions?page=0&size=1&sort=state,asc"
+			},
+			{
+				"rel": "prev",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions?page=1&size=1&sort=state,asc"
+			},
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions?page=2&size=1&sort=state,asc"
+			},
+			{
+				"rel": "next",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions?page=3&size=1&sort=state,asc"
+			},
+			{
+				"rel": "last",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions?page=41&size=1&sort=state,asc"
+			}
+		],
+		"page": {
+			"number": 2,
+			"size": 1,
+			"totalPages": 42,
+			"totalElements": 42
+		},
+		"content": [
+			{
+				"approver": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				},
+				"submitter": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				},
+				"created": "2020-03-28T20:03:44Z",
+				"changes": null,
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/6"
+					},
+					{
+						"rel": "submissionList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
+					}
+				],
+				"id": 6,
+				"state": "ACCEPTED",
+				"technology": "R",
+				"packageBag": {
+					"author": "Julie Eaton and Ian Painter",
+					"active": true,
+					"description": "Package for visualizing data quality of partially accruing time series.",
+					"technology": "R",
+					"repository": {
+						"name": "testrepo2",
+						"id": 3,
+						"published": true,
+						"technology": "R",
+						"requiresAuthentication": true,
+						"publicationUri": "http:\/\/localhost\/repo\/testrepo2",
+						"lastPublicationSuccessful": true
+					},
+					"title": "Visualization tools for partially accruing data",
+					"version": "1.2",
+					"url": null,
+					"deleted": false,
+					"binary": false,
+					"name": "accrued",
+					"submission": {
+						"id": 6,
+						"state": "ACCEPTED"
+					},
+					"links": [
+						{
+							"rel": "self",
+							"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/8"
+						},
+						{
+							"rel": "packageList",
+							"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+						}
+					],
+					"id": 8,
+					"user": {
+						"name": "Albert Einstein",
+						"id": 4,
+						"login": "einstein",
+						"email": "einstein@ldap.forumsys.com"
+					}
+				}
+			}
+		]
+	},
+	"messageCode": "success.request.processed",
+	"message": "Your request has been processed successfully.",
+	"status": "SUCCESS"
+}

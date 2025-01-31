@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -21,16 +21,9 @@
 package eu.openanalytics.rdepot.python.storage.implementations;
 
 import eu.openanalytics.rdepot.base.PropertiesParser;
+import eu.openanalytics.rdepot.base.ReadmeParser;
 import eu.openanalytics.rdepot.base.entities.Package;
-import eu.openanalytics.rdepot.base.storage.exceptions.CheckSumCalculationException;
-import eu.openanalytics.rdepot.base.storage.exceptions.CleanUpAfterSynchronizationException;
-import eu.openanalytics.rdepot.base.storage.exceptions.CreateFolderStructureException;
-import eu.openanalytics.rdepot.base.storage.exceptions.DeleteFileException;
-import eu.openanalytics.rdepot.base.storage.exceptions.LinkFoldersException;
-import eu.openanalytics.rdepot.base.storage.exceptions.Md5MismatchException;
-import eu.openanalytics.rdepot.base.storage.exceptions.OrganizePackagesException;
-import eu.openanalytics.rdepot.base.storage.exceptions.PackageFolderPopulationException;
-import eu.openanalytics.rdepot.base.storage.exceptions.ReadPackageDescriptionException;
+import eu.openanalytics.rdepot.base.storage.exceptions.*;
 import eu.openanalytics.rdepot.base.storage.implementations.CommonLocalStorage;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
@@ -52,6 +45,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -89,7 +83,36 @@ public class PythonLocalStorage extends CommonLocalStorage<PythonRepository, Pyt
     public Properties getPropertiesFromExtractedFile(final String extractedFile)
             throws ReadPackageDescriptionException {
         try {
-            return new PropertiesParser(new File(extractedFile + separator + "PKG-INFO"));
+            Properties properties = new PropertiesParser(new File(extractedFile + separator + "PKG-INFO"));
+            if (Objects.nonNull(properties.getProperty("Description"))) return properties;
+
+            String fileExtension = "";
+            switch (properties.getProperty("Description-Content-Type")) {
+                case "text/markdown": {
+                    fileExtension = ".md";
+                    break;
+                }
+                case "text/x-rst": {
+                    fileExtension = ".rst";
+                    break;
+                }
+                default:
+                    break;
+            }
+            if (Files.exists(Paths.get(extractedFile + separator + "README" + fileExtension))) {
+                properties.setProperty(
+                        "Description",
+                        ReadmeParser.loadReadme(new File(extractedFile + separator + "README" + fileExtension)));
+            } else if (Files.exists(Paths.get(extractedFile + separator + "Readme" + fileExtension))) {
+                properties.setProperty(
+                        "Description",
+                        ReadmeParser.loadReadme(new File(extractedFile + separator + "Readme" + fileExtension)));
+            } else if (Files.exists(Paths.get(extractedFile + separator + "readme" + fileExtension))) {
+                properties.setProperty(
+                        "Description",
+                        ReadmeParser.loadReadme(new File(extractedFile + separator + "readme" + fileExtension)));
+            }
+            return properties;
         } catch (IOException e) {
             try {
                 deleteFile(new File(extractedFile).getParentFile());

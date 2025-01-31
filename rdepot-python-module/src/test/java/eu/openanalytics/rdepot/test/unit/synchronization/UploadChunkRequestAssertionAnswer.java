@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,9 +20,7 @@
  */
 package eu.openanalytics.rdepot.test.unit.synchronization;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.synchronization.RepoResponse;
@@ -46,21 +44,21 @@ public class UploadChunkRequestAssertionAnswer implements Answer<ResponseEntity<
     protected void assertChunk(MultiValueMap<String, Object> entity, UploadChunkRequestAssertion assertion) {
         if (callCount == 0) {
             assertTrue(
-                    List.of(assertion.getExpectedId()).equals(entity.get("id")),
+                    List.of(assertion.expectedId()).equals(entity.get("id")),
                     "For the first chunk, the id should be empty.");
             assertEquals(
-                    List.of(assertion.getExpectedVersionBefore()),
+                    List.of(assertion.expectedVersionBefore()),
                     entity.get("version_before"),
                     "Incorrect version before the request.");
             assertEquals(
-                    List.of(assertion.getExpectedVersionAfter()),
+                    List.of(assertion.expectedVersionAfter()),
                     entity.get("version_after"),
                     "Incorrect version after the request.");
-            assertEquals(assertion.getExpectedPages(), entity.get("page"), "Incorrect number of chunks.");
-            assertEquals(assertion.getExpectedToDelete(), entity.get("to_delete"), "Incorrect packages to delete.");
+            assertEquals(assertion.expectedPages(), entity.get("page"), "Incorrect number of chunks.");
+            assertEquals(assertion.expectedToDelete(), entity.get("to_delete"), "Incorrect packages to delete.");
         }
 
-        List<File> filesFromAssertion = assertion.getFilesToUpload().stream()
+        List<File> filesFromAssertion = assertion.filesToUpload().stream()
                 .map(f -> f.getFile().getAbsoluteFile())
                 .collect(Collectors.toList());
         List<File> filesFromEntity = entity.get("files").stream()

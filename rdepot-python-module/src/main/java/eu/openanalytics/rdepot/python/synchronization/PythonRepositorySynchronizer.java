@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -35,14 +35,13 @@ import eu.openanalytics.rdepot.python.storage.PythonStorage;
 import eu.openanalytics.rdepot.python.storage.utils.PopulatedRepositoryContent;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,8 +53,10 @@ import org.springframework.web.client.RestTemplate;
 @Component
 @RequiredArgsConstructor
 public class PythonRepositorySynchronizer extends RepositorySynchronizer<PythonRepository> {
+    public static final Comparator<PythonPackage> PACKAGE_COMPARATOR = Comparator.comparingInt(PythonPackage::getId);
     private final PythonStorage storage;
     private final PythonPackageService packageService;
+    private final PythonRequestBodyPartitioner pythonRequestBodyPartitioner;
     private final RestTemplate rest;
 
     @Value("${local-storage.max-request-size}")
@@ -63,10 +64,6 @@ public class PythonRepositorySynchronizer extends RepositorySynchronizer<PythonR
 
     @Value("${declarative}")
     private String declarative;
-
-    private int chunksSize = 0;
-
-    public static final Comparator<PythonPackage> PACKAGE_COMPARATOR = Comparator.comparingInt(PythonPackage::getId);
 
     @Override
     @Transactional
@@ -117,7 +114,7 @@ public class PythonRepositorySynchronizer extends RepositorySynchronizer<PythonR
      * </p>
      *
      * @param populatedRepositoryContent the current content of the repository that has been populated
-     * @param repository the repository that is being synchronized
+     * @param repository                 the repository that is being synchronized
      * @throws SynchronizeRepositoryException if an error occurs during the synchronization process
      */
     private void synchronizeRepository(
@@ -148,7 +145,7 @@ public class PythonRepositorySynchronizer extends RepositorySynchronizer<PythonR
             sendSynchronizeRequest(requestBody, serverAndPort, repositoryDirectory);
             storage.cleanUpAfterSynchronization(populatedRepositoryContent);
         } catch (SendSynchronizeRequestException | IOException | CheckSumCalculationException e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new SynchronizeRepositoryException();
         } catch (CleanUpAfterSynchronizationException e) {
             // TODO #32884 We should somehow inform the administrator that it failed and/or revert it
@@ -165,21 +162,19 @@ public class PythonRepositorySynchronizer extends RepositorySynchronizer<PythonR
      * at the provided server address. The packages will be stored in the specified repository directory.
      * </p>
      *
-     * @param request the request body prepared in the {@code synchronizeRepository} method
-     * @param serverAddress the address of the remote server where the repository resides
+     * @param request             the request body prepared in the {@code synchronizeRepository} method
+     * @param serverAddress       the address of the remote server where the repository resides
      * @param repositoryDirectory the directory where the repository's packages should be stored remotely
      * @throws SendSynchronizeRequestException if there is an issue with sending the synchronization request
-     * @throws IOException if there is an I/O issue during communication with the server
-     * @throws CheckSumCalculationException if an error occurs while calculating the checksum for verification
+     * @throws IOException                     if there is an I/O issue during communication with the server
+     * @throws CheckSumCalculationException    if an error occurs while calculating the checksum for verification
      */
     private void sendSynchronizeRequest(
             SynchronizeRepositoryRequestBody request, String serverAddress, String repositoryDirectory)
             throws SendSynchronizeRequestException, IOException, CheckSumCalculationException {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
-        List<MultiValueMap<String, Object>> chunks = request.toChunks(maxRequestSize);
-        chunksSize = chunks.size();
+        List<MultiValueMap<String, Object>> chunks = pythonRequestBodyPartitioner.toChunks(request, maxRequestSize);
+        int chunksSize = chunks.size();
 
         log.debug("Sending chunk to repo...");
 
@@ -193,20 +188,21 @@ public class PythonRepositorySynchronizer extends RepositorySynchronizer<PythonR
                         serverAddress + "/python/" + repositoryDirectory, entity, RepoResponse.class);
 
                 if (!httpResponse.getStatusCode().is2xxSuccessful()
-                        || !Objects.equals(httpResponse.getBody().getMessage(), "OK")) {
+                        || !Objects.equals(
+                                Objects.requireNonNull(httpResponse.getBody()).getMessage(), "OK")) {
                     throw new SendSynchronizeRequestException();
                 }
 
                 id = httpResponse.getBody().getId();
             }
         } catch (RestClientException e) {
-            log.error(e.getClass().getCanonicalName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getCanonicalName(), e.getMessage(), e);
             throw new SendSynchronizeRequestException();
         } finally {
             IntStream.range(0, chunksSize).forEachOrdered(chunkNo -> {
-                String dirToRemovePath = FilesHierarchy.getArchiveDirectory(
+                Path dirToRemovePath = FilesHierarchy.getArchiveDirectory(
                         request.getFilesToUpload().get(0), chunkNo);
-                File dirToRemove = new File(dirToRemovePath);
+                File dirToRemove = dirToRemovePath.toFile();
                 if (dirToRemove.exists()) {
                     FilesHierarchy.deleteDirectory(dirToRemove);
                 }

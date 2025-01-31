@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -22,9 +22,12 @@ package eu.openanalytics.rdepot.python.synchronization;
 
 import java.io.File;
 import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FilesHierarchy {
 
@@ -33,13 +36,10 @@ public class FilesHierarchy {
     public static boolean isRepositoryDir(File file) {
         File repositoryIndex =
                 new File(file.getParentFile().getParentFile().getAbsolutePath() + SEPARATOR + "index.html");
-        if (repositoryIndex.exists()) {
-            return false;
-        }
-        return true;
+        return !repositoryIndex.exists();
     }
 
-    public static String getArchiveDirectory(File file, int chunkNo) {
+    public static Path getArchiveDirectory(File file, int chunkNo) {
         File archiveDirectory;
         if (!isRepositoryDir(file)) {
             archiveDirectory = new File(
@@ -48,20 +48,20 @@ public class FilesHierarchy {
             archiveDirectory = new File(file.getParentFile().getParentFile().getAbsolutePath() + SEPARATOR + chunkNo);
         }
 
-        if (!archiveDirectory.exists()) {
-            archiveDirectory.mkdir();
+        if (!archiveDirectory.exists() && !archiveDirectory.mkdir()) {
+            log.error("Could not create archive directory: {}", archiveDirectory);
         }
-        ;
-        return archiveDirectory.getAbsolutePath();
+        return archiveDirectory.toPath();
     }
 
     public static boolean deleteDirectory(File directoryToBeDeleted) {
         File[] allContents = directoryToBeDeleted.listFiles();
+        boolean result = true;
         if (allContents != null) {
             for (File file : allContents) {
-                deleteDirectory(file);
+                result = result && deleteDirectory(file);
             }
         }
-        return directoryToBeDeleted.delete();
+        return result && directoryToBeDeleted.delete();
     }
 }

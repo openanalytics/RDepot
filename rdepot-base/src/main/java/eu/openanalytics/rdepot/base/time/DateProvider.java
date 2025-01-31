@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -74,6 +74,8 @@ public class DateProvider {
     }
 
     public static Instant timestampToInstant(@NonNull String timestamp) {
+        if (timestamp.isEmpty()) return Instant.EPOCH;
+
         final DateTimeFormatter dtf = DateTimeFormatter.ISO_INSTANT;
         return dtf.parse(timestamp, Instant::from);
     }

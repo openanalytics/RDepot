@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -32,6 +32,7 @@ import eu.openanalytics.rdepot.r.storage.exceptions.ReadPackageVignetteException
 import eu.openanalytics.rdepot.r.storage.utils.PopulatedRepositoryContent;
 import eu.openanalytics.rdepot.r.synchronization.SynchronizeRepositoryRequestBody;
 import java.util.List;
+import org.springframework.util.MultiValueMap;
 
 /**
  * Provides features specific for R Packages storage management.
@@ -48,6 +49,8 @@ public interface RStorage extends Storage<RRepository, RPackage> {
             PopulatedRepositoryContent populatedRepositoryContent,
             List<String> remoteLatestPackages,
             List<String> remoteArchivePackages,
+            MultiValueMap<String, String> remoteLatestBinaryPackages,
+            MultiValueMap<String, String> remoteArchiveBinaryPackages,
             RRepository repository,
             String versionBefore);
 
@@ -62,6 +65,9 @@ public interface RStorage extends Storage<RRepository, RPackage> {
             List<RPackage> packages,
             List<RPackage> latestPackages,
             List<RPackage> archivePackages,
+            List<RPackage> binaryPackages,
+            List<RPackage> archiveBinaryPackages,
+            List<RPackage> latestBinaryPackages,
             RRepository repository)
             throws OrganizePackagesException;
 

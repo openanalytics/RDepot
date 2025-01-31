@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,18 +20,10 @@
  */
 package eu.openanalytics.rdepot.python.test.strategy;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import eu.openanalytics.rdepot.base.PropertiesParser;
 import eu.openanalytics.rdepot.base.api.v2.dtos.PackageUploadRequest;
@@ -61,7 +53,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.mock.web.MockMultipartFile;
 
@@ -98,7 +89,7 @@ public class PythonUploadStrategyTest extends StrategyTest {
     @Test
     public void createSubmission_whenUserIsAdmin() throws Exception {
         // Prerequisites
-        FileInputStream fis = new FileInputStream(new File(TEST_PACKAGE_PATH));
+        FileInputStream fis = new FileInputStream(TEST_PACKAGE_PATH);
         byte[] packageBytes = fis.readAllBytes();
         fis.close();
 
@@ -113,34 +104,26 @@ public class PythonUploadStrategyTest extends StrategyTest {
         boolean replace = false;
 
         PackageUploadRequest<PythonRepository> request =
-                new PackageUploadRequest<>(multipartFile, repository, generateManual, replace);
+                new PackageUploadRequest<>(multipartFile, repository, generateManual, replace, "");
 
         when(storage.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
         when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath())).thenReturn(extracted.getAbsolutePath());
         when(storage.getPropertiesFromExtractedFile(extracted.getAbsolutePath()))
                 .thenReturn(new PropertiesParser(new File(TEST_PACKAGE_EXTRACTED + "/PKG-INFO")));
-        doAnswer(new Answer<Submission>() {
-
-                    @Override
-                    public Submission answer(InvocationOnMock invocation) throws Throwable {
-                        Submission submission = invocation.getArgument(0);
-                        submission.setId(123);
-                        return submission;
-                    }
+        doAnswer((Answer<Submission>) invocation -> {
+                    Submission submission = invocation.getArgument(0);
+                    submission.setId(123);
+                    return submission;
                 })
                 .when(submissionService)
                 .create(any());
         when(storage.moveToMainDirectory(any())).thenReturn(uploadedFile.getAbsolutePath());
         when(bestMaintainerChooser.chooseBestPackageMaintainer(any())).thenReturn(requester);
         when(securityMediator.canUpload("coconutpy", repository, requester)).thenReturn(true);
-        doAnswer(new Answer<PythonPackage>() {
-
-                    @Override
-                    public PythonPackage answer(InvocationOnMock invocation) throws Throwable {
-                        PythonPackage packageBag = invocation.getArgument(0);
-                        packageBag.setId(123);
-                        return packageBag;
-                    }
+        doAnswer((Answer<PythonPackage>) invocation -> {
+                    PythonPackage packageBag = invocation.getArgument(0);
+                    packageBag.setId(123);
+                    return packageBag;
                 })
                 .when(packageService)
                 .create(any());
@@ -149,23 +132,7 @@ public class PythonUploadStrategyTest extends StrategyTest {
                 .validateUploadPackage(any(), eq(replace), any(DataSpecificValidationResult.class));
 
         // Execution
-        Strategy<Submission> strategy = new PythonPackageUploadStrategy(
-                request,
-                requester,
-                eventService,
-                submissionService,
-                packageValidator,
-                repositoryService,
-                storage,
-                packageService,
-                emailService,
-                bestMaintainerChooser,
-                repositorySynchronizer,
-                securityMediator,
-                deleter);
-
-        Submission submission = strategy.perform();
-        PythonPackage packageBag = (PythonPackage) submission.getPackage();
+        PythonPackage packageBag = getPythonPackage(request, requester);
         String source = packageBag.getSource();
 
         // Assertions
@@ -186,6 +153,12 @@ public class PythonUploadStrategyTest extends StrategyTest {
         assertEquals(PythonLanguage.instance, packageBag.getTechnology(), "Incorrect technology");
         assertEquals(123, packageBag.getId(), "Incorrect id");
         assertEquals("Bruno Celeste", packageBag.getAuthor(), "Incorrect author");
+    }
+
+    private PythonPackage getPythonPackage(PackageUploadRequest<PythonRepository> request, User requester)
+            throws StrategyFailure {
+        Submission submission = getSubmission(request, requester);
+        return (PythonPackage) submission.getPackage();
     }
 
     private String expectedDescription() {
@@ -218,7 +191,7 @@ public class PythonUploadStrategyTest extends StrategyTest {
     @SuppressWarnings("unchecked")
     @Test
     public void createSubmission_shouldSendEmail_whenUserIsNotAllowedToAccept() throws Exception {
-        FileInputStream fis = new FileInputStream(new File(TEST_PACKAGE_PATH));
+        FileInputStream fis = new FileInputStream(TEST_PACKAGE_PATH);
         byte[] packageBytes = fis.readAllBytes();
         fis.close();
 
@@ -233,33 +206,25 @@ public class PythonUploadStrategyTest extends StrategyTest {
         boolean replace = false;
 
         PackageUploadRequest<PythonRepository> request =
-                new PackageUploadRequest<>(multipartFile, repository, generateManual, replace);
+                new PackageUploadRequest<>(multipartFile, repository, generateManual, replace, "");
 
         when(storage.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
         when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath())).thenReturn(extracted.getAbsolutePath());
         when(storage.getPropertiesFromExtractedFile(extracted.getAbsolutePath()))
                 .thenReturn(new PropertiesParser(new File(TEST_PACKAGE_EXTRACTED + "/PKG-INFO")));
-        doAnswer(new Answer<Submission>() {
-
-                    @Override
-                    public Submission answer(InvocationOnMock invocation) throws Throwable {
-                        Submission submission = invocation.getArgument(0);
-                        submission.setId(123);
-                        return submission;
-                    }
+        doAnswer((Answer<Submission>) invocation -> {
+                    Submission submission = invocation.getArgument(0);
+                    submission.setId(123);
+                    return submission;
                 })
                 .when(submissionService)
                 .create(any());
         when(bestMaintainerChooser.chooseBestPackageMaintainer(any())).thenReturn(requester);
         when(securityMediator.canUpload("coconutpy", repository, requester)).thenReturn(false);
-        doAnswer(new Answer<PythonPackage>() {
-
-                    @Override
-                    public PythonPackage answer(InvocationOnMock invocation) throws Throwable {
-                        PythonPackage packageBag = invocation.getArgument(0);
-                        packageBag.setId(123);
-                        return packageBag;
-                    }
+        doAnswer((Answer<PythonPackage>) invocation -> {
+                    PythonPackage packageBag = invocation.getArgument(0);
+                    packageBag.setId(123);
+                    return packageBag;
                 })
                 .when(packageService)
                 .create(any());
@@ -268,6 +233,14 @@ public class PythonUploadStrategyTest extends StrategyTest {
                 .validateUploadPackage(any(), eq(replace), any(DataSpecificValidationResult.class));
         doNothing().when(emailService).sendAcceptSubmissionEmail(any());
 
+        Submission submission = getSubmission(request, requester);
+
+        assertFalse(submission.getPackage().isActive(), "Package should not be activated.");
+        verify(emailService, times(1)).sendAcceptSubmissionEmail(submission);
+    }
+
+    private Submission getSubmission(PackageUploadRequest<PythonRepository> request, User requester)
+            throws StrategyFailure {
         Strategy<Submission> strategy = new PythonPackageUploadStrategy(
                 request,
                 requester,
@@ -282,15 +255,12 @@ public class PythonUploadStrategyTest extends StrategyTest {
                 repositorySynchronizer,
                 securityMediator,
                 deleter);
-        Submission submission = strategy.perform();
-
-        assertFalse(submission.getPackage().isActive(), "Package should not be activated.");
-        verify(emailService, times(1)).sendAcceptSubmissionEmail(submission);
+        return strategy.perform();
     }
 
     @Test
     public void createSubmission_whenStorageFailsToWriteToWaitingRoom() throws Exception {
-        FileInputStream fis = new FileInputStream(new File(TEST_PACKAGE_PATH));
+        FileInputStream fis = new FileInputStream(TEST_PACKAGE_PATH);
         byte[] packageBytes = fis.readAllBytes();
         fis.close();
 
@@ -303,7 +273,7 @@ public class PythonUploadStrategyTest extends StrategyTest {
         boolean replace = false;
 
         PackageUploadRequest<PythonRepository> request =
-                new PackageUploadRequest<>(multipartFile, repository, generateManual, replace);
+                new PackageUploadRequest<>(multipartFile, repository, generateManual, replace, "");
 
         doThrow(new WriteToWaitingRoomException()).when(storage).writeToWaitingRoom(multipartFile, repository);
 
@@ -330,7 +300,7 @@ public class PythonUploadStrategyTest extends StrategyTest {
 
     @Test
     public void createSubmissionAndAttemptToCleanUp_whenExtractionFails() throws Exception {
-        FileInputStream fis = new FileInputStream(new File(TEST_PACKAGE_PATH));
+        FileInputStream fis = new FileInputStream(TEST_PACKAGE_PATH);
         byte[] packageBytes = fis.readAllBytes();
         fis.close();
 
@@ -344,7 +314,7 @@ public class PythonUploadStrategyTest extends StrategyTest {
         boolean replace = false;
 
         PackageUploadRequest<PythonRepository> request =
-                new PackageUploadRequest<>(multipartFile, repository, generateManual, replace);
+                new PackageUploadRequest<>(multipartFile, repository, generateManual, replace, "");
 
         when(storage.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
         doThrow(new ExtractFileException()).when(storage).extractTarGzPackageFile(uploadedFile.getAbsolutePath());
@@ -372,7 +342,7 @@ public class PythonUploadStrategyTest extends StrategyTest {
 
     @Test
     public void createSubmissionAndAttemptToCleanUp_whenReadingPropertiesFails() throws Exception {
-        FileInputStream fis = new FileInputStream(new File(TEST_PACKAGE_PATH));
+        FileInputStream fis = new FileInputStream(TEST_PACKAGE_PATH);
         byte[] packageBytes = fis.readAllBytes();
         fis.close();
 
@@ -387,7 +357,7 @@ public class PythonUploadStrategyTest extends StrategyTest {
         boolean replace = false;
 
         PackageUploadRequest<PythonRepository> request =
-                new PackageUploadRequest<>(multipartFile, repository, generateManual, replace);
+                new PackageUploadRequest<>(multipartFile, repository, generateManual, replace, "");
 
         when(storage.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
         when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath())).thenReturn(extracted.getAbsolutePath());
@@ -423,7 +393,7 @@ public class PythonUploadStrategyTest extends StrategyTest {
     @SuppressWarnings("unchecked")
     @Test
     public void createSubmissionAndRemovePackageSource_whenValidationFails() throws Exception {
-        FileInputStream fis = new FileInputStream(new File(TEST_PACKAGE_PATH));
+        FileInputStream fis = new FileInputStream(TEST_PACKAGE_PATH);
         byte[] packageBytes = fis.readAllBytes();
         fis.close();
 
@@ -438,7 +408,7 @@ public class PythonUploadStrategyTest extends StrategyTest {
         boolean replace = false;
 
         PackageUploadRequest<PythonRepository> request =
-                new PackageUploadRequest<>(multipartFile, repository, generateManual, replace);
+                new PackageUploadRequest<>(multipartFile, repository, generateManual, replace, "");
 
         when(storage.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
         when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath())).thenReturn(extracted.getAbsolutePath());

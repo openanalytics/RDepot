@@ -1,0 +1,37 @@
+{
+  "code": 200,
+  "data": {
+    "active": false,
+    "deleted": true,
+    "email": "admin@localhost",
+    "id": 8,
+    "links": [
+      {
+        "href": "http://localhost:8017/api/v2/manager/users/8",
+        "rel": "self"
+      },
+      {
+        "href": "http://localhost:8017/api/v2/manager/users",
+        "rel": "userList"
+      },
+      {
+        "href": "http://localhost:8017/api/v2/manager/users/8",
+        "rel": "self",
+        "type": "PATCH",
+        "modifiableProperties": [
+          "deleted",
+          "active",
+          "roleId"
+        ]
+      }
+    ],
+    "login": "admin",
+    "name": "Local Admin User",
+    "role": "admin",
+    "roleId": 4,
+    "userSettings": null
+  },
+  "message": "Your request has been processed successfully.",
+  "messageCode": "success.request.processed",
+  "status": "SUCCESS"
+}

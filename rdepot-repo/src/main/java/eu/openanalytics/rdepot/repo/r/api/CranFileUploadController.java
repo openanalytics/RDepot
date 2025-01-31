@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -53,6 +53,10 @@ public class CranFileUploadController extends FileUploadController<SynchronizeCr
             @RequestParam("version_after") String versionAfter,
             @RequestParam("page") String page,
             @RequestParam("id") String id,
+            @RequestPart("paths") Map<String, String> pathsToUpload,
+            @RequestPart("paths_archive") Map<String, String> pathsToUploadToArchive,
+            @RequestPart("to_delete_paths") Map<String, String> pathsToDelete,
+            @RequestPart("to_delete_paths_archive") Map<String, String> pathsToDeleteFromArchive,
             @RequestPart("checksums") Map<String, String> checksums) {
 
         SynchronizeCranRepositoryRequestBody requestBody = new SynchronizeCranRepositoryRequestBody(
@@ -65,6 +69,10 @@ public class CranFileUploadController extends FileUploadController<SynchronizeCr
                 versionAfter,
                 page,
                 repository,
+                pathsToUpload,
+                pathsToUploadToArchive,
+                pathsToDelete,
+                pathsToDeleteFromArchive,
                 checksums);
 
         return handleSynchronizeRequest(requestBody);

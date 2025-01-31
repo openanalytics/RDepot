@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -23,10 +23,7 @@ package eu.openanalytics.rdepot.test.unit.api.v2;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -65,7 +62,6 @@ import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -89,6 +85,15 @@ import org.springframework.web.multipart.MultipartFile;
 @Import({ApiTestConfig.class})
 public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2ControllerUnitTest {
 
+    private static final String JSON_PATH = "src/test/resources/unit/jsons";
+    private static final String TEST_PACKAGE_PATH =
+            "src/test/resources/unit/test_packages/strategy_tests/coconutpy-2.2.1.tar.gz";
+    private static final String EXAMPLE_SUBMISSION_CREATED_PATH = JSON_PATH + "/example_submission_created.json";
+    private static final String ERROR_SUBMISSION_DUPLICATE_PATH = JSON_PATH + "/error_submission_duplicate.json";
+    private static final String WARNING_SUBMISSION_DUPLICATE_PATH = JSON_PATH + "/warning_submission_duplicate.json";
+    private static final String WARNING_PACKAGE_REPLACE_DISABLED_PATH =
+            JSON_PATH + "/warning_package_replace_disabled.json";
+
     @Autowired
     MockMvc mockMvc;
 
@@ -106,20 +111,11 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
     @Autowired
     WebApplicationContext webApplicationContext;
 
-    private Optional<User> user;
-
-    private static final String JSON_PATH = "src/test/resources/unit/jsons";
-    private static final String TEST_PACKAGE_PATH =
-            "src/test/resources/unit/test_packages/strategy_tests/coconutpy-2.2.1.tar.gz";
-    private static final String EXAMPLE_SUBMISSION_CREATED_PATH = JSON_PATH + "/example_submission_created.json";
-    private static final String ERROR_SUBMISSION_DUPLICATE_PATH = JSON_PATH + "/error_submission_duplicate.json";
-    private static final String WARNING_SUBMISSION_DUPLICATE_PATH = JSON_PATH + "/warning_submission_duplicate.json";
-    private static final String WARNING_PACKAGE_REPLACE_DISABLED_PATH =
-            JSON_PATH + "/warning_package_replace_disabled.json";
+    private User user;
 
     @BeforeEach
     public void initEach() {
-        user = Optional.of(UserTestFixture.GET_ADMIN());
+        user = UserTestFixture.GET_ADMIN();
         DateProvider.setTestDate(LocalDateTime.of(2024, 4, 12, 0, 0)
                 .atZone(ZoneId.systemDefault())
                 .toInstant());
@@ -132,42 +128,39 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
         final byte[] packageFile = Files.readAllBytes(Path.of(TEST_PACKAGE_PATH));
         final MockMultipartFile multipartFile = new MockMultipartFile(
                 "file", "coconutpy-2.2.1.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
-        final Boolean generateManuals = true;
-        final Boolean replace = false;
+        final boolean generateManuals = true;
+        final boolean replace = false;
 
-        final Submission submission = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get())
-                .getSubmission();
+        final Submission submission =
+                PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user).getSubmission();
         submission.setState(SubmissionState.WAITING);
-        Strategy<Submission> strategy = Mockito.spy(
-                new SuccessfulStrategy<Submission>(submission, newsfeedEventService, submissionService, user.get()));
+        Strategy<Submission> strategy =
+                Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user));
         final PackageDto packageDto = PythonPackageTestFixture.GET_EXAMPLE_PACKAGE_DTO(submission.getPackageBag());
         final SubmissionDto submissionDto =
                 PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, submission.getPackageBag());
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
         when(pythonRepositoryService.findByNameAndDeleted(any(String.class), eq(false)))
                 .thenReturn(Optional.of(repository));
         doNothing().when(pythonPackageValidator).validate(any(), any(ValidationResult.class));
         when(commonPackageDtoConverter.convertEntityToDto(any())).thenReturn(packageDto);
         when(submissionDtoConverter.convertEntityToDto(submission)).thenReturn(submissionDto);
-        when(pythonStrategyFactory.uploadPackageStrategy(any(), any())).thenAnswer(new Answer<Strategy<Submission>>() {
-
-            @Override
-            public Strategy<Submission> answer(InvocationOnMock invocation) throws Throwable {
-                PackageUploadRequest<PythonRepository> request = invocation.getArgument(0);
-                assertEquals(packageFile, request.getFileData().getBytes());
-                assertEquals(repository.getName(), request.getRepository().getName());
-                assertEquals(replace, request.isReplace());
-                assertEquals(generateManuals, request.isGenerateManual());
-                return strategy;
-            }
-        });
+        when(pythonStrategyFactory.uploadPackageStrategy(any(), any()))
+                .thenAnswer((Answer<Strategy<Submission>>) invocation -> {
+                    PackageUploadRequest<PythonRepository> request = invocation.getArgument(0);
+                    assertEquals(packageFile, request.getFileData().getBytes());
+                    assertEquals(repository.getName(), request.getRepository().getName());
+                    assertEquals(replace, request.isReplace());
+                    assertEquals(generateManuals, request.isGenerateManual());
+                    return strategy;
+                });
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v2/manager/python/submissions")
                         .file(multipartFile)
                         .param("repository", repository.getName())
-                        .param("generateManual", generateManuals.toString())
-                        .param("replace", replace.toString()))
+                        .param("generateManual", Boolean.toString(generateManuals))
+                        .param("replace", Boolean.toString(replace)))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(Files.readString(Path.of(EXAMPLE_SUBMISSION_CREATED_PATH))));
     }
@@ -179,14 +172,14 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
         final byte[] packageFile = Files.readAllBytes(Path.of(TEST_PACKAGE_PATH));
         final MockMultipartFile multipartFile = new MockMultipartFile(
                 "file", "coconutpy-2.2.1.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
-        final Boolean generateManuals = true;
-        final Boolean replace = false;
+        final boolean generateManuals = true;
+        final boolean replace = false;
 
-        final PythonPackage packageBag = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get());
+        final PythonPackage packageBag = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
         final Submission submission = packageBag.getSubmission();
         submission.setState(SubmissionState.WAITING);
-        Strategy<Submission> strategy = Mockito.spy(
-                new DuplicatePackageStrategy(submission, submissionService, user.get(), newsfeedEventService));
+        Strategy<Submission> strategy =
+                Mockito.spy(new DuplicatePackageStrategy(submission, submissionService, user, newsfeedEventService));
 
         final SubmissionDto submissionDto =
                 PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, submission.getPackageBag());
@@ -194,7 +187,7 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
 
         doReturn(packageDto).when(commonPackageDtoConverter).convertEntityToDto(packageBag);
         doReturn(submissionDto).when(submissionDtoConverter).convertEntityToDto(submission);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
         when(pythonStrategyFactory.uploadPackageStrategy(any(), any())).thenReturn(strategy);
         when(pythonRepositoryService.findByNameAndDeleted(any(String.class), eq(false)))
                 .thenReturn(Optional.of(repository));
@@ -203,7 +196,7 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v2/manager/python/submissions")
                         .file(multipartFile)
                         .param("repository", repository.getName())
-                        .param("generateManual", generateManuals.toString())
+                        .param("generateManual", Boolean.toString(generateManuals))
                         .param("replace", Boolean.toString(replace)))
                 .andExpect(status().isOk())
                 .andExpect(content().json(Files.readString(Path.of(WARNING_SUBMISSION_DUPLICATE_PATH))));
@@ -216,14 +209,14 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
         final byte[] packageFile = Files.readAllBytes(Path.of(TEST_PACKAGE_PATH));
         final MockMultipartFile multipartFile = new MockMultipartFile(
                 "file", "coconutpy-2.2.1.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
-        final Boolean generateManuals = true;
-        final Boolean replace = true;
+        final boolean generateManuals = true;
+        final boolean replace = true;
 
-        final PythonPackage packageBag = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get());
+        final PythonPackage packageBag = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
         final Submission submission = packageBag.getSubmission();
         submission.setState(SubmissionState.WAITING);
-        Strategy<Submission> strategy = Mockito.spy(
-                new DuplicatePackageStrategy(submission, submissionService, user.get(), newsfeedEventService));
+        Strategy<Submission> strategy =
+                Mockito.spy(new DuplicatePackageStrategy(submission, submissionService, user, newsfeedEventService));
 
         final SubmissionDto submissionDto =
                 PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, submission.getPackageBag());
@@ -231,7 +224,7 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
 
         doReturn(packageDto).when(commonPackageDtoConverter).convertEntityToDto(packageBag);
         doReturn(submissionDto).when(submissionDtoConverter).convertEntityToDto(submission);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
         when(pythonStrategyFactory.uploadPackageStrategy(any(), any())).thenReturn(strategy);
         when(pythonRepositoryService.findByNameAndDeleted(any(String.class), eq(false)))
                 .thenReturn(Optional.of(repository));
@@ -240,7 +233,7 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v2/manager/python/submissions")
                         .file(multipartFile)
                         .param("repository", repository.getName())
-                        .param("generateManual", generateManuals.toString())
+                        .param("generateManual", Boolean.toString(generateManuals))
                         .param("replace", Boolean.toString(replace)))
                 .andExpect(status().isOk())
                 .andExpect(content().json(Files.readString(Path.of(WARNING_PACKAGE_REPLACE_DISABLED_PATH))));
@@ -269,33 +262,30 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
         final byte[] packageFile = Files.readAllBytes(Path.of(TEST_PACKAGE_PATH));
         final MockMultipartFile multipartFile = new MockMultipartFile(
                 "file", "abc_1.3.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
-        final Boolean generateManuals = true;
-        final Boolean replace = false;
-        final Submission submission = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get())
-                .getSubmission();
-        Strategy<Submission> strategy = Mockito.spy(
-                new SuccessfulStrategy<Submission>(submission, newsfeedEventService, submissionService, user.get()));
+        final boolean generateManuals = true;
+        final boolean replace = false;
+        final Submission submission =
+                PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user).getSubmission();
+        Strategy<Submission> strategy =
+                Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user));
 
         when(pythonRepositoryService.findByNameAndDeleted(REPOSITORY_NAME, false))
                 .thenReturn(Optional.of(repository));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        doAnswer(new Answer<>() {
-                    @Override
-                    public Object answer(InvocationOnMock invocation) throws Throwable {
-                        ValidationResult validationResult = invocation.getArgument(1, ValidationResult.class);
-                        validationResult.error("MULTIPART-FILE", MessageCodes.INVALID_FILENAME);
-                        return null;
-                    }
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
+        doAnswer((Answer<Object>) invocation -> {
+                    ValidationResult validationResult = invocation.getArgument(1, ValidationResult.class);
+                    validationResult.error("MULTIPART-FILE", MessageCodes.INVALID_FILENAME);
+                    return null;
                 })
                 .when(pythonPackageValidator)
                 .validate(any(MultipartFile.class), any());
-        when(pythonStrategyFactory.uploadPackageStrategy(any(), eq(user.get()))).thenReturn(strategy);
+        when(pythonStrategyFactory.uploadPackageStrategy(any(), eq(user))).thenReturn(strategy);
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v2/manager/python/submissions")
                         .file(multipartFile)
                         .param("repository", REPOSITORY_NAME)
-                        .param("generateManual", generateManuals.toString())
-                        .param("replace", replace.toString()))
+                        .param("generateManual", Boolean.toString(generateManuals))
+                        .param("replace", Boolean.toString(replace)))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().json(Files.readString(Path.of(ERROR_SUBMISSION_DUPLICATE_PATH))));
     }
@@ -307,23 +297,23 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
         final byte[] packageFile = Files.readAllBytes(Path.of(TEST_PACKAGE_PATH));
         final MockMultipartFile multipartFile = new MockMultipartFile(
                 "file", "abc_1.3.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
-        final Boolean generateManuals = true;
-        final Boolean replace = false;
-        final Submission submission = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get())
-                .getSubmission();
-        Strategy<Submission> strategy = Mockito.spy(
-                new FailureStrategy<Submission>(submission, newsfeedEventService, submissionService, user.get()));
+        final boolean generateManuals = true;
+        final boolean replace = false;
+        final Submission submission =
+                PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user).getSubmission();
+        Strategy<Submission> strategy =
+                Mockito.spy(new FailureStrategy<>(submission, newsfeedEventService, submissionService, user));
 
-        when(pythonStrategyFactory.uploadPackageStrategy(any(), eq(user.get()))).thenReturn(strategy);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(pythonStrategyFactory.uploadPackageStrategy(any(), eq(user))).thenReturn(strategy);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
         when(pythonRepositoryService.findByNameAndDeleted(any(String.class), eq(false)))
                 .thenReturn(Optional.of(repository));
 
         ResultActions result = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v2/manager/python/submissions")
                         .file(multipartFile)
                         .param("repository", repository.getName())
-                        .param("generateManual", generateManuals.toString())
-                        .param("replace", replace.toString()))
+                        .param("generateManual", Boolean.toString(generateManuals))
+                        .param("replace", Boolean.toString(replace)))
                 .andExpect(status().isInternalServerError());
         TestUtils.matchInternalServerErrorCreate(result);
     }

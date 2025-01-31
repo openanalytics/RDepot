@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -207,6 +207,7 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
         Submission submission = new Submission();
         submission.setSubmitter(requester);
         submission.setPackage(packageBag);
+        submission.setChanges(request.getChanges());
         log.debug("Submission {} created.", submission);
 
         if (securityMediator.canUpload(packageBag.getName(), packageBag.getRepository(), requester)) {

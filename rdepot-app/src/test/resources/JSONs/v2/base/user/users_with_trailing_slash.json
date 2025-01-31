@@ -1,1 +1,246 @@
-{"code":200,"data":{"links":[{"rel":"self","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users\/?page=0&size=20&sort=id,asc"}],"page":{"number":0,"size":20,"totalPages":1,"totalElements":7},"content":[{"deleted":false,"role":"admin","userSettings":{"pageSize":20,"language":"pl-PL","theme":"light"},"roleId":4,"name":"Albert Einstein","active":true,"links":[{"rel":"self","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users\/4"},{"rel":"userList","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users"},{"rel":"self","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users\/4","type":"PATCH"},{"rel":"self","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users\/4","type":"DELETE"}],"id":4,"login":"einstein","email":"einstein@ldap.forumsys.com"},{"deleted":false,"role":"repositorymaintainer","userSettings":{"pageSize":10,"language":"pl-PL","theme":"light"},"roleId":3,"name":"Nikola Tesla","active":true,"links":[{"rel":"self","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users\/5"},{"rel":"userList","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users"},{"rel":"self","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users\/5","type":"PATCH"},{"rel":"self","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users\/5","type":"DELETE"}],"id":5,"login":"tesla","email":"tesla@ldap.forumsys.com"},{"deleted":false,"role":"packagemaintainer","userSettings":null,"roleId":2,"name":"Galileo Galilei","active":true,"links":[{"rel":"self","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users\/6"},{"rel":"userList","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users"},{"rel":"self","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users\/6","type":"PATCH"},{"rel":"self","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users\/6","type":"DELETE"}],"id":6,"login":"galieleo","email":"galieleo@ldap.forumsys.com"},{"deleted":false,"role":"user","userSettings":null,"roleId":1,"name":"Isaac Newton","active":true,"links":[{"rel":"self","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users\/7"},{"rel":"userList","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users"},{"rel":"self","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users\/7","type":"PATCH"},{"rel":"self","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users\/7","type":"DELETE"}],"id":7,"login":"newton","email":"newton@ldap.forumsys.com"},{"deleted":false,"role":"admin","userSettings":null,"roleId":4,"name":"Local Admin User","active":false,"links":[{"rel":"self","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users\/8"},{"rel":"userList","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users"},{"rel":"self","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users\/8","type":"PATCH"},{"rel":"self","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users\/8","type":"DELETE"}],"id":8,"login":"admin","email":"admin@localhost"},{"deleted":false,"role":"user","userSettings":null,"roleId":1,"name":"John Doe","active":false,"links":[{"rel":"self","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users\/9"},{"rel":"userList","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users"},{"rel":"self","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users\/9","type":"PATCH"},{"rel":"self","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users\/9","type":"DELETE"}],"id":9,"login":"doe","email":"doe@localhost"},{"deleted":false,"role":"user","userSettings":null,"roleId":1,"name":"Alfred Tarski","active":true,"links":[{"rel":"self","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users\/10"},{"rel":"userList","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users"},{"rel":"self","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users\/10","type":"PATCH"},{"rel":"self","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users\/10","type":"DELETE"}],"id":10,"login":"tarski","email":"tarski@localhost"}]},"messageCode":"success.request.processed","message":"Your request has been processed successfully.","status":"SUCCESS"}
+{
+  "code": 200,
+  "data": {
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/users/?page=0&size=20&sort=id,asc"
+      }
+    ],
+    "page": {
+      "number": 0,
+      "size": 20,
+      "totalPages": 1,
+      "totalElements": 7
+    },
+    "content": [
+      {
+        "deleted": false,
+        "role": "admin",
+        "userSettings": {
+          "pageSize": 20,
+          "language": "pl-PL",
+          "theme": "light"
+        },
+        "roleId": 4,
+        "name": "Albert Einstein",
+        "active": true,
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/users/4"
+          },
+          {
+            "rel": "userList",
+            "href": "http://localhost:8017/api/v2/manager/users"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/users/4",
+            "type": "PATCH",
+            "modifiableProperties": [
+              "active",
+              "roleId"
+            ]
+          }
+        ],
+        "id": 4,
+        "login": "einstein",
+        "email": "einstein@ldap.forumsys.com"
+      },
+      {
+        "deleted": false,
+        "role": "repositorymaintainer",
+        "userSettings": {
+          "pageSize": 10,
+          "language": "pl-PL",
+          "theme": "light"
+        },
+        "roleId": 3,
+        "name": "Nikola Tesla",
+        "active": true,
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/users/5"
+          },
+          {
+            "rel": "userList",
+            "href": "http://localhost:8017/api/v2/manager/users"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/users/5",
+            "type": "PATCH",
+            "modifiableProperties": [
+              "deleted",
+              "active",
+              "roleId"
+            ]
+          }
+        ],
+        "id": 5,
+        "login": "tesla",
+        "email": "tesla@ldap.forumsys.com"
+      },
+      {
+        "deleted": false,
+        "role": "packagemaintainer",
+        "userSettings": null,
+        "roleId": 2,
+        "name": "Galileo Galilei",
+        "active": true,
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/users/6"
+          },
+          {
+            "rel": "userList",
+            "href": "http://localhost:8017/api/v2/manager/users"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/users/6",
+            "type": "PATCH",
+            "modifiableProperties": [
+              "deleted",
+              "active",
+              "roleId"
+            ]
+          }
+        ],
+        "id": 6,
+        "login": "galieleo",
+        "email": "galieleo@ldap.forumsys.com"
+      },
+      {
+        "deleted": false,
+        "role": "user",
+        "userSettings": null,
+        "roleId": 1,
+        "name": "Isaac Newton",
+        "active": true,
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/users/7"
+          },
+          {
+            "rel": "userList",
+            "href": "http://localhost:8017/api/v2/manager/users"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/users/7",
+            "type": "PATCH",
+            "modifiableProperties": [
+              "deleted",
+              "active",
+              "roleId"
+            ]
+          }
+        ],
+        "id": 7,
+        "login": "newton",
+        "email": "newton@ldap.forumsys.com"
+      },
+      {
+        "deleted": false,
+        "role": "admin",
+        "userSettings": null,
+        "roleId": 4,
+        "name": "Local Admin User",
+        "active": false,
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/users/8"
+          },
+          {
+            "rel": "userList",
+            "href": "http://localhost:8017/api/v2/manager/users"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/users/8",
+            "type": "PATCH",
+            "modifiableProperties": [
+              "deleted",
+              "active",
+              "roleId"
+            ]
+          }
+        ],
+        "id": 8,
+        "login": "admin",
+        "email": "admin@localhost"
+      },
+      {
+        "deleted": false,
+        "role": "user",
+        "userSettings": null,
+        "roleId": 1,
+        "name": "John Doe",
+        "active": false,
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/users/9"
+          },
+          {
+            "rel": "userList",
+            "href": "http://localhost:8017/api/v2/manager/users"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/users/9",
+            "type": "PATCH",
+            "modifiableProperties": [
+              "deleted",
+              "active",
+              "roleId"
+            ]
+          }
+        ],
+        "id": 9,
+        "login": "doe",
+        "email": "doe@localhost"
+      },
+      {
+        "deleted": false,
+        "role": "user",
+        "userSettings": null,
+        "roleId": 1,
+        "name": "Alfred Tarski",
+        "active": true,
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/users/10"
+          },
+          {
+            "rel": "userList",
+            "href": "http://localhost:8017/api/v2/manager/users"
+          },
+          {
+            "rel": "self",
+            "href": "http://localhost:8017/api/v2/manager/users/10",
+            "type": "PATCH",
+            "modifiableProperties": [
+              "deleted",
+              "active",
+              "roleId"
+            ]
+          }
+        ],
+        "id": 10,
+        "login": "tarski",
+        "email": "tarski@localhost"
+      }
+    ]
+  },
+  "messageCode": "success.request.processed",
+  "message": "Your request has been processed successfully.",
+  "status": "SUCCESS"
+}

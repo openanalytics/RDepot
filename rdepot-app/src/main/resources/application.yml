@@ -108,6 +108,7 @@ package:
     - 4.2
     - 4.3
     - 4.4
+    - 4.5
   architectures:
     - x86_64
     - x86

@@ -39,7 +39,7 @@
           "login": "einstein",
           "email": "einstein@ldap.forumsys.com"
         },
-        "changes": null,
+        "changes": "",
         "links": [
           {
             "rel": "self",
@@ -105,7 +105,7 @@
           "login": "einstein",
           "email": "einstein@ldap.forumsys.com"
         },
-        "changes": null,
+        "changes": "",
         "links": [
           {
             "rel": "self",
@@ -171,7 +171,7 @@
           "login": "einstein",
           "email": "einstein@ldap.forumsys.com"
         },
-        "changes": null,
+        "changes": "",
         "links": [
           {
             "rel": "self",
@@ -237,7 +237,7 @@
           "login": "einstein",
           "email": "einstein@ldap.forumsys.com"
         },
-        "changes": null,
+        "changes": "",
         "links": [
           {
             "rel": "self",
@@ -303,7 +303,7 @@
           "login": "einstein",
           "email": "einstein@ldap.forumsys.com"
         },
-        "changes": null,
+        "changes": "",
         "links": [
           {
             "rel": "self",
@@ -369,7 +369,7 @@
           "login": "einstein",
           "email": "einstein@ldap.forumsys.com"
         },
-        "changes": null,
+        "changes": "",
         "links": [
           {
             "rel": "self",
@@ -435,7 +435,7 @@
           "login": "einstein",
           "email": "einstein@ldap.forumsys.com"
         },
-        "changes": null,
+        "changes": "",
         "links": [
           {
             "rel": "self",
@@ -501,7 +501,7 @@
           "login": "einstein",
           "email": "einstein@ldap.forumsys.com"
         },
-        "changes": null,
+        "changes": "",
         "links": [
           {
             "rel": "self",
@@ -567,7 +567,7 @@
           "login": "einstein",
           "email": "einstein@ldap.forumsys.com"
         },
-        "changes": null,
+        "changes": "",
         "links": [
           {
             "rel": "self",
@@ -633,7 +633,7 @@
           "login": "einstein",
           "email": "einstein@ldap.forumsys.com"
         },
-        "changes": null,
+        "changes": "",
         "links": [
           {
             "rel": "self",
@@ -699,7 +699,7 @@
           "login": "einstein",
           "email": "einstein@ldap.forumsys.com"
         },
-        "changes": null,
+        "changes": "",
         "links": [
           {
             "rel": "self",
@@ -765,7 +765,7 @@
           "login": "einstein",
           "email": "einstein@ldap.forumsys.com"
         },
-        "changes": null,
+        "changes": "",
         "links": [
           {
             "rel": "self",
@@ -831,7 +831,7 @@
           "login": "newton",
           "email": "newton@ldap.forumsys.com"
         },
-        "changes": null,
+        "changes": "",
         "links": [
           {
             "rel": "self",
@@ -897,7 +897,7 @@
           "login": "newton",
           "email": "newton@ldap.forumsys.com"
         },
-        "changes": null,
+        "changes": "",
         "links": [
           {
             "rel": "self",
@@ -963,7 +963,7 @@
           "login": "newton",
           "email": "newton@ldap.forumsys.com"
         },
-        "changes": null,
+        "changes": "",
         "links": [
           {
             "rel": "self",
@@ -1024,7 +1024,7 @@
           "login": "newton",
           "email": "newton@ldap.forumsys.com"
         },
-        "changes": null,
+        "changes": "",
         "links": [
           {
             "rel": "self",
@@ -1090,7 +1090,7 @@
           "login": "newton",
           "email": "newton@ldap.forumsys.com"
         },
-        "changes": null,
+        "changes": "",
         "links": [
           {
             "rel": "self",
@@ -1156,7 +1156,7 @@
           "login": "galieleo",
           "email": "galieleo@ldap.forumsys.com"
         },
-        "changes": null,
+        "changes": "",
         "links": [
           {
             "rel": "self",
@@ -1222,7 +1222,7 @@
           "login": "galieleo",
           "email": "galieleo@ldap.forumsys.com"
         },
-        "changes": null,
+        "changes": "",
         "links": [
           {
             "rel": "self",
@@ -1288,7 +1288,7 @@
           "login": "galieleo",
           "email": "galieleo@ldap.forumsys.com"
         },
-        "changes": null,
+        "changes": "",
         "links": [
           {
             "rel": "self",

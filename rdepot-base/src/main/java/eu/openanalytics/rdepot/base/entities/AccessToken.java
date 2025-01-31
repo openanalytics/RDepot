@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -63,6 +63,9 @@ public class AccessToken extends EventableResource implements Serializable {
     @Column(name = "active", nullable = false)
     private boolean active;
 
+    @Column(name = "last_used", nullable = true)
+    private Instant lastUsed;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -75,32 +78,21 @@ public class AccessToken extends EventableResource implements Serializable {
     }
 
     public AccessToken(
-            String name, String value, Instant creationDate, Instant expirationDate, boolean active, boolean deleted) {
-        this();
-        this.name = name;
-        this.value = value;
-        this.creationDate = creationDate;
-        this.expirationDate = expirationDate;
-        this.active = active;
-        this.deleted = deleted;
-    }
-
-    public AccessToken(
-            int id,
             String name,
             String value,
             Instant creationDate,
             Instant expirationDate,
             boolean active,
-            boolean deleted) {
+            boolean deleted,
+            Instant lastUsed) {
         this();
-        this.id = id;
         this.name = name;
         this.value = value;
         this.creationDate = creationDate;
         this.expirationDate = expirationDate;
         this.active = active;
         this.deleted = deleted;
+        this.lastUsed = lastUsed;
     }
 
     public AccessToken(
@@ -111,7 +103,28 @@ public class AccessToken extends EventableResource implements Serializable {
             Instant expirationDate,
             boolean active,
             boolean deleted,
-            User user) {
+            Instant lastUsed) {
+        this();
+        this.id = id;
+        this.name = name;
+        this.value = value;
+        this.creationDate = creationDate;
+        this.expirationDate = expirationDate;
+        this.active = active;
+        this.deleted = deleted;
+        this.lastUsed = lastUsed;
+    }
+
+    public AccessToken(
+            int id,
+            String name,
+            String value,
+            Instant creationDate,
+            Instant expirationDate,
+            boolean active,
+            boolean deleted,
+            User user,
+            Instant lastUsed) {
         this();
         this.id = id;
         this.name = name;
@@ -121,9 +134,10 @@ public class AccessToken extends EventableResource implements Serializable {
         this.active = active;
         this.user = user;
         this.deleted = deleted;
+        this.lastUsed = lastUsed;
     }
 
-    public AccessToken(AccessTokenDto dto, Instant creationDate, Instant expirationDate) {
+    public AccessToken(AccessTokenDto dto, Instant creationDate, Instant expirationDate, Instant lastUsed) {
         this();
         this.id = dto.getId();
         this.name = dto.getName();
@@ -132,6 +146,7 @@ public class AccessToken extends EventableResource implements Serializable {
         this.expirationDate = expirationDate;
         this.active = dto.isActive();
         this.deleted = dto.isDeleted();
+        this.lastUsed = lastUsed;
     }
 
     public AccessToken(AccessToken that) {
@@ -145,6 +160,7 @@ public class AccessToken extends EventableResource implements Serializable {
         this.user = that.user;
         this.deleted = that.deleted;
         this.plainValue = that.plainValue;
+        this.lastUsed = that.lastUsed;
     }
 
     @Override

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -32,10 +32,6 @@ public class SubmissionMultipartBody {
     private String repository;
     private Boolean generateManual;
     private Boolean replace;
+    private String changes;
     private MultiPartSpecification multipartFile;
-
-    public SubmissionMultipartBody(String repository, MultiPartSpecification multipartFile) {
-        this.repository = repository;
-        this.multipartFile = multipartFile;
-    }
 }

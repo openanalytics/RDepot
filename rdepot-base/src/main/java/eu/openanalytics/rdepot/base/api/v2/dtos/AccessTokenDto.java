@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -41,6 +41,7 @@ public class AccessTokenDto implements IDto {
     private boolean active;
     private boolean deleted;
     private UserProjection user;
+    private String lastUsed;
 
     public AccessTokenDto(AccessToken entity) {
         this.entity = entity;
@@ -52,6 +53,7 @@ public class AccessTokenDto implements IDto {
         this.active = entity.isActive();
         this.deleted = entity.isDeleted();
         this.user = new UserProjection(entity.getUser());
+        this.lastUsed = entity.getLastUsed() != null ? DateProvider.instantToTimestamp(entity.getLastUsed()) : "";
     }
 
     @Override

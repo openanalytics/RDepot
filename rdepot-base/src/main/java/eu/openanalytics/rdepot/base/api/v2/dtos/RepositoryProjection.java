@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -38,7 +38,9 @@ public class RepositoryProjection {
     private String name;
     private String publicationUri;
     private boolean published;
+    private boolean requiresAuthentication;
     private String technology;
+    private boolean lastPublicationSuccessful;
 
     public RepositoryProjection(Repository repository) {
         this.id = repository.getId();
@@ -46,5 +48,7 @@ public class RepositoryProjection {
         this.publicationUri = repository.getPublicationUri();
         this.technology = repository.getTechnology().getName();
         this.published = repository.getPublished();
+        this.requiresAuthentication = repository.getRequiresAuthentication();
+        this.lastPublicationSuccessful = repository.isLastPublicationSuccessful();
     }
 }

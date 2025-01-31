@@ -1,0 +1,901 @@
+{
+	"code": 200,
+	"data": {
+		"links": [
+			{
+				"rel": "first",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events?repositoryName=testrepo1&page=0&size=20&sort=id,desc"
+			},
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events?repositoryName=testrepo1&page=0&size=20&sort=id,desc"
+			},
+			{
+				"rel": "next",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events?repositoryName=testrepo1&page=1&size=20&sort=id,desc"
+			},
+			{
+				"rel": "last",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events?repositoryName=testrepo1&page=4&size=20&sort=id,desc"
+			}
+		],
+		"page": {
+			"number": 0,
+			"size": 20,
+			"totalPages": 5,
+			"totalElements": 100
+		},
+		"content": [
+			{
+				"relatedResource": {
+					"deleted": false,
+					"id": 1,
+					"repository": {
+						"name": "testrepo1",
+						"lastPublicationSuccessful": true,
+						"id": 2,
+						"published": true,
+						"technology": "R",
+						"requiresAuthentication": false,
+						"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+					},
+					"user": {
+						"name": "Nikola Tesla",
+						"id": 5,
+						"login": "tesla",
+						"email": "tesla@ldap.forumsys.com"
+					}
+				},
+				"resourceId": 1,
+				"changedProperties": [
+					{
+						"valueAfter": "",
+						"property": "created",
+						"valueBefore": ""
+					}
+				],
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events\/360"
+					},
+					{
+						"rel": "eventList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
+					}
+				],
+				"id": 360,
+				"technology": "RDepot version: 2.5.0",
+				"time": "2020-03-28T20:04:24Z",
+				"eventType": "create",
+				"user": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				},
+				"resourceType": "REPOSITORY_MAINTAINER"
+			},
+			{
+				"relatedResource": {
+					"deleted": false,
+					"synchronizing": false,
+					"name": "testrepo1",
+					"serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo1",
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"version": 31,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"resourceId": 2,
+				"changedProperties": [
+					{
+						"valueAfter": "31",
+						"property": "version",
+						"valueBefore": "30"
+					}
+				],
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events\/359"
+					},
+					{
+						"rel": "eventList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
+					}
+				],
+				"id": 359,
+				"technology": "RDepot version: 2.5.0",
+				"time": "2020-03-29T10:43:10Z",
+				"eventType": "update",
+				"user": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				},
+				"resourceType": "REPOSITORY"
+			},
+			{
+				"relatedResource": {
+					"deleted": false,
+					"synchronizing": false,
+					"name": "testrepo1",
+					"serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo1",
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"version": 31,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"resourceId": 2,
+				"changedProperties": [
+					{
+						"valueAfter": "",
+						"property": "published",
+						"valueBefore": ""
+					}
+				],
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events\/358"
+					},
+					{
+						"rel": "eventList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
+					}
+				],
+				"id": 358,
+				"technology": "RDepot version: 2.5.0",
+				"time": "2020-03-29T10:43:10Z",
+				"eventType": "update",
+				"user": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				},
+				"resourceType": "REPOSITORY"
+			},
+			{
+				"relatedResource": {
+					"deleted": false,
+					"synchronizing": false,
+					"name": "testrepo1",
+					"serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo1",
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"version": 31,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"resourceId": 2,
+				"changedProperties": [
+					{
+						"valueAfter": "30",
+						"property": "version",
+						"valueBefore": "29"
+					}
+				],
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events\/357"
+					},
+					{
+						"rel": "eventList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
+					}
+				],
+				"id": 357,
+				"technology": "RDepot version: 2.5.0",
+				"time": "2020-03-29T10:43:10Z",
+				"eventType": "update",
+				"user": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				},
+				"resourceType": "REPOSITORY"
+			},
+			{
+				"relatedResource": {
+					"deleted": false,
+					"synchronizing": false,
+					"name": "testrepo1",
+					"serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo1",
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"version": 31,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"resourceId": 2,
+				"changedProperties": [
+					{
+						"valueAfter": "29",
+						"property": "version",
+						"valueBefore": "28"
+					}
+				],
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events\/356"
+					},
+					{
+						"rel": "eventList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
+					}
+				],
+				"id": 356,
+				"technology": "RDepot version: 2.5.0",
+				"time": "2020-03-29T10:43:05Z",
+				"eventType": "update",
+				"user": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				},
+				"resourceType": "REPOSITORY"
+			},
+			{
+				"relatedResource": {
+					"deleted": false,
+					"synchronizing": false,
+					"name": "testrepo1",
+					"serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo1",
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"version": 31,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"resourceId": 2,
+				"changedProperties": [
+					{
+						"valueAfter": "",
+						"property": "published",
+						"valueBefore": ""
+					}
+				],
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events\/355"
+					},
+					{
+						"rel": "eventList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
+					}
+				],
+				"id": 355,
+				"technology": "RDepot version: 2.5.0",
+				"time": "2020-03-29T10:43:05Z",
+				"eventType": "update",
+				"user": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				},
+				"resourceType": "REPOSITORY"
+			},
+			{
+				"relatedResource": {
+					"deleted": false,
+					"synchronizing": false,
+					"name": "testrepo1",
+					"serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo1",
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"version": 31,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"resourceId": 2,
+				"changedProperties": [
+					{
+						"valueAfter": "28",
+						"property": "version",
+						"valueBefore": "27"
+					}
+				],
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events\/354"
+					},
+					{
+						"rel": "eventList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
+					}
+				],
+				"id": 354,
+				"technology": "RDepot version: 2.5.0",
+				"time": "2020-03-29T10:43:05Z",
+				"eventType": "update",
+				"user": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				},
+				"resourceType": "REPOSITORY"
+			},
+			{
+				"relatedResource": {
+					"deleted": false,
+					"synchronizing": false,
+					"name": "testrepo1",
+					"serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo1",
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"version": 31,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"resourceId": 2,
+				"changedProperties": [
+					{
+						"valueAfter": "27",
+						"property": "version",
+						"valueBefore": "26"
+					}
+				],
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events\/319"
+					},
+					{
+						"rel": "eventList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
+					}
+				],
+				"id": 319,
+				"technology": "RDepot version: 2.5.0",
+				"time": "2020-03-28T20:10:08Z",
+				"eventType": "update",
+				"user": {
+					"name": "Nikola Tesla",
+					"id": 5,
+					"login": "tesla",
+					"email": "tesla@ldap.forumsys.com"
+				},
+				"resourceType": "REPOSITORY"
+			},
+			{
+				"relatedResource": {
+					"deleted": false,
+					"synchronizing": false,
+					"name": "testrepo1",
+					"serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo1",
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"version": 31,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"resourceId": 2,
+				"changedProperties": [
+					{
+						"valueAfter": "",
+						"property": "published",
+						"valueBefore": ""
+					}
+				],
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events\/318"
+					},
+					{
+						"rel": "eventList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
+					}
+				],
+				"id": 318,
+				"technology": "RDepot version: 2.5.0",
+				"time": "2020-03-28T20:10:08Z",
+				"eventType": "update",
+				"user": {
+					"name": "Nikola Tesla",
+					"id": 5,
+					"login": "tesla",
+					"email": "tesla@ldap.forumsys.com"
+				},
+				"resourceType": "REPOSITORY"
+			},
+			{
+				"relatedResource": {
+					"deleted": false,
+					"synchronizing": false,
+					"name": "testrepo1",
+					"serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo1",
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"version": 31,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"resourceId": 2,
+				"changedProperties": [
+					{
+						"valueAfter": "26",
+						"property": "version",
+						"valueBefore": "25"
+					}
+				],
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events\/317"
+					},
+					{
+						"rel": "eventList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
+					}
+				],
+				"id": 317,
+				"technology": "RDepot version: 2.5.0",
+				"time": "2020-03-28T20:10:08Z",
+				"eventType": "update",
+				"user": {
+					"name": "Nikola Tesla",
+					"id": 5,
+					"login": "tesla",
+					"email": "tesla@ldap.forumsys.com"
+				},
+				"resourceType": "REPOSITORY"
+			},
+			{
+				"relatedResource": {
+					"deleted": false,
+					"synchronizing": false,
+					"name": "testrepo1",
+					"serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo1",
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"version": 31,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"resourceId": 2,
+				"changedProperties": [
+					{
+						"valueAfter": "25",
+						"property": "version",
+						"valueBefore": "24"
+					}
+				],
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events\/303"
+					},
+					{
+						"rel": "eventList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
+					}
+				],
+				"id": 303,
+				"technology": "RDepot version: 2.5.0",
+				"time": "2020-03-28T20:08:48Z",
+				"eventType": "update",
+				"user": {
+					"name": "Nikola Tesla",
+					"id": 5,
+					"login": "tesla",
+					"email": "tesla@ldap.forumsys.com"
+				},
+				"resourceType": "REPOSITORY"
+			},
+			{
+				"relatedResource": {
+					"deleted": false,
+					"synchronizing": false,
+					"name": "testrepo1",
+					"serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo1",
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"version": 31,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"resourceId": 2,
+				"changedProperties": [
+					{
+						"valueAfter": "",
+						"property": "published",
+						"valueBefore": ""
+					}
+				],
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events\/302"
+					},
+					{
+						"rel": "eventList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
+					}
+				],
+				"id": 302,
+				"technology": "RDepot version: 2.5.0",
+				"time": "2020-03-28T20:08:48Z",
+				"eventType": "update",
+				"user": {
+					"name": "Nikola Tesla",
+					"id": 5,
+					"login": "tesla",
+					"email": "tesla@ldap.forumsys.com"
+				},
+				"resourceType": "REPOSITORY"
+			},
+			{
+				"relatedResource": {
+					"deleted": false,
+					"synchronizing": false,
+					"name": "testrepo1",
+					"serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo1",
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"version": 31,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"resourceId": 2,
+				"changedProperties": [
+					{
+						"valueAfter": "21",
+						"property": "added",
+						"valueBefore": ""
+					}
+				],
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events\/296"
+					},
+					{
+						"rel": "eventList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
+					}
+				],
+				"id": 296,
+				"technology": "RDepot version: 2.5.0",
+				"time": "2020-03-28T20:08:23Z",
+				"eventType": "update",
+				"user": {
+					"name": "Nikola Tesla",
+					"id": 5,
+					"login": "tesla",
+					"email": "tesla@ldap.forumsys.com"
+				},
+				"resourceType": "REPOSITORY"
+			},
+			{
+				"relatedResource": {
+					"deleted": false,
+					"synchronizing": false,
+					"name": "testrepo1",
+					"serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo1",
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"version": 31,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"resourceId": 2,
+				"changedProperties": [
+					{
+						"valueAfter": "24",
+						"property": "version",
+						"valueBefore": "23"
+					}
+				],
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events\/295"
+					},
+					{
+						"rel": "eventList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
+					}
+				],
+				"id": 295,
+				"technology": "RDepot version: 2.5.0",
+				"time": "2020-03-28T20:08:23Z",
+				"eventType": "update",
+				"user": {
+					"name": "Nikola Tesla",
+					"id": 5,
+					"login": "tesla",
+					"email": "tesla@ldap.forumsys.com"
+				},
+				"resourceType": "REPOSITORY"
+			},
+			{
+				"relatedResource": {
+					"deleted": false,
+					"synchronizing": false,
+					"name": "testrepo1",
+					"serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo1",
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"version": 31,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"resourceId": 2,
+				"changedProperties": [
+					{
+						"valueAfter": "23",
+						"property": "version",
+						"valueBefore": "22"
+					}
+				],
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events\/294"
+					},
+					{
+						"rel": "eventList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
+					}
+				],
+				"id": 294,
+				"technology": "RDepot version: 2.5.0",
+				"time": "2020-03-28T20:08:23Z",
+				"eventType": "update",
+				"user": {
+					"name": "Nikola Tesla",
+					"id": 5,
+					"login": "tesla",
+					"email": "tesla@ldap.forumsys.com"
+				},
+				"resourceType": "REPOSITORY"
+			},
+			{
+				"relatedResource": {
+					"deleted": false,
+					"synchronizing": false,
+					"name": "testrepo1",
+					"serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo1",
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"version": 31,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"resourceId": 2,
+				"changedProperties": [
+					{
+						"valueAfter": "22",
+						"property": "version",
+						"valueBefore": "21"
+					}
+				],
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events\/293"
+					},
+					{
+						"rel": "eventList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
+					}
+				],
+				"id": 293,
+				"technology": "RDepot version: 2.5.0",
+				"time": "2020-03-28T20:08:23Z",
+				"eventType": "update",
+				"user": {
+					"name": "Nikola Tesla",
+					"id": 5,
+					"login": "tesla",
+					"email": "tesla@ldap.forumsys.com"
+				},
+				"resourceType": "REPOSITORY"
+			},
+			{
+				"relatedResource": {
+					"deleted": false,
+					"synchronizing": false,
+					"name": "testrepo1",
+					"serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo1",
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"version": 31,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"resourceId": 2,
+				"changedProperties": [
+					{
+						"valueAfter": "21",
+						"property": "version",
+						"valueBefore": "20"
+					}
+				],
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events\/292"
+					},
+					{
+						"rel": "eventList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
+					}
+				],
+				"id": 292,
+				"technology": "RDepot version: 2.5.0",
+				"time": "2020-03-28T20:08:23Z",
+				"eventType": "update",
+				"user": {
+					"name": "Nikola Tesla",
+					"id": 5,
+					"login": "tesla",
+					"email": "tesla@ldap.forumsys.com"
+				},
+				"resourceType": "REPOSITORY"
+			},
+			{
+				"relatedResource": {
+					"deleted": false,
+					"synchronizing": false,
+					"name": "testrepo1",
+					"serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo1",
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"version": 31,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"resourceId": 2,
+				"changedProperties": [
+					{
+						"valueAfter": "18",
+						"property": "added",
+						"valueBefore": ""
+					}
+				],
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events\/291"
+					},
+					{
+						"rel": "eventList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
+					}
+				],
+				"id": 291,
+				"technology": "RDepot version: 2.5.0",
+				"time": "2020-03-28T20:08:18Z",
+				"eventType": "update",
+				"user": {
+					"name": "Nikola Tesla",
+					"id": 5,
+					"login": "tesla",
+					"email": "tesla@ldap.forumsys.com"
+				},
+				"resourceType": "REPOSITORY"
+			},
+			{
+				"relatedResource": {
+					"deleted": false,
+					"synchronizing": false,
+					"name": "testrepo1",
+					"serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo1",
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"version": 31,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"resourceId": 2,
+				"changedProperties": [
+					{
+						"valueAfter": "20",
+						"property": "version",
+						"valueBefore": "19"
+					}
+				],
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events\/290"
+					},
+					{
+						"rel": "eventList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
+					}
+				],
+				"id": 290,
+				"technology": "RDepot version: 2.5.0",
+				"time": "2020-03-28T20:08:18Z",
+				"eventType": "update",
+				"user": {
+					"name": "Nikola Tesla",
+					"id": 5,
+					"login": "tesla",
+					"email": "tesla@ldap.forumsys.com"
+				},
+				"resourceType": "REPOSITORY"
+			},
+			{
+				"relatedResource": {
+					"deleted": false,
+					"synchronizing": false,
+					"name": "testrepo1",
+					"serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo1",
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"version": 31,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"resourceId": 2,
+				"changedProperties": [
+					{
+						"valueAfter": "19",
+						"property": "version",
+						"valueBefore": "18"
+					}
+				],
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events\/289"
+					},
+					{
+						"rel": "eventList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/events"
+					}
+				],
+				"id": 289,
+				"technology": "RDepot version: 2.5.0",
+				"time": "2020-03-28T20:08:18Z",
+				"eventType": "update",
+				"user": {
+					"name": "Nikola Tesla",
+					"id": 5,
+					"login": "tesla",
+					"email": "tesla@ldap.forumsys.com"
+				},
+				"resourceType": "REPOSITORY"
+			}
+		]
+	},
+	"messageCode": "success.request.processed",
+	"message": "Your request has been processed successfully.",
+	"status": "SUCCESS"
+}

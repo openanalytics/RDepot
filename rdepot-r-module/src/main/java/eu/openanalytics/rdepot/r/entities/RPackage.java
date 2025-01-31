@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -67,14 +67,14 @@ public class RPackage extends Package {
     @JoinColumn(name = "repository_id", nullable = false)
     private RRepository repository;
 
-    @Column(name = "r_version", table = "rpackage")
-    private String rVersion;
+    @Column(name = "r_version", table = "rpackage", nullable = false)
+    private String rVersion = "";
 
-    @Column(name = "architecture", table = "rpackage")
-    private String architecture;
+    @Column(name = "architecture", table = "rpackage", nullable = false)
+    private String architecture = "";
 
-    @Column(name = "distribution", table = "rpackage")
-    private String distribution;
+    @Column(name = "distribution", table = "rpackage", nullable = false)
+    private String distribution = "";
 
     @Column(name = "built", table = "rpackage")
     private String built;

@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 13_01_last_used_access_token
+      author: pgleska
+      changes:
+        - addColumn:
+            tableName: access_token
+            schemaName: public
+            columns:
+            - column:
+                name: last_used
+                type: datetime
+                constraints:
+                  nullable: true

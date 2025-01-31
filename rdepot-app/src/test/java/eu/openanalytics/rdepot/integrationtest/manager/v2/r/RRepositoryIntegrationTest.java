@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -55,6 +55,7 @@ public class RRepositoryIntegrationTest extends IntegrationTest {
                 .repoIdToShiftDelete("6")
                 .repoIdToEdit("2")
                 .repoIdToRead("2")
+                .repoIdToPublishWithBinaryPackage("5")
                 .deletedRepoId("6")
                 .getEndpointNewEventsAmount(0)
                 .deleteEndpointNewEventsAmount(-35)
@@ -370,6 +371,42 @@ public class RRepositoryIntegrationTest extends IntegrationTest {
                 .howManyNewEventsShouldBeCreated(testData.getChangeEndpointNewEventsAmount())
                 .expectedJsonPath(REPOSITORIES_PATH + "published_repository.json")
                 .expectedEventsJson(EVENTS_PATH + "patched_published_repository_event.json")
+                .body(patch)
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void publishRepositoryWithBinaryPackage() throws Exception {
+        final String patch =
+                "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/published\"," + "\"value\":true" + "}" + "]";
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.PATCH)
+                .urlSuffix("/" + testData.getRepoIdToPublishWithBinaryPackage())
+                .statusCode(200)
+                .token(REPOSITORYMAINTAINER_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getChangeEndpointNewEventsAmount())
+                .expectedJsonPath(REPOSITORIES_PATH + "published_repository_with_binary.json")
+                .expectedEventsJson(EVENTS_PATH + "patched_published_repository_with_binary_event.json")
+                .body(patch)
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void patchRepository_notRequireAuthentication() throws Exception {
+        final String patch = "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/requiresAuthentication\","
+                + "\"value\":false" + "}" + "]";
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.PATCH)
+                .urlSuffix("/" + testData.getRepoIdToPublish())
+                .statusCode(200)
+                .token(REPOSITORYMAINTAINER_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getChangeEndpointNewEventsAmount())
+                .expectedJsonPath(REPOSITORIES_PATH + "patch_not_require_authentication_repository.json")
+                .expectedEventsJson(EVENTS_PATH + "patched_not_require_authentication_repository_event.json")
                 .body(patch)
                 .build();
         testEndpoint(requestBody);

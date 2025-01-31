@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -85,4 +85,9 @@ public abstract class Service<E extends Resource> extends SpringDataJpaCapableRe
             }
         });
     }
+
+    /*
+     * Deletes same version of the given package.
+     */
+    public void deleteSameVersion(E entity) {}
 }

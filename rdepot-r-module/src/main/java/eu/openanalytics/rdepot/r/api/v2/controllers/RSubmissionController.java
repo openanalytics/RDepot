@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -53,6 +53,7 @@ import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.exceptions.NonFatalSubmissionStrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
+import eu.openanalytics.rdepot.base.time.DateParser;
 import eu.openanalytics.rdepot.base.utils.specs.SpecificationUtils;
 import eu.openanalytics.rdepot.base.utils.specs.SubmissionSpecs;
 import eu.openanalytics.rdepot.base.validation.PackageValidator;
@@ -81,6 +82,7 @@ import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonPatch;
 import jakarta.json.spi.JsonProvider;
 import java.security.Principal;
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -199,6 +201,7 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
             @RequestParam(name = "rVersion") Optional<String> rVersion,
             @RequestParam(name = "architecture") Optional<String> architecture,
             @RequestParam(name = "distribution") Optional<String> distribution,
+            @RequestParam(name = "changes") Optional<String> changes,
             Principal principal)
             throws UserNotAuthorized, CreateException, RepositoryNotFound {
 
@@ -234,12 +237,20 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
                 binaryPackage,
                 rVersion.orElse(""),
                 architecture.orElse(""),
-                distribution.orElse(""));
+                distribution.orElse(""),
+                changes.orElse(""));
         final Strategy<Submission> strategy = strategyFactory.uploadPackageStrategy(request, uploader);
 
         try {
             final Submission submission = strategyExecutor.execute(strategy);
-            return handleCreatedForSingleEntity(submission, uploader);
+
+            if (generateManual && binaryPackage) {
+                return handleWarningForSingleEntity(
+                        submission, RMessageCodes.GENERATE_MANUAL_NOT_SUPPORTED, uploader, true);
+            } else {
+                return handleCreatedForSingleEntity(submission, uploader);
+            }
+
         } catch (NonFatalSubmissionStrategyFailure e) {
             log.debug(e.getMessage(), e);
             return handleWarningForSingleEntity(
@@ -296,6 +307,9 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
         final DtoResolvedPageable resolvedPageable = pageableSortResolver.resolve(pageable);
         pageableValidator.validate(SubmissionDto.class, resolvedPageable);
 
+        final Optional<Instant> fromDateInstant = fromDate.flatMap(DateParser::parseTimestampStart);
+        final Optional<Instant> toDateInstant = toDate.flatMap(DateParser::parseTimestampEnd);
+
         Specification<Submission> specification = Specification.where(SubmissionSpecs.ofTechnology(List.of("R")));
 
         if (Objects.nonNull(states)) {
@@ -306,12 +320,13 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
             specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.ofRepository(repositories));
         }
 
-        if (fromDate.isPresent()) {
-            specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.fromDate(fromDate.get()));
+        if (fromDateInstant.isPresent()) {
+            specification =
+                    SpecificationUtils.andComponent(specification, SubmissionSpecs.fromDate(fromDateInstant.get()));
         }
 
-        if (toDate.isPresent()) {
-            specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.toDate(toDate.get()));
+        if (toDateInstant.isPresent()) {
+            specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.toDate(toDateInstant.get()));
         }
 
         if (search.isPresent()) {

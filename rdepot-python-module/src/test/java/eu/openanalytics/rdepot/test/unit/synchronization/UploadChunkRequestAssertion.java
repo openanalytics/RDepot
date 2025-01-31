@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -21,17 +21,12 @@
 package eu.openanalytics.rdepot.test.unit.synchronization;
 
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.springframework.core.io.FileSystemResource;
 
-@AllArgsConstructor
-@Getter
-public class UploadChunkRequestAssertion {
-    public final String expectedId;
-    public final String expectedVersionBefore;
-    public final String expectedVersionAfter;
-    public final List<String> expectedPages;
-    public final List<String> expectedToDelete;
-    public final List<FileSystemResource> filesToUpload;
-}
+public record UploadChunkRequestAssertion(
+        String expectedId,
+        String expectedVersionBefore,
+        String expectedVersionAfter,
+        List<String> expectedPages,
+        List<String> expectedToDelete,
+        List<FileSystemResource> filesToUpload) {}

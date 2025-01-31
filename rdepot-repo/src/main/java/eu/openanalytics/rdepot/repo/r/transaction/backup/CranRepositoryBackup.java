@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -23,15 +23,22 @@ package eu.openanalytics.rdepot.repo.r.transaction.backup;
 import eu.openanalytics.rdepot.repo.transaction.backup.RepositoryBackup;
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 
 @Getter
 public class CranRepositoryBackup extends RepositoryBackup {
-    List<String> archivePackages;
+    Map<String, List<String>> recentBinaryPackages;
+    Map<String, List<String>> archivePackages;
 
     public CranRepositoryBackup(
-            List<String> recentPackages, List<String> archivePackages, File trashDirectory, String version) {
+            List<String> recentPackages,
+            Map<String, List<String>> recentBinaryPackages,
+            Map<String, List<String>> archivePackages,
+            File trashDirectory,
+            String version) {
         super(recentPackages, trashDirectory, version);
+        this.recentBinaryPackages = recentBinaryPackages;
         this.archivePackages = archivePackages;
     }
 

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,10 +20,7 @@
  */
 package eu.openanalytics.rdepot.base.daos;
 
-import java.util.List;
 import java.util.Optional;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -36,8 +33,4 @@ import org.springframework.data.repository.NoRepositoryBean;
 @NoRepositoryBean
 public interface Dao<T> extends JpaRepository<T, Integer>, JpaSpecificationExecutor<T> {
     Optional<T> findByIdAndDeleted(Integer id, Boolean deleted);
-
-    Page<T> findByDeleted(boolean deleted, Pageable pageable);
-
-    List<T> findByDeleted(boolean deleted);
 }

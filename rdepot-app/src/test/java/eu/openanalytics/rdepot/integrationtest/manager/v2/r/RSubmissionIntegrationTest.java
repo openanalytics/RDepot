@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -39,12 +39,11 @@ import java.util.Arrays;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.shaded.org.checkerframework.checker.nullness.qual.NonNull;
 
 public class RSubmissionIntegrationTest extends IntegrationTest {
 
     private final SubmissionTestData testData;
-    private static String EVENTS_PATH = "/v2/r/events/submissions/";
+    private static final String EVENTS_PATH = "/v2/r/events/submissions/";
     private static final BashScriptExecutor bashScriptExecutor = new BashScriptExecutor();
 
     public RSubmissionIntegrationTest() {
@@ -54,7 +53,7 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
                 .submissionId("5")
                 .submissionIdToAccept("30")
                 .submissionIdToCancel("31")
-                .packageId("47")
+                .packageId("48")
                 .search("galileo")
                 .states(Arrays.asList("waiting", "cancelled"))
                 .packageNameToDownload("Benchmarking")
@@ -74,6 +73,7 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
                 "testrepo2",
                 true,
                 false,
+                "",
                 new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
                         .fileName(packageBag.getName())
                         .mimeType("application/gzip")
@@ -114,6 +114,7 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
                 "testrepo2",
                 true,
                 false,
+                "",
                 new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
                         .fileName(packageBag.getName())
                         .mimeType("application/gzip")
@@ -150,6 +151,7 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
                 "testrepo2",
                 false,
                 true,
+                "",
                 new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
                         .fileName(packageBag.getName())
                         .mimeType("application/gzip")
@@ -171,11 +173,12 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
 
     @Test
     public void submitBigPackage() throws Exception {
-        File packageBag = enlargePackage(new File("src/test/resources/itestPackages/Benchmarking_0.10.tar.gz"));
+        File packageBag = enlargePackage();
         SubmissionMultipartBody body = new SubmissionMultipartBody(
                 "testrepo2",
                 false,
                 true,
+                "",
                 new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
                         .fileName(packageBag.getName())
                         .mimeType("application/gzip")
@@ -200,7 +203,7 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
         FileUtils.forceDelete(packageBag);
     }
 
-    private File enlargePackage(@NonNull File file) {
+    private File enlargePackage() {
         bashScriptExecutor.executeBashScript(
                 "src/test/resources/scripts/enlargePackage.sh",
                 "src/test/resources/itestPackages",
@@ -216,6 +219,7 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
                 "testrepo2",
                 false,
                 true,
+                "",
                 new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
                         .fileName(packageBag.getName())
                         .mimeType("application/gzip")
@@ -265,6 +269,7 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
                 "testrepo2",
                 false,
                 true,
+                "",
                 new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
                         .fileName(packageBag.getName())
                         .mimeType("application/gzip")
@@ -291,6 +296,7 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
                 "testrepo2",
                 false,
                 true,
+                "",
                 new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
                         .fileName(packageBag.getName())
                         .mimeType("application/gzip")
@@ -303,7 +309,7 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
                 .statusCode(201)
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getPostEndpointNewEventsAmount())
-                .expectedEventsJson("/v2/r/events/submissions/new_exotic_submission_without_manual_events.json")
+                .expectedEventsJson(EVENTS_PATH + "new_exotic_submission_without_manual_events.json")
                 .expectedJsonPath("/v2/r/submission/new_exotic_submission.json")
                 .submissionMultipartBody(body)
                 .build();
@@ -311,7 +317,7 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
 
         requestBody = TestRequestBody.builder()
                 .requestType(RequestType.GET_AFTER_NEW_SUBMISSION)
-                .urlSuffix("/47")
+                .urlSuffix("/48")
                 .statusCode(200)
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
@@ -328,6 +334,7 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
                 "testrepo2",
                 false,
                 true,
+                "",
                 new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
                         .fileName(packageBag.getName())
                         .mimeType("application/gzip")
@@ -341,7 +348,7 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getPostEndpointNewEventsAmount())
                 .expectedJsonPath("/v2/r/submission/new_A3_submission.json")
-                .expectedEventsJson("/v2/r/events/submissions/new_submission_events.json")
+                .expectedEventsJson(EVENTS_PATH + "new_submission_events.json")
                 .submissionMultipartBody(body)
                 .build();
         testEndpoint(requestBody);
@@ -352,6 +359,7 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
                 "testrepo2",
                 false,
                 true,
+                "",
                 new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
                         .fileName(packageBag.getName())
                         .mimeType("application/gzip")
@@ -364,13 +372,14 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(0)
                 .expectedJsonPath("/v2/r/submission/submission_replace.json")
-                .expectedEventsJson("/v2/r/events/submissions/replace_submission_events.json")
+                .expectedEventsJson(EVENTS_PATH + "replace_submission_events.json")
                 .submissionMultipartBody(body)
                 .build();
         testEndpoint(requestBody);
 
         requestBody = TestRequestBody.builder()
-                .requestType(RequestType.GET)
+                .requestType(RequestType.GET_OTHER_RESOURCE)
+                .path("/api/v2/manager/packages")
                 .urlSuffix("?sort=id,asc")
                 .statusCode(200)
                 .token(ADMIN_TOKEN)
@@ -378,6 +387,7 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
                 .expectedJsonPath("/v2/r/packages/list_of_packages_with_replaced_package.json")
                 .build();
         testEndpoint(requestBody);
+        // TODO: #34250
     }
 
     @Test
@@ -387,6 +397,7 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
                 "testrepo2",
                 false,
                 true,
+                "",
                 new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
                         .fileName(packageBag.getName())
                         .mimeType("application/gzip")
@@ -410,6 +421,7 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
                 "testrepo2",
                 false,
                 false,
+                "",
                 new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
                         .fileName(packageBag.getName())
                         .mimeType("application/gzip")
@@ -435,6 +447,7 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
                 "testrepo2",
                 false,
                 true,
+                "",
                 new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
                         .fileName(packageBag.getName())
                         .mimeType("application/gzip")
@@ -460,6 +473,7 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
                 "testrepo3",
                 false,
                 true,
+                "",
                 new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
                         .fileName(packageBag.getName())
                         .mimeType("application/gzip")
@@ -497,6 +511,7 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
                 "testrepo1",
                 true,
                 true,
+                "",
                 new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
                         .fileName(packageBag.getName())
                         .mimeType("application/gzip")
@@ -799,6 +814,96 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
                 .expectedJsonPath("/v2/malformed_patch_submission.json")
                 .body(patch)
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void submitPackage_replaceWithChanges() throws Exception {
+        File packageBag = new File("src/test/resources/itestPackages/A3_0.9.1.tar.gz");
+
+        SubmissionMultipartBody body = new SubmissionMultipartBody(
+                "testrepo2",
+                false,
+                true,
+                "",
+                new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+                        .fileName(packageBag.getName())
+                        .mimeType("application/gzip")
+                        .controlName("file")
+                        .build());
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST_MULTIPART)
+                .urlSuffix("/")
+                .statusCode(201)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getPostEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/r/submission/new_A3_submission.json")
+                .expectedEventsJson(EVENTS_PATH + "new_submission_events.json")
+                .submissionMultipartBody(body)
+                .build();
+        testEndpoint(requestBody);
+
+        packageBag = new File("src/test/resources/itestPackages/A3_0-9-1.tar.gz");
+
+        body = new SubmissionMultipartBody(
+                "testrepo2",
+                false,
+                true,
+                "this package has been changed",
+                new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+                        .fileName(packageBag.getName())
+                        .mimeType("application/gzip")
+                        .controlName("file")
+                        .build());
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST_MULTIPART)
+                .urlSuffix("/")
+                .statusCode(201)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(0)
+                .expectedJsonPath("/v2/r/submission/submission_replace_with_changes.json")
+                .expectedEventsJson(EVENTS_PATH + "replace_submission_with_changes_events.json")
+                .submissionMultipartBody(body)
+                .build();
+        testEndpoint(requestBody);
+
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET_OTHER_RESOURCE)
+                .path("/api/v2/manager/packages")
+                .urlSuffix("?sort=id,asc")
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/r/packages/list_of_packages_with_replaced_package.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void submitPackage_asPackageMaintainer() throws Exception {
+        File packageBag = new File("src/test/resources/itestPackages/A3_0.9.3.tar.gz");
+        SubmissionMultipartBody body = new SubmissionMultipartBody(
+                "testrepo3",
+                false,
+                false,
+                "",
+                new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+                        .fileName(packageBag.getName())
+                        .mimeType("application/gzip")
+                        .controlName("file")
+                        .build());
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST_MULTIPART)
+                .urlSuffix("/")
+                .statusCode(201)
+                .token(PACKAGEMAINTAINER_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getPostEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/r/submission/new_submission_as_package_maintainer.json")
+                .expectedEventsJson(EVENTS_PATH + "new_submission_as_package_maintainer.json")
+                .submissionMultipartBody(body)
                 .build();
         testEndpoint(requestBody);
     }

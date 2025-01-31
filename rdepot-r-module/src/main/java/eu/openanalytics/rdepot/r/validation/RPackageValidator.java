@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -169,8 +169,16 @@ public class RPackageValidator implements PackageValidator<RPackage> {
             validationResult.error(version, MessageCodes.INVALID_VERSION);
         }
 
-        Optional<RPackage> sameVersionOpt =
-                packageService.findByNameAndVersionAndRepositoryAndDeleted(name, packageVersion, repository, false);
+        Optional<RPackage> sameVersionOpt = packageService.findByNameAndVersionAndRepositoryAndDeletedAndBinary(
+                name,
+                packageVersion,
+                repository,
+                false,
+                packageBag.isBinary(),
+                packageBag.getRVersion(),
+                packageBag.getArchitecture(),
+                packageBag.getDistribution());
+
         if (sameVersionOpt.isPresent() && packageBag.getId() <= 0) {
             // TODO: #32883 It is better to fetch submission immediately but it probably requires a custom SQL query
             Submission submission = submissionService
@@ -259,10 +267,11 @@ public class RPackageValidator implements PackageValidator<RPackage> {
 
     private boolean compareRVersions(String allowedVersion, final String rVersion) {
 
-        if (allowedVersion.length() > rVersion.length()) return false;
+        String[] allowedVersionSplitted = StringUtils.splitByWholeSeparator(allowedVersion, ".");
+        String[] rVersionSplitted = StringUtils.splitByWholeSeparator(rVersion, ".");
 
-        for (int i = 0; i < allowedVersion.length(); i++) {
-            if (Character.isDigit(allowedVersion.charAt(i)) && allowedVersion.charAt(i) != rVersion.charAt(i)) {
+        for (int i = 0; i < 2; i++) {
+            if (!Integer.valueOf(allowedVersionSplitted[i]).equals(Integer.valueOf(rVersionSplitted[i]))) {
                 return false;
             }
         }

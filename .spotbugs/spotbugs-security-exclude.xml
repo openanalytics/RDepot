@@ -33,6 +33,14 @@
         <Bug pattern="PATH_TRAVERSAL_IN" />
     </Match>
     <Match>
+        <Class name="eu.openanalytics.rdepot.r.synchronization.SynchronizeRepositoryRequestBody" />
+        <Bug pattern="PATH_TRAVERSAL_IN" />
+    </Match>
+    <Match>
+        <Class name="eu.openanalytics.rdepot.r.synchronization.RRepositorySynchronizer"/>
+        <Bug pattern="PATH_TRAVERSAL_IN" />
+    </Match>
+    <Match>
         <Class name="eu.openanalytics.rdepot.r.storage.implementations.RLocalStorage" />
         <Bug pattern="WEAK_MESSAGE_DIGEST_MD5" />
     </Match>
@@ -58,6 +66,10 @@
     </Match>
     <Match>
         <Class name="eu.openanalytics.rdepot.repo.python.storage.PythonFileSystemStorageService" />
+        <Bug pattern="PATH_TRAVERSAL_IN" />
+    </Match>
+    <Match>
+        <Class name="eu.openanalytics.rdepot.repo.r.storage.implementations.CranFileSystemStorageService" />
         <Bug pattern="PATH_TRAVERSAL_IN" />
     </Match>
 </FindBugsFilter>

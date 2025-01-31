@@ -2,13 +2,39 @@ server {
   listen                80;
   server_name           _;
 
-    location /repo/ {
+  location /repo/ {
       root 		/opt/rdepot;
       access_log          /var/log/nginx/repo.access.log;
-      error_log           /var/log/nginx/repo.error.log;
+      error_log           /var/log/nginx/repo.error.log debug;
       autoindex on;
+
+      try_files $uri @bin;
+
       proxy_set_header  Host             $http_host;
     }
+
+
+  location @bin {
+      root 		/opt/rdepot;
+      access_log          /var/log/nginx/repo.access.log;
+      error_log           /var/log/nginx/repo.error.log debug;
+      autoindex on;
+
+	if ($http_user_agent ~ "R \((\d+\.\d+)[^ ]* ([^ ]+) ([^ ]+) ([^ ]+)\)") {
+      	set $r_version $1;
+      	set $architecture $3;
+     }
+
+     if ($uri ~ "/repo/([^/]+)/linux/([^/]+)/src/contrib/([^/]+)") {
+     	rewrite repo/([^/]+)/linux/([^/]+)/src/contrib/([^/]+) /repo/$1/bin/linux/$2/$architecture/$r_version/$3 last;
+     }
+
+     if ($uri ~ "/repo/([^/]+)/bin/linux/([^/]+)/([^/]+)/([^/]+)/([^/]+)") {
+     	rewrite /repo/([^/]+)/bin/linux/([^/]+)/([^/]+)/([^/]+)/([^/]+) /repo/$1/src/contrib/$5 break;
+     }
+
+  	proxy_set_header  Host             $http_host;
+  }
 
   location / {
     access_log          /var/log/nginx/rdepot.access.log;

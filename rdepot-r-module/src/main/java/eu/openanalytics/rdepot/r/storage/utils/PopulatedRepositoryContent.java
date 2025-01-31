@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -24,6 +24,7 @@ import eu.openanalytics.rdepot.r.entities.RPackage;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.util.MultiValueMap;
 
 @Getter
 @AllArgsConstructor
@@ -32,4 +33,6 @@ public class PopulatedRepositoryContent {
     private final List<RPackage> archivePackages;
     private final String latestDirectoryPath;
     private final String archiveDirectoryPath;
+    private final MultiValueMap<String, RPackage> binLatestPackagesPaths;
+    private final MultiValueMap<String, RPackage> binArchivePackagesPaths;
 }

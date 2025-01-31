@@ -1,0 +1,105 @@
+{
+	"code": 200,
+	"data": {
+		"links": [
+			{
+				"rel": "first",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions?page=0&size=1&sort=state,asc"
+			},
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions?page=0&size=1&sort=state,asc"
+			},
+			{
+				"rel": "next",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions?page=1&size=1&sort=state,asc"
+			},
+			{
+				"rel": "last",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions?page=41&size=1&sort=state,asc"
+			}
+		],
+		"page": {
+			"number": 0,
+			"size": 1,
+			"totalPages": 42,
+			"totalElements": 42
+		},
+		"content": [
+			{
+				"approver": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				},
+				"submitter": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				},
+				"created": "2020-03-28T20:03:44Z",
+				"changes": null,
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/4"
+					},
+					{
+						"rel": "submissionList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
+					}
+				],
+				"id": 4,
+				"state": "ACCEPTED",
+				"technology": "R",
+				"packageBag": {
+					"author": "Julie Eaton and Ian Painter",
+					"active": false,
+					"description": "Package for visualizing data quality of partially accruing time series.",
+					"technology": "R",
+					"repository": {
+						"name": "testrepo2",
+						"id": 3,
+						"published": true,
+						"technology": "R",
+						"requiresAuthentication": true,
+						"publicationUri": "http:\/\/localhost\/repo\/testrepo2",
+						"lastPublicationSuccessful": true
+					},
+					"title": "Visualization tools for partially accruing data",
+					"version": "1.1",
+					"url": null,
+					"deleted": true,
+					"binary": false,
+					"name": "accrued",
+					"submission": {
+						"id": 4,
+						"state": "ACCEPTED"
+					},
+					"links": [
+						{
+							"rel": "self",
+							"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/6"
+						},
+						{
+							"rel": "packageList",
+							"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+						}
+					],
+					"id": 6,
+					"user": {
+						"name": "Albert Einstein",
+						"id": 4,
+						"login": "einstein",
+						"email": "einstein@ldap.forumsys.com"
+					}
+				}
+			}
+		]
+	},
+	"messageCode": "success.request.processed",
+	"message": "Your request has been processed successfully.",
+	"status": "SUCCESS"
+}

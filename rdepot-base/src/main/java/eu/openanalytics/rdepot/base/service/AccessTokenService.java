@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -28,6 +28,7 @@ import eu.openanalytics.rdepot.base.service.exceptions.CreateEntityException;
 import eu.openanalytics.rdepot.base.time.DateProvider;
 import java.nio.CharBuffer;
 import java.security.SecureRandom;
+import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
@@ -102,6 +103,7 @@ public class AccessTokenService extends Service<AccessToken> {
                     && (DateProvider.now().isBefore(userToken.getExpirationDate())
                             || DateProvider.now().equals(userToken.getExpirationDate()))
                     && userToken.isActive()) {
+                userToken.setLastUsed(Instant.now());
                 return true;
             }
         }

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,10 +20,7 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.exceptions;
 
-import java.io.IOException;
-import java.io.NotSerializableException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Locale;
@@ -60,21 +57,16 @@ public class ApiException extends Exception implements Serializable {
         this.httpStatus = httpStatus;
     }
 
+    public ApiException(String messageCode, HttpStatus httpStatus, String details) {
+        super(StaticMessageResolver.getMessage(messageCode));
+        this.messageCode = messageCode;
+        this.httpStatus = httpStatus;
+        this.details = Optional.of(details);
+    }
+
     public ApiException(
             MessageSource messageSource, Locale locale, String messageCode, HttpStatus httpStatus, String details) {
         this(messageSource, locale, messageCode, httpStatus);
-
         this.setDetails(Optional.of(details));
-    }
-
-    private void writeObject(ObjectOutputStream out)
-            throws IOException, ClassNotFoundException, NotSerializableException {
-        out.defaultWriteObject();
-        out.writeObject(getDetails());
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, NotSerializableException, ClassNotFoundException {
-        in.defaultReadObject();
-        details = Optional.of((String) in.readObject());
     }
 }

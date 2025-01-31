@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,7 +63,14 @@ public class FileListingController {
 
         try {
             List<Path> files = storageService.getRecentPackagesFromRepository(repository);
-            files.forEach(file -> uploads.add(file.getFileName().toString()));
+            Map<String, List<Path>> binaryFiles = storageService.getRecentBinaryPackagesFromRepository(repository);
+
+            files.forEach(file -> uploads.add(StringUtils.substringAfter(file.toString(), repository + "/")));
+
+            binaryFiles.forEach((path, packageList) -> {
+                packageList.forEach(file -> uploads.add(StringUtils.substringAfter(file.toString(), repository + "/")));
+            });
+
         } catch (IOException e) {
             log.error(e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -76,9 +84,9 @@ public class FileListingController {
         try {
             List<String> uploads = storageService.getArchiveFromRepository(repository).values().stream()
                     .flatMap(List::stream)
-                    .map(Path::getFileName)
-                    .map(Path::toString)
+                    .map(file -> StringUtils.substringAfter(file.toString(), repository + "/"))
                     .toList();
+
             return ResponseEntity.ok(uploads);
         } catch (IOException e) {
             log.error(e.getMessage(), e);

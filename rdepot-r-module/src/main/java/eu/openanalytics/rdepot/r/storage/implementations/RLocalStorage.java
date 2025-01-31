@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -22,7 +22,17 @@ package eu.openanalytics.rdepot.r.storage.implementations;
 
 import eu.openanalytics.rdepot.base.PropertiesParser;
 import eu.openanalytics.rdepot.base.entities.Package;
-import eu.openanalytics.rdepot.base.storage.exceptions.*;
+import eu.openanalytics.rdepot.base.storage.exceptions.CheckSumCalculationException;
+import eu.openanalytics.rdepot.base.storage.exceptions.CleanUpAfterSynchronizationException;
+import eu.openanalytics.rdepot.base.storage.exceptions.CreateFolderStructureException;
+import eu.openanalytics.rdepot.base.storage.exceptions.DeleteFileException;
+import eu.openanalytics.rdepot.base.storage.exceptions.GzipFileException;
+import eu.openanalytics.rdepot.base.storage.exceptions.LinkFoldersException;
+import eu.openanalytics.rdepot.base.storage.exceptions.Md5MismatchException;
+import eu.openanalytics.rdepot.base.storage.exceptions.Md5SumCalculationException;
+import eu.openanalytics.rdepot.base.storage.exceptions.OrganizePackagesException;
+import eu.openanalytics.rdepot.base.storage.exceptions.PackageFolderPopulationException;
+import eu.openanalytics.rdepot.base.storage.exceptions.ReadPackageDescriptionException;
 import eu.openanalytics.rdepot.base.storage.implementations.CommonLocalStorage;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
@@ -36,21 +46,27 @@ import eu.openanalytics.rdepot.r.storage.utils.PopulatedRepositoryContent;
 import eu.openanalytics.rdepot.r.synchronization.SynchronizeRepositoryRequestBody;
 import jakarta.annotation.Resource;
 import jakarta.validation.constraints.NotNull;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 /**
  * Local storage implementation for R.
@@ -66,9 +82,14 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
     private String snapshot;
 
     private static final String PACKAGES = "PACKAGES";
+    private static final String PACKAGES_GZ = "PACKAGES.gz";
     private static final String ARCHIVE_FOLDER = "Archive";
     private static final String LATEST_FOLDER = "latest";
     private static final String CONTRIB_FOLDER = "contrib";
+    private static final String SRC_FOLDER = "src";
+    private static final String CURRENT_FOLDER = "current";
+    private static final String BIN_FOLDER = "bin";
+    private static final String LINUX_FOLDER = "linux";
 
     @Override
     public Properties getPropertiesFromExtractedFile(final String extractedFile)
@@ -87,7 +108,17 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
     }
 
     public String getRepositoryGeneratedPath(File dateStampFolder, String separator) {
-        return dateStampFolder.getAbsolutePath() + separator + "src" + separator + CONTRIB_FOLDER;
+        return dateStampFolder.getAbsolutePath() + separator + SRC_FOLDER + separator + CONTRIB_FOLDER;
+    }
+
+    public String getRepositoryForBinaryGeneratedPath(File dateStampFolder, String separator, String binPath) {
+        return dateStampFolder.getAbsolutePath()
+                + separator
+                + BIN_FOLDER
+                + separator
+                + LINUX_FOLDER
+                + separator
+                + binPath;
     }
 
     private void createTemporaryFoldersForLatestAndArchive(String path) throws CreateFolderStructureException {
@@ -108,13 +139,35 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
         }
     }
 
-    private void populateGeneratedFolder(List<RPackage> packages, RRepository repository, String dateStamp)
+    private void populateGeneratedSourceFolder(List<RPackage> packages, RRepository repository, String dateStamp)
             throws PackageFolderPopulationException {
         String folderPath = repositoryGenerationDirectory.getAbsolutePath()
-                + separator + repository.getId()
-                + separator + dateStamp
-                + separator + "src"
-                + separator + CONTRIB_FOLDER;
+                + separator
+                + repository.getId()
+                + separator
+                + dateStamp
+                + separator
+                + SRC_FOLDER
+                + separator
+                + CONTRIB_FOLDER;
+
+        populatePackageFolder(packages, folderPath);
+    }
+
+    private void populateGeneratedBinaryFolder(
+            List<RPackage> packages, RRepository repository, String dateStamp, String binFolderPath)
+            throws PackageFolderPopulationException {
+        String folderPath = repositoryGenerationDirectory.getAbsolutePath()
+                + separator
+                + repository.getId()
+                + separator
+                + dateStamp
+                + separator
+                + BIN_FOLDER
+                + separator
+                + LINUX_FOLDER
+                + separator
+                + binFolderPath;
 
         populatePackageFolder(packages, folderPath);
     }
@@ -122,66 +175,229 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
     @Override
     public SynchronizeRepositoryRequestBody buildSynchronizeRequestBody(
             PopulatedRepositoryContent populatedRepositoryContent,
-            List<String> remoteLatestPackages,
-            List<String> remoteArchivePackages,
+            List<String> remoteLatestSourcePackages,
+            List<String> remoteArchiveSourcePackages,
+            MultiValueMap<String, String> remoteLatestBinaryPackages,
+            MultiValueMap<String, String> remoteArchiveBinaryPackages,
             RRepository repository,
             String versionBefore) {
-        final List<File> latestToUpload =
-                selectPackagesToUpload(remoteLatestPackages, populatedRepositoryContent.getLatestPackages());
 
-        final File currentDirectory = new File(repositoryGenerationDirectory.getAbsolutePath() + separator
+        Map<String, File> packagesFiles = new HashMap<>();
+        Map<String, File> packagesGzFiles = new HashMap<>();
+        Map<String, File> packagesFilesForArchive = new HashMap<>();
+        Map<String, File> packagesGzFilesForArchive = new HashMap<>();
+
+        final String sourceDirectory = StringUtils.substringBetween(
+                populatedRepositoryContent.getLatestDirectoryPath(), "/current/", "/latest");
+
+        final List<File> latestSourceToUpload =
+                selectPackagesToUpload(remoteLatestSourcePackages, populatedRepositoryContent.getLatestPackages());
+
+        final String sourceDirectoryPath = repositoryGenerationDirectory.getAbsolutePath()
+                + separator
                 + repository.getId()
-                + separator + "current"
-                + separator + "src" + separator + CONTRIB_FOLDER + separator + LATEST_FOLDER);
-        final File packagesFile = new File(currentDirectory.getAbsolutePath() + separator + PACKAGES);
-        final File packagesGzFile = new File(currentDirectory.getAbsolutePath() + separator + "PACKAGES.gz");
+                + separator
+                + CURRENT_FOLDER
+                + separator
+                + SRC_FOLDER
+                + separator
+                + CONTRIB_FOLDER;
 
-        final List<String> latestToDelete =
-                selectPackagesToDelete(remoteLatestPackages, populatedRepositoryContent.getLatestPackages());
-        final List<File> archiveToUpload =
-                selectPackagesToUpload(remoteArchivePackages, populatedRepositoryContent.getArchivePackages());
+        final File latestSourceDirectory = new File(sourceDirectoryPath + separator + LATEST_FOLDER);
 
-        final File archiveDirectory = new File(repositoryGenerationDirectory.getAbsolutePath() + separator
-                + repository.getId()
-                + separator + "current"
-                + separator + "src" + separator + CONTRIB_FOLDER + separator + ARCHIVE_FOLDER);
-        final File packagesFileFromArchive = new File(archiveDirectory.getAbsolutePath() + separator + PACKAGES);
-        final File packagesGzFileFromArchive = new File(archiveDirectory.getAbsolutePath() + separator + "PACKAGES.gz");
+        final File packagesFileForSources = new File(latestSourceDirectory.getAbsolutePath() + separator + PACKAGES);
+        final File packagesGzFileForSources =
+                new File(latestSourceDirectory.getAbsolutePath() + separator + PACKAGES_GZ);
 
-        final List<String> archiveToDelete =
-                selectPackagesToDelete(remoteArchivePackages, populatedRepositoryContent.getArchivePackages());
+        packagesFiles.put(SRC_FOLDER + separator + CONTRIB_FOLDER, packagesFileForSources);
+        packagesGzFiles.put(SRC_FOLDER + separator + CONTRIB_FOLDER, packagesGzFileForSources);
 
-        final Map<String, String> checksums = getChecksumsForPopulatedContent(populatedRepositoryContent);
+        final List<String> latestSourceToDelete =
+                selectPackagesToDelete(remoteLatestSourcePackages, populatedRepositoryContent.getLatestPackages());
+
+        final List<File> archiveSourceToUpload =
+                selectPackagesToUpload(remoteArchiveSourcePackages, populatedRepositoryContent.getArchivePackages());
+
+        final File archiveSourceDirectory = new File(sourceDirectoryPath + separator + ARCHIVE_FOLDER);
+        final File packagesFileFromSourceArchive =
+                new File(archiveSourceDirectory.getAbsolutePath() + separator + PACKAGES);
+        final File packagesGzFileFromSourceArchive =
+                new File(archiveSourceDirectory.getAbsolutePath() + separator + PACKAGES_GZ);
+
+        packagesFilesForArchive.put(SRC_FOLDER + separator + CONTRIB_FOLDER, packagesFileFromSourceArchive);
+        packagesGzFilesForArchive.put(SRC_FOLDER + separator + CONTRIB_FOLDER, packagesGzFileFromSourceArchive);
+
+        final List<String> archiveSourceToDelete =
+                selectPackagesToDelete(remoteArchiveSourcePackages, populatedRepositoryContent.getArchivePackages());
+
+        // <path_to_folder, <file, hash>>
+        final Map<String, Map<String, String>> checksums = getChecksumsForPopulatedContent(populatedRepositoryContent);
 
         try {
-            checksums.put("recent/PACKAGES", calculateMd5Sum(packagesFile));
-            checksums.put("recent/PACKAGES.gz", calculateMd5Sum(packagesGzFile));
-            checksums.put("archive/PACKAGES", calculateMd5Sum(packagesFileFromArchive));
-            checksums.put("archive/PACKAGES.gz", calculateMd5Sum(packagesGzFileFromArchive));
+            checksums
+                    .get(SRC_FOLDER + separator + CONTRIB_FOLDER)
+                    .put("recent/PACKAGES", calculateMd5Sum(packagesFileForSources));
+            checksums
+                    .get(SRC_FOLDER + separator + CONTRIB_FOLDER)
+                    .put("recent/PACKAGES.gz", calculateMd5Sum(packagesGzFileForSources));
+            checksums
+                    .get(SRC_FOLDER + separator + CONTRIB_FOLDER)
+                    .put("archive/PACKAGES", calculateMd5Sum(packagesFileFromSourceArchive));
+            checksums
+                    .get(SRC_FOLDER + separator + CONTRIB_FOLDER)
+                    .put("archive/PACKAGES.gz", calculateMd5Sum(packagesGzFileFromSourceArchive));
         } catch (Md5SumCalculationException e) {
             log.error(e.getMessage(), e);
             throw new RuntimeException("Could not build synchronize request body due to storage malfunction.");
         }
 
+        // BINARY FILES
+        MultiValueMap<String, File> binaryPackagesToUpload = new LinkedMultiValueMap<>();
+        MultiValueMap<String, File> binaryPackagesToUploadToArchive = new LinkedMultiValueMap<>();
+        MultiValueMap<String, String> binaryPackagesToDelete = new LinkedMultiValueMap<>();
+        MultiValueMap<String, String> binaryPackagesToDeleteFromArchive = new LinkedMultiValueMap<>();
+
+        organizeBinaryPackagesForRequestBody(
+                populatedRepositoryContent.getBinLatestPackagesPaths(),
+                remoteLatestBinaryPackages,
+                binaryPackagesToUpload,
+                binaryPackagesToDelete,
+                packagesFiles,
+                packagesGzFiles,
+                checksums,
+                repository,
+                false);
+
+        organizeBinaryPackagesForRequestBody(
+                populatedRepositoryContent.getBinArchivePackagesPaths(),
+                remoteArchiveBinaryPackages,
+                binaryPackagesToUploadToArchive,
+                binaryPackagesToDeleteFromArchive,
+                packagesFilesForArchive,
+                packagesGzFilesForArchive,
+                checksums,
+                repository,
+                true);
+
         return new SynchronizeRepositoryRequestBody(
-                latestToUpload,
-                archiveToUpload,
-                latestToDelete,
-                archiveToDelete,
+                latestSourceToUpload,
+                archiveSourceToUpload,
+                latestSourceToDelete,
+                archiveSourceToDelete,
+                sourceDirectory,
                 versionBefore,
                 null,
-                packagesFile,
-                packagesGzFile,
-                packagesFileFromArchive,
-                packagesGzFileFromArchive,
+                binaryPackagesToUpload,
+                binaryPackagesToUploadToArchive,
+                binaryPackagesToDelete,
+                binaryPackagesToDeleteFromArchive,
+                packagesFiles,
+                packagesGzFiles,
+                packagesFilesForArchive,
+                packagesGzFilesForArchive,
                 checksums);
     }
 
-    private Map<String, String> getChecksumsForPopulatedContent(@NotNull PopulatedRepositoryContent content) {
-        final Map<String, String> checksums = new HashMap<>();
+    private void organizeBinaryPackagesForRequestBody(
+            MultiValueMap<String, RPackage> binaryPackagesPaths,
+            MultiValueMap<String, String> remoteBinaryPackages,
+            MultiValueMap<String, File> binaryPackagesToUpload,
+            MultiValueMap<String, String> binaryPackagesToDelete,
+            Map<String, File> packagesFiles,
+            Map<String, File> packagesGzFiles,
+            Map<String, Map<String, String>> checksums,
+            RRepository repository,
+            boolean archive) {
 
-        content.getLatestPackages().forEach(p -> checksums.put(sourceToKey(p), p.getMd5sum()));
-        content.getArchivePackages().forEach(p -> checksums.put(sourceToKey(p), p.getMd5sum()));
+        MultiValueMap<String, RPackage> reducedBinaryPaths = new LinkedMultiValueMap<>();
+        binaryPackagesPaths.forEach((key, value) -> reducedBinaryPaths.addAll(
+                StringUtils.substringBetween(key, "/current/", archive ? "/Archive" : "/latest"), value));
+
+        Set<String> allPaths = new HashSet<>();
+        allPaths.addAll(reducedBinaryPaths.keySet());
+        allPaths.addAll(remoteBinaryPackages.keySet());
+
+        for (String path : allPaths) {
+            if (!reducedBinaryPaths.containsKey(path)) {
+                remoteBinaryPackages.get(path).forEach(packageBag -> binaryPackagesToDelete.add(path, packageBag));
+                continue;
+            }
+            if (remoteBinaryPackages.containsKey(path)) {
+                List<File> packagesToUpload = selectPackagesToUpload(
+                        remoteBinaryPackages.get(path),
+                        Objects.requireNonNull(reducedBinaryPaths.get(path)).stream()
+                                .toList());
+                packagesToUpload.forEach(packageBag -> binaryPackagesToUpload.add(path, packageBag));
+
+                List<String> packagesToDelete = selectPackagesToDelete(
+                        remoteBinaryPackages.get(path),
+                        Objects.requireNonNull(reducedBinaryPaths.get(path)).stream()
+                                .toList());
+                packagesToDelete.forEach(packageBag -> binaryPackagesToDelete.add(path, packageBag));
+            } else {
+                Objects.requireNonNull(reducedBinaryPaths.get(path))
+                        .forEach(packageBag -> binaryPackagesToUpload.add(path, new File(packageBag.getSource())));
+            }
+
+            File binaryDirectory = new File(
+                    repositoryGenerationDirectory.getAbsolutePath()
+                            + separator
+                            + repository.getId()
+                            + separator
+                            + CURRENT_FOLDER
+                            + separator
+                            + path
+                            + separator,
+                    archive ? ARCHIVE_FOLDER : LATEST_FOLDER);
+
+            File packagesFile = new File(binaryDirectory.getAbsolutePath() + separator + PACKAGES);
+            File packagesGzFile = new File(binaryDirectory.getAbsolutePath() + separator + PACKAGES_GZ);
+
+            packagesFiles.put(path, packagesFile);
+            packagesGzFiles.put(path, packagesGzFile);
+
+            try {
+                String recentOrArchive = archive ? "archive" : "recent";
+                checksums.get(path).put(recentOrArchive + "/PACKAGES", calculateMd5Sum(packagesFile));
+                checksums.get(path).put(recentOrArchive + "/PACKAGES.gz", calculateMd5Sum(packagesGzFile));
+            } catch (Md5SumCalculationException e) {
+                log.error(e.getMessage(), e);
+                throw new RuntimeException("Could not build synchronize request body due to storage malfunction.");
+            }
+        }
+    }
+
+    private Map<String, Map<String, String>> getChecksumsForPopulatedContent(
+            @NotNull PopulatedRepositoryContent content) {
+        final Map<String, Map<String, String>> checksums = new HashMap<>();
+
+        checksums.put(SRC_FOLDER + separator + CONTRIB_FOLDER, new HashMap<>());
+
+        content.getLatestPackages()
+                .forEach(p ->
+                        checksums.get(SRC_FOLDER + separator + CONTRIB_FOLDER).put(sourceToKey(p), p.getMd5sum()));
+        content.getArchivePackages()
+                .forEach(p ->
+                        checksums.get(SRC_FOLDER + separator + CONTRIB_FOLDER).put(sourceToKey(p), p.getMd5sum()));
+
+        content.getBinLatestPackagesPaths()
+                .keySet()
+                .forEach(key ->
+                        checksums.put(StringUtils.substringBetween(key, "/current/", "/latest"), new HashMap<>()));
+
+        content.getBinArchivePackagesPaths()
+                .keySet()
+                .forEach(key ->
+                        checksums.put(StringUtils.substringBetween(key, "/current/", "/Archive"), new HashMap<>()));
+
+        content.getBinLatestPackagesPaths()
+                .forEach((key, value) -> value.forEach(packageBag -> checksums
+                        .get(StringUtils.substringBetween(key, "/current/", "/latest"))
+                        .put(sourceToKey(packageBag), packageBag.getMd5sum())));
+        content.getBinArchivePackagesPaths()
+                .forEach((key, value) -> value.forEach(packageBag -> checksums
+                        .get(StringUtils.substringBetween(key, "/current/", "/Archive"))
+                        .put(sourceToKey(packageBag), packageBag.getMd5sum())));
 
         return checksums;
     }
@@ -221,26 +437,147 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
             List<RPackage> packages,
             List<RPackage> latestPackages,
             List<RPackage> archivePackages,
+            List<RPackage> binaryPackages,
+            List<RPackage> latestBinaryPackages,
+            List<RPackage> archiveBinaryPackages,
             RRepository repository)
             throws OrganizePackagesException {
         try {
             createFolderStructureForGeneration(repository, dateStamp);
-            populateGeneratedFolder(packages, repository, dateStamp);
+            populateGeneratedSourceFolder(packages, repository, dateStamp);
+
+            MultiValueMap<String, RPackage> binFoldersPaths =
+                    createBinaryFolderStructureForGeneration(binaryPackages, repository, dateStamp);
+
+            for (String folderPath : binFoldersPaths.keySet()) {
+                populateGeneratedBinaryFolder(
+                        binFoldersPaths.get(folderPath).stream().toList(), repository, dateStamp, folderPath);
+            }
 
             final File target = linkCurrentFolderToGeneratedFolder(repository, dateStamp);
-            final Path repoPath = target.toPath().resolve("src").resolve(CONTRIB_FOLDER);
-            final String latestFolderPath = repoPath + separator + LATEST_FOLDER;
-            final String archiveFolderPath = repoPath + separator + ARCHIVE_FOLDER;
 
-            createTemporaryFoldersForLatestAndArchive(repoPath.toString());
-            populatePackageFolder(latestPackages, latestFolderPath);
-            populatePackageFolder(archivePackages, archiveFolderPath);
+            final Path repoPathForSources = target.toPath().resolve(SRC_FOLDER).resolve(CONTRIB_FOLDER);
+            final String latestSourceFolderPath = repoPathForSources + separator + LATEST_FOLDER;
+            final String archiveSourceFolderPath = repoPathForSources + separator + ARCHIVE_FOLDER;
 
-            return new PopulatedRepositoryContent(latestPackages, archivePackages, latestFolderPath, archiveFolderPath);
+            createTemporaryFoldersForLatestAndArchive(repoPathForSources.toString());
+            populatePackageFolder(latestPackages, latestSourceFolderPath);
+            populatePackageFolder(archivePackages, archiveSourceFolderPath);
+
+            final Path repoPathForBinaries = target.toPath().resolve(BIN_FOLDER).resolve(LINUX_FOLDER);
+
+            MultiValueMap<String, RPackage> binLatestFoldersPaths = new LinkedMultiValueMap<>();
+            MultiValueMap<String, RPackage> binArchiveFoldersPaths = new LinkedMultiValueMap<>();
+
+            for (String folderPath : binFoldersPaths.keySet()) {
+                String latestFolderPath = repoPathForBinaries + separator + folderPath + separator + LATEST_FOLDER;
+                String archiveFolderPath = repoPathForBinaries + separator + folderPath + separator + ARCHIVE_FOLDER;
+
+                createTemporaryFoldersForLatestAndArchive(repoPathForBinaries + separator + folderPath);
+
+                extractAndPopulateBinaries(
+                        latestBinaryPackages, binFoldersPaths, binLatestFoldersPaths, folderPath, latestFolderPath);
+                extractAndPopulateBinaries(
+                        archiveBinaryPackages, binFoldersPaths, binArchiveFoldersPaths, folderPath, archiveFolderPath);
+            }
+
+            return new PopulatedRepositoryContent(
+                    latestPackages,
+                    archivePackages,
+                    latestSourceFolderPath,
+                    archiveSourceFolderPath,
+                    binLatestFoldersPaths,
+                    binArchiveFoldersPaths);
         } catch (CreateFolderStructureException | PackageFolderPopulationException | LinkFoldersException e) {
             log.error(e.getMessage(), e);
             throw new OrganizePackagesException();
         }
+    }
+
+    private void extractAndPopulateBinaries(
+            List<RPackage> packages,
+            MultiValueMap<String, RPackage> allPackagesFolderPaths,
+            MultiValueMap<String, RPackage> separatedBinFoldersPaths,
+            String destinationFolderPath,
+            String currentFolderPath)
+            throws PackageFolderPopulationException {
+        final List<RPackage> packagesInBinFolder = extractPackagesForBinFolders(
+                packages,
+                allPackagesFolderPaths.get(destinationFolderPath).stream().toList());
+        if (!packagesInBinFolder.isEmpty()) {
+            populatePackageFolder(packagesInBinFolder, currentFolderPath);
+            separatedBinFoldersPaths.addAll(currentFolderPath, packagesInBinFolder);
+        }
+    }
+
+    /*
+     * This method helps to extract only latest or only archive packages
+     * from packages separated into individual bin folders
+     */
+    private List<RPackage> extractPackagesForBinFolders(
+            List<RPackage> allPackages, List<RPackage> selectedForBinFolderPackages) {
+
+        List<RPackage> extractedPackages = new ArrayList<>();
+        for (RPackage packageBag : selectedForBinFolderPackages)
+            if (allPackages.contains(packageBag)) extractedPackages.add(packageBag);
+
+        return extractedPackages;
+    }
+
+    protected MultiValueMap<String, RPackage> createBinaryFolderStructureForGeneration(
+            List<RPackage> packages, RRepository repository, String dateStamp) throws CreateFolderStructureException {
+        File dateStampFolder = null;
+        try {
+            dateStampFolder = createFolderStructure(repositoryGenerationDirectory.getAbsolutePath()
+                    + separator
+                    + repository.getId()
+                    + separator
+                    + dateStamp);
+
+            MultiValueMap<String, RPackage> packagesLocalization = new LinkedMultiValueMap<>();
+
+            for (RPackage packageBag : packages) {
+                String binFolderStructure = packageBag.getDistribution()
+                        + separator
+                        + packageBag.getArchitecture()
+                        + separator
+                        + resolveRVersionToFolderName(packageBag.getRVersion());
+                packagesLocalization.add(binFolderStructure, packageBag);
+                createFolderStructure(
+                        getRepositoryForBinaryGeneratedPath(dateStampFolder, separator, binFolderStructure));
+            }
+
+            return packagesLocalization;
+        } catch (CreateFolderStructureException e) {
+            if (dateStampFolder != null) {
+                try {
+                    deleteFile(dateStampFolder);
+                } catch (DeleteFileException dfe) {
+                    log.error(dfe.getMessage(), dfe);
+                }
+            }
+            throw e;
+        }
+    }
+
+    /*
+     * This method resolves R version of package to a folder for repository server
+     * according to the pattern X.Y e.g. 4.2.1 becomes 4.2 and 4 becomes 4.0
+     */
+    private String resolveRVersionToFolderName(String rVersion) {
+
+        int nonDigits = 0;
+
+        for (int i = 0; i < rVersion.length(); i++) {
+            if (!Character.isDigit(rVersion.charAt(i))) {
+                nonDigits++;
+                if (nonDigits == 2) return rVersion.substring(0, i);
+            }
+        }
+
+        if (nonDigits == 0) return rVersion + ".0";
+
+        return rVersion;
     }
 
     @Override
@@ -254,13 +591,14 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
                 File packagesFile = new File(folderPath + separator + PACKAGES);
 
                 Files.copy(new File(targetFilePath).toPath(), new File(destinationFilePath).toPath());
-                if (!packageBag.getMd5sum().equals(calculateMd5Sum(new File(destinationFilePath)))) {
+                final String calculatedSum = calculateMd5Sum(new File(destinationFilePath));
+                if (!packageBag.getMd5sum().equals(calculatedSum)) {
                     throw new Md5MismatchException();
                 }
 
-                BufferedWriter writer = new BufferedWriter(new FileWriter(packagesFile, true));
-                writer.append(generatePackageString(packageBag));
-                writer.close();
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(packagesFile, true))) {
+                    writer.append(generatePackageString(packageBag));
+                }
 
                 gzipFile(packagesFile);
             } catch (IOException | GzipFileException | Md5MismatchException | Md5SumCalculationException e) {
@@ -274,26 +612,61 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
         final StringBuilder packageString = new StringBuilder(500);
         final String lineSeparator = System.lineSeparator();
 
-        packageString.append("Package: ").append(separateLines(packageBag.getName(), lineSeparator)).append(lineSeparator);
-        packageString.append("Version: ").append(separateLines(packageBag.getVersion(), lineSeparator)).append(lineSeparator);
+        packageString
+                .append("Package: ")
+                .append(separateLines(packageBag.getName(), lineSeparator))
+                .append(lineSeparator);
+        packageString
+                .append("Version: ")
+                .append(separateLines(packageBag.getVersion(), lineSeparator))
+                .append(lineSeparator);
         if (packageBag.getDepends() != null && !packageBag.getDepends().trim().isEmpty())
-            packageString.append("Depends: ").append(separateLines(packageBag.getDepends(), lineSeparator)).append(lineSeparator);
+            packageString
+                    .append("Depends: ")
+                    .append(separateLines(packageBag.getDepends(), lineSeparator))
+                    .append(lineSeparator);
         if (packageBag.getImports() != null && !packageBag.getImports().trim().isEmpty())
-            packageString.append("Imports: ").append(separateLines(packageBag.getImports(), lineSeparator)).append(lineSeparator);
+            packageString
+                    .append("Imports: ")
+                    .append(separateLines(packageBag.getImports(), lineSeparator))
+                    .append(lineSeparator);
         if (packageBag.getSuggests() != null && !packageBag.getSuggests().trim().isEmpty())
-            packageString.append("Suggests: ").append(separateLines(packageBag.getSuggests(), lineSeparator)).append(lineSeparator);
-        packageString.append("License: ").append(separateLines(packageBag.getLicense(), lineSeparator)).append(lineSeparator);
+            packageString
+                    .append("Suggests: ")
+                    .append(separateLines(packageBag.getSuggests(), lineSeparator))
+                    .append(lineSeparator);
+        packageString
+                .append("License: ")
+                .append(separateLines(packageBag.getLicense(), lineSeparator))
+                .append(lineSeparator);
         if (packageBag.getLinkingTo() != null && !packageBag.getLinkingTo().isEmpty())
-            packageString.append("LinkingTo: ").append(separateLines(packageBag.getLinkingTo(), lineSeparator));
+            packageString
+                    .append("LinkingTo: ")
+                    .append(separateLines(packageBag.getLinkingTo(), lineSeparator))
+                    .append(lineSeparator);
         if (packageBag.getEnhances() != null && !packageBag.getEnhances().isEmpty())
-            packageString.append("Enhances: ").append(separateLines(packageBag.getEnhances(), lineSeparator));
+            packageString
+                    .append("Enhances: ")
+                    .append(separateLines(packageBag.getEnhances(), lineSeparator))
+                    .append(lineSeparator);
         if (packageBag.getPriority() != null && !packageBag.getPriority().isEmpty())
-            packageString.append("Priority: ").append(separateLines(packageBag.getPriority(), lineSeparator));
-        packageString.append("MD5Sum: ").append(separateLines(packageBag.getMd5sum(), lineSeparator)).append(lineSeparator);
+            packageString
+                    .append("Priority: ")
+                    .append(separateLines(packageBag.getPriority(), lineSeparator))
+                    .append(lineSeparator);
+        packageString
+                .append("MD5Sum: ")
+                .append(separateLines(packageBag.getMd5sum(), lineSeparator))
+                .append(lineSeparator);
         packageString
                 .append("NeedsCompilation: ")
                 .append(packageBag.isNeedsCompilation() ? "yes" : "no")
                 .append(lineSeparator);
+        if (packageBag.isBinary())
+            packageString
+                    .append("Built: ")
+                    .append(separateLines(packageBag.getBuilt(), lineSeparator))
+                    .append(lineSeparator);
         packageString.append(lineSeparator);
 
         return packageString.toString();
@@ -309,6 +682,16 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
         try {
             deleteFile(new File(populatedRepositoryContent.getLatestDirectoryPath()));
             deleteFile(new File(populatedRepositoryContent.getArchiveDirectoryPath()));
+
+            Set<String> binaryDirPaths = new HashSet<>();
+            binaryDirPaths.addAll(
+                    populatedRepositoryContent.getBinArchivePackagesPaths().keySet());
+            binaryDirPaths.addAll(
+                    populatedRepositoryContent.getBinArchivePackagesPaths().keySet());
+
+            for (String path : binaryDirPaths) {
+                deleteFile(new File(path));
+            }
 
             if (!Boolean.parseBoolean(snapshot)) {
                 cleanDirectory(repositoryGenerationDirectory);

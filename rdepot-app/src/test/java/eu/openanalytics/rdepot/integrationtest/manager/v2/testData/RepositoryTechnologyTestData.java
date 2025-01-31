@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -35,7 +35,9 @@ public class RepositoryTechnologyTestData {
     private String repoIdToDelete;
     private String repoIdToShiftDelete;
     private String repoIdToEdit;
+    private String repoIdToChangeHash;
     private String repoIdToRead;
+    private String repoIdToPublishWithBinaryPackage;
     private String deletedRepoId;
     private int getEndpointNewEventsAmount;
     private int deleteEndpointNewEventsAmount;

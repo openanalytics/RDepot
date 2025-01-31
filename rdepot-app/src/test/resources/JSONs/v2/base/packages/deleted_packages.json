@@ -1,289 +1,340 @@
 {
-  "code": 200,
-  "data": {
-    "links": [{
-      "rel": "self",
-      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages?deleted=true&page=0&size=20&sort=id,asc"
-    }],
-    "page": {
-      "number": 0,
-      "size": 20,
-      "totalPages": 1,
-      "totalElements": 6
-    },
-    "content": [{
-      "author": "Julie Eaton and Ian Painter",
-      "active": false,
-      "description": "Package for visualizing data quality of partially accruing time series.",
-      "source": "\/opt\/rdepot\/repositories\/3\/46950998\/accrued_1.1.tar.gz",
-      "technology": "R",
-      "repository": {
-        "name": "testrepo2",
-        "id": 3,
-        "published": true,
-        "technology": "R",
-        "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
-      },
-      "title": "Visualization tools for partially accruing data",
-      "version": "1.1",
-      "url": null,
-      "deleted": true,
-      "binary": false,
-      "name": "accrued",
-      "submission": {
-        "id": 4,
-        "state": "ACCEPTED"
-      },
-      "links": [{
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/6"
-      }, {
-        "rel": "packageList",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
-      }, {
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/6",
-        "type": "PATCH"
-      }, {
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/6",
-        "type": "DELETE"
-      }],
-      "id": 6,
-      "user": {
-        "name": "Albert Einstein",
-        "id": 4,
-        "login": "einstein",
-        "email": "einstein@ldap.forumsys.com"
-      }
-    }, {
-      "author": "Bulent Altunkaynak [aut, cre], Hamza Gamgam [aut]",
-      "active": false,
-      "description": "Performs nonparametric tests for equality of location against ordered alternatives.",
-      "source": "\/opt\/rdepot\/repositories\/2\/8436419\/npordtests_1.1.tar.gz",
-      "technology": "R",
-      "repository": {
-        "name": "testrepo1",
-        "id": 2,
-        "published": true,
-        "technology": "R",
-        "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
-      },
-      "title": "Nonparametric Tests for Equality of Location Against Ordered Alternatives",
-      "version": "1.1",
-      "url": null,
-      "deleted": true,
-      "binary": false,
-      "name": "npordtests",
-      "submission": {
-        "id": 15,
-        "state": "ACCEPTED"
-      },
-      "links": [{
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/14"
-      }, {
-        "rel": "packageList",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
-      }, {
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/14",
-        "type": "PATCH"
-      }, {
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/14",
-        "type": "DELETE"
-      }],
-      "id": 14,
-      "user": {
-        "name": "Nikola Tesla",
-        "id": 5,
-        "login": "tesla",
-        "email": "tesla@ldap.forumsys.com"
-      }
-    }, {
-      "author": "Neil J. Gunther [aut], Stefan Moeding [aut, cre]",
-      "active": false,
-      "description": "The Universal Scalability Law (Gunther 2007)",
-      "source": "\/opt\/rdepot\/repositories\/6\/21695389\/usl_2.0.0.tar.gz",
-      "technology": "R",
-      "repository": {
-        "name": "testrepo5",
-        "id": 6,
-        "published": false,
-        "technology": "R",
-        "publicationUri": "http:\/\/localhost\/repo\/testrepo5"
-      },
-      "title": "Analyze System Scalability with the Universal Scalability Law",
-      "version": "2.0.0",
-      "url": null,
-      "deleted": true,
-      "binary": false,
-      "name": "usl",
-      "submission": {
-        "id": 27,
-        "state": "ACCEPTED"
-      },
-      "links": [{
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/27"
-      }, {
-        "rel": "packageList",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
-      }, {
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/27",
-        "type": "PATCH"
-      }, {
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/27",
-        "type": "DELETE"
-      }],
-      "id": 27,
-      "user": {
-        "name": "Local Admin User",
-        "id": 8,
-        "login": "admin",
-        "email": "admin@localhost"
-      }
-    }, {
-      "author": "Nicholas Tierney [aut, cre]",
-      "active": false,
-      "description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
-      "source": "\/opt\/rdepot\/repositories\/6\/70325377\/visdat_0.1.0.tar.gz",
-      "technology": "R",
-      "repository": {
-        "name": "testrepo5",
-        "id": 6,
-        "published": false,
-        "technology": "R",
-        "publicationUri": "http:\/\/localhost\/repo\/testrepo5"
-      },
-      "title": "Preliminary Data Visualisation",
-      "version": "0.1.0",
-      "url": "https:\/\/github.com\/njtierney\/visdat\/",
-      "deleted": true,
-      "binary": false,
-      "name": "visdat",
-      "submission": {
-        "id": 28,
-        "state": "ACCEPTED"
-      },
-      "links": [{
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/28"
-      }, {
-        "rel": "packageList",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
-      }, {
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/28",
-        "type": "PATCH"
-      }, {
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/28",
-        "type": "DELETE"
-      }],
-      "id": 28,
-      "user": {
-        "name": "Local Admin User",
-        "id": 8,
-        "login": "admin",
-        "email": "admin@localhost"
-      }
-    }, {
-      "author": "Scott Fortmann-Roe",
-      "active": false,
-      "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-      "source": "\/opt\/rdepot\/repositories\/7\/67484296\/A3_0.9.1.tar.gz",
-      "technology": "R",
-      "repository": {
-        "name": "testrepo6",
-        "id": 7,
-        "published": false,
-        "technology": "R",
-        "publicationUri": "http:\/\/localhost\/repo\/testrepo6"
-      },
-      "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
-      "version": "0.9.1",
-      "url": null,
-      "deleted": true,
-      "binary": false,
-      "name": "A3",
-      "submission": {
-        "id": 29,
-        "state": "ACCEPTED"
-      },
-      "links": [{
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/29"
-      }, {
-        "rel": "packageList",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
-      }, {
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/29",
-        "type": "PATCH"
-      }, {
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/29",
-        "type": "DELETE"
-      }],
-      "id": 29,
-      "user": {
-        "name": "Local Admin User",
-        "id": 8,
-        "login": "admin",
-        "email": "admin@localhost"
-      }
-    }, {
-      "author": "Amazon Web Services",
-      "active": true,
-      "description": null,
-      "source": "\/opt\/rdepot\/repositories\/8\/55941618\/boto3-1.26.156.tar.gz",
-      "technology": "Python",
-      "repository": {
-        "name": "testrepo8",
-        "id": 8,
-        "published": true,
-        "technology": "Python",
-        "publicationUri": "http:\/\/localhost\/repo\/testrepo8"
-      },
-      "title": "The AWS SDK for Python",
-      "version": "1.26.156",
-      "url": "Documentation, https:\/\/boto3.amazonaws.com\/v1\/documentation\/api\/latest\/index.html, Source, https:\/\/github.com\/boto\/boto3",
-      "deleted": true,
-      "binary": false,
-      "name": "boto3",
-      "submission": {
-        "id": 42,
-        "state": "ACCEPTED"
-      },
-      "links": [{
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/42"
-      }, {
-        "rel": "packageList",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
-      }, {
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/42",
-        "type": "PATCH"
-      }, {
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/42",
-        "type": "DELETE"
-      }],
-      "id": 42,
-      "user": {
-        "name": "Galileo Galilei",
-        "id": 6,
-        "login": "galieleo",
-        "email": "galieleo@ldap.forumsys.com"
-      }
-    }]
-  },
-  "messageCode": "success.request.processed",
-  "message": "Your request has been processed successfully.",
-  "status": "SUCCESS"
+	"code": 200,
+	"data": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages?deleted=true&page=0&size=20&sort=id,asc"
+			}
+		],
+		"page": {
+			"number": 0,
+			"size": 20,
+			"totalPages": 1,
+			"totalElements": 6
+		},
+		"content": [
+			{
+				"author": "Julie Eaton and Ian Painter",
+				"active": false,
+				"description": "Package for visualizing data quality of partially accruing time series.",
+				"source": "\/opt\/rdepot\/repositories\/3\/46950998\/accrued_1.1.tar.gz",
+				"technology": "R",
+				"repository": {
+					"name": "testrepo2",
+					"lastPublicationSuccessful": true,
+					"id": 3,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo2"
+				},
+				"title": "Visualization tools for partially accruing data",
+				"version": "1.1",
+				"url": null,
+				"deleted": true,
+				"binary": false,
+				"name": "accrued",
+				"submission": {
+					"id": 4,
+					"state": "ACCEPTED"
+				},
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/6"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/6",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/6",
+						"type": "DELETE"
+					}
+				],
+				"id": 6,
+				"user": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				}
+			},
+			{
+				"author": "Bulent Altunkaynak [aut, cre], Hamza Gamgam [aut]",
+				"active": false,
+				"description": "Performs nonparametric tests for equality of location against ordered alternatives.",
+				"source": "\/opt\/rdepot\/repositories\/2\/8436419\/npordtests_1.1.tar.gz",
+				"technology": "R",
+				"repository": {
+					"name": "testrepo1",
+					"lastPublicationSuccessful": true,
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"title": "Nonparametric Tests for Equality of Location Against Ordered Alternatives",
+				"version": "1.1",
+				"url": null,
+				"deleted": true,
+				"binary": false,
+				"name": "npordtests",
+				"submission": {
+					"id": 15,
+					"state": "ACCEPTED"
+				},
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/14"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/14",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/14",
+						"type": "DELETE"
+					}
+				],
+				"id": 14,
+				"user": {
+					"name": "Nikola Tesla",
+					"id": 5,
+					"login": "tesla",
+					"email": "tesla@ldap.forumsys.com"
+				}
+			},
+			{
+				"author": "Neil J. Gunther [aut], Stefan Moeding [aut, cre]",
+				"active": false,
+				"description": "The Universal Scalability Law (Gunther 2007)",
+				"source": "\/opt\/rdepot\/repositories\/6\/21695389\/usl_2.0.0.tar.gz",
+				"technology": "R",
+				"repository": {
+					"name": "testrepo5",
+					"lastPublicationSuccessful": false,
+					"id": 6,
+					"published": false,
+					"technology": "R",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo5"
+				},
+				"title": "Analyze System Scalability with the Universal Scalability Law",
+				"version": "2.0.0",
+				"url": null,
+				"deleted": true,
+				"binary": false,
+				"name": "usl",
+				"submission": {
+					"id": 27,
+					"state": "ACCEPTED"
+				},
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/27"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/27",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/27",
+						"type": "DELETE"
+					}
+				],
+				"id": 27,
+				"user": {
+					"name": "Local Admin User",
+					"id": 8,
+					"login": "admin",
+					"email": "admin@localhost"
+				}
+			},
+			{
+				"author": "Nicholas Tierney [aut, cre]",
+				"active": false,
+				"description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
+				"source": "\/opt\/rdepot\/repositories\/6\/70325377\/visdat_0.1.0.tar.gz",
+				"technology": "R",
+				"repository": {
+					"name": "testrepo5",
+					"lastPublicationSuccessful": false,
+					"id": 6,
+					"published": false,
+					"technology": "R",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo5"
+				},
+				"title": "Preliminary Data Visualisation",
+				"version": "0.1.0",
+				"url": "https:\/\/github.com\/njtierney\/visdat\/",
+				"deleted": true,
+				"binary": false,
+				"name": "visdat",
+				"submission": {
+					"id": 28,
+					"state": "ACCEPTED"
+				},
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/28"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/28",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/28",
+						"type": "DELETE"
+					}
+				],
+				"id": 28,
+				"user": {
+					"name": "Local Admin User",
+					"id": 8,
+					"login": "admin",
+					"email": "admin@localhost"
+				}
+			},
+			{
+				"author": "Scott Fortmann-Roe",
+				"active": false,
+				"description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
+				"source": "\/opt\/rdepot\/repositories\/7\/67484296\/A3_0.9.1.tar.gz",
+				"technology": "R",
+				"repository": {
+					"name": "testrepo6",
+					"lastPublicationSuccessful": false,
+					"id": 7,
+					"published": false,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo6"
+				},
+				"title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
+				"version": "0.9.1",
+				"url": null,
+				"deleted": true,
+				"binary": false,
+				"name": "A3",
+				"submission": {
+					"id": 29,
+					"state": "ACCEPTED"
+				},
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/29"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/29",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/29",
+						"type": "DELETE"
+					}
+				],
+				"id": 29,
+				"user": {
+					"name": "Local Admin User",
+					"id": 8,
+					"login": "admin",
+					"email": "admin@localhost"
+				}
+			},
+			{
+				"author": "Amazon Web Services",
+				"active": true,
+				"description": null,
+				"source": "\/opt\/rdepot\/repositories\/8\/55941618\/boto3-1.26.156.tar.gz",
+				"technology": "Python",
+				"repository": {
+					"name": "testrepo8",
+					"lastPublicationSuccessful": true,
+					"id": 8,
+					"published": true,
+					"technology": "Python",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo8"
+				},
+				"title": "The AWS SDK for Python",
+				"version": "1.26.156",
+				"url": "Documentation, https:\/\/boto3.amazonaws.com\/v1\/documentation\/api\/latest\/index.html, Source, https:\/\/github.com\/boto\/boto3",
+				"deleted": true,
+				"binary": false,
+				"name": "boto3",
+				"submission": {
+					"id": 42,
+					"state": "ACCEPTED"
+				},
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/42"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/42",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/42",
+						"type": "DELETE"
+					}
+				],
+				"id": 42,
+				"user": {
+					"name": "Galileo Galilei",
+					"id": 6,
+					"login": "galieleo",
+					"email": "galieleo@ldap.forumsys.com"
+				}
+			}
+		]
+	},
+	"messageCode": "success.request.processed",
+	"message": "Your request has been processed successfully.",
+	"status": "SUCCESS"
 }

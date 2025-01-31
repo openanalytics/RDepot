@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -40,6 +40,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
@@ -54,6 +55,7 @@ import org.hibernate.annotations.Formula;
 @Table(name = "submission", schema = "public")
 public class Submission extends EventableResource implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -76,7 +78,7 @@ public class Submission extends EventableResource implements Serializable {
     private SubmissionState state;
 
     @Formula(
-            "(select min(e.date) from newsfeed_event e where e.related_submission_id=id and (e.newsfeed_event_type='CREATE' or e.newsfeed_event_type='UPLOAD'))")
+            "(select min(e.time) from newsfeed_event e where e.related_submission_id=id and (e.newsfeed_event_type='CREATE' or e.newsfeed_event_type='UPLOAD'))")
     private Instant createdDate;
 
     public Instant getCreatedDate() {

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -257,9 +257,7 @@ public class ApiV2UserController extends ApiV2Controller<User, UserDto> {
         Optional<User> requester = userService.findActiveByLogin(principal.getName());
         User user = userService.findById(id).orElseThrow(() -> new UserNotFound(messageSource, locale));
 
-        if (requester.isEmpty()
-                || !userService.isAdmin(requester.get())
-                || !securityMediator.isAuthorizedToEditWithPatch(patch, user, requester.get()))
+        if (requester.isEmpty() || !securityMediator.isAuthorizedToEditWithPatch(patch, user, requester.get()))
             throw new UserNotAuthorized(messageSource, locale);
 
         try {

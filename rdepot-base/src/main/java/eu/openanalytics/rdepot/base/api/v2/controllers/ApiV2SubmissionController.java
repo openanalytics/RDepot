@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -34,10 +34,12 @@ import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.entities.enums.SubmissionState;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
 import eu.openanalytics.rdepot.base.service.UserService;
+import eu.openanalytics.rdepot.base.time.DateParser;
 import eu.openanalytics.rdepot.base.utils.specs.SpecificationUtils;
 import eu.openanalytics.rdepot.base.utils.specs.SubmissionSpecs;
 import io.swagger.v3.oas.annotations.Operation;
 import java.security.Principal;
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -115,6 +117,9 @@ public class ApiV2SubmissionController extends ApiV2ReadingController<Submission
         final DtoResolvedPageable resolvedPageable = pageableSortResolver.resolve(pageable);
         pageableValidator.validate(SubmissionDto.class, resolvedPageable);
 
+        final Optional<Instant> fromDateInstant = fromDate.flatMap(DateParser::parseTimestampStart);
+        final Optional<Instant> toDateInstant = toDate.flatMap(DateParser::parseTimestampEnd);
+
         Specification<Submission> specification = null;
 
         if (Objects.nonNull(states)) {
@@ -129,12 +134,13 @@ public class ApiV2SubmissionController extends ApiV2ReadingController<Submission
             specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.ofRepository(repositories));
         }
 
-        if (fromDate.isPresent()) {
-            specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.fromDate(fromDate.get()));
+        if (fromDateInstant.isPresent()) {
+            specification =
+                    SpecificationUtils.andComponent(specification, SubmissionSpecs.fromDate(fromDateInstant.get()));
         }
 
-        if (toDate.isPresent()) {
-            specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.toDate(toDate.get()));
+        if (toDateInstant.isPresent()) {
+            specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.toDate(toDateInstant.get()));
         }
 
         if (search.isPresent()) {
@@ -163,7 +169,7 @@ public class ApiV2SubmissionController extends ApiV2ReadingController<Submission
     public @ResponseBody ResponseEntity<ResponseDto<EntityModel<SubmissionDto>>> getSubmissionById(
             Principal principal, @PathVariable("id") Integer id) throws SubmissionNotFound, UserNotAuthorized {
 
-        if (!userService.findActiveByLogin(principal.getName()).isPresent()) {
+        if (userService.findActiveByLogin(principal.getName()).isEmpty()) {
             throw new UserNotAuthorized(messageSource, locale);
         }
         Submission submission =

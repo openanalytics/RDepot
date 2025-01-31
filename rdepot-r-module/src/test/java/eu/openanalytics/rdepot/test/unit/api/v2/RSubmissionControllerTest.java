@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,7 +20,8 @@
  */
 package eu.openanalytics.rdepot.test.unit.api.v2;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
@@ -126,6 +127,8 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
     private static final String EXAMPLE_SUBMISSION_CREATED_PATH = JSON_PATH + "/example_submission_created.json";
     private static final String EXAMPLE_BINARY_SUBMISSION_CREATED_PATH =
             JSON_PATH + "/example_binary_submission_created.json";
+    private static final String EXAMPLE_BINARY_SUBMISSION_WTIH_GENERATE_MANUAL_TRUE_PATH =
+            JSON_PATH + "/example_binary_submission_with_generate_manual_true.json";
     private static final String ERROR_SUBMISSION_NOT_FOUND_PATH = JSON_PATH + "/error_submission_notfound.json";
     private static final String EXAMPLE_SUBMISSIONS_PATH = JSON_PATH + "/example_submissions.json";
     private static final String EXAMPLE_SUBMISSION_PATCHED_PATH = JSON_PATH + "/example_submission_patched.json";
@@ -197,7 +200,7 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
         final byte[] packageFile = Files.readAllBytes(Path.of(TEST_BINARY_PACKAGE_PATH));
         final MockMultipartFile multipartFile = new MockMultipartFile(
                 "file", "arrow_8.0.0.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
-        final boolean generateManuals = true;
+        final boolean generateManuals = false;
         final boolean replace = true;
         final boolean binary = true;
 
@@ -235,6 +238,54 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
                         .param("distribution", "centos7"))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(Files.readString(Path.of(EXAMPLE_BINARY_SUBMISSION_CREATED_PATH))));
+    }
+
+    @Test
+    @WithMockUser(authorities = "user")
+    public void submitBinaryPackage_withGenerateManualSetToTrue_shouldWarn() throws Exception {
+        final RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
+        final byte[] packageFile = Files.readAllBytes(Path.of(TEST_BINARY_PACKAGE_PATH));
+        final MockMultipartFile multipartFile = new MockMultipartFile(
+                "file", "arrow_8.0.0.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
+        final boolean generateManuals = true;
+        final boolean replace = true;
+        final boolean binary = true;
+
+        final Submission submission = RPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user.get())
+                .getSubmission();
+        submission.setState(SubmissionState.WAITING);
+        Strategy<Submission> strategy =
+                Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user.get()));
+        final PackageDto packageDto = RPackageTestFixture.GET_EXAMPLE_PACKAGE_DTO(submission.getPackageBag());
+        final SubmissionDto submissionDto =
+                RSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, submission.getPackageBag());
+
+        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(rRepositoryService.findByNameAndDeleted(any(String.class), eq(false)))
+                .thenReturn(Optional.of(repository));
+        doNothing().when(rPackageValidator).validate(any(), any(ValidationResult.class));
+        when(commonPackageDtoConverter.convertEntityToDto(any())).thenReturn(packageDto);
+        when(submissionDtoConverter.convertEntityToDto(submission)).thenReturn(submissionDto);
+        doAnswer((i) -> {
+                    final RPackageUploadRequest request = i.getArgument(0);
+                    assertTrue(request.isReplace());
+                    return strategy;
+                })
+                .when(rStrategyFactory)
+                .uploadPackageStrategy(any(), any());
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v2/manager/r/submissions")
+                        .file(multipartFile)
+                        .param("repository", repository.getName())
+                        .param("generateManual", Boolean.toString(generateManuals))
+                        .param("replace", Boolean.toString(replace))
+                        .param("binary", Boolean.toString(binary))
+                        .param("rVersion", "4.2.0")
+                        .param("architecture", "x86_64")
+                        .param("distribution", "centos7"))
+                .andExpect(status().isCreated())
+                .andExpect(content()
+                        .json(Files.readString(Path.of(EXAMPLE_BINARY_SUBMISSION_WTIH_GENERATE_MANUAL_TRUE_PATH))));
     }
 
     @Test

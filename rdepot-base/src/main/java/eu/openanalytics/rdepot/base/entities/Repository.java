@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -93,6 +93,9 @@ public abstract class Repository extends EventableResource implements Serializab
     @Column(name = "last_publication_successful")
     private boolean lastPublicationSuccessful = false;
 
+    @Column(name = "requires_authentication", nullable = false)
+    private Boolean requiresAuthentication;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "repository")
     private Set<RepositoryMaintainer> repositoryMaintainers = new HashSet<>(0);
 
@@ -123,6 +126,7 @@ public abstract class Repository extends EventableResource implements Serializab
         this.lastPublicationSuccessful = that.lastPublicationSuccessful;
         this.lastModifiedTimestamp = that.lastModifiedTimestamp;
         this.lastPublicationTimestamp = that.lastPublicationTimestamp;
+        this.requiresAuthentication = that.getRequiresAuthentication();
     }
 
     protected Repository(Technology technology) {
@@ -139,6 +143,7 @@ public abstract class Repository extends EventableResource implements Serializab
         this.name = repositoryDto.getName();
         this.deleted = repositoryDto.isDeleted();
         this.published = repositoryDto.isPublished();
+        this.requiresAuthentication = repositoryDto.getRequiresAuthentication();
         this.synchronizing = repositoryDto.isSynchronizing();
         this.lastPublicationTimestamp = lastPublicationTimestamp;
         this.lastModifiedTimestamp = lastModifiedTimestamp;

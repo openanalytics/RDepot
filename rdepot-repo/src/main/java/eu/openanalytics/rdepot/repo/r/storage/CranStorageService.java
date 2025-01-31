@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -33,12 +33,17 @@ import java.util.Map;
 public interface CranStorageService extends StorageService<SynchronizeCranRepositoryRequestBody> {
     Map<String, File> getPackagesFiles(String repository, boolean archive);
 
+    Map<String, List<Path>> getRecentBinaryPackagesFromRepository(String repository) throws IOException;
+
     Map<String, List<Path>> getArchiveFromRepository(String repository) throws IOException;
 
-    void removeNonExistingArchivePackagesFromRepo(List<String> packages, String repository)
+    void removeNonExistingBinaryPackagesFromRepo(Map<String, List<String>> packages, String repository)
             throws RestoreRepositoryException;
 
-    void generateArchiveRds(String repository) throws IOException;
+    void removeNonExistingArchivePackagesFromRepo(Map<String, List<String>> packages, String repository)
+            throws RestoreRepositoryException;
+
+    void generateArchiveRds(String repository, String path) throws IOException;
 
     @Override
     default Technology getTechnology() {

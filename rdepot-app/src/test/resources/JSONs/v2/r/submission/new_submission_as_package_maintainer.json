@@ -1,0 +1,88 @@
+{
+    "status": "SUCCESS",
+    "code": 201,
+    "message": "Your resource has been created successfully.",
+    "messageCode": "success.resource.created",
+    "data": {
+        "id": 48,
+        "packageBag": {
+            "id": 48,
+            "user": {
+                "id": 4,
+                "name": "Albert Einstein",
+                "login": "einstein",
+                "email": "einstein@ldap.forumsys.com"
+            },
+            "repository": {
+                "id": 4,
+                "name": "testrepo3",
+                "publicationUri": "http://localhost/repo/testrepo3",
+                "published": false,
+                "requiresAuthentication": true,
+                "technology": "R",
+                "lastPublicationSuccessful": false
+            },
+            "submission": {
+                "id": 48,
+                "state": "ACCEPTED"
+            },
+            "name": "A3",
+            "version": "0.9.3",
+            "source": "/opt/rdepot/repositories/4/95517882/A3_0.9.3.tar.gz",
+            "active": true,
+            "deleted": false,
+            "technology": "R",
+            "binary": false,
+            "description": "This ąęćśöäüß package supplies tools for tabulating and analyzing\\n the results of predictive models. The methods employed are\\n applicable to virtually any predictive model and make\\n comparisons between different methodologies straightforward.",
+            "author": "Scott Fortmann-Roe",
+            "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for\\n Predictive Models - test exotic letters ąęćśöäüß",
+            "url": null,
+            "links": [
+                {
+                    "rel": "self",
+                    "href": "http://localhost:8017/api/v2/manager/r/packages/48"
+                },
+                {
+                    "rel": "packageList",
+                    "href": "http://localhost:8017/api/v2/manager/packages"
+                },
+                {
+                    "rel": "self",
+                    "href": "http://localhost:8017/api/v2/manager/r/packages/48",
+                    "type": "PATCH"
+                },
+                {
+                    "rel": "self",
+                    "href": "http://localhost:8017/api/v2/manager/r/packages/48",
+                    "type": "DELETE"
+                }
+            ]
+        },
+        "submitter": {
+            "id": 6,
+            "name": "Galileo Galilei",
+            "login": "galieleo",
+            "email": "galieleo@ldap.forumsys.com"
+        },
+        "approver": {
+            "id": 6,
+            "name": "Galileo Galilei",
+            "login": "galieleo",
+            "email": "galieleo@ldap.forumsys.com"
+        },
+        "changes": "",
+        "state": "ACCEPTED",
+        "created": "2025-01-27T12:50:12.170511589Z",
+        "technology": "R",
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/r/submissions/48"
+            },
+            {
+                "rel": "submissionList",
+                "href": "http://localhost:8017/api/v2/manager/r/submissions"
+            }
+        ]
+    }
+}

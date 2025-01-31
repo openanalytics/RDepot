@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -60,7 +60,8 @@ public class PackageService<E extends Package> extends Service<E> {
         return packageDao.findByRepositoryGenericAndDeletedAndActive(repository, false, true);
     }
 
-    private void deleteSameVersion(E entity) {
+    @Override
+    public void deleteSameVersion(E entity) {
         List<E> samePackages = packageDao.findAllByNameAndRepositoryGenericAndDeletedAndVersionIn(
                 entity.getName(), entity.getRepository(), false, generateVariantsOfVersion(entity.getVersion()));
 

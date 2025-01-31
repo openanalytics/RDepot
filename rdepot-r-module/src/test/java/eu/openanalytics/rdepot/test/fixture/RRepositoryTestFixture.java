@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -41,6 +41,7 @@ public class RRepositoryTestFixture {
         repository1.setLastModifiedTimestamp(DateProvider.now());
         repository1.setLastPublicationTimestamp(DateProvider.now());
         repository1.setLastPublicationSuccessful(true);
+        repository1.setRequiresAuthentication(true);
 
         RRepository repository2 = new RRepository();
         repository2.setId(456);
@@ -52,6 +53,7 @@ public class RRepositoryTestFixture {
         repository2.setVersion(5);
         repository2.setLastModifiedTimestamp(DateProvider.now());
         repository2.setLastPublicationSuccessful(false);
+        repository2.setRequiresAuthentication(false);
 
         RRepository repository3 = new RRepository();
         repository3.setId(234);
@@ -64,6 +66,7 @@ public class RRepositoryTestFixture {
         repository3.setDeleted(true);
         repository3.setLastModifiedTimestamp(DateProvider.now());
         repository3.setLastPublicationSuccessful(false);
+        repository3.setRequiresAuthentication(false);
 
         return List.of(repository1, repository2, repository3);
     }

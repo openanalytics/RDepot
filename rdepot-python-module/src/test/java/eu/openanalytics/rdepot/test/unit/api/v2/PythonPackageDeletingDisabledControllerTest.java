@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,14 +20,8 @@
  */
 package eu.openanalytics.rdepot.test.unit.api.v2;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -54,7 +48,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -86,7 +79,7 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
     private static final String ERROR_PACKAGE_VALIDATION = JSON_PATH + "/error_package_validation.json";
     private static final String EXAMPLE_PACKAGES_REPO_PATH = JSON_PATH + "/example_packages_in_repository.json";
     private static final String ERROR_PACKAGE_DELETING_DISABLED = JSON_PATH + "/error_package_deletion_disabled.json";
-    private Optional<User> user;
+    private User user;
 
     @Autowired
     MockMvc mockMvc;
@@ -99,7 +92,7 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
 
     @BeforeEach
     public void initEach() {
-        user = Optional.of(UserTestFixture.GET_ADMIN());
+        user = UserTestFixture.GET_ADMIN();
     }
 
     @Test
@@ -133,10 +126,10 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
     public void getAllPackages() throws Exception {
         PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(userService.isAdmin(user.get())).thenReturn(true);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
+        when(userService.isAdmin(user)).thenReturn(true);
         when(pythonPackageService.findAllBySpecification(any(), any()))
-                .thenReturn(PythonPackageTestFixture.GET_EXAMPLE_PACKAGES_PAGED(repository, user.get()));
+                .thenReturn(PythonPackageTestFixture.GET_EXAMPLE_PACKAGES_PAGED(repository, user));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/python/packages")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -148,11 +141,11 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
     @WithMockUser(authorities = "user")
     public void getAllPackages_WhenRepositoryIsSpecified() throws Exception {
         final PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        Page<PythonPackage> packagesPage = PythonPackageTestFixture.GET_EXAMPLE_PACKAGES_PAGED(repository, user.get());
+        Page<PythonPackage> packagesPage = PythonPackageTestFixture.GET_EXAMPLE_PACKAGES_PAGED(repository, user);
 
         when(pythonRepositoryService.findByName(repository.getName()))
                 .thenReturn(Optional.of(PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY()));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
 
         when(pythonPackageService.findAllBySpecification(any(), any())).thenReturn(packagesPage);
 
@@ -169,7 +162,7 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
         Page<PythonPackage> packagesPage = PythonPackageTestFixture.GET_EXAMPLE_PACKAGES_PAGED_DELETED();
 
         when(pythonPackageService.findAllBySpecification(any(), any())).thenReturn(packagesPage);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/python/packages")
                         .param("deleted", "true")
@@ -184,7 +177,7 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
         final Optional<PythonPackage> packageBag = Optional.of(PythonPackageTestFixture.GET_EXAMPLE_PACKAGE());
 
         when(pythonPackageService.findById(packageBag.get().getId())).thenReturn(packageBag);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/python/packages/"
                                 + packageBag.get().getId())
@@ -201,7 +194,7 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
         final PythonPackage packageBag = PythonPackageTestFixture.GET_EXAMPLE_PACKAGE();
 
         when(pythonPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/python/packages/" + packageBag.getId())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -212,9 +205,9 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
     @Test
     @WithMockUser(authorities = "user")
     public void getPackageById_returns404_WhenPackageIsNotFound() throws Exception {
-        final Integer ID = 123;
-        when(pythonPackageService.findById(ID)).thenReturn(Optional.ofNullable(null));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        final int ID = 123;
+        when(pythonPackageService.findById(ID)).thenReturn(Optional.empty());
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/python/packages/" + ID)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -225,10 +218,10 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
     @Test
     @WithMockUser(authorities = {"user", "admin"})
     public void deletePackage_returns404_WhenPackageIsNotFound() throws Exception {
-        final Integer ID = 123;
+        final int ID = 123;
 
-        when(pythonPackageService.findById(ID)).thenReturn(Optional.ofNullable(null));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(pythonPackageService.findById(ID)).thenReturn(Optional.empty());
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v2/manager/python/packages/" + ID)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -239,7 +232,7 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
     @Test
     @WithMockUser(authorities = "user")
     public void deletePackage_returns403_WhenUserIsNotAdmin() throws Exception {
-        final Integer ID = 123;
+        final int ID = 123;
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v2/manager/python/packages/" + ID))
                 .andExpect(status().isForbidden())
@@ -253,7 +246,7 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
         packageBag.setDeleted(true);
 
         when(pythonPackageService.findOneDeleted(packageBag.getId())).thenReturn(Optional.of(packageBag));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
         doNothing().when(pythonPackageDeleter).delete(packageBag);
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v2/manager/python/packages/" + packageBag.getId()))
@@ -264,11 +257,11 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
     @Test
     @WithMockUser(authorities = {"user", "packagemaintainer"})
     public void patchPackage_returns404_WhenPackageIsNotFound() throws Exception {
-        final Integer ID = 123;
+        final int ID = 123;
         final String patchJson = "[{\"op\":\"replace\",\"path\":\"/active\",\"value\":\"false\"}]";
 
-        when(pythonPackageService.findById(ID)).thenReturn(Optional.ofNullable(null));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(pythonPackageService.findById(ID)).thenReturn(Optional.empty());
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/python/packages/" + ID)
                         .content(patchJson)
@@ -291,11 +284,11 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
     @Test
     @WithMockUser(authorities = "user")
     public void patchPackage_returns403_WhenUserIsNotPackageMaintainer() throws Exception {
-        final Integer ID = 123;
+        final int ID = 123;
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/active\",\"value\":\"false\"}]";
 
-        when(pythonPackageService.findById(ID)).thenReturn(Optional.ofNullable(null));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(pythonPackageService.findById(ID)).thenReturn(Optional.empty());
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/python/packages/" + 123)
                         .content(patchJson)
@@ -311,18 +304,18 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
         packageBag.setActive(false);
         final String patchJson = "[{\"op\":\"replace\",\"path\":\"/active\",\"value\":\"false\"}]";
         PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        Submission submission = PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION(user.get(), packageBag);
-        Strategy<PythonPackage> strategy = Mockito.spy(new SuccessfulStrategy<PythonPackage>(
-                packageBag, newsfeedEventService, pythonPackageService, user.get()));
-        when(pythonStrategyFactory.updatePackageStrategy(any(), eq(user.get()), any()))
+        Submission submission = PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, packageBag);
+        Strategy<PythonPackage> strategy =
+                Mockito.spy(new SuccessfulStrategy<>(packageBag, newsfeedEventService, pythonPackageService, user));
+        when(pythonStrategyFactory.updatePackageStrategy(any(), eq(user), any()))
                 .thenReturn(strategy);
-        when(userService.findById(anyInt())).thenReturn(user);
+        when(userService.findById(anyInt())).thenReturn(Optional.ofNullable(user));
         when(pythonRepositoryService.findById(anyInt())).thenReturn(Optional.of(repository));
         when(pythonPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
         when(submissionService.findById(anyInt())).thenReturn(Optional.of(submission));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
         doNothing().when(pythonPackageValidator).validate(any(), eq(true), any());
-        when(securityMediator.isAuthorizedToEdit(packageBag, user.get())).thenReturn(true);
+        when(securityMediator.isAuthorizedToEdit(packageBag, user)).thenReturn(true);
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/python/packages/" + packageBag.getId())
                         .content(patchJson)
                         .contentType("application/json-patch+json"))
@@ -340,18 +333,18 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
         packageBag.setActive(false);
         final String patchJson = "[{\"op\":\"replace\",\"path\":\"/deleted\",\"value\":true}]";
         PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        Submission submission = PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION(user.get(), packageBag);
-        Strategy<PythonPackage> strategy = Mockito.spy(new SuccessfulStrategy<PythonPackage>(
-                packageBag, newsfeedEventService, pythonPackageService, user.get()));
-        when(pythonStrategyFactory.updatePackageStrategy(any(), eq(user.get()), any()))
+        Submission submission = PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, packageBag);
+        Strategy<PythonPackage> strategy =
+                Mockito.spy(new SuccessfulStrategy<>(packageBag, newsfeedEventService, pythonPackageService, user));
+        when(pythonStrategyFactory.updatePackageStrategy(any(), eq(user), any()))
                 .thenReturn(strategy);
-        when(userService.findById(anyInt())).thenReturn(user);
+        when(userService.findById(anyInt())).thenReturn(Optional.ofNullable(user));
         when(pythonRepositoryService.findById(anyInt())).thenReturn(Optional.of(repository));
         when(pythonPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
         when(submissionService.findById(anyInt())).thenReturn(Optional.of(submission));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
         doNothing().when(pythonPackageValidator).validate(any(), eq(true), any());
-        when(securityMediator.isAuthorizedToEdit(packageBag, user.get())).thenReturn(true);
+        when(securityMediator.isAuthorizedToEdit(packageBag, user)).thenReturn(true);
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/python/packages/" + packageBag.getId())
                         .content(patchJson)
                         .contentType("application/json-patch+json"))
@@ -368,8 +361,8 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
         final String patchJson = "[{\"op\":\"replace\",\"path\":\"/actiiiiiive\",\"value\":\"false\"}]";
 
         when(pythonPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(securityMediator.isAuthorizedToEdit(packageBag, user.get())).thenReturn(true);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
+        when(securityMediator.isAuthorizedToEdit(packageBag, user)).thenReturn(true);
         doNothing().when(pythonPackageValidator).validate(any(), eq(false), any());
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/python/packages/" + packageBag.getId())
@@ -386,28 +379,25 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/name\",\"value\":\"newName\"}]";
 
         PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        Submission submission = PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION(user.get(), packageBag);
-        Strategy<PythonPackage> strategy = Mockito.spy(new SuccessfulStrategy<PythonPackage>(
-                packageBag, newsfeedEventService, pythonPackageService, user.get()));
+        Submission submission = PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, packageBag);
+        Strategy<PythonPackage> strategy =
+                Mockito.spy(new SuccessfulStrategy<>(packageBag, newsfeedEventService, pythonPackageService, user));
 
         when(pythonStrategyFactory.updatePackageStrategy(any(), any(), any())).thenReturn(strategy);
         when(pythonRepositoryService.findById(anyInt())).thenReturn(Optional.of(repository));
-        when(userService.findById(anyInt())).thenReturn(user);
+        when(userService.findById(anyInt())).thenReturn(Optional.ofNullable(user));
         when(pythonPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
         when(submissionService.findById(anyInt())).thenReturn(Optional.of(submission));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
         when(pythonPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
         when(repositoryMaintainerValidator.supports(RepositoryMaintainer.class)).thenReturn(true);
-        when(securityMediator.isAuthorizedToEdit(packageBag, user.get())).thenReturn(true);
+        when(securityMediator.isAuthorizedToEdit(packageBag, user)).thenReturn(true);
 
-        doAnswer(new Answer<>() {
-                    @Override
-                    public Object answer(InvocationOnMock invocation) throws Throwable {
-                        ValidationResult validationResult = invocation.getArgument(2, ValidationResult.class);
-                        validationResult.error("MULTIPART-FILE", MessageCodes.INVALID_FILENAME);
-                        return null;
-                    }
+        doAnswer((Answer<Object>) invocation -> {
+                    ValidationResult validationResult = invocation.getArgument(2, ValidationResult.class);
+                    validationResult.error("MULTIPART-FILE", MessageCodes.INVALID_FILENAME);
+                    return null;
                 })
                 .when(pythonPackageValidator)
                 .validate(any(), eq(true), any());
@@ -428,20 +418,20 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
         final String patchJson = "[{\"op\":\"replace\",\"path\":\"/active\",\"value\":\"false\"}]";
 
         PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        Submission submission = PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION(user.get(), packageBag);
-        Strategy<PythonPackage> strategy = Mockito.spy(
-                new FailureStrategy<PythonPackage>(packageBag, newsfeedEventService, pythonPackageService, user.get()));
+        Submission submission = PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, packageBag);
+        Strategy<PythonPackage> strategy =
+                Mockito.spy(new FailureStrategy<>(packageBag, newsfeedEventService, pythonPackageService, user));
 
         when(pythonStrategyFactory.updatePackageStrategy(any(), any(), any())).thenReturn(strategy);
         when(pythonRepositoryService.findById(anyInt())).thenReturn(Optional.of(repository));
-        when(userService.findById(anyInt())).thenReturn(user);
+        when(userService.findById(anyInt())).thenReturn(Optional.ofNullable(user));
         when(pythonPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
         when(submissionService.findById(anyInt())).thenReturn(Optional.of(submission));
 
         when(pythonPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
         doNothing().when(pythonPackageValidator).validate(any(), eq(true), any());
-        when(securityMediator.isAuthorizedToEdit(packageBag, user.get())).thenReturn(true);
+        when(securityMediator.isAuthorizedToEdit(packageBag, user)).thenReturn(true);
 
         ResultActions result = mockMvc.perform(
                         MockMvcRequestBuilders.patch("/api/v2/manager/python/packages/" + packageBag.getId())

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -25,14 +25,8 @@ import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.python.api.v2.dtos.PythonPackageDto;
 import eu.openanalytics.rdepot.python.technology.PythonLanguage;
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-import jakarta.persistence.SecondaryTable;
+import jakarta.persistence.*;
+import java.io.Serial;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -43,6 +37,7 @@ import lombok.Setter;
 @SecondaryTable(name = "pythonpackage", pkJoinColumns = @PrimaryKeyJoinColumn(name = "id"))
 public class PythonPackage extends Package {
 
+    @Serial
     private static final long serialVersionUID = -3373259770906796151L;
 
     @Column(name = "author_email", table = "pythonpackage")
@@ -159,7 +154,6 @@ public class PythonPackage extends Package {
         this.providesExtra = dto.getProvidesExtra();
         this.requiresDist = dto.getRequiresDist();
         this.requiresPython = dto.getRequiresPython();
-        this.summary = dto.getSummary();
         this.summary = dto.getSummary();
         this.hash = dto.getHash();
     }

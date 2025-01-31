@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -39,6 +39,7 @@ import eu.openanalytics.rdepot.python.mediator.deletion.PythonPackageDeleter;
 import eu.openanalytics.rdepot.python.services.PythonPackageService;
 import eu.openanalytics.rdepot.python.services.PythonRepositoryService;
 import eu.openanalytics.rdepot.python.strategy.create.PythonRepositoryCreateStrategy;
+import eu.openanalytics.rdepot.python.strategy.republish.PythonRepositoryRepublishStrategy;
 import eu.openanalytics.rdepot.python.strategy.update.PythonPackageUpdateStrategy;
 import eu.openanalytics.rdepot.python.strategy.update.PythonRepositoryUpdateStrategy;
 import eu.openanalytics.rdepot.python.strategy.upload.PythonPackageUploadStrategy;
@@ -59,7 +60,6 @@ public class PythonStrategyFactory {
     private final PackageMaintainerService packageMaintainerService;
     private final PythonPackageService packageService;
     private final BestMaintainerChooser bestMaintainerChooser;
-    private final PythonRepositorySynchronizer reposiotrySynchronizer;
     private final EmailService emailService;
     private final SecurityMediator securityMediator;
     private final Storage<PythonRepository, PythonPackage> storage;
@@ -67,7 +67,7 @@ public class PythonStrategyFactory {
     private final PythonPackageDeleter packageDeleter;
 
     public Strategy<Submission> uploadPackageStrategy(PackageUploadRequest<PythonRepository> request, User requester) {
-        PythonPackageUploadStrategy strategy = new PythonPackageUploadStrategy(
+        return new PythonPackageUploadStrategy(
                 request,
                 requester,
                 newsfeedEventService,
@@ -78,15 +78,15 @@ public class PythonStrategyFactory {
                 packageService,
                 emailService,
                 bestMaintainerChooser,
-                reposiotrySynchronizer,
+                repositorySynchronizer,
                 securityMediator,
                 packageDeleter);
-        return strategy;
     }
 
     public Strategy<PythonPackage> updatePackageStrategy(
             PythonPackage resource, User requester, PythonPackage updatedPackage) {
-        PythonPackageUpdateStrategy strategy = new PythonPackageUpdateStrategy(
+
+        return new PythonPackageUpdateStrategy(
                 resource,
                 newsfeedEventService,
                 packageService,
@@ -95,13 +95,12 @@ public class PythonStrategyFactory {
                 storage,
                 bestMaintainerChooser,
                 repositorySynchronizer);
-
-        return strategy;
     }
 
     public Strategy<Submission> updateSubmissionStrategy(
             Submission resource, Submission updatedResource, PythonRepository repository, User requester) {
-        Strategy<Submission> strategy = new UpdateSubmissionStrategy<PythonPackage, PythonRepository>(
+
+        return new UpdateSubmissionStrategy<>(
                 resource,
                 newsfeedEventService,
                 submissionService,
@@ -111,33 +110,34 @@ public class PythonStrategyFactory {
                 storage,
                 emailService,
                 securityMediator,
-                reposiotrySynchronizer,
+                repositorySynchronizer,
                 repository,
                 repositoryService);
-
-        return strategy;
     }
 
     public Strategy<PythonRepository> createRepositoryStrategy(PythonRepository resource, User requester) {
-        Strategy<PythonRepository> strategy =
-                new PythonRepositoryCreateStrategy(resource, newsfeedEventService, repositoryService, requester);
-        return strategy;
+        return new PythonRepositoryCreateStrategy(resource, newsfeedEventService, repositoryService, requester);
     }
 
     public Strategy<PythonRepository> updateRepositoryStrategy(
             PythonRepository resource, User requester, PythonRepository updatedRepository) {
-        Strategy<PythonRepository> strategy = new PythonRepositoryUpdateStrategy(
+
+        return new PythonRepositoryUpdateStrategy(
                 resource,
                 newsfeedEventService,
                 repositoryService,
                 requester,
                 updatedRepository,
                 new PythonRepository(resource),
-                reposiotrySynchronizer,
+                repositorySynchronizer,
                 repositoryMaintainerService,
                 packageMaintainerService,
-                packageService);
+                packageService,
+                storage);
+    }
 
-        return strategy;
+    public Strategy<PythonRepository> republishRepositoryStrategy(PythonRepository resource, User requester) {
+        return new PythonRepositoryRepublishStrategy(
+                resource, newsfeedEventService, repositoryService, requester, repositorySynchronizer);
     }
 }

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -41,6 +41,7 @@ import eu.openanalytics.rdepot.r.services.RPackageService;
 import eu.openanalytics.rdepot.r.services.RRepositoryService;
 import eu.openanalytics.rdepot.r.storage.RStorage;
 import eu.openanalytics.rdepot.r.strategy.create.RRepositoryCreateStrategy;
+import eu.openanalytics.rdepot.r.strategy.republish.RRepositoryRepublishStrategy;
 import eu.openanalytics.rdepot.r.strategy.update.RPackageUpdateStrategy;
 import eu.openanalytics.rdepot.r.strategy.update.RRepositoryUpdateStrategy;
 import eu.openanalytics.rdepot.r.strategy.upload.RPackageUploadStrategy;
@@ -132,5 +133,10 @@ public class RStrategyFactory {
                 repositorySynchronizer,
                 repository,
                 repositoryService);
+    }
+
+    public Strategy<RRepository> republishRepositoryStrategy(RRepository resource, User requUser) {
+        return new RRepositoryRepublishStrategy(
+                resource, newsfeedEventService, repositoryService, requUser, repositorySynchronizer);
     }
 }

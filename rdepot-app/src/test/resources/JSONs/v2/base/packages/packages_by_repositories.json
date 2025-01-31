@@ -1,130 +1,194 @@
 {
-  "code": 200,
-  "data": {
-    "links": [{
-      "rel": "self",
-      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages?repository=testrepo4,testrepo5&page=0&size=20&sort=id,asc"
-    }],
-    "page": {
-      "number": 0,
-      "size": 20,
-      "totalPages": 1,
-      "totalElements": 3
-    },
-    "content": [{
-      "author": "Cedric Landerer [aut, cre], Gabriel Hanas [ctb], Jeremy Rogers [ctb], Alex Cope [ctb], Denizhan Pak [ctb]",
-      "active": true,
-      "description": "Is a collection of models to analyze genome scale codon data using a Bayesian framework. Provides visualization routines and checkpointing for model fittings. Currently published models to analyze gene data for selection on codon",
-      "source": "\/opt\/rdepot\/repositories\/5\/39437028\/AnaCoDa_0.1.2.3.tar.gz",
-      "technology": "R",
-      "repository": {
-        "name": "testrepo4",
-        "id": 5,
-        "published": false,
-        "technology": "R",
-        "publicationUri": "http:\/\/localhost\/repo\/testrepo4"
-      },
-      "title": "Analysis of Codon Data under Stationarity using a Bayesian Framework",
-      "version": "0.1.2.3",
-      "url": "https:\/\/github.com\/clandere\/AnaCoDa",
-      "deleted": false,
-      "binary": false,
-      "name": "AnaCoDa",
-      "submission": {
-        "id": 20,
-        "state": "ACCEPTED"
-      },
-      "links": [{
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/20"
-      }, {
-        "rel": "packageList",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
-      }],
-      "id": 20,
-      "user": {
-        "name": "Galileo Galilei",
-        "id": 6,
-        "login": "galieleo",
-        "email": "galieleo@ldap.forumsys.com"
-      }
-    }, {
-      "author": "Neil J. Gunther [aut], Stefan Moeding [aut, cre]",
-      "active": false,
-      "description": "The Universal Scalability Law (Gunther 2007)",
-      "source": "\/opt\/rdepot\/repositories\/6\/21695389\/usl_2.0.0.tar.gz",
-      "technology": "R",
-      "repository": {
-        "name": "testrepo5",
-        "id": 6,
-        "published": false,
-        "technology": "R",
-        "publicationUri": "http:\/\/localhost\/repo\/testrepo5"
-      },
-      "title": "Analyze System Scalability with the Universal Scalability Law",
-      "version": "2.0.0",
-      "url": null,
-      "deleted": true,
-      "binary": false,
-      "name": "usl",
-      "submission": {
-        "id": 27,
-        "state": "ACCEPTED"
-      },
-      "links": [{
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/27"
-      }, {
-        "rel": "packageList",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
-      }],
-      "id": 27,
-      "user": {
-        "name": "Local Admin User",
-        "id": 8,
-        "login": "admin",
-        "email": "admin@localhost"
-      }
-    }, {
-      "author": "Nicholas Tierney [aut, cre]",
-      "active": false,
-      "description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
-      "source": "\/opt\/rdepot\/repositories\/6\/70325377\/visdat_0.1.0.tar.gz",
-      "technology": "R",
-      "repository": {
-        "name": "testrepo5",
-        "id": 6,
-        "published": false,
-        "technology": "R",
-        "publicationUri": "http:\/\/localhost\/repo\/testrepo5"
-      },
-      "title": "Preliminary Data Visualisation",
-      "version": "0.1.0",
-      "url": "https:\/\/github.com\/njtierney\/visdat\/",
-      "deleted": true,
-      "binary": false,
-      "name": "visdat",
-      "submission": {
-        "id": 28,
-        "state": "ACCEPTED"
-      },
-      "links": [{
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/28"
-      }, {
-        "rel": "packageList",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
-      }],
-      "id": 28,
-      "user": {
-        "name": "Local Admin User",
-        "id": 8,
-        "login": "admin",
-        "email": "admin@localhost"
-      }
-    }]
-  },
-  "messageCode": "success.request.processed",
-  "message": "Your request has been processed successfully.",
-  "status": "SUCCESS"
+	"code": 200,
+	"data": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages?repository=testrepo4,testrepo5&page=0&size=20&sort=id,asc"
+			}
+		],
+		"page": {
+			"number": 0,
+			"size": 20,
+			"totalPages": 1,
+			"totalElements": 4
+		},
+		"content": [
+			{
+				"author": "Cedric Landerer [aut, cre], Gabriel Hanas [ctb], Jeremy Rogers [ctb], Alex Cope [ctb], Denizhan Pak [ctb]",
+				"active": true,
+				"description": "Is a collection of models to analyze genome scale codon data using a Bayesian framework. Provides visualization routines and checkpointing for model fittings. Currently published models to analyze gene data for selection on codon",
+				"source": "\/opt\/rdepot\/repositories\/5\/39437028\/AnaCoDa_0.1.2.3.tar.gz",
+				"technology": "R",
+				"repository": {
+					"name": "testrepo4",
+					"lastPublicationSuccessful": false,
+					"id": 5,
+					"published": false,
+					"technology": "R",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo4"
+				},
+				"title": "Analysis of Codon Data under Stationarity using a Bayesian Framework",
+				"version": "0.1.2.3",
+				"url": "https:\/\/github.com\/clandere\/AnaCoDa",
+				"deleted": false,
+				"binary": false,
+				"name": "AnaCoDa",
+				"submission": {
+					"id": 20,
+					"state": "ACCEPTED"
+				},
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/20"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+					}
+				],
+				"id": 20,
+				"user": {
+					"name": "Galileo Galilei",
+					"id": 6,
+					"login": "galieleo",
+					"email": "galieleo@ldap.forumsys.com"
+				}
+			},
+			{
+				"author": "Neil J. Gunther [aut], Stefan Moeding [aut, cre]",
+				"active": false,
+				"description": "The Universal Scalability Law (Gunther 2007)",
+				"source": "\/opt\/rdepot\/repositories\/6\/21695389\/usl_2.0.0.tar.gz",
+				"technology": "R",
+				"repository": {
+					"name": "testrepo5",
+					"lastPublicationSuccessful": false,
+					"id": 6,
+					"published": false,
+					"technology": "R",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo5"
+				},
+				"title": "Analyze System Scalability with the Universal Scalability Law",
+				"version": "2.0.0",
+				"url": null,
+				"deleted": true,
+				"binary": false,
+				"name": "usl",
+				"submission": {
+					"id": 27,
+					"state": "ACCEPTED"
+				},
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/27"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+					}
+				],
+				"id": 27,
+				"user": {
+					"name": "Local Admin User",
+					"id": 8,
+					"login": "admin",
+					"email": "admin@localhost"
+				}
+			},
+			{
+				"author": "Nicholas Tierney [aut, cre]",
+				"active": false,
+				"description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
+				"source": "\/opt\/rdepot\/repositories\/6\/70325377\/visdat_0.1.0.tar.gz",
+				"technology": "R",
+				"repository": {
+					"name": "testrepo5",
+					"lastPublicationSuccessful": false,
+					"id": 6,
+					"published": false,
+					"technology": "R",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo5"
+				},
+				"title": "Preliminary Data Visualisation",
+				"version": "0.1.0",
+				"url": "https:\/\/github.com\/njtierney\/visdat\/",
+				"deleted": true,
+				"binary": false,
+				"name": "visdat",
+				"submission": {
+					"id": 28,
+					"state": "ACCEPTED"
+				},
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/28"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+					}
+				],
+				"id": 28,
+				"user": {
+					"name": "Local Admin User",
+					"id": 8,
+					"login": "admin",
+					"email": "admin@localhost"
+				}
+			},
+			{
+				"author": "Neal Richardson [aut, cre],\n Ian Cook [aut],\n Nic Crane [aut],\n Dewey Dunnington [aut] (<https:\/\/orcid.org\/0000-0002-9415-4582>),\n Romain François [aut] (<https:\/\/orcid.org\/0000-0002-2444-4226>),\n Jonathan Keane [aut],\n Dragoș Moldovan-Grünfeld [aut],\n Jeroen Ooms [aut],\n Javier Luraschi [ctb],\n Karl Dunkle Werner [ctb] (<https:\/\/orcid.org\/0000-0003-0523-7309>),\n Jeffrey Wong [ctb],\n Apache Arrow [aut, cph]",
+				"active": true,
+				"description": "'Apache' 'Arrow' <https:\/\/arrow.apache.org\/> is a cross-language\n development platform for in-memory data. It specifies a standardized\n language-independent columnar memory format for flat and hierarchical data,\n organized for efficient analytic operations on modern hardware. This\n package provides an interface to the 'Arrow C++' library",
+				"source": "\/opt\/rdepot\/repositories\/5\/32912654\/arrow_8.0.0.tar.gz",
+				"technology": "R",
+				"repository": {
+					"name": "testrepo4",
+					"lastPublicationSuccessful": false,
+					"id": 5,
+					"published": false,
+					"technology": "R",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo4"
+				},
+				"title": "Integration to 'Apache' 'Arrow'",
+				"version": "8.0.0",
+				"url": "https:\/\/github.com\/apache\/arrow\/, https:\/\/arrow.apache.org\/docs\/r\/",
+				"deleted": false,
+				"binary": true,
+				"name": "arrow",
+				"submission": {
+					"id": 47,
+					"state": "ACCEPTED"
+				},
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/47"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+					}
+				],
+				"id": 47,
+				"user": {
+					"name": "Nikola Tesla",
+					"id": 5,
+					"login": "tesla",
+					"email": "tesla@ldap.forumsys.com"
+				}
+			}
+		]
+	},
+	"messageCode": "success.request.processed",
+	"message": "Your request has been processed successfully.",
+	"status": "SUCCESS"
 }

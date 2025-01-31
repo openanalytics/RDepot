@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -24,11 +24,7 @@ import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StreamUtils;
 
@@ -47,18 +43,19 @@ public abstract class IndexesGenerator {
         Path indexPath = getIndexPath(path);
         String packagesIndexContent = Files.readString(indexPath);
         String packageString = getPackageAnchor(packageBag) + lineSeparator;
-        int index = packagesIndexContent.indexOf("</body>");
-        if (!packagesIndexContent.contains(packageString)) {
-            packagesIndexContent = new StringBuilder(packagesIndexContent)
-                    .insert(index - 1, packageString)
-                    .toString();
-            Files.writeString(
-                    indexPath,
-                    packagesIndexContent,
-                    StandardCharsets.UTF_8,
-                    StandardOpenOption.CREATE,
-                    StandardOpenOption.TRUNCATE_EXISTING);
+        if (packagesIndexContent.contains(packageString)) {
+            return;
         }
+        int index = packagesIndexContent.indexOf("</body>");
+        packagesIndexContent = new StringBuilder(packagesIndexContent)
+                .insert(index - 1, packageString)
+                .toString();
+        Files.writeString(
+                indexPath,
+                packagesIndexContent,
+                StandardCharsets.UTF_8,
+                StandardOpenOption.CREATE,
+                StandardOpenOption.TRUNCATE_EXISTING);
     }
 
     protected String getTemplateString(Resource indexTemplate) throws IOException {

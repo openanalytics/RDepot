@@ -10,7 +10,7 @@ services:
     - repository:/opt/rdepot/repo/:ro
     - logs:/var/log/nginx/
     ports:
-    - ${RDEPOT_PORT}:80
+    - ${RDEPOT_PORT:-80}:80
     depends_on:
     - backend
     - repo
@@ -32,7 +32,7 @@ services:
     build:
       dockerfile: docker/build/app-standalone/Dockerfile
       cache_from:
-      - openanalytics/rdepot-app:2.4.1
+      - openanalytics/rdepot-app:2.5.0
     restart: unless-stopped
     hostname: oa-rdepot-backend
     container_name: oa-rdepot-backend
@@ -49,6 +49,7 @@ services:
     - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/rdepot
     - DB_USERNAME=rdepot
     - DB_PASSWORD=mysecretpassword
+    - ALLOWED-ORIGIN=http://localhost:${RDEPOT_PORT:-80}
     healthcheck:
       test: ["CMD-SHELL", "if [ \"$$(curl -I localhost:8080 2>/dev/null | grep HTTP/1.1 | cut -d\" \" -f2)\" != \"302\" ]; then exit 1; else exit 0; fi;"]
       interval: 10s
@@ -58,7 +59,7 @@ services:
     build:
       dockerfile: docker/build/repo-standalone/Dockerfile
       cache_from:
-      - openanalytics/rdepot-repo:2.4.1
+      - openanalytics/rdepot-repo:2.5.0
     restart: unless-stopped
     hostname: oa-rdepot-repo
     container_name: oa-rdepot-repo
@@ -69,7 +70,7 @@ services:
     - oa-rdepot
   frontend:
     container_name: oa-rdepot-frontend
-    image: openanalytics/rdepot-client:2.4.1
+    image: openanalytics/rdepot-client:2.5.0
     restart: unless-stopped
     networks:
     - oa-rdepot
@@ -77,7 +78,7 @@ services:
     - VITE_LOGIN_SIMPLE=true
     - VITE_LOGIN_OIDC=false
     - VITE_URL_PREFIX=/
-    - VITE_SERVER_ADDRESS=http://localhost/backend
+    - VITE_SERVER_ADDRESS=http://localhost:${RDEPOT_PORT:-80}/backend
 networks:
   oa-rdepot:
     ipam:

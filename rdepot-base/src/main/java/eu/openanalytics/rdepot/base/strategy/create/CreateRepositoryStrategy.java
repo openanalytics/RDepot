@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -27,6 +27,7 @@ import eu.openanalytics.rdepot.base.event.NewsfeedEventType;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
+import java.util.Objects;
 
 /**
  * Creates {@link Repository}.
@@ -37,6 +38,14 @@ public abstract class CreateRepositoryStrategy<T extends Repository> extends Cre
     protected CreateRepositoryStrategy(
             T resource, RepositoryService<T> service, User requester, NewsfeedEventService newsfeedEventService) {
         super(resource, service, requester, newsfeedEventService);
+    }
+
+    @Override
+    protected T actualStrategy() throws StrategyFailure {
+        if (Objects.isNull(resource.getRequiresAuthentication())) {
+            resource.setRequiresAuthentication(true);
+        }
+        return super.actualStrategy();
     }
 
     @Override

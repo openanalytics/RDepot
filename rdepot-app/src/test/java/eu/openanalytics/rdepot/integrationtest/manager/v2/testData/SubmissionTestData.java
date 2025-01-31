@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -49,4 +49,5 @@ public class SubmissionTestData {
     private String fromDate;
     private String toDate;
     private String search;
+    private String changes;
 }

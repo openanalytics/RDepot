@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,7 +20,6 @@
  */
 package eu.openanalytics.rdepot.repo.python.storage;
 
-import eu.openanalytics.rdepot.repo.exception.EmptyTrashException;
 import eu.openanalytics.rdepot.repo.exception.MoveToTrashException;
 import eu.openanalytics.rdepot.repo.exception.RestoreRepositoryException;
 import eu.openanalytics.rdepot.repo.exception.StorageException;
@@ -33,7 +32,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.*;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -47,7 +50,6 @@ import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -65,7 +67,6 @@ public class PythonFileSystemStorageService extends FileSystemStorageService<Syn
         super(properties);
     }
 
-    @Override
     protected void store(MultipartFile[] files, Path saveLocation, String id) throws IOException {
         log.debug("Saving to location {}", saveLocation.toString());
         for (MultipartFile file : files) {
@@ -193,16 +194,6 @@ public class PythonFileSystemStorageService extends FileSystemStorageService<Syn
                     files.add(file);
                 }
             }
-        }
-    }
-
-    public void emptyTrash(String repository, String requestId) throws EmptyTrashException {
-        final Path trash = this.rootLocation.resolve(TRASH_PREFIX + requestId);
-        try {
-            if (Files.exists(trash)) FileUtils.forceDelete(trash.toFile());
-        } catch (IOException e) {
-            log.error("Could not delete trash directory!", e);
-            throw new EmptyTrashException(repository);
         }
     }
 

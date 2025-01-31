@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -45,6 +45,7 @@ public class RepositorySimpleDto implements IDto {
     private Boolean published = false;
     private Boolean synchronizing = false;
     private String technology;
+    private Boolean requiresAuthentication;
 
     @ToStringExclude
     private Repository entity;
@@ -59,6 +60,7 @@ public class RepositorySimpleDto implements IDto {
         this.published = repository.getPublished();
         this.synchronizing = repository.isSynchronizing();
         this.technology = repository.getTechnology().getName();
+        this.requiresAuthentication = repository.getRequiresAuthentication();
         this.entity = repository;
     }
 
@@ -72,6 +74,10 @@ public class RepositorySimpleDto implements IDto {
 
     public Boolean isSynchronizing() {
         return synchronizing;
+    }
+
+    public Boolean isRequiresAuthentication() {
+        return requiresAuthentication;
     }
 
     @Override

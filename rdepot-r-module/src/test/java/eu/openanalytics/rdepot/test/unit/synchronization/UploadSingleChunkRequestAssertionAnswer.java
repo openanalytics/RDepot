@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -25,6 +25,7 @@ import eu.openanalytics.rdepot.base.synchronization.RepoResponse;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.mockito.invocation.InvocationOnMock;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
@@ -36,56 +37,54 @@ public class UploadSingleChunkRequestAssertionAnswer extends UploadChunkRequestA
     private final String expectedId;
     private final String expectedVersionBefore;
     private final String expectedVersionAfter;
-    private final List<String> expectedToDelete;
-    private final List<String> expectedToDeleteFromArchive;
+    private final List<String> packagesToDelete;
+    private final List<String> packagesToDeleteFromArchive;
     private final List<File> packagesToUpload;
     private final List<File> packagesToUploadToArchive;
-    private final File packagesFile;
-    private final File packagesGzFile;
-    private final File packagesFileArchive;
-    private final File packagesGzFileArchive;
+    private final Map<String, String> expectedToUploadPaths;
+    private final Map<String, String> expectedToUploadToArchivePaths;
+    private final Map<String, String> expectedToDeletePaths;
+    private final Map<String, String> expectedToDeleteFromArchivePaths;
 
     public UploadSingleChunkRequestAssertionAnswer(
             Repository repository,
             final String expectedId,
             final String expectedVersionBefore,
             final String expectedVersionAfter,
-            final List<String> expectedToDelete,
-            final List<String> expectedToDeleteFromArchive,
+            final List<String> packagesToDelete,
+            final List<String> packagesToDeleteFromArchive,
             final List<File> packagesToUpload,
             final List<File> packagesToUploadToArchive,
-            final File packagesFile,
-            final File packagesGzFile,
-            final File packagesFileArchive,
-            final File packagesGzFileArchive) {
+            final Map<String, String> expectedToUploadPaths,
+            final Map<String, String> expectedToUploadToArchivePaths,
+            final Map<String, String> expectedToDeletePaths,
+            final Map<String, String> expectedToDeleteFromArchivePaths) {
         super(1, repository);
         this.expectedId = expectedId;
         this.expectedVersionBefore = expectedVersionBefore;
         this.expectedVersionAfter = expectedVersionAfter;
-        this.expectedToDelete = expectedToDelete;
-        this.expectedToDeleteFromArchive = expectedToDeleteFromArchive;
+        this.packagesToDelete = packagesToDelete;
+        this.packagesToDeleteFromArchive = packagesToDeleteFromArchive;
         this.packagesToUpload = packagesToUpload;
         this.packagesToUploadToArchive = packagesToUploadToArchive;
-        this.packagesFile = packagesFile;
-        this.packagesGzFile = packagesGzFile;
-        this.packagesFileArchive = packagesFileArchive;
-        this.packagesGzFileArchive = packagesGzFileArchive;
+        this.expectedToUploadPaths = expectedToUploadPaths;
+        this.expectedToUploadToArchivePaths = expectedToUploadToArchivePaths;
+        this.expectedToDeletePaths = expectedToDeletePaths;
+        this.expectedToDeleteFromArchivePaths = expectedToDeleteFromArchivePaths;
+        ;
     }
 
     @Override
     public ResponseEntity<RepoResponse> answer(InvocationOnMock invocation) throws Throwable {
+
         List<FileSystemResource> files = new ArrayList<>();
         files.addAll(
                 packagesToUpload.stream().map(f -> new FileSystemResource(f)).toList());
-        files.add(new FileSystemResource(packagesFile));
-        files.add(new FileSystemResource(packagesGzFile));
 
         List<FileSystemResource> filesArchive = new ArrayList<>();
         filesArchive.addAll(packagesToUploadToArchive.stream()
                 .map(f -> new FileSystemResource(f))
                 .toList());
-        filesArchive.add(new FileSystemResource(packagesFileArchive));
-        filesArchive.add(new FileSystemResource(packagesGzFileArchive));
 
         @SuppressWarnings("unchecked")
         MultiValueMap<String, Object> entity =
@@ -97,10 +96,14 @@ public class UploadSingleChunkRequestAssertionAnswer extends UploadChunkRequestA
                         expectedVersionBefore,
                         expectedVersionAfter,
                         List.of("1/1"),
-                        expectedToDelete,
-                        expectedToDeleteFromArchive,
+                        packagesToDelete,
+                        packagesToDeleteFromArchive,
                         files,
-                        filesArchive));
+                        filesArchive,
+                        expectedToUploadPaths,
+                        expectedToUploadToArchivePaths,
+                        expectedToDeletePaths,
+                        expectedToDeleteFromArchivePaths));
 
         return super.answer(invocation);
     }

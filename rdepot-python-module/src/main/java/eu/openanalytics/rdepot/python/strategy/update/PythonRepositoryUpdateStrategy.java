@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,17 +20,25 @@
  */
 package eu.openanalytics.rdepot.python.strategy.update;
 
+import eu.openanalytics.rdepot.base.entities.EventChangedVariable;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
+import eu.openanalytics.rdepot.base.storage.Storage;
+import eu.openanalytics.rdepot.base.storage.exceptions.CheckSumCalculationException;
+import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.update.UpdateRepositoryStrategy;
+import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.services.PythonPackageService;
 import eu.openanalytics.rdepot.python.services.PythonRepositoryService;
 import eu.openanalytics.rdepot.python.synchronization.PythonRepositorySynchronizer;
 
 public class PythonRepositoryUpdateStrategy extends UpdateRepositoryStrategy<PythonRepository> {
+
+    private final PythonPackageService packageService;
+    private final Storage<PythonRepository, PythonPackage> storage;
 
     public PythonRepositoryUpdateStrategy(
             PythonRepository resource,
@@ -42,7 +50,8 @@ public class PythonRepositoryUpdateStrategy extends UpdateRepositoryStrategy<Pyt
             PythonRepositorySynchronizer repositorySynchronizer,
             RepositoryMaintainerService repositoryMaintainerService,
             PackageMaintainerService packageMaintainerService,
-            PythonPackageService packageService) {
+            PythonPackageService packageService,
+            Storage<PythonRepository, PythonPackage> storage) {
         super(
                 resource,
                 eventService,
@@ -54,5 +63,31 @@ public class PythonRepositoryUpdateStrategy extends UpdateRepositoryStrategy<Pyt
                 repositoryMaintainerService,
                 packageMaintainerService,
                 packageService);
+        this.packageService = packageService;
+        this.storage = storage;
+    }
+
+    @Override
+    protected PythonRepository actualStrategy() throws StrategyFailure {
+        boolean recalculateHashes = false;
+        if (!resource.getHashMethod().equals(updatedResource.getHashMethod())) {
+            resource.setHashMethod(updatedResource.getHashMethod());
+            recalculateHashes = true;
+            changedValues.add(new EventChangedVariable(
+                    "publicationUri",
+                    oldResourceCopy.getHashMethod().getValue(),
+                    resource.getHashMethod().getValue()));
+        }
+        final PythonRepository resource = super.actualStrategy();
+        if (recalculateHashes) {
+            try {
+                for (PythonPackage packageBag : packageService.findAllByRepository(resource)) {
+                    storage.calculateCheckSum(packageBag);
+                }
+            } catch (CheckSumCalculationException e) {
+                throw new StrategyFailure(e);
+            }
+        }
+        return resource;
     }
 }

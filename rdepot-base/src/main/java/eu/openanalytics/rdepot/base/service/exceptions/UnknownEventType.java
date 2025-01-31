@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,14 +20,14 @@
  */
 package eu.openanalytics.rdepot.base.service.exceptions;
 
-import eu.openanalytics.rdepot.base.api.v2.dtos.EventType;
+import eu.openanalytics.rdepot.base.event.NewsfeedEventType;
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import java.io.Serial;
 
 /**
  * Thrown when conversion
- * between {@link String} and {@link EventType} fails.
+ * between {@link String} and {@link NewsfeedEventType} fails.
  */
 public class UnknownEventType extends LocalizedException {
 

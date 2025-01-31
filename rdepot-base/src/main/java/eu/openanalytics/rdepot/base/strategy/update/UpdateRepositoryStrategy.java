@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -78,6 +78,14 @@ public abstract class UpdateRepositoryStrategy<T extends Repository> extends Upd
             resource.setPublicationUri(updatedResource.getPublicationUri());
             changedValues.add(new EventChangedVariable(
                     "publicationUri", oldResourceCopy.getPublicationUri(), resource.getPublicationUri()));
+        }
+        if (Objects.nonNull(updatedResource.getRequiresAuthentication())
+                && !Objects.equals(resource.getRequiresAuthentication(), updatedResource.getRequiresAuthentication())) {
+            resource.setRequiresAuthentication(updatedResource.getRequiresAuthentication());
+            changedValues.add(new EventChangedVariable(
+                    "requiresAuthentication",
+                    Boolean.toString(oldResourceCopy.getRequiresAuthentication()),
+                    Boolean.toString(resource.getRequiresAuthentication())));
         }
         if (!resource.getServerAddress().equals(updatedResource.getServerAddress())) {
             resource.setServerAddress(updatedResource.getServerAddress());

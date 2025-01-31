@@ -22,12 +22,12 @@
       {
         "href": "http://localhost:8017/api/v2/manager/users/7",
         "rel": "self",
-        "type": "PATCH"
-      },
-      {
-        "href": "http://localhost:8017/api/v2/manager/users/7",
-        "rel": "self",
-        "type": "DELETE"
+        "type": "PATCH",
+        "modifiableProperties": [
+            "deleted",
+            "active",
+            "roleId"
+        ],
       }
     ],
     "id": 7,

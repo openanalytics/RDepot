@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -37,7 +37,7 @@ public abstract class PageableSortResolverImpl implements PageableSortResolver {
         log.debug("Resolving sorting arguments for pageable.");
 
         final Sort dtoSort = pageable.getSort();
-        final Sort resolvedEntitySort = Sort.by(dtoSort.map(
+        Sort resolvedEntitySort = Sort.by(dtoSort.map(
                         o -> o.withProperty(mapping.dtoToEntity(o.getProperty()).orElse(o.getProperty())))
                 .toList());
 

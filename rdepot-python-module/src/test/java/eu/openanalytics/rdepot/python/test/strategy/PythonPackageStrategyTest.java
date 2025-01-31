@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -24,12 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import eu.openanalytics.rdepot.base.entities.EventChangedVariable;
 import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
@@ -52,7 +47,6 @@ import java.util.HashSet;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 public class PythonPackageStrategyTest extends StrategyTest {
@@ -80,14 +74,7 @@ public class PythonPackageStrategyTest extends StrategyTest {
         updatedPackageBag.setActive(false);
 
         when(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag)).thenReturn(user);
-        doAnswer(new Answer<NewsfeedEvent>() {
-
-                    @Override
-                    public NewsfeedEvent answer(InvocationOnMock invocation) throws Throwable {
-                        NewsfeedEvent event = invocation.getArgument(0);
-                        return event;
-                    }
-                })
+        doAnswer((Answer<NewsfeedEvent>) invocation -> invocation.getArgument(0))
                 .when(eventService)
                 .create(any());
         doNothing().when(repositorySynchronizer).storeRepositoryOnRemoteServer(eq(repository), any());
@@ -122,14 +109,7 @@ public class PythonPackageStrategyTest extends StrategyTest {
         updatedPackageBag.setActive(false);
 
         when(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag)).thenReturn(user);
-        doAnswer(new Answer<NewsfeedEvent>() {
-
-                    @Override
-                    public NewsfeedEvent answer(InvocationOnMock invocation) throws Throwable {
-                        NewsfeedEvent event = invocation.getArgument(0);
-                        return event;
-                    }
-                })
+        doAnswer((Answer<NewsfeedEvent>) invocation -> invocation.getArgument(0))
                 .when(eventService)
                 .create(any());
         doNothing().when(eventService).attachVariables(any(), any());
@@ -164,14 +144,7 @@ public class PythonPackageStrategyTest extends StrategyTest {
         updatedPackageBag.setActive(false);
 
         when(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag)).thenReturn(newMaintainer);
-        doAnswer(new Answer<NewsfeedEvent>() {
-
-                    @Override
-                    public NewsfeedEvent answer(InvocationOnMock invocation) throws Throwable {
-                        NewsfeedEvent event = invocation.getArgument(0);
-                        return event;
-                    }
-                })
+        doAnswer((Answer<NewsfeedEvent>) invocation -> invocation.getArgument(0))
                 .when(eventService)
                 .create(any());
         doNothing().when(repositorySynchronizer).storeRepositoryOnRemoteServer(eq(repository), any());
@@ -206,14 +179,7 @@ public class PythonPackageStrategyTest extends StrategyTest {
         updatedPackageBag.setId(0);
         updatedPackageBag.setDeleted(true);
 
-        doAnswer(new Answer<NewsfeedEvent>() {
-
-                    @Override
-                    public NewsfeedEvent answer(InvocationOnMock invocation) throws Throwable {
-                        NewsfeedEvent event = invocation.getArgument(0);
-                        return event;
-                    }
-                })
+        doAnswer((Answer<NewsfeedEvent>) invocation -> invocation.getArgument(0))
                 .when(eventService)
                 .create(any());
         doNothing().when(repositorySynchronizer).storeRepositoryOnRemoteServer(eq(repository), any());
@@ -248,14 +214,7 @@ public class PythonPackageStrategyTest extends StrategyTest {
         updatedPackageBag.setActive(false);
 
         when(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag)).thenReturn(user);
-        doAnswer(new Answer<NewsfeedEvent>() {
-
-                    @Override
-                    public NewsfeedEvent answer(InvocationOnMock invocation) throws Throwable {
-                        NewsfeedEvent event = invocation.getArgument(0);
-                        return event;
-                    }
-                })
+        doAnswer((Answer<NewsfeedEvent>) invocation -> invocation.getArgument(0))
                 .when(eventService)
                 .create(any());
         doThrow(new SynchronizeRepositoryException())
@@ -273,7 +232,7 @@ public class PythonPackageStrategyTest extends StrategyTest {
                 bestMaintainerChooser,
                 repositorySynchronizer);
 
-        assertThrows(StrategyFailure.class, () -> strategy.perform());
+        assertThrows(StrategyFailure.class, strategy::perform);
     }
 
     @Test
@@ -301,7 +260,7 @@ public class PythonPackageStrategyTest extends StrategyTest {
                 bestMaintainerChooser,
                 repositorySynchronizer);
 
-        assertThrows(StrategyFailure.class, () -> strategy.perform());
+        assertThrows(StrategyFailure.class, strategy::perform);
     }
 
     @Test
@@ -324,14 +283,7 @@ public class PythonPackageStrategyTest extends StrategyTest {
         expectedValues.add(new EventChangedVariable("deleted", "false", "true"));
 
         when(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag)).thenReturn(user);
-        doAnswer(new Answer<NewsfeedEvent>() {
-
-                    @Override
-                    public NewsfeedEvent answer(InvocationOnMock invocation) throws Throwable {
-                        NewsfeedEvent event = invocation.getArgument(0);
-                        return event;
-                    }
-                })
+        doAnswer((Answer<NewsfeedEvent>) invocation -> invocation.getArgument(0))
                 .when(eventService)
                 .create(any());
         doAnswer(new AssertEventChangedValuesAnswer(expectedValues))

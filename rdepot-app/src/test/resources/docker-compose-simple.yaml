@@ -35,10 +35,14 @@ services:
       - ./docker/repo/application.yml:/opt/repo/application.yml:ro
       - repository:/opt/rdepot/
       - ./itestServer:/opt/testServer
+    environment:
+      - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8001
     networks:
       oa-rdepot:
         aliases:
           - oa-rdepot-repo
+    ports:
+      - 8002:8001
   db:
     image: registry.openanalytics.eu/proxy/library/postgres:alpine
     labels:

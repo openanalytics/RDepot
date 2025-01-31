@@ -1,43 +1,45 @@
 {
-  "code": 200,
-  "data": {
-    "deleted": true,
-    "links": [
-      {
-        "rel": "self",
-        "href": "http://localhost:8017/api/v2/manager/repository-maintainers/2"
-      },
-      {
-        "rel": "repositoryMaintainerList",
-        "href": "http://localhost:8017/api/v2/manager/repository-maintainers"
-      },
-      {
-        "rel": "self",
-        "href": "http://localhost:8017/api/v2/manager/repository-maintainers/2",
-        "type": "PATCH"
-      },
-      {
-        "rel": "self",
-        "href": "http://localhost:8017/api/v2/manager/repository-maintainers/2",
-        "type": "DELETE"
-      }
-    ],
-    "id": 2,
-    "repository": {
-      "name": "testrepo3",
-      "id": 4,
-      "published": false,
-      "technology": "R",
-      "publicationUri": "http://localhost/repo/testrepo3"
-    },
-    "user": {
-      "name": "Nikola Tesla",
-      "id": 5,
-      "login": "tesla",
-      "email": "tesla@ldap.forumsys.com"
-    }
-  },
-  "messageCode": "success.request.processed",
-  "message": "Your request has been processed successfully.",
-  "status": "SUCCESS"
+	"code": 200,
+	"data": {
+		"deleted": true,
+		"links": [
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/repository-maintainers\/2"
+			},
+			{
+				"rel": "repositoryMaintainerList",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/repository-maintainers"
+			},
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/repository-maintainers\/2",
+				"type": "PATCH"
+			},
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/repository-maintainers\/2",
+				"type": "DELETE"
+			}
+		],
+		"id": 2,
+		"repository": {
+			"name": "testrepo3",
+			"lastPublicationSuccessful": false,
+			"id": 4,
+			"published": false,
+			"technology": "R",
+			"requiresAuthentication": true,
+			"publicationUri": "http:\/\/localhost\/repo\/testrepo3"
+		},
+		"user": {
+			"name": "Nikola Tesla",
+			"id": 5,
+			"login": "tesla",
+			"email": "tesla@ldap.forumsys.com"
+		}
+	},
+	"messageCode": "success.request.processed",
+	"message": "Your request has been processed successfully.",
+	"status": "SUCCESS"
 }

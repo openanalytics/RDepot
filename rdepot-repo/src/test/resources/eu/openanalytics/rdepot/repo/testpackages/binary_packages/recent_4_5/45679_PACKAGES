@@ -1,0 +1,12 @@
+Package: OpenSpecy
+Version: 1.1.0
+Depends: R (>= 4.1.0)
+Imports: methods, data.table, jsonlite, yaml, osfr, caTools, hyperSpec,
+        mmand, plotly, digest, signal, glmnet, jpeg, shiny
+Suggests: knitr, rmarkdown, testthat (>= 3.1.9), aws.s3, loggit,
+        config, shinyjs, shinyWidgets, bs4Dash, dplyr, DT, mongolite,
+        ggplot2
+License: CC BY 4.0
+MD5Sum: 13bda5374451f899771b8388983fe334
+NeedsCompilation: no
+Built: R 4.5.0; ; 2024-06-13 23:29:42 UTC; unix

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -51,8 +51,9 @@ public class RPackageUploadRequest extends PackageUploadRequest<RRepository> {
             boolean binaryPackage,
             String rVersion,
             String architecture,
-            String distribution) {
-        super(fileData, repository, generateManual, replace);
+            String distribution,
+            String changes) {
+        super(fileData, repository, generateManual, replace, changes);
         this.binaryPackage = binaryPackage;
         this.rVersion = rVersion;
         this.architecture = architecture;

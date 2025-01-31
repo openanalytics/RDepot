@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,15 +20,8 @@
  */
 package eu.openanalytics.rdepot.test.unit.api.v2;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -88,8 +81,6 @@ public class PythonRepositoryControllerTest extends ApiV2ControllerUnitTest {
     public static final String ERROR_REPOSITORY_NOT_FOUND_PATH = JSON_PATH + "/error_repository_notfound.json";
     public static final String ERROR_REPOSITORY_MALFORMED_PATCH = JSON_PATH + "/error_repository_malformed_patch.json";
 
-    private Optional<User> user;
-
     @Autowired
     MockMvc mockMvc;
 
@@ -108,21 +99,23 @@ public class PythonRepositoryControllerTest extends ApiV2ControllerUnitTest {
     @Autowired
     WebApplicationContext webApplicationContext;
 
+    private User user;
+
     @BeforeEach
     public void initEach() {
-        user = Optional.of(UserTestFixture.GET_ADMIN());
+        user = UserTestFixture.GET_ADMIN();
     }
 
     @Test
     @WithMockUser(authorities = {"user", "admin"})
     public void getAllRepositories() throws Exception {
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
 
-        when(userService.isAdmin(user.get())).thenReturn(true);
+        when(userService.isAdmin(user)).thenReturn(true);
         when(pythonRepositoryService.findAllBySpecification(any(), any()))
                 .thenReturn(PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORIES_PAGED());
-        when(securityMediator.isAuthorizedToEdit(any(PythonRepository.class), eq(user.get())))
+        when(securityMediator.isAuthorizedToEdit(any(PythonRepository.class), eq(user)))
                 .thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/python/repositories")
@@ -143,10 +136,10 @@ public class PythonRepositoryControllerTest extends ApiV2ControllerUnitTest {
     @WithMockUser(authorities = "user")
     public void getRepository() throws Exception {
         final PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        final Integer ID = repository.getId();
+        final int ID = repository.getId();
 
         when(pythonRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/python/repositories/" + ID)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -158,12 +151,12 @@ public class PythonRepositoryControllerTest extends ApiV2ControllerUnitTest {
     @WithMockUser(authorities = {"user", "admin"})
     public void getRepository_asAdmin() throws Exception {
         final PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        final Integer ID = 1234;
+        final int ID = 1234;
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
         when(pythonRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
-        when(userService.isAdmin(user.get())).thenReturn(true);
-        when(securityMediator.isAuthorizedToEdit(repository, user.get())).thenReturn(true);
+        when(userService.isAdmin(user)).thenReturn(true);
+        when(securityMediator.isAuthorizedToEdit(repository, user)).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/python/repositories/" + ID)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -183,8 +176,8 @@ public class PythonRepositoryControllerTest extends ApiV2ControllerUnitTest {
     @WithMockUser(authorities = "user")
     public void getRepository_returns404_whenRepositoryIsNotFound() throws Exception {
 
-        when(pythonRepositoryService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(null));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(pythonRepositoryService.findById(any(Integer.class))).thenReturn(Optional.empty());
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/python/repositories/" + 123)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -200,16 +193,15 @@ public class PythonRepositoryControllerTest extends ApiV2ControllerUnitTest {
         final String exampleJson = Files.readString(path);
 
         final PythonRepository createdRepository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY(100);
-        Strategy<PythonRepository> strategy = Mockito.spy(new SuccessfulStrategy<PythonRepository>(
-                createdRepository, newsfeedEventService, pythonRepositoryService, user.get()));
+        Strategy<PythonRepository> strategy = Mockito.spy(
+                new SuccessfulStrategy<>(createdRepository, newsfeedEventService, pythonRepositoryService, user));
 
-        when(pythonStrategyFactory.createRepositoryStrategy(any(), eq(user.get())))
-                .thenReturn(strategy);
-        when(userService.findById(anyInt())).thenReturn(user);
-        when(userService.isAdmin(user.get())).thenReturn(true);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(pythonStrategyFactory.createRepositoryStrategy(any(), eq(user))).thenReturn(strategy);
+        when(userService.findById(anyInt())).thenReturn(Optional.ofNullable(user));
+        when(userService.isAdmin(user)).thenReturn(true);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
         when(pythonRepositoryValidator.supports(PythonRepository.class)).thenReturn(true);
-        when(securityMediator.isAuthorizedToEdit(createdRepository, user.get())).thenReturn(true);
+        when(securityMediator.isAuthorizedToEdit(createdRepository, user)).thenReturn(true);
         doNothing().when(pythonRepositoryValidator).validate(any(), any());
         when(pythonRepositoryValidator.supports(Repository.class)).thenReturn(true);
 
@@ -240,7 +232,7 @@ public class PythonRepositoryControllerTest extends ApiV2ControllerUnitTest {
         final Path path = Path.of(EXAMPLE_NEW_REPOSITORY_PATH);
         final String exampleJson = Files.readString(path);
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v2/manager/python/repositories")
                         .contentType("application/json")
@@ -256,10 +248,10 @@ public class PythonRepositoryControllerTest extends ApiV2ControllerUnitTest {
         final Path path = Path.of(EXAMPLE_NEW_REPOSITORY_PATH);
         final String exampleJson = Files.readString(path);
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(userService.isAdmin(user.get())).thenReturn(true);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
+        when(userService.isAdmin(user)).thenReturn(true);
         doAnswer(invocation -> {
-                    Errors errors = (Errors) invocation.getArgument(1);
+                    Errors errors = invocation.getArgument(1);
 
                     errors.rejectValue("name", MessageCodes.ERROR_DUPLICATE_NAME);
                     return null;
@@ -283,13 +275,12 @@ public class PythonRepositoryControllerTest extends ApiV2ControllerUnitTest {
         final String exampleJson = Files.readString(path);
 
         final PythonRepository newRepository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY(0);
-        Strategy<PythonRepository> strategy = Mockito.spy(new FailureStrategy<PythonRepository>(
-                newRepository, newsfeedEventService, pythonRepositoryService, user.get()));
+        Strategy<PythonRepository> strategy =
+                Mockito.spy(new FailureStrategy<>(newRepository, newsfeedEventService, pythonRepositoryService, user));
 
-        when(userService.isAdmin(user.get())).thenReturn(true);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(pythonStrategyFactory.createRepositoryStrategy(any(), eq(user.get())))
-                .thenReturn(strategy);
+        when(userService.isAdmin(user)).thenReturn(true);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
+        when(pythonStrategyFactory.createRepositoryStrategy(any(), eq(user))).thenReturn(strategy);
         doNothing().when(pythonRepositoryValidator).validate(any(), any());
         when(pythonRepositoryValidator.supports(PythonRepository.class)).thenReturn(true);
 
@@ -306,16 +297,16 @@ public class PythonRepositoryControllerTest extends ApiV2ControllerUnitTest {
     @WithMockUser(authorities = {"user", "repositorymaintainer"})
     public void patchRepository() throws Exception {
         final PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        final Integer ID = repository.getId();
-        Strategy<PythonRepository> strategy = Mockito.spy(new SuccessfulStrategy<PythonRepository>(
-                repository, newsfeedEventService, pythonRepositoryService, user.get()));
+        final int ID = repository.getId();
+        Strategy<PythonRepository> strategy =
+                Mockito.spy(new SuccessfulStrategy<>(repository, newsfeedEventService, pythonRepositoryService, user));
 
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/serverAddress\",\"value\":\"127.0.0.1\"}]";
         when(pythonRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(securityMediator.isAuthorizedToEdit(any(PythonRepository.class), eq(user.get())))
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
+        when(securityMediator.isAuthorizedToEdit(any(PythonRepository.class), eq(user)))
                 .thenReturn(true);
-        when(pythonStrategyFactory.updateRepositoryStrategy(any(), eq(user.get()), any()))
+        when(pythonStrategyFactory.updateRepositoryStrategy(any(), eq(user), any()))
                 .thenReturn(strategy);
         doNothing().when(pythonRepositoryValidator).validate(any(), any());
         when(pythonRepositoryValidator.supports(PythonRepository.class)).thenReturn(true);
@@ -344,8 +335,8 @@ public class PythonRepositoryControllerTest extends ApiV2ControllerUnitTest {
     @WithMockUser(authorities = "user")
     public void patchRepository_returns403_whenUserIsNotAuthorized() throws Exception {
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(securityMediator.isAuthorizedToEdit(any(Repository.class), eq(user.get())))
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
+        when(securityMediator.isAuthorizedToEdit(any(Repository.class), eq(user)))
                 .thenReturn(false);
 
         String patchJson = "[{\"op\": \"replace\",\"path\":\"/serverAddress\",\"value\":\"127.0.0.1\"}]";
@@ -361,8 +352,8 @@ public class PythonRepositoryControllerTest extends ApiV2ControllerUnitTest {
     @WithMockUser(authorities = {"user", "repositorymaintainer"})
     public void patchRepository_returns404_whenRepositoryIsNotFound() throws Exception {
 
-        when(pythonRepositoryService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(null));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(pythonRepositoryService.findById(any(Integer.class))).thenReturn(Optional.empty());
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
 
         String patchJson = "[{\"op\": \"replace\",\"path\":\"/serverAddress\",\"value\":\"127.0.0.1\"}]";
 
@@ -377,13 +368,13 @@ public class PythonRepositoryControllerTest extends ApiV2ControllerUnitTest {
     @WithMockUser(authorities = {"user", "repositorymaintainer"})
     public void patchRepository_returns422_whenPatchIsIncorrect() throws Exception {
         final PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        final Integer ID = repository.getId();
+        final int ID = repository.getId();
 
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/nameeeeee\",\"value\":\"Test Repo 123\"}]";
 
         when(pythonRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(securityMediator.isAuthorizedToEdit(any(Repository.class), eq(user.get())))
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
+        when(securityMediator.isAuthorizedToEdit(any(Repository.class), eq(user)))
                 .thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/python/repositories/" + ID)
@@ -397,15 +388,15 @@ public class PythonRepositoryControllerTest extends ApiV2ControllerUnitTest {
     @WithMockUser(authorities = {"user", "repositorymaintainer"})
     public void patchRepository_returns422_whenRepositoryValidationFails() throws Exception {
         final PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        final Integer ID = repository.getId();
+        final int ID = repository.getId();
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/name\",\"value\":\"Test Repo 123\"}]";
 
         when(pythonRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(securityMediator.isAuthorizedToEdit(repository, user.get())).thenReturn(true);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
+        when(securityMediator.isAuthorizedToEdit(repository, user)).thenReturn(true);
         when(pythonRepositoryValidator.supports(PythonRepository.class)).thenReturn(true);
         doAnswer(invocation -> {
-                    Errors errors = (Errors) invocation.getArgument(1);
+                    Errors errors = invocation.getArgument(1);
 
                     errors.rejectValue("name", MessageCodes.ERROR_DUPLICATE_NAME);
                     return null;
@@ -425,14 +416,14 @@ public class PythonRepositoryControllerTest extends ApiV2ControllerUnitTest {
     @WithMockUser(authorities = {"user", "admin"})
     public void deleteRepository() throws Exception {
         final PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        final Integer ID = repository.getId();
+        final int ID = repository.getId();
 
         repository.setDeleted(true);
 
         when(pythonRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
         doNothing().when(pythonRepositoryDeleter).delete(repository);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(userService.isAdmin(user.get())).thenReturn(true);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
+        when(userService.isAdmin(user)).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v2/manager/python/repositories/" + ID))
                 .andExpect(status().isNoContent());
@@ -457,9 +448,9 @@ public class PythonRepositoryControllerTest extends ApiV2ControllerUnitTest {
     @Test
     @WithMockUser(authorities = {"admin", "user"})
     public void deleteRepository_returns404_whenRepositoryIsNotFound() throws Exception {
-        when(pythonRepositoryService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(null));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(userService.isAdmin(user.get())).thenReturn(true);
+        when(pythonRepositoryService.findById(any(Integer.class))).thenReturn(Optional.empty());
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
+        when(userService.isAdmin(user)).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v2/manager/python/repositories/" + 123))
                 .andExpect(status().isNotFound())
@@ -470,14 +461,14 @@ public class PythonRepositoryControllerTest extends ApiV2ControllerUnitTest {
     @WithMockUser(authorities = {"user", "admin"})
     public void deleteRepository_returns500_whenRepositoryDeletionFails() throws Exception {
         final PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        final Integer ID = repository.getId();
+        final int ID = repository.getId();
 
         repository.setDeleted(true);
 
         when(pythonRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
         doThrow(new DeleteEntityException()).when(pythonRepositoryDeleter).delete(any());
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(userService.isAdmin(user.get())).thenReturn(true);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
+        when(userService.isAdmin(user)).thenReturn(true);
 
         ResultActions result = mockMvc.perform(
                         MockMvcRequestBuilders.delete("/api/v2/manager/python/repositories/" + ID))

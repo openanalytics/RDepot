@@ -1,137 +1,156 @@
 {
-  "code": 200,
-  "data": {
-    "links": [{
-      "rel": "first",
-      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages?page=0&size=2&sort=id,asc"
-    }, {
-      "rel": "prev",
-      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages?page=0&size=2&sort=id,asc"
-    }, {
-      "rel": "self",
-      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages?page=1&size=2&sort=id,asc"
-    }, {
-      "rel": "next",
-      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages?page=2&size=2&sort=id,asc"
-    }, {
-      "rel": "last",
-      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages?page=4&size=2&sort=id,asc"
-    }],
-    "page": {
-      "number": 1,
-      "size": 2,
-      "totalPages": 5,
-      "totalElements": 9
-    },
-    "content": [{
-      "authorEmail": null,
-      "projectUrl": "Documentation, https:\/\/setuptools.pypa.io\/, Changelog, https:\/\/setuptools.pypa.io\/en\/stable\/history.html",
-      "keywords": "CPAN PyPI distutils eggs package management",
-      "description": null,
-      "source": "\/opt\/rdepot\/repositories\/9\/95184570\/setuptools-67.4.0.tar.gz",
-      "repository": {
-        "name": "testrepo9",
-        "id": 9,
-        "published": false,
-        "technology": "Python",
-        "publicationUri": "http:\/\/localhost\/repo\/testrepo9"
-      },
-      "title": "Easily download, build, install, upgrade, and uninstall Python packages",
-      "requiresDist": null,
-      "homePage": "",
-      "maintainer": null,
-      "platform": null,
-      "requiresPython": ">=3.7",
-      "requiresExternal": null,
-      "descriptionContentType": null,
-      "classifiers": "Development Status :: 5 - Production\/Stable, Intended Audience :: Developers, License :: OSI Approved :: MIT License, Programming Language :: Python :: 3, Programming Language :: Python :: 3 :: Only, Topic :: Software Development :: Libraries :: Python Modules, Topic :: System :: Archiving :: Packaging, Topic :: System :: Systems Administration, Topic :: Utilities",
-      "links": [{
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/38"
-      }, {
-        "rel": "packageList",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages"
-      }],
-      "id": 38,
-      "summary": "Easily download, build, install, upgrade, and uninstall Python packages",
-      "author": "Python Packaging Authority",
-      "active": true,
-      "maintainerEmail": null,
-      "technology": "Python",
-      "version": "67.4.0",
-      "url": "Documentation, https:\/\/setuptools.pypa.io\/, Changelog, https:\/\/setuptools.pypa.io\/en\/stable\/history.html",
-      "providesExtra": "testing, testing-integration, docs, ssl, certs",
-      "license": "OSI Approved :: MIT License",
-      "deleted": false,
-      "binary": false,
-      "name": "setuptools",
-      "submission": {
-        "id": 38,
-        "state": "ACCEPTED"
-      },
-      "user": {
-        "name": "Albert Einstein",
-        "id": 4,
-        "login": "einstein",
-        "email": "einstein@ldap.forumsys.com"
-      },
-      "hash": "e5fd0a713141a4a105412233c63dc4e17ba0090c8e8334594ac790ec97792330"
-    }, {
-      "authorEmail": null,
-      "projectUrl": "Documentation, https:\/\/setuptools.pypa.io\/, Changelog, https:\/\/setuptools.pypa.io\/en\/stable\/history.html",
-      "keywords": "CPAN PyPI distutils eggs package management",
-      "description": null,
-      "source": "\/opt\/rdepot\/repositories\/9\/65567066\/setuptools-67.8.0.tar.gz",
-      "repository": {
-        "name": "testrepo9",
-        "id": 9,
-        "published": false,
-        "technology": "Python",
-        "publicationUri": "http:\/\/localhost\/repo\/testrepo9"
-      },
-      "title": "Easily download, build, install, upgrade, and uninstall Python packages",
-      "requiresDist": null,
-      "homePage": "",
-      "maintainer": null,
-      "platform": null,
-      "requiresPython": ">=3.7",
-      "requiresExternal": null,
-      "descriptionContentType": null,
-      "classifiers": "Development Status :: 5 - Production\/Stable, Intended Audience :: Developers, License :: OSI Approved :: MIT License, Programming Language :: Python :: 3, Programming Language :: Python :: 3 :: Only, Topic :: Software Development :: Libraries :: Python Modules, Topic :: System :: Archiving :: Packaging, Topic :: System :: Systems Administration, Topic :: Utilities",
-      "links": [{
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/39"
-      }, {
-        "rel": "packageList",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages"
-      }],
-      "id": 39,
-      "summary": "Easily download, build, install, upgrade, and uninstall Python packages",
-      "author": "Python Packaging Authority",
-      "active": true,
-      "maintainerEmail": null,
-      "technology": "Python",
-      "version": "67.8.0",
-      "url": "Documentation, https:\/\/setuptools.pypa.io\/, Changelog, https:\/\/setuptools.pypa.io\/en\/stable\/history.html",
-      "providesExtra": "testing, testing-integration, docs, ssl, certs",
-      "license": "OSI Approved :: MIT License",
-      "deleted": false,
-      "binary": false,
-      "name": "setuptools",
-      "submission": {
-        "id": 39,
-        "state": "ACCEPTED"
-      },
-      "user": {
-        "name": "Galileo Galilei",
-        "id": 6,
-        "login": "galieleo",
-        "email": "galieleo@ldap.forumsys.com"
-      },
-      "hash": "62642358adc77ffa87233bc4d2354c4b2682d214048f500964dbe760ccedf102"
-    }]
-  },
-  "messageCode": "success.request.processed",
-  "message": "Your request has been processed successfully.",
-  "status": "SUCCESS"
+	"code": 200,
+	"data": {
+		"links": [
+			{
+				"rel": "first",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages?page=0&size=2&sort=id,asc"
+			},
+			{
+				"rel": "prev",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages?page=0&size=2&sort=id,asc"
+			},
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages?page=1&size=2&sort=id,asc"
+			},
+			{
+				"rel": "next",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages?page=2&size=2&sort=id,asc"
+			},
+			{
+				"rel": "last",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages?page=4&size=2&sort=id,asc"
+			}
+		],
+		"page": {
+			"number": 1,
+			"size": 2,
+			"totalPages": 5,
+			"totalElements": 9
+		},
+		"content": [
+			{
+				"authorEmail": null,
+				"projectUrl": "Documentation, https:\/\/setuptools.pypa.io\/, Changelog, https:\/\/setuptools.pypa.io\/en\/stable\/history.html",
+				"keywords": "CPAN PyPI distutils eggs package management",
+				"description": null,
+				"source": "\/opt\/rdepot\/repositories\/9\/95184570\/setuptools-67.4.0.tar.gz",
+				"repository": {
+					"name": "testrepo9",
+					"lastPublicationSuccessful": false,
+					"id": 9,
+					"published": false,
+					"technology": "Python",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo9"
+				},
+				"title": "Easily download, build, install, upgrade, and uninstall Python packages",
+				"requiresDist": null,
+				"homePage": "",
+				"maintainer": null,
+				"platform": null,
+				"requiresPython": ">=3.7",
+				"requiresExternal": null,
+				"descriptionContentType": null,
+				"classifiers": "Development Status :: 5 - Production\/Stable, Intended Audience :: Developers, License :: OSI Approved :: MIT License, Programming Language :: Python :: 3, Programming Language :: Python :: 3 :: Only, Topic :: Software Development :: Libraries :: Python Modules, Topic :: System :: Archiving :: Packaging, Topic :: System :: Systems Administration, Topic :: Utilities",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/38"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages"
+					}
+				],
+				"id": 38,
+				"summary": "Easily download, build, install, upgrade, and uninstall Python packages",
+				"author": "Python Packaging Authority",
+				"active": true,
+				"maintainerEmail": null,
+				"technology": "Python",
+				"version": "67.4.0",
+				"url": "Documentation, https:\/\/setuptools.pypa.io\/, Changelog, https:\/\/setuptools.pypa.io\/en\/stable\/history.html",
+				"providesExtra": "testing, testing-integration, docs, ssl, certs",
+				"license": "OSI Approved :: MIT License",
+				"deleted": false,
+				"binary": false,
+				"name": "setuptools",
+				"submission": {
+					"id": 38,
+					"state": "ACCEPTED"
+				},
+				"user": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				},
+				"hash": "e5fd0a713141a4a105412233c63dc4e17ba0090c8e8334594ac790ec97792330"
+			},
+			{
+				"authorEmail": null,
+				"projectUrl": "Documentation, https:\/\/setuptools.pypa.io\/, Changelog, https:\/\/setuptools.pypa.io\/en\/stable\/history.html",
+				"keywords": "CPAN PyPI distutils eggs package management",
+				"description": null,
+				"source": "\/opt\/rdepot\/repositories\/9\/65567066\/setuptools-67.8.0.tar.gz",
+				"repository": {
+					"name": "testrepo9",
+					"lastPublicationSuccessful": false,
+					"id": 9,
+					"published": false,
+					"technology": "Python",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo9"
+				},
+				"title": "Easily download, build, install, upgrade, and uninstall Python packages",
+				"requiresDist": null,
+				"homePage": "",
+				"maintainer": null,
+				"platform": null,
+				"requiresPython": ">=3.7",
+				"requiresExternal": null,
+				"descriptionContentType": null,
+				"classifiers": "Development Status :: 5 - Production\/Stable, Intended Audience :: Developers, License :: OSI Approved :: MIT License, Programming Language :: Python :: 3, Programming Language :: Python :: 3 :: Only, Topic :: Software Development :: Libraries :: Python Modules, Topic :: System :: Archiving :: Packaging, Topic :: System :: Systems Administration, Topic :: Utilities",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/39"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages"
+					}
+				],
+				"id": 39,
+				"summary": "Easily download, build, install, upgrade, and uninstall Python packages",
+				"author": "Python Packaging Authority",
+				"active": true,
+				"maintainerEmail": null,
+				"technology": "Python",
+				"version": "67.8.0",
+				"url": "Documentation, https:\/\/setuptools.pypa.io\/, Changelog, https:\/\/setuptools.pypa.io\/en\/stable\/history.html",
+				"providesExtra": "testing, testing-integration, docs, ssl, certs",
+				"license": "OSI Approved :: MIT License",
+				"deleted": false,
+				"binary": false,
+				"name": "setuptools",
+				"submission": {
+					"id": 39,
+					"state": "ACCEPTED"
+				},
+				"user": {
+					"name": "Galileo Galilei",
+					"id": 6,
+					"login": "galieleo",
+					"email": "galieleo@ldap.forumsys.com"
+				},
+				"hash": "62642358adc77ffa87233bc4d2354c4b2682d214048f500964dbe760ccedf102"
+			}
+		]
+	},
+	"messageCode": "success.request.processed",
+	"message": "Your request has been processed successfully.",
+	"status": "SUCCESS"
 }

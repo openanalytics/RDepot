@@ -1,1 +1,40 @@
-{"code":200,"data":{"links":[{"rel":"self","href":"http:\/\/localhost:8017\/api\/v2\/manager\/users\/roles"}],"content":[{"name":"user","description":"User","id":1,"value":0},{"name":"packagemaintainer","description":"Package Maintainer","id":2,"value":1},{"name":"repositorymaintainer","description":"Repository Maintainer","id":3,"value":2},{"name":"admin","description":"Administrator","id":4,"value":3}]},"messageCode":"success.request.processed","message":"Your request has been processed successfully.","status":"SUCCESS"}
+{
+  "code": 200,
+  "data": {
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/users/roles"
+      }
+    ],
+    "content": [
+      {
+        "name": "user",
+        "description": "User",
+        "id": 1,
+        "value": 0
+      },
+      {
+        "name": "packagemaintainer",
+        "description": "Package Maintainer",
+        "id": 2,
+        "value": 1
+      },
+      {
+        "name": "repositorymaintainer",
+        "description": "Repository Maintainer",
+        "id": 3,
+        "value": 2
+      },
+      {
+        "name": "admin",
+        "description": "Administrator",
+        "id": 4,
+        "value": 3
+      }
+    ]
+  },
+  "messageCode": "success.request.processed",
+  "message": "Your request has been processed successfully.",
+  "status": "SUCCESS"
+}

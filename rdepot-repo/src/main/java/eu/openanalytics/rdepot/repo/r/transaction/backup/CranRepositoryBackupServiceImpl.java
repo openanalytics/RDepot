@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -31,9 +31,10 @@ import eu.openanalytics.rdepot.repo.transaction.backup.implementations.AbstractR
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -61,19 +62,30 @@ public class CranRepositoryBackupServiceImpl extends AbstractRepositoryBackupSer
         try {
             File trashDirectory = storageService.initTrashDirectory(transaction.getId());
             String repositoryVersion = storageService.getRepositoryVersion(transaction.getRepositoryName());
-            final List<String> recentPackages =
+
+            final List<String> recentSourcePackages =
                     storageService.getRecentPackagesFromRepository(transaction.getRepositoryName()).stream()
                             .map(Path::getFileName)
                             .map(Path::toString)
                             .toList();
-            final List<String> archivePackages =
-                    storageService.getArchiveFromRepository(transaction.getRepositoryName()).values().stream()
-                            .flatMap(Collection::stream)
-                            .map(Path::getFileName)
-                            .map(Path::toString)
-                            .toList();
-            final CranRepositoryBackup backup =
-                    new CranRepositoryBackup(recentPackages, archivePackages, trashDirectory, repositoryVersion);
+
+            final Map<String, List<String>> recentBinaryPackages =
+                    storageService
+                            .getRecentBinaryPackagesFromRepository(transaction.getRepositoryName())
+                            .entrySet()
+                            .stream()
+                            .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().stream()
+                                    .map(path -> path.getFileName().toString())
+                                    .collect(Collectors.toList())));
+
+            final Map<String, List<String>> archivePackages =
+                    storageService.getArchiveFromRepository(transaction.getRepositoryName()).entrySet().stream()
+                            .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().stream()
+                                    .map(path -> path.getFileName().toString())
+                                    .collect(Collectors.toList())));
+
+            final CranRepositoryBackup backup = new CranRepositoryBackup(
+                    recentSourcePackages, recentBinaryPackages, archivePackages, trashDirectory, repositoryVersion);
             backups.put(transaction, backup);
         } catch (InitTrashDirectoryException | GetRepositoryVersionException | IOException e) {
             transactionManager.abortTransaction(transaction);
@@ -90,12 +102,16 @@ public class CranRepositoryBackupServiceImpl extends AbstractRepositoryBackupSer
             throw new RestoreRepositoryException(transaction.getRepositoryName());
         }
         storageService.removeNonExistingPackagesFromRepo(backup.getRecentPackages(), transaction.getRepositoryName());
+        storageService.removeNonExistingBinaryPackagesFromRepo(
+                backup.getRecentBinaryPackages(), transaction.getRepositoryName());
         storageService.removeNonExistingArchivePackagesFromRepo(
                 backup.getArchivePackages(), transaction.getRepositoryName());
         storageService.restoreTrash(backup.getTrashDirectory());
         storageService.setRepositoryVersion(transaction.getRepositoryName(), backup.getVersion());
         try {
-            storageService.generateArchiveRds(transaction.getRepositoryName());
+            for (String archivePath : backup.getArchivePackages().keySet()) {
+                storageService.generateArchiveRds(transaction.getRepositoryName(), archivePath);
+            }
         } catch (IOException e) {
             log.error(e.getMessage(), e);
             throw new RestoreRepositoryException(transaction.getRepositoryName());

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -121,5 +121,20 @@ public class SubmissionIntegrationTest extends IntegrationTest {
                 .expectedJsonPath("/v2/base/submissions/accepted_submissions_with_searching.json")
                 .build();
         testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getPaginatedSubmissions_shouldBeSortedByIdInCaseOfAmbiguity() throws Exception {
+        for (int i = 0; i < 3; i++) {
+            TestRequestBody requestBody = TestRequestBody.builder()
+                    .requestType(RequestType.GET)
+                    .urlSuffix("?sort=state,asc&page=" + i + "&size=1")
+                    .statusCode(200)
+                    .token(ADMIN_TOKEN)
+                    .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                    .expectedJsonPath("/v2/base/submissions/one_submission_page_" + i + ".json")
+                    .build();
+            testEndpoint(requestBody);
+        }
     }
 }

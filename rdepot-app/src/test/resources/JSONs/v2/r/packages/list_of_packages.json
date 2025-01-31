@@ -1,1322 +1,1374 @@
 {
-  "code": 200,
-  "data": {
-    "links": [
-      {
-        "rel": "self",
-        "href": "http://localhost:8017/api/v2/manager/r/packages?page=0&size=20&sort=id,asc"
-      }
-    ],
-    "page": {
-      "number": 0,
-      "size": 20,
-      "totalPages": 1,
-      "totalElements": 20
-    },
-    "content": [
-      {
-        "enhances": null,
-        "description": "Package for visualizing data quality of partially accruing data.",
-        "source": "/opt/rdepot/repositories/3/99077116/accrued_1.3.5.tar.gz",
-        "repository": {
-          "name": "testrepo2",
-          "id": 3,
-          "published": true,
-          "technology": "R",
-          "publicationUri": "http://localhost/repo/testrepo2"
-        },
-        "title": "Data Quality Visualization Tools for Partially Accruing Data",
-        "distribution": null,
-        "suggests": null,
-        "systemRequirements": null,
-        "md5sum": "19f8aec67250bd2ac481b14b50413d03",
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/4"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/r/packages"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/4",
-            "type": "PATCH"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/4",
-            "type": "DELETE"
-          }
-        ],
-        "id": 4,
-        "rversion": null,
-        "architecture": null,
-        "imports": null,
-        "depends": "R (>= 2.14.1), grid",
-        "built": null,
-        "author": "Julie Eaton and Ian Painter",
-        "active": true,
-        "technology": "R",
-        "priority": null,
-        "version": "1.3.5",
-        "url": null,
-        "license": "GPL-3",
-        "deleted": false,
-        "binary": false,
-        "name": "accrued",
-        "submission": {
-          "id": 5,
-          "state": "ACCEPTED"
-        },
-        "linkingTo": null,
-        "user": {
-          "name": "Albert Einstein",
-          "id": 4,
-          "login": "einstein",
-          "email": "einstein@ldap.forumsys.com"
-        },
-        "needsCompilation": "no"
-      },
-      {
-        "enhances": null,
-        "description": "Package for visualizing data quality of partially accruing data.",
-        "source": "/opt/rdepot/repositories/3/82197810/accrued_1.3.tar.gz",
-        "repository": {
-          "name": "testrepo2",
-          "id": 3,
-          "published": true,
-          "technology": "R",
-          "publicationUri": "http://localhost/repo/testrepo2"
-        },
-        "title": "Data Quality Visualization Tools for Partially Accruing Data",
-        "distribution": null,
-        "suggests": null,
-        "systemRequirements": null,
-        "md5sum": "a05e4ca44438c0d9e7d713d7e3890423",
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/5"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/r/packages"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/5",
-            "type": "PATCH"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/5",
-            "type": "DELETE"
-          }
-        ],
-        "id": 5,
-        "rversion": null,
-        "architecture": null,
-        "imports": null,
-        "depends": "R (>= 2.14.1), grid",
-        "built": null,
-        "author": "Julie Eaton and Ian Painter",
-        "active": true,
-        "technology": "R",
-        "priority": null,
-        "version": "1.3",
-        "url": null,
-        "license": "GPL-3",
-        "deleted": false,
-        "binary": false,
-        "name": "accrued",
-        "submission": {
-          "id": 7,
-          "state": "ACCEPTED"
-        },
-        "linkingTo": null,
-        "user": {
-          "name": "Albert Einstein",
-          "id": 4,
-          "login": "einstein",
-          "email": "einstein@ldap.forumsys.com"
-        },
-        "needsCompilation": "no"
-      },
-      {
-        "enhances": null,
-        "description": "Package for visualizing data quality of partially accruing time series.",
-        "source": "/opt/rdepot/repositories/3/46950998/accrued_1.1.tar.gz",
-        "repository": {
-          "name": "testrepo2",
-          "id": 3,
-          "published": true,
-          "technology": "R",
-          "publicationUri": "http://localhost/repo/testrepo2"
-        },
-        "title": "Visualization tools for partially accruing data",
-        "distribution": null,
-        "suggests": null,
-        "systemRequirements": null,
-        "md5sum": "24b8cec280424dfc6a9e444fa57ba9f3",
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/6"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/r/packages"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/6",
-            "type": "PATCH"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/6",
-            "type": "DELETE"
-          }
-        ],
-        "id": 6,
-        "rversion": null,
-        "architecture": null,
-        "imports": null,
-        "depends": "R (>= 3.0), grid",
-        "built": null,
-        "author": "Julie Eaton and Ian Painter",
-        "active": false,
-        "technology": "R",
-        "priority": null,
-        "version": "1.1",
-        "url": null,
-        "license": "GPL-3",
-        "deleted": true,
-        "binary": false,
-        "name": "accrued",
-        "submission": {
-          "id": 4,
-          "state": "ACCEPTED"
-        },
-        "linkingTo": null,
-        "user": {
-          "name": "Albert Einstein",
-          "id": 4,
-          "login": "einstein",
-          "email": "einstein@ldap.forumsys.com"
-        },
-        "needsCompilation": "no"
-      },
-      {
-        "enhances": null,
-        "description": "Package for visualizing data quality of partially accruing data.",
-        "source": "/opt/rdepot/repositories/3/28075835/accrued_1.4.tar.gz",
-        "repository": {
-          "name": "testrepo2",
-          "id": 3,
-          "published": true,
-          "technology": "R",
-          "publicationUri": "http://localhost/repo/testrepo2"
-        },
-        "title": "Data Quality Visualization Tools for Partially Accruing Data",
-        "distribution": null,
-        "suggests": null,
-        "systemRequirements": null,
-        "md5sum": "97c2930a9dd7ca9fc1409d5340c06470",
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/7"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/r/packages"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/7",
-            "type": "PATCH"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/7",
-            "type": "DELETE"
-          }
-        ],
-        "id": 7,
-        "rversion": null,
-        "architecture": null,
-        "imports": null,
-        "depends": "R (>= 2.14.1), grid",
-        "built": null,
-        "author": "Julie Eaton and Ian Painter",
-        "active": false,
-        "technology": "R",
-        "priority": null,
-        "version": "1.4",
-        "url": null,
-        "license": "GPL-3",
-        "deleted": false,
-        "binary": false,
-        "name": "accrued",
-        "submission": {
-          "id": 8,
-          "state": "ACCEPTED"
-        },
-        "linkingTo": null,
-        "user": {
-          "name": "Albert Einstein",
-          "id": 4,
-          "login": "einstein",
-          "email": "einstein@ldap.forumsys.com"
-        },
-        "needsCompilation": "no"
-      },
-      {
-        "enhances": null,
-        "description": "Package for visualizing data quality of partially accruing time series.",
-        "source": "/opt/rdepot/repositories/3/83118397/accrued_1.2.tar.gz",
-        "repository": {
-          "name": "testrepo2",
-          "id": 3,
-          "published": true,
-          "technology": "R",
-          "publicationUri": "http://localhost/repo/testrepo2"
-        },
-        "title": "Visualization tools for partially accruing data",
-        "distribution": null,
-        "suggests": null,
-        "systemRequirements": null,
-        "md5sum": "70d295115295a4718593f6a39d77add9",
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/8"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/r/packages"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/8",
-            "type": "PATCH"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/8",
-            "type": "DELETE"
-          }
-        ],
-        "id": 8,
-        "rversion": null,
-        "architecture": null,
-        "imports": null,
-        "depends": "R (>= 3.0), grid",
-        "built": null,
-        "author": "Julie Eaton and Ian Painter",
-        "active": true,
-        "technology": "R",
-        "priority": null,
-        "version": "1.2",
-        "url": null,
-        "license": "GPL-3",
-        "deleted": false,
-        "binary": false,
-        "name": "accrued",
-        "submission": {
-          "id": 6,
-          "state": "ACCEPTED"
-        },
-        "linkingTo": null,
-        "user": {
-          "name": "Albert Einstein",
-          "id": 4,
-          "login": "einstein",
-          "email": "einstein@ldap.forumsys.com"
-        },
-        "needsCompilation": "no"
-      },
-      {
-        "enhances": null,
-        "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-        "source": "/opt/rdepot/repositories/4/47098069/A3_0.9.1.tar.gz",
-        "repository": {
-          "name": "testrepo3",
-          "id": 4,
-          "published": false,
-          "technology": "R",
-          "publicationUri": "http://localhost/repo/testrepo3"
-        },
-        "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
-        "distribution": null,
-        "suggests": "randomForest, e1071",
-        "systemRequirements": null,
-        "md5sum": "8eb4760cd574f5489e61221dc9bb0076",
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/9"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/r/packages"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/9",
-            "type": "PATCH"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/9",
-            "type": "DELETE"
-          }
-        ],
-        "id": 9,
-        "rversion": null,
-        "architecture": null,
-        "imports": null,
-        "depends": "xtable, pbapply",
-        "built": null,
-        "author": "Scott Fortmann-Roe",
-        "active": true,
-        "technology": "R",
-        "priority": null,
-        "version": "0.9.1",
-        "url": null,
-        "license": "GPL (>= 2)",
-        "deleted": false,
-        "binary": false,
-        "name": "A3",
-        "submission": {
-          "id": 9,
-          "state": "ACCEPTED"
-        },
-        "linkingTo": null,
-        "user": {
-          "name": "Galileo Galilei",
-          "id": 6,
-          "login": "galieleo",
-          "email": "galieleo@ldap.forumsys.com"
-        },
-        "needsCompilation": "no"
-      },
-      {
-        "enhances": null,
-        "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-        "source": "/opt/rdepot/repositories/4/54491936/A3_0.9.2.tar.gz",
-        "repository": {
-          "name": "testrepo3",
-          "id": 4,
-          "published": false,
-          "technology": "R",
-          "publicationUri": "http://localhost/repo/testrepo3"
-        },
-        "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
-        "distribution": null,
-        "suggests": "randomForest, e1071",
-        "systemRequirements": null,
-        "md5sum": "76d726aee8dd7c6ed94d150d5718015b",
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/10"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/r/packages"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/10",
-            "type": "PATCH"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/10",
-            "type": "DELETE"
-          }
-        ],
-        "id": 10,
-        "rversion": null,
-        "architecture": null,
-        "imports": null,
-        "depends": "R (>= 2.15.0), xtable, pbapply",
-        "built": null,
-        "author": "Scott Fortmann-Roe",
-        "active": true,
-        "technology": "R",
-        "priority": null,
-        "version": "0.9.2",
-        "url": null,
-        "license": "GPL (>= 2)",
-        "deleted": false,
-        "binary": false,
-        "name": "A3",
-        "submission": {
-          "id": 10,
-          "state": "ACCEPTED"
-        },
-        "linkingTo": null,
-        "user": {
-          "name": "Galileo Galilei",
-          "id": 6,
-          "login": "galieleo",
-          "email": "galieleo@ldap.forumsys.com"
-        },
-        "needsCompilation": "no"
-      },
-      {
-        "enhances": null,
-        "description": "The package implements several ABC algorithms for performing parameter estimation and model selection. Cross-validation tools are also available for measuring the accuracy of ABC estimates, and to calculate the misclassification probabilities of different models.",
-        "source": "/opt/rdepot/repositories/4/95296712/abc_1.3.tar.gz",
-        "repository": {
-          "name": "testrepo3",
-          "id": 4,
-          "published": false,
-          "technology": "R",
-          "publicationUri": "http://localhost/repo/testrepo3"
-        },
-        "title": "Tools for Approximate Bayesian Computation (ABC)",
-        "distribution": null,
-        "suggests": null,
-        "systemRequirements": null,
-        "md5sum": "c47d18b86b331a5023dcd62b74fedbb6",
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/11"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/r/packages"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/11",
-            "type": "PATCH"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/11",
-            "type": "DELETE"
-          }
-        ],
-        "id": 11,
-        "rversion": null,
-        "architecture": null,
-        "imports": null,
-        "depends": "R (>= 2.10), nnet, quantreg, locfit",
-        "built": null,
-        "author": "Katalin Csillery, Michael Blum and Olivier Francois",
-        "active": false,
-        "technology": "R",
-        "priority": null,
-        "version": "1.3",
-        "url": null,
-        "license": "GPL (>= 3)",
-        "deleted": false,
-        "binary": false,
-        "name": "abc",
-        "submission": {
-          "id": 11,
-          "state": "ACCEPTED"
-        },
-        "linkingTo": null,
-        "user": {
-          "name": "Galileo Galilei",
-          "id": 6,
-          "login": "galieleo",
-          "email": "galieleo@ldap.forumsys.com"
-        },
-        "needsCompilation": "no"
-      },
-      {
-        "enhances": null,
-        "description": "The 'abc' package provides various functions for parameter estimation and model selection in an ABC framework. Three main",
-        "source": "/opt/rdepot/repositories/4/49426769/abc_1.0.tar.gz",
-        "repository": {
-          "name": "testrepo3",
-          "id": 4,
-          "published": false,
-          "technology": "R",
-          "publicationUri": "http://localhost/repo/testrepo3"
-        },
-        "title": "Functions to perform Approximate Bayesian Computation (ABC) using simulated data",
-        "distribution": null,
-        "suggests": null,
-        "systemRequirements": null,
-        "md5sum": "91599204c92275ed4b36d55e8d7c144b",
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/12"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/r/packages"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/12",
-            "type": "PATCH"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/12",
-            "type": "DELETE"
-          }
-        ],
-        "id": 12,
-        "rversion": null,
-        "architecture": null,
-        "imports": null,
-        "depends": "R (>= 1.8.0), nnet, quantreg, locfit, methods",
-        "built": null,
-        "author": "Katalin Csillery, with contributions from Michael Blum and Olivier Francois",
-        "active": true,
-        "technology": "R",
-        "priority": null,
-        "version": "1.0",
-        "url": null,
-        "license": "Unlimited",
-        "deleted": false,
-        "binary": false,
-        "name": "abc",
-        "submission": {
-          "id": 12,
-          "state": "ACCEPTED"
-        },
-        "linkingTo": null,
-        "user": {
-          "name": "Galileo Galilei",
-          "id": 6,
-          "login": "galieleo",
-          "email": "galieleo@ldap.forumsys.com"
-        },
-        "needsCompilation": "no"
-      },
-      {
-        "enhances": null,
-        "description": "Package for visualizing data quality of partially accruing time series.",
-        "source": "/opt/rdepot/repositories/2/40553654/accrued_1.0.tar.gz",
-        "repository": {
-          "name": "testrepo1",
-          "id": 2,
-          "published": true,
-          "technology": "R",
-          "publicationUri": "http://localhost/repo/testrepo1"
-        },
-        "title": "Visualization tools for partially accruing data",
-        "distribution": null,
-        "suggests": null,
-        "systemRequirements": null,
-        "md5sum": "1c75d59b18e554a285a9b156a06a288c",
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/13"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/r/packages"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/13",
-            "type": "PATCH"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/13",
-            "type": "DELETE"
-          }
-        ],
-        "id": 13,
-        "rversion": null,
-        "architecture": null,
-        "imports": null,
-        "depends": "R (>= 3.0), grid",
-        "built": null,
-        "author": "Julie Eaton and Ian Painter",
-        "active": false,
-        "technology": "R",
-        "priority": null,
-        "version": "1.0",
-        "url": null,
-        "license": "GPL-3",
-        "deleted": false,
-        "binary": false,
-        "name": "accrued",
-        "submission": {
-          "id": 14,
-          "state": "ACCEPTED"
-        },
-        "linkingTo": null,
-        "user": {
-          "name": "Galileo Galilei",
-          "id": 6,
-          "login": "galieleo",
-          "email": "galieleo@ldap.forumsys.com"
-        },
-        "needsCompilation": "no"
-      },
-      {
-        "enhances": null,
-        "description": "Performs nonparametric tests for equality of location against ordered alternatives.",
-        "source": "/opt/rdepot/repositories/2/8436419/npordtests_1.1.tar.gz",
-        "repository": {
-          "name": "testrepo1",
-          "id": 2,
-          "published": true,
-          "technology": "R",
-          "publicationUri": "http://localhost/repo/testrepo1"
-        },
-        "title": "Nonparametric Tests for Equality of Location Against Ordered Alternatives",
-        "distribution": null,
-        "suggests": null,
-        "systemRequirements": null,
-        "md5sum": "da8be1247d3145b757bd62e01fc6eb8b",
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/14"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/r/packages"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/14",
-            "type": "PATCH"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/14",
-            "type": "DELETE"
-          }
-        ],
-        "id": 14,
-        "rversion": null,
-        "architecture": null,
-        "imports": null,
-        "depends": "R (>= 2.15.0)",
-        "built": null,
-        "author": "Bulent Altunkaynak [aut, cre], Hamza Gamgam [aut]",
-        "active": false,
-        "technology": "R",
-        "priority": null,
-        "version": "1.1",
-        "url": null,
-        "license": "GPL (>= 2)",
-        "deleted": true,
-        "binary": false,
-        "name": "npordtests",
-        "submission": {
-          "id": 15,
-          "state": "ACCEPTED"
-        },
-        "linkingTo": null,
-        "user": {
-          "name": "Nikola Tesla",
-          "id": 5,
-          "login": "tesla",
-          "email": "tesla@ldap.forumsys.com"
-        },
-        "needsCompilation": "no"
-      },
-      {
-        "enhances": null,
-        "description": "Provides an R interface for the Bureau of Economic Analysis (BEA)",
-        "source": "/opt/rdepot/repositories/2/89565416/bea.R_1.0.5.tar.gz",
-        "repository": {
-          "name": "testrepo1",
-          "id": 2,
-          "published": true,
-          "technology": "R",
-          "publicationUri": "http://localhost/repo/testrepo1"
-        },
-        "title": "Bureau of Economic Analysis API",
-        "distribution": null,
-        "suggests": null,
-        "systemRequirements": null,
-        "md5sum": "5e664f320c7cc884138d64467f6b0e49",
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/15"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/r/packages"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/15",
-            "type": "PATCH"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/15",
-            "type": "DELETE"
-          }
-        ],
-        "id": 15,
-        "rversion": null,
-        "architecture": null,
-        "imports": "httr, DT, shiny, jsonlite, googleVis, shinydashboard, ggplot2, stringr, chron, gtable, scales, htmltools, httpuv, xtable, stringi, magrittr, htmlwidgets, Rcpp, munsell, colorspace, plyr, yaml",
-        "depends": "R (>= 3.2.1), data.table",
-        "built": null,
-        "author": "Andrea Batch [aut, cre], Jeff Chen [ctb], Walt Kampas [ctb]",
-        "active": true,
-        "technology": "R",
-        "priority": null,
-        "version": "1.0.5",
-        "url": "https://github.com/us-bea/beaR",
-        "license": "CC0",
-        "deleted": false,
-        "binary": false,
-        "name": "bea.R",
-        "submission": {
-          "id": 13,
-          "state": "ACCEPTED"
-        },
-        "linkingTo": null,
-        "user": {
-          "name": "Nikola Tesla",
-          "id": 5,
-          "login": "tesla",
-          "email": "tesla@ldap.forumsys.com"
-        },
-        "needsCompilation": "no"
-      },
-      {
-        "enhances": null,
-        "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-        "source": "/opt/rdepot/repositories/2/9907084/A3_0.9.2.tar.gz",
-        "repository": {
-          "name": "testrepo1",
-          "id": 2,
-          "published": true,
-          "technology": "R",
-          "publicationUri": "http://localhost/repo/testrepo1"
-        },
-        "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
-        "distribution": null,
-        "suggests": "randomForest, e1071",
-        "systemRequirements": null,
-        "md5sum": "76d726aee8dd7c6ed94d150d5718015b",
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/17"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/r/packages"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/17",
-            "type": "PATCH"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/17",
-            "type": "DELETE"
-          }
-        ],
-        "id": 17,
-        "rversion": null,
-        "architecture": null,
-        "imports": null,
-        "depends": "R (>= 2.15.0), xtable, pbapply",
-        "built": null,
-        "author": "Scott Fortmann-Roe",
-        "active": true,
-        "technology": "R",
-        "priority": null,
-        "version": "0.9.2",
-        "url": null,
-        "license": "GPL (>= 2)",
-        "deleted": false,
-        "binary": false,
-        "name": "A3",
-        "submission": {
-          "id": 17,
-          "state": "ACCEPTED"
-        },
-        "linkingTo": null,
-        "user": {
-          "name": "Nikola Tesla",
-          "id": 5,
-          "login": "tesla",
-          "email": "tesla@ldap.forumsys.com"
-        },
-        "needsCompilation": "no"
-      },
-      {
-        "enhances": null,
-        "description": "The package implements several ABC algorithms for performing parameter estimation and model selection. Cross-validation tools are also available for measuring the accuracy of ABC estimates, and to calculate the misclassification probabilities of different models.",
-        "source": "/opt/rdepot/repositories/2/88170013/abc_1.3.tar.gz",
-        "repository": {
-          "name": "testrepo1",
-          "id": 2,
-          "published": true,
-          "technology": "R",
-          "publicationUri": "http://localhost/repo/testrepo1"
-        },
-        "title": "Tools for Approximate Bayesian Computation (ABC)",
-        "distribution": null,
-        "suggests": null,
-        "systemRequirements": null,
-        "md5sum": "c47d18b86b331a5023dcd62b74fedbb6",
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/18"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/r/packages"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/18",
-            "type": "PATCH"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/18",
-            "type": "DELETE"
-          }
-        ],
-        "id": 18,
-        "rversion": null,
-        "architecture": null,
-        "imports": null,
-        "depends": "R (>= 2.10), nnet, quantreg, locfit",
-        "built": null,
-        "author": "Katalin Csillery, Michael Blum and Olivier Francois",
-        "active": true,
-        "technology": "R",
-        "priority": null,
-        "version": "1.3",
-        "url": null,
-        "license": "GPL (>= 3)",
-        "deleted": false,
-        "binary": false,
-        "name": "abc",
-        "submission": {
-          "id": 18,
-          "state": "ACCEPTED"
-        },
-        "linkingTo": null,
-        "user": {
-          "name": "Nikola Tesla",
-          "id": 5,
-          "login": "tesla",
-          "email": "tesla@ldap.forumsys.com"
-        },
-        "needsCompilation": "no"
-      },
-      {
-        "enhances": null,
-        "description": "Is a collection of models to analyze genome scale codon data using a Bayesian framework. Provides visualization routines and checkpointing for model fittings. Currently published models to analyze gene data for selection on codon",
-        "source": "/opt/rdepot/repositories/5/39437028/AnaCoDa_0.1.2.3.tar.gz",
-        "repository": {
-          "name": "testrepo4",
-          "id": 5,
-          "published": false,
-          "technology": "R",
-          "publicationUri": "http://localhost/repo/testrepo4"
-        },
-        "title": "Analysis of Codon Data under Stationarity using a Bayesian Framework",
-        "distribution": null,
-        "suggests": "knitr, Hmisc, VGAM, coda, testthat, lmodel2",
-        "systemRequirements": null,
-        "md5sum": "41026e4157a0b3b6d909f0c6f72fa65c",
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/20"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/r/packages"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/20",
-            "type": "PATCH"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/20",
-            "type": "DELETE"
-          }
-        ],
-        "id": 20,
-        "rversion": null,
-        "architecture": null,
-        "imports": "",
-        "depends": "R (>= 3.3.0), Rcpp (>= 0.11.3), methods",
-        "built": null,
-        "author": "Cedric Landerer [aut, cre], Gabriel Hanas [ctb], Jeremy Rogers [ctb], Alex Cope [ctb], Denizhan Pak [ctb]",
-        "active": true,
-        "technology": "R",
-        "priority": null,
-        "version": "0.1.2.3",
-        "url": "https://github.com/clandere/AnaCoDa",
-        "license": "GPL (>= 2)",
-        "deleted": false,
-        "binary": false,
-        "name": "AnaCoDa",
-        "submission": {
-          "id": 20,
-          "state": "ACCEPTED"
-        },
-        "linkingTo": "Rcpp",
-        "user": {
-          "name": "Galileo Galilei",
-          "id": 6,
-          "login": "galieleo",
-          "email": "galieleo@ldap.forumsys.com"
-        },
-        "needsCompilation": "no"
-      },
-      {
-        "enhances": null,
-        "description": "Estimates and graphs deterministic (DEA) frontier models with different technology assumptions (fdh, vrs, drs, crs, irs, add). Also handles possible slacks, peers and their weights (lambdas), optimal cost, revenue and profit allocation, super--efficiency, and mergers. A comparative method for estimating SFA efficiencies is included.",
-        "source": "/opt/rdepot/repositories/2/71228208/Benchmarking_0.10.tar.gz",
-        "repository": {
-          "name": "testrepo1",
-          "id": 2,
-          "published": true,
-          "technology": "R",
-          "publicationUri": "http://localhost/repo/testrepo1"
-        },
-        "title": "Benchmark and frontier analysis using DEA and SFA",
-        "distribution": null,
-        "suggests": null,
-        "systemRequirements": null,
-        "md5sum": "9a99c2ebefa6d49422ca7893c1f4ead8",
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/21"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/r/packages"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/21",
-            "type": "PATCH"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/21",
-            "type": "DELETE"
-          }
-        ],
-        "id": 21,
-        "rversion": null,
-        "architecture": null,
-        "imports": null,
-        "depends": "lpSolveAPI, ucminf",
-        "built": null,
-        "author": "Peter Bogetoft and Lars Otto",
-        "active": true,
-        "technology": "R",
-        "priority": null,
-        "version": "0.10",
-        "url": null,
-        "license": "GPL (>= 2)",
-        "deleted": false,
-        "binary": false,
-        "name": "Benchmarking",
-        "submission": {
-          "id": 21,
-          "state": "ACCEPTED"
-        },
-        "linkingTo": null,
-        "user": {
-          "name": "Nikola Tesla",
-          "id": 5,
-          "login": "tesla",
-          "email": "tesla@ldap.forumsys.com"
-        },
-        "needsCompilation": "no"
-      },
-      {
-        "enhances": null,
-        "description": "The Universal Scalability Law (Gunther 2007)",
-        "source": "/opt/rdepot/repositories/2/33930690/usl_2.0.0.tar.gz",
-        "repository": {
-          "name": "testrepo1",
-          "id": 2,
-          "published": true,
-          "technology": "R",
-          "publicationUri": "http://localhost/repo/testrepo1"
-        },
-        "title": "Analyze System Scalability with the Universal Scalability Law",
-        "distribution": null,
-        "suggests": "knitr",
-        "systemRequirements": null,
-        "md5sum": "868140a3c3c29327eef5d5a485aee5b6",
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/25"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/r/packages"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/25",
-            "type": "PATCH"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/25",
-            "type": "DELETE"
-          }
-        ],
-        "id": 25,
-        "rversion": null,
-        "architecture": null,
-        "imports": "graphics, stats, nlsr",
-        "depends": "R (>= 3.0), methods",
-        "built": null,
-        "author": "Neil J. Gunther [aut], Stefan Moeding [aut, cre]",
-        "active": true,
-        "technology": "R",
-        "priority": null,
-        "version": "2.0.0",
-        "url": null,
-        "license": "BSD_2_clause + file LICENSE",
-        "deleted": false,
-        "binary": false,
-        "name": "usl",
-        "submission": {
-          "id": 25,
-          "state": "ACCEPTED"
-        },
-        "linkingTo": null,
-        "user": {
-          "name": "Nikola Tesla",
-          "id": 5,
-          "login": "tesla",
-          "email": "tesla@ldap.forumsys.com"
-        },
-        "needsCompilation": "no"
-      },
-      {
-        "enhances": null,
-        "description": "The Universal Scalability Law (Gunther 2007)",
-        "source": "/opt/rdepot/repositories/6/21695389/usl_2.0.0.tar.gz",
-        "repository": {
-          "name": "testrepo5",
-          "id": 6,
-          "published": false,
-          "technology": "R",
-          "publicationUri": "http://localhost/repo/testrepo5"
-        },
-        "title": "Analyze System Scalability with the Universal Scalability Law",
-        "distribution": null,
-        "suggests": "knitr",
-        "systemRequirements": null,
-        "md5sum": "868140a3c3c29327eef5d5a485aee5b6",
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/27"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/r/packages"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/27",
-            "type": "PATCH"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/27",
-            "type": "DELETE"
-          }
-        ],
-        "id": 27,
-        "rversion": null,
-        "architecture": null,
-        "imports": "graphics, stats, nlsr",
-        "depends": "R (>= 3.0), methods",
-        "built": null,
-        "author": "Neil J. Gunther [aut], Stefan Moeding [aut, cre]",
-        "active": false,
-        "technology": "R",
-        "priority": null,
-        "version": "2.0.0",
-        "url": null,
-        "license": "BSD_2_clause + file LICENSE",
-        "deleted": true,
-        "binary": false,
-        "name": "usl",
-        "submission": {
-          "id": 27,
-          "state": "ACCEPTED"
-        },
-        "linkingTo": null,
-        "user": {
-          "name": "Local Admin User",
-          "id": 8,
-          "login": "admin",
-          "email": "admin@localhost"
-        },
-        "needsCompilation": "no"
-      },
-      {
-        "enhances": null,
-        "description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
-        "source": "/opt/rdepot/repositories/6/70325377/visdat_0.1.0.tar.gz",
-        "repository": {
-          "name": "testrepo5",
-          "id": 6,
-          "published": false,
-          "technology": "R",
-          "publicationUri": "http://localhost/repo/testrepo5"
-        },
-        "title": "Preliminary Data Visualisation",
-        "distribution": null,
-        "suggests": "plotly (>= 4.5.6), testthat, knitr, rmarkdown, vdiffr",
-        "systemRequirements": null,
-        "md5sum": "f343fa3a01dcd9546fa0947877f58f36",
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/28"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/r/packages"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/28",
-            "type": "PATCH"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/28",
-            "type": "DELETE"
-          }
-        ],
-        "id": 28,
-        "rversion": null,
-        "architecture": null,
-        "imports": "ggplot2, tidyr, dplyr, purrr, magrittr, stats",
-        "depends": "R (>= 3.2.2)",
-        "built": null,
-        "author": "Nicholas Tierney [aut, cre]",
-        "active": false,
-        "technology": "R",
-        "priority": null,
-        "version": "0.1.0",
-        "url": "https://github.com/njtierney/visdat/",
-        "license": "MIT + file LICENSE",
-        "deleted": true,
-        "binary": false,
-        "name": "visdat",
-        "submission": {
-          "id": 28,
-          "state": "ACCEPTED"
-        },
-        "linkingTo": null,
-        "user": {
-          "name": "Local Admin User",
-          "id": 8,
-          "login": "admin",
-          "email": "admin@localhost"
-        },
-        "needsCompilation": "no"
-      },
-      {
-        "enhances": null,
-        "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-        "source": "/opt/rdepot/repositories/7/67484296/A3_0.9.1.tar.gz",
-        "repository": {
-          "name": "testrepo6",
-          "id": 7,
-          "published": false,
-          "technology": "R",
-          "publicationUri": "http://localhost/repo/testrepo6"
-        },
-        "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
-        "distribution": null,
-        "suggests": "randomForest, e1071",
-        "systemRequirements": null,
-        "md5sum": "8eb4760cd574f5489e61221dc9bb0076",
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/29"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/r/packages"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/29",
-            "type": "PATCH"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/29",
-            "type": "DELETE"
-          }
-        ],
-        "id": 29,
-        "rversion": null,
-        "architecture": null,
-        "imports": null,
-        "depends": "xtable, pbapply",
-        "built": null,
-        "author": "Scott Fortmann-Roe",
-        "active": false,
-        "technology": "R",
-        "priority": null,
-        "version": "0.9.1",
-        "url": null,
-        "license": "GPL (>= 2)",
-        "deleted": true,
-        "binary": false,
-        "name": "A3",
-        "submission": {
-          "id": 29,
-          "state": "ACCEPTED"
-        },
-        "linkingTo": null,
-        "user": {
-          "name": "Local Admin User",
-          "id": 8,
-          "login": "admin",
-          "email": "admin@localhost"
-        },
-        "needsCompilation": "no"
-      }
-    ]
-  },
-  "messageCode": "success.request.processed",
-  "message": "Your request has been processed successfully.",
-  "status": "SUCCESS"
+	"code": 200,
+	"data": {
+		"links": [
+			{
+				"rel": "first",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages?page=0&size=20&sort=id,asc"
+			},
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages?page=0&size=20&sort=id,asc"
+			},
+			{
+				"rel": "next",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages?page=1&size=20&sort=id,asc"
+			},
+			{
+				"rel": "last",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages?page=1&size=20&sort=id,asc"
+			}
+		],
+		"page": {
+			"number": 0,
+			"size": 20,
+			"totalPages": 2,
+			"totalElements": 21
+		},
+		"content": [
+			{
+				"enhances": null,
+				"description": "Package for visualizing data quality of partially accruing data.",
+				"source": "\/opt\/rdepot\/repositories\/3\/99077116\/accrued_1.3.5.tar.gz",
+				"repository": {
+					"name": "testrepo2",
+					"lastPublicationSuccessful": true,
+					"id": 3,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo2"
+				},
+				"title": "Data Quality Visualization Tools for Partially Accruing Data",
+				"distribution": null,
+				"suggests": null,
+				"systemRequirements": null,
+				"md5sum": "19f8aec67250bd2ac481b14b50413d03",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/4"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/4",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/4",
+						"type": "DELETE"
+					}
+				],
+				"id": 4,
+				"rversion": null,
+				"architecture": null,
+				"imports": null,
+				"depends": "R (>= 2.14.1), grid",
+				"built": null,
+				"author": "Julie Eaton and Ian Painter",
+				"active": true,
+				"technology": "R",
+				"priority": null,
+				"version": "1.3.5",
+				"url": null,
+				"license": "GPL-3",
+				"deleted": false,
+				"binary": false,
+				"name": "accrued",
+				"submission": {
+					"id": 5,
+					"state": "ACCEPTED"
+				},
+				"linkingTo": null,
+				"user": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				},
+				"needsCompilation": "no"
+			},
+			{
+				"enhances": null,
+				"description": "Package for visualizing data quality of partially accruing data.",
+				"source": "\/opt\/rdepot\/repositories\/3\/82197810\/accrued_1.3.tar.gz",
+				"repository": {
+					"name": "testrepo2",
+					"lastPublicationSuccessful": true,
+					"id": 3,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo2"
+				},
+				"title": "Data Quality Visualization Tools for Partially Accruing Data",
+				"distribution": null,
+				"suggests": null,
+				"systemRequirements": null,
+				"md5sum": "a05e4ca44438c0d9e7d713d7e3890423",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/5"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/5",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/5",
+						"type": "DELETE"
+					}
+				],
+				"id": 5,
+				"rversion": null,
+				"architecture": null,
+				"imports": null,
+				"depends": "R (>= 2.14.1), grid",
+				"built": null,
+				"author": "Julie Eaton and Ian Painter",
+				"active": true,
+				"technology": "R",
+				"priority": null,
+				"version": "1.3",
+				"url": null,
+				"license": "GPL-3",
+				"deleted": false,
+				"binary": false,
+				"name": "accrued",
+				"submission": {
+					"id": 7,
+					"state": "ACCEPTED"
+				},
+				"linkingTo": null,
+				"user": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				},
+				"needsCompilation": "no"
+			},
+			{
+				"enhances": null,
+				"description": "Package for visualizing data quality of partially accruing time series.",
+				"source": "\/opt\/rdepot\/repositories\/3\/46950998\/accrued_1.1.tar.gz",
+				"repository": {
+					"name": "testrepo2",
+					"lastPublicationSuccessful": true,
+					"id": 3,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo2"
+				},
+				"title": "Visualization tools for partially accruing data",
+				"distribution": null,
+				"suggests": null,
+				"systemRequirements": null,
+				"md5sum": "24b8cec280424dfc6a9e444fa57ba9f3",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/6"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/6",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/6",
+						"type": "DELETE"
+					}
+				],
+				"id": 6,
+				"rversion": null,
+				"architecture": null,
+				"imports": null,
+				"depends": "R (>= 3.0), grid",
+				"built": null,
+				"author": "Julie Eaton and Ian Painter",
+				"active": false,
+				"technology": "R",
+				"priority": null,
+				"version": "1.1",
+				"url": null,
+				"license": "GPL-3",
+				"deleted": true,
+				"binary": false,
+				"name": "accrued",
+				"submission": {
+					"id": 4,
+					"state": "ACCEPTED"
+				},
+				"linkingTo": null,
+				"user": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				},
+				"needsCompilation": "no"
+			},
+			{
+				"enhances": null,
+				"description": "Package for visualizing data quality of partially accruing data.",
+				"source": "\/opt\/rdepot\/repositories\/3\/28075835\/accrued_1.4.tar.gz",
+				"repository": {
+					"name": "testrepo2",
+					"lastPublicationSuccessful": true,
+					"id": 3,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo2"
+				},
+				"title": "Data Quality Visualization Tools for Partially Accruing Data",
+				"distribution": null,
+				"suggests": null,
+				"systemRequirements": null,
+				"md5sum": "97c2930a9dd7ca9fc1409d5340c06470",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/7"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/7",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/7",
+						"type": "DELETE"
+					}
+				],
+				"id": 7,
+				"rversion": null,
+				"architecture": null,
+				"imports": null,
+				"depends": "R (>= 2.14.1), grid",
+				"built": null,
+				"author": "Julie Eaton and Ian Painter",
+				"active": false,
+				"technology": "R",
+				"priority": null,
+				"version": "1.4",
+				"url": null,
+				"license": "GPL-3",
+				"deleted": false,
+				"binary": false,
+				"name": "accrued",
+				"submission": {
+					"id": 8,
+					"state": "ACCEPTED"
+				},
+				"linkingTo": null,
+				"user": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				},
+				"needsCompilation": "no"
+			},
+			{
+				"enhances": null,
+				"description": "Package for visualizing data quality of partially accruing time series.",
+				"source": "\/opt\/rdepot\/repositories\/3\/83118397\/accrued_1.2.tar.gz",
+				"repository": {
+					"name": "testrepo2",
+					"lastPublicationSuccessful": true,
+					"id": 3,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo2"
+				},
+				"title": "Visualization tools for partially accruing data",
+				"distribution": null,
+				"suggests": null,
+				"systemRequirements": null,
+				"md5sum": "70d295115295a4718593f6a39d77add9",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/8"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/8",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/8",
+						"type": "DELETE"
+					}
+				],
+				"id": 8,
+				"rversion": null,
+				"architecture": null,
+				"imports": null,
+				"depends": "R (>= 3.0), grid",
+				"built": null,
+				"author": "Julie Eaton and Ian Painter",
+				"active": true,
+				"technology": "R",
+				"priority": null,
+				"version": "1.2",
+				"url": null,
+				"license": "GPL-3",
+				"deleted": false,
+				"binary": false,
+				"name": "accrued",
+				"submission": {
+					"id": 6,
+					"state": "ACCEPTED"
+				},
+				"linkingTo": null,
+				"user": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				},
+				"needsCompilation": "no"
+			},
+			{
+				"enhances": null,
+				"description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
+				"source": "\/opt\/rdepot\/repositories\/4\/47098069\/A3_0.9.1.tar.gz",
+				"repository": {
+					"name": "testrepo3",
+					"lastPublicationSuccessful": false,
+					"id": 4,
+					"published": false,
+					"technology": "R",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo3"
+				},
+				"title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
+				"distribution": null,
+				"suggests": "randomForest, e1071",
+				"systemRequirements": null,
+				"md5sum": "8eb4760cd574f5489e61221dc9bb0076",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/9"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/9",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/9",
+						"type": "DELETE"
+					}
+				],
+				"id": 9,
+				"rversion": null,
+				"architecture": null,
+				"imports": null,
+				"depends": "xtable, pbapply",
+				"built": null,
+				"author": "Scott Fortmann-Roe",
+				"active": true,
+				"technology": "R",
+				"priority": null,
+				"version": "0.9.1",
+				"url": null,
+				"license": "GPL (>= 2)",
+				"deleted": false,
+				"binary": false,
+				"name": "A3",
+				"submission": {
+					"id": 9,
+					"state": "ACCEPTED"
+				},
+				"linkingTo": null,
+				"user": {
+					"name": "Galileo Galilei",
+					"id": 6,
+					"login": "galieleo",
+					"email": "galieleo@ldap.forumsys.com"
+				},
+				"needsCompilation": "no"
+			},
+			{
+				"enhances": null,
+				"description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
+				"source": "\/opt\/rdepot\/repositories\/4\/54491936\/A3_0.9.2.tar.gz",
+				"repository": {
+					"name": "testrepo3",
+					"lastPublicationSuccessful": false,
+					"id": 4,
+					"published": false,
+					"technology": "R",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo3"
+				},
+				"title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
+				"distribution": null,
+				"suggests": "randomForest, e1071",
+				"systemRequirements": null,
+				"md5sum": "76d726aee8dd7c6ed94d150d5718015b",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/10"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/10",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/10",
+						"type": "DELETE"
+					}
+				],
+				"id": 10,
+				"rversion": null,
+				"architecture": null,
+				"imports": null,
+				"depends": "R (>= 2.15.0), xtable, pbapply",
+				"built": null,
+				"author": "Scott Fortmann-Roe",
+				"active": true,
+				"technology": "R",
+				"priority": null,
+				"version": "0.9.2",
+				"url": null,
+				"license": "GPL (>= 2)",
+				"deleted": false,
+				"binary": false,
+				"name": "A3",
+				"submission": {
+					"id": 10,
+					"state": "ACCEPTED"
+				},
+				"linkingTo": null,
+				"user": {
+					"name": "Galileo Galilei",
+					"id": 6,
+					"login": "galieleo",
+					"email": "galieleo@ldap.forumsys.com"
+				},
+				"needsCompilation": "no"
+			},
+			{
+				"enhances": null,
+				"description": "The package implements several ABC algorithms for performing parameter estimation and model selection. Cross-validation tools are also available for measuring the accuracy of ABC estimates, and to calculate the misclassification probabilities of different models.",
+				"source": "\/opt\/rdepot\/repositories\/4\/95296712\/abc_1.3.tar.gz",
+				"repository": {
+					"name": "testrepo3",
+					"lastPublicationSuccessful": false,
+					"id": 4,
+					"published": false,
+					"technology": "R",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo3"
+				},
+				"title": "Tools for Approximate Bayesian Computation (ABC)",
+				"distribution": null,
+				"suggests": null,
+				"systemRequirements": null,
+				"md5sum": "c47d18b86b331a5023dcd62b74fedbb6",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/11"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/11",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/11",
+						"type": "DELETE"
+					}
+				],
+				"id": 11,
+				"rversion": null,
+				"architecture": null,
+				"imports": null,
+				"depends": "R (>= 2.10), nnet, quantreg, locfit",
+				"built": null,
+				"author": "Katalin Csillery, Michael Blum and Olivier Francois",
+				"active": false,
+				"technology": "R",
+				"priority": null,
+				"version": "1.3",
+				"url": null,
+				"license": "GPL (>= 3)",
+				"deleted": false,
+				"binary": false,
+				"name": "abc",
+				"submission": {
+					"id": 11,
+					"state": "ACCEPTED"
+				},
+				"linkingTo": null,
+				"user": {
+					"name": "Galileo Galilei",
+					"id": 6,
+					"login": "galieleo",
+					"email": "galieleo@ldap.forumsys.com"
+				},
+				"needsCompilation": "no"
+			},
+			{
+				"enhances": null,
+				"description": "The 'abc' package provides various functions for parameter estimation and model selection in an ABC framework. Three main",
+				"source": "\/opt\/rdepot\/repositories\/4\/49426769\/abc_1.0.tar.gz",
+				"repository": {
+					"name": "testrepo3",
+					"lastPublicationSuccessful": false,
+					"id": 4,
+					"published": false,
+					"technology": "R",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo3"
+				},
+				"title": "Functions to perform Approximate Bayesian Computation (ABC) using simulated data",
+				"distribution": null,
+				"suggests": null,
+				"systemRequirements": null,
+				"md5sum": "91599204c92275ed4b36d55e8d7c144b",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/12"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/12",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/12",
+						"type": "DELETE"
+					}
+				],
+				"id": 12,
+				"rversion": null,
+				"architecture": null,
+				"imports": null,
+				"depends": "R (>= 1.8.0), nnet, quantreg, locfit, methods",
+				"built": null,
+				"author": "Katalin Csillery, with contributions from Michael Blum and Olivier Francois",
+				"active": true,
+				"technology": "R",
+				"priority": null,
+				"version": "1.0",
+				"url": null,
+				"license": "Unlimited",
+				"deleted": false,
+				"binary": false,
+				"name": "abc",
+				"submission": {
+					"id": 12,
+					"state": "ACCEPTED"
+				},
+				"linkingTo": null,
+				"user": {
+					"name": "Galileo Galilei",
+					"id": 6,
+					"login": "galieleo",
+					"email": "galieleo@ldap.forumsys.com"
+				},
+				"needsCompilation": "no"
+			},
+			{
+				"enhances": null,
+				"description": "Package for visualizing data quality of partially accruing time series.",
+				"source": "\/opt\/rdepot\/repositories\/2\/40553654\/accrued_1.0.tar.gz",
+				"repository": {
+					"name": "testrepo1",
+					"lastPublicationSuccessful": true,
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"title": "Visualization tools for partially accruing data",
+				"distribution": null,
+				"suggests": null,
+				"systemRequirements": null,
+				"md5sum": "1c75d59b18e554a285a9b156a06a288c",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/13"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/13",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/13",
+						"type": "DELETE"
+					}
+				],
+				"id": 13,
+				"rversion": null,
+				"architecture": null,
+				"imports": null,
+				"depends": "R (>= 3.0), grid",
+				"built": null,
+				"author": "Julie Eaton and Ian Painter",
+				"active": false,
+				"technology": "R",
+				"priority": null,
+				"version": "1.0",
+				"url": null,
+				"license": "GPL-3",
+				"deleted": false,
+				"binary": false,
+				"name": "accrued",
+				"submission": {
+					"id": 14,
+					"state": "ACCEPTED"
+				},
+				"linkingTo": null,
+				"user": {
+					"name": "Galileo Galilei",
+					"id": 6,
+					"login": "galieleo",
+					"email": "galieleo@ldap.forumsys.com"
+				},
+				"needsCompilation": "no"
+			},
+			{
+				"enhances": null,
+				"description": "Performs nonparametric tests for equality of location against ordered alternatives.",
+				"source": "\/opt\/rdepot\/repositories\/2\/8436419\/npordtests_1.1.tar.gz",
+				"repository": {
+					"name": "testrepo1",
+					"lastPublicationSuccessful": true,
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"title": "Nonparametric Tests for Equality of Location Against Ordered Alternatives",
+				"distribution": null,
+				"suggests": null,
+				"systemRequirements": null,
+				"md5sum": "da8be1247d3145b757bd62e01fc6eb8b",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/14"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/14",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/14",
+						"type": "DELETE"
+					}
+				],
+				"id": 14,
+				"rversion": null,
+				"architecture": null,
+				"imports": null,
+				"depends": "R (>= 2.15.0)",
+				"built": null,
+				"author": "Bulent Altunkaynak [aut, cre], Hamza Gamgam [aut]",
+				"active": false,
+				"technology": "R",
+				"priority": null,
+				"version": "1.1",
+				"url": null,
+				"license": "GPL (>= 2)",
+				"deleted": true,
+				"binary": false,
+				"name": "npordtests",
+				"submission": {
+					"id": 15,
+					"state": "ACCEPTED"
+				},
+				"linkingTo": null,
+				"user": {
+					"name": "Nikola Tesla",
+					"id": 5,
+					"login": "tesla",
+					"email": "tesla@ldap.forumsys.com"
+				},
+				"needsCompilation": "no"
+			},
+			{
+				"enhances": null,
+				"description": "Provides an R interface for the Bureau of Economic Analysis (BEA)",
+				"source": "\/opt\/rdepot\/repositories\/2\/89565416\/bea.R_1.0.5.tar.gz",
+				"repository": {
+					"name": "testrepo1",
+					"lastPublicationSuccessful": true,
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"title": "Bureau of Economic Analysis API",
+				"distribution": null,
+				"suggests": null,
+				"systemRequirements": null,
+				"md5sum": "5e664f320c7cc884138d64467f6b0e49",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/15"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/15",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/15",
+						"type": "DELETE"
+					}
+				],
+				"id": 15,
+				"rversion": null,
+				"architecture": null,
+				"imports": "httr, DT, shiny, jsonlite, googleVis, shinydashboard, ggplot2, stringr, chron, gtable, scales, htmltools, httpuv, xtable, stringi, magrittr, htmlwidgets, Rcpp, munsell, colorspace, plyr, yaml",
+				"depends": "R (>= 3.2.1), data.table",
+				"built": null,
+				"author": "Andrea Batch [aut, cre], Jeff Chen [ctb], Walt Kampas [ctb]",
+				"active": true,
+				"technology": "R",
+				"priority": null,
+				"version": "1.0.5",
+				"url": "https:\/\/github.com\/us-bea\/beaR",
+				"license": "CC0",
+				"deleted": false,
+				"binary": false,
+				"name": "bea.R",
+				"submission": {
+					"id": 13,
+					"state": "ACCEPTED"
+				},
+				"linkingTo": null,
+				"user": {
+					"name": "Nikola Tesla",
+					"id": 5,
+					"login": "tesla",
+					"email": "tesla@ldap.forumsys.com"
+				},
+				"needsCompilation": "no"
+			},
+			{
+				"enhances": null,
+				"description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
+				"source": "\/opt\/rdepot\/repositories\/2\/9907084\/A3_0.9.2.tar.gz",
+				"repository": {
+					"name": "testrepo1",
+					"lastPublicationSuccessful": true,
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
+				"distribution": null,
+				"suggests": "randomForest, e1071",
+				"systemRequirements": null,
+				"md5sum": "76d726aee8dd7c6ed94d150d5718015b",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/17"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/17",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/17",
+						"type": "DELETE"
+					}
+				],
+				"id": 17,
+				"rversion": null,
+				"architecture": null,
+				"imports": null,
+				"depends": "R (>= 2.15.0), xtable, pbapply",
+				"built": null,
+				"author": "Scott Fortmann-Roe",
+				"active": true,
+				"technology": "R",
+				"priority": null,
+				"version": "0.9.2",
+				"url": null,
+				"license": "GPL (>= 2)",
+				"deleted": false,
+				"binary": false,
+				"name": "A3",
+				"submission": {
+					"id": 17,
+					"state": "ACCEPTED"
+				},
+				"linkingTo": null,
+				"user": {
+					"name": "Nikola Tesla",
+					"id": 5,
+					"login": "tesla",
+					"email": "tesla@ldap.forumsys.com"
+				},
+				"needsCompilation": "no"
+			},
+			{
+				"enhances": null,
+				"description": "The package implements several ABC algorithms for performing parameter estimation and model selection. Cross-validation tools are also available for measuring the accuracy of ABC estimates, and to calculate the misclassification probabilities of different models.",
+				"source": "\/opt\/rdepot\/repositories\/2\/88170013\/abc_1.3.tar.gz",
+				"repository": {
+					"name": "testrepo1",
+					"lastPublicationSuccessful": true,
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"title": "Tools for Approximate Bayesian Computation (ABC)",
+				"distribution": null,
+				"suggests": null,
+				"systemRequirements": null,
+				"md5sum": "c47d18b86b331a5023dcd62b74fedbb6",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/18"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/18",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/18",
+						"type": "DELETE"
+					}
+				],
+				"id": 18,
+				"rversion": null,
+				"architecture": null,
+				"imports": null,
+				"depends": "R (>= 2.10), nnet, quantreg, locfit",
+				"built": null,
+				"author": "Katalin Csillery, Michael Blum and Olivier Francois",
+				"active": true,
+				"technology": "R",
+				"priority": null,
+				"version": "1.3",
+				"url": null,
+				"license": "GPL (>= 3)",
+				"deleted": false,
+				"binary": false,
+				"name": "abc",
+				"submission": {
+					"id": 18,
+					"state": "ACCEPTED"
+				},
+				"linkingTo": null,
+				"user": {
+					"name": "Nikola Tesla",
+					"id": 5,
+					"login": "tesla",
+					"email": "tesla@ldap.forumsys.com"
+				},
+				"needsCompilation": "no"
+			},
+			{
+				"enhances": null,
+				"description": "Is a collection of models to analyze genome scale codon data using a Bayesian framework. Provides visualization routines and checkpointing for model fittings. Currently published models to analyze gene data for selection on codon",
+				"source": "\/opt\/rdepot\/repositories\/5\/39437028\/AnaCoDa_0.1.2.3.tar.gz",
+				"repository": {
+					"name": "testrepo4",
+					"lastPublicationSuccessful": false,
+					"id": 5,
+					"published": false,
+					"technology": "R",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo4"
+				},
+				"title": "Analysis of Codon Data under Stationarity using a Bayesian Framework",
+				"distribution": null,
+				"suggests": "knitr, Hmisc, VGAM, coda, testthat, lmodel2",
+				"systemRequirements": null,
+				"md5sum": "41026e4157a0b3b6d909f0c6f72fa65c",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/20"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/20",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/20",
+						"type": "DELETE"
+					}
+				],
+				"id": 20,
+				"rversion": null,
+				"architecture": null,
+				"imports": "",
+				"depends": "R (>= 3.3.0), Rcpp (>= 0.11.3), methods",
+				"built": null,
+				"author": "Cedric Landerer [aut, cre], Gabriel Hanas [ctb], Jeremy Rogers [ctb], Alex Cope [ctb], Denizhan Pak [ctb]",
+				"active": true,
+				"technology": "R",
+				"priority": null,
+				"version": "0.1.2.3",
+				"url": "https:\/\/github.com\/clandere\/AnaCoDa",
+				"license": "GPL (>= 2)",
+				"deleted": false,
+				"binary": false,
+				"name": "AnaCoDa",
+				"submission": {
+					"id": 20,
+					"state": "ACCEPTED"
+				},
+				"linkingTo": "Rcpp",
+				"user": {
+					"name": "Galileo Galilei",
+					"id": 6,
+					"login": "galieleo",
+					"email": "galieleo@ldap.forumsys.com"
+				},
+				"needsCompilation": "no"
+			},
+			{
+				"enhances": null,
+				"description": "Estimates and graphs deterministic (DEA) frontier models with different technology assumptions (fdh, vrs, drs, crs, irs, add). Also handles possible slacks, peers and their weights (lambdas), optimal cost, revenue and profit allocation, super--efficiency, and mergers. A comparative method for estimating SFA efficiencies is included.",
+				"source": "\/opt\/rdepot\/repositories\/2\/71228208\/Benchmarking_0.10.tar.gz",
+				"repository": {
+					"name": "testrepo1",
+					"lastPublicationSuccessful": true,
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"title": "Benchmark and frontier analysis using DEA and SFA",
+				"distribution": null,
+				"suggests": null,
+				"systemRequirements": null,
+				"md5sum": "9a99c2ebefa6d49422ca7893c1f4ead8",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/21"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/21",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/21",
+						"type": "DELETE"
+					}
+				],
+				"id": 21,
+				"rversion": null,
+				"architecture": null,
+				"imports": null,
+				"depends": "lpSolveAPI, ucminf",
+				"built": null,
+				"author": "Peter Bogetoft and Lars Otto",
+				"active": true,
+				"technology": "R",
+				"priority": null,
+				"version": "0.10",
+				"url": null,
+				"license": "GPL (>= 2)",
+				"deleted": false,
+				"binary": false,
+				"name": "Benchmarking",
+				"submission": {
+					"id": 21,
+					"state": "ACCEPTED"
+				},
+				"linkingTo": null,
+				"user": {
+					"name": "Nikola Tesla",
+					"id": 5,
+					"login": "tesla",
+					"email": "tesla@ldap.forumsys.com"
+				},
+				"needsCompilation": "no"
+			},
+			{
+				"enhances": null,
+				"description": "The Universal Scalability Law (Gunther 2007)",
+				"source": "\/opt\/rdepot\/repositories\/2\/33930690\/usl_2.0.0.tar.gz",
+				"repository": {
+					"name": "testrepo1",
+					"lastPublicationSuccessful": true,
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"title": "Analyze System Scalability with the Universal Scalability Law",
+				"distribution": null,
+				"suggests": "knitr",
+				"systemRequirements": null,
+				"md5sum": "868140a3c3c29327eef5d5a485aee5b6",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/25"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/25",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/25",
+						"type": "DELETE"
+					}
+				],
+				"id": 25,
+				"rversion": null,
+				"architecture": null,
+				"imports": "graphics, stats, nlsr",
+				"depends": "R (>= 3.0), methods",
+				"built": null,
+				"author": "Neil J. Gunther [aut], Stefan Moeding [aut, cre]",
+				"active": true,
+				"technology": "R",
+				"priority": null,
+				"version": "2.0.0",
+				"url": null,
+				"license": "BSD_2_clause + file LICENSE",
+				"deleted": false,
+				"binary": false,
+				"name": "usl",
+				"submission": {
+					"id": 25,
+					"state": "ACCEPTED"
+				},
+				"linkingTo": null,
+				"user": {
+					"name": "Nikola Tesla",
+					"id": 5,
+					"login": "tesla",
+					"email": "tesla@ldap.forumsys.com"
+				},
+				"needsCompilation": "no"
+			},
+			{
+				"enhances": null,
+				"description": "The Universal Scalability Law (Gunther 2007)",
+				"source": "\/opt\/rdepot\/repositories\/6\/21695389\/usl_2.0.0.tar.gz",
+				"repository": {
+					"name": "testrepo5",
+					"lastPublicationSuccessful": false,
+					"id": 6,
+					"published": false,
+					"technology": "R",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo5"
+				},
+				"title": "Analyze System Scalability with the Universal Scalability Law",
+				"distribution": null,
+				"suggests": "knitr",
+				"systemRequirements": null,
+				"md5sum": "868140a3c3c29327eef5d5a485aee5b6",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/27"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/27",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/27",
+						"type": "DELETE"
+					}
+				],
+				"id": 27,
+				"rversion": null,
+				"architecture": null,
+				"imports": "graphics, stats, nlsr",
+				"depends": "R (>= 3.0), methods",
+				"built": null,
+				"author": "Neil J. Gunther [aut], Stefan Moeding [aut, cre]",
+				"active": false,
+				"technology": "R",
+				"priority": null,
+				"version": "2.0.0",
+				"url": null,
+				"license": "BSD_2_clause + file LICENSE",
+				"deleted": true,
+				"binary": false,
+				"name": "usl",
+				"submission": {
+					"id": 27,
+					"state": "ACCEPTED"
+				},
+				"linkingTo": null,
+				"user": {
+					"name": "Local Admin User",
+					"id": 8,
+					"login": "admin",
+					"email": "admin@localhost"
+				},
+				"needsCompilation": "no"
+			},
+			{
+				"enhances": null,
+				"description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
+				"source": "\/opt\/rdepot\/repositories\/6\/70325377\/visdat_0.1.0.tar.gz",
+				"repository": {
+					"name": "testrepo5",
+					"lastPublicationSuccessful": false,
+					"id": 6,
+					"published": false,
+					"technology": "R",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo5"
+				},
+				"title": "Preliminary Data Visualisation",
+				"distribution": null,
+				"suggests": "plotly (>= 4.5.6), testthat, knitr, rmarkdown, vdiffr",
+				"systemRequirements": null,
+				"md5sum": "f343fa3a01dcd9546fa0947877f58f36",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/28"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/28",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/28",
+						"type": "DELETE"
+					}
+				],
+				"id": 28,
+				"rversion": null,
+				"architecture": null,
+				"imports": "ggplot2, tidyr, dplyr, purrr, magrittr, stats",
+				"depends": "R (>= 3.2.2)",
+				"built": null,
+				"author": "Nicholas Tierney [aut, cre]",
+				"active": false,
+				"technology": "R",
+				"priority": null,
+				"version": "0.1.0",
+				"url": "https:\/\/github.com\/njtierney\/visdat\/",
+				"license": "MIT + file LICENSE",
+				"deleted": true,
+				"binary": false,
+				"name": "visdat",
+				"submission": {
+					"id": 28,
+					"state": "ACCEPTED"
+				},
+				"linkingTo": null,
+				"user": {
+					"name": "Local Admin User",
+					"id": 8,
+					"login": "admin",
+					"email": "admin@localhost"
+				},
+				"needsCompilation": "no"
+			},
+			{
+				"enhances": null,
+				"description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
+				"source": "\/opt\/rdepot\/repositories\/7\/67484296\/A3_0.9.1.tar.gz",
+				"repository": {
+					"name": "testrepo6",
+					"lastPublicationSuccessful": false,
+					"id": 7,
+					"published": false,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo6"
+				},
+				"title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
+				"distribution": null,
+				"suggests": "randomForest, e1071",
+				"systemRequirements": null,
+				"md5sum": "8eb4760cd574f5489e61221dc9bb0076",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/29"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/29",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/29",
+						"type": "DELETE"
+					}
+				],
+				"id": 29,
+				"rversion": null,
+				"architecture": null,
+				"imports": null,
+				"depends": "xtable, pbapply",
+				"built": null,
+				"author": "Scott Fortmann-Roe",
+				"active": false,
+				"technology": "R",
+				"priority": null,
+				"version": "0.9.1",
+				"url": null,
+				"license": "GPL (>= 2)",
+				"deleted": true,
+				"binary": false,
+				"name": "A3",
+				"submission": {
+					"id": 29,
+					"state": "ACCEPTED"
+				},
+				"linkingTo": null,
+				"user": {
+					"name": "Local Admin User",
+					"id": 8,
+					"login": "admin",
+					"email": "admin@localhost"
+				},
+				"needsCompilation": "no"
+			}
+		]
+	},
+	"messageCode": "success.request.processed",
+	"message": "Your request has been processed successfully.",
+	"status": "SUCCESS"
 }

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -22,7 +22,6 @@ package eu.openanalytics.rdepot.base.api.v2.dtos;
 
 import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
 import eu.openanalytics.rdepot.base.entities.enums.ResourceType;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,6 +43,7 @@ public class NewsfeedEventDto implements IDto {
     private final NewsfeedEvent entity;
     private final List<ChangedVariableDto> changedProperties;
     private final IDto relatedResource;
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT;
 
     @Override
     public NewsfeedEvent getEntity() {
@@ -55,9 +55,8 @@ public class NewsfeedEventDto implements IDto {
         this.technology = entity.getTechnology().getName()
                 + " version: "
                 + entity.getTechnology().getVersion();
-        LocalDateTime fullDate =
-                LocalDateTime.of(entity.getDate(), entity.getTime().toLocalTime());
-        this.time = fullDate.format(DateTimeFormatter.ISO_DATE_TIME);
+
+        this.time = formatter.format(entity.getTime());
         this.user = entity.getAuthor().createDtoShort();
         this.eventType = entity.getType().getValue();
         this.resourceId = entity.getRelatedResource().getId();

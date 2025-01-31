@@ -1,77 +1,87 @@
 {
-  "code": 200,
-  "data": {
-    "approver": {
-      "name": "Albert Einstein",
-      "id": 4,
-      "login": "einstein",
-      "email": "einstein@ldap.forumsys.com"
-    },
-    "submitter": {
-      "name": "Galileo Galilei",
-      "id": 6,
-      "login": "galieleo",
-      "email": "galieleo@ldap.forumsys.com"
-    },
-    "created": "2020-03-28T00:00:00Z",
-    "changes": null,
-    "links": [{
-      "rel": "self",
-      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/30"
-    }, {
-      "rel": "submissionList",
-      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions"
-    }],
-    "id": 30,
-    "state": "ACCEPTED",
-    "technology": "R",
-    "packageBag": {
-      "author": "Scott Fortmann-Roe",
-      "active": true,
-      "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-      "technology": "R",
-      "repository": {
-        "name": "testrepo4",
-        "id": 5,
-        "published": false,
-        "technology": "R",
-        "publicationUri": "http:\/\/localhost\/repo\/testrepo4"
-      },
-      "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
-      "version": "0.9.1",
-      "url": null,
-      "deleted": false,
-      "binary": false,
-      "name": "A3",
-      "submission": {
-        "id": 30,
-        "state": "ACCEPTED"
-      },
-      "links": [{
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/30"
-      }, {
-        "rel": "packageList",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
-      }, {
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/30",
-        "type": "PATCH"
-      }, {
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/30",
-        "type": "DELETE"
-      }],
-      "id": 30,
-      "user": {
-        "name": "Local Admin User",
-        "id": 8,
-        "login": "admin",
-        "email": "admin@localhost"
-      }
-    }
-  },
-  "messageCode": "success.request.processed",
-  "message": "Your request has been processed successfully.",
-  "status": "SUCCESS"
+	"code": 200,
+	"data": {
+		"approver": {
+			"name": "Albert Einstein",
+			"id": 4,
+			"login": "einstein",
+			"email": "einstein@ldap.forumsys.com"
+		},
+		"submitter": {
+			"name": "Galileo Galilei",
+			"id": 6,
+			"login": "galieleo",
+			"email": "galieleo@ldap.forumsys.com"
+		},
+		"created": "2020-03-28T20:14:44Z",
+		"changes": null,
+		"links": [
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/30"
+			},
+			{
+				"rel": "submissionList",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions"
+			}
+		],
+		"id": 30,
+		"state": "ACCEPTED",
+		"technology": "R",
+		"packageBag": {
+			"author": "Scott Fortmann-Roe",
+			"active": true,
+			"description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
+			"technology": "R",
+			"repository": {
+				"name": "testrepo4",
+				"lastPublicationSuccessful": false,
+				"id": 5,
+				"published": false,
+				"technology": "R",
+				"requiresAuthentication": true,
+				"publicationUri": "http:\/\/localhost\/repo\/testrepo4"
+			},
+			"title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
+			"version": "0.9.1",
+			"url": null,
+			"deleted": false,
+			"binary": false,
+			"name": "A3",
+			"submission": {
+				"id": 30,
+				"state": "ACCEPTED"
+			},
+			"links": [
+				{
+					"rel": "self",
+					"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/30"
+				},
+				{
+					"rel": "packageList",
+					"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+				},
+				{
+					"rel": "self",
+					"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/30",
+					"type": "PATCH"
+				},
+				{
+					"rel": "self",
+					"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/30",
+					"type": "DELETE"
+				}
+			],
+			"id": 30,
+			"user": {
+				"name": "Local Admin User",
+				"id": 8,
+				"login": "admin",
+				"email": "admin@localhost"
+			}
+		}
+	},
+	"messageCode": "success.request.processed",
+	"message": "Your request has been processed successfully.",
+	"status": "SUCCESS"
 }

@@ -24,7 +24,9 @@
           "name": "D",
           "publicationUri": "http://localhost/repo/D",
           "published": false,
-          "technology": "R"
+          "technology": "R",
+          "requiresAuthentication": true,
+          "lastPublicationSuccessful": false
         },
         "submission": {
           "id": 1,
@@ -47,13 +49,13 @@
         "license": "GPL (>= 2)",
         "md5sum": "8eb4760cd574f5489e61221dc9bb0076",
         "built": null,
-        "architecture": null,
-        "distribution": null,
+        "architecture": "",
+        "distribution": "",
         "enhances": null,
         "linkingTo": null,
         "priority": null,
         "needsCompilation": "no",
-        "rversion": null,
+        "rversion": "",
         "links": [
           {
             "rel": "self",

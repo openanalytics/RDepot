@@ -2,11 +2,12 @@
 
 ### How to start RDepot
 
-Firstly, environment variable `RDEPOT_PORT` has to be defined, for instance by executing the following command in the terminal:
+Firstly, environment variable `RDEPOT_PORT` can be defined, for instance by executing the following command in the terminal:
 
 `export RDEPOT_PORT=8080`
 
-Make sure that the defined port above is available on the machine.
+This port will be used for serving the RDepot UI (if not set, it defaults to 80).
+Make sure that the defined port above (or port 80, if not set) is available on the machine.
 
 When that is done, simply run:
 
@@ -32,7 +33,7 @@ to remove all data.
 
 ### How to interact with RDepot
 
-After RDepot is ready, one can then browse to `http://localhost:${RDEPOT_PORT}` to log in (where `${RDEPOT_PORT}` is the value of the environment variable defined above).
+After RDepot is ready, one can then browse to `http://localhost:${RDEPOT_PORT}` to log in (where `${RDEPOT_PORT}` is the value of the environment variable defined above, or 80 if not set).
 
 There is an admin user with username `einstein` and password `testpassword`.
 
@@ -41,6 +42,7 @@ See [the RDepot manager application.yaml](./docker/compose/backend/application.y
 For more information on configuration, please check [the official documentation](https://rdepot.io/latest/documentation/administration/configuration/).
 
 To complete an end-to-end flow, which consists of:
+
 1. upload R or Python package via the RDepot UI
 2. publish the package to the RDepot Repository server
 3. install the R or Python package
@@ -50,7 +52,7 @@ the following steps are needed:
 1. go to the repositories page (see `http://localhost:${RDEPOT_PORT}/repositories`)
 2. create a repository with:
     * a name: in this demo deployment, Python repository names should use a `py` prefix, for example: `pyDemoRepo` (R repositories have no such restrictions)
-    * a publication URI: `http://localhost:${RDEPOT_PORT}/repo/repositoryName` (again, replace `${RDEPOT_PORT}` with the above defined port)
+    * a publication URI: `http://localhost:${RDEPOT_PORT}/repo/repositoryName` (again, replace `${RDEPOT_PORT}` with the above defined port, or 80 if not set)
     * a server address: http://oa-rdepot-repo:8080/repositoryName
     * a technology: R or Python
 3. make sure the repository is shown in the UI by toggling the `Published` filter toggle in the UI, above the `Repositories` table

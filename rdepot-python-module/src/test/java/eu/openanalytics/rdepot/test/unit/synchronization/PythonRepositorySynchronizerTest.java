@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,13 +20,8 @@
  */
 package eu.openanalytics.rdepot.test.unit.synchronization;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.synchronization.RepoResponse;
@@ -34,8 +29,10 @@ import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.services.PythonPackageService;
 import eu.openanalytics.rdepot.python.storage.PythonStorage;
+import eu.openanalytics.rdepot.python.storage.implementations.PythonPackageLocalArchiver;
 import eu.openanalytics.rdepot.python.storage.utils.PopulatedRepositoryContent;
 import eu.openanalytics.rdepot.python.synchronization.PythonRepositorySynchronizer;
+import eu.openanalytics.rdepot.python.synchronization.PythonRequestBodyPartitioner;
 import eu.openanalytics.rdepot.python.synchronization.SynchronizeRepositoryRequestBody;
 import eu.openanalytics.rdepot.test.fixture.PythonPackageTestFixture;
 import eu.openanalytics.rdepot.test.fixture.PythonRepositoryTestFixture;
@@ -46,6 +43,7 @@ import java.util.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -62,6 +60,10 @@ public class PythonRepositorySynchronizerTest extends UnitTest {
     @Mock
     RestTemplate rest;
 
+    @Spy
+    PythonRequestBodyPartitioner pythonRequestBodyPartitioner =
+            new PythonRequestBodyPartitioner(new PythonPackageLocalArchiver());
+
     @InjectMocks
     PythonRepositorySynchronizer repositorySynchronizer;
 
@@ -70,8 +72,7 @@ public class PythonRepositorySynchronizerTest extends UnitTest {
         final PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
         repository.setServerAddress("http://127.0.0.1/testrepo1");
 
-        final User requester = UserTestFixture.GET_ADMIN();
-        final User user = requester;
+        final User user = UserTestFixture.GET_ADMIN();
         final String DATESTAMP = "47619020";
         final String path = "/target/generation/folder/src";
         final String TEST_PACKAGES_PATH = "src/test/resources/unit/test_packages/testrepo1";
@@ -79,7 +80,7 @@ public class PythonRepositorySynchronizerTest extends UnitTest {
 
         final String versionBefore = "1";
         final String versionAfter = "2";
-        doReturn(new ResponseEntity<String>("[1]", HttpStatus.OK))
+        doReturn(new ResponseEntity<>("[1]", HttpStatus.OK))
                 .when(rest)
                 .getForEntity(eq("http://127.0.0.1/python/testrepo1/"), eq(String.class));
 
@@ -89,8 +90,8 @@ public class PythonRepositorySynchronizerTest extends UnitTest {
                 PythonPackageTestFixture.GET_PACKAGES_WITH_MULTIPLE_VERSIONS_OF_THE_SAME_PACKAGE_ONLY_LATEST(
                         repository, user);
 
-        Collections.sort(packages, PythonRepositorySynchronizer.PACKAGE_COMPARATOR);
-        Collections.sort(onlyLatest, PythonRepositorySynchronizer.PACKAGE_COMPARATOR);
+        packages.sort(PythonRepositorySynchronizer.PACKAGE_COMPARATOR);
+        onlyLatest.sort(PythonRepositorySynchronizer.PACKAGE_COMPARATOR);
 
         final PopulatedRepositoryContent populatedContent = new PopulatedRepositoryContent(packages, path);
         final List<File> filesToUpload = List.of(
@@ -149,7 +150,7 @@ public class PythonRepositorySynchronizerTest extends UnitTest {
 
         final String versionBefore = "1";
         final String versionAfter = "2";
-        doReturn(new ResponseEntity<String>("[1]", HttpStatus.OK))
+        doReturn(new ResponseEntity<>("[1]", HttpStatus.OK))
                 .when(rest)
                 .getForEntity(eq("http://127.0.0.1/python/testrepo2/"), eq(String.class));
 
@@ -201,7 +202,8 @@ public class PythonRepositorySynchronizerTest extends UnitTest {
 
         final Map<String, String> checksums = new HashMap<>();
         checksums.put("index.tar.gz", "b99b8a8e405e9a7c3fe55bbe18f04fd47a155e925fe15c8b783576639a5fcb4b");
-        checksums.put("testpackage3.tar.gz", "5d52f6a0d99c1abba908d986e919945aeaa6e5bcc374ad9542f7bf9d18c8e241");
+        // TODO: #33235 duplicate key in map below, so why is this here?
+        //  checksums.put("testpackage3.tar.gz", "5d52f6a0d99c1abba908d986e919945aeaa6e5bcc374ad9542f7bf9d18c8e241");
         checksums.put("testpackage1.tar.gz", "a242efdc03e5270fbc8e76a2b9c8283240195cc02668fcd7241a37ab9dad2db8");
         checksums.put("testpackage2.tar.gz", "3844276f3a9f501406d29d7361917ed318391fb13003c3167a6e26948c9c969c");
         checksums.put("testpackage3.tar.gz", "d15b5ed490addce78cedfbbc81ee4321e1c66bd814f1e0e4e2a290bfb9f6c9f1");

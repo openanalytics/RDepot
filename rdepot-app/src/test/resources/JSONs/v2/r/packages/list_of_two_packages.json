@@ -1,168 +1,172 @@
 {
-  "code": 200,
-  "data": {
-    "links": [
-      {
-        "rel": "first",
-        "href": "http://localhost:8017/api/v2/manager/r/packages?page=0&size=2&sort=id,asc"
-      },
-      {
-        "rel": "prev",
-        "href": "http://localhost:8017/api/v2/manager/r/packages?page=0&size=2&sort=id,asc"
-      },
-      {
-        "rel": "self",
-        "href": "http://localhost:8017/api/v2/manager/r/packages?page=1&size=2&sort=id,asc"
-      },
-      {
-        "rel": "next",
-        "href": "http://localhost:8017/api/v2/manager/r/packages?page=2&size=2&sort=id,asc"
-      },
-      {
-        "rel": "last",
-        "href": "http://localhost:8017/api/v2/manager/r/packages?page=9&size=2&sort=id,asc"
-      }
-    ],
-    "page": {
-      "number": 1,
-      "size": 2,
-      "totalPages": 10,
-      "totalElements": 20
-    },
-    "content": [
-      {
-        "enhances": null,
-        "description": "Package for visualizing data quality of partially accruing time series.",
-        "source": "/opt/rdepot/repositories/3/46950998/accrued_1.1.tar.gz",
-        "repository": {
-          "name": "testrepo2",
-          "id": 3,
-          "published": true,
-          "technology": "R",
-          "publicationUri": "http://localhost/repo/testrepo2"
-        },
-        "title": "Visualization tools for partially accruing data",
-        "distribution": null,
-        "suggests": null,
-        "systemRequirements": null,
-        "md5sum": "24b8cec280424dfc6a9e444fa57ba9f3",
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/6"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/r/packages"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/6",
-            "type": "PATCH"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/6",
-            "type": "DELETE"
-          }
-        ],
-        "id": 6,
-        "rversion": null,
-        "architecture": null,
-        "imports": null,
-        "depends": "R (>= 3.0), grid",
-        "built": null,
-        "author": "Julie Eaton and Ian Painter",
-        "active": false,
-        "technology": "R",
-        "priority": null,
-        "version": "1.1",
-        "url": null,
-        "license": "GPL-3",
-        "deleted": true,
-        "binary": false,
-        "name": "accrued",
-        "submission": {
-          "id": 4,
-          "state": "ACCEPTED"
-        },
-        "linkingTo": null,
-        "user": {
-          "name": "Albert Einstein",
-          "id": 4,
-          "login": "einstein",
-          "email": "einstein@ldap.forumsys.com"
-        },
-        "needsCompilation": "no"
-      },
-      {
-        "enhances": null,
-        "description": "Package for visualizing data quality of partially accruing data.",
-        "source": "/opt/rdepot/repositories/3/28075835/accrued_1.4.tar.gz",
-        "repository": {
-          "name": "testrepo2",
-          "id": 3,
-          "published": true,
-          "technology": "R",
-          "publicationUri": "http://localhost/repo/testrepo2"
-        },
-        "title": "Data Quality Visualization Tools for Partially Accruing Data",
-        "distribution": null,
-        "suggests": null,
-        "systemRequirements": null,
-        "md5sum": "97c2930a9dd7ca9fc1409d5340c06470",
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/7"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8017/api/v2/manager/r/packages"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/7",
-            "type": "PATCH"
-          },
-          {
-            "rel": "self",
-            "href": "http://localhost:8017/api/v2/manager/r/packages/7",
-            "type": "DELETE"
-          }
-        ],
-        "id": 7,
-        "rversion": null,
-        "architecture": null,
-        "imports": null,
-        "depends": "R (>= 2.14.1), grid",
-        "built": null,
-        "author": "Julie Eaton and Ian Painter",
-        "active": false,
-        "technology": "R",
-        "priority": null,
-        "version": "1.4",
-        "url": null,
-        "license": "GPL-3",
-        "deleted": false,
-        "binary": false,
-        "name": "accrued",
-        "submission": {
-          "id": 8,
-          "state": "ACCEPTED"
-        },
-        "linkingTo": null,
-        "user": {
-          "name": "Albert Einstein",
-          "id": 4,
-          "login": "einstein",
-          "email": "einstein@ldap.forumsys.com"
-        },
-        "needsCompilation": "no"
-      }
-    ]
-  },
-  "messageCode": "success.request.processed",
-  "message": "Your request has been processed successfully.",
-  "status": "SUCCESS"
+	"code": 200,
+	"data": {
+		"links": [
+			{
+				"rel": "first",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages?page=0&size=2&sort=id,asc"
+			},
+			{
+				"rel": "prev",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages?page=0&size=2&sort=id,asc"
+			},
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages?page=1&size=2&sort=id,asc"
+			},
+			{
+				"rel": "next",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages?page=2&size=2&sort=id,asc"
+			},
+			{
+				"rel": "last",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages?page=10&size=2&sort=id,asc"
+			}
+		],
+		"page": {
+			"number": 1,
+			"size": 2,
+			"totalPages": 11,
+			"totalElements": 21
+		},
+		"content": [
+			{
+				"enhances": null,
+				"description": "Package for visualizing data quality of partially accruing time series.",
+				"source": "\/opt\/rdepot\/repositories\/3\/46950998\/accrued_1.1.tar.gz",
+				"repository": {
+					"name": "testrepo2",
+					"lastPublicationSuccessful": true,
+					"id": 3,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo2"
+				},
+				"title": "Visualization tools for partially accruing data",
+				"distribution": null,
+				"suggests": null,
+				"systemRequirements": null,
+				"md5sum": "24b8cec280424dfc6a9e444fa57ba9f3",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/6"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/6",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/6",
+						"type": "DELETE"
+					}
+				],
+				"id": 6,
+				"rversion": null,
+				"architecture": null,
+				"imports": null,
+				"depends": "R (>= 3.0), grid",
+				"built": null,
+				"author": "Julie Eaton and Ian Painter",
+				"active": false,
+				"technology": "R",
+				"priority": null,
+				"version": "1.1",
+				"url": null,
+				"license": "GPL-3",
+				"deleted": true,
+				"binary": false,
+				"name": "accrued",
+				"submission": {
+					"id": 4,
+					"state": "ACCEPTED"
+				},
+				"linkingTo": null,
+				"user": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				},
+				"needsCompilation": "no"
+			},
+			{
+				"enhances": null,
+				"description": "Package for visualizing data quality of partially accruing data.",
+				"source": "\/opt\/rdepot\/repositories\/3\/28075835\/accrued_1.4.tar.gz",
+				"repository": {
+					"name": "testrepo2",
+					"lastPublicationSuccessful": true,
+					"id": 3,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo2"
+				},
+				"title": "Data Quality Visualization Tools for Partially Accruing Data",
+				"distribution": null,
+				"suggests": null,
+				"systemRequirements": null,
+				"md5sum": "97c2930a9dd7ca9fc1409d5340c06470",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/7"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/7",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/7",
+						"type": "DELETE"
+					}
+				],
+				"id": 7,
+				"rversion": null,
+				"architecture": null,
+				"imports": null,
+				"depends": "R (>= 2.14.1), grid",
+				"built": null,
+				"author": "Julie Eaton and Ian Painter",
+				"active": false,
+				"technology": "R",
+				"priority": null,
+				"version": "1.4",
+				"url": null,
+				"license": "GPL-3",
+				"deleted": false,
+				"binary": false,
+				"name": "accrued",
+				"submission": {
+					"id": 8,
+					"state": "ACCEPTED"
+				},
+				"linkingTo": null,
+				"user": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				},
+				"needsCompilation": "no"
+			}
+		]
+	},
+	"messageCode": "success.request.processed",
+	"message": "Your request has been processed successfully.",
+	"status": "SUCCESS"
 }

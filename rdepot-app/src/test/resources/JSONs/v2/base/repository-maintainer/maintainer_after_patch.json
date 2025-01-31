@@ -1,43 +1,45 @@
 {
-    "code": 200,
-    "data": {
-        "deleted": false,
-        "id": 3,
-        "links": [
-            {
-                "href": "http://localhost:8017/api/v2/manager/repository-maintainers/3",
-                "rel": "self"
-            },
-            {
-                "href": "http://localhost:8017/api/v2/manager/repository-maintainers",
-                "rel": "repositoryMaintainerList"
-            },
-            {
-                "href": "http://localhost:8017/api/v2/manager/repository-maintainers/3",
-                "rel": "self",
-                "type": "PATCH"
-            },
-            {
-                "href": "http://localhost:8017/api/v2/manager/repository-maintainers/3",
-                "rel": "self",
-                "type": "DELETE"
-            }
-        ],
-        "repository": {
-            "id": 3,
-            "name": "testrepo2",
-            "publicationUri": "http://localhost/repo/testrepo2",
-            "published": true,
-            "technology": "R"
-        },
-        "user": {
-            "email": "tesla@ldap.forumsys.com",
-            "id": 5,
-            "login": "tesla",
-            "name": "Nikola Tesla"
-        }
-    },
-    "message": "Your request has been processed successfully.",
-    "messageCode": "success.request.processed",
-    "status": "SUCCESS"
+	"code": 200,
+	"data": {
+		"deleted": false,
+		"links": [
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/repository-maintainers\/3"
+			},
+			{
+				"rel": "repositoryMaintainerList",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/repository-maintainers"
+			},
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/repository-maintainers\/3",
+				"type": "PATCH"
+			},
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/repository-maintainers\/3",
+				"type": "DELETE"
+			}
+		],
+		"id": 3,
+		"repository": {
+			"name": "testrepo2",
+			"lastPublicationSuccessful": true,
+			"id": 3,
+			"published": true,
+			"technology": "R",
+			"requiresAuthentication": true,
+			"publicationUri": "http:\/\/localhost\/repo\/testrepo2"
+		},
+		"user": {
+			"name": "Nikola Tesla",
+			"id": 5,
+			"login": "tesla",
+			"email": "tesla@ldap.forumsys.com"
+		}
+	},
+	"messageCode": "success.request.processed",
+	"message": "Your request has been processed successfully.",
+	"status": "SUCCESS"
 }

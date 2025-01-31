@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -78,7 +78,9 @@ public class RPackageValidatorTest {
     private RPackage updatedPackageBag;
     private RPackage duplicatedPackageBag;
     private RPackage binaryPackage;
+    private RPackage duplicatedBinaryPackage;
     private Submission submission;
+    private Submission binarySubmission;
     private DataSpecificValidationResult<Submission> errors;
 
     @BeforeEach
@@ -93,7 +95,9 @@ public class RPackageValidatorTest {
         duplicatedPackageBag = new RPackage(packageBag);
         binaryPackage = RPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user);
         binaryPackage.setVersion("1");
+        duplicatedBinaryPackage = new RPackage(binaryPackage);
         submission = RSubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, duplicatedPackageBag);
+        binarySubmission = RSubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, duplicatedBinaryPackage);
         packageValidator =
                 new RPackageValidator(submissionService, rPackageService, env, setAllowedRBinaryProperties());
     }
@@ -225,7 +229,7 @@ public class RPackageValidatorTest {
         assertTrue(errors.hasErrors(), "Validation should return built error");
         verify(errors, times(1)).error("built", RMessageCodes.EMPTY_BUILT);
     }
-
+    //    "3.6", "4.0", "4.1.0", "4.1.1", "4.2"
     @Test
     public void validateUploadBinaryPackageWithDifferentRVersions_shouldSucceed() {
         prepareTest();
@@ -247,6 +251,15 @@ public class RPackageValidatorTest {
     public void validateUploadBinaryPackageWhenRVersionNotAllowed_shouldFail() {
         prepareTest();
         binaryPackage.setRVersion("4.3");
+        packageValidator.validateUploadPackage(binaryPackage, true, errors);
+        assertTrue(errors.hasErrors(), "Validation should return rVersion error");
+        verify(errors, times(1)).error("rVersion", RMessageCodes.R_VERSION_NOT_ALLOWED);
+    }
+
+    @Test
+    public void validateUploadBinaryPackageWhenMajorVersionsAreDifferentLengthAndSimilarBeginning_shouldFail() {
+        prepareTest();
+        binaryPackage.setRVersion("4.23");
         packageValidator.validateUploadPackage(binaryPackage, true, errors);
         assertTrue(errors.hasErrors(), "Validation should return rVersion error");
         verify(errors, times(1)).error("rVersion", RMessageCodes.R_VERSION_NOT_ALLOWED);
@@ -283,8 +296,15 @@ public class RPackageValidatorTest {
     public void validateUploadPackageThatExistsWithReplaceSetToTrue_shouldWarn() {
         prepareTest();
         packageBag.setId(-1);
-        when(rPackageService.findByNameAndVersionAndRepositoryAndDeleted(
-                        packageBag.getName(), packageBag.getVersion(), packageBag.getRepository(), false))
+        when(rPackageService.findByNameAndVersionAndRepositoryAndDeletedAndBinary(
+                        packageBag.getName(),
+                        packageBag.getVersion(),
+                        packageBag.getRepository(),
+                        false,
+                        false,
+                        "",
+                        "",
+                        ""))
                 .thenReturn(Optional.of(duplicatedPackageBag));
         when(submissionService.findByPackage(duplicatedPackageBag)).thenReturn(Optional.of(submission));
 
@@ -299,8 +319,15 @@ public class RPackageValidatorTest {
     public void validateUploadPackageThatExistsWithReplaceSetToFalse_shouldWarn() {
         prepareTest();
         packageBag.setId(-1);
-        when(rPackageService.findByNameAndVersionAndRepositoryAndDeleted(
-                        packageBag.getName(), packageBag.getVersion(), packageBag.getRepository(), false))
+        when(rPackageService.findByNameAndVersionAndRepositoryAndDeletedAndBinary(
+                        packageBag.getName(),
+                        packageBag.getVersion(),
+                        packageBag.getRepository(),
+                        false,
+                        false,
+                        "",
+                        "",
+                        ""))
                 .thenReturn(Optional.of(duplicatedPackageBag));
         when(submissionService.findByPackage(duplicatedPackageBag)).thenReturn(Optional.of(submission));
 
@@ -309,6 +336,41 @@ public class RPackageValidatorTest {
         assertFalse(errors.hasErrors(), "Validation results should be empty for a standard package");
         assertTrue(errors.hasWarnings(), "Validation should return duplications warning");
         verify(errors, times(1)).warning("version", MessageCodes.DUPLICATE_VERSION_REPLACE_OFF, submission);
+    }
+
+    @Test
+    public void validateUploadBinaryPackageThatExistForDifferentBinaryParameters_shouldSucceed() {
+        prepareTest();
+        binaryPackage.setId(-1);
+        duplicatedBinaryPackage.setRVersion("4.5");
+
+        packageValidator.validateUploadPackage(binaryPackage, false, errors);
+
+        assertFalse(errors.hasErrors(), "Validation results should be empty for a standard binary package");
+    }
+
+    @Test
+    public void validateUploadBinaryPackageThatExistForTheSameBinaryParametersAndReplaceSetToFalse_shouldWarn() {
+        prepareTest();
+        binaryPackage.setId(-1);
+        when(rPackageService.findByNameAndVersionAndRepositoryAndDeletedAndBinary(
+                        binaryPackage.getName(),
+                        binaryPackage.getVersion(),
+                        binaryPackage.getRepository(),
+                        false,
+                        binaryPackage.isBinary(),
+                        binaryPackage.getRVersion(),
+                        binaryPackage.getArchitecture(),
+                        binaryPackage.getDistribution()))
+                .thenReturn(Optional.of(duplicatedBinaryPackage));
+
+        when(submissionService.findByPackage(duplicatedBinaryPackage)).thenReturn(Optional.of(binarySubmission));
+
+        packageValidator.validateUploadPackage(binaryPackage, false, errors);
+
+        assertFalse(errors.hasErrors(), "Validation results should be empty for a standard package");
+        assertTrue(errors.hasWarnings(), "Validation should return duplications warning");
+        verify(errors, times(1)).warning("version", MessageCodes.DUPLICATE_VERSION_REPLACE_OFF, binarySubmission);
     }
 
     @Test

@@ -13,21 +13,21 @@
     "links": [
       {
         "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/users\/7"
+        "href": "http://localhost:8017/api/v2/manager/users/7"
       },
       {
         "rel": "userList",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/users"
+        "href": "http://localhost:8017/api/v2/manager/users"
       },
       {
         "href": "http://localhost:8017/api/v2/manager/users/7",
         "rel": "self",
-        "type": "PATCH"
-      },
-      {
-        "href": "http://localhost:8017/api/v2/manager/users/7",
-        "rel": "self",
-        "type": "DELETE"
+        "type": "PATCH",
+        "modifiableProperties": [
+          "deleted",
+          "active",
+          "roleId"
+        ]
       }
     ],
     "id": 7,

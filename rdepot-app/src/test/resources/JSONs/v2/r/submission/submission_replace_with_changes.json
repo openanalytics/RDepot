@@ -1,0 +1,88 @@
+{
+	"status": "SUCCESS",
+	"code": 201,
+	"message": "Your resource has been created successfully.",
+	"messageCode": "success.resource.created",
+	"data": {
+		"id": 49,
+		"packageBag": {
+			"id": 49,
+			"user": {
+				"id": 4,
+				"name": "Albert Einstein",
+				"login": "einstein",
+				"email": "einstein@ldap.forumsys.com"
+			},
+			"repository": {
+				"id": 3,
+				"name": "testrepo2",
+				"publicationUri": "http://localhost/repo/testrepo2",
+				"published": true,
+				"technology": "R",
+				"requiresAuthentication": true,
+				"lastPublicationSuccessful": true
+			},
+			"submission": {
+				"id": 49,
+				"state": "ACCEPTED"
+			},
+			"name": "A3",
+			"version": "0-9-1",
+			"source": "/opt/rdepot/repositories/3/44389665/A3_0.9.1.tar.gz",
+			"active": true,
+			"deleted": false,
+			"technology": "R",
+			"binary": false,
+			"description": "This package supplies tools for tabulating and analyzing\\n the results of predictive models. The methods employed are\\n applicable to virtually any predictive model and make\\n comparisons between different methodologies straightforward.",
+			"author": "Scott Fortmann-Roe",
+			"title": "A3: Accurate, Adaptable, and Accessible Error Metrics for\\n Predictive Models",
+			"url": null,
+			"links": [
+				{
+					"rel": "self",
+					"href": "http://localhost:8017/api/v2/manager/r/packages/49"
+				},
+				{
+					"rel": "packageList",
+					"href": "http://localhost:8017/api/v2/manager/packages"
+				},
+				{
+					"rel": "self",
+					"href": "http://localhost:8017/api/v2/manager/r/packages/49",
+					"type": "PATCH"
+				},
+				{
+					"rel": "self",
+					"href": "http://localhost:8017/api/v2/manager/r/packages/49",
+					"type": "DELETE"
+				}
+			]
+		},
+		"submitter": {
+			"id": 4,
+			"name": "Albert Einstein",
+			"login": "einstein",
+			"email": "einstein@ldap.forumsys.com"
+		},
+		"approver": {
+			"id": 4,
+			"name": "Albert Einstein",
+			"login": "einstein",
+			"email": "einstein@ldap.forumsys.com"
+		},
+		"changes": "this package has been changed",
+		"state": "ACCEPTED",
+		"created": "2024-12-18T15:59:03.941468500Z",
+		"technology": "R",
+		"links": [
+			{
+				"rel": "self",
+				"href": "http://localhost:8017/api/v2/manager/r/submissions/49"
+			},
+			{
+				"rel": "submissionList",
+				"href": "http://localhost:8017/api/v2/manager/r/submissions"
+			}
+		]
+	}
+}

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -141,9 +141,8 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
 
                 if (packageBag.getVersion() == null) {
                     if (localPackage.isEmpty()
-                            || (!localPackage.isEmpty()
-                                    && !getPackageMd5(packageBag.getName(), remotePackages)
-                                            .equals(localPackage.get().getMd5sum()))) {
+                            || !getPackageMd5(packageBag.getName(), remotePackages)
+                                    .equals(localPackage.get().getMd5sum())) {
                         updatePackage(
                                 packageBag.getName(),
                                 getVersion(packageBag.getName(), remotePackages),
@@ -242,7 +241,8 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
                     false,
                     null,
                     null,
-                    null); // TODO #33470 Allow mirroring of binary R packages
+                    null,
+                    ""); // TODO #33470 Allow mirroring of binary R packages
             Strategy<Submission> strategy = strategyFactory.uploadPackageStrategy(request, uploader);
             strategyExecutor.execute(strategy);
 

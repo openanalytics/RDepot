@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,7 +20,6 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.controllers;
 
-import eu.openanalytics.rdepot.base.api.v2.dtos.EventType;
 import eu.openanalytics.rdepot.base.api.v2.dtos.NewsfeedEventDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.ResponseDto;
 import eu.openanalytics.rdepot.base.api.v2.exceptions.ApiException;
@@ -28,13 +27,15 @@ import eu.openanalytics.rdepot.base.api.v2.exceptions.EventNotFound;
 import eu.openanalytics.rdepot.base.api.v2.exceptions.UserNotAuthorized;
 import eu.openanalytics.rdepot.base.api.v2.hateoas.EventModelAssembler;
 import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
-import eu.openanalytics.rdepot.base.entities.Role;
 import eu.openanalytics.rdepot.base.entities.User;
+import eu.openanalytics.rdepot.base.event.NewsfeedEventType;
 import eu.openanalytics.rdepot.base.mediator.newsfeed.NewsfeedEventsRolesFiltration;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.UserService;
+import eu.openanalytics.rdepot.base.time.DateParser;
 import java.security.Principal;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import org.springdoc.core.annotations.ParameterObject;
@@ -92,7 +93,7 @@ public class ApiV2NewsfeedEventController extends ApiV2ReadingController<Newsfee
      * @param pageable represents pagination and sorting parameters
      * @param technologies technologies that events are related to, e.g. R or Python
      * @param userName login of the user that was responsible for event creation
-     * @param eventType e.g. create, delete or update; see: {@link EventType}
+     * @param eventType e.g. create, delete or update; see: {@link NewsfeedEventType}
      * @param resourceType e.g. package or repository
      * @param fromDate when the oldest event was created
      * @param toDate when the latest event was created
@@ -107,23 +108,36 @@ public class ApiV2NewsfeedEventController extends ApiV2ReadingController<Newsfee
             @ParameterObject Pageable pageable,
             @RequestParam(name = "technology", required = false) List<String> technologies,
             @RequestParam(name = "userName", required = false) List<String> userName,
+            @RequestParam(name = "packageName", required = false) List<String> packageName,
+            @RequestParam(name = "packageVersion", required = false) List<String> packageVersion,
+            @RequestParam(name = "repositoryName", required = false) List<String> repositoryName,
             @RequestParam(name = "eventType", required = false) List<String> eventType,
             @RequestParam(name = "resourceType", required = false) List<String> resourceType,
             @RequestParam(name = "fromDate", required = false) Optional<String> fromDate,
             @RequestParam(name = "toDate", required = false) Optional<String> toDate)
             throws ApiException {
-
-        Page<NewsfeedEvent> retrievedEvents = null;
-
-        User user = userService
+        final User user = userService
                 .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
-        boolean isAdmin = user.getRole().getValue() == Role.VALUE.ADMIN;
 
-        Specification<NewsfeedEvent> specification = eventsRolesFiltering.getNewsfeedEventsRolesSpecification(user);
+        final Optional<Instant> fromDateInstant = fromDate.flatMap(DateParser::parseTimestampStart);
+        final Optional<Instant> toDateInstant = toDate.flatMap(DateParser::parseTimestampEnd);
 
-        retrievedEvents = eventRetriever.findEventsByParameters(
-                pageable, isAdmin, technologies, userName, eventType, resourceType, fromDate, toDate, specification);
+        final Specification<NewsfeedEvent> specification =
+                eventsRolesFiltering.getNewsfeedEventsRolesSpecification(user);
+
+        final Page<NewsfeedEvent> retrievedEvents = eventRetriever.findEventsByParameters(
+                pageable,
+                technologies,
+                userName,
+                packageName,
+                packageVersion,
+                repositoryName,
+                eventType,
+                resourceType,
+                fromDateInstant,
+                toDateInstant,
+                specification);
         return handleSuccessForPagedCollection(retrievedEvents, user);
     }
 

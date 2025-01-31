@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -44,7 +44,7 @@ public class PackageIndexGenerator extends IndexesGenerator {
 
     protected String getPackageAnchor(PythonPackage packageBag) {
         String packageFileName = packageBag.getName() + "-" + packageBag.getVersion() + ".tar.gz";
-        String anchor = "<a href=\"%s\" data-requires-python=\"%s\">%s</a><br>";
+        String anchor = "<a href=\"%s\" data-requires-python=\"%s\" data-version=\"%s\">%s</a><br>";
 
         String publicationUri;
         try {
@@ -58,6 +58,7 @@ public class PackageIndexGenerator extends IndexesGenerator {
                 anchor,
                 publicationUri + separator + packageBag.getName() + separator + packageFileName,
                 packageBag.getRequiresPython(),
+                packageBag.getVersion(),
                 packageFileName);
     }
 

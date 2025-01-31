@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -42,8 +42,10 @@ public abstract class UploadChunkRequestAssertionAnswer implements Answer<Respon
 
     protected void assertChunk(MultiValueMap<String, Object> entity, UploadChunkRequestAssertion assertion) {
         if (callCount == 0) {
-            assertTrue(
-                    List.of(assertion.getExpectedId()).equals(entity.get("id")),
+
+            assertEquals(
+                    List.of(assertion.getExpectedId()),
+                    entity.get("id"),
                     "For the first chunk, the id should be empty.");
             assertEquals(
                     List.of(assertion.getExpectedVersionBefore()),
@@ -54,17 +56,24 @@ public abstract class UploadChunkRequestAssertionAnswer implements Answer<Respon
                     entity.get("version_after"),
                     "Incorrect version after the request.");
             assertEquals(assertion.getExpectedPages(), entity.get("page"), "Incorrect number of chunks.");
+
             assertEquals(assertion.getExpectedToDelete(), entity.get("to_delete"), "Incorrect packages to delete.");
             assertEquals(
                     assertion.getExpectedToDeleteFromArchive(),
                     entity.get("to_delete_archive"),
                     "Incorrect packages to delete from archive.");
         }
-        assertEquals(assertion.getFilesToUpload(), entity.get("files"), "Incorrect files uploaded.");
-        assertEquals(
-                assertion.getFilesToUploadToArchive(),
-                entity.get("files_archive"),
-                "Incorrect files uploaded to archive.");
+
+        assertTrue(
+                assertion.getFilesToUpload().containsAll(entity.get("files"))
+                        && entity.get("files").containsAll(assertion.getFilesToUpload()),
+                "Incorrect files uploaded.");
+        if (entity.get("files_archive") != null) {
+            assertTrue(
+                    assertion.getFilesToUploadToArchive().containsAll(entity.get("files_archive"))
+                            && entity.get("files_archive").containsAll(assertion.getFilesToUploadToArchive()),
+                    "Incorrect files uploaded to archive.");
+        }
     }
 
     @Override

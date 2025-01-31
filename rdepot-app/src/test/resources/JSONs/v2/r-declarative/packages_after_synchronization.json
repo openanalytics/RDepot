@@ -24,7 +24,9 @@
           "name": "D",
           "publicationUri": "http://localhost/repo/D",
           "published": false,
-          "technology": "R"
+          "technology": "R",
+          "requiresAuthentication": true,
+          "lastPublicationSuccessful": false
         },
         "submission": {
           "id": 1,
@@ -46,14 +48,14 @@
         "license": "Artistic-2.0",
         "md5sum": "0c5047689b3712935e2db374eb3bcc95",
         "built": null,
-        "architecture": null,
-        "distribution": null,
+        "architecture": "",
+        "distribution": "",
         "enhances": null,
         "linkingTo": null,
         "source": "",
         "priority": null,
         "needsCompilation": "yes",
-        "rversion": null,
+        "rversion": "",
         "links": [
           {
             "rel": "self",
@@ -78,7 +80,9 @@
           "name": "D",
           "publicationUri": "http://localhost/repo/D",
           "published": false,
-          "technology": "R"
+          "technology": "R",
+          "requiresAuthentication": true,
+          "lastPublicationSuccessful": false
         },
         "submission": {
           "id": 2,
@@ -102,13 +106,13 @@
         "license": "GPL-2 | file LICENSE",
         "md5sum": "02d87290852410924eb816c2d4788afa",
         "built": null,
-        "architecture": null,
-        "distribution": null,
+        "architecture": "",
+        "distribution": "",
         "enhances": "sp",
         "linkingTo": null,
         "priority": null,
         "needsCompilation": "no",
-        "rversion": null,
+        "rversion": "",
         "links": [
           {
             "rel": "self",
@@ -133,7 +137,9 @@
           "name": "D",
           "publicationUri": "http://localhost/repo/D",
           "published": false,
-          "technology": "R"
+          "technology": "R",
+          "requiresAuthentication": true,
+          "lastPublicationSuccessful": false
         },
         "submission": {
           "id": 3,
@@ -157,13 +163,13 @@
         "license": "MIT + file LICENSE",
         "md5sum": "2b5620465fc14e4b294be3a18ffc2115",
         "built": null,
-        "architecture": null,
-        "distribution": null,
+        "architecture": "",
+        "distribution": "",
         "enhances": null,
         "linkingTo": null,
         "priority": null,
         "needsCompilation": "no",
-        "rversion": null,
+        "rversion": "",
         "links": [
           {
             "rel": "self",
@@ -188,7 +194,9 @@
           "name": "D",
           "publicationUri": "http://localhost/repo/D",
           "published": false,
-          "technology": "R"
+          "technology": "R",
+          "requiresAuthentication": true,
+          "lastPublicationSuccessful": false
         },
         "submission": {
           "id": 4,
@@ -212,13 +220,13 @@
         "license": "Artistic-2.0",
         "md5sum": "c06830f9bcfc0ae87023bfe03acb319e",
         "built": null,
-        "architecture": null,
-        "distribution": null,
+        "architecture": "",
+        "distribution": "",
         "enhances": null,
         "linkingTo": null,
         "priority": null,
         "needsCompilation": "no",
-        "rversion": null,
+        "rversion": "",
         "links": [
           {
             "rel": "self",

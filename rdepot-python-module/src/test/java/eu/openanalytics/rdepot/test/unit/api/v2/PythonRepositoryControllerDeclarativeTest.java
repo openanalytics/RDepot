@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -36,6 +36,7 @@ import eu.openanalytics.rdepot.test.fixture.PythonRepositoryTestFixture;
 import eu.openanalytics.rdepot.test.fixture.UserTestFixture;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,12 +55,11 @@ import org.springframework.web.context.WebApplicationContext;
 @ActiveProfiles("apiv2declarative")
 public class PythonRepositoryControllerDeclarativeTest extends ApiV2ControllerUnitTest {
 
-    public static final String JSON_PATH =
-            ClassLoader.getSystemClassLoader().getResource("unit/jsons").getPath();
+    public static final String JSON_PATH = Objects.requireNonNull(
+                    ClassLoader.getSystemClassLoader().getResource("unit/jsons"))
+            .getPath();
     public static final String ERROR_DECLARATIVE_MODE_PATH = JSON_PATH + "/error_declarative_mode.json";
     public static final String EXAMPLE_NEW_REPOSITORY_PATH = JSON_PATH + "/example_new_repository.json";
-
-    private Optional<User> user;
 
     @Autowired
     MockMvc mockMvc;
@@ -70,21 +70,23 @@ public class PythonRepositoryControllerDeclarativeTest extends ApiV2ControllerUn
     @Autowired
     WebApplicationContext webApplicationContext;
 
+    private User user;
+
     @BeforeEach
     public void initEach() {
-        user = Optional.of(UserTestFixture.GET_ADMIN());
+        user = UserTestFixture.GET_ADMIN();
     }
 
     @Test
     @WithMockUser(authorities = {"user", "repositorymaintainer"})
     public void patchRepository_returns405_whenDeclarativeModeIsEnabled() throws Exception {
-        final Integer ID = 123;
+        final int ID = 123;
         final PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/serverAddress\",\"value\":\"127.0.0.1\"}]";
 
         when(pythonRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(securityMediator.isAuthorizedToEdit(any(Repository.class), eq(user.get())))
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
+        when(securityMediator.isAuthorizedToEdit(any(Repository.class), eq(user)))
                 .thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/python/repositories/" + ID)
@@ -101,8 +103,8 @@ public class PythonRepositoryControllerDeclarativeTest extends ApiV2ControllerUn
         final Path path = Path.of(EXAMPLE_NEW_REPOSITORY_PATH);
         final String exampleJson = Files.readString(path);
 
-        when(userService.isAdmin(user.get())).thenReturn(true);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.isAdmin(user)).thenReturn(true);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v2/manager/python/repositories")
                         .content(exampleJson)

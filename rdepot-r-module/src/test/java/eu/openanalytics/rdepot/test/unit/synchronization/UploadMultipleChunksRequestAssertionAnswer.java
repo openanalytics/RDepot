@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -24,6 +24,7 @@ import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.synchronization.RepoResponse;
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import org.mockito.invocation.InvocationOnMock;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
@@ -38,6 +39,11 @@ public class UploadMultipleChunksRequestAssertionAnswer extends UploadChunkReque
     private final List<String> expectedToDeleteFromArchive;
     private final List<List<File>> packagesToUpload;
     private final List<List<File>> packagesToUploadToArchive;
+    private final List<Map<String, String>> expectedToUploadPaths;
+    private final List<Map<String, String>> expectedToUploadToArchivePaths;
+    private final Map<String, String> expectedToDeletePaths;
+    private final Map<String, String> expectedToDeleteFromArchivePaths;
+
     private String expectedId = "";
 
     public UploadMultipleChunksRequestAssertionAnswer(
@@ -48,7 +54,11 @@ public class UploadMultipleChunksRequestAssertionAnswer extends UploadChunkReque
             final List<String> expectedToDelete,
             final List<String> expectedToDeleteFromArchive,
             final List<List<File>> packagesToUpload,
-            final List<List<File>> packagesToUploadToArchive) {
+            final List<List<File>> packagesToUploadToArchive,
+            final List<Map<String, String>> expectedToUploadPaths,
+            final List<Map<String, String>> expectedToUploadToArchivePaths,
+            final Map<String, String> expectedToDeletePaths,
+            final Map<String, String> expectedToDeleteFromArchivePaths) {
         super(chunksToSend, repository);
         this.expectedVersionAfter = expectedVersionAfter;
         this.expectedVersionBefore = expectedVersionBefore;
@@ -56,10 +66,15 @@ public class UploadMultipleChunksRequestAssertionAnswer extends UploadChunkReque
         this.expectedToDeleteFromArchive = expectedToDeleteFromArchive;
         this.packagesToUpload = packagesToUpload;
         this.packagesToUploadToArchive = packagesToUploadToArchive;
+        this.expectedToUploadPaths = expectedToUploadPaths;
+        this.expectedToUploadToArchivePaths = expectedToUploadToArchivePaths;
+        this.expectedToDeletePaths = expectedToDeletePaths;
+        this.expectedToDeleteFromArchivePaths = expectedToDeleteFromArchivePaths;
     }
 
     @Override
     public ResponseEntity<RepoResponse> answer(InvocationOnMock invocation) throws Throwable {
+
         final List<List<FileSystemResource>> files = packagesToUpload.stream()
                 .map(l -> l.stream().map(f -> new FileSystemResource(f)).toList())
                 .toList();
@@ -81,7 +96,13 @@ public class UploadMultipleChunksRequestAssertionAnswer extends UploadChunkReque
                         expectedToDelete,
                         expectedToDeleteFromArchive,
                         callCount < files.size() ? files.get(callCount) : null,
-                        callCount < archiveFiles.size() ? archiveFiles.get(callCount) : null));
+                        callCount < archiveFiles.size() ? archiveFiles.get(callCount) : null,
+                        callCount < expectedToUploadPaths.size() ? expectedToUploadPaths.get(callCount) : null,
+                        callCount < expectedToUploadToArchivePaths.size()
+                                ? expectedToUploadToArchivePaths.get(callCount)
+                                : null,
+                        expectedToDeletePaths,
+                        expectedToDeleteFromArchivePaths));
 
         ResponseEntity<RepoResponse> response = super.answer(invocation);
         expectedId = response.getBody().getId();

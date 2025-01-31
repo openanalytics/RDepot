@@ -1,9 +1,9 @@
 {
-  "code": 422,
-  "data": [
-    "Could not resolve related resources: PackageMaintainerDto(id=0, user=UserProjection(id=6, name=null, login=null, email=null), packageName=A3, repository=RepositoryProjection(id=2222, name=null, publicationUri=null, published=false, technology=null), deleted=false, entity=Package Maintainer (id: 0, user: \"null\", package: \"null\", repository: \"null\"))"
-  ],
-  "messageCode": "error.validation",
-  "message": "Validation failed for the resource.",
-  "status": "ERROR"
+	"code": 422,
+	"data": [
+		"Could not resolve related resources: PackageMaintainerDto(id=0, user=UserProjection(id=6, name=null, login=null, email=null), packageName=A3, repository=RepositoryProjection(id=2222, name=null, publicationUri=null, published=false, requiresAuthentication=false, technology=null, lastPublicationSuccessful=false), deleted=false, entity=Package Maintainer (id: 0, user: \"null\", package: \"null\", repository: \"null\"))"
+	],
+	"messageCode": "error.validation",
+	"message": "Validation failed for the resource.",
+	"status": "ERROR"
 }

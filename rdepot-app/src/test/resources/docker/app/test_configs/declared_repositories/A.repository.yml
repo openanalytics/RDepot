@@ -1,3 +1,4 @@
-    name: A
-    publicationUri: http://localhost/repo/A
-    serverAddress: http://oa-rdepot-repo:8080/A
+ name: A
+ publicationUri: http://localhost/repo/A
+ serverAddress: http://oa-rdepot-repo:8080/A
+ requiresAuthentication: false

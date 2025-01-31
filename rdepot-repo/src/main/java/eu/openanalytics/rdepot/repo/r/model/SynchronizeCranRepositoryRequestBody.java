@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -31,6 +31,10 @@ import org.springframework.web.multipart.MultipartFile;
 public class SynchronizeCranRepositoryRequestBody extends SynchronizeRepositoryRequestBody {
     MultipartFile[] filesToUploadToArchive;
     String[] filesToDeleteFromArchive;
+    Map<String, String> pathsToUpload;
+    Map<String, String> pathsToUploadToArchive;
+    Map<String, String> pathsToDelete;
+    Map<String, String> pathsToDeleteFromArchive;
 
     public SynchronizeCranRepositoryRequestBody(
             String id,
@@ -42,6 +46,10 @@ public class SynchronizeCranRepositoryRequestBody extends SynchronizeRepositoryR
             String versionAfter,
             String page,
             String repository,
+            Map<String, String> paths,
+            Map<String, String> pathsToUploadToArchive,
+            Map<String, String> pathsToDelete,
+            Map<String, String> pathsToDeleteFromArchive,
             Map<String, String> checksums) {
         super(
                 page,
@@ -55,6 +63,10 @@ public class SynchronizeCranRepositoryRequestBody extends SynchronizeRepositoryR
                 filesToDelete);
         this.filesToUploadToArchive = filesToUploadToArchive == null ? new MultipartFile[0] : filesToUploadToArchive;
         this.filesToDeleteFromArchive = filesToDeleteFromArchive == null ? new String[0] : filesToDeleteFromArchive;
+        this.pathsToUpload = paths;
+        this.pathsToUploadToArchive = pathsToUploadToArchive;
+        this.pathsToDelete = pathsToDelete;
+        this.pathsToDeleteFromArchive = pathsToDeleteFromArchive;
     }
 
     @Override

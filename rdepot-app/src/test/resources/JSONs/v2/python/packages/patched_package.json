@@ -1,60 +1,65 @@
 {
-  "code": 200,
-  "data": {
-    "authorEmail": null,
-    "projectUrl": "homepage, https:\/\/pandas.pydata.org, documentation, https:\/\/pandas.pydata.org\/docs\/, repository, https:\/\/github.com\/pandas-dev\/pandas",
-    "keywords": null,
-    "description": null,
-    "source": "\/opt\/rdepot\/repositories\/8\/21604316\/pandas-2.0.1.tar.gz",
-    "repository": {
-      "name": "testrepo8",
-      "id": 8,
-      "published": true,
-      "technology": "Python",
-      "publicationUri": "http:\/\/localhost\/repo\/testrepo8"
-    },
-    "title": "Powerful data structures for data analysis, time series, and statistics",
-    "requiresDist": null,
-    "homePage": "",
-    "maintainer": null,
-    "platform": null,
-    "requiresPython": ">=3.8",
-    "requiresExternal": null,
-    "descriptionContentType": null,
-    "classifiers": "Development Status :: 5 - Production\/Stable, Environment :: Console, Intended Audience :: Science\/Research, License :: OSI Approved :: BSD License, Operating System :: OS Independent, Programming Language :: Cython, Programming Language :: Python, Programming Language :: Python :: 3, Programming Language :: Python :: 3 :: Only, Programming Language :: Python :: 3.8, Programming Language :: Python :: 3.9, Programming Language :: Python :: 3.10, Programming Language :: Python :: 3.11, Topic :: Scientific\/Engineering",
-    "links": [{
-      "rel": "self",
-      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/41"
-    }, {
-      "rel": "packageList",
-      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages"
-    }],
-    "id": 41,
-    "summary": "Powerful data structures for data analysis, time series, and statistics",
-    "author": null,
-    "active": false,
-    "maintainerEmail": null,
-    "technology": "Python",
-    "version": "2.0.1",
-    "url": "homepage, https:\/\/pandas.pydata.org, documentation, https:\/\/pandas.pydata.org\/docs\/, repository, https:\/\/github.com\/pandas-dev\/pandas",
-    "providesExtra": "test, performance, computation, fss, aws, gcp, excel, parquet, feather, hdf5, spss, postgresql, mysql, sql-other, html, xml, plot, output_formatting, clipboard, compression, all",
-    "license": "BSD 3-Clause License Copyright (c) 2008-2011, AQR Capital Management, LLC, Lambda Foundry, Inc. and PyData Development Team All rights reserved. Copyright (c) 2011-2023, Open source contributors. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and\/or other materials provided with the distribution. * Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.",
-    "deleted": false,
-    "binary": false,
-    "name": "pandas",
-    "submission": {
-      "id": 41,
-      "state": "ACCEPTED"
-    },
-    "user": {
-      "name": "Local Admin User",
-      "id": 8,
-      "login": "admin",
-      "email": "admin@localhost"
-    },
-    "hash": "7053d7ff8c563324b9a76110fabbd227c96c11d337521a57d94973bbb5f2a7ad"
-  },
-  "messageCode": "success.request.processed",
-  "message": "Your request has been processed successfully.",
-  "status": "SUCCESS"
+	"code": 200,
+	"data": {
+		"authorEmail": null,
+		"projectUrl": "homepage, https:\/\/pandas.pydata.org, documentation, https:\/\/pandas.pydata.org\/docs\/, repository, https:\/\/github.com\/pandas-dev\/pandas",
+		"keywords": null,
+		"description": null,
+		"source": "\/opt\/rdepot\/repositories\/8\/21604316\/pandas-2.0.1.tar.gz",
+		"repository": {
+			"name": "testrepo8",
+			"lastPublicationSuccessful": true,
+			"id": 8,
+			"published": true,
+			"technology": "Python",
+			"requiresAuthentication": true,
+			"publicationUri": "http:\/\/localhost\/repo\/testrepo8"
+		},
+		"title": "Powerful data structures for data analysis, time series, and statistics",
+		"requiresDist": null,
+		"homePage": "",
+		"maintainer": null,
+		"platform": null,
+		"requiresPython": ">=3.8",
+		"requiresExternal": null,
+		"descriptionContentType": null,
+		"classifiers": "Development Status :: 5 - Production\/Stable, Environment :: Console, Intended Audience :: Science\/Research, License :: OSI Approved :: BSD License, Operating System :: OS Independent, Programming Language :: Cython, Programming Language :: Python, Programming Language :: Python :: 3, Programming Language :: Python :: 3 :: Only, Programming Language :: Python :: 3.8, Programming Language :: Python :: 3.9, Programming Language :: Python :: 3.10, Programming Language :: Python :: 3.11, Topic :: Scientific\/Engineering",
+		"links": [
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/41"
+			},
+			{
+				"rel": "packageList",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages"
+			}
+		],
+		"id": 41,
+		"summary": "Powerful data structures for data analysis, time series, and statistics",
+		"author": null,
+		"active": false,
+		"maintainerEmail": null,
+		"technology": "Python",
+		"version": "2.0.1",
+		"url": "homepage, https:\/\/pandas.pydata.org, documentation, https:\/\/pandas.pydata.org\/docs\/, repository, https:\/\/github.com\/pandas-dev\/pandas",
+		"providesExtra": "test, performance, computation, fss, aws, gcp, excel, parquet, feather, hdf5, spss, postgresql, mysql, sql-other, html, xml, plot, output_formatting, clipboard, compression, all",
+		"license": "BSD 3-Clause License Copyright (c) 2008-2011, AQR Capital Management, LLC, Lambda Foundry, Inc. and PyData Development Team All rights reserved. Copyright (c) 2011-2023, Open source contributors. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and\/or other materials provided with the distribution. * Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.",
+		"deleted": false,
+		"binary": false,
+		"name": "pandas",
+		"submission": {
+			"id": 41,
+			"state": "ACCEPTED"
+		},
+		"user": {
+			"name": "Local Admin User",
+			"id": 8,
+			"login": "admin",
+			"email": "admin@localhost"
+		},
+		"hash": "7053d7ff8c563324b9a76110fabbd227c96c11d337521a57d94973bbb5f2a7ad"
+	},
+	"messageCode": "success.request.processed",
+	"message": "Your request has been processed successfully.",
+	"status": "SUCCESS"
 }

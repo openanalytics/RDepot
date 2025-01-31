@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -84,12 +84,16 @@ public class RRepositoryDataInitializer
         if (declarative) {
             boolean deleted = false;
             boolean published = true;
+            boolean requiresAuthentication = true;
 
             if (declaredRepository.getDeleted() != null) deleted = declaredRepository.getDeleted();
             if (declaredRepository.getPublished() != null) published = declaredRepository.getPublished();
+            if (declaredRepository.getRequiresAuthentication() != null)
+                requiresAuthentication = declaredRepository.getRequiresAuthentication();
 
             repository.setDeleted(deleted);
             repository.setPublished(published);
+            repository.setRequiresAuthentication(requiresAuthentication);
         }
 
         return repository;

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -39,7 +39,8 @@ public class AccessTokenDtoConverter implements DtoConverter<AccessToken, Access
             return new AccessToken(
                     dto,
                     dto.getCreationDate() != null ? DateProvider.timestampToInstant(dto.getCreationDate()) : null,
-                    dto.getExpirationDate() != null ? DateProvider.timestampToInstant(dto.getExpirationDate()) : null);
+                    dto.getExpirationDate() != null ? DateProvider.timestampToInstant(dto.getExpirationDate()) : null,
+                    !dto.getLastUsed().isBlank() ? DateProvider.timestampToInstant(dto.getLastUsed()) : null);
         } catch (DateTimeParseException e) {
             throw new EntityResolutionException(dto);
         }

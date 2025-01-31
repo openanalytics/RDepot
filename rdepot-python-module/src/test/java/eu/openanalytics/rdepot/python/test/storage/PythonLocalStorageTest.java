@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,9 +20,7 @@
  */
 package eu.openanalytics.rdepot.python.test.storage;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.storage.implementations.CommonLocalStorage;
@@ -405,8 +403,8 @@ public class PythonLocalStorageTest extends UnitTest {
                 </head>
                 <body>
                   <h1>Links for pandas</h1>
-                  <a href="/repo/testrepo/pandas/pandas-2.0.1.tar.gz" data-requires-python=">=3.8">pandas-2.0.1.tar.gz</a><br>
-                  <a href="/repo/testrepo/pandas/pandas-2.0.3.tar.gz" data-requires-python=">=3.8">pandas-2.0.3.tar.gz</a><br>
+                  <a href="/repo/testrepo/pandas/pandas-2.0.1.tar.gz" data-requires-python=">=3.8" data-version="2.0.1">pandas-2.0.1.tar.gz</a><br>
+                  <a href="/repo/testrepo/pandas/pandas-2.0.3.tar.gz" data-requires-python=">=3.8" data-version="2.0.3">pandas-2.0.3.tar.gz</a><br>
                 </body>
                 </html>
                 """;
@@ -424,7 +422,7 @@ public class PythonLocalStorageTest extends UnitTest {
                 </head>
                 <body>
                   <h1>Links for cryptography</h1>
-                  <a href="/repo/testrepo/cryptography/cryptography-41.0.1.tar.gz" data-requires-python=">=3.7">cryptography-41.0.1.tar.gz</a><br>
+                  <a href="/repo/testrepo/cryptography/cryptography-41.0.1.tar.gz" data-requires-python=">=3.7" data-version="41.0.1">cryptography-41.0.1.tar.gz</a><br>
                 </body>
                 </html>
                 """;
@@ -463,9 +461,9 @@ public class PythonLocalStorageTest extends UnitTest {
                 newPackagePath.startsWith(packageUploadDirectory.getAbsolutePath()),
                 "File was not uploaded to Package Upload Directory!");
         assertTrue(randomNumber > -1, "Incorrect random waiting room number.");
-        assertEquals(repositoriesDir, "repositories", "Repositories dir should be called \\\"repositories\\\".");
-        assertEquals(repositoryId, "2", "Incorrect repository id in path.");
-        assertEquals(filename, "coconutpy-2.2.1.tar.gz", "Incorrect file name.");
+        assertEquals("repositories", repositoriesDir, "Repositories dir should be called \\\"repositories\\\".");
+        assertEquals("2", repositoryId, "Incorrect repository id in path.");
+        assertEquals("coconutpy-2.2.1.tar.gz", filename, "Incorrect file name.");
         assertTrue(Files.exists(actualFile.toPath()), "File does not exist in correct directory");
         assertArrayEquals(fileContent, Files.readAllBytes(actualFile.toPath()), "File content is incorrect.");
     }
@@ -514,7 +512,7 @@ public class PythonLocalStorageTest extends UnitTest {
                 "File was not uploaded to Package Upload Directory!");
         assertEquals("boto3-1.26.156.tar.gz", fileName, "Incorrect file name");
         assertTrue(randomNumber > -1, "Incorrect random waiting room number.");
-        assertEquals(waitingRoomFolderName, "new", "Waiting Room should be called \"new\".");
+        assertEquals("new", waitingRoomFolderName, "Waiting Room should be called \"new\".");
         assertTrue(Files.exists(actualFile.toPath()), "File does not exist in correct directory");
         assertArrayEquals(fileContent, actualContent, "File content is incorrect.");
     }
@@ -550,9 +548,9 @@ public class PythonLocalStorageTest extends UnitTest {
                 newPackagePath.startsWith(packageUploadDirectory.getAbsolutePath()),
                 "File was not uploaded to Package Upload Directory!");
         assertTrue(randomNumber > -1, "Incorrect random waiting room number.");
-        assertEquals(trashDir, "trash", "Repositories dir should be called \"repositories\".");
-        assertEquals(repositoryId, "2", "Incorrect repository id in path.");
-        assertEquals(fileName, "cryptography-41.0.1.tar.gz", "Incorrect file name.");
+        assertEquals("trash", trashDir, "Repositories dir should be called \"repositories\".");
+        assertEquals("2", repositoryId, "Incorrect repository id in path.");
+        assertEquals("cryptography-41.0.1.tar.gz", fileName, "Incorrect file name.");
         assertTrue(Files.exists(actualFile.toPath()), "File does not exist in correct directory");
         assertArrayEquals(fileContent, Files.readAllBytes(actualFile.toPath()), "File content is incorrect.");
     }

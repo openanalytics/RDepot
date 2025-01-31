@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -178,7 +178,6 @@ public class MessageCodes {
     public static final String INVALID_REPOSITORY_DECLARATION = "invalid.repository.declaration";
     public static final String UNRECOGNIZED_QUERY_PARAMETER = "unrecognized.query.parameter";
     public static final String DECLARED_REPOSITORY_TECHNOLOGY_MISMATCH = "declared.repository.technology.mismatch";
-
     public static final String INTERNAL_ERROR = "internal.error";
     public static final String BAD_REQUEST = "bad.request";
     public static final String METHOD_NOT_ALLOWED = "method.not.allowed";

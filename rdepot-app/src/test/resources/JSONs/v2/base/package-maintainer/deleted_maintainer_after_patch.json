@@ -1,44 +1,46 @@
- {
-    "code": 200,
-    "data": {
-        "deleted": true,
-        "id": 1,
-        "links": [
-            {
-                "href": "http://localhost:8017/api/v2/manager/package-maintainers/1",
-                "rel": "self"
-            },
-            {
-                "href": "http://localhost:8017/api/v2/manager/package-maintainers",
-                "rel": "packageMaintainerList"
-            },
-            {
-                "href": "http://localhost:8017/api/v2/manager/package-maintainers/1",
-                "rel": "self",
-                "type": "PATCH"
-            },
-            {
-                "href": "http://localhost:8017/api/v2/manager/package-maintainers/1",
-                "rel": "self",
-                "type": "DELETE"
-            }
-        ],
-        "packageName": "accrued",
-        "repository": {
-            "id": 2,
-            "name": "testrepo1",
-            "publicationUri": "http://localhost/repo/testrepo1",
-            "published": true,
-            "technology": "R"
-        },
-        "user": {
-            "email": "galieleo@ldap.forumsys.com",
-            "id": 6,
-            "login": "galieleo",
-            "name": "Galileo Galilei"
-        }
-    },
-    "message": "Your request has been processed successfully.",
-    "messageCode": "success.request.processed",
-    "status": "SUCCESS"
+{
+	"code": 200,
+	"data": {
+		"deleted": true,
+		"links": [
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/1"
+			},
+			{
+				"rel": "packageMaintainerList",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers"
+			},
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/1",
+				"type": "PATCH"
+			},
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/1",
+				"type": "DELETE"
+			}
+		],
+		"id": 1,
+		"packageName": "accrued",
+		"repository": {
+			"name": "testrepo1",
+			"lastPublicationSuccessful": true,
+			"id": 2,
+			"published": true,
+			"technology": "R",
+			"requiresAuthentication": false,
+			"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+		},
+		"user": {
+			"name": "Galileo Galilei",
+			"id": 6,
+			"login": "galieleo",
+			"email": "galieleo@ldap.forumsys.com"
+		}
+	},
+	"messageCode": "success.request.processed",
+	"message": "Your request has been processed successfully.",
+	"status": "SUCCESS"
 }

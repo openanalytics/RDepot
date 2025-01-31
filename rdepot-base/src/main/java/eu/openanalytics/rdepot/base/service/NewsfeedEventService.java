@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,7 +20,6 @@
  */
 package eu.openanalytics.rdepot.base.service;
 
-import eu.openanalytics.rdepot.base.api.v2.exceptions.RepositoryMaintainerNotFound;
 import eu.openanalytics.rdepot.base.daos.EventChangedVariableDao;
 import eu.openanalytics.rdepot.base.daos.NewsfeedEventDao;
 import eu.openanalytics.rdepot.base.entities.EventChangedVariable;
@@ -33,19 +32,10 @@ import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
 import eu.openanalytics.rdepot.base.service.exceptions.UnknownEventType;
 import eu.openanalytics.rdepot.base.service.exceptions.UnknownResourceType;
 import eu.openanalytics.rdepot.base.utils.specs.NewsfeedEventSpecs;
-import eu.openanalytics.rdepot.base.utils.specs.SpecificationUtils;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.time.Instant;
+import java.util.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -73,18 +63,14 @@ public class NewsfeedEventService extends eu.openanalytics.rdepot.base.service.S
      * @throws UnknownEventType
      */
     private NewsfeedEventType resolveEventType(String eventType) throws UnknownEventType {
-        switch (eventType) {
-            case "create":
-                return NewsfeedEventType.CREATE;
-            case "delete":
-                return NewsfeedEventType.DELETE;
-            case "update":
-                return NewsfeedEventType.UPDATE;
-            case "upload":
-                return NewsfeedEventType.UPLOAD;
-            default:
-                throw new UnknownEventType();
-        }
+        return switch (eventType) {
+            case "create" -> NewsfeedEventType.CREATE;
+            case "delete" -> NewsfeedEventType.DELETE;
+            case "update" -> NewsfeedEventType.UPDATE;
+            case "upload" -> NewsfeedEventType.UPLOAD;
+            case "republish" -> NewsfeedEventType.REPUBLISH;
+            default -> throw new UnknownEventType();
+        };
     }
 
     /**
@@ -94,24 +80,16 @@ public class NewsfeedEventService extends eu.openanalytics.rdepot.base.service.S
      * @throws UnknownResourceType
      */
     private ResourceType resolveResourceType(String resourceType) throws UnknownResourceType {
-        switch (resourceType) {
-            case "package":
-                return ResourceType.PACKAGE;
-            case "repository":
-                return ResourceType.REPOSITORY;
-            case "user":
-                return ResourceType.USER;
-            case "submission":
-                return ResourceType.SUBMISSION;
-            case "packageMaintainer":
-                return ResourceType.PACKAGE_MAINTAINER;
-            case "repositoryMaintainer":
-                return ResourceType.REPOSITORY_MAINTAINER;
-            case "accessToken":
-                return ResourceType.ACCESS_TOKEN;
-            default:
-                throw new UnknownResourceType();
-        }
+        return switch (resourceType) {
+            case "package" -> ResourceType.PACKAGE;
+            case "repository" -> ResourceType.REPOSITORY;
+            case "user" -> ResourceType.USER;
+            case "submission" -> ResourceType.SUBMISSION;
+            case "packageMaintainer" -> ResourceType.PACKAGE_MAINTAINER;
+            case "repositoryMaintainer" -> ResourceType.REPOSITORY_MAINTAINER;
+            case "accessToken" -> ResourceType.ACCESS_TOKEN;
+            default -> throw new UnknownResourceType();
+        };
     }
 
     private Specification<NewsfeedEvent> addComponent(
@@ -122,31 +100,87 @@ public class NewsfeedEventService extends eu.openanalytics.rdepot.base.service.S
         return specification;
     }
 
+    private Specification<NewsfeedEvent> orComponent(
+            Specification<NewsfeedEvent> specification, Specification<NewsfeedEvent> specificationComponent) {
+        if (specification == null) specification = Specification.where(specificationComponent);
+        else specification = specification.or(specificationComponent);
+
+        return specification;
+    }
+
     /**
      * Finds an event based on supplied parameters.
      * All of them are {@link Optional Optionals}
      * so that they can but do not need to be supplied.
      * @param pageable used for pagination
-     * @param isAdmin flag used to determine if the user making a request has administrator rights
-     * @param technologyStr
-     * @param user
-     * @param resourceId
-     * @param eventType
-     * @param resourceType
+     * @param technologies
+     * @param userNames
+     * @param packageNames
+     * @param repositoryNames
+     * @param eventTypes
+     * @param resourceTypes
+     * @param fromDate
+     * @param toDate
      * @return {@link Page} of events.
-     * @throws RepositoryMaintainerNotFound
      */
     public Page<NewsfeedEvent> findEventsByParameters(
             Pageable pageable,
-            boolean isAdmin,
             List<String> technologies,
             List<String> userNames,
+            List<String> packageNames,
+            List<String> packageVersions,
+            List<String> repositoryNames,
             List<String> eventTypes,
             List<String> resourceTypes,
-            Optional<String> fromDate,
-            Optional<String> toDate,
-            Specification<NewsfeedEvent> specification)
-            throws RepositoryMaintainerNotFound {
+            Optional<Instant> fromDate,
+            Optional<Instant> toDate,
+            Specification<NewsfeedEvent> specification) {
+
+        if (Objects.nonNull(packageNames) && Objects.nonNull(repositoryNames)) {
+            if (Objects.nonNull(packageVersions)) {
+                specification = addComponent(
+                        specification,
+                        NewsfeedEventSpecs.byPackageNamesAndVersionsAndRepositoryNames(
+                                packageNames, packageVersions, repositoryNames));
+                specification = orComponent(
+                        specification,
+                        NewsfeedEventSpecs.bySubmissionAndPackageNamesAndVersionsAndRepositoryNames(
+                                packageNames, packageVersions, repositoryNames));
+            } else {
+                specification = addComponent(
+                        specification,
+                        NewsfeedEventSpecs.byPackageNamesAndRepositoryNames(packageNames, repositoryNames));
+                specification = orComponent(
+                        specification,
+                        NewsfeedEventSpecs.bySubmissionAndPackageNamesAndRepositoryNames(
+                                packageNames, repositoryNames));
+            }
+            specification = orComponent(
+                    specification,
+                    NewsfeedEventSpecs.byPackageMaintainerAndPackageNamesAndRepositoryNames(
+                            packageNames, repositoryNames));
+        } else if (Objects.nonNull(packageNames)) {
+            if (Objects.nonNull(packageVersions)) {
+                specification = addComponent(
+                        specification, NewsfeedEventSpecs.byPackageNamesAndVersions(packageNames, packageVersions));
+                specification = orComponent(
+                        specification,
+                        NewsfeedEventSpecs.bySubmissionAndPackageNamesAndVersions(packageNames, packageVersions));
+            } else {
+                specification = addComponent(specification, NewsfeedEventSpecs.byPackageNames(packageNames));
+                specification =
+                        orComponent(specification, NewsfeedEventSpecs.bySubmissionAndPackageNames(packageNames));
+            }
+            specification =
+                    orComponent(specification, NewsfeedEventSpecs.byPackageMaintainerAndPackageNames(packageNames));
+        } else if (Objects.nonNull(repositoryNames)) {
+            specification = addComponent(specification, NewsfeedEventSpecs.byRepositoryNames(repositoryNames));
+            specification = orComponent(specification, NewsfeedEventSpecs.byPackageAndRepositoryNames(repositoryNames));
+            specification = orComponent(
+                    specification, NewsfeedEventSpecs.byPackageMaintainerAndRepositoryNames(repositoryNames));
+            specification = orComponent(
+                    specification, NewsfeedEventSpecs.byRepositoryMaintainerAndRepositoryNames(repositoryNames));
+        }
 
         if (Objects.nonNull(technologies)) {
             specification = addComponent(specification, NewsfeedEventSpecs.byTechnology(technologies));
@@ -163,7 +197,7 @@ public class NewsfeedEventService extends eu.openanalytics.rdepot.base.service.S
             }
         } catch (UnknownEventType e) {
             log.debug(e.getMessage(), e);
-            return new PageImpl<NewsfeedEvent>(List.of()); // There are no events of such type
+            return new PageImpl<>(List.of()); // There are no events of such type
         }
 
         try {
@@ -173,7 +207,7 @@ public class NewsfeedEventService extends eu.openanalytics.rdepot.base.service.S
             }
         } catch (UnknownResourceType e) {
             log.debug(e.getMessage(), e);
-            return new PageImpl<NewsfeedEvent>(List.of());
+            return new PageImpl<>(List.of());
         }
 
         if (fromDate.isPresent()) {
@@ -185,9 +219,7 @@ public class NewsfeedEventService extends eu.openanalytics.rdepot.base.service.S
         }
 
         Pageable pageableWithSort = PageRequest.of(
-                pageable.getPageNumber(),
-                pageable.getPageSize(),
-                pageable.getSortOr(Sort.by(Direction.DESC, "date").and(Sort.by(Direction.DESC, "time"))));
+                pageable.getPageNumber(), pageable.getPageSize(), pageable.getSortOr(Sort.by(Direction.DESC, "time")));
 
         if (specification == null) return findAll(pageableWithSort);
         else return findAllBySpecification(specification, pageableWithSort);
@@ -197,25 +229,11 @@ public class NewsfeedEventService extends eu.openanalytics.rdepot.base.service.S
         return newsfeedEventDao.findAll(NewsfeedEventSpecs.hasRelatedResource(resource));
     }
 
-    public List<NewsfeedEvent> findAllByRelatedResourceType(ResourceType resourceType) {
-        return newsfeedEventDao.findAll(NewsfeedEventSpecs.hasResourceOfType(resourceType));
-    }
-
     public void attachVariables(NewsfeedEvent entity, Set<EventChangedVariable> eventChangedVariables) {
         eventChangedVariables.forEach(v -> {
             v.setRelatedNewsfeedEvent(entity);
             eventChangedVariableDao.save(v);
         });
-    }
-
-    public List<NewsfeedEvent> findByDateAndResource(LocalDate date, Resource resource) {
-        return newsfeedEventDao.findAll(SpecificationUtils.andComponent(
-                NewsfeedEventSpecs.byDate(date), NewsfeedEventSpecs.hasRelatedResource(resource)));
-    }
-
-    public List<NewsfeedEvent> findByDateAndRepository(LocalDate date, Repository repository) {
-        return newsfeedEventDao.findAll(SpecificationUtils.andComponent(
-                NewsfeedEventSpecs.byDate(date), NewsfeedEventSpecs.relatedResourceHasRelatedRepository(repository)));
     }
 
     public List<NewsfeedEvent> findByRepository(Repository repository) {
@@ -225,17 +243,6 @@ public class NewsfeedEventService extends eu.openanalytics.rdepot.base.service.S
     public void deleteRelatedEvents(Resource resource) throws DeleteEntityException {
         for (NewsfeedEvent event : findAllByResource(resource)) {
             delete(event);
-        }
-    }
-
-    private List<NewsfeedEvent> findAllForPackage(int id) {
-        return newsfeedEventDao.findAllForPackageWithId(id);
-    }
-
-    public void deleteRelatedPackageEvents(int resourceId) throws DeleteEntityException {
-        List<NewsfeedEvent> events = findAllForPackage(resourceId);
-        for (NewsfeedEvent event : events) {
-            delete(event.getId());
         }
     }
 

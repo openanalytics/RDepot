@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -23,30 +23,19 @@ package eu.openanalytics.rdepot.test.unit.api.v2;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.openanalytics.rdepot.base.api.v2.dtos.PackageDto;
-import eu.openanalytics.rdepot.base.api.v2.dtos.PackageUploadRequest;
-import eu.openanalytics.rdepot.base.api.v2.dtos.SubmissionDto;
-import eu.openanalytics.rdepot.base.api.v2.dtos.SubmissionProjection;
-import eu.openanalytics.rdepot.base.api.v2.dtos.UserProjection;
+import eu.openanalytics.rdepot.base.api.v2.dtos.*;
 import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
+import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.entities.enums.SubmissionState;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
-import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
-import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure;
 import eu.openanalytics.rdepot.base.time.DateProvider;
 import eu.openanalytics.rdepot.base.validation.ValidationResult;
 import eu.openanalytics.rdepot.base.validation.exceptions.PatchValidationException;
@@ -77,7 +66,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -86,7 +74,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -106,6 +93,19 @@ import org.springframework.web.multipart.MultipartFile;
 @Import({ApiTestConfig.class})
 public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
 
+    private static final String JSON_PATH = "src/test/resources/unit/jsons";
+    private static final String TEST_PACKAGE_PATH =
+            "src/test/resources/unit/test_packages/strategy_tests/coconutpy-2.2.1.tar.gz";
+    private static final String EXAMPLE_SUBMISSION_CREATED_PATH = JSON_PATH + "/example_submission_created.json";
+    private static final String ERROR_SUBMISSION_NOT_FOUND_PATH = JSON_PATH + "/error_submission_notfound.json";
+    private static final String EXAMPLE_SUBMISSIONS_PATH = JSON_PATH + "/example_submissions.json";
+    private static final String EXAMPLE_SUBMISSION_PATCHED_PATH = JSON_PATH + "/example_submission_patched.json";
+    private static final String EXAMPLE_SUBMISSION_PATH = JSON_PATH + "/example_submission.json";
+    private static final String ERROR_SUBMISSION_DUPLICATE_PATH = JSON_PATH + "/error_submission_duplicate.json";
+    private static final String ERROR_UPDATE_NOT_ALLOWED_SUBMISSION_PATH =
+            JSON_PATH + "/error_update_notallowed_submission.json";
+    private static final String WARNING_SUBMISSION_DUPLICATE_PATH = JSON_PATH + "/warning_submission_duplicate.json";
+
     @Autowired
     MockMvc mockMvc;
 
@@ -123,24 +123,11 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
     @Autowired
     WebApplicationContext webApplicationContext;
 
-    private Optional<User> user;
-
-    private static final String JSON_PATH = "src/test/resources/unit/jsons";
-    private static final String TEST_PACKAGE_PATH =
-            "src/test/resources/unit/test_packages/strategy_tests/coconutpy-2.2.1.tar.gz";
-    private static final String EXAMPLE_SUBMISSION_CREATED_PATH = JSON_PATH + "/example_submission_created.json";
-    private static final String ERROR_SUBMISSION_NOT_FOUND_PATH = JSON_PATH + "/error_submission_notfound.json";
-    private static final String EXAMPLE_SUBMISSIONS_PATH = JSON_PATH + "/example_submissions.json";
-    private static final String EXAMPLE_SUBMISSION_PATCHED_PATH = JSON_PATH + "/example_submission_patched.json";
-    private static final String EXAMPLE_SUBMISSION_PATH = JSON_PATH + "/example_submission.json";
-    private static final String ERROR_SUBMISSION_DUPLICATE_PATH = JSON_PATH + "/error_submission_duplicate.json";
-    private static final String ERROR_UPDATE_NOT_ALLOWED_SUBMISSION_PATH =
-            JSON_PATH + "/error_update_notallowed_submission.json";
-    private static final String WARNING_SUBMISSION_DUPLICATE_PATH = JSON_PATH + "/warning_submission_duplicate.json";
+    private User user;
 
     @BeforeEach
     public void initEach() {
-        user = Optional.of(UserTestFixture.GET_ADMIN());
+        user = UserTestFixture.GET_ADMIN();
         DateProvider.setTestDate(LocalDateTime.of(2024, 4, 12, 0, 0)
                 .atZone(ZoneId.systemDefault())
                 .toInstant());
@@ -153,42 +140,39 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
         final byte[] packageFile = Files.readAllBytes(Path.of(TEST_PACKAGE_PATH));
         final MockMultipartFile multipartFile = new MockMultipartFile(
                 "file", "coconutpy-2.2.1.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
-        final Boolean generateManuals = true;
-        final Boolean replace = false;
+        final boolean generateManuals = true;
+        final boolean replace = false;
 
-        final Submission submission = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get())
-                .getSubmission();
+        final Submission submission =
+                PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user).getSubmission();
         submission.setState(SubmissionState.WAITING);
-        Strategy<Submission> strategy = Mockito.spy(
-                new SuccessfulStrategy<Submission>(submission, newsfeedEventService, submissionService, user.get()));
+        Strategy<Submission> strategy =
+                Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user));
         final PackageDto packageDto = PythonPackageTestFixture.GET_EXAMPLE_PACKAGE_DTO(submission.getPackageBag());
         final SubmissionDto submissionDto =
                 PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, submission.getPackageBag());
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
         when(pythonRepositoryService.findByNameAndDeleted(any(String.class), eq(false)))
                 .thenReturn(Optional.of(repository));
         doNothing().when(pythonPackageValidator).validate(any(), any(ValidationResult.class));
         when(commonPackageDtoConverter.convertEntityToDto(any())).thenReturn(packageDto);
         when(submissionDtoConverter.convertEntityToDto(submission)).thenReturn(submissionDto);
-        when(pythonStrategyFactory.uploadPackageStrategy(any(), any())).thenAnswer(new Answer<Strategy<Submission>>() {
-
-            @Override
-            public Strategy<Submission> answer(InvocationOnMock invocation) throws Throwable {
-                PackageUploadRequest<PythonRepository> request = invocation.getArgument(0);
-                assertEquals(packageFile, request.getFileData().getBytes());
-                assertEquals(repository.getName(), request.getRepository().getName());
-                assertEquals(replace, request.isReplace());
-                assertEquals(generateManuals, request.isGenerateManual());
-                return strategy;
-            }
-        });
+        when(pythonStrategyFactory.uploadPackageStrategy(any(), any()))
+                .thenAnswer((Answer<Strategy<Submission>>) invocation -> {
+                    PackageUploadRequest<PythonRepository> request = invocation.getArgument(0);
+                    assertEquals(packageFile, request.getFileData().getBytes());
+                    assertEquals(repository.getName(), request.getRepository().getName());
+                    assertEquals(replace, request.isReplace());
+                    assertEquals(generateManuals, request.isGenerateManual());
+                    return strategy;
+                });
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v2/manager/python/submissions")
                         .file(multipartFile)
                         .param("repository", repository.getName())
-                        .param("generateManual", generateManuals.toString())
-                        .param("replace", replace.toString()))
+                        .param("generateManual", Boolean.toString(generateManuals))
+                        .param("replace", Boolean.toString(replace)))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(Files.readString(Path.of(EXAMPLE_SUBMISSION_CREATED_PATH))));
     }
@@ -200,14 +184,14 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
         final byte[] packageFile = Files.readAllBytes(Path.of(TEST_PACKAGE_PATH));
         final MockMultipartFile multipartFile = new MockMultipartFile(
                 "file", "coconutpy-2.2.1.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
-        final Boolean generateManuals = true;
-        final Boolean replace = false;
+        final boolean generateManuals = true;
+        final boolean replace = false;
 
-        final PythonPackage packageBag = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get());
+        final PythonPackage packageBag = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
         final Submission submission = packageBag.getSubmission();
         submission.setState(SubmissionState.WAITING);
-        Strategy<Submission> strategy = Mockito.spy(
-                new DuplicatePackageStrategy(submission, submissionService, user.get(), newsfeedEventService));
+        Strategy<Submission> strategy =
+                Mockito.spy(new DuplicatePackageStrategy(submission, submissionService, user, newsfeedEventService));
 
         final SubmissionDto submissionDto =
                 PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, submission.getPackageBag());
@@ -215,7 +199,7 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
 
         doReturn(packageDto).when(commonPackageDtoConverter).convertEntityToDto(packageBag);
         doReturn(submissionDto).when(submissionDtoConverter).convertEntityToDto(submission);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
         when(pythonStrategyFactory.uploadPackageStrategy(any(), any())).thenReturn(strategy);
         when(pythonRepositoryService.findByNameAndDeleted(any(String.class), eq(false)))
                 .thenReturn(Optional.of(repository));
@@ -224,7 +208,7 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v2/manager/python/submissions")
                         .file(multipartFile)
                         .param("repository", repository.getName())
-                        .param("generateManual", generateManuals.toString())
+                        .param("generateManual", Boolean.toString(generateManuals))
                         .param("replace", Boolean.toString(replace)))
                 .andExpect(status().isOk())
                 .andExpect(content().json(Files.readString(Path.of(WARNING_SUBMISSION_DUPLICATE_PATH))));
@@ -253,33 +237,30 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
         final byte[] packageFile = Files.readAllBytes(Path.of(TEST_PACKAGE_PATH));
         final MockMultipartFile multipartFile = new MockMultipartFile(
                 "file", "abc_1.3.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
-        final Boolean generateManuals = true;
-        final Boolean replace = false;
-        final Submission submission = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get())
-                .getSubmission();
-        Strategy<Submission> strategy = Mockito.spy(
-                new SuccessfulStrategy<Submission>(submission, newsfeedEventService, submissionService, user.get()));
+        final boolean generateManuals = true;
+        final boolean replace = false;
+        final Submission submission =
+                PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user).getSubmission();
+        Strategy<Submission> strategy =
+                Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user));
 
         when(pythonRepositoryService.findByNameAndDeleted(REPOSITORY_NAME, false))
                 .thenReturn(Optional.of(repository));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        doAnswer(new Answer<>() {
-                    @Override
-                    public Object answer(InvocationOnMock invocation) throws Throwable {
-                        ValidationResult validationResult = invocation.getArgument(1, ValidationResult.class);
-                        validationResult.error("MULTIPART-FILE", MessageCodes.INVALID_FILENAME);
-                        return null;
-                    }
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
+        doAnswer((Answer<Object>) invocation -> {
+                    ValidationResult validationResult = invocation.getArgument(1, ValidationResult.class);
+                    validationResult.error("MULTIPART-FILE", MessageCodes.INVALID_FILENAME);
+                    return null;
                 })
                 .when(pythonPackageValidator)
                 .validate(any(MultipartFile.class), any());
-        when(pythonStrategyFactory.uploadPackageStrategy(any(), eq(user.get()))).thenReturn(strategy);
+        when(pythonStrategyFactory.uploadPackageStrategy(any(), eq(user))).thenReturn(strategy);
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v2/manager/python/submissions")
                         .file(multipartFile)
                         .param("repository", REPOSITORY_NAME)
-                        .param("generateManual", generateManuals.toString())
-                        .param("replace", replace.toString()))
+                        .param("generateManual", Boolean.toString(generateManuals))
+                        .param("replace", Boolean.toString(replace)))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().json(Files.readString(Path.of(ERROR_SUBMISSION_DUPLICATE_PATH))));
     }
@@ -291,23 +272,23 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
         final byte[] packageFile = Files.readAllBytes(Path.of(TEST_PACKAGE_PATH));
         final MockMultipartFile multipartFile = new MockMultipartFile(
                 "file", "abc_1.3.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
-        final Boolean generateManuals = true;
-        final Boolean replace = false;
-        final Submission submission = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get())
-                .getSubmission();
-        Strategy<Submission> strategy = Mockito.spy(
-                new FailureStrategy<Submission>(submission, newsfeedEventService, submissionService, user.get()));
+        final boolean generateManuals = true;
+        final boolean replace = false;
+        final Submission submission =
+                PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user).getSubmission();
+        Strategy<Submission> strategy =
+                Mockito.spy(new FailureStrategy<>(submission, newsfeedEventService, submissionService, user));
 
-        when(pythonStrategyFactory.uploadPackageStrategy(any(), eq(user.get()))).thenReturn(strategy);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(pythonStrategyFactory.uploadPackageStrategy(any(), eq(user))).thenReturn(strategy);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
         when(pythonRepositoryService.findByNameAndDeleted(any(String.class), eq(false)))
                 .thenReturn(Optional.of(repository));
 
         ResultActions result = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v2/manager/python/submissions")
                         .file(multipartFile)
                         .param("repository", repository.getName())
-                        .param("generateManual", generateManuals.toString())
-                        .param("replace", replace.toString()))
+                        .param("generateManual", Boolean.toString(generateManuals))
+                        .param("replace", Boolean.toString(replace)))
                 .andExpect(status().isInternalServerError());
         TestUtils.matchInternalServerErrorCreate(result);
     }
@@ -358,8 +339,8 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
     @WithMockUser(authorities = {"user", "admin"})
     public void deleteSubmission_returns404_whenSubmissionIsNotFound() throws Exception {
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(submissionService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(null));
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
+        when(submissionService.findById(any(Integer.class))).thenReturn(Optional.empty());
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v2/manager/python/submissions/" + 123))
                 .andExpect(status().isNotFound())
@@ -370,8 +351,8 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
     @WithMockUser(authorities = {"user", "admin"})
     public void getSubmission_returns404_whenSubmissionIsNotFound() throws Exception {
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(submissionService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(null));
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
+        when(submissionService.findById(any(Integer.class))).thenReturn(Optional.empty());
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/python/submissions/" + 123))
                 .andExpect(status().isNotFound())
@@ -383,8 +364,8 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
     public void patchSubmission_returns404_whenSubmissionIsNotFound() throws Exception {
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/state\",\"value\":\"ACCEPTED\"}]";
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(submissionService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(null));
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
+        when(submissionService.findById(any(Integer.class))).thenReturn(Optional.empty());
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/python/submissions/" + 123)
                         .contentType("application/json-patch+json")
@@ -398,11 +379,11 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
     public void patchSubmission_returns403_whenUserIsNotAuthorized() throws Exception {
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/state\",\"value\":\"ACCEPTED\"}]";
         final PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        final Submission submission = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get())
-                .getSubmission();
+        final Submission submission =
+                PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user).getSubmission();
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(securityMediator.isAuthorizedToEdit(eq(submission), any(), eq(user.get())))
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
+        when(securityMediator.isAuthorizedToEdit(eq(submission), any(), eq(user)))
                 .thenReturn(false);
         when(submissionService.findById(submission.getId())).thenReturn(Optional.of(submission));
 
@@ -418,25 +399,25 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
     public void patchSubmission_returns500_whenInternalServerErrorOccurs() throws Exception {
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/state\",\"value\":\"ACCEPTED\"}]";
         final PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        final Submission submission = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get())
-                .getSubmission();
-        final PythonPackage packageBag = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get());
+        final Submission submission =
+                PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user).getSubmission();
+        final PythonPackage packageBag = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
         final SubmissionDto submissionDto =
                 PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, packageBag);
 
-        Strategy<Submission> strategy = Mockito.spy(
-                new FailureStrategy<Submission>(submission, newsfeedEventService, submissionService, user.get()));
+        Strategy<Submission> strategy =
+                Mockito.spy(new FailureStrategy<>(submission, newsfeedEventService, submissionService, user));
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(userService.findById(any(Integer.class))).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
+        when(userService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(user));
         when(pythonPackageService.findById(any(Integer.class))).thenReturn(Optional.of(packageBag));
         when(pythonRepositoryService.findById(any(Integer.class))).thenReturn(Optional.of(repository));
         when(submissionDtoConverter.resolveDtoToEntity(any())).thenReturn(submission);
         when(submissionDtoConverter.convertEntityToDto(any())).thenReturn(submissionDto);
-        when(securityMediator.isAuthorizedToEdit(eq(submission), any(), eq(user.get())))
+        when(securityMediator.isAuthorizedToEdit(eq(submission), any(), eq(user)))
                 .thenReturn(true);
         when(submissionService.findById(any(Integer.class))).thenReturn(Optional.of(submission));
-        when(pythonStrategyFactory.updateSubmissionStrategy(eq(submission), any(), eq(repository), eq(user.get())))
+        when(pythonStrategyFactory.updateSubmissionStrategy(eq(submission), any(), eq(repository), eq(user)))
                 .thenReturn(strategy);
 
         ResultActions result = mockMvc.perform(
@@ -453,10 +434,10 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
     @WithMockUser(authorities = {"user", "admin"})
     public void deleteSubmission() throws Exception {
         final PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        final Submission submission = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get())
-                .getSubmission();
+        final Submission submission =
+                PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user).getSubmission();
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
         when(submissionService.findById(submission.getId())).thenReturn(Optional.of(submission));
         doNothing().when(submissionDeleter).delete(submission);
 
@@ -469,24 +450,22 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
     public void getAllSubmissions_asMaintainer() throws Exception {
         PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
 
-        List<Submission> submissions =
-                PythonPackageTestFixture.GET_FIXTURE_PACKAGES(repository, user.get(), 3, 100).stream()
-                        .map(p -> p.getSubmission())
-                        .collect(Collectors.toList());
+        List<Submission> submissions = PythonPackageTestFixture.GET_FIXTURE_PACKAGES(repository, user, 3, 100).stream()
+                .map(Package::getSubmission)
+                .collect(Collectors.toList());
         submissions.get(0).setState(SubmissionState.WAITING);
         submissions.get(1).setState(SubmissionState.WAITING);
         submissions.get(2).setState(SubmissionState.WAITING);
-        Page<Submission> paged = new PageImpl<Submission>(submissions);
+        Page<Submission> paged = new PageImpl<>(submissions);
         List<PackageDto> packageDtos = PythonPackageTestFixture.GET_EXAMPLE_PACKAGE_DTOS(submissions);
 
         List<SubmissionDto> submissionDtos = PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTOS(submissions);
 
-        when(submissionService.findAllBySpecification(
-                        ArgumentMatchers.<Specification<Submission>>any(), any(Pageable.class)))
+        when(submissionService.findAllBySpecification(ArgumentMatchers.any(), any(Pageable.class)))
                 .thenReturn(paged);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(userService.findById(any(Integer.class))).thenReturn(user);
-        when(userService.findById(user.get().getId())).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
+        when(userService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(user));
+        when(userService.findById(user.getId())).thenReturn(Optional.ofNullable(user));
         when(commonPackageDtoConverter.convertEntityToDto(submissions.get(0).getPackageBag()))
                 .thenReturn(packageDtos.get(0));
         when(commonPackageDtoConverter.convertEntityToDto(submissions.get(1).getPackageBag()))
@@ -499,7 +478,7 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/python/submissions")
                         .param("deleted", "false")
                         .param("state", "WAITING")
-                        .param("submitterId", Integer.toString(user.get().getId()))
+                        .param("submitterId", Integer.toString(user.getId()))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(Files.readString(Path.of(EXAMPLE_SUBMISSIONS_PATH))));
@@ -510,22 +489,22 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
     public void patchSubmission() throws Exception {
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/state\",\"value\":\"ACCEPTED\"}]";
         final PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        final Submission submission = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get())
-                .getSubmission();
+        final Submission submission =
+                PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user).getSubmission();
         submission.setState(SubmissionState.WAITING);
         final PythonPackage pythonPackage = (PythonPackage) submission.getPackage();
         final SubmissionDto submissionDto =
                 PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, pythonPackage);
         submissionDto.setState(SubmissionState.ACCEPTED);
-        submissionDto.setApprover(new UserProjection(user.get()));
+        submissionDto.setApprover(new UserProjection(user));
         final PackageDto packageDto = PythonPackageTestFixture.GET_EXAMPLE_PACKAGE_DTO(pythonPackage);
         submissionDto.getEntity().setState(SubmissionState.ACCEPTED);
         packageDto.setSubmission(new SubmissionProjection(submissionDto.getEntity()));
         submissionDto.getEntity().setState(SubmissionState.WAITING);
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(userService.findById(any(Integer.class))).thenReturn(user);
-        when(securityMediator.isAuthorizedToEdit(eq(submission), any(), eq(user.get())))
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
+        when(userService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(user));
+        when(securityMediator.isAuthorizedToEdit(eq(submission), any(), eq(user)))
                 .thenReturn(true);
         when(submissionService.findById(submission.getId())).thenReturn(Optional.of(submission));
         when(submissionService.findById(any(Integer.class))).thenReturn(Optional.of(submission));
@@ -534,33 +513,23 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
         when(pythonPackageService.findById(0)).thenReturn(Optional.of(pythonPackage));
         when(pythonRepositoryService.findById(any(Integer.class))).thenReturn(Optional.of(repository));
         when(commonPackageDtoConverter.convertEntityToDto(any())).thenReturn(packageDto);
-        when(pythonStrategyFactory.updateSubmissionStrategy(eq(submission), any(), eq(repository), eq(user.get())))
-                .thenAnswer(new Answer<Strategy<Submission>>() {
+        when(pythonStrategyFactory.updateSubmissionStrategy(eq(submission), any(), eq(repository), eq(user)))
+                .thenAnswer((Answer<Strategy<Submission>>) invocation -> {
+                    Submission entity = invocation.getArgument(0);
+                    return new Strategy<>(entity, submissionService, null, newsfeedEventService) {
 
-                    @Override
-                    public Strategy<Submission> answer(InvocationOnMock invocation) throws Throwable {
-                        Submission entity = invocation.getArgument(0);
-                        return new Strategy<Submission>(entity, submissionService, null, newsfeedEventService) {
+                        @Override
+                        protected Submission actualStrategy() {
+                            entity.setState(SubmissionState.ACCEPTED);
+                            entity.setApprover(requester);
+                            return entity;
+                        }
 
-                            @Override
-                            protected Submission actualStrategy() throws StrategyFailure {
-                                entity.setState(SubmissionState.ACCEPTED);
-                                entity.setApprover(requester);
-                                return entity;
-                            }
-
-                            @Override
-                            protected NewsfeedEvent generateEvent(Submission resource) {
-                                return null;
-                            }
-
-                            @Override
-                            protected void postStrategy() throws StrategyFailure {}
-
-                            @Override
-                            public void revertChanges() throws StrategyReversionFailure {}
-                        };
-                    }
+                        @Override
+                        protected NewsfeedEvent generateEvent(Submission resource) {
+                            return null;
+                        }
+                    };
                 });
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/python/submissions/" + submission.getId())
@@ -575,26 +544,26 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
     public void patchSubmission_returns422_whenTryingToAcceptedCancelledSubmission() throws Exception {
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/state\",\"value\":\"ACCEPTED\"}]";
         final PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        final Submission submission = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get())
-                .getSubmission();
-        final PythonPackage packageBag = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get());
+        final Submission submission =
+                PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user).getSubmission();
+        final PythonPackage packageBag = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
         final SubmissionDto submissionDto =
                 PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, packageBag);
 
         submission.setState(SubmissionState.CANCELLED);
-        Strategy<Submission> strategy = Mockito.spy(
-                new SuccessfulStrategy<Submission>(submission, newsfeedEventService, submissionService, user.get()));
+        Strategy<Submission> strategy =
+                Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user));
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(userService.findById(any(Integer.class))).thenReturn(user);
-        when(securityMediator.isAuthorizedToEdit(eq(submission), any(), eq(user.get())))
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
+        when(userService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(user));
+        when(securityMediator.isAuthorizedToEdit(eq(submission), any(), eq(user)))
                 .thenReturn(true);
         when(submissionService.findById(any(Integer.class))).thenReturn(Optional.of(submission));
         when(submissionDtoConverter.convertEntityToDto(any())).thenReturn(submissionDto);
         when(submissionDtoConverter.resolveDtoToEntity(any())).thenReturn(submission);
         when(pythonRepositoryService.findById(any(Integer.class))).thenReturn(Optional.of(repository));
         when(pythonStrategyFactory.updateSubmissionStrategy(
-                        any(Submission.class), any(Submission.class), eq(repository), eq(user.get())))
+                        any(Submission.class), any(Submission.class), eq(repository), eq(user)))
                 .thenReturn(strategy);
         when(pythonPackageService.findById(any(Integer.class))).thenReturn(Optional.of(packageBag));
 
@@ -613,10 +582,10 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
     @WithMockUser
     public void getSubmission_returns403_whenUserIsNotAuthorized() throws Exception {
         final PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        final Submission submission = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get())
-                .getSubmission();
+        final Submission submission =
+                PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user).getSubmission();
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
         when(submissionService.findById(submission.getId())).thenReturn(Optional.of(submission));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/python/submissions/" + submission.getId())
@@ -629,14 +598,14 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
     @WithMockUser(authorities = "user")
     public void getSubmission() throws Exception {
         final PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        final Submission submission = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get())
-                .getSubmission();
+        final Submission submission =
+                PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user).getSubmission();
         submission.setState(SubmissionState.WAITING);
         final SubmissionDto submissionDto =
                 PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, submission.getPackageBag());
         final PackageDto packageDto = PythonPackageTestFixture.GET_EXAMPLE_PACKAGE_DTO(submission.getPackageBag());
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
         when(submissionService.findById(submission.getId())).thenReturn(Optional.of(submission));
         when(submissionDtoConverter.convertEntityToDto(submission)).thenReturn(submissionDto);
         when(commonPackageDtoConverter.convertEntityToDto(any())).thenReturn(packageDto);

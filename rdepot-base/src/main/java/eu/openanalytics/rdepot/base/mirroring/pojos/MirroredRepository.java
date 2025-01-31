@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -42,6 +42,7 @@ public abstract class MirroredRepository<P extends MirroredPackage, M extends Mi
     protected String serverAddress;
     protected Boolean deleted = false;
     protected Boolean published = true;
+    protected Boolean requiresAuthentication;
     protected Set<M> mirrors = new HashSet<>();
 
     public abstract Technology getTechnology();

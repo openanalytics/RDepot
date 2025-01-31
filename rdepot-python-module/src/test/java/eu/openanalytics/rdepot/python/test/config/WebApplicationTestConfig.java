@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -26,11 +26,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import org.apache.catalina.core.ApplicationContext;
-import org.apache.catalina.core.ApplicationContextFacade;
-import org.apache.catalina.core.StandardContext;
-import org.apache.catalina.core.StandardEngine;
-import org.apache.catalina.core.StandardService;
+import org.apache.catalina.core.*;
 import org.junit.jupiter.api.io.TempDir;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -104,14 +100,13 @@ public class WebApplicationTestConfig implements WebMvcConfigurer {
 
     @Bean
     public MappingJackson2HttpMessageConverter jsonConverter() {
-        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        return converter;
+        return new MappingJackson2HttpMessageConverter();
     }
 
     @Bean
     public ByteArrayHttpMessageConverter byteConverter() {
         ByteArrayHttpMessageConverter converter = new ByteArrayHttpMessageConverter();
-        List<MediaType> mediaTypes = new ArrayList<MediaType>();
+        List<MediaType> mediaTypes = new ArrayList<>();
         mediaTypes.add(MediaType.valueOf("application/gzip"));
         mediaTypes.add(MediaType.valueOf("application/pdf"));
         converter.setSupportedMediaTypes(mediaTypes);

@@ -1,4 +1,3 @@
-version: '3'
 services:
   proxy:
     image: registry.openanalytics.eu/proxy/library/nginx:alpine

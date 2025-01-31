@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -28,15 +28,7 @@ import eu.openanalytics.rdepot.base.api.v2.converters.exceptions.EntityResolutio
 import eu.openanalytics.rdepot.base.api.v2.dtos.PackageUploadRequest;
 import eu.openanalytics.rdepot.base.api.v2.dtos.ResponseDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.SubmissionDto;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.ApiException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.ApplyPatchException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.CreateException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.DeleteException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.InvalidSubmission;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.MalformedPatchException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.RepositoryNotFound;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.SubmissionNotFound;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.UserNotAuthorized;
+import eu.openanalytics.rdepot.base.api.v2.exceptions.*;
 import eu.openanalytics.rdepot.base.api.v2.resolvers.CommonPageableSortResolver;
 import eu.openanalytics.rdepot.base.api.v2.resolvers.DtoResolvedPageable;
 import eu.openanalytics.rdepot.base.api.v2.validation.PageableValidator;
@@ -54,6 +46,7 @@ import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.exceptions.NonFatalSubmissionStrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
+import eu.openanalytics.rdepot.base.time.DateParser;
 import eu.openanalytics.rdepot.base.utils.specs.SpecificationUtils;
 import eu.openanalytics.rdepot.base.utils.specs.SubmissionSpecs;
 import eu.openanalytics.rdepot.base.validation.SubmissionPatchValidator;
@@ -69,16 +62,10 @@ import eu.openanalytics.rdepot.python.services.PythonRepositoryService;
 import eu.openanalytics.rdepot.python.strategy.factory.PythonStrategyFactory;
 import eu.openanalytics.rdepot.python.validation.PythonPackageValidator;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonArrayBuilder;
-import jakarta.json.JsonException;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
-import jakarta.json.JsonPatch;
+import jakarta.json.*;
 import jakarta.json.spi.JsonProvider;
 import java.security.Principal;
-import java.util.Arrays;
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -98,17 +85,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -119,8 +96,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping(value = "/api/v2/manager/python/submissions")
 public class PythonSubmissionController extends ApiV2Controller<Submission, SubmissionDto> {
 
-    private SubmissionService submissionService;
-    private UserService userService;
+    private final SubmissionService submissionService;
+    private final UserService userService;
     private final PythonStrategyFactory strategyFactory;
     private final SecurityMediator securityMediator;
     private final PythonRepositoryService repositoryService;
@@ -180,12 +157,11 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
      * @param repository     name of the destination repository
      * @param generateManual specifies if manuals should be generated for the
      *                       package
-     * @param replace        specified if previous version should be replaced
+     * @param replaceRequestParam specified if previous version should be replaced
      * @param principal      used for authorization
      * @return DTO with created submission
      * @throws UserNotAuthorized
      * @throws CreateException    if there was an error on the server side
-     * @throws InvalidSubmission  if user provided invalid file or parameters
      * @throws RepositoryNotFound
      */
     @PreAuthorize("hasAuthority('user')")
@@ -197,8 +173,9 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
             @RequestParam("repository") final String repository,
             @RequestParam(name = "generateManual", defaultValue = "${generate-manuals}") final Boolean generateManual,
             @RequestParam(name = "replace", defaultValue = "false") final Boolean replaceRequestParam,
+            @RequestParam(name = "changes") Optional<String> changes,
             Principal principal)
-            throws UserNotAuthorized, CreateException, InvalidSubmission, RepositoryNotFound {
+            throws UserNotAuthorized, CreateException, RepositoryNotFound {
 
         boolean replace = replaceRequestParam;
 
@@ -215,8 +192,8 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
             return handleValidationError(validationResult);
         }
 
-        PackageUploadRequest<PythonRepository> request =
-                new PackageUploadRequest<>(multipartFile, repositoryEntity, generateManual, replace);
+        PackageUploadRequest<PythonRepository> request = new PackageUploadRequest<>(
+                multipartFile, repositoryEntity, generateManual, replace, changes.orElse(""));
 
         Strategy<Submission> strategy = strategyFactory.uploadPackageStrategy(request, uploader);
 
@@ -236,7 +213,7 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
             log.error(e.getMessage(), e);
             if (e.getReason() instanceof PackageDuplicateWithReplaceOff replaceOffWarning) {
                 log.debug(
-                        "warning",
+                        "warning: {}",
                         Pair.of(Objects.requireNonNull(multipartFile.getOriginalFilename()), e.getMessage()));
                 if (!replacingPackagesEnabled && replaceRequestParam)
                     return handleWarningForSingleEntity(
@@ -300,7 +277,7 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
                     submission, dtoConverter.resolveDtoToEntity(submissionDto), repository, requester);
             submission = strategyExecutor.execute(strategy);
         } catch (StrategyFailure | EntityResolutionException e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new ApplyPatchException(messageSource, locale);
         } catch (JsonProcessingException | JsonException | PatchValidationException e) {
             throw new MalformedPatchException(messageSource, locale, e);
@@ -310,7 +287,7 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
     }
 
     /**
-     * This method is supposed to make state field case insensitive.
+     * This method is supposed to make state field case-insensitive.
      *
      * @param jsonPatch to fix
      * @return fixed patch
@@ -367,15 +344,17 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
             @RequestParam(name = "toDate", required = false) Optional<String> toDate,
             @RequestParam(name = "search", required = false) Optional<String> search)
             throws ApiException {
-        if (!userService.findActiveByLogin(principal.getName()).isPresent()) {
+        if (userService.findActiveByLogin(principal.getName()).isEmpty()) {
             throw new UserNotAuthorized(messageSource, locale);
         }
 
         final DtoResolvedPageable resolvedPageable = pageableSortResolver.resolve(pageable);
         pageableValidator.validate(SubmissionDto.class, resolvedPageable);
 
-        Specification<Submission> specification =
-                Specification.where(SubmissionSpecs.ofTechnology(Arrays.asList("Python")));
+        final Optional<Instant> fromDateInstant = fromDate.flatMap(DateParser::parseTimestampStart);
+        final Optional<Instant> toDateInstant = toDate.flatMap(DateParser::parseTimestampEnd);
+
+        Specification<Submission> specification = Specification.where(SubmissionSpecs.ofTechnology(List.of("Python")));
 
         if (Objects.nonNull(states)) {
             specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.ofState(states));
@@ -389,12 +368,13 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
             specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.ofRepository(repositories));
         }
 
-        if (fromDate.isPresent()) {
-            specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.fromDate(fromDate.get()));
+        if (fromDateInstant.isPresent()) {
+            specification =
+                    SpecificationUtils.andComponent(specification, SubmissionSpecs.fromDate(fromDateInstant.get()));
         }
 
-        if (toDate.isPresent()) {
-            specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.toDate(toDate.get()));
+        if (toDateInstant.isPresent()) {
+            specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.toDate(toDateInstant.get()));
         }
 
         if (search.isPresent()) {
@@ -426,7 +406,7 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
     @Operation(operationId = "getPythonSubmissionById")
     public @ResponseBody ResponseEntity<ResponseDto<EntityModel<SubmissionDto>>> getSubmissionById(
             Principal principal, @PathVariable("id") Integer id) throws SubmissionNotFound, UserNotAuthorized {
-        if (!userService.findActiveByLogin(principal.getName()).isPresent()) {
+        if (userService.findActiveByLogin(principal.getName()).isEmpty()) {
             throw new UserNotAuthorized(messageSource, locale);
         }
         Submission submission =
@@ -443,7 +423,6 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
      *
      * @param principal used for authorization
      * @param id
-     * @return
      * @throws SubmissionNotFound
      * @throws UserNotAuthorized
      * @throws DeleteException
@@ -465,7 +444,7 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
         try {
             submissionDeleter.delete(submission);
         } catch (DeleteEntityException e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new DeleteException(messageSource, locale);
         }
     }

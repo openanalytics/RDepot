@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -25,11 +25,13 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2UserController;
 import eu.openanalytics.rdepot.base.api.v2.converters.DtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.dtos.UserDto;
+import eu.openanalytics.rdepot.base.api.v2.hateoas.linking.LinkWithModifiableProperties;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.service.UserService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
@@ -54,12 +56,18 @@ public class UserModelAssembler extends AbstractRoleAwareModelAssembler<User, Us
 
     @Override
     protected List<Link> getLinksToMethodsWithLimitedAccess(User entity, User user, Link baseLink) {
-        List<Link> links = new ArrayList<>();
+        final List<Link> links = new ArrayList<>();
 
         if (userService.isAdmin(user)) {
             links.add(linkTo(baseControllerClass).withRel("userList"));
-            links.add(baseLink.withType(HTTP_METHODS.PATCH.getValue()));
-            links.add(baseLink.withType(HTTP_METHODS.DELETE.getValue()));
+            final String[] commonProperties = new String[] {"active", "roleId"};
+            final String[] modifiableProperties = user.getId() == entity.getId()
+                    ? commonProperties
+                    : // A user cannot delete themselves
+                    ArrayUtils.addFirst(commonProperties, "deleted");
+            final LinkWithModifiableProperties link = new LinkWithModifiableProperties(
+                    baseLink.withType(HTTP_METHODS.PATCH.getValue()), modifiableProperties);
+            links.add(link);
         }
 
         return links;

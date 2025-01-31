@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -25,7 +25,7 @@ import eu.openanalytics.rdepot.base.entities.enums.SubmissionState;
 import eu.openanalytics.rdepot.base.utils.TechnologyResolver;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -60,27 +60,24 @@ public class SubmissionSpecs {
                 "%" + packageBag.toLowerCase() + "%");
     }
 
-    public static Specification<Submission> fromDate(String fromDate) {
+    public static Specification<Submission> fromDate(Instant fromDate) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-            LocalDate date = LocalDate.parse(fromDate);
-
-            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("createdDate"), date));
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("createdDate"), fromDate));
             query.distinct(true);
 
-            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }
 
-    public static Specification<Submission> toDate(String toDate) {
+    public static Specification<Submission> toDate(Instant toDate) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-            LocalDate date = LocalDate.parse(toDate);
 
-            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("createdDate"), date));
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("createdDate"), toDate));
             query.distinct(true);
 
-            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }
 

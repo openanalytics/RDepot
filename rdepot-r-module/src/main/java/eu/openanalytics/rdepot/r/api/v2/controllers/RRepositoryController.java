@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -182,9 +182,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
         final DtoResolvedPageable resolvedPageable = pageableSortResolver.resolve(pageable);
         pageableValidator.validate(RepositoryDto.class, resolvedPageable);
 
-        Specification<RRepository> specs = null;
-
-        specs = SpecificationUtils.andComponent(specs, RepositorySpecs.isDeleted(deleted));
+        Specification<RRepository> specs = SpecificationUtils.andComponent(null, RepositorySpecs.isDeleted(deleted));
         if (name.isPresent()) specs = SpecificationUtils.andComponent(specs, RepositorySpecs.ofName(name.get()));
         return handleSuccessForPagedCollection(
                 repositoryService.findAllBySpecification(specs, resolvedPageable), requester);
@@ -251,7 +249,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
             RRepository repository = strategyExecutor.execute(strategy);
             return handleCreatedForSingleEntity(repository, requester);
         } catch (StrategyFailure e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new CreateException(messageSource, locale);
         } catch (EntityResolutionException e) {
             return handleValidationError(e);
@@ -301,7 +299,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
         } catch (JsonException | JsonProcessingException e) {
             throw new MalformedPatchException(messageSource, locale, e);
         } catch (StrategyFailure e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new ApplyPatchException(messageSource, locale);
         } catch (EntityResolutionException e) {
             return handleValidationError(e);
@@ -334,7 +332,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
         try {
             deleter.delete(repository);
         } catch (DeleteEntityException e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new DeleteException(messageSource, locale);
         }
     }
@@ -346,7 +344,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/{id}/synchronize-mirrors")
     public void synchronizeWithMirrors(@PathVariable("id") Integer id, Principal principal) throws ApiException {
-        if (!userService.findActiveByLogin(principal.getName()).isPresent()) {
+        if (userService.findActiveByLogin(principal.getName()).isEmpty()) {
             throw new UserNotAuthorized(messageSource, locale);
         }
         RRepository repository =
@@ -385,5 +383,48 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
         }
 
         throw new SynchronizationNotFound(messageSource, locale);
+    }
+
+    /**
+     * Republish repository.
+     * @param principal used for authorization
+     * @param id ID of repository to republish
+     */
+    @PreAuthorize("hasAuthority('repositorymaintainer')")
+    @PostMapping(value = "/{id}/republish")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(operationId = "republishRRepository")
+    public @ResponseBody ResponseEntity<?> republishRepository(@PathVariable("id") Integer id, Principal principal)
+            throws UserNotAuthorized, CreateException, RepositoryNotFound {
+
+        User requester = userService
+                .findActiveByLogin(principal.getName())
+                .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
+
+        RRepository repository =
+                repositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
+
+        try {
+            BindingResult bindingResult = createBindingResult(repository);
+
+            repositoryValidator.validate(repository, bindingResult);
+
+            if (bindingResult.hasErrors()) return handleValidationError(bindingResult);
+
+            Strategy<RRepository> strategy;
+            if (repository.getPublished()) {
+                strategy = factory.republishRepositoryStrategy(repository, requester);
+            } else {
+                RRepository publishedRepo = new RRepository(repository);
+                publishedRepo.setPublished(true);
+                strategy = factory.updateRepositoryStrategy(repository, requester, publishedRepo);
+            }
+
+            repository = strategyExecutor.execute(strategy);
+            return handleSuccessForSingleEntity(repository, requester);
+        } catch (StrategyFailure e) {
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
+            throw new CreateException(messageSource, locale);
+        }
     }
 }

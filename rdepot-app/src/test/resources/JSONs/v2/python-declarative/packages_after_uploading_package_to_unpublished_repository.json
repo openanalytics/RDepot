@@ -24,7 +24,9 @@
                     "name": "Y",
                     "publicationUri": "http://localhost/repo/Y",
                     "published": false,
-                    "technology": "Python"
+                    "technology": "Python",
+                    "requiresAuthentication": true,
+                    "lastPublicationSuccessful": false
                 },
                 "submission": {
                     "id": 1,

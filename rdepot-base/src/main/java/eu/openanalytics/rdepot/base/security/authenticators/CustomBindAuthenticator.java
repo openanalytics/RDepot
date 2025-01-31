@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -103,7 +103,7 @@ public abstract class CustomBindAuthenticator {
         return securityMediator.getGrantedAuthorities(username);
     }
 
-    private void verifyAndUpdateUser(User user, String login, String name, String email, boolean isAdmin)
+    protected void verifyAndUpdateUser(User user, String login, String name, String email, boolean isAdmin)
             throws AuthException {
         if (user.isDeleted()) {
             throw new UserSoftDeletedException(user);

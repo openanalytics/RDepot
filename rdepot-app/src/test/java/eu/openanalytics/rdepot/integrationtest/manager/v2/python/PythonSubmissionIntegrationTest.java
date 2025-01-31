@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
 public class PythonSubmissionIntegrationTest extends IntegrationTest {
 
     private final SubmissionTestData testData;
-    private static String EVENTS_PATH = "/v2/python/events/submissions/";
+    private static final String EVENTS_PATH = "/v2/python/events/submissions/";
 
     public PythonSubmissionIntegrationTest() {
         super("/api/v2/manager/python/submissions");
@@ -64,6 +64,7 @@ public class PythonSubmissionIntegrationTest extends IntegrationTest {
                 "testrepo9",
                 false,
                 true,
+                "",
                 new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
                         .fileName(packageBag.getName())
                         .mimeType("application/gzip")
@@ -87,6 +88,7 @@ public class PythonSubmissionIntegrationTest extends IntegrationTest {
                 "testrepo9",
                 false,
                 false,
+                "",
                 new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
                         .fileName(packageBag.getName())
                         .mimeType("application/gzip")
@@ -112,6 +114,7 @@ public class PythonSubmissionIntegrationTest extends IntegrationTest {
                 "testrepo8",
                 false,
                 true,
+                "",
                 new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
                         .fileName(packageBag.getName())
                         .mimeType("application/gzip")
@@ -148,6 +151,7 @@ public class PythonSubmissionIntegrationTest extends IntegrationTest {
                 "testrepo9",
                 false,
                 true,
+                "",
                 new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
                         .fileName(packageBag.getName())
                         .mimeType("application/gzip")
@@ -161,14 +165,14 @@ public class PythonSubmissionIntegrationTest extends IntegrationTest {
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getPostEndpointNewEventsAmount())
                 .expectedJsonPath("/v2/python/submissions/new_wheel_submission.json")
-                .expectedEventsJson("/v2/python/events/submissions/new_wheel_submission_events.json")
+                .expectedEventsJson(EVENTS_PATH + "new_wheel_submission_events.json")
                 .submissionMultipartBody(body)
                 .build();
         testEndpoint(requestBody);
 
         requestBody = TestRequestBody.builder()
                 .requestType(RequestType.GET_AFTER_NEW_SUBMISSION)
-                .urlSuffix("/47")
+                .urlSuffix("/48")
                 .statusCode(200)
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
@@ -184,6 +188,7 @@ public class PythonSubmissionIntegrationTest extends IntegrationTest {
                 "testrepo9",
                 false,
                 true,
+                "",
                 new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
                         .fileName(packageBag.getName())
                         .mimeType("application/gzip")
@@ -197,14 +202,14 @@ public class PythonSubmissionIntegrationTest extends IntegrationTest {
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getPostEndpointNewEventsAmount())
                 .expectedJsonPath("/v2/python/submissions/new_wheel_0-40-0_submission.json")
-                .expectedEventsJson("/v2/python/events/submissions/new_wheel_0-40-0_submission_events.json")
+                .expectedEventsJson(EVENTS_PATH + "new_wheel_0-40-0_submission_events.json")
                 .submissionMultipartBody(body)
                 .build();
         testEndpoint(requestBody);
 
         requestBody = TestRequestBody.builder()
                 .requestType(RequestType.GET_AFTER_NEW_SUBMISSION)
-                .urlSuffix("/47")
+                .urlSuffix("/48")
                 .statusCode(200)
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
@@ -220,6 +225,7 @@ public class PythonSubmissionIntegrationTest extends IntegrationTest {
                 "testrepo9",
                 false,
                 true,
+                "",
                 new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
                         .fileName(packageBag.getName())
                         .mimeType("application/gzip")
@@ -233,14 +239,14 @@ public class PythonSubmissionIntegrationTest extends IntegrationTest {
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getPostEndpointNewEventsAmount())
                 .expectedJsonPath("/v2/python/submissions/new_wheel_0-40-0_custom_submission.json")
-                .expectedEventsJson("/v2/python/events/submissions/new_wheel_0-40-0_submission_events.json")
+                .expectedEventsJson(EVENTS_PATH + "new_wheel_0-40-0_submission_events.json")
                 .submissionMultipartBody(body)
                 .build();
         testEndpoint(requestBody);
 
         requestBody = TestRequestBody.builder()
                 .requestType(RequestType.GET_AFTER_NEW_SUBMISSION)
-                .urlSuffix("/47")
+                .urlSuffix("/48")
                 .statusCode(200)
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
@@ -256,6 +262,7 @@ public class PythonSubmissionIntegrationTest extends IntegrationTest {
                 "testrepo9",
                 false,
                 true,
+                "",
                 new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
                         .fileName(packageBag.getName())
                         .mimeType("application/gzip")
@@ -585,6 +592,106 @@ public class PythonSubmissionIntegrationTest extends IntegrationTest {
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
                 .expectedJsonPath("/v2/malformed_patch_submission.json")
                 .body(patch)
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void submitPackage_replaceWithChanges() throws Exception {
+        File packageBag = new File("src/test/resources/itestPackages/coconutpy-2.2.1.tar.gz");
+
+        SubmissionMultipartBody body = new SubmissionMultipartBody(
+                "testrepo9",
+                false,
+                true,
+                "",
+                new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+                        .fileName(packageBag.getName())
+                        .mimeType("application/gzip")
+                        .controlName("file")
+                        .build());
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST_MULTIPART)
+                .urlSuffix("/")
+                .statusCode(201)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getPostEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/python/submissions/new_coconutpy_approved_submission.json")
+                .expectedEventsJson(EVENTS_PATH + "new_submission_events.json")
+                .submissionMultipartBody(body)
+                .build();
+        testEndpoint(requestBody);
+
+        packageBag = new File("src/test/resources/itestPackages/coconutpy-2.2.1.tar.gz");
+
+        body = new SubmissionMultipartBody(
+                "testrepo9",
+                false,
+                true,
+                "this package has been changed",
+                new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+                        .fileName(packageBag.getName())
+                        .mimeType("application/gzip")
+                        .controlName("file")
+                        .build());
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST_MULTIPART)
+                .urlSuffix("/")
+                .statusCode(201)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(0)
+                .expectedJsonPath("/v2/python/submissions/new_coconutpy_with_changes.json")
+                .expectedEventsJson(EVENTS_PATH + "new_submission_events.json")
+                .submissionMultipartBody(body)
+                .build();
+        testEndpoint(requestBody);
+
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET_OTHER_RESOURCE)
+                .path("/api/v2/manager/packages")
+                .urlSuffix("?sort=id,asc")
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/python/packages/list_of_packages_after_replace.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void submitPackage_asPackageMaintainer() throws Exception {
+        final String postBody =
+                "{" + "\"user\": { \"id\": 6}," + "\"packageName\": \"wheel\"," + "\"repository\": {\"id\" : 9}" + "}";
+
+        testPostEndpoint(
+                postBody,
+                "/api/v2/manager/package-maintainers",
+                "/v2/base/package-maintainer/maintainer_python_created.json",
+                201,
+                ADMIN_TOKEN);
+
+        File packageBag = new File("src/test/resources/itestPackages/wheel-0.42.0.tar.gz");
+        SubmissionMultipartBody body = new SubmissionMultipartBody(
+                "testrepo9",
+                false,
+                true,
+                "",
+                new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+                        .fileName(packageBag.getName())
+                        .mimeType("application/gzip")
+                        .controlName("file")
+                        .build());
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST_MULTIPART)
+                .urlSuffix("/")
+                .statusCode(201)
+                .token(PACKAGEMAINTAINER_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getPostEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/python/submissions/new_submission_as_package_maintainer.json")
+                .expectedEventsJson(EVENTS_PATH + "new_submission_as_package_maintainer.json")
+                .submissionMultipartBody(body)
                 .build();
         testEndpoint(requestBody);
     }

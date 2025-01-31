@@ -1,0 +1,24 @@
+databaseChangeLog:
+  - changeSet:
+      id: 14_01_last_used_access_token
+      author: pgleska
+      changes:
+        - addColumn:
+            tableName: repository
+            schemaName: public
+            columns:
+            - column:
+                name: requires_authentication
+                type: bool
+                defaultValueBoolean: true
+                constraints:
+                  nullable: false
+  - changeSet:
+      id: 14_02_extend_changed_variable
+      author: pgleska
+      changes:
+        - modifyDataType:
+           schemaName: public
+           tableName: changed_variable
+           columnName: changed_variable
+           newDataType: character varying(32)

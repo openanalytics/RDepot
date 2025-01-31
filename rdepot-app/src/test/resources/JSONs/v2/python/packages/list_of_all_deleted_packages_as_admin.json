@@ -1,72 +1,81 @@
 {
-  "code": 200,
-  "data": {
-    "links": [{
-      "rel": "self",
-      "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages?deleted=true&page=0&size=20&sort=id,asc"
-    }],
-    "page": {
-      "number": 0,
-      "size": 20,
-      "totalPages": 1,
-      "totalElements": 1
-    },
-    "content": [{
-      "authorEmail": null,
-      "projectUrl": "Documentation, https:\/\/boto3.amazonaws.com\/v1\/documentation\/api\/latest\/index.html, Source, https:\/\/github.com\/boto\/boto3",
-      "keywords": null,
-      "description": null,
-      "source": "\/opt\/rdepot\/repositories\/8\/55941618\/boto3-1.26.156.tar.gz",
-      "repository": {
-        "name": "testrepo8",
-        "id": 8,
-        "published": true,
-        "technology": "Python",
-        "publicationUri": "http:\/\/localhost\/repo\/testrepo8"
-      },
-      "title": "The AWS SDK for Python",
-      "requiresDist": null,
-      "homePage": "",
-      "maintainer": null,
-      "platform": null,
-      "requiresPython": ">= 3.7",
-      "requiresExternal": null,
-      "descriptionContentType": null,
-      "classifiers": "Development Status :: 5 - Production\/Stable, Intended Audience :: Developers, Natural Language :: English, License :: OSI Approved :: Apache Software License, Programming Language :: Python, Programming Language :: Python :: 3, Programming Language :: Python :: 3.7, Programming Language :: Python :: 3.8, Programming Language :: Python :: 3.9, Programming Language :: Python :: 3.10, Programming Language :: Python :: 3.11",
-      "links": [{
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/42"
-      }, {
-        "rel": "packageList",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages"
-      }],
-      "id": 42,
-      "summary": "The AWS SDK for Python",
-      "author": "Amazon Web Services",
-      "active": true,
-      "maintainerEmail": null,
-      "technology": "Python",
-      "version": "1.26.156",
-      "url": "Documentation, https:\/\/boto3.amazonaws.com\/v1\/documentation\/api\/latest\/index.html, Source, https:\/\/github.com\/boto\/boto3",
-      "providesExtra": "crt",
-      "license": "Apache License 2.0",
-      "deleted": true,
-      "binary": false,
-      "name": "boto3",
-      "submission": {
-        "id": 42,
-        "state": "ACCEPTED"
-      },
-      "user": {
-        "name": "Galileo Galilei",
-        "id": 6,
-        "login": "galieleo",
-        "email": "galieleo@ldap.forumsys.com"
-      },
-      "hash": "3a60283676399ae94b49b7a170fb0f42ca2ddcde490988fb0af7fd5a64440ab8"
-    }]
-  },
-  "messageCode": "success.request.processed",
-  "message": "Your request has been processed successfully.",
-  "status": "SUCCESS"
+	"code": 200,
+	"data": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages?deleted=true&page=0&size=20&sort=id,asc"
+			}
+		],
+		"page": {
+			"number": 0,
+			"size": 20,
+			"totalPages": 1,
+			"totalElements": 1
+		},
+		"content": [
+			{
+				"authorEmail": null,
+				"projectUrl": "Documentation, https:\/\/boto3.amazonaws.com\/v1\/documentation\/api\/latest\/index.html, Source, https:\/\/github.com\/boto\/boto3",
+				"keywords": null,
+				"description": null,
+				"source": "\/opt\/rdepot\/repositories\/8\/55941618\/boto3-1.26.156.tar.gz",
+				"repository": {
+					"name": "testrepo8",
+					"lastPublicationSuccessful": true,
+					"id": 8,
+					"published": true,
+					"technology": "Python",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo8"
+				},
+				"title": "The AWS SDK for Python",
+				"requiresDist": null,
+				"homePage": "",
+				"maintainer": null,
+				"platform": null,
+				"requiresPython": ">= 3.7",
+				"requiresExternal": null,
+				"descriptionContentType": null,
+				"classifiers": "Development Status :: 5 - Production\/Stable, Intended Audience :: Developers, Natural Language :: English, License :: OSI Approved :: Apache Software License, Programming Language :: Python, Programming Language :: Python :: 3, Programming Language :: Python :: 3.7, Programming Language :: Python :: 3.8, Programming Language :: Python :: 3.9, Programming Language :: Python :: 3.10, Programming Language :: Python :: 3.11",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/42"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages"
+					}
+				],
+				"id": 42,
+				"summary": "The AWS SDK for Python",
+				"author": "Amazon Web Services",
+				"active": true,
+				"maintainerEmail": null,
+				"technology": "Python",
+				"version": "1.26.156",
+				"url": "Documentation, https:\/\/boto3.amazonaws.com\/v1\/documentation\/api\/latest\/index.html, Source, https:\/\/github.com\/boto\/boto3",
+				"providesExtra": "crt",
+				"license": "Apache License 2.0",
+				"deleted": true,
+				"binary": false,
+				"name": "boto3",
+				"submission": {
+					"id": 42,
+					"state": "ACCEPTED"
+				},
+				"user": {
+					"name": "Galileo Galilei",
+					"id": 6,
+					"login": "galieleo",
+					"email": "galieleo@ldap.forumsys.com"
+				},
+				"hash": "3a60283676399ae94b49b7a170fb0f42ca2ddcde490988fb0af7fd5a64440ab8"
+			}
+		]
+	},
+	"messageCode": "success.request.processed",
+	"message": "Your request has been processed successfully.",
+	"status": "SUCCESS"
 }

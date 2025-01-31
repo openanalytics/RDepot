@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -47,6 +47,7 @@ public class PythonRepositoryIntegrationTest extends IntegrationTest {
                 .repoIdToDelete("8")
                 .repoIdToShiftDelete("10")
                 .repoIdToEdit("9")
+                .repoIdToChangeHash("10")
                 .repoIdToRead("9")
                 .deletedRepoId("11")
                 .getEndpointNewEventsAmount(0)
@@ -440,6 +441,35 @@ public class PythonRepositoryIntegrationTest extends IntegrationTest {
                 .body(patch)
                 .build();
 
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void patchRepository_changeHash() throws Exception {
+        final String patch =
+                "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/hashMethod\"," + "\"value\": \"SHA256\"" + "}" + "]";
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.PATCH)
+                .urlSuffix("/" + testData.getRepoIdToChangeHash())
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getChangeEndpointNewEventsAmount())
+                .expectedJsonPath(REPOSITORIES_PATH + "patched_repository_changed_hash_method.json")
+                .expectedEventsJson(EVENTS_PATH + "patched_changed_hash_method_repository_event.json")
+                .body(patch)
+                .build();
+        testEndpoint(requestBody);
+
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET_OTHER_RESOURCE)
+                .path("/api/v2/manager/python/packages")
+                .urlSuffix("?repository=testrepo10&sort=id,desc")
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/python/packages/packages_after_hash_recalculation.json")
+                .build();
         testEndpoint(requestBody);
     }
 }

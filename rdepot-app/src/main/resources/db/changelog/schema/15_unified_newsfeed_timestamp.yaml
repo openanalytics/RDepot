@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: 15_01_unified_newsfeed_event_timestamp
+      author: wgorczak
+      preConditions:
+        - onFail: MARK_RAN
+        - columnExists:
+            columnName: date
+            tableName: newsfeed_event
+      changes:
+        - sql:
+            sql: "ALTER TABLE public.newsfeed_event ADD timestamp TIMESTAMP DEFAULT now() NOT NULL; \
+            UPDATE public.newsfeed_event SET timestamp = TO_TIMESTAMP(CONCAT(TO_CHAR(date, 'yyyy-mm-dd'), ' ', TO_CHAR(CAST(time as TIME), 'HH24:MI:SS')), 'yyyy-mm-dd HH24:MI:SS')::timestamp; \
+            ALTER TABLE public.newsfeed_event DROP COLUMN time; \
+            ALTER TABLE public.newsfeed_event DROP COLUMN date; \
+            ALTER TABLE public.newsfeed_event RENAME COLUMN timestamp TO time;"

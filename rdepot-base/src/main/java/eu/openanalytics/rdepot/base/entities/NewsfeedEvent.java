@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -37,8 +37,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Getter;
@@ -60,10 +59,7 @@ import lombok.Setter;
 public class NewsfeedEvent extends Resource {
 
     @Column(name = "time", nullable = false)
-    private LocalDateTime time = LocalDateTime.now();
-
-    @Column(name = "date", nullable = false)
-    private LocalDate date = time.toLocalDate();
+    private Instant time = Instant.now();
 
     @ManyToOne
     @JoinColumn(name = "author_id", nullable = false)

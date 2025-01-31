@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -148,9 +148,8 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
         final DtoResolvedPageable resolvedPageable = pageableSortResolver.resolve(pageable);
         pageableValidator.validate(RepositoryDto.class, resolvedPageable);
 
-        Specification<PythonRepository> specs = null;
-
-        specs = SpecificationUtils.andComponent(specs, RepositorySpecs.isDeleted(deleted));
+        Specification<PythonRepository> specs =
+                SpecificationUtils.andComponent(null, RepositorySpecs.isDeleted(deleted));
         if (name.isPresent()) specs = SpecificationUtils.andComponent(specs, RepositorySpecs.ofName(name.get()));
         return handleSuccessForPagedCollection(
                 repositoryService.findAllBySpecification(specs, resolvedPageable), requester);
@@ -211,7 +210,7 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
         } catch (PythonRepositoryValidationError e) {
             return handleValidationError(e.getBindingResult());
         } catch (StrategyFailure e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new CreateException(messageSource, LocaleContextHolder.getLocale());
         } catch (EntityResolutionException e) {
             return handleValidationError(e);
@@ -246,7 +245,7 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
         } catch (JsonException | JsonProcessingException e) {
             throw new MalformedPatchException(messageSource, locale, e);
         } catch (StrategyFailure e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new ApplyPatchException(messageSource, locale);
         } catch (PythonRepositoryValidationError e) {
             return handleValidationError(e.getBindingResult());
@@ -276,13 +275,56 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
         try {
             deleter.delete(repository);
         } catch (DeleteEntityException e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new DeleteException(messageSource, locale);
         }
     }
 
+    /**
+     * Republish repository.
+     * @param principal used for authorization
+     * @param id ID of repository to republish
+     */
+    @PreAuthorize("hasAuthority('repositorymaintainer')")
+    @PostMapping(value = "/{id}/republish")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(operationId = "republishRRepository")
+    public @ResponseBody ResponseEntity<?> republishRepository(@PathVariable("id") Integer id, Principal principal)
+            throws UserNotAuthorized, CreateException, RepositoryNotFound {
+
+        User requester = userService
+                .findActiveByLogin(principal.getName())
+                .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
+
+        PythonRepository repository =
+                repositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
+
+        try {
+            BindingResult bindingResult = createBindingResult(repository);
+
+            validator.validate(repository, bindingResult);
+
+            if (bindingResult.hasErrors()) return handleValidationError(bindingResult);
+
+            Strategy<PythonRepository> strategy;
+            if (repository.getPublished()) {
+                strategy = factory.republishRepositoryStrategy(repository, requester);
+            } else {
+                PythonRepository publishedRepo = new PythonRepository(repository);
+                publishedRepo.setPublished(true);
+                strategy = factory.updateRepositoryStrategy(repository, requester, publishedRepo);
+            }
+
+            repository = strategyExecutor.execute(strategy);
+            return handleSuccessForSingleEntity(repository, requester);
+        } catch (StrategyFailure e) {
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
+            throw new CreateException(messageSource, locale);
+        }
+    }
+
     private void checkDeclarative() throws NotAllowedInDeclarativeMode {
-        if (Boolean.valueOf(declarative)) throw new NotAllowedInDeclarativeMode(messageSource, locale);
+        if (Boolean.parseBoolean(declarative)) throw new NotAllowedInDeclarativeMode(messageSource, locale);
     }
 
     private void validate(PythonRepository entity) throws PythonRepositoryValidationError {
@@ -292,10 +334,9 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
     }
 
     private User getRequester(Principal principal) throws UserNotAuthorized {
-        User requester = userService
+        return userService
                 .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, LocaleContextHolder.getLocale()));
-        return requester;
     }
 
     private void checkIfUserIsAdmin(User user) throws UserNotAuthorized {

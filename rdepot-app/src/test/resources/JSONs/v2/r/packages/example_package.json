@@ -1,71 +1,73 @@
 {
-  "code": 200,
-  "data": {
-    "enhances": null,
-    "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-    "source": "/opt/rdepot/repositories/2/9907084/A3_0.9.2.tar.gz",
-    "repository": {
-      "name": "testrepo1",
-      "id": 2,
-      "published": true,
-      "technology": "R",
-      "publicationUri": "http://localhost/repo/testrepo1"
-    },
-    "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
-    "distribution": null,
-    "suggests": "randomForest, e1071",
-    "systemRequirements": null,
-    "md5sum": "76d726aee8dd7c6ed94d150d5718015b",
-    "links": [
-      {
-        "rel": "self",
-        "href": "http://localhost:8017/api/v2/manager/r/packages/17"
-      },
-      {
-        "rel": "packageList",
-        "href": "http://localhost:8017/api/v2/manager/r/packages"
-      },
-      {
-        "rel": "self",
-        "href": "http://localhost:8017/api/v2/manager/r/packages/17",
-        "type": "PATCH"
-      },
-      {
-        "rel": "self",
-        "href": "http://localhost:8017/api/v2/manager/r/packages/17",
-        "type": "DELETE"
-      }
-    ],
-    "id": 17,
-    "rversion": null,
-    "architecture": null,
-    "imports": null,
-    "depends": "R (>= 2.15.0), xtable, pbapply",
-    "built": null,
-    "author": "Scott Fortmann-Roe",
-    "active": true,
-    "technology": "R",
-    "priority": null,
-    "version": "0.9.2",
-    "url": null,
-    "license": "GPL (>= 2)",
-    "deleted": false,
-    "binary": false,
-    "name": "A3",
-    "submission": {
-      "id": 17,
-      "state": "ACCEPTED"
-    },
-    "linkingTo": null,
-    "user": {
-      "name": "Nikola Tesla",
-      "id": 5,
-      "login": "tesla",
-      "email": "tesla@ldap.forumsys.com"
-    },
-    "needsCompilation": "no"
-  },
-  "messageCode": "success.request.processed",
-  "message": "Your request has been processed successfully.",
-  "status": "SUCCESS"
+	"code": 200,
+	"data": {
+		"enhances": null,
+		"description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
+		"source": "\/opt\/rdepot\/repositories\/2\/9907084\/A3_0.9.2.tar.gz",
+		"repository": {
+			"name": "testrepo1",
+			"lastPublicationSuccessful": true,
+			"id": 2,
+			"published": true,
+			"technology": "R",
+			"requiresAuthentication": false,
+			"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+		},
+		"title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
+		"distribution": null,
+		"suggests": "randomForest, e1071",
+		"systemRequirements": null,
+		"md5sum": "76d726aee8dd7c6ed94d150d5718015b",
+		"links": [
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/17"
+			},
+			{
+				"rel": "packageList",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+			},
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/17",
+				"type": "PATCH"
+			},
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/17",
+				"type": "DELETE"
+			}
+		],
+		"id": 17,
+		"rversion": null,
+		"architecture": null,
+		"imports": null,
+		"depends": "R (>= 2.15.0), xtable, pbapply",
+		"built": null,
+		"author": "Scott Fortmann-Roe",
+		"active": true,
+		"technology": "R",
+		"priority": null,
+		"version": "0.9.2",
+		"url": null,
+		"license": "GPL (>= 2)",
+		"deleted": false,
+		"binary": false,
+		"name": "A3",
+		"submission": {
+			"id": 17,
+			"state": "ACCEPTED"
+		},
+		"linkingTo": null,
+		"user": {
+			"name": "Nikola Tesla",
+			"id": 5,
+			"login": "tesla",
+			"email": "tesla@ldap.forumsys.com"
+		},
+		"needsCompilation": "no"
+	},
+	"messageCode": "success.request.processed",
+	"message": "Your request has been processed successfully.",
+	"status": "SUCCESS"
 }

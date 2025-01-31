@@ -1,0 +1,174 @@
+pipeline {
+  agent {
+    kubernetes {
+      inheritFrom 'kaniko'
+      yamlFile 'agent.pod.yaml'
+      defaultContainer 'rdepot-build'
+      yamlMergeStrategy merge()
+    }
+  }
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '3'))
+  }
+  environment {
+    VERSION = sh(returnStdout: true, script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout').trim()
+    NS = 'openanalytics'
+    DOCKER_BUILDKIT = '1'
+    REGISTRY = 'registry.openanalytics.eu'
+    NO_COLOR = 'true'
+  }
+  stages {
+    stage('license check') {
+      steps {
+        sh "mvn com.mycila:license-maven-plugin:check"
+      }
+    }
+    stage('static code analysis') {
+      steps {
+        sh "mvn clean install -DskipTests -Ddependency-check.skip=true -Perrorprone com.github.spotbugs:spotbugs-maven-plugin:check"
+        sh "mvn pmd:pmd"
+      }
+    }
+    stage('build test images and publish') {
+      steps {
+        container('kaniko') {
+          sh """
+          /kaniko/executor \
+                    -v info \
+                    --context ${env.WORKSPACE}/rdepot-app/src/test/resources/docker/app \
+                    --cache=true \
+                    --cache-repo ${env.REGISTRY}/${env.NS}/rdepot-app-it-cache \
+                    --log-format=text \
+                    --log-timestamp=true \
+                    --cleanup \
+                    --destination ${env.REGISTRY}/${env.NS}/rdepot-app-it:${env.VERSION}
+          """
+          sh """
+          /kaniko/executor \
+                    -v info \
+                    --context ${env.WORKSPACE}/rdepot-app/src/test/resources/docker/repo \
+                    --cache=true \
+                    --cache-repo ${env.REGISTRY}/${env.NS}/rdepot-repo-it-cache \
+                    --log-format=text \
+                    --log-timestamp=true \
+                    --cleanup \
+                    --destination ${env.REGISTRY}/${env.NS}/rdepot-repo-it:${env.VERSION}
+          """
+        }
+      }
+      post {
+        always {
+          sh "cp /kaniko/jenkins/mem*.log ${env.WORKSPACE}"
+          archiveArtifacts artifacts: 'mem*.log', fingerprint: true
+        }
+      }
+    }
+    stage('tests') {
+      steps {
+          configFileProvider([configFile(fileId: 'maven-settings-rsb', variable: 'MAVEN_SETTINGS_RSB')]) {
+            sh "mvn -s $MAVEN_SETTINGS_RSB clean deploy -Ddependency-check.skip=true"
+          }
+          publishHTML([
+            reportDir: 'rdepot-app/target/site/', reportFiles: 'failsafe-report.html',
+            reportName: 'Integration Test / App Test Report',
+            allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true])
+          publishHTML([
+            reportDir: 'rdepot-repo/target/site/', reportFiles: 'surefire-report.html',
+            reportName: 'Repo Test Report',
+            allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true])
+          publishHTML([
+            reportDir: 'rdepot-r-module/target/site/', reportFiles: 'surefire-report.html',
+            reportName: 'R Module Test Report',
+            allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true])
+          publishHTML([
+            reportDir: 'rdepot-python-module/target/site/', reportFiles: 'surefire-report.html',
+            reportName: 'Python Module Test Report',
+            allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true])
+          publishHTML([
+            reportDir: 'target/', reportFiles: 'dependency-check-report.html',
+            reportName: 'OWASP Dependency Analysis Report',
+            allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true])
+      }
+    }
+    stage('build images') {
+      steps {
+        container('kaniko') {
+          sh """
+          /kaniko/executor \
+                    -v info \
+                    --context ${env.WORKSPACE} \
+                    --cache=true \
+                    --cache-repo ${env.REGISTRY}/${env.NS}/rdepot-app-cache \
+                    --no-push \
+                    --log-format=text \
+                    --log-timestamp=true \
+                    --cleanup \
+                    --dockerfile ${env.WORKSPACE}/docker/build/app-standalone/Dockerfile
+          """
+          sh """
+          /kaniko/executor \
+                    -v info \
+                    --context ${env.WORKSPACE} \
+                    --cache=true \
+                    --cache-repo ${env.REGISTRY}/${env.NS}/rdepot-repo-cache \
+                    --no-push \
+                    --log-format=text \
+                    --log-timestamp=true \
+                    --cleanup \
+                    --dockerfile ${env.WORKSPACE}/docker/build/repo-standalone/Dockerfile
+          """
+        }
+      }
+      post {
+        always {
+          sh "cp /kaniko/jenkins/mem*.log ${env.WORKSPACE}"
+          archiveArtifacts artifacts: 'mem*.log', fingerprint: true
+        }
+      }
+    }
+    stage('publish images') {
+      when {
+        anyOf {
+          branch 'develop'
+          branch 'master'
+        }
+      }
+      steps {
+        container('kaniko') {
+          sh """
+          /kaniko/executor \
+                    -v info \
+                    --context ${env.WORKSPACE} \
+                    --log-format=text \
+                    --log-timestamp=true \
+                    --cache=true \
+                    --cache-repo ${env.REGISTRY}/${env.NS}/rdepot-app-cache \
+                    --cleanup \
+                    --dockerfile ${env.WORKSPACE}/docker/build/app-standalone/Dockerfile \
+                    --destination ${env.REGISTRY}/${env.NS}/rdepot-app:${env.VERSION} \
+                    --destination ${env.REGISTRY}/${env.NS}/rdepot-app:latest
+          """
+          sh """
+          /kaniko/executor \
+                    -v info \
+                    --context ${env.WORKSPACE} \
+                    --log-format=text \
+                    --log-timestamp=true \
+                    --cache=true \
+                    --cache-repo ${env.REGISTRY}/${env.NS}/rdepot-repo-cache \
+                    --cleanup \
+                    --dockerfile ${env.WORKSPACE}/docker/build/repo-standalone/Dockerfile \
+                    --destination ${env.REGISTRY}/${env.NS}/rdepot-repo:${env.VERSION} \
+                    --destination ${env.REGISTRY}/${env.NS}/rdepot-repo:latest
+          """
+        }
+      }
+      post {
+        always {
+          sh "cp /kaniko/jenkins/mem*.log ${env.WORKSPACE}"
+          archiveArtifacts artifacts: 'mem*.log', fingerprint: true
+        }
+      }
+    }
+  }
+}

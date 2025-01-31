@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -56,9 +56,8 @@ public class UploadSingleChunkRequestAssertionAnswer extends UploadChunkRequestA
 
     @Override
     public ResponseEntity<RepoResponse> answer(InvocationOnMock invocation) throws Throwable {
-        List<FileSystemResource> files = new ArrayList<>();
-        files.addAll(
-                packagesToUpload.stream().map(f -> new FileSystemResource(f)).toList());
+        List<FileSystemResource> files = new ArrayList<>(
+                packagesToUpload.stream().map(FileSystemResource::new).toList());
 
         @SuppressWarnings("unchecked")
         MultiValueMap<String, Object> entity =

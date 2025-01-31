@@ -21,6 +21,7 @@
         "deleted": false,
         "published": false,
         "synchronizing": false,
+        "requiresAuthentication": true,
         "technology": "R",
         "numberOfPackages": 0,
         "links": [
@@ -43,6 +44,7 @@
         "deleted": false,
         "lastPublicationSuccessful": true,
         "published": true,
+        "requiresAuthentication": false,
         "synchronizing": false,
         "technology": "R",
         "numberOfPackages": 1,

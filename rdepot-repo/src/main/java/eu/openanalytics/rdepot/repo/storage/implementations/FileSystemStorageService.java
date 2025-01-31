@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -34,18 +34,20 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Scanner;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 public abstract class FileSystemStorageService<T extends SynchronizeRepositoryRequestBody>
@@ -125,28 +127,6 @@ public abstract class FileSystemStorageService<T extends SynchronizeRepositoryRe
         } catch (EmptyTrashException e) {
             log.error(e.getMessage(), e);
             throw new StorageException(e.getMessage(), e);
-        }
-    }
-
-    protected void store(MultipartFile[] files, Path saveLocation, String id) throws IOException {
-        log.debug("Saving to location {}", saveLocation.toString());
-        try {
-            if (!Files.exists(saveLocation)) {
-                Files.createDirectories(saveLocation);
-            }
-        } catch (IOException e) {
-            throw new StorageException("Failed to create directory " + saveLocation.getFileName(), e);
-        }
-        for (MultipartFile file : files) {
-            Path destination = saveLocation.resolve(Objects.requireNonNull(file.getOriginalFilename()));
-            try {
-                if (Files.exists(destination)) {
-                    moveToTrash(id, destination);
-                }
-                Files.copy(file.getInputStream(), destination);
-            } catch (IOException | MoveToTrashException e) {
-                throw new StorageException("Failed to store file " + file.getOriginalFilename(), e);
-            }
         }
     }
 

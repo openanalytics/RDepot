@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,7 +20,8 @@
  */
 package eu.openanalytics.rdepot.test.unit.validation;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 import eu.openanalytics.rdepot.base.entities.Submission;
@@ -30,8 +31,6 @@ import eu.openanalytics.rdepot.base.service.SubmissionService;
 import eu.openanalytics.rdepot.base.validation.DataSpecificValidationResult;
 import eu.openanalytics.rdepot.base.validation.PackageValidator;
 import eu.openanalytics.rdepot.base.validation.ValidationResultImpl;
-import eu.openanalytics.rdepot.base.validation.exceptions.PackageDuplicateWithReplaceOff;
-import eu.openanalytics.rdepot.base.validation.exceptions.PackageValidationException;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.messaging.PythonMessageCodes;
@@ -70,8 +69,6 @@ public class PythonPackageValidatorTest {
     PythonPackageService packageService;
 
     private PackageValidator<PythonPackage> packageValidator;
-    private Optional<User> user;
-    private PythonRepository repository;
     private PythonPackage packageBag;
     private Submission submission;
     private PythonPackage updatedPackageBag;
@@ -79,10 +76,10 @@ public class PythonPackageValidatorTest {
     private DataSpecificValidationResult<Submission> errors;
 
     @BeforeEach
-    public void initEach() throws Exception {
-        user = Optional.of(UserTestFixture.GET_ADMIN());
-        repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        packageBag = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get());
+    public void initEach() {
+        User user = UserTestFixture.GET_ADMIN();
+        PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
+        packageBag = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
         packageBag.setTitle("someTitle");
         packageBag.setVersion("21");
         packageBag.setName("accelerated");
@@ -91,19 +88,19 @@ public class PythonPackageValidatorTest {
         updatedPackageBag = new PythonPackage(packageBag);
         updatedPackageBag.setLicense(packageBag.getLicense());
         updatedPackageBag.setHash(packageBag.getHash());
-        submission = PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION(user.get(), duplicatedPackageBag);
+        submission = PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, duplicatedPackageBag);
         packageValidator = new PythonPackageValidator(submissionService, packageService, env);
     }
 
     @Test
-    public void validateUploadPackage_shouldSucceed() throws Exception {
+    public void validateUploadPackage_shouldSucceed() {
         prepareTest();
         packageValidator.validateUploadPackage(packageBag, true, errors);
         assertFalse(errors.hasErrors(), "Validation results should be empty for a standard package");
     }
 
     @Test
-    public void validateUploadPackageWithDashInName_shouldSucceed() throws Exception {
+    public void validateUploadPackageWithDashInName_shouldSucceed() {
         prepareTest();
         packageBag.setName("accelerated-numpy");
         packageValidator.validateUploadPackage(packageBag, true, errors);
@@ -111,7 +108,7 @@ public class PythonPackageValidatorTest {
     }
 
     @Test
-    public void validateUploadPackageWithUnderscoreInName_shouldSucceed() throws Exception {
+    public void validateUploadPackageWithUnderscoreInName_shouldSucceed() {
         prepareTest();
         packageBag.setName("accelerated_numpy");
         packageValidator.validateUploadPackage(packageBag, true, errors);
@@ -121,7 +118,7 @@ public class PythonPackageValidatorTest {
     }
 
     @Test
-    public void validateUploadPackageWithNonAsciiChar_shouldFail() throws Exception {
+    public void validateUploadPackageWithNonAsciiChar_shouldFail() {
         prepareTest();
         packageBag.setName("accelerated€");
         packageValidator.validateUploadPackage(packageBag, true, errors);
@@ -131,7 +128,7 @@ public class PythonPackageValidatorTest {
     }
 
     @Test
-    public void validateUploadPackageEndingWithDot_shouldFail() throws Exception {
+    public void validateUploadPackageEndingWithDot_shouldFail() {
         prepareTest();
         packageBag.setName("newPackage.");
         packageValidator.validateUploadPackage(packageBag, true, errors);
@@ -141,7 +138,7 @@ public class PythonPackageValidatorTest {
     }
 
     @Test
-    public void validateUploadPackageStartingWithNonLetter_shouldFail() throws Exception {
+    public void validateUploadPackageStartingWithNonLetter_shouldFail() {
         prepareTest();
         packageBag.setName("1newPackage");
         packageValidator.validateUploadPackage(packageBag, true, errors);
@@ -151,7 +148,7 @@ public class PythonPackageValidatorTest {
     }
 
     @Test
-    public void validateUploadPackageWithEmptyName_shouldFail() throws Exception {
+    public void validateUploadPackageWithEmptyName_shouldFail() {
         prepareTest();
         packageBag.setName("");
         packageValidator.validateUploadPackage(packageBag, true, errors);
@@ -161,7 +158,7 @@ public class PythonPackageValidatorTest {
     }
 
     @Test
-    public void validateUploadPackageWithEmptyLicense_shouldFail() throws Exception {
+    public void validateUploadPackageWithEmptyLicense_shouldFail() {
         prepareTest();
         packageBag.setLicense("");
         packageValidator.validateUploadPackage(packageBag, true, errors);
@@ -170,7 +167,7 @@ public class PythonPackageValidatorTest {
     }
 
     @Test
-    public void validateUploadPackageWithEmptyHash_shouldFail() throws Exception {
+    public void validateUploadPackageWithEmptyHash_shouldFail() {
         prepareTest();
         packageBag.setHash("");
         packageValidator.validateUploadPackage(packageBag, true, errors);
@@ -179,7 +176,7 @@ public class PythonPackageValidatorTest {
     }
 
     @Test
-    public void validateUploadPackageThatExistsWithReplaceSetToTrue_shouldWarn() throws Exception {
+    public void validateUploadPackageThatExistsWithReplaceSetToTrue_shouldWarn() {
         prepareTest();
         packageBag.setId(-1);
         when(packageService.findByNameAndVersionAndRepositoryAndDeleted(
@@ -195,7 +192,7 @@ public class PythonPackageValidatorTest {
     }
 
     @Test
-    public void validateUploadPackageThatExistsWithReplaceSetToFalse_shouldWarn() throws Exception {
+    public void validateUploadPackageThatExistsWithReplaceSetToFalse_shouldWarn() {
         prepareTest();
         packageBag.setId(-1);
         when(packageService.findByNameAndVersionAndRepositoryAndDeleted(
@@ -211,7 +208,7 @@ public class PythonPackageValidatorTest {
     }
 
     @Test
-    public void updatePackage_shouldNotAllowChangingPackageName() throws Exception {
+    public void updatePackage_shouldNotAllowChangingPackageName() {
         prepareTest();
         updatedPackageBag.setName("newName");
         validateUpdatedPackageBag();
@@ -219,7 +216,7 @@ public class PythonPackageValidatorTest {
     }
 
     @Test
-    public void updatePackage_shouldNotAllowChangingVersion() throws Exception {
+    public void updatePackage_shouldNotAllowChangingVersion() {
         prepareTest();
         updatedPackageBag.setVersion("100");
         validateUpdatedPackageBag();
@@ -227,7 +224,7 @@ public class PythonPackageValidatorTest {
     }
 
     @Test
-    public void updatePackage_shouldNotAllowChangingLicense() throws Exception {
+    public void updatePackage_shouldNotAllowChangingLicense() {
         prepareTest();
         updatedPackageBag.setLicense("newLicense");
         validateUpdatedPackageBag();
@@ -235,7 +232,7 @@ public class PythonPackageValidatorTest {
     }
 
     @Test
-    public void updatePackage_shouldNotAllowChangingSource() throws Exception {
+    public void updatePackage_shouldNotAllowChangingSource() {
         prepareTest();
         updatedPackageBag.setSource("newSource");
         validateUpdatedPackageBag();
@@ -243,7 +240,7 @@ public class PythonPackageValidatorTest {
     }
 
     @Test
-    public void updatePackage_shouldNotAllowChangingPackageMaintainer() throws Exception {
+    public void updatePackage_shouldNotAllowChangingPackageMaintainer() {
         prepareTest();
         updatedPackageBag.setUser(UserTestFixture.GET_REGULAR_USER());
         validateUpdatedPackageBag();
@@ -251,7 +248,7 @@ public class PythonPackageValidatorTest {
     }
 
     @Test
-    public void updatePackage_shouldNotAllowChangingRepository() throws Exception {
+    public void updatePackage_shouldNotAllowChangingRepository() {
         prepareTest();
         updatedPackageBag.setRepository(new PythonRepository());
         validateUpdatedPackageBag();
@@ -259,7 +256,7 @@ public class PythonPackageValidatorTest {
     }
 
     @Test
-    public void updatePackage_shouldNotAllowChangingHash() throws Exception {
+    public void updatePackage_shouldNotAllowChangingHash() {
         prepareTest();
         updatedPackageBag.setHash("newHash");
         validateUpdatedPackageBag();
@@ -267,7 +264,7 @@ public class PythonPackageValidatorTest {
     }
 
     @Test
-    public void validateUploadMultipartFile_shouldSucced() throws Exception {
+    public void validateUploadMultipartFile_shouldSucceed() throws Exception {
         errors = Mockito.spy(ValidationResultImpl.createDataSpecificResult());
         final File newPackage = new File("src/test/resources/unit/test_packages/testrepo1/boto3/boto3-1.26.156.tar.gz");
         final byte[] fileContent = Files.readAllBytes(newPackage.toPath());
@@ -288,12 +285,12 @@ public class PythonPackageValidatorTest {
                 ContentType.MULTIPART_FORM_DATA.toString(),
                 fileContent);
         packageValidator.validate(multipart, errors);
-        assertTrue(errors.hasErrors(), "Validation should return contetnt type error");
+        assertTrue(errors.hasErrors(), "Validation should return content type error");
         verify(errors, times(1)).error("CONTENT-TYPE", MessageCodes.INVALID_CONTENTTYPE);
     }
 
     @Test
-    public void validateUploadMultipartFileWithNoContentType_shouldFail() throws Exception {
+    public void validateUploadMultipartFileWithNoContentType_shouldFail() {
         errors = Mockito.spy(ValidationResultImpl.createDataSpecificResult());
         final MultipartFile multipart = new MockMultipartFile("boto3-1.26.156.tar.gz", new byte[] {});
         packageValidator.validate(multipart, errors);
@@ -313,7 +310,7 @@ public class PythonPackageValidatorTest {
         verify(errors, times(1)).error("MULTIPART-FILE", MessageCodes.INVALID_FILENAME);
     }
 
-    private void prepareTest() throws PackageValidationException, PackageDuplicateWithReplaceOff {
+    private void prepareTest() {
         errors = Mockito.spy(ValidationResultImpl.createDataSpecificResult());
         when(env.getProperty("package.version.max-numbers", "10")).thenReturn("1");
     }
@@ -324,7 +321,7 @@ public class PythonPackageValidatorTest {
     }
 
     @Test
-    public void validateUploadNotExistingPackage_shouldFail() throws Exception {
+    public void validateUploadNotExistingPackage_shouldFail() {
         prepareTest();
         updatedPackageBag.setId(100);
         packageValidator.validate(updatedPackageBag, true, errors);

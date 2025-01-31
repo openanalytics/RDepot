@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -23,12 +23,9 @@ package eu.openanalytics.rdepot.integrationtest.manager.v2;
 import static io.restassured.RestAssured.given;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import eu.openanalytics.rdepot.integrationtest.IntegrationTestContainers;
 import eu.openanalytics.rdepot.integrationtest.environment.BashTestEnvironmentConfigurator;
 import eu.openanalytics.rdepot.integrationtest.environment.TestEnvironmentConfigurator;
@@ -36,13 +33,14 @@ import eu.openanalytics.rdepot.integrationtest.manager.v2.testData.SubmissionMul
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -98,24 +96,8 @@ public abstract class IntegrationTest {
                 "wrong number of events created after the operation");
     }
 
-    public void testRepositoryEndpoint(TestRequestBody requestBody) throws Exception {
-        int eventsNumberBeforeOperation = getTotalEventsAmount();
-        chooseEndpoint(requestBody);
-        int eventsNumberAfterOperation = getTotalEventsAmount();
-        int result = eventsNumberAfterOperation - eventsNumberBeforeOperation;
-        if (requestBody.getExpectedEventsJson().isPresent()) {
-            testIfNewestEventsAreCorrect(
-                    requestBody.getHowManyNewEventsShouldBeCreated(),
-                    requestBody.getExpectedEventsJson().get());
-        }
-        Assertions.assertEquals(
-                requestBody.getHowManyNewEventsShouldBeCreated(),
-                result,
-                "wrong number of events created after the operation");
-    }
-
     @BeforeAll
-    public static void setUpForAll() throws IOException, InterruptedException {
+    public static void setUpForAll() {
         if (RUN_CONTAINERS) {
             IntegrationTestContainers.startContainersIfNotRunningYet();
         }
@@ -141,10 +123,10 @@ public abstract class IntegrationTest {
                 testGetEndpoint(
                         req.getExpectedJsonPath(), req.getUrlSuffix(), req.getStatusCode(), req.getToken(), false);
                 break;
-            case GET_OTHER_RESOURCE:
+            case GET_OTHER_RESOURCE, GET_WITH_NEW_PATCH:
                 testGetEndpoint(
                         req.getExpectedJsonPath(),
-                        req.getPath().get(),
+                        req.getPath().orElseThrow(),
                         req.getUrlSuffix(),
                         req.getStatusCode(),
                         req.getToken());
@@ -152,14 +134,6 @@ public abstract class IntegrationTest {
             case GET_ARRAY:
                 testGetArrayEndpoint(
                         req.getExpectedJsonPath(), req.getUrlSuffix(), req.getStatusCode(), req.getToken());
-                break;
-            case GET_WITH_NEW_PATCH:
-                testGetEndpoint(
-                        req.getExpectedJsonPath(),
-                        req.getPath().get(),
-                        req.getUrlSuffix(),
-                        req.getStatusCode(),
-                        req.getToken());
                 break;
             case GET_UNAUTHENTICATED:
                 testGetEndpointUnauthenticated(req.getUrlSuffix());
@@ -173,30 +147,31 @@ public abstract class IntegrationTest {
                 break;
             case PATCH:
                 testPatchEndpoint(
-                        req.getBody().get(),
+                        req.getBody().orElseThrow(),
                         req.getExpectedJsonPath(),
                         req.getUrlSuffix(),
                         req.getStatusCode(),
                         req.getToken());
                 break;
             case PATCH_UNAUTHENTICATED:
-                testPatchEndpointUnauthenticated(req.getBody().get(), req.getUrlSuffix());
+                testPatchEndpointUnauthenticated(req.getBody().orElseThrow(), req.getUrlSuffix());
                 break;
             case PATCH_UNAUTHORIZED:
-                testPatchEndpointUnauthorized(req.getBody().get(), req.getUrlSuffix(), req.getToken());
+                testPatchEndpointUnauthorized(req.getBody().orElseThrow(), req.getUrlSuffix(), req.getToken());
                 break;
             case POST:
-                testPostEndpoint(req.getBody().get(), req.getExpectedJsonPath(), req.getStatusCode(), req.getToken());
+                testPostEndpoint(
+                        req.getBody().orElseThrow(), req.getExpectedJsonPath(), req.getStatusCode(), req.getToken());
                 break;
             case POST_UNAUTHENTICATED:
-                testPostEndpoint_asUnauthenticated(req.getBody().get());
+                testPostEndpoint_asUnauthenticated(req.getBody().orElseThrow());
                 break;
             case POST_UNAUTHORIZED:
-                testPostEndpoint_asUnauthorized(req.getBody().get(), req.getToken());
+                testPostEndpoint_asUnauthorized(req.getBody().orElseThrow(), req.getToken());
                 break;
             case POST_MULTIPART:
                 testPostMultipartEndpoint(
-                        req.getSubmissionMultipartBody().get(),
+                        req.getSubmissionMultipartBody().orElseThrow(),
                         req.getExpectedJsonPath(),
                         req.getStatusCode(),
                         req.getToken());
@@ -286,8 +261,7 @@ public abstract class IntegrationTest {
         Assertions.assertEquals(expectedJSON, actualJSON, "Incorrect JSON output.");
     }
 
-    protected void testDeleteEndpoint(String urlSuffix, int statusCode, String token)
-            throws JsonMappingException, JsonProcessingException, ParseException {
+    protected void testDeleteEndpoint(String urlSuffix, int statusCode, String token) {
         given().header(AUTHORIZATION, BASIC + token)
                 .accept(ContentType.JSON)
                 .when()
@@ -427,6 +401,30 @@ public abstract class IntegrationTest {
         Assertions.assertEquals(expectedJSON, actualJSON, "There are some differences in packages that user sees.");
     }
 
+    protected void testPostEndpoint(String body, String path, String expectedJsonPath, int statusCode, String token)
+            throws Exception {
+        JSONParser jsonParser = new JSONParser();
+
+        FileReader reader = new FileReader(JSON_PATH + expectedJsonPath);
+        JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
+
+        String data = given().header(AUTHORIZATION, BASIC + token)
+                .accept(ContentType.JSON)
+                .contentType(ContentType.JSON)
+                .body(body)
+                .when()
+                .post(path)
+                .then()
+                .statusCode(statusCode)
+                .extract()
+                .asString();
+
+        JSONObject actualJSON = (JSONObject) jsonParser.parse(data);
+        removeFields(actualJSON, false);
+        removeFields(expectedJSON, false);
+        Assertions.assertEquals(expectedJSON, actualJSON, "There are some differences in packages that user sees.");
+    }
+
     protected void testPostMultipartEndpoint(
             SubmissionMultipartBody body, String expectedJsonPath, int statusCode, String token) throws Exception {
         JSONParser jsonParser = new JSONParser();
@@ -441,6 +439,7 @@ public abstract class IntegrationTest {
                     .multiPart("repository", body.getRepository())
                     .multiPart("generateManual", body.getGenerateManual())
                     .multiPart("replace", body.getReplace())
+                    .multiPart("changes", body.getChanges())
                     .multiPart(body.getMultipartFile())
                     .when()
                     .post(apiPath)
@@ -453,6 +452,7 @@ public abstract class IntegrationTest {
                     .accept(ContentType.JSON)
                     .contentType("multipart/form-data")
                     .multiPart("repository", body.getRepository())
+                    .multiPart("changes", body.getChanges())
                     .multiPart(body.getMultipartFile())
                     .when()
                     .post(apiPath)
@@ -534,9 +534,9 @@ public abstract class IntegrationTest {
 
     @SuppressWarnings("unchecked")
     protected List<JSONObject> convert(JSONArray rootJSON) throws ParseException {
-        List<JSONObject> JSON = new ArrayList<JSONObject>();
-        for (int i = 0; i < rootJSON.size(); i++) {
-            JSONObject objJSON = (JSONObject) rootJSON.get(i);
+        List<JSONObject> JSON = new ArrayList<>();
+        for (Object o : rootJSON) {
+            JSONObject objJSON = (JSONObject) o;
             String source = objJSON.get("source").toString();
             objJSON.remove("lastLoggedInOn");
             objJSON.remove("source");
@@ -547,58 +547,22 @@ public abstract class IntegrationTest {
         return JSON;
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    protected List<List> convertPackages(JsonArray rootJSON) throws ParseException {
-        List<List> JSON = new ArrayList<>();
-
-        for (int i = 0; i < rootJSON.size(); i++) {
-            JsonObject repositoryJSON = (JsonObject) rootJSON.get(i);
-            JsonArray packagesJSON = (JsonArray) repositoryJSON.get("packages");
-            List JSONList = new ArrayList<>();
-            for (int k = 0; k < packagesJSON.size(); k++) {
-                JsonObject packageJSON = (JsonObject) packagesJSON.get(k);
-                JSONList.add(packageJSON);
-            }
-            JSON.add(JSONList);
-        }
-        return JSON;
-    }
-
-    protected boolean compareListOfMaintainersFromGetMaintainers(JsonObject expected, JsonObject actual)
-            throws ParseException {
-        if (expected == null || actual == null) return false;
-
-        expected.remove("repositories");
-        actual.remove("repositories");
-
-        if (!expected.equals(actual)) return false;
-
-        return true;
-    }
-
     protected String extractContent(byte[] pdf) throws IOException {
-        PDDocument document = Loader.loadPDF(pdf);
-        try {
+        try (PDDocument document = Loader.loadPDF(pdf)) {
             return new PDFTextStripper().getText(document);
-        } finally {
-            document.close();
         }
     }
 
     protected byte[] readFileToByteArray(File file) {
-        FileInputStream fis;
-        byte[] bArray = new byte[(int) file.length()];
         try {
-            fis = new FileInputStream(file);
-            fis.read(bArray);
-            fis.close();
+            return Files.readAllBytes(file.toPath());
         } catch (IOException ioExp) {
             ioExp.printStackTrace();
         }
-        return bArray;
+        return new byte[] {};
     }
 
-    private int getTotalEventsAmount() throws ParseException, JsonMappingException, JsonProcessingException {
+    private int getTotalEventsAmount() throws JsonProcessingException {
 
         String data = given().header(AUTHORIZATION, BASIC + ADMIN_TOKEN)
                 .accept(ContentType.JSON)
@@ -614,10 +578,10 @@ public abstract class IntegrationTest {
 
         JsonNode result = eventsNode.get("data").get("page").get("totalElements");
 
-        return Integer.valueOf(result.toString());
+        return Integer.parseInt(result.toString());
     }
 
-    private void testIfNewestEventsAreCorrect(int howMany, String expectedJsonPath) throws IOException, ParseException {
+    private void testIfNewestEventsAreCorrect(int howMany, String expectedJsonPath) throws IOException {
 
         String data = given().header(AUTHORIZATION, BASIC + ADMIN_TOKEN)
                 .accept(ContentType.JSON)
@@ -639,7 +603,7 @@ public abstract class IntegrationTest {
     }
 
     private List<ObjectNode> convertEvents(JsonNode events, int howMany) {
-        List<ObjectNode> result = new ArrayList<ObjectNode>();
+        List<ObjectNode> result = new ArrayList<>();
         for (int i = 0; i < howMany; i++) {
             ObjectNode tmpEvent = (ObjectNode) events.get(i);
             tmpEvent.remove("time");
@@ -652,6 +616,12 @@ public abstract class IntegrationTest {
                 if (packageBag.has("source")) {
                     packageBag.remove("source");
                 }
+            }
+            if (relatedResourceObject.has("lastUsed")) {
+                relatedResourceObject.remove("lastUsed");
+            }
+            if (relatedResourceObject.has("lastLoggedInOn")) {
+                relatedResourceObject.remove("lastLoggedInOn");
             }
 
             result.add(tmpEvent);
@@ -673,7 +643,7 @@ public abstract class IntegrationTest {
             }
         }
 
-        toRemove.forEach(k -> relatedResourceObject.remove(k));
+        toRemove.forEach(relatedResourceObject::remove);
     }
 
     private void removeFields(JSONObject json, boolean newSubmission) {
@@ -689,6 +659,9 @@ public abstract class IntegrationTest {
                     if (jsonRelatedResource.get("lastLoggedInOn") != null) {
                         jsonRelatedResource.remove("lastLoggedInOn");
                     }
+                    if (jsonRelatedResource.get("lastUsed") != null) {
+                        jsonRelatedResource.remove("lastUsed");
+                    }
                 }
                 if (jsonData.get("lastLoggedInOn") != null) {
                     jsonData.remove("lastLoggedInOn");
@@ -701,6 +674,9 @@ public abstract class IntegrationTest {
                 }
                 if (jsonData.get("expirationDate") != null) {
                     jsonData.remove("expirationDate");
+                }
+                if (jsonData.get("lastUsed") != null) {
+                    jsonData.remove("lastUsed");
                 }
                 if (jsonData.get("value") != null) {
                     jsonData.remove("value");
@@ -716,7 +692,8 @@ public abstract class IntegrationTest {
                 }
             }
 
-            JSONArray expectedContent = (JSONArray) jsonData.get("content");
+            JSONArray expectedContent =
+                    (JSONArray) Objects.requireNonNull(jsonData).get("content");
             if (expectedContent != null) {
                 for (int i = 0; i < expectedContent.size(); i++) {
                     JSONObject el = (JSONObject) expectedContent.get(i);
@@ -728,6 +705,9 @@ public abstract class IntegrationTest {
                         JSONObject jsonRelatedResource = (JSONObject) el.get("relatedResource");
                         if (jsonRelatedResource.get("lastLoggedInOn") != null) {
                             jsonRelatedResource.remove("lastLoggedInOn");
+                        }
+                        if (jsonRelatedResource.get("lastUsed") != null) {
+                            jsonRelatedResource.remove("lastUsed");
                         }
                     }
                     if (el.get("lastLoggedInOn") != null) {
@@ -741,6 +721,9 @@ public abstract class IntegrationTest {
                     }
                     if (el.get("expirationDate") != null) {
                         el.remove("expirationDate");
+                    }
+                    if (el.get("lastUsed") != null) {
+                        el.remove("lastUsed");
                     }
                     if (el.get("value") != null) {
                         el.remove("value");
@@ -756,7 +739,7 @@ public abstract class IntegrationTest {
                     }
                 }
             }
-        } catch (ClassCastException e) {
+        } catch (ClassCastException ignored) {
         }
     }
 }

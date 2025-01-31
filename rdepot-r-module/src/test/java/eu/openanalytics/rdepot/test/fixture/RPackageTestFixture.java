@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -203,7 +203,7 @@ public class RPackageTestFixture {
 
         // Package ABC
         final String PACKAGE_NAME_ABC = "Abc";
-        final RPackage abcLatest = GET_FIXTURE_PACKAGE(repository, user, 1);
+        final RPackage abcLatest = GET_FIXTURE_PACKAGE(repository, user, 3);
         abcLatest.setName(PACKAGE_NAME_ABC);
         abcLatest.setVersion("1.2.3");
 
@@ -211,7 +211,7 @@ public class RPackageTestFixture {
 
         // Package XYZ
         final String PACKAGE_NAME_XYZ = "X-Y-Z";
-        final RPackage xyzLatest = GET_FIXTURE_PACKAGE(repository, user, 2);
+        final RPackage xyzLatest = GET_FIXTURE_PACKAGE(repository, user, 5);
         xyzLatest.setName(PACKAGE_NAME_XYZ);
         xyzLatest.setVersion("0.0.3");
 
@@ -219,10 +219,87 @@ public class RPackageTestFixture {
 
         // Package DEF
         final String PACKAGE_NAME_DEF = "D E F";
-        final RPackage defLatest = GET_FIXTURE_PACKAGE(repository, user, 3);
+        final RPackage defLatest = GET_FIXTURE_PACKAGE(repository, user, 6);
         defLatest.setName(PACKAGE_NAME_DEF);
         defLatest.setVersion("3.2.1");
         packages.add(defLatest);
+
+        return packages;
+    }
+
+    public static List<RPackage> GET_BINARY_PACKAGES_MULTIPLE_VERSIONS_OF_THE_SAME_PACKAGE(
+            RRepository repository, User user) {
+        final ArrayList<RPackage> packages = new ArrayList<>();
+
+        final String PACKAGE_NAME_KLM = "Klm";
+        final RPackage klmVersion1 = GET_FIXTURE_BINARY_PACKAGE(repository, user);
+        klmVersion1.setName(PACKAGE_NAME_KLM);
+        klmVersion1.setVersion("2.0.1");
+        klmVersion1.setId(11);
+        final RPackage klmVersion2 = GET_FIXTURE_BINARY_PACKAGE(repository, user);
+        klmVersion2.setName(PACKAGE_NAME_KLM);
+        klmVersion2.setVersion("2.1.0");
+        klmVersion2.setId(12);
+        final RPackage klmLatest = GET_FIXTURE_BINARY_PACKAGE(repository, user);
+        klmLatest.setName(PACKAGE_NAME_KLM);
+        klmLatest.setVersion("2.1.5");
+        klmLatest.setId(13);
+
+        packages.add(klmLatest);
+        packages.add(klmVersion2);
+        packages.add(klmVersion1);
+
+        final String PACKAGE_NAME_PQR = "PQR";
+        final RPackage pqrVersion1 = GET_FIXTURE_BINARY_PACKAGE(repository, user);
+        pqrVersion1.setName(PACKAGE_NAME_PQR);
+        pqrVersion1.setVersion("1.5");
+        pqrVersion1.setId(14);
+        final RPackage pqrLatest = GET_FIXTURE_BINARY_PACKAGE(repository, user);
+        pqrLatest.setName(PACKAGE_NAME_PQR);
+        pqrLatest.setVersion("1.6");
+        pqrLatest.setId(15);
+
+        packages.add(pqrLatest);
+        packages.add(pqrVersion1);
+
+        final String PACKAGE_NAME_BLA = "bla";
+        final RPackage blaLatest = GET_FIXTURE_BINARY_PACKAGE(repository, user);
+        blaLatest.setName(PACKAGE_NAME_BLA);
+        blaLatest.setVersion("3.2.1");
+        blaLatest.setId(16);
+
+        packages.add(blaLatest);
+
+        return packages;
+    }
+
+    public static List<RPackage> GET_BINARY_PACKAGES_MULTIPLE_VERSIONS_OF_THE_SAME_PACKAGE_ONLY_LATEST(
+            RRepository repository, User user) {
+        final ArrayList<RPackage> packages = new ArrayList<>();
+
+        final String PACKAGE_NAME_KLM = "Klm";
+        final RPackage klmLatest = GET_FIXTURE_BINARY_PACKAGE(repository, user);
+        klmLatest.setName(PACKAGE_NAME_KLM);
+        klmLatest.setVersion("2.1.5");
+        klmLatest.setId(13);
+
+        packages.add(klmLatest);
+
+        final String PACKAGE_NAME_PQR = "PQR";
+        final RPackage pqrLatest = GET_FIXTURE_BINARY_PACKAGE(repository, user);
+        pqrLatest.setName(PACKAGE_NAME_PQR);
+        pqrLatest.setVersion("1.6");
+        pqrLatest.setId(15);
+
+        packages.add(pqrLatest);
+
+        final String PACKAGE_NAME_BLA = "bla";
+        final RPackage blaLatest = GET_FIXTURE_BINARY_PACKAGE(repository, user);
+        blaLatest.setName(PACKAGE_NAME_BLA);
+        blaLatest.setVersion("3.2.1");
+        blaLatest.setId(16);
+
+        packages.add(blaLatest);
 
         return packages;
     }

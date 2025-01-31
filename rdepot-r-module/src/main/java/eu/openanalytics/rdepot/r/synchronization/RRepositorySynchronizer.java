@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2024 Open Analytics NV
+ * Copyright (C) 2012-2025 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -32,9 +32,16 @@ import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.services.RPackageService;
 import eu.openanalytics.rdepot.r.storage.RStorage;
 import eu.openanalytics.rdepot.r.storage.utils.PopulatedRepositoryContent;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -42,6 +49,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -51,50 +59,107 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class RRepositorySynchronizer extends RepositorySynchronizer<RRepository> {
 
+    public static final Comparator<RPackage> PACKAGE_COMPARATOR = Comparator.comparingInt(RPackage::getId);
     private final RStorage storage;
     private final RPackageService packageService;
     private final RestTemplate rest;
+    private final RRequestBodyPartitioner rRequestBodyPartitioner;
 
     @Value("${local-storage.max-request-size}")
     private Integer maxRequestSize;
-
-    public static final Comparator<RPackage> PACKAGE_COMPARATOR = Comparator.comparingInt(RPackage::getId);
 
     @Override
     @Transactional
     public void storeRepositoryOnRemoteServer(RRepository repository, String dateStamp)
             throws SynchronizeRepositoryException {
-        LinkedHashSet<RPackage> packages = new LinkedHashSet<>(packageService.findActiveByRepository(repository));
-        List<RPackage> allPackages = new LinkedList<>(packages);
 
-        Set<RPackage> latestPackageSet = packageService.filterLatest(packages);
-        packages.removeAll(latestPackageSet);
+        LinkedHashSet<RPackage> sourcePackages =
+                new LinkedHashSet<>(packageService.findSourcePackagesByRepository(repository));
+        LinkedHashSet<RPackage> binaryPackages =
+                new LinkedHashSet<>(packageService.findBinaryPackagesByRepository(repository));
 
-        List<RPackage> archivePackages = new LinkedList<>(packages);
-        List<RPackage> latestPackages = new LinkedList<>(latestPackageSet);
+        List<RPackage> allSourcePackages = new LinkedList<>(sourcePackages);
+        List<RPackage> allBinaryPackages = new LinkedList<>(binaryPackages);
 
-        archivePackages.sort(PACKAGE_COMPARATOR);
-        latestPackages.sort(PACKAGE_COMPARATOR);
-        allPackages.sort(PACKAGE_COMPARATOR);
+        Set<RPackage> latestSourcePackageSet = packageService.filterLatest(sourcePackages);
+        sourcePackages.removeAll(latestSourcePackageSet);
 
-        storeRepositoryOnRemoteServer(repository, dateStamp, allPackages, archivePackages, latestPackages);
+        Set<RPackage> latestBinaryPackageSet = packageService.filterLatest(binaryPackages);
+        binaryPackages.removeAll(latestBinaryPackageSet);
+
+        List<RPackage> archiveSourcePackages = new LinkedList<>(sourcePackages);
+        List<RPackage> latestSourcePackages = new LinkedList<>(latestSourcePackageSet);
+        List<RPackage> archiveBinaryPackages = new LinkedList<>(binaryPackages);
+        List<RPackage> latestBinaryPackages = new LinkedList<>(latestBinaryPackageSet);
+
+        archiveSourcePackages.sort(PACKAGE_COMPARATOR);
+        latestSourcePackages.sort(PACKAGE_COMPARATOR);
+        allSourcePackages.sort(PACKAGE_COMPARATOR);
+        archiveBinaryPackages.sort(PACKAGE_COMPARATOR);
+        latestBinaryPackages.sort(PACKAGE_COMPARATOR);
+        allBinaryPackages.sort(PACKAGE_COMPARATOR);
+
+        storeRepositoryOnRemoteServer(
+                repository,
+                dateStamp,
+                allSourcePackages,
+                archiveSourcePackages,
+                latestSourcePackages,
+                allBinaryPackages,
+                archiveBinaryPackages,
+                latestBinaryPackages);
     }
 
     private synchronized void storeRepositoryOnRemoteServer(
             RRepository repository,
             String dateStamp,
-            List<RPackage> packages,
-            List<RPackage> archivePackages,
-            List<RPackage> latestPackages)
+            List<RPackage> sourcePackages,
+            List<RPackage> archiveSourcePackages,
+            List<RPackage> latestSourcePackages,
+            List<RPackage> binaryPackages,
+            List<RPackage> archiveBinaryPackages,
+            List<RPackage> latestBinaryPackages)
             throws SynchronizeRepositoryException {
         try {
             synchronizeRepository(
-                    storage.organizePackagesInStorage(dateStamp, packages, latestPackages, archivePackages, repository),
+                    storage.organizePackagesInStorage(
+                            dateStamp,
+                            sourcePackages,
+                            latestSourcePackages,
+                            archiveSourcePackages,
+                            binaryPackages,
+                            latestBinaryPackages,
+                            archiveBinaryPackages,
+                            repository),
                     repository);
         } catch (OrganizePackagesException e) {
             log.error(e.getMessage(), e);
             throw new SynchronizeRepositoryException();
         }
+    }
+
+    private RemoteState getRemoteState(String serverAndPort, String repositoryDirectory, boolean archive) {
+        final Gson gson = new Gson();
+
+        final ResponseEntity<String> response = rest.getForEntity(
+                serverAndPort + "/" + repositoryDirectory + (archive ? "/archive/" : "/"), String.class);
+
+        final List<String> remotePackages =
+                new ArrayList<>(Arrays.asList(gson.fromJson(response.getBody(), String[].class)));
+
+        final List<String> remoteSourcePackages = remotePackages.stream()
+                .filter(file -> StringUtils.contains(file, "src/contrib/"))
+                .map(file -> StringUtils.substringAfterLast(file, "/"))
+                .toList();
+
+        // <path = "bin/... , filename>
+        final MultiValueMap<String, String> remoteBinaryPackages = new LinkedMultiValueMap<>();
+        remotePackages.stream()
+                .filter(file -> StringUtils.startsWith(file, "bin/"))
+                .forEach(file -> remoteBinaryPackages.add(
+                        StringUtils.substringBeforeLast(file, "/"), StringUtils.substringAfterLast(file, "/")));
+
+        return new RemoteState(remoteSourcePackages, remoteBinaryPackages, remotePackages);
     }
 
     private void synchronizeRepository(PopulatedRepositoryContent populatedRepositoryContent, RRepository repository)
@@ -106,35 +171,29 @@ public class RRepositorySynchronizer extends RepositorySynchronizer<RRepository>
         }
 
         String serverAndPort = serverAddressComponents[0] + "//" + serverAddressComponents[2];
-        StringBuilder repositoryDirectory = new StringBuilder();
-        int i = 3;
-        for (; i < serverAddressComponents.length - 1; i++) {
-            repositoryDirectory.append(serverAddressComponents[i]);
-            repositoryDirectory.append("/");
-        }
-        repositoryDirectory.append(serverAddressComponents[i]);
-
-        Gson gson = new Gson();
+        String repositoryDirectory = String.join(
+                "/",
+                Arrays.stream(serverAddressComponents, 3, serverAddressComponents.length)
+                        .toArray(String[]::new));
 
         try {
-            ResponseEntity<String> response =
-                    rest.getForEntity(serverAndPort + "/" + repositoryDirectory + "/", String.class);
+            final RemoteState remoteLatestState = getRemoteState(serverAndPort, repositoryDirectory, false);
+            final RemoteState remoteArchiveState = getRemoteState(serverAndPort, repositoryDirectory, true);
+            final String versionBefore = remoteLatestState.getPackages().remove(0);
 
-            List<String> remoteLatestPackages =
-                    new ArrayList<>(Arrays.asList(gson.fromJson(response.getBody(), String[].class)));
-            response = rest.getForEntity(serverAndPort + "/" + repositoryDirectory + "/archive/", String.class);
-            List<String> remoteArchivePackages =
-                    new ArrayList<>(Arrays.asList(gson.fromJson(response.getBody(), String[].class)));
+            final SynchronizeRepositoryRequestBody requestBody = storage.buildSynchronizeRequestBody(
+                    populatedRepositoryContent,
+                    remoteLatestState.getSourcePackages(),
+                    remoteArchiveState.getSourcePackages(),
+                    remoteLatestState.getBinaryPackages(),
+                    remoteArchiveState.getBinaryPackages(),
+                    repository,
+                    versionBefore);
 
-            String versionBefore = remoteLatestPackages.remove(0);
-
-            SynchronizeRepositoryRequestBody requestBody = storage.buildSynchronizeRequestBody(
-                    populatedRepositoryContent, remoteLatestPackages, remoteArchivePackages, repository, versionBefore);
-
-            sendSynchronizeRequest(requestBody, serverAndPort, repositoryDirectory.toString());
+            sendSynchronizeRequest(requestBody, serverAndPort, repositoryDirectory);
             storage.cleanUpAfterSynchronization(populatedRepositoryContent);
         } catch (SendSynchronizeRequestException | RestClientException e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new SynchronizeRepositoryException();
         } catch (CleanUpAfterSynchronizationException e) {
             // TODO #32884 We should somehow inform the administrator that it failed and/or revert it
@@ -145,13 +204,13 @@ public class RRepositorySynchronizer extends RepositorySynchronizer<RRepository>
     private void sendSynchronizeRequest(
             SynchronizeRepositoryRequestBody request, String serverAddress, String repositoryDirectory)
             throws SendSynchronizeRequestException {
-        List<MultiValueMap<String, Object>> chunks = request.toChunks(maxRequestSize);
+        final ChunksData chunksData = rRequestBodyPartitioner.toChunks(request, maxRequestSize);
 
         log.debug("Sending chunk to repo...");
 
         try {
             String id = "";
-            for (MultiValueMap<String, Object> chunk : chunks) {
+            for (MultiValueMap<String, Object> chunk : chunksData.getChunks()) {
                 chunk.add("id", id);
 
                 final HttpHeaders headers = new HttpHeaders();
@@ -168,9 +227,35 @@ public class RRepositorySynchronizer extends RepositorySynchronizer<RRepository>
 
                 id = httpResponse.getBody().getId();
             }
+
+            revertFileNamesChange(chunksData.getOldFilenames());
+
         } catch (RestClientException e) {
-            log.error(e.getClass().getCanonicalName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getCanonicalName(), e.getMessage(), e);
             throw new SendSynchronizeRequestException();
         }
+    }
+
+    private void revertFileNamesChange(Map<File, String> oldFilenames) {
+
+        oldFilenames.forEach((file, oldFilename) -> {
+            final File withoutPrefixFile =
+                    new File(file.getParent() + "/" + StringUtils.substringAfter(file.getName(), "_"));
+            try {
+                FileUtils.moveFile(file, withoutPrefixFile, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                log.error(e.getMessage(), e);
+                throw new IllegalStateException(
+                        "Could not properly revert file names changes after sending the chunks!");
+            }
+        });
+    }
+
+    @Getter
+    @AllArgsConstructor
+    private static class RemoteState {
+        List<String> sourcePackages;
+        MultiValueMap<String, String> binaryPackages;
+        List<String> packages;
     }
 }

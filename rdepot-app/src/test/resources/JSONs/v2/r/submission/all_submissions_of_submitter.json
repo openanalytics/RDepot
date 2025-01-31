@@ -27,7 +27,7 @@
           "login": "newton",
           "email": "newton@ldap.forumsys.com"
         },
-        "changes": null,
+        "changes": "",
         "links": [
           {
             "rel": "self",
@@ -93,7 +93,7 @@
           "login": "newton",
           "email": "newton@ldap.forumsys.com"
         },
-        "changes": null,
+        "changes": "",
         "links": [
           {
             "rel": "self",
@@ -159,7 +159,7 @@
           "login": "newton",
           "email": "newton@ldap.forumsys.com"
         },
-        "changes": null,
+        "changes": "",
         "links": [
           {
             "rel": "self",
@@ -220,7 +220,7 @@
           "login": "newton",
           "email": "newton@ldap.forumsys.com"
         },
-        "changes": null,
+        "changes": "",
         "links": [
           {
             "rel": "self",
@@ -294,7 +294,7 @@
           "login": "newton",
           "email": "newton@ldap.forumsys.com"
         },
-        "changes": null,
+        "changes": "",
         "links": [
           {
             "rel": "self",
