@@ -56,7 +56,7 @@ public class DuplicatePackageStrategy extends Strategy<Submission> {
     }
 
     @Override
-    protected void postStrategy() throws StrategyFailure {}
+    public void postStrategy() throws StrategyFailure {}
 
     @Override
     public void revertChanges() throws StrategyReversionFailure {}

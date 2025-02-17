@@ -104,7 +104,7 @@ public class RPackageStrategyTest extends StrategyTest {
                 repositorySynchronizer);
 
         strategy.perform();
-
+        strategy.postStrategy();
         verify(repositorySynchronizer, times(1)).storeRepositoryOnRemoteServer(eq(repository));
     }
 
@@ -211,7 +211,7 @@ public class RPackageStrategyTest extends StrategyTest {
                 repositorySynchronizer);
 
         strategy.perform();
-
+        strategy.postStrategy();
         verify(bestMaintainerChooser, times(1)).chooseBestPackageMaintainer(packageBag);
         assertEquals(newMaintainer, packageBag.getUser(), "Maintainer has not been updated for the package.");
     }
@@ -253,7 +253,7 @@ public class RPackageStrategyTest extends StrategyTest {
                 repositorySynchronizer);
 
         strategy.perform();
-
+        strategy.postStrategy();
         verify(bestMaintainerChooser, times(0)).chooseBestPackageMaintainer(packageBag);
     }
 
@@ -295,8 +295,8 @@ public class RPackageStrategyTest extends StrategyTest {
                 storage,
                 bestMaintainerChooser,
                 repositorySynchronizer);
-
-        assertThrows(StrategyFailure.class, () -> strategy.perform());
+        strategy.perform();
+        assertThrows(StrategyFailure.class, () -> strategy.postStrategy());
     }
 
     @Test

@@ -695,4 +695,31 @@ public class PythonSubmissionIntegrationTest extends IntegrationTest {
                 .build();
         testEndpoint(requestBody);
     }
+
+    @Test
+    public void submitPackage_withNoContentDescriptionType() throws Exception {
+        File packageBag = new File("src/test/resources/itestPackages/PyYAML-6.0.1.tar.gz");
+        SubmissionMultipartBody body = new SubmissionMultipartBody(
+                "testrepo9",
+                false,
+                true,
+                "",
+                new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+                        .fileName(packageBag.getName())
+                        .mimeType("application/gzip")
+                        .controlName("file")
+                        .build());
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST_MULTIPART)
+                .urlSuffix("/")
+                .statusCode(201)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getPostEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/python/submissions/new_submission_no_description_content_type.json")
+                .expectedEventsJson(EVENTS_PATH + "new_submission_no_description_content_type.json")
+                .submissionMultipartBody(body)
+                .build();
+        testEndpoint(requestBody);
+    }
 }

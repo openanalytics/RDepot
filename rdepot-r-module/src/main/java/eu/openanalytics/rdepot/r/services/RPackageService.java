@@ -72,8 +72,8 @@ public class RPackageService extends PackageService<RPackage> {
     }
 
     @Override
-    public void deleteSameVersion(RPackage entity) {
-        Optional<RPackage> samePackage = packageDao.findByNameAndRepositoryGenericAndDeletedAndBinaryAndVersionIn(
+    protected List<RPackage> findSameVersions(RPackage entity) {
+        return packageDao.findAllByNameAndRepositoryGenericAndDeletedAndBinaryAndVersionIn(
                 entity.getName(),
                 entity.getRepository(),
                 false,
@@ -82,13 +82,6 @@ public class RPackageService extends PackageService<RPackage> {
                 entity.getArchitecture(),
                 entity.getDistribution(),
                 generateVariantsOfVersion(entity.getVersion()));
-
-        if (samePackage.isPresent()) {
-            log.debug("Found non-deleted packages of the same name, version and repository.");
-
-            samePackage.get().setDeleted(true);
-            samePackage.get().setActive(false);
-        }
     }
 
     @Override

@@ -87,7 +87,7 @@ public class PythonLocalStorage extends CommonLocalStorage<PythonRepository, Pyt
             if (Objects.nonNull(properties.getProperty("Description"))) return properties;
 
             String fileExtension = "";
-            switch (properties.getProperty("Description-Content-Type")) {
+            switch (properties.getProperty("Description-Content-Type", "")) {
                 case "text/markdown": {
                     fileExtension = ".md";
                     break;

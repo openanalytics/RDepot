@@ -77,23 +77,26 @@ public abstract class Strategy<T extends Resource> {
     protected abstract NewsfeedEvent generateEvent(T resource);
 
     /**
-     * Operations performed after the event is registered and operation performed.
+     * Operations that need to be performed after the event is registered
+     * and operation performed.
      * May be used to link another strategy that
      * would be performed as the next operation in the chain.
-     * Override this method if its needed
+     * Override this method if it is needed.
+     * Must be manually executed after perform.
      */
-    protected void postStrategy() throws StrategyFailure {}
+    public void postStrategy() throws StrategyFailure {}
 
     /**
      * Rolls back every operation performed in the strategy.
      * May be used for failure recovery.
-     * Override this method if its needed
+     * Override this method if it is needed.
      */
     public void revertChanges() throws StrategyReversionFailure {}
 
     /**
      * Performs the strategy.
      * This method coordinates the basic flow of every strategy.
+     * Make sure to execute the postStrategy method manually afterwards if needed.
      * @return created, modified or unchanged (in case of deletion) object
      * @throws StrategyFailure contains information about what went wrong in the strategy
      */
@@ -104,7 +107,6 @@ public abstract class Strategy<T extends Resource> {
         } catch (CreateEntityException e) {
             throw new FatalStrategyFailure(e);
         }
-        postStrategy();
         return processedResource;
     }
 

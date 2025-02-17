@@ -22,25 +22,24 @@ package eu.openanalytics.rdepot.base.strategy;
 
 import eu.openanalytics.rdepot.base.entities.Resource;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This is a "wrapper" bean that executes {@link Strategy Strategies}
- * and makes sure that their {@link org.springframework.transaction.annotation.Transactional}
+ * and makes sure that their {@link Transactional}
  * properties are preserved.
  */
 @Component
-@AllArgsConstructor
-public class StrategyExecutor {
+public class TransactionalStrategyExecutor {
 
-    private final TransactionalStrategyExecutor transactionalStrategyExecutor;
+    @Transactional(rollbackFor = StrategyFailure.class)
+    public <T extends Resource> T perform(Strategy<T> strategy) throws StrategyFailure {
+        return strategy.perform();
+    }
 
-    public <T extends Resource> T execute(Strategy<T> strategy) throws StrategyFailure {
-        synchronized (this) {
-            final T result = transactionalStrategyExecutor.perform(strategy);
-            transactionalStrategyExecutor.postStrategy(strategy);
-            return result;
-        }
+    @Transactional(rollbackFor = StrategyFailure.class)
+    public <T extends Resource> void postStrategy(Strategy<T> strategy) throws StrategyFailure {
+        strategy.postStrategy();
     }
 }

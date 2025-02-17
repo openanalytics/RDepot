@@ -40,7 +40,7 @@ public class SuccessfulStrategy<T extends Resource> extends CreateStrategy<T> {
     }
 
     @Override
-    protected void postStrategy() throws StrategyFailure {}
+    public void postStrategy() throws StrategyFailure {}
 
     @Override
     public void revertChanges() throws StrategyReversionFailure {}

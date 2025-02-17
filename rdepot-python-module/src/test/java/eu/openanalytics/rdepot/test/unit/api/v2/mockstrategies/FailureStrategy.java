@@ -41,7 +41,7 @@ public class FailureStrategy<T extends Resource> extends Strategy<T> {
     }
 
     @Override
-    protected void postStrategy() throws StrategyFailure {}
+    public void postStrategy() throws StrategyFailure {}
 
     @Override
     public void revertChanges() throws StrategyReversionFailure {}

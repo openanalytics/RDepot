@@ -170,7 +170,7 @@ public class UpdateSubmissionStrategy<P extends Package, R extends Repository> e
     }
 
     @Override
-    protected void postStrategy() throws StrategyFailure {
+    public void postStrategy() throws StrategyFailure {
         try {
             if (requiresRepublishing) repositorySynchronizer.storeRepositoryOnRemoteServer(repository);
         } catch (SynchronizeRepositoryException e) {

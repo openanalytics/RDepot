@@ -645,7 +645,7 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
                         }
 
                         @Override
-                        protected void postStrategy() {}
+                        public void postStrategy() {}
 
                         @Override
                         public void revertChanges() {}

@@ -49,7 +49,7 @@ public abstract class CreateRepositoryStrategy<T extends Repository> extends Cre
     }
 
     @Override
-    protected void postStrategy() throws StrategyFailure {}
+    public void postStrategy() throws StrategyFailure {}
 
     @Override
     protected NewsfeedEvent generateEvent(T resource) {

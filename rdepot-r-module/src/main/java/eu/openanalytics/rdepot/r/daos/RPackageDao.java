@@ -63,4 +63,24 @@ public interface RPackageDao extends PackageDao<RPackage> {
             @Param("architecture") String architecture,
             @Param("distribution") String distribution,
             @Param("versions") Collection<String> versions);
+
+    @Query(
+            value = "SELECT rp FROM RPackage rp "
+                    + "WHERE rp.name = :name "
+                    + "AND rp.repository = :repositoryGeneric "
+                    + "AND rp.binary = :binaryPackage "
+                    + "AND rp.deleted = :deleted "
+                    + "AND rp.rVersion = :rVersion "
+                    + "AND rp.architecture = :architecture "
+                    + "AND rp.distribution = :distribution "
+                    + "AND rp.version IN :versions")
+    List<RPackage> findAllByNameAndRepositoryGenericAndDeletedAndBinaryAndVersionIn(
+            @Param("name") String name,
+            @Param("repositoryGeneric") Repository repositoryGeneric,
+            @Param("deleted") Boolean deleted,
+            @Param("binaryPackage") Boolean binary_package,
+            @Param("rVersion") String r_version,
+            @Param("architecture") String architecture,
+            @Param("distribution") String distribution,
+            @Param("versions") Collection<String> versions);
 }

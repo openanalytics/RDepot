@@ -187,7 +187,7 @@ public class RRepositoryStrategyTest extends StrategyTest {
                 packageService);
 
         strategy.perform();
-
+        strategy.postStrategy();
         verify(repositorySynchronizer, times(1)).storeRepositoryOnRemoteServer(repository);
         verify(eventService, times(1)).create(any());
     }
@@ -217,7 +217,7 @@ public class RRepositoryStrategyTest extends StrategyTest {
                 packageService);
 
         strategy.perform();
-
+        strategy.postStrategy();
         verify(repositorySynchronizer, times(1)).storeRepositoryOnRemoteServer(eq(repository));
     }
 
@@ -246,10 +246,10 @@ public class RRepositoryStrategyTest extends StrategyTest {
                 repositoryMaintainerService,
                 packageMaintainerService,
                 packageService);
-
+        strategy.perform();
         StrategyFailure exception = assertThrows(
                 StrategyFailure.class,
-                strategy::perform,
+                strategy::postStrategy,
                 "Exception should be thrown when strategy fails to" + "update the repository.");
         String expectedMessage = MessageCodes.STRATEGY_FAILURE + ": " + MessageCodes.COULD_NOT_SYNCHRONIZE_REPOSITORY;
         assertEquals(expectedMessage, exception.getMessage(), "could.not.synchronize.repository should be thrown");
@@ -348,6 +348,7 @@ public class RRepositoryStrategyTest extends StrategyTest {
                 packageService);
 
         strategy.perform();
+        strategy.postStrategy();
     }
 
     @Test

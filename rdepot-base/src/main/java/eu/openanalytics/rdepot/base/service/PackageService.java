@@ -60,10 +60,14 @@ public class PackageService<E extends Package> extends Service<E> {
         return packageDao.findByRepositoryGenericAndDeletedAndActive(repository, false, true);
     }
 
+    protected List<E> findSameVersions(E entity) {
+        return packageDao.findAllByNameAndRepositoryGenericAndDeletedAndVersionIn(
+                entity.getName(), entity.getRepository(), false, generateVariantsOfVersion(entity.getVersion()));
+    }
+
     @Override
     public void deleteSameVersion(E entity) {
-        List<E> samePackages = packageDao.findAllByNameAndRepositoryGenericAndDeletedAndVersionIn(
-                entity.getName(), entity.getRepository(), false, generateVariantsOfVersion(entity.getVersion()));
+        List<E> samePackages = findSameVersions(entity);
 
         if (!samePackages.isEmpty()) log.debug("Found non-deleted packages of the same name, version and repository.");
 

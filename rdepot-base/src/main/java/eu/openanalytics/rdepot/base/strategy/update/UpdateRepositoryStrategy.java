@@ -141,7 +141,7 @@ public abstract class UpdateRepositoryStrategy<T extends Repository> extends Upd
     }
 
     @Override
-    protected void postStrategy() throws StrategyFailure {
+    public void postStrategy() throws StrategyFailure {
         if (resource.getPublished()) {
             try {
                 repositorySynchronizer.storeRepositoryOnRemoteServer(resource);

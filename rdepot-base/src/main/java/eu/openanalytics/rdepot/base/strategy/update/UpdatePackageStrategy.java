@@ -120,7 +120,7 @@ public abstract class UpdatePackageStrategy<P extends Package> extends UpdateStr
     }
 
     @Override
-    protected void postStrategy() throws StrategyFailure {
+    public void postStrategy() throws StrategyFailure {
         try {
             if (processedResource.getRepository().getPublished()) publishPackageRepository(processedResource);
         } catch (SynchronizeRepositoryException e) {

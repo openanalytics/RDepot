@@ -371,7 +371,7 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
     protected abstract void assignRepositoryToPackage(R repository, P packageBag);
 
     @Override
-    protected void postStrategy() throws StrategyFailure {
+    public void postStrategy() throws StrategyFailure {
         if (request.getRepository().getPublished()) {
             try {
                 repositorySynchronizer.storeRepositoryOnRemoteServer(request.getRepository());
