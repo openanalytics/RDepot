@@ -37,63 +37,64 @@ public class PropertiesFromMetaDataFileTest {
     private static final String DATA_TABLE_FILE = JSON_PATH + "/test_files/properties_files/DESCRIPTION_data_table";
     private static final String MATRIX_FILE = JSON_PATH + "/test_files/properties_files/DESCRIPTION_matrix";
     private static final String GGALLY_FILE = JSON_PATH + "/test_files/properties_files/DESCRIPTION_ggally";
+    private static final String ACTUAR_FILE = JSON_PATH + "/test_files/properties_files/DESCRIPTION_actuar";
 
     @Test
     public void readPropertiesFromAccruedFile() throws Exception {
         final Properties properties = new PropertiesParser(new File(ACCRUED_FILE));
-        assertEquals(properties.size(), 14);
+        assertEquals(14, properties.size());
         assertEquals(
-                properties.getProperty("Description"),
-                "Package for visualizing data quality of partially accruing data.");
-        assertEquals(properties.getProperty("Packaged"), "2015-07-20 18:44:41 UTC; jreaton");
-        assertEquals(properties.getProperty("License"), "GPL-3");
-        assertEquals(properties.getProperty("Title"), "Data Quality Visualization Tools for Partially Accruing Data");
-        assertEquals(properties.getProperty("Date"), "2015-07-20");
-        assertEquals(properties.getProperty("Maintainer"), "Julie Eaton <jreaton@uw.edu>");
-        assertEquals(properties.getProperty("Type"), "Package");
-        assertEquals(properties.getProperty("Repository"), "CRAN");
-        assertEquals(properties.getProperty("Version"), "1.3.5");
-        assertEquals(properties.getProperty("Author"), "Julie Eaton and Ian Painter");
-        assertEquals(properties.getProperty("NeedsCompilation"), "no");
-        assertEquals(properties.getProperty("Package"), "accrued");
-        assertEquals(properties.getProperty("Depends"), "R (>= 2.14.1), grid");
-        assertEquals(properties.getProperty("Date/Publication"), "2015-07-20 22:40:00");
+                "Package for visualizing data quality of partially accruing data.",
+                properties.getProperty("Description"));
+        assertEquals("2015-07-20 18:44:41 UTC; jreaton", properties.getProperty("Packaged"));
+        assertEquals("GPL-3", properties.getProperty("License"));
+        assertEquals("Data Quality Visualization Tools for Partially Accruing Data", properties.getProperty("Title"));
+        assertEquals("2015-07-20", properties.getProperty("Date"));
+        assertEquals("Julie Eaton <jreaton@uw.edu>", properties.getProperty("Maintainer"));
+        assertEquals("Package", properties.getProperty("Type"));
+        assertEquals("CRAN", properties.getProperty("Repository"));
+        assertEquals("1.3.5", properties.getProperty("Version"));
+        assertEquals("Julie Eaton and Ian Painter", properties.getProperty("Author"));
+        assertEquals("no", properties.getProperty("NeedsCompilation"));
+        assertEquals("accrued", properties.getProperty("Package"));
+        assertEquals("R (>= 2.14.1), grid", properties.getProperty("Depends"));
+        assertEquals("2015-07-20 22:40:00", properties.getProperty("Date/Publication"));
     }
 
     @Test
     public void readPropertiesFromDataTableFile() throws Exception {
         final Properties properties = new PropertiesParser(new File(DATA_TABLE_FILE));
-        assertEquals(properties.size(), 20);
+        assertEquals(20, properties.size());
         assertEquals(
-                properties.getProperty("Description"),
-                "Fast aggregation of large data (e.g. 100GB in RAM), fast ordered joins, fast add/modify/delete of columns by group using no copies at all, list columns, friendly and fast character-separated-value read/write. Offers a natural and flexible syntax, for faster development.");
-        assertEquals(properties.getProperty("Packaged"), "2023-02-16 16:37:18 UTC; mdowle");
-        assertEquals(properties.getProperty("License"), "MPL-2.0 | file LICENSE");
-        assertEquals(properties.getProperty("Title"), "Extension of `data.frame`");
-        assertEquals(properties.getProperty("Imports"), "methods");
-        assertEquals(properties.getProperty("SystemRequirements"), "zlib");
+                "Fast aggregation of large data (e.g. 100GB in RAM), fast ordered joins, fast add/modify/delete of columns by group using no copies at all, list columns, friendly and fast character-separated-value read/write. Offers a natural and flexible syntax, for faster development.",
+                properties.getProperty("Description"));
+        assertEquals("2023-02-16 16:37:18 UTC; mdowle", properties.getProperty("Packaged"));
+        assertEquals("MPL-2.0 | file LICENSE", properties.getProperty("License"));
+        assertEquals("Extension of `data.frame`", properties.getProperty("Title"));
+        assertEquals("methods", properties.getProperty("Imports"));
+        assertEquals("zlib", properties.getProperty("SystemRequirements"));
         assertEquals(
-                properties.getProperty("URL"),
-                "https://r-datatable.com, https://Rdatatable.gitlab.io/data.table,\\n https://github.com/Rdatatable/data.table");
-        assertEquals(properties.getProperty("BugReports"), "https://github.com/Rdatatable/data.table/issues");
-        assertEquals(properties.getProperty("ByteCompile"), "TRUE");
-        assertEquals(properties.getProperty("VignetteBuilder"), "knitr");
-        assertEquals(properties.getProperty("Maintainer"), "Matt Dowle <mattjdowle@gmail.com>");
-        assertEquals(properties.getProperty("Repository"), "CRAN");
-        assertEquals(properties.getProperty("Version"), "1.14.8");
+                "https://r-datatable.com, https://Rdatatable.gitlab.io/data.table,\\n https://github.com/Rdatatable/data.table",
+                properties.getProperty("URL"));
+        assertEquals("https://github.com/Rdatatable/data.table/issues", properties.getProperty("BugReports"));
+        assertEquals("TRUE", properties.getProperty("ByteCompile"));
+        assertEquals("knitr", properties.getProperty("VignetteBuilder"));
+        assertEquals("Matt Dowle <mattjdowle@gmail.com>", properties.getProperty("Maintainer"));
+        assertEquals("CRAN", properties.getProperty("Repository"));
+        assertEquals("1.14.8", properties.getProperty("Version"));
         assertEquals(
-                properties.getProperty("Suggests"),
-                "bit64 (>= 4.0.0), bit (>= 4.0.4), curl, R.utils, xts,\\n nanotime, zoo (>= 1.8-1), yaml, knitr, rmarkdown");
-        assertEquals(properties.getProperty("NeedsCompilation"), "yes");
+                "bit64 (>= 4.0.0), bit (>= 4.0.4), curl, R.utils, xts,\\n nanotime, zoo (>= 1.8-1), yaml, knitr, rmarkdown",
+                properties.getProperty("Suggests"));
+        assertEquals("yes", properties.getProperty("NeedsCompilation"));
         assertEquals(
-                properties.getProperty("Author"),
-                "Matt Dowle [aut, cre],\\n Arun Srinivasan [aut],\\n Jan Gorecki [ctb],\\n Michael Chirico [ctb],\\n Pasha Stetsenko [ctb],\\n Tom Short [ctb],\\n Steve Lianoglou [ctb],\\n Eduard Antonyan [ctb],\\n Markus Bonsch [ctb],\\n Hugh Parsonage [ctb],\\n Scott Ritchie [ctb],\\n Kun Ren [ctb],\\n Xianying Tan [ctb],\\n Rick Saporta [ctb],\\n Otto Seiskari [ctb],\\n Xianghui Dong [ctb],\\n Michel Lang [ctb],\\n Watal Iwasaki [ctb],\\n Seth Wenchel [ctb],\\n Karl Broman [ctb],\\n Tobias Schmidt [ctb],\\n David Arenburg [ctb],\\n Ethan Smith [ctb],\\n Francois Cocquemas [ctb],\\n Matthieu Gomez [ctb],\\n Philippe Chataignon [ctb],\\n Nello Blaser [ctb],\\n Dmitry Selivanov [ctb],\\n Andrey Riabushenko [ctb],\\n Cheng Lee [ctb],\\n Declan Groves [ctb],\\n Daniel Possenriede [ctb],\\n Felipe Parages [ctb],\\n Denes Toth [ctb],\\n Mus Yaramaz-David [ctb],\\n Ayappan Perumal [ctb],\\n James Sams [ctb],\\n Martin Morgan [ctb],\\n Michael Quinn [ctb],\\n @javrucebo [ctb],\\n @marc-outins [ctb],\\n Roy Storey [ctb],\\n Manish Saraswat [ctb],\\n Morgan Jacob [ctb],\\n Michael Schubmehl [ctb],\\n Davis Vaughan [ctb],\\n Toby Hocking [ctb],\\n Leonardo Silvestri [ctb],\\n Tyson Barrett [ctb],\\n Jim Hester [ctb],\\n Anthony Damico [ctb],\\n Sebastian Freundt [ctb],\\n David Simons [ctb],\\n Elliott Sales de Andrade [ctb],\\n Cole Miller [ctb],\\n Jens Peder Meldgaard [ctb],\\n Vaclav Tlapak [ctb],\\n Kevin Ushey [ctb],\\n Dirk Eddelbuettel [ctb],\\n Ben Schwen [ctb]");
-        assertEquals(properties.getProperty("Package"), "data.table");
+                "Matt Dowle [aut, cre],\\n Arun Srinivasan [aut],\\n Jan Gorecki [ctb],\\n Michael Chirico [ctb],\\n Pasha Stetsenko [ctb],\\n Tom Short [ctb],\\n Steve Lianoglou [ctb],\\n Eduard Antonyan [ctb],\\n Markus Bonsch [ctb],\\n Hugh Parsonage [ctb],\\n Scott Ritchie [ctb],\\n Kun Ren [ctb],\\n Xianying Tan [ctb],\\n Rick Saporta [ctb],\\n Otto Seiskari [ctb],\\n Xianghui Dong [ctb],\\n Michel Lang [ctb],\\n Watal Iwasaki [ctb],\\n Seth Wenchel [ctb],\\n Karl Broman [ctb],\\n Tobias Schmidt [ctb],\\n David Arenburg [ctb],\\n Ethan Smith [ctb],\\n Francois Cocquemas [ctb],\\n Matthieu Gomez [ctb],\\n Philippe Chataignon [ctb],\\n Nello Blaser [ctb],\\n Dmitry Selivanov [ctb],\\n Andrey Riabushenko [ctb],\\n Cheng Lee [ctb],\\n Declan Groves [ctb],\\n Daniel Possenriede [ctb],\\n Felipe Parages [ctb],\\n Denes Toth [ctb],\\n Mus Yaramaz-David [ctb],\\n Ayappan Perumal [ctb],\\n James Sams [ctb],\\n Martin Morgan [ctb],\\n Michael Quinn [ctb],\\n @javrucebo [ctb],\\n @marc-outins [ctb],\\n Roy Storey [ctb],\\n Manish Saraswat [ctb],\\n Morgan Jacob [ctb],\\n Michael Schubmehl [ctb],\\n Davis Vaughan [ctb],\\n Toby Hocking [ctb],\\n Leonardo Silvestri [ctb],\\n Tyson Barrett [ctb],\\n Jim Hester [ctb],\\n Anthony Damico [ctb],\\n Sebastian Freundt [ctb],\\n David Simons [ctb],\\n Elliott Sales de Andrade [ctb],\\n Cole Miller [ctb],\\n Jens Peder Meldgaard [ctb],\\n Vaclav Tlapak [ctb],\\n Kevin Ushey [ctb],\\n Dirk Eddelbuettel [ctb],\\n Ben Schwen [ctb]",
+                properties.getProperty("Author"));
+        assertEquals("data.table", properties.getProperty("Package"));
         assertEquals(
-                properties.getProperty("Authors@R"),
-                "c(\\n person(\"Matt\",\"Dowle\", role=c(\"aut\",\"cre\"), email=\"mattjdowle@gmail.com\"),\\n person(\"Arun\",\"Srinivasan\", role=\"aut\", email=\"asrini@pm.me\"),\\n person(\"Jan\",\"Gorecki\", role=\"ctb\"),\\n person(\"Michael\",\"Chirico\", role=\"ctb\"),\\n person(\"Pasha\",\"Stetsenko\", role=\"ctb\"),\\n person(\"Tom\",\"Short\", role=\"ctb\"),\\n person(\"Steve\",\"Lianoglou\", role=\"ctb\"),\\n person(\"Eduard\",\"Antonyan\", role=\"ctb\"),\\n person(\"Markus\",\"Bonsch\", role=\"ctb\"),\\n person(\"Hugh\",\"Parsonage\", role=\"ctb\"),\\n person(\"Scott\",\"Ritchie\", role=\"ctb\"),\\n person(\"Kun\",\"Ren\", role=\"ctb\"),\\n person(\"Xianying\",\"Tan\", role=\"ctb\"),\\n person(\"Rick\",\"Saporta\", role=\"ctb\"),\\n person(\"Otto\",\"Seiskari\", role=\"ctb\"),\\n person(\"Xianghui\",\"Dong\", role=\"ctb\"),\\n person(\"Michel\",\"Lang\", role=\"ctb\"),\\n person(\"Watal\",\"Iwasaki\", role=\"ctb\"),\\n person(\"Seth\",\"Wenchel\", role=\"ctb\"),\\n person(\"Karl\",\"Broman\", role=\"ctb\"),\\n person(\"Tobias\",\"Schmidt\", role=\"ctb\"),\\n person(\"David\",\"Arenburg\", role=\"ctb\"),\\n person(\"Ethan\",\"Smith\", role=\"ctb\"),\\n person(\"Francois\",\"Cocquemas\", role=\"ctb\"),\\n person(\"Matthieu\",\"Gomez\", role=\"ctb\"),\\n person(\"Philippe\",\"Chataignon\", role=\"ctb\"),\\n person(\"Nello\",\"Blaser\", role=\"ctb\"),\\n person(\"Dmitry\",\"Selivanov\", role=\"ctb\"),\\n person(\"Andrey\",\"Riabushenko\", role=\"ctb\"),\\n person(\"Cheng\",\"Lee\", role=\"ctb\"),\\n person(\"Declan\",\"Groves\", role=\"ctb\"),\\n person(\"Daniel\",\"Possenriede\", role=\"ctb\"),\\n person(\"Felipe\",\"Parages\", role=\"ctb\"),\\n person(\"Denes\",\"Toth\", role=\"ctb\"),\\n person(\"Mus\",\"Yaramaz-David\", role=\"ctb\"),\\n person(\"Ayappan\",\"Perumal\", role=\"ctb\"),\\n person(\"James\",\"Sams\", role=\"ctb\"),\\n person(\"Martin\",\"Morgan\", role=\"ctb\"),\\n person(\"Michael\",\"Quinn\", role=\"ctb\"),\\n person(\"@javrucebo\",\"\", role=\"ctb\"),\\n person(\"@marc-outins\",\"\", role=\"ctb\"),\\n person(\"Roy\",\"Storey\", role=\"ctb\"),\\n person(\"Manish\",\"Saraswat\", role=\"ctb\"),\\n person(\"Morgan\",\"Jacob\", role=\"ctb\"),\\n person(\"Michael\",\"Schubmehl\", role=\"ctb\"),\\n person(\"Davis\",\"Vaughan\", role=\"ctb\"),\\n person(\"Toby\",\"Hocking\", role=\"ctb\"),\\n person(\"Leonardo\",\"Silvestri\", role=\"ctb\"),\\n person(\"Tyson\",\"Barrett\", role=\"ctb\"),\\n person(\"Jim\",\"Hester\", role=\"ctb\"),\\n person(\"Anthony\",\"Damico\", role=\"ctb\"),\\n person(\"Sebastian\",\"Freundt\", role=\"ctb\"),\\n person(\"David\",\"Simons\", role=\"ctb\"),\\n person(\"Elliott\",\"Sales de Andrade\", role=\"ctb\"),\\n person(\"Cole\",\"Miller\", role=\"ctb\"),\\n person(\"Jens Peder\",\"Meldgaard\", role=\"ctb\"),\\n person(\"Vaclav\",\"Tlapak\", role=\"ctb\"),\\n person(\"Kevin\",\"Ushey\", role=\"ctb\"),\\n person(\"Dirk\",\"Eddelbuettel\", role=\"ctb\"),\\n person(\"Ben\",\"Schwen\", role=\"ctb\"))");
-        assertEquals(properties.getProperty("Depends"), "R (>= 3.1.0)");
-        assertEquals(properties.getProperty("Date/Publication"), "2023-02-17 12:20:12 UTC");
+                "c(\\n person(\"Matt\",\"Dowle\", role=c(\"aut\",\"cre\"), email=\"mattjdowle@gmail.com\"),\\n person(\"Arun\",\"Srinivasan\", role=\"aut\", email=\"asrini@pm.me\"),\\n person(\"Jan\",\"Gorecki\", role=\"ctb\"),\\n person(\"Michael\",\"Chirico\", role=\"ctb\"),\\n person(\"Pasha\",\"Stetsenko\", role=\"ctb\"),\\n person(\"Tom\",\"Short\", role=\"ctb\"),\\n person(\"Steve\",\"Lianoglou\", role=\"ctb\"),\\n person(\"Eduard\",\"Antonyan\", role=\"ctb\"),\\n person(\"Markus\",\"Bonsch\", role=\"ctb\"),\\n person(\"Hugh\",\"Parsonage\", role=\"ctb\"),\\n person(\"Scott\",\"Ritchie\", role=\"ctb\"),\\n person(\"Kun\",\"Ren\", role=\"ctb\"),\\n person(\"Xianying\",\"Tan\", role=\"ctb\"),\\n person(\"Rick\",\"Saporta\", role=\"ctb\"),\\n person(\"Otto\",\"Seiskari\", role=\"ctb\"),\\n person(\"Xianghui\",\"Dong\", role=\"ctb\"),\\n person(\"Michel\",\"Lang\", role=\"ctb\"),\\n person(\"Watal\",\"Iwasaki\", role=\"ctb\"),\\n person(\"Seth\",\"Wenchel\", role=\"ctb\"),\\n person(\"Karl\",\"Broman\", role=\"ctb\"),\\n person(\"Tobias\",\"Schmidt\", role=\"ctb\"),\\n person(\"David\",\"Arenburg\", role=\"ctb\"),\\n person(\"Ethan\",\"Smith\", role=\"ctb\"),\\n person(\"Francois\",\"Cocquemas\", role=\"ctb\"),\\n person(\"Matthieu\",\"Gomez\", role=\"ctb\"),\\n person(\"Philippe\",\"Chataignon\", role=\"ctb\"),\\n person(\"Nello\",\"Blaser\", role=\"ctb\"),\\n person(\"Dmitry\",\"Selivanov\", role=\"ctb\"),\\n person(\"Andrey\",\"Riabushenko\", role=\"ctb\"),\\n person(\"Cheng\",\"Lee\", role=\"ctb\"),\\n person(\"Declan\",\"Groves\", role=\"ctb\"),\\n person(\"Daniel\",\"Possenriede\", role=\"ctb\"),\\n person(\"Felipe\",\"Parages\", role=\"ctb\"),\\n person(\"Denes\",\"Toth\", role=\"ctb\"),\\n person(\"Mus\",\"Yaramaz-David\", role=\"ctb\"),\\n person(\"Ayappan\",\"Perumal\", role=\"ctb\"),\\n person(\"James\",\"Sams\", role=\"ctb\"),\\n person(\"Martin\",\"Morgan\", role=\"ctb\"),\\n person(\"Michael\",\"Quinn\", role=\"ctb\"),\\n person(\"@javrucebo\",\"\", role=\"ctb\"),\\n person(\"@marc-outins\",\"\", role=\"ctb\"),\\n person(\"Roy\",\"Storey\", role=\"ctb\"),\\n person(\"Manish\",\"Saraswat\", role=\"ctb\"),\\n person(\"Morgan\",\"Jacob\", role=\"ctb\"),\\n person(\"Michael\",\"Schubmehl\", role=\"ctb\"),\\n person(\"Davis\",\"Vaughan\", role=\"ctb\"),\\n person(\"Toby\",\"Hocking\", role=\"ctb\"),\\n person(\"Leonardo\",\"Silvestri\", role=\"ctb\"),\\n person(\"Tyson\",\"Barrett\", role=\"ctb\"),\\n person(\"Jim\",\"Hester\", role=\"ctb\"),\\n person(\"Anthony\",\"Damico\", role=\"ctb\"),\\n person(\"Sebastian\",\"Freundt\", role=\"ctb\"),\\n person(\"David\",\"Simons\", role=\"ctb\"),\\n person(\"Elliott\",\"Sales de Andrade\", role=\"ctb\"),\\n person(\"Cole\",\"Miller\", role=\"ctb\"),\\n person(\"Jens Peder\",\"Meldgaard\", role=\"ctb\"),\\n person(\"Vaclav\",\"Tlapak\", role=\"ctb\"),\\n person(\"Kevin\",\"Ushey\", role=\"ctb\"),\\n person(\"Dirk\",\"Eddelbuettel\", role=\"ctb\"),\\n person(\"Ben\",\"Schwen\", role=\"ctb\"))",
+                properties.getProperty("Authors@R"));
+        assertEquals("R (>= 3.1.0)", properties.getProperty("Depends"));
+        assertEquals("2023-02-17 12:20:12 UTC", properties.getProperty("Date/Publication"));
     }
 
     @Test
@@ -258,5 +259,31 @@ public class PropertiesFromMetaDataFileTest {
         assertEquals("Barret Schloerke <schloerke@gmail.com>", properties.getProperty("Maintainer"));
         assertEquals("CRAN", properties.getProperty("Repository"));
         assertEquals("2024-02-14 00:53:32 UTC", properties.getProperty("Date/Publication"));
+    }
+
+    @Test
+    public void readPropertiesFromActuarFile() throws Exception {
+        final Properties properties = new PropertiesParser(new File(ACTUAR_FILE));
+        assertEquals(23, properties.size());
+        assertEquals("62P05, 91B30, 62G32", properties.getProperty("Classification/MSC-2010"));
+        assertEquals(
+                String.join(
+                        "",
+                        "Vincent Goulet [cre, aut],\\n ",
+                        "Sébastien Auclair [ctb],\\n ",
+                        "Christophe Dutang [aut],\\n ",
+                        "Walter Garcia-Fontes [ctb],\\n ",
+                        "Nicholas Langevin [ctb],\\n ",
+                        "Xavier Milhaud [ctb],\\n ",
+                        "Tommy Ouellet [ctb],\\n ",
+                        "Alexandre Parent [ctb],\\n ",
+                        "Mathieu Pigeon [aut],\\n ",
+                        "Louis-Philippe Pouliot [ctb],\\n ",
+                        "Jeffrey A. Ryan [aut] (Package API),\\n ",
+                        "Robert Gentleman [aut] (Parts of the R to C interface),\\n ",
+                        "Ross Ihaka [aut] (Parts of the R to C interface),\\n ",
+                        "R Core Team [aut] (Parts of the R to C interface),\\n ",
+                        "R Foundation [aut] (Parts of the R to C interface)"),
+                properties.getProperty("Author"));
     }
 }

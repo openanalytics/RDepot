@@ -1,7 +1,7 @@
 {
-    "status": "ERROR",
-    "code": 422,
-    "message": "Your JSON Patch object is incorrect.",
-    "messageCode": "error.malformed.patch",
-    "data": "deactivated.token.could.not.be.changed"
+	"code": 422,
+	"data": "Deactivated token could not be changed.",
+	"messageCode": "error.malformed.patch",
+	"message": "Your JSON Patch object is incorrect.",
+	"status": "ERROR"
 }

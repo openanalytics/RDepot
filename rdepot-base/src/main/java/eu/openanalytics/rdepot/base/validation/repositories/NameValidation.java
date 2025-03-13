@@ -24,8 +24,8 @@ import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.base.validation.ChainValidator;
-import java.util.Optional;
-import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.validation.Errors;
 
 /**
@@ -33,19 +33,25 @@ import org.springframework.validation.Errors;
  * Should neither be empty, nor a duplicate of any existing repository.
  * @param <R> technology-specific repository class
  */
-@AllArgsConstructor
+@Getter
+@RequiredArgsConstructor
 public class NameValidation<R extends Repository> extends ChainValidator<R> {
 
     private final RepositoryService<R> repositoryService;
+    private final BasicNameValidator nameValidator;
 
     public void validateField(R repository, Errors errors) {
-        if (repository.getName() == null || repository.getName().isBlank()) {
-            errors.rejectValue("name", MessageCodes.EMPTY_NAME);
-        } else {
-            Optional<R> duplicateName = repositoryService.findByName(repository.getName());
-            if (duplicateName.isPresent() && duplicateName.get().getId() != repository.getId()) {
-                errors.rejectValue("name", MessageCodes.ERROR_DUPLICATE_NAME);
+        switch (nameValidator.validateName(repository.getName())) {
+            case EMPTY: {
+                errors.rejectValue("name", MessageCodes.EMPTY_NAME);
+                break;
             }
+            case INVALID: {
+                errors.rejectValue("name", MessageCodes.INVALID_REPOSITORY_NAME);
+                break;
+            }
+            default:
+                break;
         }
     }
 }

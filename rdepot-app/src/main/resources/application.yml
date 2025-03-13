@@ -1,3 +1,4 @@
+---
 api-token:
   secret: SecretKeyToGenJWTsButItShouldBeReplaced
 
@@ -29,8 +30,8 @@ default-user-configuration:
     - dark
 
 replacing:
-   packages:
-      enabled: true
+  packages:
+    enabled: true
 
 # Email related properties
 #email:
@@ -127,6 +128,11 @@ package:
 repository:
   generation:
     dir: /opt/rdepot/generated
+  validation-name-regex:
+    general: ".+"
+    technology:
+      python: "[A-Za-z0-9\\-_.~]+"
+      r: "[A-Za-z0-9 \\-_.]+"
 
 #spring.mvc.view.prefix=/WEB-INF/pages/
 #spring.mvc.view.suffix=.jsp

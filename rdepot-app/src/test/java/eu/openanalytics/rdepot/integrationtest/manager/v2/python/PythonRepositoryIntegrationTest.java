@@ -32,8 +32,8 @@ import org.junit.jupiter.api.Test;
 
 public class PythonRepositoryIntegrationTest extends IntegrationTest {
     private final RepositoryTechnologyTestData testData;
-    private static String EVENTS_PATH = "/v2/python/events/repositories/";
-    private static String REPOSITORIES_PATH = "/v2/python/repositories/";
+    private static final String EVENTS_PATH = "/v2/python/events/repositories/";
+    private static final String REPOSITORIES_PATH = "/v2/python/repositories/";
 
     public PythonRepositoryIntegrationTest() {
         super("/api/v2/manager/python/repositories");

@@ -26,18 +26,28 @@ import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2Controller;
 import eu.openanalytics.rdepot.base.api.v2.converters.exceptions.EntityResolutionException;
 import eu.openanalytics.rdepot.base.api.v2.dtos.RepositoryDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.ResponseDto;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.*;
+import eu.openanalytics.rdepot.base.api.v2.exceptions.ApiException;
+import eu.openanalytics.rdepot.base.api.v2.exceptions.ApplyPatchException;
+import eu.openanalytics.rdepot.base.api.v2.exceptions.CreateException;
+import eu.openanalytics.rdepot.base.api.v2.exceptions.DeleteException;
+import eu.openanalytics.rdepot.base.api.v2.exceptions.MalformedPatchException;
+import eu.openanalytics.rdepot.base.api.v2.exceptions.NotAllowedInDeclarativeMode;
+import eu.openanalytics.rdepot.base.api.v2.exceptions.RepositoryDeletionException;
+import eu.openanalytics.rdepot.base.api.v2.exceptions.RepositoryNotFound;
+import eu.openanalytics.rdepot.base.api.v2.exceptions.UserNotAuthorized;
 import eu.openanalytics.rdepot.base.api.v2.hateoas.RoleAwareRepresentationModelAssembler;
 import eu.openanalytics.rdepot.base.api.v2.resolvers.CommonPageableSortResolver;
 import eu.openanalytics.rdepot.base.api.v2.resolvers.DtoResolvedPageable;
 import eu.openanalytics.rdepot.base.api.v2.validation.PageableValidator;
 import eu.openanalytics.rdepot.base.entities.Role;
 import eu.openanalytics.rdepot.base.entities.User;
+import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
+import eu.openanalytics.rdepot.base.strategy.exceptions.EditingDeletedResourceException;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.utils.specs.RepositorySpecs;
 import eu.openanalytics.rdepot.base.utils.specs.SpecificationUtils;
@@ -69,7 +79,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * REST controller implementation for Python repositories.
@@ -81,7 +101,7 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
 
     private final PythonStrategyFactory factory;
     private final UserService userService;
-    private final PythonRepositoryService repositoryService;
+    private final PythonRepositoryService pythonRepositoryService;
     private final SecurityMediator securityMediator;
     private final PythonRepositoryValidator validator;
     private final PythonRepositoryDeleter deleter;
@@ -101,7 +121,7 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
             PagedResourcesAssembler<PythonRepository> pagedModelAssembler,
             ObjectMapper objectMapper,
             UserService userService,
-            PythonRepositoryService repositoryService,
+            PythonRepositoryService pythonRepositoryService,
             PythonStrategyFactory factory,
             PythonRepositoryValidator validator,
             SecurityMediator securityMediator,
@@ -121,7 +141,7 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
                 dtoConverter);
         this.securityMediator = securityMediator;
         this.factory = factory;
-        this.repositoryService = repositoryService;
+        this.pythonRepositoryService = pythonRepositoryService;
         this.validator = validator;
         this.userService = userService;
         this.deleter = deleter;
@@ -152,7 +172,7 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
                 SpecificationUtils.andComponent(null, RepositorySpecs.isDeleted(deleted));
         if (name.isPresent()) specs = SpecificationUtils.andComponent(specs, RepositorySpecs.ofName(name.get()));
         return handleSuccessForPagedCollection(
-                repositoryService.findAllBySpecification(specs, resolvedPageable), requester);
+                pythonRepositoryService.findAllBySpecification(specs, resolvedPageable), requester);
     }
 
     /**
@@ -174,7 +194,7 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
 
         PythonRepository repository =
-                repositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
+                pythonRepositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
 
         if ((!userService.isAdmin(requester) && repository.isDeleted()))
             throw new RepositoryNotFound(messageSource, locale);
@@ -226,12 +246,17 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
         User requester = getRequester(principal);
 
         PythonRepository repository =
-                repositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
+                pythonRepositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
 
         if (!securityMediator.isAuthorizedToEdit(repository, requester))
             throw new UserNotAuthorized(messageSource, locale);
 
         checkDeclarative();
+
+        if (repository.isDeleted())
+            throw new EditingDeletedResourceException(
+                    MessageCodes.EDITING_DELETED_RESOURCE_NOT_POSSIBLE, messageSource, locale);
+
         try {
             PythonRepositoryDto repositoryDto = applyPatchToEntity(jsonPatch, repository);
             PythonRepository updated = dtoConverter.resolveDtoToEntity(repositoryDto);
@@ -266,7 +291,7 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
             throw new UserNotAuthorized(messageSource, locale);
 
         PythonRepository repository =
-                repositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
+                pythonRepositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
 
         checkDeclarative();
 
@@ -297,7 +322,7 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
 
         PythonRepository repository =
-                repositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
+                pythonRepositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
 
         try {
             BindingResult bindingResult = createBindingResult(repository);

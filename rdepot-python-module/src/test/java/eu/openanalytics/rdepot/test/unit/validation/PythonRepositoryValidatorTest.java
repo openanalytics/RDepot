@@ -20,15 +20,21 @@
  */
 package eu.openanalytics.rdepot.test.unit.validation;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-import eu.openanalytics.rdepot.base.validation.RepositoryValidator;
+import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.services.PythonRepositoryService;
 import eu.openanalytics.rdepot.python.validation.PythonRepositoryValidator;
+import eu.openanalytics.rdepot.python.validation.repositories.PythonBasicNameValidator;
+import eu.openanalytics.rdepot.python.validation.repositories.PythonNameValidation;
 import eu.openanalytics.rdepot.test.fixture.PythonRepositoryTestFixture;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -43,10 +49,20 @@ public class PythonRepositoryValidatorTest {
     @Mock
     PythonRepositoryService pythonRepositoryService;
 
+    @Mock
+    RepositoryService<Repository> repositoryService;
+
+    private PythonRepositoryValidator repositoryValidator;
+
+    @BeforeEach
+    public void init() {
+        PythonNameValidation nameValidation = new PythonNameValidation(
+                pythonRepositoryService, new PythonBasicNameValidator("[A-Za-z0-9\\-_.~]+", ".+"));
+        repositoryValidator = new PythonRepositoryValidator(pythonRepositoryService, repositoryService, nameValidation);
+    }
+
     @Test
     public void updateRepository_shouldNotAllowChangingRepositoryVersion() {
-        RepositoryValidator<PythonRepository> repositoryValidator =
-                new PythonRepositoryValidator(pythonRepositoryService);
         PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
         PythonRepository updatedRepository = new PythonRepository(repository);
         updatedRepository.setVersion(100);
@@ -55,7 +71,7 @@ public class PythonRepositoryValidatorTest {
         dataBinder.setValidator(repositoryValidator);
         Errors errors = Mockito.spy(dataBinder.getBindingResult());
 
-        when(pythonRepositoryService.findById(repository.getId())).thenReturn((Optional.of(repository)));
+        when(repositoryService.findById(repository.getId())).thenReturn((Optional.of(repository)));
 
         repositoryValidator.validate(updatedRepository, errors);
         verify(errors, times(1)).rejectValue("version", MessageCodes.FORBIDDEN_UPDATE);

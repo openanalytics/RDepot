@@ -41,6 +41,7 @@ import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
 import eu.openanalytics.rdepot.base.entities.Role;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.mediator.deletion.PackageMaintainerDeleter;
+import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
@@ -48,6 +49,7 @@ import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
+import eu.openanalytics.rdepot.base.strategy.exceptions.EditingDeletedResourceException;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.factory.StrategyFactory;
 import eu.openanalytics.rdepot.base.utils.specs.PackageMaintainerSpecs;
@@ -295,6 +297,10 @@ public class ApiV2PackageMaintainerController extends ApiV2Controller<PackageMai
 
         if (!securityMediator.isAuthorizedToEdit(packageMaintainer, requester))
             throw new UserNotAuthorized(messageSource, locale);
+
+        if (packageMaintainer.isDeleted())
+            throw new EditingDeletedResourceException(
+                    MessageCodes.EDITING_DELETED_RESOURCE_NOT_POSSIBLE, messageSource, locale);
 
         PackageMaintainer updated;
         try {

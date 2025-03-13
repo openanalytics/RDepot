@@ -91,6 +91,7 @@ public class PackageMaintainerControllerUnitTest extends ApiV2ControllerUnitTest
             JSON_PATH + "/error_packagemaintainer_malformed_patch.json";
     private static final String EXAMPLE_PACKAGEMAINTAINER_PATCHED_PATH =
             JSON_PATH + "/example_packagemaintainer_patched.json";
+    public static final String EDITING_DELETED_RESOURCE_PATH = JSON_PATH + "/editing_deleted_resource.json";
 
     private Optional<User> user;
     private PackageMaintainer maintainer;
@@ -424,16 +425,29 @@ public class PackageMaintainerControllerUnitTest extends ApiV2ControllerUnitTest
         String patchJson = "[{\"op\": \"replace\",\"path\":\"/packageName\",\"value\":\"neeeeeew_package\"}]";
         final Integer id = maintainer.getId();
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(packageMaintainerService.findById(any(Integer.class))).thenReturn(Optional.of(maintainer));
-        when(securityMediator.isAuthorizedToEdit(eq(maintainer), any(User.class)))
-                .thenReturn(false);
-
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/package-maintainers/" + id)
                         .contentType("application/json-patch+json")
                         .content(patchJson))
                 .andExpect(status().isForbidden())
                 .andExpect(content().json(Files.readString(Path.of(ERROR_NOT_AUTHORIZED_PATH))));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"user", "repositorymaintainer"})
+    public void patchPackageMaintainer_returns405_whenPackageMaintainerIsDeleted() throws Exception {
+        String patchJson = "[{\"op\": \"replace\", \"path\":\"/packageName\",\"value\":\"neeeeeew_package\"}]";
+        final Integer id = maintainer.getId();
+        maintainer.setDeleted(true);
+
+        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(packageMaintainerService.findById(any(Integer.class))).thenReturn(Optional.of(maintainer));
+        when(securityMediator.isAuthorizedToEdit(maintainer, user.get())).thenReturn(true);
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/package-maintainers/" + id)
+                        .contentType("application/json-patch+json")
+                        .content(patchJson))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(content().json(Files.readString(Path.of(EDITING_DELETED_RESOURCE_PATH))));
     }
 
     @Test

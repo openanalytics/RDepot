@@ -29,13 +29,15 @@ public class RMessageCodes {
     public static final String EMPTY_AUTHOR = "empty.author";
     public static final String EMPTY_TITLE = "empty.title";
     public static final String EMPTY_MD5SUM = "empty.md5sum";
-    // validation - R binary package
+
+    // validation - binary package
     public static final String R_VERSION_NOT_ALLOWED = "r.version.not.allowed";
     public static final String INVALID_R_VERSION = "invalid.r.version";
     public static final String ARCHITECTURE_NOT_ALLOWED = "architecture.not.allowed";
     public static final String INVALID_ARCHITECTURE = "invalid.architecture";
     public static final String DISTRIBUTION_NOT_ALLOWED = "distribution.not.allowed";
     public static final String EMPTY_BUILT = "empty.built";
+
     public static final String COULD_NOT_PARSE_PACKAGES_FILE = "could.not.parse.packages.file";
     public static final String UPDATE_PACKAGE_EXCEPTION = "error.update.package";
     public static final String COULD_NOT_DOWNLOAD_PACKAGES_FILE = "could.not.download.packages.file";
@@ -43,4 +45,5 @@ public class RMessageCodes {
     public static final String COULD_NOT_GET_VIGNETTE = "could.not.get.vignette";
     public static final String COULD_NOT_GENERATE_MANUAL = "could.not.generate.manual";
     public static final String GENERATE_MANUAL_NOT_SUPPORTED = "generate.manual.not.supported";
+    public static final String COULD_NOT_GENERATE_PACKAGES_FILE = "could.not.generate.packages.file";
 }

@@ -25,13 +25,15 @@ import eu.openanalytics.rdepot.base.config.declarative.YamlDeclarativeConfigurat
 import eu.openanalytics.rdepot.r.mirroring.CranMirror;
 import eu.openanalytics.rdepot.r.mirroring.pojos.MirroredRPackage;
 import eu.openanalytics.rdepot.r.mirroring.pojos.MirroredRRepository;
+import eu.openanalytics.rdepot.r.validation.repositories.RBasicNameValidator;
 import org.springframework.stereotype.Component;
 
 @Component
 public class RYamlDeclarativeConfigurationSource
         extends YamlDeclarativeConfigurationSource<MirroredRRepository, MirroredRPackage, CranMirror> {
 
-    public RYamlDeclarativeConfigurationSource(DeclaredRepositoryDirectoriesProps declaredRepositoryDirectoriesProps) {
-        super(declaredRepositoryDirectoriesProps, MirroredRRepository.class);
+    public RYamlDeclarativeConfigurationSource(
+            DeclaredRepositoryDirectoriesProps declaredRepositoryDirectoriesProps, RBasicNameValidator nameValidator) {
+        super(declaredRepositoryDirectoriesProps, MirroredRRepository.class, nameValidator);
     }
 }

@@ -23,10 +23,13 @@ package eu.openanalytics.rdepot.base.config.declarative;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import eu.openanalytics.rdepot.base.config.declarative.exceptions.DeclaredRepositoryTechnologyMismatch;
+import eu.openanalytics.rdepot.base.config.declarative.exceptions.InvalidDeclaredRepositoryName;
 import eu.openanalytics.rdepot.base.config.declarative.exceptions.InvalidRepositoryDeclaration;
 import eu.openanalytics.rdepot.base.mirroring.Mirror;
 import eu.openanalytics.rdepot.base.mirroring.pojos.MirroredPackage;
 import eu.openanalytics.rdepot.base.mirroring.pojos.MirroredRepository;
+import eu.openanalytics.rdepot.base.validation.repositories.BasicNameValidator;
+import eu.openanalytics.rdepot.base.validation.repositories.NameValidationResult;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -47,12 +50,16 @@ public abstract class YamlDeclarativeConfigurationSource<
     protected final DeclaredRepositoryDirectoriesProps declaredRepositoryDirectoriesProps;
     protected final Class<R> repositoryClass;
     protected final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    protected final BasicNameValidator nameValidator;
 
     protected YamlDeclarativeConfigurationSource(
-            DeclaredRepositoryDirectoriesProps declaredRepositoryDirectoriesProps, Class<R> repositoryClass) {
+            DeclaredRepositoryDirectoriesProps declaredRepositoryDirectoriesProps,
+            Class<R> repositoryClass,
+            BasicNameValidator nameValidator) {
         super();
         this.declaredRepositoryDirectoriesProps = declaredRepositoryDirectoriesProps;
         this.repositoryClass = repositoryClass;
+        this.nameValidator = nameValidator;
         mapper.findAndRegisterModules();
     }
 
@@ -89,7 +96,7 @@ public abstract class YamlDeclarativeConfigurationSource<
                     declaredRepositories.add(retrieveDeclaredRepositoryFromFile(configFile));
                 } catch (DeclaredRepositoryTechnologyMismatch e) {
                     log.debug(e.getMessage(), e);
-                } catch (InvalidRepositoryDeclaration e) {
+                } catch (InvalidRepositoryDeclaration | InvalidDeclaredRepositoryName e) {
                     log.error(e.getMessage(), e);
                 }
             }
@@ -101,14 +108,22 @@ public abstract class YamlDeclarativeConfigurationSource<
     /**
      * Parses provided YAML file into repository declaration.
      * @throws InvalidRepositoryDeclaration when YAML could not be parsed into repository
+     * @throws InvalidDeclaredRepositoryName when repository name is not valid
      */
     protected R retrieveDeclaredRepositoryFromFile(File configFile)
-            throws InvalidRepositoryDeclaration, DeclaredRepositoryTechnologyMismatch {
+            throws InvalidRepositoryDeclaration, DeclaredRepositoryTechnologyMismatch, InvalidDeclaredRepositoryName {
         try {
-            return mapper.readValue(configFile, repositoryClass);
+            R repository = mapper.readValue(configFile, repositoryClass);
+            if (!nameValidator.validateName(repository.getName()).equals(NameValidationResult.OK)) {
+                throw new InvalidDeclaredRepositoryName(repository.getName());
+            }
+            return repository;
         } catch (DeclaredRepositoryTechnologyMismatch e) {
             log.debug(e.getMessage(), e);
             throw new DeclaredRepositoryTechnologyMismatch(configFile.getAbsolutePath());
+        } catch (InvalidDeclaredRepositoryName e) {
+            log.debug(e.getMessage(), e);
+            throw new InvalidDeclaredRepositoryName(configFile.getAbsolutePath());
         } catch (IOException e) {
             log.error(e.getMessage(), e);
             throw new InvalidRepositoryDeclaration(configFile.getAbsolutePath());

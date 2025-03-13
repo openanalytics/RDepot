@@ -58,6 +58,7 @@ public class MessageCodes {
     public static final String ERROR_DOWNLOAD_VIGNETTE = "error.download.vignette";
     public static final String DELETING_REPOSITORIES_DISABLED = "deleting.repositories.disabled";
     public static final String DELETING_PACKAGES_DISABLED = "deleting.packages.disabled";
+    public static final String EDITING_DELETED_RESOURCE_NOT_POSSIBLE = "editing.deleted.resource.not.possible";
 
     // API - Validation
     public static final String ERROR_VALIDATION = "error.validation";
@@ -147,6 +148,7 @@ public class MessageCodes {
     public static final String ERROR_DOWNLOAD_FILE = "error.download.file";
     public static final String NO_SUCH_PACKAGE_ERROR = "error.no.such.package";
     public static final String RESOLVE_RELATED_ENTITIES_EXCEPTION = "could.not.resolve.related.entities";
+    public static final String INVALID_REPOSITORY_NAME = "invalid.repository.name";
 
     // R-related
     public static final String ERROR_ORGANIZE_PACKAGES_IN_STORAGE = "error.organize.packages.in.storage";

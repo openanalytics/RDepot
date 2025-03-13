@@ -42,11 +42,13 @@ import eu.openanalytics.rdepot.base.api.v2.validation.PageableValidator;
 import eu.openanalytics.rdepot.base.entities.Role;
 import eu.openanalytics.rdepot.base.entities.SynchronizationStatus;
 import eu.openanalytics.rdepot.base.entities.User;
+import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
+import eu.openanalytics.rdepot.base.strategy.exceptions.EditingDeletedResourceException;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.utils.specs.RepositorySpecs;
 import eu.openanalytics.rdepot.base.utils.specs.SpecificationUtils;
@@ -100,7 +102,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/api/v2/manager/r/repositories")
 public class RRepositoryController extends ApiV2Controller<RRepository, RRepositoryDto> {
 
-    private final RRepositoryService repositoryService;
+    private final RRepositoryService rRepositoryService;
     private final UserService userService;
     private final RRepositoryValidator repositoryValidator;
     private final CranMirrorSynchronizer mirrorSynchronizer;
@@ -123,7 +125,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
             RRepositoryModelAssembler modelAssembler,
             PagedResourcesAssembler<RRepository> pagedModelAssembler,
             ObjectMapper objectMapper,
-            RRepositoryService repositoryService,
+            RRepositoryService rRepositoryService,
             UserService userService,
             RRepositoryValidator repositoryValidator,
             CranMirrorSynchronizer cranMirrorSynchronizer,
@@ -143,7 +145,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
                 RRepositoryDto.class,
                 Optional.of(repositoryValidator),
                 rRepositoryDtoConverter);
-        this.repositoryService = repositoryService;
+        this.rRepositoryService = rRepositoryService;
         this.userService = userService;
         this.repositoryValidator = repositoryValidator;
         this.mirrorSynchronizer = cranMirrorSynchronizer;
@@ -185,7 +187,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
         Specification<RRepository> specs = SpecificationUtils.andComponent(null, RepositorySpecs.isDeleted(deleted));
         if (name.isPresent()) specs = SpecificationUtils.andComponent(specs, RepositorySpecs.ofName(name.get()));
         return handleSuccessForPagedCollection(
-                repositoryService.findAllBySpecification(specs, resolvedPageable), requester);
+                rRepositoryService.findAllBySpecification(specs, resolvedPageable), requester);
     }
 
     @GetMapping("/bad-endpoint")
@@ -207,7 +209,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
 
         RRepository repository =
-                repositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
+                rRepositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
 
         if ((!userService.isAdmin(requester) && repository.isDeleted()))
             throw new RepositoryNotFound(messageSource, locale);
@@ -271,7 +273,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
     public @ResponseBody ResponseEntity<?> updateRepository(
             Principal principal, @PathVariable("id") Integer id, @RequestBody JsonPatch jsonPatch) throws ApiException {
         RRepository repository =
-                repositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
+                rRepositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
 
         User requester = userService
                 .findActiveByLogin(principal.getName())
@@ -280,6 +282,10 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
             throw new UserNotAuthorized(messageSource, locale);
 
         if (Boolean.parseBoolean(declarative)) throw new NotAllowedInDeclarativeMode(messageSource, locale);
+
+        if (repository.isDeleted())
+            throw new EditingDeletedResourceException(
+                    MessageCodes.EDITING_DELETED_RESOURCE_NOT_POSSIBLE, messageSource, locale);
 
         try {
             RRepositoryDto repositoryDto = applyPatchToEntity(jsonPatch, repository);
@@ -323,7 +329,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
             throw new UserNotAuthorized(messageSource, locale);
 
         RRepository repository =
-                repositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
+                rRepositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
 
         if (Boolean.parseBoolean(declarative)) throw new NotAllowedInDeclarativeMode(messageSource, locale);
 
@@ -348,7 +354,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
             throw new UserNotAuthorized(messageSource, locale);
         }
         RRepository repository =
-                repositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
+                rRepositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
 
         mirrorSynchronizer
                 .findByRepository(repository)
@@ -367,7 +373,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
                 .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
         RRepository repository =
-                repositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
+                rRepositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
 
         if (!securityMediator.isAuthorizedToEdit(repository, requester))
             throw new UserNotAuthorized(messageSource, locale);
@@ -402,7 +408,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
 
         RRepository repository =
-                repositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
+                rRepositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
 
         try {
             BindingResult bindingResult = createBindingResult(repository);

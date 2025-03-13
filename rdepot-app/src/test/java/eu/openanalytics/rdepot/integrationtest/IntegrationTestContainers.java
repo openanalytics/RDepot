@@ -32,8 +32,10 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 public class IntegrationTestContainers {
 
-    private static DockerComposeContainer<?> container = new DockerComposeContainer<>(
-                    new File("src/test/resources/docker-compose.yaml"))
+    private static final DockerComposeContainer<?> DOCKER_COMPOSE_CONTAINER =
+            new DockerComposeContainer<>(new File("src/test/resources/docker-compose.yaml"));
+
+    private static DockerComposeContainer<?> container = DOCKER_COMPOSE_CONTAINER
             .withLocalCompose(true)
             .withOptions("--compatibility")
             .waitingFor(
@@ -53,13 +55,13 @@ public class IntegrationTestContainers {
     }
 
     public static void startContainersIfNotRunningYet() {
-        System.out.println("===Setting up containers for test class: " + String.valueOf(testClassesCount + 1) + "/"
-                + TEST_CLASSES_TO_COMPLETE);
+        System.out.println(
+                "===Setting up containers for test class: " + (testClassesCount + 1) + "/" + TEST_CLASSES_TO_COMPLETE);
         if (!running) {
             System.out.println("===Containers were not running. Starting up...");
             container.start();
             running = true;
-            System.out.println("===Containers started succesfully.");
+            System.out.println("===Containers started successfully.");
         } else {
             System.out.println("===Containers are already running - skipping.");
         }

@@ -8,7 +8,7 @@ server {
       error_log           /var/log/nginx/repo.error.log debug;
       autoindex on;
 
-      try_files $uri @bin;
+      try_files $uri $uri/ @bin;
 
       proxy_set_header  Host             $http_host;
     }

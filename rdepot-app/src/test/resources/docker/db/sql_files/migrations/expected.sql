@@ -115,7 +115,7 @@ SET row_security = off; SET default_tablespace = ''; SET default_table_access_me
 -- CREATE TABLE public.rpackage ( id integer NOT NULL, depends text, imports text, suggests text, system_requirements text, license text, md5sum text, r_version text, architecture text, distribution text, built text, enhances text, linking_to text, priority text, needs_compilation boolean DEFAULT false NOT NULL
 ); ALTER TABLE public.rpackage OWNER TO postgres; --
 -- Name: rrepository; Type: TABLE; Schema: public; Owner: postgres
--- CREATE TABLE public.rrepository ( id integer NOT NULL
+-- CREATE TABLE public.rrepository ( id integer NOT NULL, redirect_to_source boolean DEFAULT false NOT NULL
 ); ALTER TABLE public.rrepository OWNER TO postgres; --
 -- Name: user_settings; Type: TABLE; Schema: public; Owner: postgres
 -- CREATE TABLE public.user_settings ( id integer NOT NULL, deleted boolean NOT NULL, language character varying(16) NOT NULL, theme character varying(16) NOT NULL, page_size integer NOT NULL, user_id integer NOT NULL
@@ -986,13 +986,13 @@ SET row_security = off; SET default_tablespace = ''; SET default_table_access_me
 15 R (>= 3.2.1), data.table httr, DT, shiny, jsonlite, googleVis, shinydashboard, ggplot2, stringr, chron, gtable, scales, htmltools, httpuv, xtable, stringi, magrittr, htmlwidgets, Rcpp, munsell, colorspace, plyr, yaml \N \N CC0 5e664f320c7cc884138d64467f6b0e49 \N \N \N \N \N \N \N f
 \. --
 -- Data for Name: rrepository; Type: TABLE DATA; Schema: public; Owner: postgres
--- COPY public.rrepository (id) FROM stdin;
-5
-4
-3
-6
-7
-2
+-- COPY public.rrepository (id, redirect_to_source) FROM stdin;
+5 f
+4 f
+3 f
+6 f
+7 f
+2 f
 \. --
 -- Data for Name: submission; Type: TABLE DATA; Schema: public; Owner: postgres
 -- COPY public.submission (id, submitter_id, package_id, changes, deleted, state, approver_id) FROM stdin;

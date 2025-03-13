@@ -39,6 +39,7 @@ import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.entities.Vignette;
 import eu.openanalytics.rdepot.r.storage.RStorage;
 import eu.openanalytics.rdepot.r.storage.exceptions.GenerateManualException;
+import eu.openanalytics.rdepot.r.storage.exceptions.GeneratePackagesFileException;
 import eu.openanalytics.rdepot.r.storage.exceptions.GetReferenceManualException;
 import eu.openanalytics.rdepot.r.storage.exceptions.ReadPackageVignetteException;
 import eu.openanalytics.rdepot.r.storage.exceptions.ReadRPackageDescriptionException;
@@ -55,9 +56,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -313,24 +317,29 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
         binaryPackagesPaths.forEach((key, value) -> reducedBinaryPaths.addAll(
                 StringUtils.substringBetween(key, "/current/", archive ? "/Archive" : "/latest"), value));
 
+        MultiValueMap<String, String> reducedRemoteBinaryPackagesPaths = new LinkedMultiValueMap<>();
+        remoteBinaryPackages.forEach((key, value) ->
+                reducedRemoteBinaryPackagesPaths.addAll(StringUtils.substringBefore(key, "/Archive"), value));
+
         Set<String> allPaths = new HashSet<>();
         allPaths.addAll(reducedBinaryPaths.keySet());
-        allPaths.addAll(remoteBinaryPackages.keySet());
+        allPaths.addAll(reducedRemoteBinaryPackagesPaths.keySet());
 
         for (String path : allPaths) {
             if (!reducedBinaryPaths.containsKey(path)) {
-                remoteBinaryPackages.get(path).forEach(packageBag -> binaryPackagesToDelete.add(path, packageBag));
+                Objects.requireNonNull(reducedRemoteBinaryPackagesPaths.get(path))
+                        .forEach(packageBag -> binaryPackagesToDelete.add(path, packageBag));
                 continue;
             }
-            if (remoteBinaryPackages.containsKey(path)) {
+            if (reducedRemoteBinaryPackagesPaths.containsKey(path)) {
                 List<File> packagesToUpload = selectPackagesToUpload(
-                        remoteBinaryPackages.get(path),
+                        reducedRemoteBinaryPackagesPaths.get(path),
                         Objects.requireNonNull(reducedBinaryPaths.get(path)).stream()
                                 .toList());
                 packagesToUpload.forEach(packageBag -> binaryPackagesToUpload.add(path, packageBag));
 
                 List<String> packagesToDelete = selectPackagesToDelete(
-                        remoteBinaryPackages.get(path),
+                        Objects.requireNonNull(reducedRemoteBinaryPackagesPaths.get(path)),
                         Objects.requireNonNull(reducedBinaryPaths.get(path)).stream()
                                 .toList());
                 packagesToDelete.forEach(packageBag -> binaryPackagesToDelete.add(path, packageBag));
@@ -481,6 +490,17 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
                         archiveBinaryPackages, binFoldersPaths, binArchiveFoldersPaths, folderPath, archiveFolderPath);
             }
 
+            if (repository.isRedirectToSource()) {
+                Map<String, List<RPackage>> latestPackagesToPutIntoPackagesFile =
+                        chooseLatestPackagesToPutIntoPackagesFile(
+                                latestPackages, binLatestFoldersPaths, binArchiveFoldersPaths);
+                Map<String, List<RPackage>> archivePackagesToPutIntoPackagesFile =
+                        getArchivePackagesToPutIntoPackagesFile(archivePackages, binArchiveFoldersPaths);
+
+                generatePackagesFiles(latestPackagesToPutIntoPackagesFile);
+                generatePackagesFiles(archivePackagesToPutIntoPackagesFile);
+            }
+
             return new PopulatedRepositoryContent(
                     latestPackages,
                     archivePackages,
@@ -488,21 +508,121 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
                     archiveSourceFolderPath,
                     binLatestFoldersPaths,
                     binArchiveFoldersPaths);
-        } catch (CreateFolderStructureException | PackageFolderPopulationException | LinkFoldersException e) {
+        } catch (CreateFolderStructureException
+                | PackageFolderPopulationException
+                | LinkFoldersException
+                | GeneratePackagesFileException e) {
             log.error(e.getMessage(), e);
             throw new OrganizePackagesException();
         }
     }
 
+    private Map<String, List<RPackage>> chooseLatestPackagesToPutIntoPackagesFile(
+            List<RPackage> sourcePackages,
+            MultiValueMap<String, RPackage> binPackages,
+            MultiValueMap<String, RPackage> archiveBinPackages) {
+
+        Map<String, List<RPackage>> packagesToPutIntoPackagesFile = new HashMap<>();
+        for (String path : binPackages.keySet()) {
+            packagesToPutIntoPackagesFile.put(path, new ArrayList<>());
+
+            final List<RPackage> binariesList =
+                    binPackages.get(path).stream().map(RPackage::new).collect(Collectors.toList());
+
+            for (RPackage packageBag : binariesList) {
+                RPackage chosenPackage = chooseSourceOrBinaryVersionOfPackage(sourcePackages, packageBag);
+
+                packagesToPutIntoPackagesFile.get(path).add(chosenPackage);
+
+                if (!chosenPackage.equals(packageBag)) {
+                    final File toMoveFile = new File(path, packageBag.getFileName());
+                    final File newFileLocalization =
+                            new File(path.replaceAll("/latest", "/Archive"), packageBag.getFileName());
+                    try {
+                        FileUtils.moveFile(toMoveFile, newFileLocalization, StandardCopyOption.REPLACE_EXISTING);
+                    } catch (IOException e) {
+                        log.error(e.getMessage(), e);
+                        throw new IllegalStateException("Could not properly move file to Archive!");
+                    }
+                    archiveBinPackages.add(path.replaceAll("/latest", "/Archive"), packageBag);
+                    binPackages.get(path).remove(packageBag);
+                }
+            }
+
+            packagesToPutIntoPackagesFile
+                    .get(path)
+                    .addAll(extractSourcePackagesToPutIntoPackagesFile(sourcePackages, binariesList));
+        }
+
+        return packagesToPutIntoPackagesFile;
+    }
+
+    private Map<String, List<RPackage>> getArchivePackagesToPutIntoPackagesFile(
+            List<RPackage> sourcePackages, MultiValueMap<String, RPackage> binPackages) {
+
+        Map<String, List<RPackage>> packagesToPutIntoPackagesFile = new HashMap<>();
+
+        for (String path : binPackages.keySet()) {
+            packagesToPutIntoPackagesFile.put(path, new ArrayList<>());
+
+            packagesToPutIntoPackagesFile.get(path).addAll(binPackages.get(path));
+
+            packagesToPutIntoPackagesFile.get(path).addAll(sourcePackages);
+        }
+
+        return packagesToPutIntoPackagesFile;
+    }
+
+    private List<RPackage> extractSourcePackagesToPutIntoPackagesFile(
+            List<RPackage> sourcePackages, List<RPackage> binaryPackages) {
+        List<String> binaryNames = binaryPackages.stream().map(Package::getName).toList();
+
+        return sourcePackages.stream()
+                .filter(packageBag -> !binaryNames.contains(packageBag.getName()))
+                .toList();
+    }
+
+    private RPackage chooseSourceOrBinaryVersionOfPackage(List<RPackage> sourcePackages, RPackage binaryPackage) {
+
+        for (RPackage sourcePackage : sourcePackages) {
+            if (Objects.equals(sourcePackage.getName(), binaryPackage.getName())
+                    && compareVersions(sourcePackage.getVersion(), binaryPackage.getVersion()) == 1) {
+                return sourcePackage;
+            }
+        }
+
+        return binaryPackage;
+    }
+
+    private int compareVersions(String sourceVersion, String binaryVersion) {
+
+        String[] sourceVersionSplitted = StringUtils.splitByWholeSeparator(sourceVersion, ".");
+        String[] binaryVersionSplitted = StringUtils.splitByWholeSeparator(binaryVersion, ".");
+
+        int maxLength = Math.min(sourceVersionSplitted.length, binaryVersionSplitted.length);
+
+        for (int i = 0; i < maxLength; i++) {
+            if (Integer.valueOf(sourceVersionSplitted[i]).compareTo(Integer.valueOf(binaryVersionSplitted[i])) != 0) {
+                return Integer.valueOf(sourceVersionSplitted[i]).compareTo(Integer.valueOf(binaryVersionSplitted[i]));
+            }
+        }
+
+        if (sourceVersionSplitted.length > binaryVersionSplitted.length) {
+            return 1;
+        }
+
+        return 0;
+    }
+
     private void extractAndPopulateBinaries(
-            List<RPackage> packages,
+            List<RPackage> packagesToPopulate,
             MultiValueMap<String, RPackage> allPackagesFolderPaths,
             MultiValueMap<String, RPackage> separatedBinFoldersPaths,
             String destinationFolderPath,
             String currentFolderPath)
             throws PackageFolderPopulationException {
         final List<RPackage> packagesInBinFolder = extractPackagesForBinFolders(
-                packages,
+                packagesToPopulate,
                 allPackagesFolderPaths.get(destinationFolderPath).stream().toList());
         if (!packagesInBinFolder.isEmpty()) {
             populatePackageFolder(packagesInBinFolder, currentFolderPath);
@@ -588,7 +708,6 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
                     folderPath + separator + packageBag.getName() + "_" + packageBag.getVersion() + ".tar.gz";
 
             try {
-                File packagesFile = new File(folderPath + separator + PACKAGES);
 
                 Files.copy(new File(targetFilePath).toPath(), new File(destinationFilePath).toPath());
                 final String calculatedSum = calculateMd5Sum(new File(destinationFilePath));
@@ -596,14 +715,38 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
                     throw new Md5MismatchException();
                 }
 
-                try (BufferedWriter writer = new BufferedWriter(new FileWriter(packagesFile, true))) {
-                    writer.append(generatePackageString(packageBag));
+                if (!packageBag.isBinary() || !packageBag.getRepository().isRedirectToSource()) {
+                    addPackageToPackagesFile(packageBag, folderPath);
                 }
 
-                gzipFile(packagesFile);
-            } catch (IOException | GzipFileException | Md5MismatchException | Md5SumCalculationException e) {
+            } catch (IOException
+                    | Md5MismatchException
+                    | Md5SumCalculationException
+                    | GeneratePackagesFileException e) {
                 log.error("{}: {}", e.getClass(), e.getMessage());
                 throw new PackageFolderPopulationException();
+            }
+        }
+    }
+
+    private void addPackageToPackagesFile(RPackage packageBag, String folderPath) throws GeneratePackagesFileException {
+        File packagesFile = new File(folderPath + separator + PACKAGES);
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(packagesFile, true))) {
+            writer.append(generatePackageString(packageBag));
+            gzipFile(packagesFile);
+        } catch (IOException | GzipFileException e) {
+            log.error("{}: {}", e.getClass(), e.getMessage());
+            throw new GeneratePackagesFileException();
+        }
+    }
+
+    // Map <folder_path, packages>
+    private void generatePackagesFiles(Map<String, List<RPackage>> packages) throws GeneratePackagesFileException {
+        for (String path : packages.keySet()) {
+
+            for (RPackage packageBag : packages.get(path)) {
+                addPackageToPackagesFile(packageBag, path);
             }
         }
     }

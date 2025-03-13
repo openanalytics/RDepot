@@ -24,13 +24,17 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-import eu.openanalytics.rdepot.base.validation.RepositoryValidator;
+import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.services.RRepositoryService;
 import eu.openanalytics.rdepot.r.validation.RRepositoryValidator;
+import eu.openanalytics.rdepot.r.validation.repositories.RBasicNameValidator;
+import eu.openanalytics.rdepot.r.validation.repositories.RNameValidation;
 import eu.openanalytics.rdepot.test.fixture.RRepositoryTestFixture;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -45,11 +49,20 @@ public class RRepositoryValidatorTest {
     @Mock
     RRepositoryService rRepositoryService;
 
-    private RepositoryValidator<RRepository> repositoryValidator;
+    @Mock
+    RepositoryService<Repository> repositoryService;
+
+    private RRepositoryValidator repositoryValidator;
+
+    @BeforeEach
+    public void init() {
+        RNameValidation nameValidation =
+                new RNameValidation(rRepositoryService, new RBasicNameValidator("[A-Za-z0-9 \\-_.]+", ".+"));
+        repositoryValidator = new RRepositoryValidator(rRepositoryService, repositoryService, nameValidation);
+    }
 
     @Test
-    public void updateRepository_shouldNotAllowChangingRepositoryVersion() throws Exception {
-        repositoryValidator = new RRepositoryValidator(rRepositoryService);
+    public void updateRepository_shouldNotAllowChangingRepositoryVersion() {
         RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
         RRepository updatedRepository = new RRepository(repository);
         updatedRepository.setVersion(100);
@@ -58,7 +71,7 @@ public class RRepositoryValidatorTest {
         dataBinder.setValidator(repositoryValidator);
         Errors errors = Mockito.spy(dataBinder.getBindingResult());
 
-        when(rRepositoryService.findById(repository.getId())).thenReturn((Optional.of(repository)));
+        when(repositoryService.findById(repository.getId())).thenReturn((Optional.of(repository)));
 
         repositoryValidator.validate(updatedRepository, errors);
         verify(errors, times(1)).rejectValue("version", MessageCodes.FORBIDDEN_UPDATE);

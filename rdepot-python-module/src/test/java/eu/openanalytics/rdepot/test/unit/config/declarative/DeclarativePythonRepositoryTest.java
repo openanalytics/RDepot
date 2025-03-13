@@ -24,6 +24,7 @@ import eu.openanalytics.rdepot.base.config.declarative.DeclaredRepositoryDirecto
 import eu.openanalytics.rdepot.python.config.declarative.DeclarativePythonRepository;
 import eu.openanalytics.rdepot.python.config.declarative.PythonYamlDeclarativeConfigurationSource;
 import eu.openanalytics.rdepot.python.technology.PythonLanguage;
+import eu.openanalytics.rdepot.python.validation.repositories.PythonBasicNameValidator;
 import eu.openanalytics.rdepot.test.unit.UnitTest;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -43,8 +44,9 @@ public class DeclarativePythonRepositoryTest extends UnitTest {
     public void successfullyInitializeDeclarativePythonRepository() throws Exception {
         DeclaredRepositoryDirectoriesProps directories = new DeclaredRepositoryDirectoriesProps();
         directories.setPaths(List.of(GOOD_REPOSITORIES));
+        PythonBasicNameValidator nameValidator = new PythonBasicNameValidator("[A-Za-z0-9\\-_.~]+", ".+");
         PythonYamlDeclarativeConfigurationSource configurationSource =
-                new PythonYamlDeclarativeConfigurationSource(directories);
+                new PythonYamlDeclarativeConfigurationSource(directories, nameValidator);
         List<DeclarativePythonRepository> repositories = configurationSource.retrieveDeclaredRepositories();
         Assertions.assertEquals(3, repositories.size());
         for (DeclarativePythonRepository repository : repositories) {
@@ -60,8 +62,9 @@ public class DeclarativePythonRepositoryTest extends UnitTest {
     public void handleMissingTechnologyForDeclarativePythonRepository() throws Exception {
         DeclaredRepositoryDirectoriesProps directories = new DeclaredRepositoryDirectoriesProps();
         directories.setPaths(List.of(MISSING_TECHNOLOGY_REPOSITORIES));
+        PythonBasicNameValidator nameValidator = new PythonBasicNameValidator("[A-Za-z0-9\\-_.~]+", ".+");
         PythonYamlDeclarativeConfigurationSource configurationSource =
-                new PythonYamlDeclarativeConfigurationSource(directories);
+                new PythonYamlDeclarativeConfigurationSource(directories, nameValidator);
         List<DeclarativePythonRepository> repositories = configurationSource.retrieveDeclaredRepositories();
         Assertions.assertEquals(0, repositories.size());
     }
@@ -70,8 +73,9 @@ public class DeclarativePythonRepositoryTest extends UnitTest {
     public void handleTechnologyMismatchForDeclarativePythonRepository() throws Exception {
         DeclaredRepositoryDirectoriesProps directories = new DeclaredRepositoryDirectoriesProps();
         directories.setPaths(List.of(TECHNOLOGY_MISMATCH_REPOSITORIES));
+        PythonBasicNameValidator nameValidator = new PythonBasicNameValidator("[A-Za-z0-9\\-_.~]+", ".+");
         PythonYamlDeclarativeConfigurationSource configurationSource =
-                new PythonYamlDeclarativeConfigurationSource(directories);
+                new PythonYamlDeclarativeConfigurationSource(directories, nameValidator);
         List<DeclarativePythonRepository> repositories = configurationSource.retrieveDeclaredRepositories();
         Assertions.assertEquals(0, repositories.size());
     }

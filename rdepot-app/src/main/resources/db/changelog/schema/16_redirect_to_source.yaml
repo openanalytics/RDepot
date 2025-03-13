@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: 16_01_redirect_to_source
+      author: dglebowska
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: rrepository
+            schemaName: public
+        - not:
+          - columnExists:
+              tableName: rrepository
+              schemaName: public
+              columnName: redirect_to_source
+      changes:
+        - addColumn:
+            tableName: rrepository
+            schemaName: public
+            columns:
+            - column:
+                name: redirect_to_source
+                type: boolean
+                defaultValueBoolean: false
+                constraints:
+                  nullable: false
+  - changeSet:
+      id: 16_02_insert_data_into_rrepository
+      author: dglebowska
+      changes:
+        - sql:
+            sql: "INSERT INTO public.rrepository (id) SELECT r.id FROM repository r WHERE resource_technology = 'R' AND r.id NOT IN (SELECT rr.id FROM public.rrepository rr);"

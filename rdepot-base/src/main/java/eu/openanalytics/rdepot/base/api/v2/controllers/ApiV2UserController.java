@@ -39,12 +39,14 @@ import eu.openanalytics.rdepot.base.api.v2.resolvers.DtoResolvedPageable;
 import eu.openanalytics.rdepot.base.api.v2.validation.PageableValidator;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.entities.UserSettings;
+import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.RoleService;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.UserSettingsService;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
+import eu.openanalytics.rdepot.base.strategy.exceptions.EditingDeletedResourceException;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.factory.StrategyFactory;
 import eu.openanalytics.rdepot.base.utils.specs.SpecificationUtils;
@@ -247,18 +249,24 @@ public class ApiV2UserController extends ApiV2Controller<User, UserDto> {
 
     /**
      * Updates a user. Requires admin privileges.
+     * @throws EditingDeletedResourceException when deleted user is to be edited
      */
     @PatchMapping(value = "/{id}", consumes = "application/json-patch+json")
     @PreAuthorize("hasAuthority('admin')")
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody ResponseEntity<?> patchUser(
             Principal principal, @PathVariable("id") Integer id, @RequestBody JsonPatch patch)
-            throws UserNotFound, ApplyPatchException, UserNotAuthorized, MalformedPatchException {
+            throws UserNotFound, ApplyPatchException, UserNotAuthorized, MalformedPatchException,
+                    EditingDeletedResourceException {
         Optional<User> requester = userService.findActiveByLogin(principal.getName());
         User user = userService.findById(id).orElseThrow(() -> new UserNotFound(messageSource, locale));
 
         if (requester.isEmpty() || !securityMediator.isAuthorizedToEditWithPatch(patch, user, requester.get()))
             throw new UserNotAuthorized(messageSource, locale);
+
+        if (user.isDeleted())
+            throw new EditingDeletedResourceException(
+                    MessageCodes.EDITING_DELETED_RESOURCE_NOT_POSSIBLE, messageSource, locale);
 
         try {
             UserDto patchedDto = applyPatchToEntity(patch, user);

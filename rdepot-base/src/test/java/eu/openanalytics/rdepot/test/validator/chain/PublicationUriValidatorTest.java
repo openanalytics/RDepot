@@ -23,10 +23,8 @@ package eu.openanalytics.rdepot.test.validator.chain;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-import eu.openanalytics.rdepot.base.api.v2.exceptions.CreateException;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-import eu.openanalytics.rdepot.base.validation.exceptions.RepositoryValidationException;
 import eu.openanalytics.rdepot.base.validation.repositories.PublicationUriValidation;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,11 +41,11 @@ public class PublicationUriValidatorTest extends SingleChainValidatorTest {
     @BeforeEach
     public void init() {
         super.init();
-        validation = new PublicationUriValidation<Repository>(repositoryService);
+        validation = new PublicationUriValidation<>(repositoryService);
     }
 
     @Test
-    public void createRepository_whenPublicationUriEqualsNull() throws CreateException, RepositoryValidationException {
+    public void createRepository_whenPublicationUriEqualsNull() {
         repository.setPublicationUri(null);
         validation.validate(repository, bindingResult);
         expectedBindingResult.rejectValue("publicationUri", MessageCodes.EMPTY_PUBLICATIONURI);
@@ -55,8 +53,7 @@ public class PublicationUriValidatorTest extends SingleChainValidatorTest {
     }
 
     @Test
-    public void createRepository_whenRepositoryServerAddressIsDuplicatedInDifferentRepository()
-            throws CreateException, RepositoryValidationException {
+    public void createRepository_whenRepositoryServerAddressIsDuplicatedInDifferentRepository() {
         expectedRepository.setId(99);
         when(repositoryService.findByPublicationUri(repository.getPublicationUri()))
                 .thenReturn(Optional.of(expectedRepository));
@@ -66,8 +63,7 @@ public class PublicationUriValidatorTest extends SingleChainValidatorTest {
     }
 
     @Test
-    public void createRepository_shouldPass_whenRepositoryPublicationUriIsDuplicatedInTheSameId()
-            throws CreateException, RepositoryValidationException {
+    public void createRepository_shouldPass_whenRepositoryPublicationUriIsDuplicatedInTheSameId() {
         when(repositoryService.findByPublicationUri(repository.getPublicationUri()))
                 .thenReturn(Optional.ofNullable(repository));
         validation.validate(repository, bindingResult);
@@ -75,10 +71,9 @@ public class PublicationUriValidatorTest extends SingleChainValidatorTest {
     }
 
     @Test
-    public void createRepository_shouldPass_whenRepositoryPublicationUriIsNew()
-            throws CreateException, RepositoryValidationException {
+    public void createRepository_shouldPass_whenRepositoryPublicationUriIsNew() {
         when(repositoryService.findByPublicationUri(repository.getPublicationUri()))
-                .thenReturn(Optional.ofNullable(null));
+                .thenReturn(Optional.empty());
         validation.validate(repository, bindingResult);
         assertEquals(expectedBindingResult, bindingResult);
     }

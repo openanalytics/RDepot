@@ -24,10 +24,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
-import eu.openanalytics.rdepot.base.api.v2.exceptions.CreateException;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-import eu.openanalytics.rdepot.base.validation.exceptions.RepositoryValidationException;
 import eu.openanalytics.rdepot.base.validation.repositories.IdValidation;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,21 +42,19 @@ public class IdValidatorTest extends SingleChainValidatorTest {
     @BeforeEach
     public void init() {
         super.init();
-        validation = new IdValidation<Repository>(repositoryService);
+        validation = new IdValidation<>(repositoryService);
     }
 
     @Test
-    public void createRepository_whenRepositoryNotFoundInDataBase()
-            throws CreateException, RepositoryValidationException {
-        when(repositoryService.findById(anyInt())).thenReturn(Optional.ofNullable(null));
+    public void createRepository_whenRepositoryNotFoundInDataBase() {
+        when(repositoryService.findById(anyInt())).thenReturn(Optional.empty());
         validation.validate(repository, bindingResult);
         expectedBindingResult.rejectValue("id", MessageCodes.REPOSITORY_NOT_FOUND);
         assertEquals(expectedBindingResult, bindingResult);
     }
 
     @Test
-    public void createRepository_whenRepositoryInDataBaseHasTheSameVersion()
-            throws CreateException, RepositoryValidationException {
+    public void createRepository_whenRepositoryInDataBaseHasTheSameVersion() {
         expectedRepository.setVersion(2);
         when(repositoryService.findById(anyInt())).thenReturn(Optional.of(expectedRepository));
         validation.validate(repository, bindingResult);
@@ -67,16 +63,14 @@ public class IdValidatorTest extends SingleChainValidatorTest {
     }
 
     @Test
-    public void createRepository_shouldPass_whenRepositoryExistsInDatabaseAnHasTheSameVerion()
-            throws CreateException, RepositoryValidationException {
+    public void createRepository_shouldPass_whenRepositoryExistsInDatabaseAnHasTheSameVersion() {
         when(repositoryService.findById(anyInt())).thenReturn(Optional.of(repository));
         validation.validate(repository, bindingResult);
         assertEquals(expectedBindingResult, bindingResult);
     }
 
     @Test
-    public void createRepository_shouldPass_whenRepositoryIsNew()
-            throws CreateException, RepositoryValidationException {
+    public void createRepository_shouldPass_whenRepositoryIsNew() {
         repository.setId(-1);
         validation.validate(repository, bindingResult);
         assertEquals(expectedBindingResult, bindingResult);

@@ -20,10 +20,12 @@
  */
 package eu.openanalytics.rdepot.r.strategy.update;
 
+import eu.openanalytics.rdepot.base.entities.EventChangedVariable;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
+import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.update.UpdateRepositoryStrategy;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.services.RPackageService;
@@ -54,5 +56,18 @@ public class RRepositoryUpdateStrategy extends UpdateRepositoryStrategy<RReposit
                 repositoryMaintainerService,
                 packageMaintainerService,
                 packageService);
+    }
+
+    @Override
+    protected RRepository actualStrategy() throws StrategyFailure {
+        if (resource.isRedirectToSource() != updatedResource.isRedirectToSource()) {
+            resource.setRedirectToSource(updatedResource.isRedirectToSource());
+            changedValues.add(new EventChangedVariable(
+                    "redirect_to_source",
+                    Boolean.toString(oldResourceCopy.isRedirectToSource()),
+                    Boolean.toString(resource.isRedirectToSource())));
+        }
+
+        return super.actualStrategy();
     }
 }

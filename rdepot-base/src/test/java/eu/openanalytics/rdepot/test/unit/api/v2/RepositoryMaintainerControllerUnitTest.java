@@ -84,6 +84,7 @@ public class RepositoryMaintainerControllerUnitTest extends ApiV2ControllerUnitT
             JSON_PATH + "/error_repositorymaintainer_malformed_patch.json";
     private static final String EXAMPLE_REPOSITORYMAINTAINER_PATCHED_PATH =
             JSON_PATH + "/example_repositorymaintainer_patched.json";
+    public static final String EDITING_DELETED_RESOURCE_PATH = JSON_PATH + "/editing_deleted_resource.json";
 
     private Optional<User> user;
 
@@ -381,6 +382,25 @@ public class RepositoryMaintainerControllerUnitTest extends ApiV2ControllerUnitT
                         .content(patchJson))
                 .andExpect(status().isForbidden())
                 .andExpect(content().json(Files.readString(Path.of(ERROR_NOT_AUTHORIZED_PATH))));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"user", "admin"})
+    public void patchRepositoryMaintainer_returns405_whenRepositoryMaintainerIsDeleted() throws Exception {
+        String patchJson = "[{\"op\": \"replace\", \"path\":\"/repositoryId\",\"value\":\"1234\"}]";
+        final RepositoryMaintainer maintainer = RepositoryMaintainerTestFixture.GET_FIXTURE_REPOSITORY_MAINTAINER();
+        final Integer ID = maintainer.getId();
+        user.get().setId(111);
+        maintainer.setDeleted(true);
+
+        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(repositoryMaintainerService.findById(ID)).thenReturn(Optional.of(maintainer));
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/repository-maintainers/" + ID)
+                        .contentType("application/json-patch+json")
+                        .content(patchJson))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(content().json(Files.readString(Path.of(EDITING_DELETED_RESOURCE_PATH))));
     }
 
     @Test

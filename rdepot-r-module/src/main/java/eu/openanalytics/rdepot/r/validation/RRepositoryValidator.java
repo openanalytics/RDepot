@@ -20,9 +20,12 @@
  */
 package eu.openanalytics.rdepot.r.validation;
 
+import eu.openanalytics.rdepot.base.entities.Repository;
+import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.base.validation.RepositoryValidator;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.services.RRepositoryService;
+import eu.openanalytics.rdepot.r.validation.repositories.RNameValidation;
 import lombok.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -30,8 +33,11 @@ import org.springframework.validation.Errors;
 @Component
 public class RRepositoryValidator extends RepositoryValidator<RRepository> {
 
-    public RRepositoryValidator(RRepositoryService repositoryService) {
-        super(repositoryService);
+    public RRepositoryValidator(
+            RRepositoryService repositoryService,
+            RepositoryService<Repository> commonRepositoryService,
+            RNameValidation rNameValidation) {
+        super(repositoryService, commonRepositoryService, rNameValidation);
     }
 
     @Override

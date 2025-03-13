@@ -34,7 +34,6 @@ import eu.openanalytics.rdepot.base.service.PackageService;
 import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
-import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure;
 import eu.openanalytics.rdepot.base.synchronization.RepositorySynchronizer;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
 import java.time.Instant;
@@ -74,6 +73,7 @@ public abstract class UpdateRepositoryStrategy<T extends Repository> extends Upd
 
     @Override
     protected T actualStrategy() throws StrategyFailure {
+
         if (!resource.getPublicationUri().equals(updatedResource.getPublicationUri())) {
             resource.setPublicationUri(updatedResource.getPublicationUri());
             changedValues.add(new EventChangedVariable(
@@ -150,9 +150,6 @@ public abstract class UpdateRepositoryStrategy<T extends Repository> extends Upd
             }
         }
     }
-
-    @Override
-    public void revertChanges() throws StrategyReversionFailure {}
 
     @Override
     protected NewsfeedEvent generateEvent(T resource) {

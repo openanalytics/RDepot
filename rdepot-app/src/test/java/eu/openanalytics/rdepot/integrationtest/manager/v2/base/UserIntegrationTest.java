@@ -312,6 +312,37 @@ public class UserIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    public void patchUser_returns405_editingAfterDelete() throws Exception {
+        final String patch =
+                "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/deleted\"," + "\"value\":true" + "}" + "]";
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.PATCH)
+                .urlSuffix("/7")
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getChangeEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/base/user/soft_delete_user.json")
+                .expectedEventsJson("/v2/base/events/users/soft_delete_user_event.json")
+                .body(patch)
+                .build();
+        testEndpoint(requestBody);
+
+        final String patchAfterDelete =
+                "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/repositoryId\"," + "\"value\":1234" + "}" + "]";
+
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.PATCH)
+                .urlSuffix("/7")
+                .statusCode(405)
+                .token(ADMIN_TOKEN)
+                .expectedJsonPath("/v2/editing_deleted_resource.json")
+                .body(patchAfterDelete)
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
     public void patchUser_changeRole() throws Exception, ParseException {
         final String patch = "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/roleId\"," + "\"value\":2" + "}" + "]";
 

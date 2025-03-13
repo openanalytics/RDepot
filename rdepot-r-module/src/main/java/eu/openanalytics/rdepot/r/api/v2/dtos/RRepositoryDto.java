@@ -23,13 +23,19 @@ package eu.openanalytics.rdepot.r.api.v2.dtos;
 import eu.openanalytics.rdepot.base.api.v2.dtos.RepositoryDto;
 import eu.openanalytics.rdepot.base.entities.Resource;
 import eu.openanalytics.rdepot.r.entities.RRepository;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringExclude;
 
+@Getter
+@Setter
 @NoArgsConstructor
 public class RRepositoryDto extends RepositoryDto {
     @ToStringExclude
     private RRepository entity;
+
+    private boolean redirectToSource;
 
     public RRepositoryDto(
             RRepository repository,
@@ -39,6 +45,7 @@ public class RRepositoryDto extends RepositoryDto {
             boolean lastPublicationSuccessful) {
         super(repository, numberOfPackages, lastPublicationTimestamp, lastModifiedTimestamp, lastPublicationSuccessful);
         this.entity = repository;
+        this.redirectToSource = repository.isRedirectToSource();
     }
 
     @Override

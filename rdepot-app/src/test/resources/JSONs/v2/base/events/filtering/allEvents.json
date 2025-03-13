@@ -89,7 +89,7 @@
 					}
 				],
 				"id": 399,
-				"technology": "RDepot version: 2.5.1",
+				"technology": "RDepot version: 2.5.2",
 				"time": "2024-11-19T11:22:33Z",
 				"eventType": "upload",
 				"user": {
@@ -129,7 +129,7 @@
 					}
 				],
 				"id": 398,
-				"technology": "RDepot version: 2.5.1",
+				"technology": "RDepot version: 2.5.2",
 				"time": "2024-01-19T13:42:35Z",
 				"eventType": "create",
 				"user": {
@@ -169,7 +169,7 @@
 					}
 				],
 				"id": 397,
-				"technology": "RDepot version: 2.5.1",
+				"technology": "RDepot version: 2.5.2",
 				"time": "2024-01-19T13:42:34Z",
 				"eventType": "create",
 				"user": {
@@ -209,7 +209,7 @@
 					}
 				],
 				"id": 396,
-				"technology": "RDepot version: 2.5.1",
+				"technology": "RDepot version: 2.5.2",
 				"time": "2024-01-19T13:42:32Z",
 				"eventType": "create",
 				"user": {
@@ -249,7 +249,7 @@
 					}
 				],
 				"id": 395,
-				"technology": "RDepot version: 2.5.1",
+				"technology": "RDepot version: 2.5.2",
 				"time": "2024-01-19T13:42:26Z",
 				"eventType": "create",
 				"user": {
@@ -295,7 +295,7 @@
 					}
 				],
 				"id": 394,
-				"technology": "RDepot version: 2.5.1",
+				"technology": "RDepot version: 2.5.2",
 				"time": "2023-12-07T23:59:59Z",
 				"eventType": "update",
 				"user": {
@@ -335,7 +335,7 @@
 					}
 				],
 				"id": 393,
-				"technology": "RDepot version: 2.5.1",
+				"technology": "RDepot version: 2.5.2",
 				"time": "2023-12-06T11:49:44Z",
 				"eventType": "create",
 				"user": {
@@ -381,7 +381,7 @@
 					}
 				],
 				"id": 392,
-				"technology": "RDepot version: 2.5.1",
+				"technology": "RDepot version: 2.5.2",
 				"time": "2023-12-06T09:13:31Z",
 				"eventType": "update",
 				"user": {
@@ -421,7 +421,7 @@
 					}
 				],
 				"id": 391,
-				"technology": "RDepot version: 2.5.1",
+				"technology": "RDepot version: 2.5.2",
 				"time": "2023-12-05T11:12:54Z",
 				"eventType": "create",
 				"user": {
@@ -461,7 +461,7 @@
 					}
 				],
 				"id": 390,
-				"technology": "RDepot version: 2.5.1",
+				"technology": "RDepot version: 2.5.2",
 				"time": "2023-12-04T11:12:25Z",
 				"eventType": "create",
 				"user": {
@@ -501,7 +501,7 @@
 					}
 				],
 				"id": 389,
-				"technology": "RDepot version: 2.5.1",
+				"technology": "RDepot version: 2.5.2",
 				"time": "2023-11-15T11:11:11Z",
 				"eventType": "create",
 				"user": {
@@ -570,7 +570,7 @@
 					}
 				],
 				"id": 388,
-				"technology": "RDepot version: 2.5.1",
+				"technology": "RDepot version: 2.5.2",
 				"time": "2023-07-10T12:36:18Z",
 				"eventType": "upload",
 				"user": {
@@ -639,7 +639,7 @@
 					}
 				],
 				"id": 387,
-				"technology": "RDepot version: 2.5.1",
+				"technology": "RDepot version: 2.5.2",
 				"time": "2023-07-10T12:36:04Z",
 				"eventType": "upload",
 				"user": {
@@ -684,7 +684,7 @@
 					}
 				],
 				"id": 386,
-				"technology": "RDepot version: 2.5.1",
+				"technology": "RDepot version: 2.5.2",
 				"time": "2023-07-10T12:35:21Z",
 				"eventType": "create",
 				"user": {
@@ -729,7 +729,7 @@
 					}
 				],
 				"id": 385,
-				"technology": "RDepot version: 2.5.1",
+				"technology": "RDepot version: 2.5.2",
 				"time": "2023-07-10T12:35:08Z",
 				"eventType": "create",
 				"user": {
@@ -774,7 +774,7 @@
 					}
 				],
 				"id": 384,
-				"technology": "RDepot version: 2.5.1",
+				"technology": "RDepot version: 2.5.2",
 				"time": "2023-07-10T12:35:00Z",
 				"eventType": "create",
 				"user": {
@@ -819,7 +819,7 @@
 					}
 				],
 				"id": 383,
-				"technology": "RDepot version: 2.5.1",
+				"technology": "RDepot version: 2.5.2",
 				"time": "2023-07-10T12:34:38Z",
 				"eventType": "create",
 				"user": {
@@ -893,7 +893,7 @@
 					}
 				],
 				"id": 382,
-				"technology": "RDepot version: 2.5.1",
+				"technology": "RDepot version: 2.5.2",
 				"time": "2023-07-10T12:34:02Z",
 				"eventType": "upload",
 				"user": {
@@ -967,7 +967,7 @@
 					}
 				],
 				"id": 381,
-				"technology": "RDepot version: 2.5.1",
+				"technology": "RDepot version: 2.5.2",
 				"time": "2023-07-10T12:33:27Z",
 				"eventType": "upload",
 				"user": {
@@ -1041,7 +1041,7 @@
 					}
 				],
 				"id": 380,
-				"technology": "RDepot version: 2.5.1",
+				"technology": "RDepot version: 2.5.2",
 				"time": "2023-07-10T12:32:32Z",
 				"eventType": "upload",
 				"user": {

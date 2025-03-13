@@ -23,10 +23,8 @@ package eu.openanalytics.rdepot.test.validator.chain;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-import eu.openanalytics.rdepot.base.api.v2.exceptions.CreateException;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-import eu.openanalytics.rdepot.base.validation.exceptions.RepositoryValidationException;
 import eu.openanalytics.rdepot.base.validation.repositories.ServerAddressValidation;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,12 +41,11 @@ public class ServerAddressValidatorTest extends SingleChainValidatorTest {
     @BeforeEach
     public void init() {
         super.init();
-        validation = new ServerAddressValidation<Repository>(repositoryService);
+        validation = new ServerAddressValidation<>(repositoryService);
     }
 
     @Test
-    public void createRepository_whenRepositoryServerAddressEqualsNull()
-            throws CreateException, RepositoryValidationException {
+    public void createRepository_whenRepositoryServerAddressEqualsNull() {
         repository.setServerAddress(null);
         validation.validate(repository, bindingResult);
         expectedBindingResult.rejectValue("serverAddress", MessageCodes.EMPTY_SERVERADDRESS);
@@ -56,8 +53,7 @@ public class ServerAddressValidatorTest extends SingleChainValidatorTest {
     }
 
     @Test
-    public void createRepository_whenRepositoryServerAddressIsDuplicatedInDifferentRepository()
-            throws CreateException, RepositoryValidationException {
+    public void createRepository_whenRepositoryServerAddressIsDuplicatedInDifferentRepository() {
         expectedRepository.setId(99);
         when(repositoryService.findByServerAddress(repository.getServerAddress()))
                 .thenReturn(Optional.of(expectedRepository));
@@ -67,8 +63,7 @@ public class ServerAddressValidatorTest extends SingleChainValidatorTest {
     }
 
     @Test
-    public void createRepository_shouldPass_whenRepositoryServerAddressIsDuplicatedInTheSameId()
-            throws CreateException, RepositoryValidationException {
+    public void createRepository_shouldPass_whenRepositoryServerAddressIsDuplicatedInTheSameId() {
         when(repositoryService.findByServerAddress(repository.getServerAddress()))
                 .thenReturn(Optional.of(repository));
         validation.validate(repository, bindingResult);
@@ -76,10 +71,9 @@ public class ServerAddressValidatorTest extends SingleChainValidatorTest {
     }
 
     @Test
-    public void createRepository_shouldPass_whenRepositoryServerAddressIsNew()
-            throws CreateException, RepositoryValidationException {
+    public void createRepository_shouldPass_whenRepositoryServerAddressIsNew() {
         when(repositoryService.findByServerAddress(repository.getServerAddress()))
-                .thenReturn(Optional.ofNullable(null));
+                .thenReturn(Optional.empty());
         validation.validate(repository, bindingResult);
         assertEquals(expectedBindingResult, bindingResult);
     }

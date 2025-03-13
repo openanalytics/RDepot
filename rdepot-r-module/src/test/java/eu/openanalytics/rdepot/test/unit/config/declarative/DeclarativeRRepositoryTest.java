@@ -24,6 +24,7 @@ import eu.openanalytics.rdepot.base.config.declarative.DeclaredRepositoryDirecto
 import eu.openanalytics.rdepot.r.config.declarative.RYamlDeclarativeConfigurationSource;
 import eu.openanalytics.rdepot.r.mirroring.pojos.MirroredRRepository;
 import eu.openanalytics.rdepot.r.technology.RLanguage;
+import eu.openanalytics.rdepot.r.validation.repositories.RBasicNameValidator;
 import eu.openanalytics.rdepot.test.unit.UnitTest;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -40,7 +41,9 @@ public class DeclarativeRRepositoryTest extends UnitTest {
     public void successfullyInitializeDeclarativeRRepository() throws Exception {
         DeclaredRepositoryDirectoriesProps directories = new DeclaredRepositoryDirectoriesProps();
         directories.setPaths(List.of(GOOD_REPOSITORIES));
-        RYamlDeclarativeConfigurationSource configurationSource = new RYamlDeclarativeConfigurationSource(directories);
+        RBasicNameValidator nameValidator = new RBasicNameValidator("[A-Za-z0-9 \\-_.]+", ".+");
+        RYamlDeclarativeConfigurationSource configurationSource =
+                new RYamlDeclarativeConfigurationSource(directories, nameValidator);
         List<MirroredRRepository> repositories = configurationSource.retrieveDeclaredRepositories();
         Assertions.assertEquals(3, repositories.size());
         for (MirroredRRepository repository : repositories) {
@@ -56,7 +59,9 @@ public class DeclarativeRRepositoryTest extends UnitTest {
     public void handleTechnologyMismatchForDeclarativeRRepository() throws Exception {
         DeclaredRepositoryDirectoriesProps directories = new DeclaredRepositoryDirectoriesProps();
         directories.setPaths(List.of(TECHNOLOGY_MISMATCH_REPOSITORIES));
-        RYamlDeclarativeConfigurationSource configurationSource = new RYamlDeclarativeConfigurationSource(directories);
+        RBasicNameValidator nameValidator = new RBasicNameValidator("[A-Za-z0-9 \\-_.]+", ".+");
+        RYamlDeclarativeConfigurationSource configurationSource =
+                new RYamlDeclarativeConfigurationSource(directories, nameValidator);
         List<MirroredRRepository> repositories = configurationSource.retrieveDeclaredRepositories();
         Assertions.assertEquals(0, repositories.size());
     }

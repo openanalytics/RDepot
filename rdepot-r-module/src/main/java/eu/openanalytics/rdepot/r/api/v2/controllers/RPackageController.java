@@ -43,12 +43,14 @@ import eu.openanalytics.rdepot.base.api.v2.validation.PageableValidator;
 import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.entities.enums.SubmissionState;
+import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
 import eu.openanalytics.rdepot.base.storage.exceptions.SourceNotFoundException;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
+import eu.openanalytics.rdepot.base.strategy.exceptions.EditingDeletedResourceException;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.utils.specs.PackageSpecs;
 import eu.openanalytics.rdepot.base.utils.specs.SpecificationUtils;
@@ -265,6 +267,10 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
 
         if (!securityMediator.isAuthorizedToEdit(packageBag, requester))
             throw new UserNotAuthorized(messageSource, locale);
+
+        if (packageBag.isDeleted())
+            throw new EditingDeletedResourceException(
+                    MessageCodes.EDITING_DELETED_RESOURCE_NOT_POSSIBLE, messageSource, locale);
 
         try {
             final RPackageDto packageDto = applyPatchToEntity(patch, packageBag);

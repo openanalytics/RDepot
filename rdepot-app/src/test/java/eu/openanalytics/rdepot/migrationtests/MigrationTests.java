@@ -37,8 +37,10 @@ import org.testcontainers.containers.wait.strategy.Wait;
 
 public class MigrationTests {
 
-    public static DockerComposeContainer<?> container = new DockerComposeContainer<>(
-                    new File("src/test/resources/docker-compose-migrations.yaml"))
+    private static final DockerComposeContainer<?> DOCKER_COMPOSE_CONTAINER =
+            new DockerComposeContainer<>(new File("src/test/resources/docker-compose-migrations.yaml"));
+
+    public static DockerComposeContainer<?> container = DOCKER_COMPOSE_CONTAINER
             .withLocalCompose(true)
             .withOptions("--compatibility")
             .waitingFor(
@@ -49,7 +51,7 @@ public class MigrationTests {
                             .withStartupTimeout(Duration.ofMinutes(5)));
 
     @BeforeAll
-    public static void configureRestAssured() throws IOException, InterruptedException {
+    public static void configureRestAssured() {
         IntegrationTestContainers.stopContainers();
         System.out.println("===Starting containers for migrations tests...");
         container.start();
@@ -64,7 +66,7 @@ public class MigrationTests {
     }
 
     @Test
-    public void migrationModulesTest() throws IOException, InterruptedException {
+    public void migrationModulesTest() throws IOException {
         String expected = Files.readString(Path.of("src/test/resources/docker/db/sql_files/migrations/expected.sql"))
                 .trim()
                 .replaceAll("\\t", " ")

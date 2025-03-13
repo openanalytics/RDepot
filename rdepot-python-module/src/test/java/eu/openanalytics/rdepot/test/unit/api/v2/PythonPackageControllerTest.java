@@ -79,6 +79,7 @@ public class PythonPackageControllerTest extends ApiV2ControllerUnitTest {
     private static final String ERROR_PACKAGE_MALFORMED_PATCH = JSON_PATH + "/error_package_malformed_patch.json";
     private static final String ERROR_PACKAGE_VALIDATION = JSON_PATH + "/error_package_validation.json";
     private static final String EXAMPLE_PACKAGES_REPO_PATH = JSON_PATH + "/example_packages_in_repository.json";
+    public static final String EDITING_DELETED_RESOURCE_PATH = JSON_PATH + "/editing_deleted_resource.json";
 
     @Autowired
     MockMvc mockMvc;
@@ -324,6 +325,24 @@ public class PythonPackageControllerTest extends ApiV2ControllerUnitTest {
 
         verify(strategy, times(1)).perform();
         verify(pythonPackageValidator).validate(any(), eq(true), any());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"user", "packagemaintainer"})
+    public void patchPackage_returns405_whenPackageIsDeleted() throws Exception {
+        final PythonPackage packageBag = PythonPackageTestFixture.GET_EXAMPLE_PACKAGE();
+        packageBag.setDeleted(true);
+        final String patchJson = "[{\"op\":\"replace\",\"path\":\"/active\",\"value\":\"false\"}]";
+
+        when(pythonPackageService.findById(packageBag.getId())).thenReturn(Optional.of(packageBag));
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
+        when(securityMediator.isAuthorizedToEdit(packageBag, user)).thenReturn(true);
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/python/packages/" + packageBag.getId())
+                        .contentType("application/json-patch+json")
+                        .content(patchJson))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(content().json(Files.readString(Path.of(EDITING_DELETED_RESOURCE_PATH))));
     }
 
     @Test

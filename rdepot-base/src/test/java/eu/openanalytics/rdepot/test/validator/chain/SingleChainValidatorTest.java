@@ -49,7 +49,6 @@ public class SingleChainValidatorTest {
 
     private BindingResult createDataBinding(Repository repository) {
         final DataBinder dataBinder = new DataBinder(repository);
-        BindingResult bindingResult = dataBinder.getBindingResult();
-        return bindingResult;
+        return dataBinder.getBindingResult();
     }
 }

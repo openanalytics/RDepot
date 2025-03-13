@@ -43,6 +43,8 @@ import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class PythonDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
+    private static final DockerComposeContainer<?> DOCKER_COMPOSE_CONTAINER =
+            new DockerComposeContainer<>(new File("src/test/resources/docker-compose-declarative.yaml"));
     private static final String API_PATH = "/api/v2/manager/python";
     public static final TestEnvironmentConfigurator testEnv = TestEnvironmentConfigurator.getDefaultInstance();
     public static final String AUTHORIZATION = "Authorization";
@@ -53,8 +55,7 @@ public class PythonDeclarativeIntegrationTest extends DeclarativeIntegrationTest
     public static final String USER_TOKEN =
             "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJuZXd0b24iLCJuYW1lIjoiSXNhYWMgTmV3dG9uIiwiZW1haWwiOiJuZXd0b25AbGRhcC5mb3J1bXN5cy5jb20iLCJhdWQiOiJSRGVwb3QiLCJyb2xlcyI6WyJ1c2VyIl0sImlzcyI6IlJEZXBvdCIsImV4cCI6MjAwNzAyNzUwOSwiaWF0IjoxNjkxNjY3NTA5fQ.waNTEOoLL0jkDpvihngEg_O6_W91wvIcSdtcXIBYiTeE5SbyLL60FFztYwuUwo-aEghzqnQlfVj4NATZMWgA-g";
 
-    public static DockerComposeContainer<?> container = new DockerComposeContainer<>(
-                    new File("src/test/resources/docker-compose-declarative.yaml"))
+    public static DockerComposeContainer<?> container = DOCKER_COMPOSE_CONTAINER
             .withLocalCompose(true)
             .withOptions("--compatibility")
             .waitingFor(
@@ -69,7 +70,7 @@ public class PythonDeclarativeIntegrationTest extends DeclarativeIntegrationTest
     }
 
     @BeforeAll
-    public static void configureRestAssured() throws IOException, InterruptedException {
+    public static void configureRestAssured() {
         IntegrationTestContainers.stopContainers();
         System.out.println("===Starting containers for declarative mode tests...");
         container.start();
@@ -106,8 +107,7 @@ public class PythonDeclarativeIntegrationTest extends DeclarativeIntegrationTest
     }
 
     @Test
-    public void shouldUploadPackageToPublishedPythonRepository()
-            throws IOException, ParseException, InterruptedException {
+    public void shouldUploadPackageToPublishedPythonRepository() throws IOException, ParseException {
         File packageBag = new File("src/test/resources/itestPackages/coconutpy-2.2.1.tar.gz");
 
         given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -134,8 +134,7 @@ public class PythonDeclarativeIntegrationTest extends DeclarativeIntegrationTest
     }
 
     @Test
-    public void shouldUploadPackageToUnpublishedPythonRepository()
-            throws IOException, ParseException, InterruptedException {
+    public void shouldUploadPackageToUnpublishedPythonRepository() throws IOException, ParseException {
         File packageBag = new File("src/test/resources/itestPackages/coconutpy-2.2.1.tar.gz");
 
         given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -163,5 +162,5 @@ public class PythonDeclarativeIntegrationTest extends DeclarativeIntegrationTest
     }
 
     @Override
-    protected void updateMd5SumsAndVersion(JsonArray expectedContent) throws IOException {}
+    protected void updateMd5SumsAndVersion(JsonArray expectedContent) {}
 }

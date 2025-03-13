@@ -31,6 +31,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Collections;
+import java.util.Objects;
 import org.apache.commons.lang3.ArrayUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -45,6 +46,9 @@ import org.testcontainers.containers.wait.strategy.Wait;
 
 public class RRepositoryWithoutSnapshotsIntegrationTest {
 
+    private static final DockerComposeContainer<?> DOCKER_COMPOSE_CONTAINER =
+            new DockerComposeContainer<>(new File("src/test/resources/docker-compose-without-snapshots.yaml"));
+
     public static final String REPOSITORYMAINTAINER_TOKEN =
             "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXNsYSIsIm5hbWUiOiJOaWtvbGEgVGVzbGEiLCJlbWFpbCI6InRlc2xhQGxkYXAuZm9ydW1zeXMuY29tIiwiYXVkIjoiUkRlcG90Iiwicm9sZXMiOlsidXNlciIsInBhY2thZ2VtYWludGFpbmVyIiwicmVwb3NpdG9yeW1haW50YWluZXIiXSwiaXNzIjoiUkRlcG90IiwiZXhwIjoyMDA3MDI3NDU3LCJpYXQiOjE2OTE2Njc0NTd9.6o7URshlNb91K9DKig79XIk9ozhomwaBmLg6im1JgbeWfJJUOP9k-gLTmWWHZkBC32MGKKFR-U11QzYY6G7zsw";
 
@@ -57,8 +61,7 @@ public class RRepositoryWithoutSnapshotsIntegrationTest {
 
     public static final TestEnvironmentConfigurator testEnv = TestEnvironmentConfigurator.getDefaultInstance();
 
-    public static DockerComposeContainer<?> container = new DockerComposeContainer<>(
-                    new File("src/test/resources/docker-compose-without-snapshots.yaml"))
+    public static DockerComposeContainer<?> container = DOCKER_COMPOSE_CONTAINER
             .withLocalCompose(true)
             .withOptions("--compatibility")
             .waitingFor(
@@ -70,7 +73,7 @@ public class RRepositoryWithoutSnapshotsIntegrationTest {
                             .withStartupTimeout(Duration.ofMinutes(5)));
 
     @BeforeAll
-    public static final void configureRestAssured() throws IOException, InterruptedException {
+    public static void configureRestAssured() {
         IntegrationTestContainers.stopContainers();
         System.out.println("===Starting containers for without snapshots mode tests...");
         container.start();
@@ -80,7 +83,7 @@ public class RRepositoryWithoutSnapshotsIntegrationTest {
     }
 
     @AfterAll
-    public static final void tearDownContainer() {
+    public static void tearDownContainer() {
         System.out.println("===Stopping containers for Without snapshots mode...");
         container.stop();
         System.out.println("===Without snapshots containers stopped.");
@@ -128,7 +131,7 @@ public class RRepositoryWithoutSnapshotsIntegrationTest {
     }
 
     private int runCommand(String... args) throws IOException, InterruptedException {
-        int exitValue = -1;
+        int exitValue;
         String[] cmd = ArrayUtils.addAll(new String[] {"/bin/bash"}, args);
         Process process = Runtime.getRuntime().exec(cmd);
         exitValue = process.waitFor();
@@ -167,10 +170,11 @@ public class RRepositoryWithoutSnapshotsIntegrationTest {
                 }
             }
 
-            JSONArray expectedContent = (JSONArray) jsonData.get("content");
+            JSONArray expectedContent =
+                    (JSONArray) Objects.requireNonNull(jsonData).get("content");
             if (expectedContent != null) {
-                for (int i = 0; i < expectedContent.size(); i++) {
-                    JSONObject el = (JSONObject) expectedContent.get(i);
+                for (Object o : expectedContent) {
+                    JSONObject el = (JSONObject) o;
                     if (el.get("packageBag") != null) {
                         JSONObject jsonPackage = (JSONObject) el.get("packageBag");
                         jsonPackage.remove("source");
@@ -198,7 +202,7 @@ public class RRepositoryWithoutSnapshotsIntegrationTest {
                     }
                 }
             }
-        } catch (ClassCastException e) {
+        } catch (ClassCastException ignored) {
         }
     }
 }

@@ -20,8 +20,15 @@
  */
 package eu.openanalytics.rdepot.test.unit.api.v2;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -80,6 +87,7 @@ public class PythonRepositoryControllerTest extends ApiV2ControllerUnitTest {
     public static final String EXAMPLE_REPOSITORY_PATCHED_PATH = JSON_PATH + "/example_repository_patched.json";
     public static final String ERROR_REPOSITORY_NOT_FOUND_PATH = JSON_PATH + "/error_repository_notfound.json";
     public static final String ERROR_REPOSITORY_MALFORMED_PATCH = JSON_PATH + "/error_repository_malformed_patch.json";
+    public static final String EDITING_DELETED_RESOURCE_PATH = JSON_PATH + "/editing_deleted_resource.json";
 
     @Autowired
     MockMvc mockMvc;
@@ -362,6 +370,28 @@ public class PythonRepositoryControllerTest extends ApiV2ControllerUnitTest {
                         .content(patchJson))
                 .andExpect(status().isNotFound())
                 .andExpect(content().json(Files.readString(Path.of(ERROR_REPOSITORY_NOT_FOUND_PATH))));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"user", "repositorymaintainer"})
+    public void patchRepository_returns405_whenRepositoryIsDeleted() throws Exception {
+
+        final PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
+        final int ID = repository.getId();
+        repository.setDeleted(true);
+
+        when(pythonRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
+        when(securityMediator.isAuthorizedToEdit(any(Repository.class), eq(user)))
+                .thenReturn(true);
+
+        String patchJson = "[{\"op\": \"replace\",\"path\":\"/published\",\"value\":\"true\"}]";
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/python/repositories/" + ID)
+                        .contentType("application/json-patch+json")
+                        .content(patchJson))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(content().json(Files.readString(Path.of(EDITING_DELETED_RESOURCE_PATH))));
     }
 
     @Test

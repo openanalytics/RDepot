@@ -22,7 +22,6 @@ package eu.openanalytics.rdepot.integrationtest.manager.v2.r;
 
 import static io.restassured.RestAssured.given;
 import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,6 +50,8 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 
 public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
+    private static final DockerComposeContainer<?> DOCKER_COMPOSE_CONTAINER =
+            new DockerComposeContainer<>(new File("src/test/resources/docker-compose-declarative.yaml"));
     private static final String REPO_NAME_TO_EDIT = "newName";
     private static final String REPO_NAME_TO_CREATE = "testrepo7";
     private static final String API_PATH = "/api/v2/manager/r";
@@ -70,8 +71,7 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
 
     public static final TestEnvironmentConfigurator testEnv = TestEnvironmentConfigurator.getDefaultInstance();
 
-    public static DockerComposeContainer<?> container = new DockerComposeContainer<>(
-                    new File("src/test/resources/docker-compose-declarative.yaml"))
+    public static DockerComposeContainer<?> container = DOCKER_COMPOSE_CONTAINER
             .withLocalCompose(true)
             .withOptions("--compatibility")
             .waitingFor(
@@ -86,7 +86,7 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
     }
 
     @BeforeAll
-    public static void configureRestAssured() throws IOException, InterruptedException {
+    public static void configureRestAssured() {
         IntegrationTestContainers.stopContainers();
         System.out.println("===Starting containers for declarative mode tests...");
         container.start();
@@ -128,11 +128,11 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
         final JsonObject expectedResponse = (JsonObject) JsonParser.parseReader(reader);
         final JsonObject actualResponse = (JsonObject) JsonParser.parseString(response);
 
-        assertEquals("Incorrect public configuration returned.", expectedResponse, actualResponse);
+        Assertions.assertEquals(expectedResponse, actualResponse, "Incorrect public configuration returned.");
     }
 
     @Test
-    public void shouldNotRetrievePublicConfig_IfUnauthenticated() throws Exception {
+    public void shouldNotRetrievePublicConfig_IfUnauthenticated() {
         given().accept(ContentType.JSON)
                 .when()
                 .get("/api/v2/manager/config")
@@ -167,7 +167,7 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
     }
 
     @Test
-    public void shouldUploadPackageToPublishedRRepository() throws IOException, ParseException, InterruptedException {
+    public void shouldUploadPackageToPublishedRRepository() throws IOException, ParseException {
         File packageBag = new File("src/test/resources/itestPackages/A3_0.9.1.tar.gz");
 
         given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -194,7 +194,7 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
     }
 
     @Test
-    public void shouldUploadPackageToUnpublishedRRepository() throws IOException, ParseException, InterruptedException {
+    public void shouldUploadPackageToUnpublishedRRepository() throws IOException, ParseException {
         File packageBag = new File("src/test/resources/itestPackages/A3_0.9.1.tar.gz");
 
         given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -300,7 +300,7 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
 
         JsonObject actualJson = (JsonObject) JsonParser.parseString(response);
 
-        if (actualJson
+        return actualJson
                         .get("data")
                         .getAsJsonObject()
                         .get("repositoryId")
@@ -311,12 +311,11 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
                         .getAsJsonObject()
                         .get("pending")
                         .getAsString()
-                        .equals("false")) return true;
-        return false;
+                        .equals("false");
     }
 
     @Override
-    protected void updateMd5SumsAndVersion(JsonArray expactedPackages) throws IOException {
+    protected void updateMd5SumsAndVersion(JsonArray expectedPackages) throws IOException {
         // 1. parse file with links and names to map
         // 2. download PACKAGES file
         // 3. parse PACKAGES file
@@ -334,7 +333,7 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
         }
         reader.close();
 
-        for (JsonElement el : expactedPackages) {
+        for (JsonElement el : expectedPackages) {
             JsonObject package_ = el.getAsJsonObject();
             String packageName = package_.get("name").getAsString();
             if (!withVersion.contains(packageName)) {
@@ -345,7 +344,7 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
                 FileUtils.copyURLToFile(new URL(url), tempFile);
 
                 reader = new Scanner(tempFile);
-                Boolean found = false;
+                boolean found = false;
                 while (reader.hasNextLine()) {
                     String line = reader.nextLine();
                     if (!found && line.equals("Package: " + packageName)) {

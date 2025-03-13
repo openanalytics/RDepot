@@ -24,8 +24,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import eu.openanalytics.rdepot.base.config.declarative.DeclaredRepositoryDirectoriesProps;
 import eu.openanalytics.rdepot.base.config.declarative.exceptions.DeclaredRepositoryTechnologyMismatch;
+import eu.openanalytics.rdepot.base.config.declarative.exceptions.InvalidDeclaredRepositoryName;
 import eu.openanalytics.rdepot.base.config.declarative.exceptions.InvalidRepositoryDeclaration;
+import eu.openanalytics.rdepot.base.validation.repositories.NameValidationResult;
 import eu.openanalytics.rdepot.python.technology.PythonLanguage;
+import eu.openanalytics.rdepot.python.validation.repositories.PythonBasicNameValidator;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,10 +43,13 @@ public class PythonYamlDeclarativeConfigurationSource {
     protected final DeclaredRepositoryDirectoriesProps declaredRepositoryDirectoriesProps;
     protected final Class<DeclarativePythonRepository> repositoryClass = DeclarativePythonRepository.class;
     protected final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    protected final PythonBasicNameValidator nameValidator;
 
     public PythonYamlDeclarativeConfigurationSource(
-            DeclaredRepositoryDirectoriesProps declaredRepositoryDirectoriesProps) {
+            DeclaredRepositoryDirectoriesProps declaredRepositoryDirectoriesProps,
+            PythonBasicNameValidator nameValidation) {
         this.declaredRepositoryDirectoriesProps = declaredRepositoryDirectoriesProps;
+        this.nameValidator = nameValidation;
         mapper.findAndRegisterModules();
     }
 
@@ -79,7 +85,7 @@ public class PythonYamlDeclarativeConfigurationSource {
                     declaredRepositories.add(retrieveDeclaredRepositoryFromFile(configFile));
                 } catch (DeclaredRepositoryTechnologyMismatch e) {
                     log.debug(e.getMessage(), e);
-                } catch (InvalidRepositoryDeclaration e) {
+                } catch (InvalidRepositoryDeclaration | InvalidDeclaredRepositoryName e) {
                     log.error(e.getMessage(), e);
                 }
             }
@@ -91,18 +97,25 @@ public class PythonYamlDeclarativeConfigurationSource {
     /**
      * Parses provided YAML file into repository declaration.
      * @throws InvalidRepositoryDeclaration when YAML could not be parsed into repository
+     * @throws InvalidDeclaredRepositoryName when repository name is not valid
      */
     protected DeclarativePythonRepository retrieveDeclaredRepositoryFromFile(File configFile)
-            throws InvalidRepositoryDeclaration, DeclaredRepositoryTechnologyMismatch {
+            throws InvalidRepositoryDeclaration, DeclaredRepositoryTechnologyMismatch, InvalidDeclaredRepositoryName {
         try {
             DeclarativePythonRepository repository = mapper.readValue(configFile, repositoryClass);
             if (repository.technology == null || !repository.technology.equals(PythonLanguage.instance)) {
                 throw new DeclaredRepositoryTechnologyMismatch(repository.name);
+            } else if (!nameValidator.validateName(repository.name).equals(NameValidationResult.OK)) {
+                throw new InvalidDeclaredRepositoryName(repository.name);
             }
+
             return repository;
         } catch (DeclaredRepositoryTechnologyMismatch e) {
             log.debug(e.getMessage(), e);
             throw new DeclaredRepositoryTechnologyMismatch(configFile.getAbsolutePath());
+        } catch (InvalidDeclaredRepositoryName e) {
+            log.debug(e.getMessage(), e);
+            throw new InvalidDeclaredRepositoryName(configFile.getAbsolutePath());
         } catch (IOException e) {
             log.error(e.getMessage(), e);
             throw new InvalidRepositoryDeclaration(configFile.getAbsolutePath());

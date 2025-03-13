@@ -1,0 +1,7 @@
+{
+    "status": "ERROR",
+    "code": 405,
+    "message": "Editing a deleted resource is not allowed.",
+    "messageCode": "editing.deleted.resource.not.possible",
+    "data": null
+}

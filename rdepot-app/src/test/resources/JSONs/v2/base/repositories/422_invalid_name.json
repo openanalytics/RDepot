@@ -1,0 +1,9 @@
+{
+    "status": "ERROR",
+    "code": 422,
+    "message": "Validation failed for the resource.",
+    "messageCode": "error.validation",
+    "data": [
+        "Invalid repository name."
+    ]
+}

@@ -20,10 +20,7 @@
  */
 package eu.openanalytics.rdepot.r.test.storage;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -640,6 +637,357 @@ public class RLocalStorageTest extends UnitTest {
                 "Symlink does not point at a right dir.");
     }
 
+    @Test
+    public void organizePackagesInStorage_withRedirectToSourceSetToTrue() throws Exception {
+        final String datestamp = "20240110";
+        final User user = UserTestFixture.GET_PACKAGE_MAINTAINER();
+
+        final RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
+        repository.setId(2);
+        repository.setPublished(true);
+        repository.setRedirectToSource(true);
+
+        final RPackage benchmarkingArchivePackage = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
+        benchmarkingArchivePackage.setSource(
+                new File(packageUploadDirectory + "/repositories/2/71228208/Benchmarking_0.10.tar.gz")
+                        .getAbsolutePath());
+        benchmarkingArchivePackage.setMd5sum("9a99c2ebefa6d49422ca7893c1f4ead8");
+        benchmarkingArchivePackage.setName("Benchmarking");
+        benchmarkingArchivePackage.setVersion("0.10");
+        benchmarkingArchivePackage.setActive(true);
+
+        final RPackage benchmarkingPackage = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
+        benchmarkingPackage.setSource(
+                new File(packageUploadDirectory + "/repositories/2/79878978/Benchmarking_0.31.tar.gz")
+                        .getAbsolutePath());
+        benchmarkingPackage.setName("Benchmarking");
+        benchmarkingPackage.setVersion("0.31");
+        benchmarkingPackage.setActive(true);
+        benchmarkingPackage.setMd5sum("136460e58c711ed9cc1cdbdbde2e5b86");
+
+        final RPackage arrowSourceVersion = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
+        arrowSourceVersion.setSource(
+                new File(packageUploadDirectory + "/repositories/2/6897574/arrow_18.1.0.1.tar.gz").getAbsolutePath());
+        arrowSourceVersion.setName("arrow");
+        arrowSourceVersion.setVersion("18.1.0.1");
+        arrowSourceVersion.setActive(true);
+        arrowSourceVersion.setMd5sum("4fc2b28d05af4d6e458494c385082699");
+
+        final RPackage accruedLatest = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
+        accruedLatest.setSource(
+                new File(packageUploadDirectory + "/repositories/2/3094731/accrued_1.4.tar.gz").getAbsolutePath());
+        accruedLatest.setName("accrued");
+        accruedLatest.setVersion("1.4");
+        accruedLatest.setActive(true);
+        accruedLatest.setMd5sum("97c2930a9dd7ca9fc1409d5340c06470");
+
+        final RPackage accruedArchive1 = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
+        accruedArchive1.setSource(
+                new File(packageUploadDirectory + "/repositories/2/4185687/accrued_1.2.tar.gz").getAbsolutePath());
+        accruedArchive1.setName("accrued");
+        accruedArchive1.setVersion("1.2");
+        accruedArchive1.setActive(true);
+        accruedArchive1.setMd5sum("70d295115295a4718593f6a39d77add9");
+
+        final RPackage accruedArchive2 = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
+        accruedArchive2.setSource(
+                new File(packageUploadDirectory + "/repositories/2/3328424/accrued_1.3.tar.gz").getAbsolutePath());
+        accruedArchive2.setName("accrued");
+        accruedArchive2.setVersion("1.3");
+        accruedArchive2.setActive(true);
+        accruedArchive2.setMd5sum("a05e4ca44438c0d9e7d713d7e3890423");
+
+        final RPackage openSpecySourceVersion = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
+        openSpecySourceVersion.setSource(
+                new File(packageUploadDirectory + "/repositories/2/3987555/OpenSpecy_1.1.0.tar.gz").getAbsolutePath());
+        openSpecySourceVersion.setName("OpenSpecy");
+        openSpecySourceVersion.setVersion("1.1.0");
+        openSpecySourceVersion.setActive(true);
+        openSpecySourceVersion.setMd5sum("0da320752536e9659fd2f8e4e99ecb7f");
+
+        final RPackage openSpecyLatest = RPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user);
+        openSpecyLatest.setSource(
+                new File(packageUploadDirectory + "/repositories/2/9420570/OpenSpecy_1.1.0.tar.gz").getAbsolutePath());
+        openSpecyLatest.setName("OpenSpecy");
+        openSpecyLatest.setVersion("1.1.0");
+        openSpecyLatest.setActive(true);
+        openSpecyLatest.setMd5sum("13bda5374451f899771b8388983fe334");
+        openSpecyLatest.setRVersion("4.5");
+        openSpecyLatest.setBuilt("R 4.5.0; ; 2024-06-13 23:29:42 UTC; unix");
+
+        final RPackage openSpecyArchive = RPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user);
+        openSpecyArchive.setSource(
+                new File(packageUploadDirectory + "/repositories/2/6918282/OpenSpecy_1.0.99.tar.gz").getAbsolutePath());
+        openSpecyArchive.setName("OpenSpecy");
+        openSpecyArchive.setVersion("1.0.99");
+        openSpecyArchive.setActive(true);
+        openSpecyArchive.setMd5sum("2333d8335e081ac4607495fe5e840dde");
+        openSpecyArchive.setRVersion("4.2.1");
+        openSpecyArchive.setBuilt("R 4.2.1; ; 2024-06-13 23:29:42 UTC; unix");
+
+        final RPackage arrowBinaryVersion = RPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user);
+        arrowBinaryVersion.setSource(
+                new File(packageUploadDirectory + "/repositories/2/9955549/arrow_8.0.0.tar.gz").getAbsolutePath());
+        arrowBinaryVersion.setName("arrow");
+        arrowBinaryVersion.setVersion("8.0.0");
+        arrowBinaryVersion.setActive(true);
+        arrowBinaryVersion.setMd5sum("b55eb6a2f5adeff68f1ef15fd35b03de");
+        arrowBinaryVersion.setRVersion("4.2.0");
+        arrowBinaryVersion.setBuilt("R 4.2.0; x86_64-pc-linux-gnu; 2022-06-07 00:49:30 UTC; unix");
+
+        List<RPackage> sourcePackages = List.of(
+                benchmarkingArchivePackage,
+                benchmarkingPackage,
+                accruedArchive1,
+                accruedArchive2,
+                accruedLatest,
+                openSpecySourceVersion,
+                arrowSourceVersion);
+        List<RPackage> archiveSourcePackages = List.of(benchmarkingArchivePackage, accruedArchive1, accruedArchive2);
+        List<RPackage> latestSourcePackages =
+                List.of(benchmarkingPackage, accruedLatest, arrowSourceVersion, openSpecySourceVersion);
+
+        List<RPackage> binaryPackages = List.of(openSpecyLatest, openSpecyArchive, arrowBinaryVersion);
+        List<RPackage> archiveBinaryPackages = List.of(openSpecyArchive);
+        List<RPackage> latestBinaryPackages = List.of(openSpecyLatest, arrowBinaryVersion);
+
+        storage.organizePackagesInStorage(
+                datestamp,
+                sourcePackages,
+                latestSourcePackages,
+                archiveSourcePackages,
+                binaryPackages,
+                latestBinaryPackages,
+                archiveBinaryPackages,
+                repository);
+
+        final File currentDatestampGeneratedDirectory = new File(repositoryGenerationDirectory + "/2/20240110");
+        final File currentGeneratedDirectory = new File(repositoryGenerationDirectory + "/2/current");
+
+        final File actualLatestSourcePackagesFile =
+                new File(repositoryGenerationDirectory + "/2/20240110/src/contrib/latest/PACKAGES");
+        final File actualArchiveSourcePackagesFile =
+                new File(repositoryGenerationDirectory + "/2/20240110/src/contrib/Archive/PACKAGES");
+        final String actualLatestSourcePackagesFileContent = Files.readString(actualLatestSourcePackagesFile.toPath());
+        final String actualArchiveSourcePackagesFileContent =
+                Files.readString(actualArchiveSourcePackagesFile.toPath());
+
+        final File actualLatestBinaryPackagesFile_HigherRVersion =
+                new File(repositoryGenerationDirectory + "/2/20240110/bin/linux/centos7/x86_64/4.5/latest/PACKAGES");
+        final File actualLatestBinaryPackagesFile_LowerRVersion =
+                new File(repositoryGenerationDirectory + "/2/20240110/bin/linux/centos7/x86_64/4.2/latest/PACKAGES");
+        final File actualArchiveBinaryPackagesFile_LowerRVersion =
+                new File(repositoryGenerationDirectory + "/2/20240110/bin/linux/centos7/x86_64/4.2/Archive/PACKAGES");
+
+        final String actualLatestBinaryPackagesFileContent_HigherRVersion =
+                Files.readString(actualLatestBinaryPackagesFile_HigherRVersion.toPath());
+        final String actualLatestBinaryPackagesFileContent_LowerRVersion =
+                Files.readString(actualLatestBinaryPackagesFile_LowerRVersion.toPath());
+        final String actualArchiveBinaryPackagesFileContent_LowerRVersion =
+                Files.readString(actualArchiveBinaryPackagesFile_LowerRVersion.toPath());
+
+        final String expectedLatestSourcePackagesFileContent = getExpectedLatestPackagesFile_forRedirectToSource();
+        final String expectedArchiveSourcePackagesFileContent = getExpectedArchivePackagesFile_forRedirectToSource();
+
+        final String expectedLatestBinaryPackagesFileContent_HigherRVersion =
+                getExpectedBinaryLatestPackagesFileForHigherRVersion_forRedirectToSource();
+        final String expectedLatestBinaryPackagesFileContent_LowerRVersion =
+                getExpectedBinaryLatestPackagesFileForLowerRVersion_forRedirectToSource();
+        final String expectedArchiveBinaryPackagesFileContent_LowerRVersion =
+                getExpectedBinaryArchivePackagesFileForLowerRVersion_forRedirectToSource();
+
+        verifySourcePackage(currentGeneratedDirectory, "Benchmarking_0.10.tar.gz", true);
+        verifySourcePackage(currentGeneratedDirectory, "Benchmarking_0.31.tar.gz", false);
+        verifySourcePackage(currentGeneratedDirectory, "arrow_18.1.0.1.tar.gz", false);
+        verifySourcePackage(currentGeneratedDirectory, "accrued_1.2.tar.gz", true);
+        verifySourcePackage(currentGeneratedDirectory, "accrued_1.3.tar.gz", true);
+        verifySourcePackage(currentGeneratedDirectory, "accrued_1.4.tar.gz", false);
+        verifySourcePackage(currentGeneratedDirectory, "OpenSpecy_1.1.0.tar.gz", false);
+
+        verifyBinaryPackage(currentGeneratedDirectory, "bin/linux/centos7/x86_64/4.5", "OpenSpecy_1.1.0.tar.gz", false);
+        verifyBinaryPackage(currentGeneratedDirectory, "bin/linux/centos7/x86_64/4.2", "OpenSpecy_1.0.99.tar.gz", true);
+        verifyBinaryPackage(
+                currentGeneratedDirectory,
+                "bin/linux/centos7/x86_64/4.2",
+                "arrow_8.0.0.tar.gz",
+                true); // latest binary package becomes archive, due to higher version of source package
+
+        assertEquals(
+                expectedLatestSourcePackagesFileContent,
+                actualLatestSourcePackagesFileContent,
+                "Incorrect latest source PACKAGES file");
+        assertEquals(
+                expectedArchiveSourcePackagesFileContent,
+                actualArchiveSourcePackagesFileContent,
+                "Incorrect archive source PACKAGES file");
+        assertEquals(
+                expectedLatestBinaryPackagesFileContent_HigherRVersion,
+                actualLatestBinaryPackagesFileContent_HigherRVersion,
+                "Incorrect latest binary PACKAGES file");
+        assertEquals(
+                expectedLatestBinaryPackagesFileContent_LowerRVersion,
+                actualLatestBinaryPackagesFileContent_LowerRVersion,
+                "Incorrect latest binary PACKAGES file");
+        assertEquals(
+                expectedArchiveBinaryPackagesFileContent_LowerRVersion,
+                actualArchiveBinaryPackagesFileContent_LowerRVersion,
+                "Incorrect archive binary PACKAGES file");
+        assertTrue(currentDatestampGeneratedDirectory.isDirectory(), "Directory was not generated.");
+        assertTrue(Files.isSymbolicLink(currentGeneratedDirectory.toPath()), "current should be a symlink");
+        assertEquals(
+                currentDatestampGeneratedDirectory.getAbsolutePath(),
+                currentGeneratedDirectory.toPath().toRealPath().toFile().getAbsolutePath(),
+                "Symlink does not point at a right dir.");
+    }
+
+    private String getExpectedBinaryArchivePackagesFileForLowerRVersion_forRedirectToSource() {
+        return """
+				Package: OpenSpecy
+				Version: 1.0.99
+				License: Some license1
+				MD5Sum: 2333d8335e081ac4607495fe5e840dde
+				NeedsCompilation: no
+				Built: R 4.2.1; ; 2024-06-13 23:29:42 UTC; unix
+
+				Package: arrow
+				Version: 8.0.0
+				License: Some license1
+				MD5Sum: b55eb6a2f5adeff68f1ef15fd35b03de
+				NeedsCompilation: no
+				Built: R 4.2.0; x86_64-pc-linux-gnu; 2022-06-07 00:49:30 UTC; unix
+
+				Package: Benchmarking
+				Version: 0.10
+				License: Some license1
+				MD5Sum: 9a99c2ebefa6d49422ca7893c1f4ead8
+				NeedsCompilation: no
+
+				Package: accrued
+				Version: 1.2
+				License: Some license1
+				MD5Sum: 70d295115295a4718593f6a39d77add9
+				NeedsCompilation: no
+
+				Package: accrued
+				Version: 1.3
+				License: Some license1
+				MD5Sum: a05e4ca44438c0d9e7d713d7e3890423
+				NeedsCompilation: no
+
+				""";
+    }
+
+    private String getExpectedBinaryLatestPackagesFileForLowerRVersion_forRedirectToSource() {
+        return """
+				Package: arrow
+				Version: 18.1.0.1
+				License: Some license1
+				MD5Sum: 4fc2b28d05af4d6e458494c385082699
+				NeedsCompilation: no
+
+				Package: Benchmarking
+				Version: 0.31
+				License: Some license1
+				MD5Sum: 136460e58c711ed9cc1cdbdbde2e5b86
+				NeedsCompilation: no
+
+				Package: accrued
+				Version: 1.4
+				License: Some license1
+				MD5Sum: 97c2930a9dd7ca9fc1409d5340c06470
+				NeedsCompilation: no
+
+				Package: OpenSpecy
+				Version: 1.1.0
+				License: Some license1
+				MD5Sum: 0da320752536e9659fd2f8e4e99ecb7f
+				NeedsCompilation: no
+
+				""";
+    }
+
+    private String getExpectedBinaryLatestPackagesFileForHigherRVersion_forRedirectToSource() {
+        return """
+				Package: OpenSpecy
+				Version: 1.1.0
+				License: Some license1
+				MD5Sum: 13bda5374451f899771b8388983fe334
+				NeedsCompilation: no
+				Built: R 4.5.0; ; 2024-06-13 23:29:42 UTC; unix
+
+				Package: Benchmarking
+				Version: 0.31
+				License: Some license1
+				MD5Sum: 136460e58c711ed9cc1cdbdbde2e5b86
+				NeedsCompilation: no
+
+				Package: accrued
+				Version: 1.4
+				License: Some license1
+				MD5Sum: 97c2930a9dd7ca9fc1409d5340c06470
+				NeedsCompilation: no
+
+				Package: arrow
+				Version: 18.1.0.1
+				License: Some license1
+				MD5Sum: 4fc2b28d05af4d6e458494c385082699
+				NeedsCompilation: no
+
+				""";
+    }
+
+    private String getExpectedArchivePackagesFile_forRedirectToSource() {
+        return """
+				Package: Benchmarking
+				Version: 0.10
+				License: Some license1
+				MD5Sum: 9a99c2ebefa6d49422ca7893c1f4ead8
+				NeedsCompilation: no
+
+				Package: accrued
+				Version: 1.2
+				License: Some license1
+				MD5Sum: 70d295115295a4718593f6a39d77add9
+				NeedsCompilation: no
+
+				Package: accrued
+				Version: 1.3
+				License: Some license1
+				MD5Sum: a05e4ca44438c0d9e7d713d7e3890423
+				NeedsCompilation: no
+
+				""";
+    }
+
+    private String getExpectedLatestPackagesFile_forRedirectToSource() {
+        return """
+                Package: Benchmarking
+                Version: 0.31
+                License: Some license1
+                MD5Sum: 136460e58c711ed9cc1cdbdbde2e5b86
+                NeedsCompilation: no
+
+                Package: accrued
+                Version: 1.4
+                License: Some license1
+                MD5Sum: 97c2930a9dd7ca9fc1409d5340c06470
+                NeedsCompilation: no
+
+                Package: arrow
+                Version: 18.1.0.1
+                License: Some license1
+                MD5Sum: 4fc2b28d05af4d6e458494c385082699
+                NeedsCompilation: no
+
+                Package: OpenSpecy
+                Version: 1.1.0
+                License: Some license1
+                MD5Sum: 0da320752536e9659fd2f8e4e99ecb7f
+                NeedsCompilation: no
+
+                """;
+    }
+
     private String getExpectedArchivePackagesFile() {
         return """
                 Package: Benchmarking
@@ -807,7 +1155,7 @@ public class RLocalStorageTest extends UnitTest {
         assertEquals(
                 0,
                 Objects.requireNonNull(repositoryGenerationDirectory.listFiles()).length,
-                "Generation directory should be empty when shapshots are off.");
+                "Generation directory should be empty when snapshots are off.");
     }
 
     @Test

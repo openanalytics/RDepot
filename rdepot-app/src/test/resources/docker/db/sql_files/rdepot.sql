@@ -252,13 +252,13 @@ COPY public.pythonpackage (id, author_email, classifier, description_content_typ
 -- Data for Name: rrepository; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.rrepository (id) FROM stdin;
-5
-4
-3
-6
-7
-2
+COPY public.rrepository (id, redirect_to_source) FROM stdin;
+5	f
+4	f
+3	f
+6	f
+7	f
+2	f
 \.
 
 

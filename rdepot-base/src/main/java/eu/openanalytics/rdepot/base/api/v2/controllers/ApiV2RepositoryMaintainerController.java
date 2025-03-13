@@ -40,11 +40,13 @@ import eu.openanalytics.rdepot.base.api.v2.validation.PageableValidator;
 import eu.openanalytics.rdepot.base.entities.RepositoryMaintainer;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.mediator.deletion.RepositoryMaintainerDeleter;
+import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
+import eu.openanalytics.rdepot.base.strategy.exceptions.EditingDeletedResourceException;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.factory.StrategyFactory;
 import eu.openanalytics.rdepot.base.utils.specs.RepositoryMaintainerSpecs;
@@ -255,6 +257,11 @@ public class ApiV2RepositoryMaintainerController
         RepositoryMaintainer repositoryMaintainer = repositoryMaintainerService
                 .findById(id)
                 .orElseThrow(() -> new RepositoryMaintainerNotFound(messageSource, locale));
+
+        if (repositoryMaintainer.isDeleted())
+            throw new EditingDeletedResourceException(
+                    MessageCodes.EDITING_DELETED_RESOURCE_NOT_POSSIBLE, messageSource, locale);
+
         RepositoryMaintainer updated;
 
         try {

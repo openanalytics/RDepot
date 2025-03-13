@@ -21,7 +21,6 @@
 package eu.openanalytics.rdepot.integrationtest.manager.v2.r;
 
 import static io.restassured.RestAssured.given;
-import static org.junit.Assert.assertEquals;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -38,9 +37,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class RRepositoryIntegrationTest extends IntegrationTest {
-    private RepositoryTechnologyTestData testData;
-    private static String REPOSITORIES_PATH = "/v2/r/repositories/";
-    private static String EVENTS_PATH = "/v2/r/events/repositories/";
+    private final RepositoryTechnologyTestData testData;
+    private static final String REPOSITORIES_PATH = "/v2/r/repositories/";
+    private static final String EVENTS_PATH = "/v2/r/events/repositories/";
 
     public RRepositoryIntegrationTest() {
         super("/api/v2/manager/r/repositories");
@@ -78,11 +77,11 @@ public class RRepositoryIntegrationTest extends IntegrationTest {
         final JsonObject expectedResponse = (JsonObject) JsonParser.parseReader(reader);
         final JsonObject actualResponse = (JsonObject) JsonParser.parseString(response);
 
-        assertEquals("Incorrect public configuration returned.", expectedResponse, actualResponse);
+        Assertions.assertEquals(expectedResponse, actualResponse, "Incorrect public configuration returned.");
     }
 
     @Test
-    public void getConfig_returns401_whenUnauthenticated() throws Exception {
+    public void getConfig_returns401_whenUnauthenticated() {
         given().accept(ContentType.JSON)
                 .when()
                 .get("/api/v2/manager/r/config")
@@ -269,6 +268,26 @@ public class RRepositoryIntegrationTest extends IntegrationTest {
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
                 .expectedJsonPath("/v2/base/repositories/422_create.json")
+                .body(body)
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void createRepository_returns422_whenInvalidName() throws Exception {
+        final String body = "{"
+                + "\"name\": \"#testrepo\","
+                + "\"publicationUri\":\"http://localhost/repo/" + testData.getRepoNameToCreate() + "\","
+                + "\"serverAddress\":\"http://oa-rdepot-repo:8080/" + testData.getRepoNameToCreate() + "\""
+                + "}";
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST)
+                .urlSuffix("/")
+                .statusCode(422)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/base/repositories/422_invalid_name.json")
                 .body(body)
                 .build();
         testEndpoint(requestBody);
@@ -477,6 +496,23 @@ public class RRepositoryIntegrationTest extends IntegrationTest {
                 .body(patch)
                 .build();
 
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void patchRepository_updateName_shouldFail() throws Exception {
+        final String patch =
+                "[" + "{" + "\"op\": \"replace\"," + "\"path\": \"/name\"," + "\"value\": \"#testrepo\"" + "}" + "]";
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.PATCH)
+                .urlSuffix("/" + testData.getRepoIdToDelete())
+                .statusCode(422)
+                .token(REPOSITORYMAINTAINER_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/base/repositories/422_invalid_name.json")
+                .body(patch)
+                .build();
         testEndpoint(requestBody);
     }
 }

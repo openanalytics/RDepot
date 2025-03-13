@@ -20,17 +20,23 @@
  */
 package eu.openanalytics.rdepot.python.validation;
 
+import eu.openanalytics.rdepot.base.entities.Repository;
+import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.base.validation.RepositoryValidator;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.services.PythonRepositoryService;
+import eu.openanalytics.rdepot.python.validation.repositories.PythonNameValidation;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
 @Component
 public class PythonRepositoryValidator extends RepositoryValidator<PythonRepository> {
 
-    public PythonRepositoryValidator(PythonRepositoryService repositoryService) {
-        super(repositoryService);
+    public PythonRepositoryValidator(
+            PythonRepositoryService repositoryService,
+            RepositoryService<Repository> commonRepositoryService,
+            PythonNameValidation pythonNameValidator) {
+        super(repositoryService, commonRepositoryService, pythonNameValidator);
     }
 
     @Override

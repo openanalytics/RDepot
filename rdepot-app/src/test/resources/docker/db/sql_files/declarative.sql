@@ -416,7 +416,8 @@ ALTER TABLE public.rpackage OWNER TO postgres;
 --
 
 CREATE TABLE public.rrepository (
-    id integer NOT NULL
+    id integer NOT NULL,
+    redirect_to_source boolean DEFAULT false NOT NULL
 );
 
 
@@ -708,7 +709,10 @@ COPY public.rpackage (id, depends, imports, suggests, system_requirements, licen
 -- Data for Name: rrepository; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.rrepository (id) FROM stdin;
+COPY public.rrepository (id, redirect_to_source) FROM stdin;
+3	f
+5	f
+6	f
 \.
 
 
