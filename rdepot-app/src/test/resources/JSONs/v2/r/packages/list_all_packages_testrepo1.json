@@ -11,7 +11,7 @@
 			"number": 0,
 			"size": 20,
 			"totalPages": 1,
-			"totalElements": 7
+			"totalElements": 10
 		},
 		"content": [
 			{
@@ -29,8 +29,10 @@
 				},
 				"title": "Analyze System Scalability with the Universal Scalability Law",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": "knitr",
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "868140a3c3c29327eef5d5a485aee5b6",
 				"links": [
 					{
@@ -83,6 +85,144 @@
 			},
 			{
 				"enhances": null,
+				"description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
+				"source": "",
+				"repository": {
+					"name": "testrepo1",
+					"lastPublicationSuccessful": true,
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"title": "Preliminary Data Visualisation",
+				"distribution": null,
+				"maintainer": null,
+				"suggests": "plotly (>= 4.5.6), testthat, knitr, rmarkdown, vdiffr",
+				"systemRequirements": null,
+				"descriptionContentType": "txt",
+				"md5sum": "f343fa3a01dcd9546fa0947877f58f36",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/23"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/23",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/23",
+						"type": "DELETE"
+					}
+				],
+				"id": 23,
+				"rversion": null,
+				"architecture": null,
+				"imports": "ggplot2, tidyr, dplyr, purrr, magrittr, stats",
+				"depends": "R (>= 3.2.2)",
+				"built": null,
+				"author": "Nicholas Tierney [aut, cre]",
+				"active": false,
+				"technology": "R",
+				"priority": null,
+				"version": "0.1.0",
+				"url": "https:\/\/github.com\/njtierney\/visdat\/",
+				"license": "MIT + file LICENSE",
+				"deleted": false,
+				"binary": false,
+				"name": "visdat",
+				"submission": {
+					"id": 22,
+					"state": "REJECTED"
+				},
+				"linkingTo": null,
+				"user": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				},
+				"needsCompilation": "no"
+			},
+			{
+				"enhances": null,
+				"description": "Is a collection of models to analyze genome scale codon data using a Bayesian framework. Provides visualization routines and checkpointing for model fittings. Currently published models to analyze gene data for selection on codon",
+				"source": "",
+				"repository": {
+					"name": "testrepo1",
+					"lastPublicationSuccessful": true,
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"title": "Analysis of Codon Data under Stationarity using a Bayesian Framework",
+				"distribution": null,
+				"maintainer": null,
+				"suggests": "knitr, Hmisc, VGAM, coda, testthat, lmodel2",
+				"systemRequirements": null,
+				"descriptionContentType": "txt",
+				"md5sum": "41026e4157a0b3b6d909f0c6f72fa65c",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/22"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/22",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/22",
+						"type": "DELETE"
+					}
+				],
+				"id": 22,
+				"rversion": null,
+				"architecture": null,
+				"imports": "",
+				"depends": "R (>= 3.3.0), Rcpp (>= 0.11.3), methods",
+				"built": null,
+				"author": "Cedric Landerer [aut, cre], Gabriel Hanas [ctb], Jeremy Rogers [ctb], Alex Cope [ctb], Denizhan Pak [ctb]",
+				"active": false,
+				"technology": "R",
+				"priority": null,
+				"version": "0.1.2.3",
+				"url": "https:\/\/github.com\/clandere\/AnaCoDa",
+				"license": "GPL (>= 2)",
+				"deleted": false,
+				"binary": false,
+				"name": "AnaCoDa",
+				"submission": {
+					"id": 23,
+					"state": "CANCELLED"
+				},
+				"linkingTo": "Rcpp",
+				"user": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				},
+				"needsCompilation": "no"
+			},
+			{
+				"enhances": null,
 				"description": "Estimates and graphs deterministic (DEA) frontier models with different technology assumptions (fdh, vrs, drs, crs, irs, add). Also handles possible slacks, peers and their weights (lambdas), optimal cost, revenue and profit allocation, super--efficiency, and mergers. A comparative method for estimating SFA efficiencies is included.",
 				"source": "\/opt\/rdepot\/repositories\/2\/71228208\/Benchmarking_0.10.tar.gz",
 				"repository": {
@@ -96,8 +236,10 @@
 				},
 				"title": "Benchmark and frontier analysis using DEA and SFA",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": null,
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "9a99c2ebefa6d49422ca7893c1f4ead8",
 				"links": [
 					{
@@ -163,8 +305,10 @@
 				},
 				"title": "Tools for Approximate Bayesian Computation (ABC)",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": null,
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "c47d18b86b331a5023dcd62b74fedbb6",
 				"links": [
 					{
@@ -230,8 +374,10 @@
 				},
 				"title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": "randomForest, e1071",
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "76d726aee8dd7c6ed94d150d5718015b",
 				"links": [
 					{
@@ -284,6 +430,75 @@
 			},
 			{
 				"enhances": null,
+				"description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
+				"source": "",
+				"repository": {
+					"name": "testrepo1",
+					"lastPublicationSuccessful": true,
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
+				"distribution": null,
+				"maintainer": null,
+				"suggests": "randomForest, e1071",
+				"systemRequirements": null,
+				"descriptionContentType": "txt",
+				"md5sum": "8eb4760cd574f5489e61221dc9bb0076",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/16"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/16",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/16",
+						"type": "DELETE"
+					}
+				],
+				"id": 16,
+				"rversion": null,
+				"architecture": null,
+				"imports": null,
+				"depends": "xtable, pbapply",
+				"built": null,
+				"author": "Scott Fortmann-Roe",
+				"active": false,
+				"technology": "R",
+				"priority": null,
+				"version": "0.9.1",
+				"url": null,
+				"license": "GPL (>= 2)",
+				"deleted": false,
+				"binary": false,
+				"name": "A3",
+				"submission": {
+					"id": 16,
+					"state": "REJECTED"
+				},
+				"linkingTo": null,
+				"user": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				},
+				"needsCompilation": "no"
+			},
+			{
+				"enhances": null,
 				"description": "Provides an R interface for the Bureau of Economic Analysis (BEA)",
 				"source": "\/opt\/rdepot\/repositories\/2\/89565416\/bea.R_1.0.5.tar.gz",
 				"repository": {
@@ -297,8 +512,10 @@
 				},
 				"title": "Bureau of Economic Analysis API",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": null,
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "5e664f320c7cc884138d64467f6b0e49",
 				"links": [
 					{
@@ -364,8 +581,10 @@
 				},
 				"title": "Nonparametric Tests for Equality of Location Against Ordered Alternatives",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": null,
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "da8be1247d3145b757bd62e01fc6eb8b",
 				"links": [
 					{
@@ -431,8 +650,10 @@
 				},
 				"title": "Visualization tools for partially accruing data",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": null,
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "1c75d59b18e554a285a9b156a06a288c",
 				"links": [
 					{

@@ -1,1 +1,94 @@
-{"code":200,"data":{"links":[{"rel":"self","href":"http:\/\/localhost:8017\/api\/v2\/manager\/repositories?published=true&page=0&size=20&sort=id,asc"}],"page":{"number":0,"size":20,"totalPages":1,"totalElements":3},"content":[{"requiresAuthentication":false,"serverAddress":"http:\/\/oa-rdepot-repo:8080\/testrepo1","lastPublicationSuccessful":true,"published":true,"technology":"R","version":31,"numberOfPackages":9,"deleted":false,"synchronizing":false,"name":"testrepo1","links":[{"rel":"self","href":"http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories\/2"},{"rel":"repositoryList","href":"http:\/\/localhost:8017\/api\/v2\/manager\/repositories"}],"id":2,"publicationUri":"http:\/\/localhost\/repo\/testrepo1"},{"requiresAuthentication":true,"serverAddress":"http:\/\/oa-rdepot-repo:8080\/testrepo2","lastPublicationSuccessful":true,"published":true,"technology":"R","version":8,"numberOfPackages":6,"deleted":false,"synchronizing":false,"name":"testrepo2","links":[{"rel":"self","href":"http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories\/3"},{"rel":"repositoryList","href":"http:\/\/localhost:8017\/api\/v2\/manager\/repositories"}],"id":3,"publicationUri":"http:\/\/localhost\/repo\/testrepo2"},{"requiresAuthentication":true,"serverAddress":"http:\/\/oa-rdepot-repo:8080\/testrepo8","lastPublicationSuccessful":true,"published":true,"technology":"Python","version":7,"numberOfPackages":5,"deleted":false,"synchronizing":false,"name":"testrepo8","links":[{"rel":"self","href":"http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/8"},{"rel":"repositoryList","href":"http:\/\/localhost:8017\/api\/v2\/manager\/repositories"}],"id":8,"publicationUri":"http:\/\/localhost\/repo\/testrepo8"}]},"messageCode":"success.request.processed","message":"Your request has been processed successfully.","status":"SUCCESS"}
+{
+	"code": 200,
+	"data": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/repositories?published=true&page=0&size=20&sort=id,asc"
+			}
+		],
+		"page": {
+			"number": 0,
+			"size": 20,
+			"totalPages": 1,
+			"totalElements": 3
+		},
+		"content": [
+			{
+				"requiresAuthentication": false,
+				"serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo1",
+				"lastPublicationSuccessful": true,
+				"published": true,
+				"technology": "R",
+				"version": 31,
+				"numberOfPackages": 9,
+				"deleted": false,
+				"synchronizing": false,
+				"name": "testrepo1",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories\/2"
+					},
+					{
+						"rel": "repositoryList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/repositories"
+					}
+				],
+				"id": 2,
+				"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+			},
+			{
+				"requiresAuthentication": true,
+				"serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo2",
+				"lastPublicationSuccessful": true,
+				"published": true,
+				"technology": "R",
+				"version": 8,
+				"numberOfPackages": 6,
+				"deleted": false,
+				"synchronizing": false,
+				"name": "testrepo2",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories\/3"
+					},
+					{
+						"rel": "repositoryList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/repositories"
+					}
+				],
+				"id": 3,
+				"publicationUri": "http:\/\/localhost\/repo\/testrepo2"
+			},
+			{
+				"requiresAuthentication": true,
+				"serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo8",
+				"lastPublicationSuccessful": true,
+				"published": true,
+				"technology": "Python",
+				"version": 7,
+				"numberOfPackages": 5,
+				"deleted": false,
+				"synchronizing": false,
+				"name": "testrepo8",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/8"
+					},
+					{
+						"rel": "repositoryList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/repositories"
+					}
+				],
+				"id": 8,
+				"publicationUri": "http:\/\/localhost\/repo\/testrepo8"
+			}
+		]
+	},
+	"messageCode": "success.request.processed",
+	"message": "Your request has been processed successfully.",
+	"status": "SUCCESS"
+}

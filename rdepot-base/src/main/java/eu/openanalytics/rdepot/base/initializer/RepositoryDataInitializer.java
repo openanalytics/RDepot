@@ -136,9 +136,9 @@ public abstract class RepositoryDataInitializer<
 
         if (!bindException.hasErrors()) {
             try {
-                log.debug("Creating R repository {}", newRepository);
+                log.debug("Creating {} repository {}", newRepository.getTechnology(), newRepository);
                 E created = repositoryService.create(newRepository);
-                log.debug("Created R repository {}", created.toString());
+                log.debug("Created repository {}", created.toString());
             } catch (CreateEntityException e) {
                 log.error(e.getMessage(), e);
             }
@@ -156,16 +156,15 @@ public abstract class RepositoryDataInitializer<
         log.info("Scheduling mirroring for declared repositories...");
         for (R declaredRepository : repositories) {
             for (M mirror : declaredRepository.getMirrors()) {
-                if (!mirror.getSyncInterval().isEmpty()) {
-                    log.info(
-                            "Scheduling mirroring for {} with sync interval: {}",
-                            declaredRepository.getName(),
-                            mirror.getSyncInterval());
+                if (mirror.getSyncInterval().isEmpty()) continue;
+                log.info(
+                        "Scheduling mirroring for {} with sync interval: {}",
+                        declaredRepository.getName(),
+                        mirror.getSyncInterval());
 
-                    CronTrigger cronTrigger = new CronTrigger(mirror.getSyncInterval());
-                    taskScheduler.schedule(
-                            new SynchronizeMirrorTask<>(mirrorService, declaredRepository, mirror), cronTrigger);
-                }
+                CronTrigger cronTrigger = new CronTrigger(mirror.getSyncInterval());
+                taskScheduler.schedule(
+                        new SynchronizeMirrorTask<>(mirrorService, declaredRepository, mirror), cronTrigger);
             }
         }
         log.info("Mirroring scheduled for all repositories.");

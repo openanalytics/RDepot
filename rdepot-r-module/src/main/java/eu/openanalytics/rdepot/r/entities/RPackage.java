@@ -91,6 +91,9 @@ public class RPackage extends Package {
     @Column(name = "needs_compilation", table = "rpackage")
     private boolean needsCompilation = false;
 
+    @Column(name = "maintainer", table = "rpackage")
+    private String maintainer;
+
     @Transient
     private Boolean generateManuals;
 
@@ -127,6 +130,7 @@ public class RPackage extends Package {
         this.linkingTo = packageBag.linkingTo;
         this.priority = packageBag.priority;
         this.needsCompilation = packageBag.needsCompilation;
+        this.maintainer = packageBag.maintainer;
     }
 
     public RPackage() {
@@ -150,6 +154,7 @@ public class RPackage extends Package {
         this.linkingTo = dto.getLinkingTo();
         this.priority = dto.getPriority();
         this.needsCompilation = dto.getNeedsCompilation().equals("yes");
+        this.maintainer = dto.getMaintainer();
     }
 
     public RPackage(

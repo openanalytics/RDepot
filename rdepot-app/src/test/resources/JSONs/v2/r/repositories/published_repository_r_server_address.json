@@ -1,0 +1,41 @@
+{
+  "code": 200,
+  "data": {
+    "redirectToSource": false,
+    "serverAddress": "http://oa-rdepot-repo:8080/r/testrepo7",
+    "lastPublicationSuccessful": true,
+    "published": true,
+    "technology": "R",
+    "version": 2,
+    "numberOfPackages": 1,
+    "deleted": false,
+    "synchronizing": false,
+    "name": "testrepo7",
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/r/repositories/13"
+      },
+      {
+        "rel": "repositoryList",
+        "href": "http://localhost:8017/api/v2/manager/r/repositories"
+      },
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/r/repositories/13",
+        "type": "PATCH"
+      },
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/r/repositories/13",
+        "type": "DELETE"
+      }
+    ],
+    "id": 13,
+    "requiresAuthentication": true,
+    "publicationUri": "http://localhost/repo/testrepo7"
+  },
+  "messageCode": "success.request.processed",
+  "message": "Your request has been processed successfully.",
+  "status": "SUCCESS"
+}

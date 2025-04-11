@@ -1,0 +1,41 @@
+{
+  "code": 201,
+  "data": {
+    "requiresAuthentication": true,
+    "serverAddress": "http://oa-rdepot-repo:8080/python/testrepo13",
+    "lastPublicationSuccessful": false,
+    "published": false,
+    "technology": "Python",
+    "version": 0,
+    "numberOfPackages": 0,
+    "hashMethod": "SHA256",
+    "deleted": false,
+    "synchronizing": false,
+    "name": "testrepo13",
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/python/repositories/13"
+      },
+      {
+        "rel": "repositoryList",
+        "href": "http://localhost:8017/api/v2/manager/python/repositories"
+      },
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/python/repositories/13",
+        "type": "PATCH"
+      },
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/python/repositories/13",
+        "type": "DELETE"
+      }
+    ],
+    "id": 13,
+    "publicationUri": "http://localhost/repo/testrepo13"
+  },
+  "messageCode": "success.resource.created",
+  "message": "Your resource has been created successfully.",
+  "status": "SUCCESS"
+}

@@ -2,6 +2,13 @@ databaseChangeLog:
   - changeSet:
       id: 14_01_last_used_access_token
       author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - columnExists:
+                tableName: repository
+                schemaName: public
+                columnName: requires_authentication
       changes:
         - addColumn:
             tableName: repository

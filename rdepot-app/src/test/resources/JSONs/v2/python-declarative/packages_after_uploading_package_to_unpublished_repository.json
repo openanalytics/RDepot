@@ -45,7 +45,7 @@
                 "url": "",
                 "authorEmail": null,
                 "classifiers": null,
-                "descriptionContentType": null,
+                "descriptionContentType": "",
                 "homePage": "",
                 "keywords": "coconut video encoding api",
                 "license": "MIT License",

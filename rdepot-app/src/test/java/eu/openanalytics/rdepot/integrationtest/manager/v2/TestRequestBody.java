@@ -32,7 +32,10 @@ import lombok.Setter;
 public class TestRequestBody {
     private RequestType requestType;
     private String expectedJsonPath;
-    private String urlSuffix;
+
+    @Builder.Default
+    private String urlSuffix = "";
+
     private int statusCode;
     private String token;
     private int howManyNewEventsShouldBeCreated;

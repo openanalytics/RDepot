@@ -1,0 +1,24 @@
+databaseChangeLog:
+  - changeSet:
+      id: 19_01_add_maintainer_to_rpackage
+      author: dglebowska
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: package
+            schemaName: public
+        - not:
+            - columnExists:
+                tableName: rpackage
+                schemaName: public
+                columnName: maintainer
+      changes:
+        - addColumn:
+            tableName: rpackage
+            schemaName: public
+            columns:
+              - column:
+                  name: maintainer
+                  type: text
+                  constraints:
+                    nullable: true

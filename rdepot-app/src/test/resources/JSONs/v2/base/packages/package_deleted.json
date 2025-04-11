@@ -6,6 +6,7 @@
 		"description": "Package for visualizing data quality of partially accruing time series.",
 		"source": "\/opt\/rdepot\/repositories\/3\/46950998\/accrued_1.1.tar.gz",
 		"technology": "R",
+		"descriptionContentType": "txt",
 		"repository": {
 			"name": "testrepo2",
 			"lastPublicationSuccessful": true,

@@ -1,0 +1,7 @@
+{
+  "status": "ERROR",
+  "code": 422,
+  "message": "The server address you provided is already in use.",
+  "messageCode": "error.used.serveraddress",
+  "data": null
+}

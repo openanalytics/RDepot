@@ -32,6 +32,7 @@ import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.services.RPackageService;
 import eu.openanalytics.rdepot.r.storage.RStorage;
 import eu.openanalytics.rdepot.r.storage.utils.PopulatedRepositoryContent;
+import eu.openanalytics.rdepot.r.technology.RLanguage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.StandardCopyOption;
@@ -142,7 +143,9 @@ public class RRepositorySynchronizer extends RepositorySynchronizer<RRepository>
         final Gson gson = new Gson();
 
         final ResponseEntity<String> response = rest.getForEntity(
-                serverAndPort + "/" + repositoryDirectory + (archive ? "/archive/" : "/"), String.class);
+                attachTechnologyIfNeeded(serverAndPort, repositoryDirectory, RLanguage.instance)
+                        + (archive ? "archive/" : ""),
+                String.class);
 
         final List<String> remotePackages =
                 new ArrayList<>(Arrays.asList(gson.fromJson(response.getBody(), String[].class)));
@@ -215,9 +218,11 @@ public class RRepositorySynchronizer extends RepositorySynchronizer<RRepository>
 
                 final HttpHeaders headers = new HttpHeaders();
                 headers.add(HttpHeaders.CONTENT_TYPE, ContentType.MULTIPART_FORM_DATA.getMimeType());
-                HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(chunk, headers);
-                ResponseEntity<RepoResponse> httpResponse =
-                        rest.postForEntity(serverAddress + "/r/" + repositoryDirectory, entity, RepoResponse.class);
+                final HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(chunk, headers);
+                final ResponseEntity<RepoResponse> httpResponse = rest.postForEntity(
+                        attachTechnologyIfNeeded(serverAddress, repositoryDirectory, RLanguage.instance),
+                        entity,
+                        RepoResponse.class);
 
                 if (!httpResponse.getStatusCode().is2xxSuccessful()
                         || !Objects.equals(

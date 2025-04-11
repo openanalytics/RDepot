@@ -3,7 +3,7 @@
   <parent>
     <groupId>eu.openanalytics</groupId>
     <artifactId>rdepot</artifactId>
-    <version>2.5.2</version>
+    <version>2.6.0</version>
   </parent>
   <artifactId>rdepot-r-module</artifactId>
   <name>RDepot R Module</name>
@@ -12,7 +12,7 @@
   	<dependency>
 		<groupId>eu.openanalytics</groupId>
 		<artifactId>rdepot-base</artifactId>
-		<version>2.5.2</version>
+		<version>2.6.0</version>
 	</dependency>
 	<dependency>
 		    <groupId>org.eclipse.parsson</groupId>

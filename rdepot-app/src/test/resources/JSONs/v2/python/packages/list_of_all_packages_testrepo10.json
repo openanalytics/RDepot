@@ -33,7 +33,7 @@
         "platform": null,
         "requiresPython": ">=3.8",
         "requiresExternal": null,
-        "descriptionContentType": null,
+        "descriptionContentType": "text/markdown",
         "classifiers": "Development Status :: 5 - Production\/Stable, Intended Audience :: Science\/Research, Intended Audience :: Developers, License :: OSI Approved :: BSD License, Programming Language :: C, Programming Language :: Python, Programming Language :: Python :: 3, Programming Language :: Python :: 3.8, Programming Language :: Python :: 3.9, Programming Language :: Python :: 3.10, Programming Language :: Python :: 3.11, Programming Language :: Python :: 3 :: Only, Programming Language :: Python :: Implementation :: CPython, Topic :: Software Development, Topic :: Scientific\/Engineering, Typing :: Typed, Operating System :: Microsoft :: Windows, Operating System :: POSIX, Operating System :: Unix, Operating System :: MacOS",
         "links": [
           {
@@ -88,7 +88,7 @@
         "platform": null,
         "requiresPython": ">=3.7",
         "requiresExternal": null,
-        "descriptionContentType": null,
+        "descriptionContentType": "text/x-rst",
         "classifiers": "Development Status :: 5 - Production\/Stable, Intended Audience :: Developers, Topic :: System :: Archiving :: Packaging, License :: OSI Approved :: MIT License, Programming Language :: Python, Programming Language :: Python :: 3 :: Only, Programming Language :: Python :: 3.7, Programming Language :: Python :: 3.8, Programming Language :: Python :: 3.9, Programming Language :: Python :: 3.10, Programming Language :: Python :: 3.11",
         "links": [
           {

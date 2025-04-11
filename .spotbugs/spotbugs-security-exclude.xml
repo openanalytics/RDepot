@@ -72,4 +72,16 @@
         <Class name="eu.openanalytics.rdepot.repo.r.storage.implementations.CranFileSystemStorageService" />
         <Bug pattern="PATH_TRAVERSAL_IN" />
     </Match>
+    <Match>
+        <Class name="eu.openanalytics.rdepot.python.mirroring.PypiMirrorSynchronizer" />
+        <Bug pattern="PATH_TRAVERSAL_IN" />
+    </Match>
+    <Match>
+        <Class name="eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2StatusController" />
+        <Bug pattern="URLCONNECTION_SSRF_FD" />
+    </Match>
+    <Match>
+        <Class name="eu.openanalytics.rdepot.base.synchronization.healthcheck.ServerAddressHealthcheckService" />
+        <Bug pattern="URLCONNECTION_SSRF_FD" />
+    </Match>
 </FindBugsFilter>

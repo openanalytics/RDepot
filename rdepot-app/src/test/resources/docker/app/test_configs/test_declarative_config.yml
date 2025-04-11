@@ -69,7 +69,7 @@ spring:
     enabled: false
   liquibase:
     user: postgres
-    enabled: false
+    enabled: true
     url: jdbc:postgresql://oa-rdepot-db:5432/declarative
 
 # Debug SQL queries

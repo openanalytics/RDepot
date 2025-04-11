@@ -56,7 +56,7 @@ public class PackageIndexGenerator extends IndexesGenerator {
         }
         return String.format(
                 anchor,
-                publicationUri + separator + packageBag.getName() + separator + packageFileName,
+                publicationUri + separator + packageBag.getNormalizedName() + separator + packageFileName,
                 packageBag.getRequiresPython(),
                 packageBag.getVersion(),
                 packageFileName);

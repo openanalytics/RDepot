@@ -36,7 +36,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class PackageUploadRequest<T extends Repository> {
     private MultipartFile fileData;
     private T repository;
-    private boolean generateManual = true;
     private boolean replace = false;
     private String changes;
 }

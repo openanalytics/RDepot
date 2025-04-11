@@ -32,6 +32,7 @@
 			"active": true,
 			"description": "Estimates and graphs deterministic (DEA) frontier models\\n with different technology assumptions (fdh, vrs, drs, crs, irs,\\n add). Also handles possible slacks, peers and their weights\\n (lambdas), optimal cost, revenue and profit allocation,\\n super--efficiency, and mergers. A comparative method for\\n estimating SFA efficiencies is included.",
 			"technology": "R",
+			"descriptionContentType": "txt",
 			"repository": {
 				"name": "testrepo2",
 				"lastPublicationSuccessful": true,

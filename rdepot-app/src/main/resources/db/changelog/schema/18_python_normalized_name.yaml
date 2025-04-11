@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: 18_01_add_python_normalized_name
+      author: dglebowska
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: pythonpackage
+            schemaName: public
+        - not:
+            - columnExists:
+                tableName: pythonpackage
+                schemaName: public
+                columnName: normalized_name
+      changes:
+        - addColumn:
+            tableName: pythonpackage
+            schemaName: public
+            columns:
+              - column:
+                  name: normalized_name
+                  type: text
+        - sql:
+            sql: "UPDATE public.pythonpackage pp SET normalized_name = LOWER(TRANSLATE(p.name, '._', '--')) FROM public.package p WHERE pp.id = p.id;"
+        - addNotNullConstraint:
+            tableName: pythonpackage
+            schemaName: public
+            columnName: normalized_name

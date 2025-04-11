@@ -23,7 +23,7 @@
 			"number": 0,
 			"size": 20,
 			"totalPages": 2,
-			"totalElements": 21
+			"totalElements": 29
 		},
 		"content": [
 			{
@@ -41,8 +41,10 @@
 				},
 				"title": "Data Quality Visualization Tools for Partially Accruing Data",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": null,
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "19f8aec67250bd2ac481b14b50413d03",
 				"links": [
 					{
@@ -108,8 +110,10 @@
 				},
 				"title": "Data Quality Visualization Tools for Partially Accruing Data",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": null,
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "a05e4ca44438c0d9e7d713d7e3890423",
 				"links": [
 					{
@@ -175,8 +179,10 @@
 				},
 				"title": "Visualization tools for partially accruing data",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": null,
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "24b8cec280424dfc6a9e444fa57ba9f3",
 				"links": [
 					{
@@ -242,8 +248,10 @@
 				},
 				"title": "Data Quality Visualization Tools for Partially Accruing Data",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": null,
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "97c2930a9dd7ca9fc1409d5340c06470",
 				"links": [
 					{
@@ -309,8 +317,10 @@
 				},
 				"title": "Visualization tools for partially accruing data",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": null,
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "70d295115295a4718593f6a39d77add9",
 				"links": [
 					{
@@ -376,8 +386,10 @@
 				},
 				"title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": "randomForest, e1071",
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "8eb4760cd574f5489e61221dc9bb0076",
 				"links": [
 					{
@@ -443,8 +455,10 @@
 				},
 				"title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": "randomForest, e1071",
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "76d726aee8dd7c6ed94d150d5718015b",
 				"links": [
 					{
@@ -510,8 +524,10 @@
 				},
 				"title": "Tools for Approximate Bayesian Computation (ABC)",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": null,
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "c47d18b86b331a5023dcd62b74fedbb6",
 				"links": [
 					{
@@ -577,8 +593,10 @@
 				},
 				"title": "Functions to perform Approximate Bayesian Computation (ABC) using simulated data",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": null,
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "91599204c92275ed4b36d55e8d7c144b",
 				"links": [
 					{
@@ -644,8 +662,10 @@
 				},
 				"title": "Visualization tools for partially accruing data",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": null,
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "1c75d59b18e554a285a9b156a06a288c",
 				"links": [
 					{
@@ -711,8 +731,10 @@
 				},
 				"title": "Nonparametric Tests for Equality of Location Against Ordered Alternatives",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": null,
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "da8be1247d3145b757bd62e01fc6eb8b",
 				"links": [
 					{
@@ -778,8 +800,10 @@
 				},
 				"title": "Bureau of Economic Analysis API",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": null,
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "5e664f320c7cc884138d64467f6b0e49",
 				"links": [
 					{
@@ -833,6 +857,75 @@
 			{
 				"enhances": null,
 				"description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
+				"source": "",
+				"repository": {
+					"name": "testrepo1",
+					"lastPublicationSuccessful": true,
+					"id": 2,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": false,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+				},
+				"title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
+				"distribution": null,
+				"maintainer": null,
+				"suggests": "randomForest, e1071",
+				"systemRequirements": null,
+				"descriptionContentType": "txt",
+				"md5sum": "8eb4760cd574f5489e61221dc9bb0076",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/16"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/16",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/16",
+						"type": "DELETE"
+					}
+				],
+				"id": 16,
+				"rversion": null,
+				"architecture": null,
+				"imports": null,
+				"depends": "xtable, pbapply",
+				"built": null,
+				"author": "Scott Fortmann-Roe",
+				"active": false,
+				"technology": "R",
+				"priority": null,
+				"version": "0.9.1",
+				"url": null,
+				"license": "GPL (>= 2)",
+				"deleted": false,
+				"binary": false,
+				"name": "A3",
+				"submission": {
+					"id": 16,
+					"state": "REJECTED"
+				},
+				"linkingTo": null,
+				"user": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				},
+				"needsCompilation": "no"
+			},
+			{
+				"enhances": null,
+				"description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
 				"source": "\/opt\/rdepot\/repositories\/2\/9907084\/A3_0.9.2.tar.gz",
 				"repository": {
 					"name": "testrepo1",
@@ -845,8 +938,10 @@
 				},
 				"title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": "randomForest, e1071",
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "76d726aee8dd7c6ed94d150d5718015b",
 				"links": [
 					{
@@ -912,8 +1007,10 @@
 				},
 				"title": "Tools for Approximate Bayesian Computation (ABC)",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": null,
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "c47d18b86b331a5023dcd62b74fedbb6",
 				"links": [
 					{
@@ -966,6 +1063,75 @@
 			},
 			{
 				"enhances": null,
+				"description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
+				"source": "\/opt\/rdepot\/new\/70032548\/visdat_0.1.0.tar.gz",
+				"repository": {
+					"name": "testrepo2",
+					"lastPublicationSuccessful": true,
+					"id": 3,
+					"published": true,
+					"technology": "R",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo2"
+				},
+				"title": "Preliminary Data Visualisation",
+				"distribution": null,
+				"maintainer": null,
+				"suggests": "plotly (>= 4.5.6), testthat, knitr, rmarkdown, vdiffr",
+				"systemRequirements": null,
+				"descriptionContentType": "txt",
+				"md5sum": "f343fa3a01dcd9546fa0947877f58f36",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/19"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/19",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/19",
+						"type": "DELETE"
+					}
+				],
+				"id": 19,
+				"rversion": null,
+				"architecture": null,
+				"imports": "ggplot2, tidyr, dplyr, purrr, magrittr, stats",
+				"depends": "R (>= 3.2.2)",
+				"built": null,
+				"author": "Nicholas Tierney [aut, cre]",
+				"active": false,
+				"technology": "R",
+				"priority": null,
+				"version": "0.1.0",
+				"url": "https:\/\/github.com\/njtierney\/visdat\/",
+				"license": "MIT + file LICENSE",
+				"deleted": false,
+				"binary": false,
+				"name": "visdat",
+				"submission": {
+					"id": 19,
+					"state": "WAITING"
+				},
+				"linkingTo": null,
+				"user": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				},
+				"needsCompilation": "no"
+			},
+			{
+				"enhances": null,
 				"description": "Is a collection of models to analyze genome scale codon data using a Bayesian framework. Provides visualization routines and checkpointing for model fittings. Currently published models to analyze gene data for selection on codon",
 				"source": "\/opt\/rdepot\/repositories\/5\/39437028\/AnaCoDa_0.1.2.3.tar.gz",
 				"repository": {
@@ -979,8 +1145,10 @@
 				},
 				"title": "Analysis of Codon Data under Stationarity using a Bayesian Framework",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": "knitr, Hmisc, VGAM, coda, testthat, lmodel2",
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "41026e4157a0b3b6d909f0c6f72fa65c",
 				"links": [
 					{
@@ -1046,8 +1214,10 @@
 				},
 				"title": "Benchmark and frontier analysis using DEA and SFA",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": null,
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "9a99c2ebefa6d49422ca7893c1f4ead8",
 				"links": [
 					{
@@ -1100,8 +1270,8 @@
 			},
 			{
 				"enhances": null,
-				"description": "The Universal Scalability Law (Gunther 2007)",
-				"source": "\/opt\/rdepot\/repositories\/2\/33930690\/usl_2.0.0.tar.gz",
+				"description": "Is a collection of models to analyze genome scale codon data using a Bayesian framework. Provides visualization routines and checkpointing for model fittings. Currently published models to analyze gene data for selection on codon",
+				"source": "",
 				"repository": {
 					"name": "testrepo1",
 					"lastPublicationSuccessful": true,
@@ -1111,15 +1281,17 @@
 					"requiresAuthentication": false,
 					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
 				},
-				"title": "Analyze System Scalability with the Universal Scalability Law",
+				"title": "Analysis of Codon Data under Stationarity using a Bayesian Framework",
 				"distribution": null,
-				"suggests": "knitr",
+				"maintainer": null,
+				"suggests": "knitr, Hmisc, VGAM, coda, testthat, lmodel2",
 				"systemRequirements": null,
-				"md5sum": "868140a3c3c29327eef5d5a485aee5b6",
+				"descriptionContentType": "txt",
+				"md5sum": "41026e4157a0b3b6d909f0c6f72fa65c",
 				"links": [
 					{
 						"rel": "self",
-						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/25"
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/22"
 					},
 					{
 						"rel": "packageList",
@@ -1127,133 +1299,68 @@
 					},
 					{
 						"rel": "self",
-						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/25",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/22",
 						"type": "PATCH"
 					},
 					{
 						"rel": "self",
-						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/25",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/22",
 						"type": "DELETE"
 					}
 				],
-				"id": 25,
+				"id": 22,
 				"rversion": null,
 				"architecture": null,
-				"imports": "graphics, stats, nlsr",
-				"depends": "R (>= 3.0), methods",
+				"imports": "",
+				"depends": "R (>= 3.3.0), Rcpp (>= 0.11.3), methods",
 				"built": null,
-				"author": "Neil J. Gunther [aut], Stefan Moeding [aut, cre]",
-				"active": true,
-				"technology": "R",
-				"priority": null,
-				"version": "2.0.0",
-				"url": null,
-				"license": "BSD_2_clause + file LICENSE",
-				"deleted": false,
-				"binary": false,
-				"name": "usl",
-				"submission": {
-					"id": 25,
-					"state": "ACCEPTED"
-				},
-				"linkingTo": null,
-				"user": {
-					"name": "Nikola Tesla",
-					"id": 5,
-					"login": "tesla",
-					"email": "tesla@ldap.forumsys.com"
-				},
-				"needsCompilation": "no"
-			},
-			{
-				"enhances": null,
-				"description": "The Universal Scalability Law (Gunther 2007)",
-				"source": "\/opt\/rdepot\/repositories\/6\/21695389\/usl_2.0.0.tar.gz",
-				"repository": {
-					"name": "testrepo5",
-					"lastPublicationSuccessful": false,
-					"id": 6,
-					"published": false,
-					"technology": "R",
-					"requiresAuthentication": true,
-					"publicationUri": "http:\/\/localhost\/repo\/testrepo5"
-				},
-				"title": "Analyze System Scalability with the Universal Scalability Law",
-				"distribution": null,
-				"suggests": "knitr",
-				"systemRequirements": null,
-				"md5sum": "868140a3c3c29327eef5d5a485aee5b6",
-				"links": [
-					{
-						"rel": "self",
-						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/27"
-					},
-					{
-						"rel": "packageList",
-						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
-					},
-					{
-						"rel": "self",
-						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/27",
-						"type": "PATCH"
-					},
-					{
-						"rel": "self",
-						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/27",
-						"type": "DELETE"
-					}
-				],
-				"id": 27,
-				"rversion": null,
-				"architecture": null,
-				"imports": "graphics, stats, nlsr",
-				"depends": "R (>= 3.0), methods",
-				"built": null,
-				"author": "Neil J. Gunther [aut], Stefan Moeding [aut, cre]",
+				"author": "Cedric Landerer [aut, cre], Gabriel Hanas [ctb], Jeremy Rogers [ctb], Alex Cope [ctb], Denizhan Pak [ctb]",
 				"active": false,
 				"technology": "R",
 				"priority": null,
-				"version": "2.0.0",
-				"url": null,
-				"license": "BSD_2_clause + file LICENSE",
-				"deleted": true,
+				"version": "0.1.2.3",
+				"url": "https:\/\/github.com\/clandere\/AnaCoDa",
+				"license": "GPL (>= 2)",
+				"deleted": false,
 				"binary": false,
-				"name": "usl",
+				"name": "AnaCoDa",
 				"submission": {
-					"id": 27,
-					"state": "ACCEPTED"
+					"id": 23,
+					"state": "CANCELLED"
 				},
-				"linkingTo": null,
+				"linkingTo": "Rcpp",
 				"user": {
-					"name": "Local Admin User",
-					"id": 8,
-					"login": "admin",
-					"email": "admin@localhost"
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
 				},
 				"needsCompilation": "no"
 			},
 			{
 				"enhances": null,
 				"description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
-				"source": "\/opt\/rdepot\/repositories\/6\/70325377\/visdat_0.1.0.tar.gz",
+				"source": "",
 				"repository": {
-					"name": "testrepo5",
-					"lastPublicationSuccessful": false,
-					"id": 6,
-					"published": false,
+					"name": "testrepo1",
+					"lastPublicationSuccessful": true,
+					"id": 2,
+					"published": true,
 					"technology": "R",
-					"requiresAuthentication": true,
-					"publicationUri": "http:\/\/localhost\/repo\/testrepo5"
+					"requiresAuthentication": false,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
 				},
 				"title": "Preliminary Data Visualisation",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": "plotly (>= 4.5.6), testthat, knitr, rmarkdown, vdiffr",
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "f343fa3a01dcd9546fa0947877f58f36",
 				"links": [
 					{
 						"rel": "self",
-						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/28"
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/23"
 					},
 					{
 						"rel": "packageList",
@@ -1261,16 +1368,16 @@
 					},
 					{
 						"rel": "self",
-						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/28",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/23",
 						"type": "PATCH"
 					},
 					{
 						"rel": "self",
-						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/28",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/23",
 						"type": "DELETE"
 					}
 				],
-				"id": 28,
+				"id": 23,
 				"rversion": null,
 				"architecture": null,
 				"imports": "ggplot2, tidyr, dplyr, purrr, magrittr, stats",
@@ -1283,86 +1390,19 @@
 				"version": "0.1.0",
 				"url": "https:\/\/github.com\/njtierney\/visdat\/",
 				"license": "MIT + file LICENSE",
-				"deleted": true,
+				"deleted": false,
 				"binary": false,
 				"name": "visdat",
 				"submission": {
-					"id": 28,
-					"state": "ACCEPTED"
+					"id": 22,
+					"state": "REJECTED"
 				},
 				"linkingTo": null,
 				"user": {
-					"name": "Local Admin User",
-					"id": 8,
-					"login": "admin",
-					"email": "admin@localhost"
-				},
-				"needsCompilation": "no"
-			},
-			{
-				"enhances": null,
-				"description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-				"source": "\/opt\/rdepot\/repositories\/7\/67484296\/A3_0.9.1.tar.gz",
-				"repository": {
-					"name": "testrepo6",
-					"lastPublicationSuccessful": false,
-					"id": 7,
-					"published": false,
-					"technology": "R",
-					"requiresAuthentication": false,
-					"publicationUri": "http:\/\/localhost\/repo\/testrepo6"
-				},
-				"title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
-				"distribution": null,
-				"suggests": "randomForest, e1071",
-				"systemRequirements": null,
-				"md5sum": "8eb4760cd574f5489e61221dc9bb0076",
-				"links": [
-					{
-						"rel": "self",
-						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/29"
-					},
-					{
-						"rel": "packageList",
-						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
-					},
-					{
-						"rel": "self",
-						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/29",
-						"type": "PATCH"
-					},
-					{
-						"rel": "self",
-						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/29",
-						"type": "DELETE"
-					}
-				],
-				"id": 29,
-				"rversion": null,
-				"architecture": null,
-				"imports": null,
-				"depends": "xtable, pbapply",
-				"built": null,
-				"author": "Scott Fortmann-Roe",
-				"active": false,
-				"technology": "R",
-				"priority": null,
-				"version": "0.9.1",
-				"url": null,
-				"license": "GPL (>= 2)",
-				"deleted": true,
-				"binary": false,
-				"name": "A3",
-				"submission": {
-					"id": 29,
-					"state": "ACCEPTED"
-				},
-				"linkingTo": null,
-				"user": {
-					"name": "Local Admin User",
-					"id": 8,
-					"login": "admin",
-					"email": "admin@localhost"
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
 				},
 				"needsCompilation": "no"
 			}

@@ -378,7 +378,7 @@ public abstract class CommonLocalStorage<R extends Repository, P extends Package
      * @param outputDir     the output directory file.
      */
     private List<String> unTar(final File inputFile, final File outputDir) throws IOException, ArchiveException {
-        log.debug(String.format("Extracting %s to dir %s.", inputFile.getAbsolutePath(), outputDir.getAbsolutePath()));
+        log.debug("Extracting {} to dir {}.", inputFile.getAbsolutePath(), outputDir.getAbsolutePath());
         final InputStream is = new FileInputStream(inputFile);
         TarArchiveEntry entry;
         List<String> filesInArchive = new ArrayList<>();
@@ -421,7 +421,7 @@ public abstract class CommonLocalStorage<R extends Repository, P extends Package
      * @return  The {@link File} with the extracted content.
      */
     private File unGzip(final File inputFile, final File outputDir) throws IOException {
-        log.debug(String.format("Extracting %s to dir %s.", inputFile.getAbsolutePath(), outputDir.getAbsolutePath()));
+        log.debug("Extracting {} to dir {}.", inputFile.getAbsolutePath(), outputDir.getAbsolutePath());
 
         final File outputFile = new File(
                 outputDir, inputFile.getName().substring(0, inputFile.getName().length() - 3));
@@ -563,7 +563,7 @@ public abstract class CommonLocalStorage<R extends Repository, P extends Package
         return tempFile;
     }
 
-    private void downloadFileToDestination(String url, File destination) throws DownloadFileException {
+    protected void downloadFileToDestination(String url, File destination) throws DownloadFileException {
         try (final CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
             final HttpGet httpGet = new HttpGet(url);
             final HttpResponse response = httpClient.execute(httpGet);
@@ -589,6 +589,10 @@ public abstract class CommonLocalStorage<R extends Repository, P extends Package
      */
     public MultipartFile downloadFile(String url, File destination) throws DownloadFileException {
         downloadFileToDestination(url, destination);
+        return returnMultipartFile(url, destination);
+    }
+
+    public MultipartFile returnMultipartFile(String url, File destination) {
         return new MultipartFile() {
 
             @Override

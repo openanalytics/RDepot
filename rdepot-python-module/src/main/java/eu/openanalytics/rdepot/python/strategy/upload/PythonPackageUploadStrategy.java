@@ -85,7 +85,7 @@ public class PythonPackageUploadStrategy extends DefaultPackageUploadStrategy<Py
         packageBag.setAuthor(author);
         packageBag.setAuthorEmail(properties.getProperty("Author-Email"));
         packageBag.setClassifiers(properties.getProperty("Classifier"));
-        packageBag.setDescriptionContentType(properties.getProperty("Description-Content-Type"));
+        packageBag.setDescriptionContentType(properties.getProperty("Description-Content-Type", ""));
         packageBag.setKeywords(properties.getProperty("Keywords"));
         packageBag.setLicense(properties.getProperty("License"));
         if (StringUtils.isAllEmpty(packageBag.getLicense())) {
@@ -102,6 +102,7 @@ public class PythonPackageUploadStrategy extends DefaultPackageUploadStrategy<Py
         packageBag.setRequiresPython(properties.getProperty("Requires-Python"));
         packageBag.setSummary(properties.getProperty("Summary"));
         packageBag.setName(properties.getProperty("Name"));
+        packageBag.setNormalizedName(properties.getProperty("Name"));
         return packageBag;
     }
 

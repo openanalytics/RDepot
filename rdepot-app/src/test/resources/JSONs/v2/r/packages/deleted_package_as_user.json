@@ -8,6 +8,7 @@
     "description": "Performs nonparametric tests for equality of location against ordered alternatives.",
     "source": "/opt/rdepot/repositories/2/8436419/npordtests_1.1.tar.gz",
     "technology": "R",
+    "descriptionContentType": "txt",
     "repository": {
       "name": "testrepo1",
       "id": 2,

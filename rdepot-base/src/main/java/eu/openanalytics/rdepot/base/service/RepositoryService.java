@@ -64,6 +64,10 @@ public class RepositoryService<E extends Repository> extends eu.openanalytics.rd
         return repositoryDao.findByServerAddress(serverAddress);
     }
 
+    public Optional<E> findByServerAddressStartsWith(String serverAddress) {
+        return repositoryDao.findByServerAddressStartsWith(serverAddress);
+    }
+
     @Transactional
     public void incrementVersion(E repository) {
         final String repoName = repository.getName();

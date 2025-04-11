@@ -15,8 +15,10 @@
 		},
 		"title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
 		"distribution": null,
+		"maintainer": null,
 		"suggests": "randomForest, e1071",
 		"systemRequirements": null,
+		"descriptionContentType": "txt",
 		"md5sum": "76d726aee8dd7c6ed94d150d5718015b",
 		"links": [
 			{

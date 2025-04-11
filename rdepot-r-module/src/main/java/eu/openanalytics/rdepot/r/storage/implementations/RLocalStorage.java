@@ -192,7 +192,9 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
         Map<String, File> packagesGzFilesForArchive = new HashMap<>();
 
         final String sourceDirectory = StringUtils.substringBetween(
-                populatedRepositoryContent.getLatestDirectoryPath(), "/current/", "/latest");
+                populatedRepositoryContent.getLatestDirectoryPath(),
+                separator + CURRENT_FOLDER + separator,
+                separator + LATEST_FOLDER);
 
         final List<File> latestSourceToUpload =
                 selectPackagesToUpload(remoteLatestSourcePackages, populatedRepositoryContent.getLatestPackages());
@@ -315,11 +317,15 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
 
         MultiValueMap<String, RPackage> reducedBinaryPaths = new LinkedMultiValueMap<>();
         binaryPackagesPaths.forEach((key, value) -> reducedBinaryPaths.addAll(
-                StringUtils.substringBetween(key, "/current/", archive ? "/Archive" : "/latest"), value));
+                StringUtils.substringBetween(
+                        key,
+                        separator + CURRENT_FOLDER + separator,
+                        archive ? separator + ARCHIVE_FOLDER : separator + LATEST_FOLDER),
+                value));
 
         MultiValueMap<String, String> reducedRemoteBinaryPackagesPaths = new LinkedMultiValueMap<>();
-        remoteBinaryPackages.forEach((key, value) ->
-                reducedRemoteBinaryPackagesPaths.addAll(StringUtils.substringBefore(key, "/Archive"), value));
+        remoteBinaryPackages.forEach((key, value) -> reducedRemoteBinaryPackagesPaths.addAll(
+                StringUtils.substringBefore(key, separator + ARCHIVE_FOLDER), value));
 
         Set<String> allPaths = new HashSet<>();
         allPaths.addAll(reducedBinaryPaths.keySet());
@@ -367,8 +373,8 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
 
             try {
                 String recentOrArchive = archive ? "archive" : "recent";
-                checksums.get(path).put(recentOrArchive + "/PACKAGES", calculateMd5Sum(packagesFile));
-                checksums.get(path).put(recentOrArchive + "/PACKAGES.gz", calculateMd5Sum(packagesGzFile));
+                checksums.get(path).put(recentOrArchive + separator + PACKAGES, calculateMd5Sum(packagesFile));
+                checksums.get(path).put(recentOrArchive + separator + PACKAGES_GZ, calculateMd5Sum(packagesGzFile));
             } catch (Md5SumCalculationException e) {
                 log.error(e.getMessage(), e);
                 throw new RuntimeException("Could not build synchronize request body due to storage malfunction.");
@@ -391,21 +397,27 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
 
         content.getBinLatestPackagesPaths()
                 .keySet()
-                .forEach(key ->
-                        checksums.put(StringUtils.substringBetween(key, "/current/", "/latest"), new HashMap<>()));
+                .forEach(key -> checksums.put(
+                        StringUtils.substringBetween(
+                                key, separator + CURRENT_FOLDER + separator, separator + LATEST_FOLDER),
+                        new HashMap<>()));
 
         content.getBinArchivePackagesPaths()
                 .keySet()
-                .forEach(key ->
-                        checksums.put(StringUtils.substringBetween(key, "/current/", "/Archive"), new HashMap<>()));
+                .forEach(key -> checksums.put(
+                        StringUtils.substringBetween(
+                                key, separator + CURRENT_FOLDER + separator, separator + ARCHIVE_FOLDER),
+                        new HashMap<>()));
 
         content.getBinLatestPackagesPaths()
                 .forEach((key, value) -> value.forEach(packageBag -> checksums
-                        .get(StringUtils.substringBetween(key, "/current/", "/latest"))
+                        .get(StringUtils.substringBetween(
+                                key, separator + CURRENT_FOLDER + separator, separator + LATEST_FOLDER))
                         .put(sourceToKey(packageBag), packageBag.getMd5sum())));
         content.getBinArchivePackagesPaths()
                 .forEach((key, value) -> value.forEach(packageBag -> checksums
-                        .get(StringUtils.substringBetween(key, "/current/", "/Archive"))
+                        .get(StringUtils.substringBetween(
+                                key, separator + CURRENT_FOLDER + separator, separator + ARCHIVE_FOLDER))
                         .put(sourceToKey(packageBag), packageBag.getMd5sum())));
 
         return checksums;
@@ -536,15 +548,15 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
 
                 if (!chosenPackage.equals(packageBag)) {
                     final File toMoveFile = new File(path, packageBag.getFileName());
-                    final File newFileLocalization =
-                            new File(path.replaceAll("/latest", "/Archive"), packageBag.getFileName());
+                    String archivePath = path.replace(separator + LATEST_FOLDER, separator + ARCHIVE_FOLDER);
+                    final File newFileLocation = new File(archivePath, packageBag.getFileName());
                     try {
-                        FileUtils.moveFile(toMoveFile, newFileLocalization, StandardCopyOption.REPLACE_EXISTING);
+                        FileUtils.moveFile(toMoveFile, newFileLocation, StandardCopyOption.REPLACE_EXISTING);
                     } catch (IOException e) {
                         log.error(e.getMessage(), e);
                         throw new IllegalStateException("Could not properly move file to Archive!");
                     }
-                    archiveBinPackages.add(path.replaceAll("/latest", "/Archive"), packageBag);
+                    archiveBinPackages.add(archivePath, packageBag);
                     binPackages.get(path).remove(packageBag);
                 }
             }
@@ -654,7 +666,7 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
                     + separator
                     + dateStamp);
 
-            MultiValueMap<String, RPackage> packagesLocalization = new LinkedMultiValueMap<>();
+            MultiValueMap<String, RPackage> packagesLocation = new LinkedMultiValueMap<>();
 
             for (RPackage packageBag : packages) {
                 String binFolderStructure = packageBag.getDistribution()
@@ -662,12 +674,12 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
                         + packageBag.getArchitecture()
                         + separator
                         + resolveRVersionToFolderName(packageBag.getRVersion());
-                packagesLocalization.add(binFolderStructure, packageBag);
+                packagesLocation.add(binFolderStructure, packageBag);
                 createFolderStructure(
                         getRepositoryForBinaryGeneratedPath(dateStampFolder, separator, binFolderStructure));
             }
 
-            return packagesLocalization;
+            return packagesLocation;
         } catch (CreateFolderStructureException e) {
             if (dateStampFolder != null) {
                 try {

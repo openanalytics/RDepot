@@ -79,13 +79,15 @@ public class PythonFileSystemStorageService extends FileSystemStorageService<Syn
         try {
             String fileName = file.getOriginalFilename();
             assert !StringUtils.isBlank(fileName);
+
+            String normalizedName = normalizeName(fileName.substring(0, fileName.length() - 7));
             if (!fileName.equals("index.tar.gz")) {
-                packageDir = Paths.get(saveLocation.toString(), fileName.substring(0, fileName.length() - 7));
+                packageDir = Paths.get(saveLocation.toString(), normalizedName);
             }
             if (!Files.exists(packageDir)) {
                 Files.createDirectories(packageDir);
             }
-            File fileToUnpack = new File(packageDir + "/" + file.getOriginalFilename());
+            File fileToUnpack = new File(packageDir + "/" + fileName);
             try {
                 Files.createFile(fileToUnpack.toPath());
             } catch (FileAlreadyExistsException ignored) {
@@ -99,10 +101,14 @@ public class PythonFileSystemStorageService extends FileSystemStorageService<Syn
         } catch (IOException e) {
             throw new StorageException("Failed to create directory " + saveLocation.getFileName(), e);
         } catch (ArchiveException e) {
-            throw new StorageException("Failed to untar packages" + saveLocation.getFileName(), e);
+            throw new StorageException("Failed to extract packages" + saveLocation.getFileName(), e);
         } finally {
             cleanSpace(packageDir);
         }
+    }
+
+    private String normalizeName(String name) {
+        return name.replaceAll("[-_.]", "-").toLowerCase();
     }
 
     private void cleanSpace(Path packageDir) throws IOException {
@@ -117,7 +123,7 @@ public class PythonFileSystemStorageService extends FileSystemStorageService<Syn
     }
 
     private File unGzip(final File inputFile, final File outputDir) throws IOException {
-        log.debug(String.format("Ungzipping %s to dir %s.", inputFile.getAbsolutePath(), outputDir.getAbsolutePath()));
+        log.debug("Extracting {} to dir {}.", inputFile.getAbsolutePath(), outputDir.getAbsolutePath());
 
         final File outputFile = new File(
                 outputDir, inputFile.getName().substring(0, inputFile.getName().length() - 3));
@@ -134,7 +140,7 @@ public class PythonFileSystemStorageService extends FileSystemStorageService<Syn
     }
 
     private void unTar(final File inputFile, final File outputDir) throws IOException, ArchiveException {
-        log.debug(String.format("Untarring %s to dir %s.", inputFile.getAbsolutePath(), outputDir.getAbsolutePath()));
+        log.debug("Extracting {} to dir {}.", inputFile.getAbsolutePath(), outputDir.getAbsolutePath());
         final InputStream is = new FileInputStream(inputFile);
         final TarArchiveInputStream debInputStream = new ArchiveStreamFactory().createArchiveInputStream("tar", is);
         TarArchiveEntry entry;

@@ -156,8 +156,7 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
             @ParameterObject Pageable pageable,
             @RequestParam(name = "repository", required = false) List<String> repositories,
             @RequestParam(name = "deleted", required = false) Optional<Boolean> deleted,
-            @RequestParam(name = "submissionState", required = false, defaultValue = "ACCEPTED")
-                    List<SubmissionState> submissionStates,
+            @RequestParam(name = "submissionState", required = false) List<SubmissionState> submissionStates,
             @RequestParam(name = "name", required = false) Optional<String> name)
             throws ApiException {
         final User requester = userService

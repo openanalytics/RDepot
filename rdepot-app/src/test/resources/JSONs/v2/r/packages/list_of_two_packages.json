@@ -20,14 +20,14 @@
 			},
 			{
 				"rel": "last",
-				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages?page=10&size=2&sort=id,asc"
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages?page=14&size=2&sort=id,asc"
 			}
 		],
 		"page": {
 			"number": 1,
 			"size": 2,
-			"totalPages": 11,
-			"totalElements": 21
+			"totalPages": 15,
+			"totalElements": 29
 		},
 		"content": [
 			{
@@ -45,8 +45,10 @@
 				},
 				"title": "Visualization tools for partially accruing data",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": null,
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "24b8cec280424dfc6a9e444fa57ba9f3",
 				"links": [
 					{
@@ -112,8 +114,10 @@
 				},
 				"title": "Data Quality Visualization Tools for Partially Accruing Data",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": null,
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "97c2930a9dd7ca9fc1409d5340c06470",
 				"links": [
 					{

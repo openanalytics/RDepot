@@ -28,14 +28,15 @@ import java.util.Scanner;
 public class ReadmeParser {
 
     public static String loadReadme(File readmeFile) throws IOException {
-        Scanner scanner = new Scanner(new FileInputStream(readmeFile));
-        scanner.useDelimiter("\\n");
-        StringBuilder value = new StringBuilder();
-        String line;
-        while (scanner.hasNext()) {
-            line = scanner.next();
-            value.append(line).append("\\n");
+        try (Scanner scanner = new Scanner(new FileInputStream(readmeFile))) {
+            scanner.useDelimiter("(\r\\n|\r|\\n)");
+            StringBuilder value = new StringBuilder();
+            String line;
+            while (scanner.hasNext()) {
+                line = scanner.next();
+                value.append(line).append("\\n");
+            }
+            return value.toString();
         }
-        return value.toString();
     }
 }

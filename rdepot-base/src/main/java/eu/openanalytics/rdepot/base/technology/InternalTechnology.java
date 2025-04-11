@@ -45,7 +45,7 @@ public class InternalTechnology implements Technology {
 
     @Override
     public String getVersion() {
-        return "2.5.2";
+        return "2.6.0";
     }
 
     @Override

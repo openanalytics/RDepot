@@ -35,6 +35,7 @@
 			"active": false,
 			"description": "Functions to visualise webs and calculate a series of indices commonly used to describe pattern in (ecological) webs. It focuses on webs consisting of only two levels (bipartite), e.g. pollination webs or predator-prey-webs. Visualisation is important to get an idea of what we are actually looking at, while the indices summarise different aspects of the web's topology.",
 			"technology": "R",
+			"descriptionContentType": "txt",
 			"repository": {
 				"name": "testrepo3",
 				"lastPublicationSuccessful": false,

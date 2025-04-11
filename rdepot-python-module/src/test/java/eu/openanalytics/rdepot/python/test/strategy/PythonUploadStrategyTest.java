@@ -100,11 +100,10 @@ public class PythonUploadStrategyTest extends StrategyTest {
                 TEST_PACKAGE_FILENAME, TEST_PACKAGE_FILENAME, TEST_PACKAGE_CONTENTTYPE, packageBytes);
         File uploadedFile = new File(TEST_PACKAGE_PATH);
         File extracted = new File(TEST_PACKAGE_EXTRACTED);
-        boolean generateManual = true;
         boolean replace = false;
 
         PackageUploadRequest<PythonRepository> request =
-                new PackageUploadRequest<>(multipartFile, repository, generateManual, replace, "");
+                new PackageUploadRequest<>(multipartFile, repository, replace, "");
 
         when(storage.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
         when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath())).thenReturn(extracted.getAbsolutePath());
@@ -202,11 +201,10 @@ public class PythonUploadStrategyTest extends StrategyTest {
                 TEST_PACKAGE_FILENAME, TEST_PACKAGE_FILENAME, TEST_PACKAGE_CONTENTTYPE, packageBytes);
         File uploadedFile = new File(TEST_PACKAGE_PATH);
         File extracted = new File(TEST_PACKAGE_EXTRACTED);
-        boolean generateManual = true;
         boolean replace = false;
 
         PackageUploadRequest<PythonRepository> request =
-                new PackageUploadRequest<>(multipartFile, repository, generateManual, replace, "");
+                new PackageUploadRequest<>(multipartFile, repository, replace, "");
 
         when(storage.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
         when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath())).thenReturn(extracted.getAbsolutePath());
@@ -269,11 +267,10 @@ public class PythonUploadStrategyTest extends StrategyTest {
         repository.setPublished(false);
         MockMultipartFile multipartFile = new MockMultipartFile(
                 TEST_PACKAGE_FILENAME, TEST_PACKAGE_FILENAME, TEST_PACKAGE_CONTENTTYPE, packageBytes);
-        boolean generateManual = true;
         boolean replace = false;
 
         PackageUploadRequest<PythonRepository> request =
-                new PackageUploadRequest<>(multipartFile, repository, generateManual, replace, "");
+                new PackageUploadRequest<>(multipartFile, repository, replace, "");
 
         doThrow(new WriteToWaitingRoomException()).when(storage).writeToWaitingRoom(multipartFile, repository);
 
@@ -310,11 +307,10 @@ public class PythonUploadStrategyTest extends StrategyTest {
         MockMultipartFile multipartFile = new MockMultipartFile(
                 TEST_PACKAGE_FILENAME, TEST_PACKAGE_FILENAME, TEST_PACKAGE_CONTENTTYPE, packageBytes);
         File uploadedFile = new File(TEST_PACKAGE_PATH);
-        boolean generateManual = true;
         boolean replace = false;
 
         PackageUploadRequest<PythonRepository> request =
-                new PackageUploadRequest<>(multipartFile, repository, generateManual, replace, "");
+                new PackageUploadRequest<>(multipartFile, repository, replace, "");
 
         when(storage.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
         doThrow(new ExtractFileException()).when(storage).extractTarGzPackageFile(uploadedFile.getAbsolutePath());
@@ -353,11 +349,10 @@ public class PythonUploadStrategyTest extends StrategyTest {
                 TEST_PACKAGE_FILENAME, TEST_PACKAGE_FILENAME, TEST_PACKAGE_CONTENTTYPE, packageBytes);
         File uploadedFile = new File(TEST_PACKAGE_PATH);
         File extracted = new File(TEST_PACKAGE_EXTRACTED);
-        boolean generateManual = true;
         boolean replace = false;
 
         PackageUploadRequest<PythonRepository> request =
-                new PackageUploadRequest<>(multipartFile, repository, generateManual, replace, "");
+                new PackageUploadRequest<>(multipartFile, repository, replace, "");
 
         when(storage.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
         when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath())).thenReturn(extracted.getAbsolutePath());
@@ -404,11 +399,10 @@ public class PythonUploadStrategyTest extends StrategyTest {
                 TEST_PACKAGE_FILENAME, TEST_PACKAGE_FILENAME, TEST_PACKAGE_CONTENTTYPE, packageBytes);
         File uploadedFile = new File(TEST_PACKAGE_PATH);
         File extracted = new File(TEST_PACKAGE_EXTRACTED);
-        boolean generateManual = true;
         boolean replace = false;
 
         PackageUploadRequest<PythonRepository> request =
-                new PackageUploadRequest<>(multipartFile, repository, generateManual, replace, "");
+                new PackageUploadRequest<>(multipartFile, repository, replace, "");
 
         when(storage.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
         when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath())).thenReturn(extracted.getAbsolutePath());

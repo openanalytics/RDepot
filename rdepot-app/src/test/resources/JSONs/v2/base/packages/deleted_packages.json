@@ -11,7 +11,7 @@
 			"number": 0,
 			"size": 20,
 			"totalPages": 1,
-			"totalElements": 6
+			"totalElements": 8
 		},
 		"content": [
 			{
@@ -33,6 +33,7 @@
 				"version": "1.1",
 				"url": null,
 				"deleted": true,
+				"descriptionContentType": "txt",
 				"binary": false,
 				"name": "accrued",
 				"submission": {
@@ -86,6 +87,7 @@
 				"version": "1.1",
 				"url": null,
 				"deleted": true,
+				"descriptionContentType": "txt",
 				"binary": false,
 				"name": "npordtests",
 				"submission": {
@@ -139,6 +141,7 @@
 				"version": "2.0.0",
 				"url": null,
 				"deleted": true,
+				"descriptionContentType": "txt",
 				"binary": false,
 				"name": "usl",
 				"submission": {
@@ -192,6 +195,7 @@
 				"version": "0.1.0",
 				"url": "https:\/\/github.com\/njtierney\/visdat\/",
 				"deleted": true,
+				"descriptionContentType": "txt",
 				"binary": false,
 				"name": "visdat",
 				"submission": {
@@ -245,6 +249,7 @@
 				"version": "0.9.1",
 				"url": null,
 				"deleted": true,
+				"descriptionContentType": "txt",
 				"binary": false,
 				"name": "A3",
 				"submission": {
@@ -280,8 +285,116 @@
 				}
 			},
 			{
+				"author": "Daniel Holth",
+				"active": false,
+				"description": "wheel =====\n \n This library is the reference implementation of the Python wheel packaging\n standard, as defined in `PEP 427`_.\n \n It has two different roles:\n \n #. A setuptools_ extension for building wheels that provides the\n ``bdist_wheel`` setuptools command\n #. A command line tool for working with wheel files\n \n It should be noted that wheel is **not** intended to be used as a library, and\n as such there is no stable, public API.\n \n .. _PEP 427: https:\/\/www.python.org\/dev\/peps\/pep-0427\/\n .. _setuptools: https:\/\/pypi.org\/project\/setuptools\/\n \n Documentation\n -------------\n \n The documentation_ can be found on Read The Docs.\n \n .. _documentation: https:\/\/wheel.readthedocs.io\/\n \n Code of Conduct\n ---------------\n \n Everyone interacting in the wheel project's codebases, issue trackers, chat\n rooms, and mailing lists is expected to follow the `PSF Code of Conduct`_.\n \n .. _PSF Code of Conduct: https:\/\/github.com\/pypa\/.github\/blob\/main\/CODE_OF_CONDUCT.md\n \n \n",
+				"source": "\/opt\/rdepot\/trash\/10\/74692077\/wheel-0.36.1.tar.gz",
+				"technology": "Python",
+				"repository": {
+					"name": "testrepo10",
+					"lastPublicationSuccessful": false,
+					"id": 10,
+					"published": false,
+					"technology": "Python",
+					"requiresAuthentication": false,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo10"
+				},
+				"title": "A built-package format for Python",
+				"version": "0.36.1",
+				"url": "Documentation, https:\/\/wheel.readthedocs.io\/, Changelog, https:\/\/wheel.readthedocs.io\/en\/stable\/news.html, Issue Tracker, https:\/\/github.com\/pypa\/wheel\/issues",
+				"deleted": true,
+				"descriptionContentType": "",
+				"binary": false,
+				"name": "wheel",
+				"submission": {
+					"id": 35,
+					"state": "REJECTED"
+				},
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/35"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/35",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/35",
+						"type": "DELETE"
+					}
+				],
+				"id": 35,
+				"user": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				}
+			},
+			{
+				"author": "Daniel Holth",
+				"active": false,
+				"description": null,
+				"source": "\/opt\/rdepot\/trash\/10\/37007947\/wheel-0.38.0.tar.gz",
+				"technology": "Python",
+				"repository": {
+					"name": "testrepo10",
+					"lastPublicationSuccessful": false,
+					"id": 10,
+					"published": false,
+					"technology": "Python",
+					"requiresAuthentication": false,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo10"
+				},
+				"title": "A built-package format for Python",
+				"version": "0.38.0",
+				"url": "Documentation, https:\/\/wheel.readthedocs.io\/, Changelog, https:\/\/wheel.readthedocs.io\/en\/stable\/news.html, Issue Tracker, https:\/\/github.com\/pypa\/wheel\/issues",
+				"deleted": true,
+				"descriptionContentType": "",
+				"binary": false,
+				"name": "wheel",
+				"submission": {
+					"id": 36,
+					"state": "REJECTED"
+				},
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/36"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/36",
+						"type": "PATCH"
+					},
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/36",
+						"type": "DELETE"
+					}
+				],
+				"id": 36,
+				"user": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				}
+			},
+			{
 				"author": "Amazon Web Services",
-				"active": true,
+				"active": false,
 				"description": null,
 				"source": "\/opt\/rdepot\/repositories\/8\/55941618\/boto3-1.26.156.tar.gz",
 				"technology": "Python",
@@ -298,6 +411,7 @@
 				"version": "1.26.156",
 				"url": "Documentation, https:\/\/boto3.amazonaws.com\/v1\/documentation\/api\/latest\/index.html, Source, https:\/\/github.com\/boto\/boto3",
 				"deleted": true,
+				"descriptionContentType": "",
 				"binary": false,
 				"name": "boto3",
 				"submission": {

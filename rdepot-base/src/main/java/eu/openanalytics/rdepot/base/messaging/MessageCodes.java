@@ -64,7 +64,8 @@ public class MessageCodes {
     public static final String ERROR_VALIDATION = "error.validation";
     public static final String ERROR_MALFORMED_PATCH = "error.malformed.patch";
     public static final String ERROR_INVALID_SUBMISSION = "error.invalid.submission";
-
+    public static final String ERROR_INVALID_SERVERADDRESS = "error.invalid.serveraddress";
+    public static final String ERROR_UNHEALTHY_SERVERADDRESS = "error.unhealthy.serveraddress";
     // Storage
 
     public static final String REPOSITORY_NOT_FOUND = "repository.not.found";
@@ -176,6 +177,8 @@ public class MessageCodes {
     public static final String TOKEN_NUMBER_OF_DAYS_MUST_BE_LESS_THAN_366 =
             "token.number.of.days.must.be.less.than.366";
     public static final String DEACTIVATED_TOKEN_COULD_NOT_BE_CHANGED = "deactivated.token.could.not.be.changed";
+    public static final String ACCESS_TOKENS_CANNOT_BE_SOFT_DELETED = "access.tokens.cannot.be.soft.deleted";
+
     // declarative
     public static final String INVALID_REPOSITORY_DECLARATION = "invalid.repository.declaration";
     public static final String UNRECOGNIZED_QUERY_PARAMETER = "unrecognized.query.parameter";
@@ -185,6 +188,8 @@ public class MessageCodes {
     public static final String METHOD_NOT_ALLOWED = "method.not.allowed";
     public static final String NOT_ACCEPTABLE = "not.acceptable";
     public static final String UNSUPPORTED_MEDIA_TYPE = "unsupported.media.type";
+    public static final String UPDATE_PACKAGE_EXCEPTION = "error.update.package";
+    public static final String ERROR_CLEAN_FS = "error.clean.fs";
 
     public static final String PACKAGE_PROCESSING_ERROR = "package.processing.error";
     public static final String PACKAGE_CREATE_ERROR = "package.create.error";
@@ -193,4 +198,5 @@ public class MessageCodes {
     public static final String WARNING_REPLACING_PACKAGES_DISABLED = "warning.replacing.packages.disabled";
     public static final String WARNING_SYNCHRONIZATION_FAILURE = "warning.synchronization.failure";
     public static final String WARNING_UNKNOWN = "warning.unknown";
+    public static final String ERROR_MALFORMED_URL = "error.malformed.url";
 }

@@ -25,7 +25,6 @@ import eu.openanalytics.rdepot.base.api.v2.converters.PackageDtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.converters.SubmissionDtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.converters.UserSettingsDtoConverter;
 import eu.openanalytics.rdepot.base.entities.Repository;
-import eu.openanalytics.rdepot.base.mediator.BestMaintainerChooser;
 import eu.openanalytics.rdepot.base.mediator.deletion.AccessTokenDeleter;
 import eu.openanalytics.rdepot.base.mediator.deletion.PackageMaintainerDeleter;
 import eu.openanalytics.rdepot.base.mediator.deletion.RepositoryMaintainerDeleter;
@@ -35,10 +34,12 @@ import eu.openanalytics.rdepot.base.service.*;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.factory.StrategyFactory;
+import eu.openanalytics.rdepot.base.synchronization.healthcheck.ServerAddressHealthcheckService;
 import eu.openanalytics.rdepot.base.validation.*;
 import eu.openanalytics.rdepot.python.mediator.deletion.PythonPackageDeleter;
 import eu.openanalytics.rdepot.python.mediator.deletion.PythonRepositoryDeleter;
 import eu.openanalytics.rdepot.python.mediator.deletion.PythonSubmissionDeleter;
+import eu.openanalytics.rdepot.python.mirroring.PypiMirrorSynchronizer;
 import eu.openanalytics.rdepot.python.services.PythonPackageService;
 import eu.openanalytics.rdepot.python.services.PythonRepositoryService;
 import eu.openanalytics.rdepot.python.storage.implementations.PythonLocalStorage;
@@ -49,7 +50,6 @@ import java.util.Objects;
 import org.eclipse.parsson.JsonProviderImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.ArgumentMatchers;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -62,24 +62,10 @@ public abstract class ApiV2ControllerUnitTest {
             .getPath();
     public static final String ERROR_NOT_AUTHENTICATED_PATH = JSON_PATH_COMMON + "/error_not_authenticated.json";
     public static final String ERROR_NOT_AUTHORIZED_PATH = JSON_PATH_COMMON + "/error_not_authorized.json";
-    public static final String ERROR_CREATE_PATH = JSON_PATH_COMMON + "/error_create.json";
-    public static final String EXAMPLE_DELETED_PATH = JSON_PATH_COMMON + "/example_deleted.json";
-    public static final String ERROR_DELETE_PATH = JSON_PATH_COMMON + "/error_delete.json";
-    public static final String ERROR_PATCH_PATH = JSON_PATH_COMMON + "/error_patch.json";
-    public static final String EXAMPLE_USERS_PATH = JSON_PATH_COMMON + "/example_users.json";
-    public static final String EXAMPLE_USER_PATH = JSON_PATH_COMMON + "/example_user.json";
-    public static final String ERROR_USER_NOT_FOUND_PATH = JSON_PATH_COMMON + "/error_user_notfound.json";
-    public static final String EXAMPLE_USER_PATCHED_PATH = JSON_PATH_COMMON + "/example_user_patched.json";
-    public static final String EXAMPLE_ROLES_PATH = JSON_PATH_COMMON + "/example_roles.json";
-    public static final String EXAMPLE_TOKEN_PATH = JSON_PATH_COMMON + "/example_token.json";
-    public static final String ERROR_UPDATE_NOT_ALLOWED_PATH = JSON_PATH_COMMON + "/error_update_notallowed.json";
 
     static {
         System.setProperty("jakarta.json.provider", JsonProviderImpl.class.getCanonicalName());
     }
-
-    @Mock
-    protected BestMaintainerChooser bestMaintainerChooser;
 
     @MockBean
     AccessTokenService accessTokenService;
@@ -169,6 +155,9 @@ public abstract class ApiV2ControllerUnitTest {
     PythonPackageValidator pythonPackageValidator;
 
     @MockBean
+    PypiMirrorSynchronizer pypiMirrorSynchronizer;
+
+    @MockBean
     PythonRepositoryDeleter pythonRepositoryDeleter;
 
     @MockBean
@@ -188,6 +177,9 @@ public abstract class ApiV2ControllerUnitTest {
 
     @MockBean
     StrategyExecutor strategyExecutor;
+
+    @MockBean
+    ServerAddressHealthcheckService serverAddressHealthcheckService;
 
     @BeforeEach
     public void clearContext() throws Exception {

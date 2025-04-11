@@ -22,5 +22,15 @@ package eu.openanalytics.rdepot.python.daos;
 
 import eu.openanalytics.rdepot.base.daos.PackageDao;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
+import eu.openanalytics.rdepot.python.entities.PythonRepository;
+import java.util.Collection;
+import java.util.List;
 
-public interface PythonPackageDao extends PackageDao<PythonPackage> {}
+public interface PythonPackageDao extends PackageDao<PythonPackage> {
+
+    List<PythonPackage> findByNormalizedNameAndRepositoryGenericAndDeleted(
+            String name, PythonRepository repositoryGeneric, boolean deleted);
+
+    List<PythonPackage> findAllByNormalizedNameAndRepositoryGenericAndDeletedAndVersionIn(
+            String name, PythonRepository repositoryGeneric, boolean deleted, Collection<String> versions);
+}

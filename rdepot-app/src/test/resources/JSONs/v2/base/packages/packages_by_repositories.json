@@ -11,7 +11,7 @@
 			"number": 0,
 			"size": 20,
 			"totalPages": 1,
-			"totalElements": 4
+			"totalElements": 7
 		},
 		"content": [
 			{
@@ -33,6 +33,7 @@
 				"version": "0.1.2.3",
 				"url": "https:\/\/github.com\/clandere\/AnaCoDa",
 				"deleted": false,
+				"descriptionContentType": "txt",
 				"binary": false,
 				"name": "AnaCoDa",
 				"submission": {
@@ -58,6 +59,50 @@
 				}
 			},
 			{
+				"author": "Peter Bogetoft and Lars Otto",
+				"active": false,
+				"description": "Estimates and graphs deterministic (DEA) frontier models with different technology assumptions (fdh, vrs, drs, crs, irs, add). Also handles possible slacks, peers and their weights (lambdas), optimal cost, revenue and profit allocation, super--efficiency, and mergers. A comparative method for estimating SFA efficiencies is included.",
+				"source": "",
+				"technology": "R",
+				"repository": {
+					"name": "testrepo4",
+					"lastPublicationSuccessful": false,
+					"id": 5,
+					"published": false,
+					"technology": "R",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo4"
+				},
+				"title": "Benchmark and frontier analysis using DEA and SFA",
+				"version": "0.10",
+				"url": null,
+				"deleted": false,
+				"descriptionContentType": "txt",
+				"binary": false,
+				"name": "Benchmarking",
+				"submission": {
+					"id": 24,
+					"state": "REJECTED"
+				},
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/24"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+					}
+				],
+				"id": 24,
+				"user": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				}
+			},
+			{
 				"author": "Neil J. Gunther [aut], Stefan Moeding [aut, cre]",
 				"active": false,
 				"description": "The Universal Scalability Law (Gunther 2007)",
@@ -76,6 +121,7 @@
 				"version": "2.0.0",
 				"url": null,
 				"deleted": true,
+				"descriptionContentType": "txt",
 				"binary": false,
 				"name": "usl",
 				"submission": {
@@ -119,6 +165,7 @@
 				"version": "0.1.0",
 				"url": "https:\/\/github.com\/njtierney\/visdat\/",
 				"deleted": true,
+				"descriptionContentType": "txt",
 				"binary": false,
 				"name": "visdat",
 				"submission": {
@@ -136,6 +183,94 @@
 					}
 				],
 				"id": 28,
+				"user": {
+					"name": "Local Admin User",
+					"id": 8,
+					"login": "admin",
+					"email": "admin@localhost"
+				}
+			},
+			{
+				"author": "Scott Fortmann-Roe",
+				"active": false,
+				"description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
+				"source": "\/opt\/rdepot\/new\/92253304\/A3_0.9.1.tar.gz",
+				"technology": "R",
+				"repository": {
+					"name": "testrepo4",
+					"lastPublicationSuccessful": false,
+					"id": 5,
+					"published": false,
+					"technology": "R",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo4"
+				},
+				"title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
+				"version": "0.9.1",
+				"url": null,
+				"deleted": false,
+				"descriptionContentType": "txt",
+				"binary": false,
+				"name": "A3",
+				"submission": {
+					"id": 30,
+					"state": "WAITING"
+				},
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/30"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+					}
+				],
+				"id": 30,
+				"user": {
+					"name": "Local Admin User",
+					"id": 8,
+					"login": "admin",
+					"email": "admin@localhost"
+				}
+			},
+			{
+				"author": "Katalin Csillery, with contributions from Michael Blum and Olivier Francois",
+				"active": false,
+				"description": "The 'abc' package provides various functions for parameter estimation and model selection in an ABC framework. Three main",
+				"source": "\/opt\/rdepot\/new\/51328701\/abc_1.0.tar.gz",
+				"technology": "R",
+				"repository": {
+					"name": "testrepo4",
+					"lastPublicationSuccessful": false,
+					"id": 5,
+					"published": false,
+					"technology": "R",
+					"requiresAuthentication": true,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo4"
+				},
+				"title": "Functions to perform Approximate Bayesian Computation (ABC) using simulated data",
+				"version": "1.0",
+				"url": null,
+				"deleted": false,
+				"descriptionContentType": "txt",
+				"binary": false,
+				"name": "abc",
+				"submission": {
+					"id": 31,
+					"state": "WAITING"
+				},
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/31"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+					}
+				],
+				"id": 31,
 				"user": {
 					"name": "Local Admin User",
 					"id": 8,
@@ -162,6 +297,7 @@
 				"version": "8.0.0",
 				"url": "https:\/\/github.com\/apache\/arrow\/, https:\/\/arrow.apache.org\/docs\/r\/",
 				"deleted": false,
+				"descriptionContentType": "txt",
 				"binary": true,
 				"name": "arrow",
 				"submission": {

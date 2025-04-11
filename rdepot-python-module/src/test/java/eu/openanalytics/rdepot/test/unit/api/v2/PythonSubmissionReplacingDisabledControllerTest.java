@@ -128,7 +128,6 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
         final byte[] packageFile = Files.readAllBytes(Path.of(TEST_PACKAGE_PATH));
         final MockMultipartFile multipartFile = new MockMultipartFile(
                 "file", "coconutpy-2.2.1.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
-        final boolean generateManuals = true;
         final boolean replace = false;
 
         final Submission submission =
@@ -152,14 +151,12 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
                     assertEquals(packageFile, request.getFileData().getBytes());
                     assertEquals(repository.getName(), request.getRepository().getName());
                     assertEquals(replace, request.isReplace());
-                    assertEquals(generateManuals, request.isGenerateManual());
                     return strategy;
                 });
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v2/manager/python/submissions")
                         .file(multipartFile)
                         .param("repository", repository.getName())
-                        .param("generateManual", Boolean.toString(generateManuals))
                         .param("replace", Boolean.toString(replace)))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(Files.readString(Path.of(EXAMPLE_SUBMISSION_CREATED_PATH))));
@@ -172,7 +169,6 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
         final byte[] packageFile = Files.readAllBytes(Path.of(TEST_PACKAGE_PATH));
         final MockMultipartFile multipartFile = new MockMultipartFile(
                 "file", "coconutpy-2.2.1.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
-        final boolean generateManuals = true;
         final boolean replace = false;
 
         final PythonPackage packageBag = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
@@ -196,7 +192,6 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v2/manager/python/submissions")
                         .file(multipartFile)
                         .param("repository", repository.getName())
-                        .param("generateManual", Boolean.toString(generateManuals))
                         .param("replace", Boolean.toString(replace)))
                 .andExpect(status().isOk())
                 .andExpect(content().json(Files.readString(Path.of(WARNING_SUBMISSION_DUPLICATE_PATH))));
@@ -209,7 +204,6 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
         final byte[] packageFile = Files.readAllBytes(Path.of(TEST_PACKAGE_PATH));
         final MockMultipartFile multipartFile = new MockMultipartFile(
                 "file", "coconutpy-2.2.1.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
-        final boolean generateManuals = true;
         final boolean replace = true;
 
         final PythonPackage packageBag = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
@@ -233,7 +227,6 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v2/manager/python/submissions")
                         .file(multipartFile)
                         .param("repository", repository.getName())
-                        .param("generateManual", Boolean.toString(generateManuals))
                         .param("replace", Boolean.toString(replace)))
                 .andExpect(status().isOk())
                 .andExpect(content().json(Files.readString(Path.of(WARNING_PACKAGE_REPLACE_DISABLED_PATH))));
@@ -248,7 +241,6 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v2/manager/python/submissions")
                         .file(multipartFile)
                         .param("repository", "testttt")
-                        .param("generateManual", "true")
                         .param("replace", "false"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().json(Files.readString(Path.of(ERROR_NOT_AUTHENTICATED_PATH))));
@@ -262,7 +254,6 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
         final byte[] packageFile = Files.readAllBytes(Path.of(TEST_PACKAGE_PATH));
         final MockMultipartFile multipartFile = new MockMultipartFile(
                 "file", "abc_1.3.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
-        final boolean generateManuals = true;
         final boolean replace = false;
         final Submission submission =
                 PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user).getSubmission();
@@ -284,7 +275,6 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v2/manager/python/submissions")
                         .file(multipartFile)
                         .param("repository", REPOSITORY_NAME)
-                        .param("generateManual", Boolean.toString(generateManuals))
                         .param("replace", Boolean.toString(replace)))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().json(Files.readString(Path.of(ERROR_SUBMISSION_DUPLICATE_PATH))));
@@ -297,7 +287,6 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
         final byte[] packageFile = Files.readAllBytes(Path.of(TEST_PACKAGE_PATH));
         final MockMultipartFile multipartFile = new MockMultipartFile(
                 "file", "abc_1.3.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
-        final boolean generateManuals = true;
         final boolean replace = false;
         final Submission submission =
                 PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user).getSubmission();
@@ -312,7 +301,6 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
         ResultActions result = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v2/manager/python/submissions")
                         .file(multipartFile)
                         .param("repository", repository.getName())
-                        .param("generateManual", Boolean.toString(generateManuals))
                         .param("replace", Boolean.toString(replace)))
                 .andExpect(status().isInternalServerError());
         TestUtils.matchInternalServerErrorCreate(result);

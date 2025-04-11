@@ -59,6 +59,7 @@
 					"active": false,
 					"description": "Package for visualizing data quality of partially accruing time series.",
 					"technology": "R",
+					"descriptionContentType": "txt",
 					"repository": {
 						"name": "testrepo2",
 						"lastPublicationSuccessful": true,
@@ -130,6 +131,7 @@
 					"active": true,
 					"description": "Package for visualizing data quality of partially accruing data.",
 					"technology": "R",
+					"descriptionContentType": "txt",
 					"repository": {
 						"name": "testrepo2",
 						"lastPublicationSuccessful": true,
@@ -201,6 +203,7 @@
 					"active": true,
 					"description": "Package for visualizing data quality of partially accruing time series.",
 					"technology": "R",
+					"descriptionContentType": "txt",
 					"repository": {
 						"name": "testrepo2",
 						"lastPublicationSuccessful": true,
@@ -272,6 +275,7 @@
 					"active": true,
 					"description": "Package for visualizing data quality of partially accruing data.",
 					"technology": "R",
+					"descriptionContentType": "txt",
 					"repository": {
 						"name": "testrepo2",
 						"lastPublicationSuccessful": true,
@@ -343,6 +347,7 @@
 					"active": false,
 					"description": "Package for visualizing data quality of partially accruing data.",
 					"technology": "R",
+					"descriptionContentType": "txt",
 					"repository": {
 						"name": "testrepo2",
 						"lastPublicationSuccessful": true,
@@ -414,6 +419,7 @@
 					"active": true,
 					"description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
 					"technology": "R",
+					"descriptionContentType": "txt",
 					"repository": {
 						"name": "testrepo3",
 						"lastPublicationSuccessful": false,
@@ -485,6 +491,7 @@
 					"active": true,
 					"description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
 					"technology": "R",
+					"descriptionContentType": "txt",
 					"repository": {
 						"name": "testrepo3",
 						"lastPublicationSuccessful": false,
@@ -556,6 +563,7 @@
 					"active": false,
 					"description": "The package implements several ABC algorithms for performing parameter estimation and model selection. Cross-validation tools are also available for measuring the accuracy of ABC estimates, and to calculate the misclassification probabilities of different models.",
 					"technology": "R",
+					"descriptionContentType": "txt",
 					"repository": {
 						"name": "testrepo3",
 						"lastPublicationSuccessful": false,
@@ -627,6 +635,7 @@
 					"active": true,
 					"description": "The 'abc' package provides various functions for parameter estimation and model selection in an ABC framework. Three main",
 					"technology": "R",
+					"descriptionContentType": "txt",
 					"repository": {
 						"name": "testrepo3",
 						"lastPublicationSuccessful": false,
@@ -698,6 +707,7 @@
 					"active": true,
 					"description": "Provides an R interface for the Bureau of Economic Analysis (BEA)",
 					"technology": "R",
+					"descriptionContentType": "txt",
 					"repository": {
 						"name": "testrepo1",
 						"lastPublicationSuccessful": true,
@@ -769,6 +779,7 @@
 					"active": false,
 					"description": "Package for visualizing data quality of partially accruing time series.",
 					"technology": "R",
+					"descriptionContentType": "txt",
 					"repository": {
 						"name": "testrepo1",
 						"lastPublicationSuccessful": true,
@@ -840,6 +851,7 @@
 					"active": false,
 					"description": "Performs nonparametric tests for equality of location against ordered alternatives.",
 					"technology": "R",
+					"descriptionContentType": "txt",
 					"repository": {
 						"name": "testrepo1",
 						"lastPublicationSuccessful": true,
@@ -911,6 +923,7 @@
 					"active": false,
 					"description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
 					"technology": "R",
+					"descriptionContentType": "txt",
 					"repository": {
 						"name": "testrepo1",
 						"lastPublicationSuccessful": true,
@@ -982,6 +995,7 @@
 					"active": true,
 					"description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
 					"technology": "R",
+					"descriptionContentType": "txt",
 					"repository": {
 						"name": "testrepo1",
 						"lastPublicationSuccessful": true,
@@ -1053,6 +1067,7 @@
 					"active": true,
 					"description": "The package implements several ABC algorithms for performing parameter estimation and model selection. Cross-validation tools are also available for measuring the accuracy of ABC estimates, and to calculate the misclassification probabilities of different models.",
 					"technology": "R",
+					"descriptionContentType": "txt",
 					"repository": {
 						"name": "testrepo1",
 						"lastPublicationSuccessful": true,
@@ -1127,6 +1142,7 @@
 					"active": false,
 					"description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
 					"technology": "R",
+					"descriptionContentType": "txt",
 					"repository": {
 						"name": "testrepo2",
 						"lastPublicationSuccessful": true,
@@ -1198,6 +1214,7 @@
 					"active": true,
 					"description": "Is a collection of models to analyze genome scale codon data using a Bayesian framework. Provides visualization routines and checkpointing for model fittings. Currently published models to analyze gene data for selection on codon",
 					"technology": "R",
+					"descriptionContentType": "txt",
 					"repository": {
 						"name": "testrepo4",
 						"lastPublicationSuccessful": false,
@@ -1269,6 +1286,7 @@
 					"active": true,
 					"description": "Estimates and graphs deterministic (DEA) frontier models with different technology assumptions (fdh, vrs, drs, crs, irs, add). Also handles possible slacks, peers and their weights (lambdas), optimal cost, revenue and profit allocation, super--efficiency, and mergers. A comparative method for estimating SFA efficiencies is included.",
 					"technology": "R",
+					"descriptionContentType": "txt",
 					"repository": {
 						"name": "testrepo1",
 						"lastPublicationSuccessful": true,
@@ -1340,6 +1358,7 @@
 					"active": false,
 					"description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
 					"technology": "R",
+					"descriptionContentType": "txt",
 					"repository": {
 						"name": "testrepo1",
 						"lastPublicationSuccessful": true,
@@ -1411,6 +1430,7 @@
 					"active": false,
 					"description": "Is a collection of models to analyze genome scale codon data using a Bayesian framework. Provides visualization routines and checkpointing for model fittings. Currently published models to analyze gene data for selection on codon",
 					"technology": "R",
+					"descriptionContentType": "txt",
 					"repository": {
 						"name": "testrepo1",
 						"lastPublicationSuccessful": true,

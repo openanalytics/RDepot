@@ -20,6 +20,7 @@
 				"description": "Package for visualizing data quality of partially accruing data.",
 				"source": "\/opt\/rdepot\/repositories\/3\/99077116\/accrued_1.3.5.tar.gz",
 				"technology": "R",
+				"descriptionContentType": "txt",
 				"repository": {
 					"name": "testrepo2",
 					"lastPublicationSuccessful": true,
@@ -63,6 +64,7 @@
 				"description": "Package for visualizing data quality of partially accruing data.",
 				"source": "\/opt\/rdepot\/repositories\/3\/82197810\/accrued_1.3.tar.gz",
 				"technology": "R",
+				"descriptionContentType": "txt",
 				"repository": {
 					"name": "testrepo2",
 					"lastPublicationSuccessful": true,
@@ -106,6 +108,7 @@
 				"description": "Package for visualizing data quality of partially accruing time series.",
 				"source": "\/opt\/rdepot\/repositories\/3\/46950998\/accrued_1.1.tar.gz",
 				"technology": "R",
+				"descriptionContentType": "txt",
 				"repository": {
 					"name": "testrepo2",
 					"lastPublicationSuccessful": true,
@@ -149,6 +152,7 @@
 				"description": "Package for visualizing data quality of partially accruing data.",
 				"source": "\/opt\/rdepot\/repositories\/3\/28075835\/accrued_1.4.tar.gz",
 				"technology": "R",
+				"descriptionContentType": "txt",
 				"repository": {
 					"name": "testrepo2",
 					"lastPublicationSuccessful": true,
@@ -192,6 +196,7 @@
 				"description": "Package for visualizing data quality of partially accruing time series.",
 				"source": "\/opt\/rdepot\/repositories\/3\/83118397\/accrued_1.2.tar.gz",
 				"technology": "R",
+				"descriptionContentType": "txt",
 				"repository": {
 					"name": "testrepo2",
 					"lastPublicationSuccessful": true,
@@ -235,6 +240,7 @@
 				"description": "Package for visualizing data quality of partially accruing time series.",
 				"source": "\/opt\/rdepot\/repositories\/2\/40553654\/accrued_1.0.tar.gz",
 				"technology": "R",
+				"descriptionContentType": "txt",
 				"repository": {
 					"name": "testrepo1",
 					"lastPublicationSuccessful": true,
@@ -278,6 +284,7 @@
 				"description": "# numpy-threading-extensions Faster loops for NumPy using multithreading and other tricks. The first release\n will target NumPy binary and unary ufuncs. Eventually we will enable overriding\n other NumPy functions, and provide an C-based (non-Python) API for extending\n via third-party functions.\n \n [![Travis CI Build Status](https:\/\/api.travis-ci.org\/Quansight\/numpy-threading-extensions.svg)](https:\/\/travis-ci.org\/Quansight\/numpy-threading-extensions)\n \n [![Coverage Status](https:\/\/codecov.io\/gh\/Quansight\/numpy-threading-extensions\/branch\/main\/graphs\/badge.svg)](https:\/\/codecov.io\/github\/Quansight\/numpy-threading-extensions)\n \n [![License: MIT](https:\/\/img.shields.io\/badge\/License-MIT-yellow.svg)](https:\/\/opensource.org\/licenses\/MIT)\n \n ## Installation\n ```\n pip install accelerated_numpy\n ```\n \n You can also install the in-development version 0.0.1 with:\n ```\n pip install https:\/\/github.com\/Quansight\/numpy-threading-extensions\/archive\/v0.0.1.zip\n ```\n or latest with\n ```\n pip install https:\/\/github.com\/Quansight\/numpy-threading-extensions\/archive\/main.zip\n ```\n \n ## Documentation\n \n To use the project:\n \n ```python\n import accelerated_numpy\n accelerated_numpy.initialize()\n ```\n \n ## Development\n \n To run all the tests run::\n \n ```\n tox\n ```\n \n Note, to combine the coverage data from all the tox environments run:\n \n OS | Command\n ----|----\n Windows | `set PYTEST_ADDOPTS=--cov-append`\n | | `tox`\n Other | `PYTEST_ADDOPTS=--cov-append tox`\n \n",
 				"source": "\/opt\/rdepot\/repositories\/8\/25558329\/accelerated-numpy-0.1.0.tar.gz",
 				"technology": "Python",
+				"descriptionContentType": "text/markdown",
 				"repository": {
 					"name": "testrepo8",
 					"lastPublicationSuccessful": true,

@@ -52,7 +52,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -93,7 +92,7 @@ public class PackageMaintainerControllerUnitTest extends ApiV2ControllerUnitTest
             JSON_PATH + "/example_packagemaintainer_patched.json";
     public static final String EDITING_DELETED_RESOURCE_PATH = JSON_PATH + "/editing_deleted_resource.json";
 
-    private Optional<User> user;
+    private User user;
     private PackageMaintainer maintainer;
 
     @Autowired
@@ -122,7 +121,7 @@ public class PackageMaintainerControllerUnitTest extends ApiV2ControllerUnitTest
 
     @BeforeEach
     public void initEach() {
-        user = Optional.of(UserTestFixture.GET_ADMIN());
+        user = UserTestFixture.GET_ADMIN();
         maintainer = PackageMaintainerTestFixture.GET_FIXTURE_PACKAGE_MAINTAINER();
     }
 
@@ -142,7 +141,7 @@ public class PackageMaintainerControllerUnitTest extends ApiV2ControllerUnitTest
         when(packageMaintainerService.findAll(any(Pageable.class)))
                 .thenReturn(PackageMaintainerTestFixture.GET_EXAMPLE_PACKAGE_MAINTAINERS_PAGED());
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/package-maintainers")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -161,8 +160,8 @@ public class PackageMaintainerControllerUnitTest extends ApiV2ControllerUnitTest
     @Test
     @WithMockUser(authorities = {"user", "repositorymaintainer"})
     public void getPackageMaintainer_returns404_whenPackageMaintainerIsNotFound() throws Exception {
-        when(packageMaintainerService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(null));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(packageMaintainerService.findById(any(Integer.class))).thenReturn(Optional.empty());
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/package-maintainers/" + 123)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -181,7 +180,7 @@ public class PackageMaintainerControllerUnitTest extends ApiV2ControllerUnitTest
     @Test
     @WithMockUser
     public void getPackageMaintainer_returns403_whenUserIsNotAuthorized() throws Exception {
-        final Integer id = maintainer.getId();
+        final int id = maintainer.getId();
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/package-maintainers/" + id)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden())
@@ -191,9 +190,9 @@ public class PackageMaintainerControllerUnitTest extends ApiV2ControllerUnitTest
     @Test
     @WithMockUser(authorities = "user")
     public void getPackageMaintainer_returns403_whenUserIsNotAuthorizedToSee() throws Exception {
-        final Integer id = maintainer.getId();
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(securityMediator.isAuthorizedToSee(maintainer, user.get())).thenReturn(false);
+        final int id = maintainer.getId();
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
+        when(securityMediator.isAuthorizedToSee(maintainer, user)).thenReturn(false);
         when(packageMaintainerService.findById(id)).thenReturn(Optional.of(maintainer));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/package-maintainers/" + id)
@@ -205,9 +204,9 @@ public class PackageMaintainerControllerUnitTest extends ApiV2ControllerUnitTest
     @Test
     @WithMockUser(authorities = {"user", "repositorymaintainer"})
     public void getPackageMaintainer() throws Exception {
-        final Integer id = maintainer.getId();
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(securityMediator.isAuthorizedToSee(maintainer, user.get())).thenReturn(true);
+        final int id = maintainer.getId();
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
+        when(securityMediator.isAuthorizedToSee(maintainer, user)).thenReturn(true);
         when(packageMaintainerService.findById(id)).thenReturn(Optional.of(maintainer));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/package-maintainers/" + id)
@@ -232,9 +231,9 @@ public class PackageMaintainerControllerUnitTest extends ApiV2ControllerUnitTest
     public void createPackageMaintainer_returns403_whenUserIsNotAuthorized() throws Exception {
         final String exampleJson = Files.readString(Path.of(EXAMPLE_NEW_PACKAGEMAINTAINER_PATH));
 
-        when(securityMediator.isAuthorizedToEdit(any(PackageMaintainer.class), eq(user.get())))
+        when(securityMediator.isAuthorizedToEdit(any(PackageMaintainer.class), eq(user)))
                 .thenReturn(false);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v2/manager/package-maintainers")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -249,19 +248,15 @@ public class PackageMaintainerControllerUnitTest extends ApiV2ControllerUnitTest
         final String exampleJson = Files.readString(Path.of(EXAMPLE_NEW_PACKAGEMAINTAINER_PATH));
         Repository repository = RepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
 
-        when(securityMediator.isAuthorizedToEdit(any(PackageMaintainer.class), eq(user.get())))
+        when(securityMediator.isAuthorizedToEdit(any(PackageMaintainer.class), eq(user)))
                 .thenReturn(true);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        doReturn(Optional.of(repository)).when(commonRepositoryService).findById(123);
-        when(userService.findById(111)).thenReturn(user);
-        doAnswer(new Answer<Object>() {
-
-                    @Override
-                    public Object answer(InvocationOnMock invocation) throws Throwable {
-                        BindingResult bindingResult = invocation.getArgument(1);
-                        bindingResult.rejectValue("packageName", MessageCodes.PACKAGE_ALREADY_MAINTAINED);
-                        return null;
-                    }
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
+        doReturn(Optional.of(repository)).when(repositoryService).findById(123);
+        when(userService.findById(111)).thenReturn(Optional.of(user));
+        doAnswer((Answer<Object>) invocation -> {
+                    BindingResult bindingResult = invocation.getArgument(1);
+                    bindingResult.rejectValue("packageName", MessageCodes.PACKAGE_ALREADY_MAINTAINED);
+                    return null;
                 })
                 .when(packageMaintainerValidator)
                 .validate(any(), any());
@@ -277,22 +272,21 @@ public class PackageMaintainerControllerUnitTest extends ApiV2ControllerUnitTest
     @Test
     @WithMockUser(authorities = {"repositorymaintainer", "user"})
     public void createPackageMaintainer() throws Exception {
-        user.get().setId(111);
+        user.setId(111);
         final String exampleJson = Files.readString(Path.of(EXAMPLE_NEW_PACKAGEMAINTAINER_PATH));
         Repository repository = RepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        Strategy<PackageMaintainer> strategy = Mockito.spy(new SuccessfulStrategy<PackageMaintainer>(
-                maintainer, newsfeedEventService, packageMaintainerService, user.get()));
+        Strategy<PackageMaintainer> strategy =
+                Mockito.spy(new SuccessfulStrategy<>(maintainer, newsfeedEventService, packageMaintainerService, user));
 
-        when(strategyFactory.createPackageMaintainerStrategy(any(), eq(user.get())))
-                .thenReturn(strategy);
-        when(securityMediator.isAuthorizedToEdit(any(PackageMaintainer.class), eq(user.get())))
+        when(strategyFactory.createPackageMaintainerStrategy(any(), eq(user))).thenReturn(strategy);
+        when(securityMediator.isAuthorizedToEdit(any(PackageMaintainer.class), eq(user)))
                 .thenReturn(true);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         doNothing().when(packageMaintainerValidator).validate(any(), any());
         when(packageMaintainerValidator.supports(PackageMaintainer.class)).thenReturn(true);
         when(packageMaintainerService.create(any())).thenReturn(maintainer);
-        doReturn(Optional.of(repository)).when(commonRepositoryService).findById(123);
-        when(userService.findById(111)).thenReturn(user);
+        doReturn(Optional.of(repository)).when(repositoryService).findById(123);
+        when(userService.findById(111)).thenReturn(Optional.of(user));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v2/manager/package-maintainers")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -308,16 +302,15 @@ public class PackageMaintainerControllerUnitTest extends ApiV2ControllerUnitTest
     public void createPackageMaintainer_returns500_whenCreationFails() throws Exception {
         final String exampleJson = Files.readString(Path.of(EXAMPLE_NEW_PACKAGEMAINTAINER_PATH));
         Repository repository = RepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        Strategy<PackageMaintainer> strategy = Mockito.spy(new FailureStrategy<PackageMaintainer>(
-                maintainer, newsfeedEventService, packageMaintainerService, user.get()));
+        Strategy<PackageMaintainer> strategy =
+                Mockito.spy(new FailureStrategy<>(maintainer, newsfeedEventService, packageMaintainerService, user));
 
-        doReturn(Optional.of(repository)).when(commonRepositoryService).findById(123);
-        when(userService.findById(111)).thenReturn(user);
-        when(strategyFactory.createPackageMaintainerStrategy(any(), eq(user.get())))
-                .thenReturn(strategy);
-        when(securityMediator.isAuthorizedToEdit(any(PackageMaintainer.class), eq(user.get())))
+        doReturn(Optional.of(repository)).when(repositoryService).findById(123);
+        when(userService.findById(111)).thenReturn(Optional.of(user));
+        when(strategyFactory.createPackageMaintainerStrategy(any(), eq(user))).thenReturn(strategy);
+        when(securityMediator.isAuthorizedToEdit(any(PackageMaintainer.class), eq(user)))
                 .thenReturn(true);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         doNothing().when(packageMaintainerValidator).validate(any(), any());
         when(packageMaintainerValidator.supports(PackageMaintainer.class)).thenReturn(true);
         doAnswer(invocation -> invocation.getArgument(0))
@@ -344,7 +337,7 @@ public class PackageMaintainerControllerUnitTest extends ApiV2ControllerUnitTest
     @WithMockUser(authorities = {"admin", "user"})
     public void deletePackageMaintainer_returns404_whenPackageMaintainerIsNotFound() throws Exception {
         when(packageMaintainerService.findById(any(Integer.class))).thenReturn(null);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v2/manager/package-maintainers/" + 123)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -355,7 +348,7 @@ public class PackageMaintainerControllerUnitTest extends ApiV2ControllerUnitTest
     @Test
     @WithMockUser
     public void deletePackageMaintainer_returns403_whenUserIsNotAuthorized() throws Exception {
-        final Integer id = maintainer.getId();
+        final int id = maintainer.getId();
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v2/manager/package-maintainers/" + id)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -366,9 +359,9 @@ public class PackageMaintainerControllerUnitTest extends ApiV2ControllerUnitTest
     @Test
     @WithMockUser(authorities = {"admin", "user"})
     public void deletePackageMaintainer() throws Exception {
-        final Integer id = maintainer.getId();
+        final int id = maintainer.getId();
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         when(packageMaintainerService.findOneDeleted(any(Integer.class))).thenReturn(Optional.of(maintainer));
         doNothing().when(packageMaintainerDeleter).delete(maintainer);
 
@@ -394,10 +387,10 @@ public class PackageMaintainerControllerUnitTest extends ApiV2ControllerUnitTest
     @WithMockUser(authorities = {"user", "repositorymaintainer"})
     public void patchPackageMaintainer_returns404_whenPackageMaintainerIsNotFound() throws Exception {
         String patchJson = "[{\"op\": \"replace\",\"path\":\"/packageName\",\"value\":\"neeeeeew_package\"}]";
-        final Integer id = maintainer.getId();
+        final int id = maintainer.getId();
 
-        when(packageMaintainerService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(null));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(packageMaintainerService.findById(any(Integer.class))).thenReturn(Optional.empty());
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/package-maintainers/" + id)
                         .contentType("application/json-patch+json")
@@ -410,7 +403,7 @@ public class PackageMaintainerControllerUnitTest extends ApiV2ControllerUnitTest
     @WithMockUser
     public void patchPackageMaintainer_returns403_whenUserIsNotAuthorized() throws Exception {
         String patchJson = "[{\"op\": \"replace\",\"path\":\"/packageName\",\"value\":\"neeeeeew_package\"}]";
-        final Integer id = maintainer.getId();
+        final int id = maintainer.getId();
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/package-maintainers/" + id)
                         .contentType("application/json-patch+json")
@@ -423,7 +416,7 @@ public class PackageMaintainerControllerUnitTest extends ApiV2ControllerUnitTest
     @WithMockUser(authorities = {"user", "repositorymaintainer"})
     public void patchPackageMaintainer_returns403_whenUserIsNotAuthorizedToEdit() throws Exception {
         String patchJson = "[{\"op\": \"replace\",\"path\":\"/packageName\",\"value\":\"neeeeeew_package\"}]";
-        final Integer id = maintainer.getId();
+        final int id = maintainer.getId();
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/package-maintainers/" + id)
                         .contentType("application/json-patch+json")
@@ -436,12 +429,12 @@ public class PackageMaintainerControllerUnitTest extends ApiV2ControllerUnitTest
     @WithMockUser(authorities = {"user", "repositorymaintainer"})
     public void patchPackageMaintainer_returns405_whenPackageMaintainerIsDeleted() throws Exception {
         String patchJson = "[{\"op\": \"replace\", \"path\":\"/packageName\",\"value\":\"neeeeeew_package\"}]";
-        final Integer id = maintainer.getId();
+        final int id = maintainer.getId();
         maintainer.setDeleted(true);
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         when(packageMaintainerService.findById(any(Integer.class))).thenReturn(Optional.of(maintainer));
-        when(securityMediator.isAuthorizedToEdit(maintainer, user.get())).thenReturn(true);
+        when(securityMediator.isAuthorizedToEdit(maintainer, user)).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/package-maintainers/" + id)
                         .contentType("application/json-patch+json")
@@ -454,13 +447,13 @@ public class PackageMaintainerControllerUnitTest extends ApiV2ControllerUnitTest
     @WithMockUser(authorities = {"user", "repositorymaintainer"})
     public void patchPackageMaintainer_returns422_whenPatchIsIncorrect() throws Exception {
         String patchJson = "[{\"op\": \"replace\", \"path\":\"/packageNaaaaaaame\",\"value\":\"neeeeeew_package\"}]";
-        final Integer id = maintainer.getId();
-        Strategy<PackageMaintainer> strategy = new SuccessfulStrategy<PackageMaintainer>(
-                maintainer, newsfeedEventService, packageMaintainerService, user.get());
+        final int id = maintainer.getId();
+        Strategy<PackageMaintainer> strategy =
+                new SuccessfulStrategy<>(maintainer, newsfeedEventService, packageMaintainerService, user);
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         when(packageMaintainerService.findById(any(Integer.class))).thenReturn(Optional.of(maintainer));
-        when(securityMediator.isAuthorizedToEdit(maintainer, user.get())).thenReturn(true);
+        when(securityMediator.isAuthorizedToEdit(maintainer, user)).thenReturn(true);
         when(strategyFactory.updatePackageMaintainerStrategy(
                         eq(maintainer), any(User.class), any(PackageMaintainer.class)))
                 .thenReturn(strategy);
@@ -476,20 +469,20 @@ public class PackageMaintainerControllerUnitTest extends ApiV2ControllerUnitTest
     @WithMockUser(authorities = {"user", "repositorymaintainer"})
     public void patchPackageMaintainer_returns500_whenStrategyFailure() throws Exception {
         String patchJson = "[{\"op\": \"replace\", \"path\":\"/packageName\",\"value\":\"neeeeeew_package\"}]";
-        final Integer id = maintainer.getId();
+        final int id = maintainer.getId();
         Repository repository = RepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        Strategy<PackageMaintainer> strategy = Mockito.spy(new FailureStrategy<PackageMaintainer>(
-                maintainer, newsfeedEventService, packageMaintainerService, user.get()));
+        Strategy<PackageMaintainer> strategy =
+                Mockito.spy(new FailureStrategy<>(maintainer, newsfeedEventService, packageMaintainerService, user));
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         when(packageMaintainerService.findById(any(Integer.class))).thenReturn(Optional.of(maintainer));
-        when(securityMediator.isAuthorizedToEdit(maintainer, user.get())).thenReturn(true);
+        when(securityMediator.isAuthorizedToEdit(maintainer, user)).thenReturn(true);
         when(strategyFactory.updatePackageMaintainerStrategy(
                         eq(maintainer), any(User.class), any(PackageMaintainer.class)))
                 .thenReturn(strategy);
         when(packageMaintainerValidator.supports(PackageMaintainer.class)).thenReturn(true);
-        doReturn(Optional.of(repository)).when(commonRepositoryService).findById(123);
-        when(userService.findById(111)).thenReturn(user);
+        doReturn(Optional.of(repository)).when(repositoryService).findById(123);
+        when(userService.findById(111)).thenReturn(Optional.of(user));
 
         ResultActions result = mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/package-maintainers/" + id)
                         .contentType("application/json-patch+json")
@@ -504,26 +497,26 @@ public class PackageMaintainerControllerUnitTest extends ApiV2ControllerUnitTest
     @WithMockUser(authorities = {"user", "repositorymaintainer"})
     public void patchPackageMaintainer() throws Exception {
         String patchJson = "[{\"op\": \"replace\",\"path\":\"/packageName\",\"value\":\"neeeeeew_package\"}]";
-        final Integer id = maintainer.getId();
+        final int id = maintainer.getId();
         final PackageMaintainer updated = new PackageMaintainer(maintainer);
 
         updated.setId(maintainer.getId());
         updated.setPackageName("neeeeeew_package");
-        user.get().setId(111);
+        user.setId(111);
 
         Repository repository = RepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        Strategy<PackageMaintainer> strategy = Mockito.spy(new SuccessfulStrategy<PackageMaintainer>(
-                updated, newsfeedEventService, packageMaintainerService, user.get()));
+        Strategy<PackageMaintainer> strategy =
+                Mockito.spy(new SuccessfulStrategy<>(updated, newsfeedEventService, packageMaintainerService, user));
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         when(packageMaintainerService.findById(any(Integer.class))).thenReturn(Optional.of(maintainer));
-        when(securityMediator.isAuthorizedToEdit(maintainer, user.get())).thenReturn(true);
+        when(securityMediator.isAuthorizedToEdit(maintainer, user)).thenReturn(true);
         when(strategyFactory.updatePackageMaintainerStrategy(any(), any(), any()))
                 .thenReturn(strategy);
         doNothing().when(packageMaintainerValidator).validate(any(), any());
         when(packageMaintainerValidator.supports(PackageMaintainer.class)).thenReturn(true);
-        doReturn(Optional.of(repository)).when(commonRepositoryService).findById(123);
-        when(userService.findById(111)).thenReturn(user);
+        doReturn(Optional.of(repository)).when(repositoryService).findById(123);
+        when(userService.findById(111)).thenReturn(Optional.of(user));
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/package-maintainers/" + id)
                         .contentType("application/json-patch+json")

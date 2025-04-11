@@ -33,6 +33,7 @@ import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.services.PythonPackageService;
 import eu.openanalytics.rdepot.python.storage.PythonStorage;
 import eu.openanalytics.rdepot.python.storage.utils.PopulatedRepositoryContent;
+import eu.openanalytics.rdepot.python.technology.PythonLanguage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -61,9 +62,6 @@ public class PythonRepositorySynchronizer extends RepositorySynchronizer<PythonR
 
     @Value("${local-storage.max-request-size}")
     private Integer maxRequestSize;
-
-    @Value("${declarative}")
-    private String declarative;
 
     @Override
     @Transactional
@@ -127,12 +125,15 @@ public class PythonRepositorySynchronizer extends RepositorySynchronizer<PythonR
         }
 
         String serverAndPort = serverAddressComponents[0] + "//" + serverAddressComponents[2];
-        String repositoryDirectory = serverAddressComponents[3];
+        String repositoryDirectory = String.join(
+                "/",
+                Arrays.stream(serverAddressComponents, 3, serverAddressComponents.length)
+                        .toArray(String[]::new));
 
         Gson gson = new Gson();
 
-        ResponseEntity<String> response =
-                rest.getForEntity(serverAndPort + "/python/" + repositoryDirectory + "/", String.class);
+        ResponseEntity<String> response = rest.getForEntity(
+                attachTechnologyIfNeeded(serverAndPort, repositoryDirectory, PythonLanguage.instance), String.class);
 
         List<String> remotePackages = new ArrayList<>(Arrays.asList(gson.fromJson(response.getBody(), String[].class)));
 
@@ -185,7 +186,9 @@ public class PythonRepositorySynchronizer extends RepositorySynchronizer<PythonR
 
                 HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(chunk);
                 ResponseEntity<RepoResponse> httpResponse = rest.postForEntity(
-                        serverAddress + "/python/" + repositoryDirectory, entity, RepoResponse.class);
+                        attachTechnologyIfNeeded(serverAddress, repositoryDirectory, PythonLanguage.instance),
+                        entity,
+                        RepoResponse.class);
 
                 if (!httpResponse.getStatusCode().is2xxSuccessful()
                         || !Objects.equals(

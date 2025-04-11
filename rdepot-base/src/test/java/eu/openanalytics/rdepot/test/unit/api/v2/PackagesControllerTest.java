@@ -62,7 +62,7 @@ public class PackagesControllerTest extends ApiV2ControllerUnitTest {
     public static final String EXAMPLE_COMMON_PACKAGE_PATH = JSON_PATH + "/example_common_package.json";
     public static final String ERROR_PACKAGE_NOT_FOUND = JSON_PATH + "/error_package_notfound.json";
 
-    private Optional<User> user;
+    private User user;
 
     @Autowired
     MockMvc mockMvc;
@@ -81,7 +81,7 @@ public class PackagesControllerTest extends ApiV2ControllerUnitTest {
 
     @BeforeEach
     public void initEach() {
-        user = Optional.of(UserTestFixture.GET_REGULAR_USER());
+        user = UserTestFixture.GET_REGULAR_USER();
     }
 
     @Test
@@ -95,10 +95,10 @@ public class PackagesControllerTest extends ApiV2ControllerUnitTest {
     @WithMockUser(authorities = "user")
     public void getPackage() throws Exception {
         final Package packageBag = PackageTestFixture.GET_EXAMPLE_PACKAGE();
-        final Integer ID = 1234;
+        final int ID = 1234;
         final PackageDto packageDto = PackageTestFixture.GET_EXAMPLE_PACKAGE_DTO();
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
         when(commonPackageService.findById(ID)).thenReturn(Optional.of(packageBag));
         when(commonPackageDtoConverter.convertEntityToDto(any())).thenReturn(packageDto);
 
@@ -120,7 +120,7 @@ public class PackagesControllerTest extends ApiV2ControllerUnitTest {
     @WithMockUser(authorities = "user")
     public void getPackage_returns404_whenRepositoryIsNotFound() throws Exception {
 
-        when(commonRepositoryService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(null));
+        when(repositoryService.findById(any(Integer.class))).thenReturn(Optional.empty());
         when(userService.findActiveByLogin("user")).thenReturn(Optional.of(UserTestFixture.GET_ADMIN()));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/packages/" + 123)

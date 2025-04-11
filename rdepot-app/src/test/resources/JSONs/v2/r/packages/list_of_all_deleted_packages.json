@@ -29,8 +29,10 @@
 				},
 				"title": "Visualization tools for partially accruing data",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": null,
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "24b8cec280424dfc6a9e444fa57ba9f3",
 				"links": [
 					{
@@ -96,8 +98,10 @@
 				},
 				"title": "Nonparametric Tests for Equality of Location Against Ordered Alternatives",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": null,
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "da8be1247d3145b757bd62e01fc6eb8b",
 				"links": [
 					{
@@ -163,8 +167,10 @@
 				},
 				"title": "Analyze System Scalability with the Universal Scalability Law",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": "knitr",
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "868140a3c3c29327eef5d5a485aee5b6",
 				"links": [
 					{
@@ -230,8 +236,10 @@
 				},
 				"title": "Preliminary Data Visualisation",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": "plotly (>= 4.5.6), testthat, knitr, rmarkdown, vdiffr",
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "f343fa3a01dcd9546fa0947877f58f36",
 				"links": [
 					{
@@ -297,8 +305,10 @@
 				},
 				"title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
 				"distribution": null,
+				"maintainer": null,
 				"suggests": "randomForest, e1071",
 				"systemRequirements": null,
+				"descriptionContentType": "txt",
 				"md5sum": "8eb4760cd574f5489e61221dc9bb0076",
 				"links": [
 					{

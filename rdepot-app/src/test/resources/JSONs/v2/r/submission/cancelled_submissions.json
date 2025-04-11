@@ -47,6 +47,7 @@
 					"active": false,
 					"description": "Is a collection of models to analyze genome scale codon data using a Bayesian framework. Provides visualization routines and checkpointing for model fittings. Currently published models to analyze gene data for selection on codon",
 					"technology": "R",
+					"descriptionContentType": "txt",
 					"repository": {
 						"name": "testrepo1",
 						"lastPublicationSuccessful": true,

@@ -18,26 +18,21 @@
  * You should have received a copy of the Apache License
  * along with this program. If not, see <http://www.apache.org/licenses/>
  */
-package eu.openanalytics.rdepot.python.config.declarative;
+package eu.openanalytics.rdepot.base.mirroring.exceptions;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import eu.openanalytics.rdepot.base.technology.Technology;
-import eu.openanalytics.rdepot.python.technology.PythonLanguage;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import eu.openanalytics.rdepot.base.messaging.MessageCodes;
+import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
+import eu.openanalytics.rdepot.base.mirroring.Mirror;
+import java.io.Serial;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class DeclarativePythonRepository {
-    protected String name;
-    protected String publicationUri;
-    protected String serverAddress;
-    protected Boolean deleted = false;
-    protected Boolean published = true;
-    protected Boolean requiresAuthentication;
+public class UpdatePackageException extends Exception {
 
-    @JsonDeserialize(using = PythonLanguage.class)
-    protected Technology technology;
+    @Serial
+    private static final long serialVersionUID = 6799693422535662386L;
+
+    public UpdatePackageException(String name, String version, Mirror<?> mirror) {
+        super(StaticMessageResolver.getMessage(MessageCodes.UPDATE_PACKAGE_EXCEPTION)
+                + ": {name: \"" + name + "\", version:\""
+                + version + "\", mirror: \"" + mirror.toString() + "\"}");
+    }
 }

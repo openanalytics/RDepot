@@ -28,10 +28,14 @@ import eu.openanalytics.rdepot.integrationtest.manager.v2.IntegrationTest;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.RequestType;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.TestRequestBody;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.testData.RepositoryTechnologyTestData;
+import eu.openanalytics.rdepot.integrationtest.manager.v2.testData.SubmissionMultipartBody;
+import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.http.ContentType;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -390,6 +394,69 @@ public class RRepositoryIntegrationTest extends IntegrationTest {
                 .howManyNewEventsShouldBeCreated(testData.getChangeEndpointNewEventsAmount())
                 .expectedJsonPath(REPOSITORIES_PATH + "published_repository.json")
                 .expectedEventsJson(EVENTS_PATH + "patched_published_repository_event.json")
+                .body(patch)
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void createRepositoryWithRServerAddress_uploadPackage_publish() throws Exception {
+        final String body = "{"
+                + "\"name\": \"" + testData.getRepoNameToCreate() + "\","
+                + "\"publicationUri\":\"http://localhost/repo/" + testData.getRepoNameToCreate() + "\","
+                + "\"serverAddress\":\"http://oa-rdepot-repo:8080/r/" + testData.getRepoNameToCreate() + "\""
+                + "}";
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST)
+                .urlSuffix("/")
+                .statusCode(201)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getChangeEndpointNewEventsAmount())
+                .expectedJsonPath(REPOSITORIES_PATH + "created_repository_r_server_address.json")
+                .expectedEventsJson(EVENTS_PATH + "created_repository_event_r_server_address.json")
+                .body(body)
+                .build();
+        testEndpoint(requestBody);
+
+        File packageBag = new File("src/test/resources/itestPackages/Benchmarking_0.10.tar.gz");
+        SubmissionMultipartBody submissionBody = new SubmissionMultipartBody(
+                "testrepo7",
+                true,
+                false,
+                "",
+                new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+                        .fileName(packageBag.getName())
+                        .mimeType("application/gzip")
+                        .controlName("file")
+                        .build());
+
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST_MULTIPART)
+                .path("/api/v2/manager/r/submissions")
+                .urlSuffix("/")
+                .statusCode(201)
+                .token(ADMIN_TOKEN)
+                .expectedJsonPath("/v2/r/submission/new_submission_r_server_address.json")
+                .expectedEventsJson(
+                        "/v2/r/events/submissions/new_submission_without_manual_events_r_server_address.json")
+                .howManyNewEventsShouldBeCreated(1)
+                .submissionMultipartBody(submissionBody)
+                .build();
+
+        testEndpoint(requestBody);
+
+        final String patch =
+                "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/published\"," + "\"value\":true" + "}" + "]";
+
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.PATCH)
+                .urlSuffix("/13")
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getChangeEndpointNewEventsAmount())
+                .expectedJsonPath(REPOSITORIES_PATH + "published_repository_r_server_address.json")
+                .expectedEventsJson(EVENTS_PATH + "patched_published_repository_r_server_address_event.json")
                 .body(patch)
                 .build();
         testEndpoint(requestBody);

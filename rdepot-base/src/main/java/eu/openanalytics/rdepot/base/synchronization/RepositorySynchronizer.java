@@ -21,8 +21,11 @@
 package eu.openanalytics.rdepot.base.synchronization;
 
 import eu.openanalytics.rdepot.base.entities.Repository;
+import eu.openanalytics.rdepot.base.technology.Technology;
 import eu.openanalytics.rdepot.base.time.DateProvider;
 import java.time.Instant;
+import java.util.Arrays;
+import lombok.NonNull;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -50,6 +53,39 @@ public abstract class RepositorySynchronizer<T extends Repository> {
             repository.setLastPublicationSuccessful(false);
             throw e;
         }
+    }
+
+    protected String attachTechnologyIfNeeded(
+            @NonNull String serverAndPort, @NonNull String repositoryDirectory, Technology technology) {
+        if (repositoryDirectory.startsWith("/"))
+            throw new IllegalArgumentException("Repository path must not start with '/'");
+
+        final String[] pathComponents = repositoryDirectory.split("/");
+        final String expectedTechnology = technology.getName().toLowerCase();
+        final StringBuilder enrichedPath = new StringBuilder();
+        enrichedPath.append(serverAndPort);
+        if (pathComponents.length == 1) {
+            enrichedPath.append('/').append(expectedTechnology).append('/').append(pathComponents[0]);
+        } else if (pathComponents.length > 1) {
+            if (pathComponents[pathComponents.length - 2].equals(expectedTechnology)) {
+                enrichedPath.append('/').append(repositoryDirectory);
+            } else {
+                final String firstPart = String.join(
+                        "/",
+                        Arrays.stream(pathComponents, 0, pathComponents.length - 1)
+                                .toArray(String[]::new));
+                final String lastPart = pathComponents[pathComponents.length - 1];
+                enrichedPath
+                        .append('/')
+                        .append(firstPart)
+                        .append('/')
+                        .append(expectedTechnology)
+                        .append('/')
+                        .append(lastPart);
+            }
+        }
+        enrichedPath.append("/");
+        return enrichedPath.toString();
     }
 
     protected abstract void storeRepositoryOnRemoteServer(T repository, String datestamp)

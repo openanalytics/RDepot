@@ -130,7 +130,7 @@ public class PythonPackageControllerTest extends ApiV2ControllerUnitTest {
 
         when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
         when(userService.isAdmin(user)).thenReturn(true);
-        when(pythonPackageService.findAllBySpecification(any(), any()))
+        when(pythonPackageService.findAll(any()))
                 .thenReturn(PythonPackageTestFixture.GET_EXAMPLE_PACKAGES_PAGED(repository, user));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/python/packages")
@@ -152,7 +152,7 @@ public class PythonPackageControllerTest extends ApiV2ControllerUnitTest {
         when(pythonPackageService.findAllBySpecification(any(), any())).thenReturn(packagesPage);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/python/packages")
-                        .param("repositoryName", repository.getName())
+                        .param("repository", repository.getName())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(Files.readString(Path.of(EXAMPLE_PACKAGES_REPO_PATH))));

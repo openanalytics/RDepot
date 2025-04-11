@@ -64,4 +64,9 @@ public abstract class Mirror<P extends MirroredPackage> {
                 && Objects.equals(type, other.type)
                 && Objects.equals(uri, other.uri);
     }
+
+    public String getUriWithTrailingSlash() {
+        if (Objects.isNull(this.getUri())) return "/";
+        return this.getUri().endsWith("/") ? this.getUri() : this.getUri() + "/";
+    }
 }

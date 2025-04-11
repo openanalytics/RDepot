@@ -53,6 +53,7 @@ import eu.openanalytics.rdepot.base.storage.Storage;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.factory.StrategyFactory;
+import eu.openanalytics.rdepot.base.synchronization.healthcheck.ServerAddressHealthcheckService;
 import eu.openanalytics.rdepot.base.validation.AccessTokenPatchValidator;
 import eu.openanalytics.rdepot.base.validation.PackageMaintainerValidator;
 import eu.openanalytics.rdepot.base.validation.PackageValidator;
@@ -62,13 +63,13 @@ import eu.openanalytics.rdepot.base.validation.UserSettingsValidator;
 import eu.openanalytics.rdepot.base.validation.UserValidator;
 import eu.openanalytics.rdepot.test.fixture.UserTestFixture;
 import java.security.Principal;
+import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.parsson.JsonProviderImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.Authentication;
@@ -119,7 +120,7 @@ public class ApiV2ControllerUnitTest {
     PackageMaintainerDeleter packageMaintainerDeleter;
 
     @MockBean
-    RepositoryService<Repository> commonRepositoryService;
+    RepositoryService<Repository> repositoryService;
 
     @MockBean
     CommonPackageService commonPackageService;
@@ -181,24 +182,23 @@ public class ApiV2ControllerUnitTest {
     @MockBean
     StrategyExecutor strategyExecutor;
 
+    @MockBean
+    ServerAddressHealthcheckService serverAddressHealthcheckService;
+
     @Mock
     protected BestMaintainerChooser bestMaintainerChooser;
 
     @BeforeEach
     public void clearContext() throws Exception {
         SecurityContextHolder.clearContext();
-        Mockito.doAnswer(new Answer<>() {
-                    @Override
-                    public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
-                        return ((Strategy<?>) invocationOnMock.getArgument(0)).perform();
-                    }
-                })
+        Mockito.doAnswer((Answer<Object>) invocationOnMock -> ((Strategy<?>) invocationOnMock.getArgument(0)).perform())
                 .when(strategyExecutor)
                 .execute(ArgumentMatchers.any());
     }
 
-    public static final String JSON_PATH =
-            ClassLoader.getSystemClassLoader().getResource("unit/jsons").getPath();
+    public static final String JSON_PATH = Objects.requireNonNull(
+                    ClassLoader.getSystemClassLoader().getResource("unit/jsons"))
+            .getPath();
 
     public static final String ERROR_NOT_AUTHENTICATED_PATH = JSON_PATH + "/error_not_authenticated.json";
     public static final String ERROR_NOT_AUTHORIZED_PATH = JSON_PATH + "/error_not_authorized.json";

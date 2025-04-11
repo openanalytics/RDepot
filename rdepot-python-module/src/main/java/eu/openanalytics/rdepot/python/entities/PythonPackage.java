@@ -46,9 +46,6 @@ public class PythonPackage extends Package {
     @Column(name = "classifier", table = "pythonpackage")
     private String classifiers = "";
 
-    @Column(name = "description_content_type", table = "pythonpackage")
-    private String descriptionContentType = "";
-
     @Column(name = "home_page", table = "pythonpackage")
     private String homePage = "";
 
@@ -91,6 +88,9 @@ public class PythonPackage extends Package {
 
     @Column(name = "hash", nullable = false, table = "pythonpackage")
     private String hash;
+
+    @Column(name = "normalized_name", nullable = false, table = "pythonpackage")
+    private String normalizedName;
 
     public PythonPackage(PythonPackage packageBag) {
         super(packageBag);
@@ -136,6 +136,7 @@ public class PythonPackage extends Package {
         this.license = license;
         this.hash = hash;
         this.repository = repository;
+        setNormalizedName(name);
     }
 
     public PythonPackage(PythonPackageDto dto, PythonRepository repository, Submission submission, User user) {
@@ -143,7 +144,6 @@ public class PythonPackage extends Package {
         this.repository = repository;
         this.authorEmail = dto.getAuthorEmail();
         this.classifiers = dto.getClassifiers();
-        this.descriptionContentType = dto.getDescriptionContentType();
         this.homePage = dto.getHomePage();
         this.keywords = dto.getKeywords();
         this.license = dto.getLicense();
@@ -156,6 +156,7 @@ public class PythonPackage extends Package {
         this.requiresPython = dto.getRequiresPython();
         this.summary = dto.getSummary();
         this.hash = dto.getHash();
+        setNormalizedName(dto.getName());
     }
 
     @Override
@@ -171,5 +172,9 @@ public class PythonPackage extends Package {
     @Override
     public String getUrl() {
         return this.projectUrl == null || this.projectUrl.isBlank() ? this.homePage : this.projectUrl;
+    }
+
+    public void setNormalizedName(String name) {
+        this.normalizedName = name.replaceAll("[-_.]", "-").toLowerCase();
     }
 }

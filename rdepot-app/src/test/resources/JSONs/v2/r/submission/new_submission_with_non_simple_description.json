@@ -32,6 +32,7 @@
 			"active": true,
 			"description": "A rich hierarchy of sparse and dense matrix classes,\\n including general, symmetric, triangular, and diagonal matrices\\n with numeric, logical, or pattern entries. Efficient methods for\\n operating on such matrices, often wrapping the 'BLAS', 'LAPACK',\\n and 'SuiteSparse' libraries.",
 			"technology": "R",
+			"descriptionContentType": "txt",
 			"repository": {
 				"name": "testrepo2",
 				"lastPublicationSuccessful": true,

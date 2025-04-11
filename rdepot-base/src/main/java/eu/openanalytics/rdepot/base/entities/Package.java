@@ -109,8 +109,11 @@ public abstract class Package extends EventableResource implements Comparable<Pa
     @Column(name = "active", nullable = false)
     private boolean active;
 
-    @Column(name = "binary_package", nullable = false, table = "package")
+    @Column(name = "binary_package", nullable = false)
     private boolean binary;
+
+    @Column(name = "description_content_type", nullable = false)
+    private String descriptionContentType = "";
 
     protected Package(Package packageBag) {
         super(packageBag.id, packageBag.getTechnology(), ResourceType.PACKAGE);

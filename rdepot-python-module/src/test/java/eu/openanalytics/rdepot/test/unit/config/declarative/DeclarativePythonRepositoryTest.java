@@ -21,8 +21,8 @@
 package eu.openanalytics.rdepot.test.unit.config.declarative;
 
 import eu.openanalytics.rdepot.base.config.declarative.DeclaredRepositoryDirectoriesProps;
-import eu.openanalytics.rdepot.python.config.declarative.DeclarativePythonRepository;
 import eu.openanalytics.rdepot.python.config.declarative.PythonYamlDeclarativeConfigurationSource;
+import eu.openanalytics.rdepot.python.mirroring.pojos.MirroredPythonRepository;
 import eu.openanalytics.rdepot.python.technology.PythonLanguage;
 import eu.openanalytics.rdepot.python.validation.repositories.PythonBasicNameValidator;
 import eu.openanalytics.rdepot.test.unit.UnitTest;
@@ -41,15 +41,15 @@ public class DeclarativePythonRepositoryTest extends UnitTest {
             TEST_RESOURCES_PATH + "/test_files/declarative_repository_files/technology_mismatch";
 
     @Test
-    public void successfullyInitializeDeclarativePythonRepository() throws Exception {
+    public void successfullyInitializeDeclarativePythonRepository() {
         DeclaredRepositoryDirectoriesProps directories = new DeclaredRepositoryDirectoriesProps();
         directories.setPaths(List.of(GOOD_REPOSITORIES));
         PythonBasicNameValidator nameValidator = new PythonBasicNameValidator("[A-Za-z0-9\\-_.~]+", ".+");
         PythonYamlDeclarativeConfigurationSource configurationSource =
                 new PythonYamlDeclarativeConfigurationSource(directories, nameValidator);
-        List<DeclarativePythonRepository> repositories = configurationSource.retrieveDeclaredRepositories();
+        List<MirroredPythonRepository> repositories = configurationSource.retrieveDeclaredRepositories();
         Assertions.assertEquals(3, repositories.size());
-        for (DeclarativePythonRepository repository : repositories) {
+        for (MirroredPythonRepository repository : repositories) {
             Assertions.assertEquals("a", repository.getName());
             Assertions.assertEquals("http://localhost/repo/Python", repository.getPublicationUri());
             Assertions.assertEquals("http://oa-rdepot-repo:8080/Python", repository.getServerAddress());
@@ -59,24 +59,24 @@ public class DeclarativePythonRepositoryTest extends UnitTest {
     }
 
     @Test
-    public void handleMissingTechnologyForDeclarativePythonRepository() throws Exception {
+    public void handleMissingTechnologyForDeclarativePythonRepository() {
         DeclaredRepositoryDirectoriesProps directories = new DeclaredRepositoryDirectoriesProps();
         directories.setPaths(List.of(MISSING_TECHNOLOGY_REPOSITORIES));
         PythonBasicNameValidator nameValidator = new PythonBasicNameValidator("[A-Za-z0-9\\-_.~]+", ".+");
         PythonYamlDeclarativeConfigurationSource configurationSource =
                 new PythonYamlDeclarativeConfigurationSource(directories, nameValidator);
-        List<DeclarativePythonRepository> repositories = configurationSource.retrieveDeclaredRepositories();
+        List<MirroredPythonRepository> repositories = configurationSource.retrieveDeclaredRepositories();
         Assertions.assertEquals(0, repositories.size());
     }
 
     @Test
-    public void handleTechnologyMismatchForDeclarativePythonRepository() throws Exception {
+    public void handleTechnologyMismatchForDeclarativePythonRepository() {
         DeclaredRepositoryDirectoriesProps directories = new DeclaredRepositoryDirectoriesProps();
         directories.setPaths(List.of(TECHNOLOGY_MISMATCH_REPOSITORIES));
         PythonBasicNameValidator nameValidator = new PythonBasicNameValidator("[A-Za-z0-9\\-_.~]+", ".+");
         PythonYamlDeclarativeConfigurationSource configurationSource =
                 new PythonYamlDeclarativeConfigurationSource(directories, nameValidator);
-        List<DeclarativePythonRepository> repositories = configurationSource.retrieveDeclaredRepositories();
+        List<MirroredPythonRepository> repositories = configurationSource.retrieveDeclaredRepositories();
         Assertions.assertEquals(0, repositories.size());
     }
 }

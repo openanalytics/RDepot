@@ -1,0 +1,50 @@
+Package: alkahest
+Title: Pre-Processing XY Data from Experimental Methods
+Version: 1.3.0
+Authors@R: c(
+    person("Nicolas", "Frerebeau", , "nicolas.frerebeau@u-bordeaux-montaigne.fr", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-5759-4944")),
+    person("Brice", "Lebrun", role = "art",
+           comment = c(ORCID = "0000-0001-7503-8685", "Logo designer")),
+    person("Université Bordeaux Montaigne", role = "fnd",
+           comment = c(ROR = "03pbgwk21")),
+    person("CNRS", role = "fnd",
+           comment = c(ROR = "02feahw73"))
+  )
+Maintainer: Nicolas Frerebeau <nicolas.frerebeau@u-bordeaux-montaigne.fr>
+Description: A lightweight, dependency-free toolbox for pre-processing XY
+    data from experimental methods (i.e. any signal that can be measured
+    along a continuous variable). This package provides methods for
+    baseline estimation and correction, smoothing, normalization,
+    integration and peaks detection. Baseline correction methods includes
+    polynomial fitting as described in Lieber and Mahadevan-Jansen (2003)
+    <doi:10.1366/000370203322554518>, Rolling Ball algorithm after Kneen
+    and Annegarn (1996) <doi:10.1016/0168-583X(95)00908-6>, SNIP algorithm
+    after Ryan et al. (1988) <doi:10.1016/0168-583X(88)90063-8>, 4S Peak
+    Filling after Liland (2015) <doi:10.1016/j.mex.2015.02.009> and more.
+License: GPL (>= 3)
+URL: https://codeberg.org/tesselle/alkahest,
+        https://packages.tesselle.org/alkahest/
+BugReports: https://codeberg.org/tesselle/alkahest/issues
+Depends: R (>= 3.5.0)
+Imports: grDevices, methods, stats, utils
+Suggests: knitr, markdown, Matrix, tinytest
+VignetteBuilder: knitr
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.2
+X-schema.org-isPartOf: https://www.tesselle.org
+X-schema.org-keywords: spectroscopy, archaeometry, r-package
+Collate: 'AllGenerics.R' 'alkahest-internal.R' 'alkahest-package.R'
+        'baseline.R' 'data.R' 'integrate.R' 'peaks.R' 'replace.R'
+        'resample.R' 'rescale.R' 'signal.R' 'smooth.R' 'windows.R'
+        'xrd.R'
+NeedsCompilation: no
+Packaged: 2025-02-25 21:35:08 UTC; nicolas
+Author: Nicolas Frerebeau [aut, cre] (<https://orcid.org/0000-0001-5759-4944>),
+  Brice Lebrun [art] (<https://orcid.org/0000-0001-7503-8685>, Logo
+    designer),
+  Université Bordeaux Montaigne [fnd] (03pbgwk21),
+  CNRS [fnd] (02feahw73)
+Repository: CRAN
+Date/Publication: 2025-02-25 22:00:02 UTC

@@ -2,6 +2,13 @@ databaseChangeLog:
   - changeSet:
       id: 13_01_last_used_access_token
       author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - columnExists:
+                tableName: access_token
+                schemaName: public
+                columnName: last_used
       changes:
         - addColumn:
             tableName: access_token

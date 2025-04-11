@@ -108,10 +108,10 @@ public class RRepositorySynchronizerTest extends UnitTest {
 
         doReturn(new ResponseEntity<>("[3]", HttpStatus.OK))
                 .when(rest)
-                .getForEntity(eq("http://127.0.0.1/testrepo1/"), eq(String.class));
+                .getForEntity(eq("http://127.0.0.1/r/testrepo1/"), eq(String.class));
         doReturn(new ResponseEntity<>("[]", HttpStatus.OK))
                 .when(rest)
-                .getForEntity(eq("http://127.0.0.1/testrepo1/archive/"), eq(String.class));
+                .getForEntity(eq("http://127.0.0.1/r/testrepo1/archive/"), eq(String.class));
 
         final List<RPackage> packages =
                 RPackageTestFixture.GET_PACKAGES_WITH_MULTIPLE_VERSIONS_OF_THE_SAME_PACKAGE(repository, user);
@@ -328,16 +328,16 @@ public class RRepositorySynchronizerTest extends UnitTest {
     @Test
     public void storeRepositoryOnRemoteServer_sameBinariesWithDifferentParameters() throws Exception {
         final RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        repository.setServerAddress("http://127.0.0.1/testrepo1");
+        repository.setServerAddress("http://127.0.0.1/r/testrepo1");
 
         final User user = UserTestFixture.GET_ADMIN();
 
         doReturn(new ResponseEntity<>("[3]", HttpStatus.OK))
                 .when(rest)
-                .getForEntity(eq("http://127.0.0.1/testrepo1/"), eq(String.class));
+                .getForEntity(eq("http://127.0.0.1/r/testrepo1/"), eq(String.class));
         doReturn(new ResponseEntity<>("[]", HttpStatus.OK))
                 .when(rest)
-                .getForEntity(eq("http://127.0.0.1/testrepo1/archive/"), eq(String.class));
+                .getForEntity(eq("http://127.0.0.1/r/testrepo1/archive/"), eq(String.class));
 
         final List<RPackage> sourcePackages =
                 RPackageTestFixture.GET_PACKAGES_WITH_MULTIPLE_VERSIONS_OF_THE_SAME_PACKAGE(repository, user);
@@ -529,10 +529,10 @@ public class RRepositorySynchronizerTest extends UnitTest {
 
         doReturn(new ResponseEntity<>("[3]", HttpStatus.OK))
                 .when(rest)
-                .getForEntity(eq("http://127.0.0.1/testrepo1/"), eq(String.class));
+                .getForEntity(eq("http://127.0.0.1/r/testrepo1/"), eq(String.class));
         doReturn(new ResponseEntity<>("[]", HttpStatus.OK))
                 .when(rest)
-                .getForEntity(eq("http://127.0.0.1/testrepo1/archive/"), eq(String.class));
+                .getForEntity(eq("http://127.0.0.1/r/testrepo1/archive/"), eq(String.class));
 
         ReflectionTestUtils.setField(repositorySynchronizer, "maxRequestSize", 4);
 
@@ -869,10 +869,10 @@ public class RRepositorySynchronizerTest extends UnitTest {
 
         doReturn(new ResponseEntity<>("[3]", HttpStatus.OK))
                 .when(rest)
-                .getForEntity(eq("http://127.0.0.1/testrepo1/"), eq(String.class));
+                .getForEntity(eq("http://127.0.0.1/r/testrepo1/"), eq(String.class));
         doReturn(new ResponseEntity<>("[]", HttpStatus.OK))
                 .when(rest)
-                .getForEntity(eq("http://127.0.0.1/testrepo1/archive/"), eq(String.class));
+                .getForEntity(eq("http://127.0.0.1/r/testrepo1/archive/"), eq(String.class));
 
         final List<RPackage> packages =
                 RPackageTestFixture.GET_PACKAGES_WITH_MULTIPLE_VERSIONS_OF_THE_SAME_PACKAGE(repository, user);
@@ -1115,10 +1115,10 @@ public class RRepositorySynchronizerTest extends UnitTest {
 
         doReturn(new ResponseEntity<>("[3]", HttpStatus.OK))
                 .when(rest)
-                .getForEntity(eq("http://127.0.0.1/repo-server/testrepo1/"), eq(String.class));
+                .getForEntity(eq("http://127.0.0.1/repo-server/r/testrepo1/"), eq(String.class));
         doReturn(new ResponseEntity<>("[]", HttpStatus.OK))
                 .when(rest)
-                .getForEntity(eq("http://127.0.0.1/repo-server/testrepo1/archive/"), eq(String.class));
+                .getForEntity(eq("http://127.0.0.1/repo-server/r/testrepo1/archive/"), eq(String.class));
 
         final List<RPackage> packages =
                 RPackageTestFixture.GET_PACKAGES_WITH_MULTIPLE_VERSIONS_OF_THE_SAME_PACKAGE(repository, user);

@@ -32,6 +32,7 @@
       "active": true,
       "description": "Test some exotic characters: ąęćóęßæłżźćń",
       "technology": "Python",
+      "descriptionContentType": "text/x-rst",
       "repository": {
         "name": "testrepo9",
         "id": 9,

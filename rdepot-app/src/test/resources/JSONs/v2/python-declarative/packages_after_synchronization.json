@@ -1,0 +1,258 @@
+{
+    "status": "SUCCESS",
+    "code": 200,
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "data": {
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8021/api/v2/manager/python/packages?page=0&size=20&sort=id,asc"
+            }
+        ],
+        "content": [
+            {
+                "id": 1,
+                "user": {
+                    "id": 4,
+                    "name": "Albert Einstein",
+                    "login": "einstein",
+                    "email": "einstein@ldap.forumsys.com"
+                },
+                "repository": {
+                    "id": 1,
+                    "name": "X",
+                    "publicationUri": "http://localhost/repo/X",
+                    "published": true,
+                    "requiresAuthentication": true,
+                    "technology": "Python",
+                    "lastPublicationSuccessful": true
+                },
+                "submission": {
+                    "id": 1,
+                    "state": "ACCEPTED"
+                },
+                "name": "abo_tools",
+                "version": "1.0",
+                "source": "/opt/rdepot/repositories/1/90161081/abo_tools-1.0.tar.gz",
+                "active": true,
+                "deleted": false,
+                "technology": "Python",
+                "binary": false,
+                "description": "Description\\n ===========\\n \\n Tools for ABO analys",
+                "author": "UNKNOWN",
+                "title": "UNKNOWN",
+                "url": "",
+                "authorEmail": null,
+                "classifiers": null,
+                "descriptionContentType": "",
+                "homePage": "",
+                "keywords": null,
+                "license": "UNKNOWN",
+                "maintainer": null,
+                "maintainerEmail": null,
+                "platform": "UNKNOWN",
+                "projectUrl": null,
+                "providesExtra": null,
+                "requiresDist": null,
+                "requiresExternal": null,
+                "requiresPython": null,
+                "summary": "UNKNOWN",
+                "hash": "70222dec4ca6d0e3658bf0dc34f5c5c72235f1f28b4977b3b991347a84035c3c",
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8021/api/v2/manager/python/packages/1"
+                    },
+                    {
+                        "rel": "packageList",
+                        "href": "http://localhost:8021/api/v2/manager/python/packages"
+                    }
+                ]
+            },
+            {
+                "id": 2,
+                "user": {
+                    "id": 4,
+                    "name": "Albert Einstein",
+                    "login": "einstein",
+                    "email": "einstein@ldap.forumsys.com"
+                },
+                "repository": {
+                    "id": 1,
+                    "name": "X",
+                    "publicationUri": "http://localhost/repo/X",
+                    "published": true,
+                    "requiresAuthentication": true,
+                    "technology": "Python",
+                    "lastPublicationSuccessful": true
+                },
+                "submission": {
+                    "id": 2,
+                    "state": "ACCEPTED"
+                },
+                "name": "tetrapolyscope",
+                "version": "0.0.1",
+                "source": "/opt/rdepot/repositories/1/53353284/tetrapolyscope-0.0.1.tar.gz",
+                "active": true,
+                "deleted": false,
+                "technology": "Python",
+                "binary": false,
+                "description": "# polyscope-py\\nPython bindings for Polyscope - Chromalab Version. https://polyscope.run/py\\n\\n\\nThis library is a python wrapper and deployment system. The core library lives at [this polyscope fork](https://github.com/i-geng/polyscope)\\n\\nTo contribute, check out the [instructions here](https://polyscope.run/about/contributing/).\\n\\n### Installation (for now before Irene puts it on PyPI)\\n\\nUninstall current version of polyscope from current virtual environment:\\n```\\npip uninstall polyscope\\n```\\n\\nLocal installation. Haven't put this version on PyPI yet, since it seems like uploading a \\nnew version could take over an hour. \\n```\\ngit clone --recurse-submodules git@github.com:i-geng/polyscope-py.git\\n```\\n\\nFrom the root polyscope-py directory, build the C++ source:\\n```\\nmkdir build; cd build\\ncmake ../\\nmake -j4\\n```\\nBack in the root polyscope-py directory:\\n```\\npip install .\\n```\\n\\nTo use polyscope's functions for writing videos, you will also need FFmpeg.\\n",
+                "author": "Nicholas Sharp",
+                "title": "Polyscope: A viewer and user interface for 3D data.",
+                "url": "",
+                "authorEmail": null,
+                "classifiers": null,
+                "descriptionContentType": "text/markdown",
+                "homePage": "",
+                "keywords": null,
+                "license": "MIT",
+                "maintainer": null,
+                "maintainerEmail": null,
+                "platform": "UNKNOWN",
+                "projectUrl": null,
+                "providesExtra": null,
+                "requiresDist": null,
+                "requiresExternal": null,
+                "requiresPython": null,
+                "summary": "Polyscope: A viewer and user interface for 3D data.",
+                "hash": "47b518fb442789f4ae05df8d93a8946b95206037f137d9aab760af414fdda935",
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8021/api/v2/manager/python/packages/2"
+                    },
+                    {
+                        "rel": "packageList",
+                        "href": "http://localhost:8021/api/v2/manager/python/packages"
+                    }
+                ]
+            },
+            {
+                "id": 3,
+                "user": {
+                    "id": 4,
+                    "name": "Albert Einstein",
+                    "login": "einstein",
+                    "email": "einstein@ldap.forumsys.com"
+                },
+                "repository": {
+                    "id": 1,
+                    "name": "X",
+                    "publicationUri": "http://localhost/repo/X",
+                    "published": true,
+                    "requiresAuthentication": true,
+                    "technology": "Python",
+                    "lastPublicationSuccessful": true
+                },
+                "submission": {
+                    "id": 3,
+                    "state": "ACCEPTED"
+                },
+                "name": "adobe_analytic_API_V2.0-azure",
+                "version": "0.0.3",
+                "source": "/opt/rdepot/repositories/1/90846456/adobe_analytic_API_V2.0-azure-0.0.3.tar.gz",
+                "active": true,
+                "deleted": false,
+                "technology": "Python",
+                "binary": false,
+                "description": "# Adobe Analytics Python Class \\n\\nDownload Reports data utilising the Adobe.io version 2.0 API locally.\\n\\nTo Integrate with Cloud (Azure) ,please check [Integrate with Azure](Azurepipeline.md)\\n\\n\\n\\n\\n\\n# Authentication methods supported by the package:\\n1.JWT\\n\\n2.OAuth (tested only through Jupyter Notebook!)\\n\\n## Authentication via JSON Web Token (JWT aka Service Account)\\n\\nWe’re going to use JWT aka Service Account as the method for authentication since it’s designed for machine-to-machine communication. As such authentication can be completely automated on platforms such as Azure after it’s built.\\n\\nCompare this to Oauth 2.0 based authentication which requires user input at some interval. You might want the user to authenticate from time to time, but my goal is to build this data ingestion pipeline that doesn’t require any user interaction once it’s built.\\n\\n## JWT Requirements & Adobe.io access\\nIn order to run the package, first you need to gain access to a service account from Adobe.io or request an existing certificate from Principle Publisher. The method used is JWT authentication. More instructions on how to create the integration at: https://www.adobe.io/authentication/auth-methods.html#!AdobeDocs/adobeio-auth/master/JWT/JWT.md. \\n\\n### To obtain JWT credientials from Adbobe Developer Console\\n\\n\\nIn Projects > Credential Details > Get the Client ID and Client Secret:\\n![](/assets/images/AA-to-Azure-Python-Wrapper-Class/adobe-analytics-client-id-secret-v2.png)\\n\\nIn Projects > Credential Details > Generate a public/private keypair\\n![](/assets/images/AA-to-Azure-Python-Wrapper-Class/adobe-analytics-generate-pub-priv-keys.png)\\n\\nWhen you click the button you’ll download a zip file that contains a public key file and private key file. You can open these in any text editor to see what they look like. Keep the private key file handy, we’ll refer to it later in our Python code.\\n\\n### Or you can request JWT certificate from Principle Publisher.\\n\\nSample certificate:\\n```python\\n{\\n   'CLIENT_SECRET':'xxxx',\\n   'ORG_ID':'xxxx@AdobeOrg',\\n   'API_KEY':'xxxxx',\\n   'TECHNICAL_ACCOUNT_ID':'xxxx@techacct.adobe.com',\\n   'TECHNICAL_ACCOUNT_EMAIL':'x@techacct.adobe.com',\\n   'PUBLIC_KEYS_WITH_EXPIRY':{\\n      'xxxxxx':'mm/dd/yyyy'\\n   }\\n}\\n```\\n\\nAfter you have completed the integration, you will finde available the following information:\\n\\n- Organization ID ( ORG_ID ): It is in the format of < organisation id >@AdobeOrg\\n- Technical Account ID( TECHNICAL_ACCOUNT_ID ): < tech account id >@techacct.adobe.com \\n- Client ID( API_KEY ):Like a username for the API, Information is available on the completion of the Service Account integration\\n- Client Secret( CLIENT_SECRET ):Like a password for the API,  Information is available on the completion of the Service Account integration\\n- Account ID( TECHNICAL_ACCOUNT_ID ): Instructions on how to obtain it at https://youtu.be/lrg1MuVi0Fo?t=96\\n- Report suite( GLOBAL_COMPANY_ID ): Report suite ID from which you want to download the data. Usually it is 'canada5'.\\n- Private Key: Like a signature for your password\\n- JWT Payload: Some specific details that Adobe want you to show them to trade for the Access Token.\\n\\nMake sure that the integration is associated with an Adobe Analytics product profile that is granted access to the necessary metrics ,dimensions and segments.\\n\\n\\n\\n## Package installation\\n```python\\npip install requirements.txt\\n```\\n\\n## Samples\\n\\n### Initial setup - JWT\\nAfter you have configured the integration and downloaded the package, the following setup is needed:\\n```python\\nADOBE_ORG_ID = os.environ['ADOBE_ORG_ID']\\nSUBJECT_ACCOUNT = os.environ['SUBJECT_ACCOUNT']\\nCLIENT_ID = os.environ['CLIENT_ID']\\nCLIENT_SECRET = os.environ['CLIENT_SECRET']\\nPRIVATE_KEY_LOCATION = os.environ['PRIVATE_KEY_LOCATION']\\nGLOBAL_COMPANY_ID = os.environ['GLOBAL_COMPANY_ID']\\nREPORT_SUITE_ID = os.environ['REPORT_SUITE_ID']\\n```\\nNext initialise the Adobe client:\\n```python\\naa = analytics_client(\\n        adobe_org_id = ADOBE_ORG_ID, \\n        subject_account = SUBJECT_ACCOUNT, \\n        client_id = CLIENT_ID, \\n        client_secret = CLIENT_SECRET,\\n        account_id = GLOBAL_COMPANY_ID, \\n        private_key_location = PRIVATE_KEY_LOCATION\\n)\\n\\naa.set_report_suite(report_suite_id = REPORT_SUITE_ID)\\n```\\n\\n\\n### Initial setup - OAuth\\n\\nImport the package and initiate the required parameters\\n```python\\nimport analytics_client\\n\\nclient_id = '<client id>'\\nclient_secret = '<client secret>'\\nglobal_company_id = '<global company id>'\\n```\\nInitialise the Adobe client:\\n```python\\naa = analytics_client(\\n        auth_client_id = client_id, \\n        client_secret = client_secret,\\n        account_id = global_company_id\\n)\\n```\\nPerform the authentication\\n\\n```python\\naa._authenticate()\\n```\\n\\nFor a demo notebook, please refer to the [Jupyter Notebook - OAuth example](examples/JupyterNotebook/OAuthDemo.ipynb)\\n\\n\\n\\n## Report Configurations\\nSet the date range of the report (format: YYYY-MM-DD)\\n```python\\naa.set_date_range(date_start = '2019-12-01', date_end= '2019-12-31')\\n```\\nTo configure specific hours for the start and end date:\\n```python\\naa.set_date_range(date_start='2020-12-01', date_end='2020-12-01', hour_start= 4, hour_end= 5 )\\n```\\nIf `hour_end` is set, then only up to that hour in the last day data will be retrieved instead of the full day.\\n\\n## Global segments\\nTo add a segment, you need the segment ID (currently only this option is supported). To obtain the ID, you need to activate the Adobe Analytics Workspace debugger (https://github.com/AdobeDocs/analytics-2.0-apis/blob/master/reporting-tricks.md). Then inspect the JSON request window and locate the segment ID under the 'globalFilters' object.\\n\\nTo apply the segment:\\n```python\\naa.add_global_segment(segment_id = 's300000938_60d228c474f05e635fba03ff')\\n\\n# add segment 'SC Labs (E/F)(v12)' to the report request body\\n```\\n\\n\\n\\n### Request with 2 metrics and 1 dimension\\n```python\\naa.add_metric(metric_name= 'metrics/visits')\\naa.add_metric(metric_name= 'metrics/orders')\\naa.add_dimension(dimension_name = 'variables/mobiledevicetype')\\ndata = aa.get_report()\\n```\\nOutput:\\n\\n|itemId_lvl_1   |  value_lvl_1 | metrics/visits | metrics/averagetimeuserstay |  |\\n| --- | --- | --- | --- | --- \\n|         0     |      Other    |  1    |    3    \\n|  1728229488   |       Tablet  |     2   |   45    \\n|  2163986270   | Mobile Phone  |    12   |    23    \\n|  ...    | ...  |       ...   |        ...   |      \\n\\n### Request with 2 metrics and 2 dimensions:\\n```\\naa.add_metric(metric_name= 'metrics/visits')\\naa.add_metric(metric_name= 'metrics/averagetimespentonsite')\\naa.add_dimension(dimension_name = 'variables/devicetype')\\naa.add_dimension(dimension_name = 'variables/evar5')\\ndata = aa.get_report_multiple_breakdowns()\\n\\n```\\nOutput:\\nEach item in level 1 (i.e. Tablet) is broken down by the dimension in level 2 (i.e. eng,fra). The package downloads all possible combinations. In a similar fashion more dimensions can be added.\\n\\n| itemId_lvl_1 | value_lvl_1 | itemId_lvl_2 |  value_lvl_2 | metrics/visits | metrics/averagetimespentonsite  |  |\\n| --- | --- | --- | --- | --- | --- | --- \\n|0 |Other |1 |fra| 233| 39| \\n|0 |Other |2 |fra| 424| 12  | \\n|0 |Other |3 |fra| 840| 41  | \\n| ... | ... | ... | ... | ... | ... |  \\n| 1728229488 |Tablet |1 | eng| 80| 12  | \\n| 1728229488 |Tablet |2 |eng| 50| 41  | \\n| ... | ... | ... | ... | ... | ... |  \\n\\n\\n\\n## Upload result to Azure Blob Storage\\n\\nNow to connect to the Azure blob to upload the result, we must provide an the following parameters. You can find them on the “Access keys” page of the Azure blob storage account. To obtain the parameters, open the home page of Azure Portal Select Azure Blob storage account (stsaebdevca01 ) :\\n\\n![](/assets/images/AA-to-Azure-Python-Wrapper-Class/Azure-blob-provide-access-key.jpg)\\n\\n```python\\nconn_string=os.environ['conn_string']\\naccountName=os.environ['accountName']\\naccountKey=os.environ['accountKey']\\ncontainerName =os.environ['containerName']\\n```\\n\\nNow we can initiate the blob client and upload our result as a csv into the container\\n\\n```python\\nblob = BlobClient.from_connection_string(conn_str=conn_string, container_name=containerName, blob_name='blob_parent/blob_name')\\n\\nblob.upload_blob(str(data.to_csv()),overwrite=True)\\n```\\n\\n## Unit Test\\n\\nRun the following code to unit test the code\\n\\n```python\\npy.test Adobe-Azure-analytics-api-v2.0/tests/test_core.py\\n# or\\npytest \\n```\\n\\n\\n# Next Steps\\n\\n[Integrate with Azure](Azurepipeline.md)\\n\\n[Connect with Power BI](PowerBIReadme.md)\\n\\n# Issues, Bugs and Suggestions:\\n\\n\\nKnown missing features:\\n- No support for filtering\\n- No support for top N \\n- No support for custom sorting\\n",
+                "author": "AlexZ",
+                "title": "Automate Adobe Analytics Reports API v2 requests to export to Azure Blob Storage programmatically.",
+                "url": "",
+                "authorEmail": null,
+                "classifiers": "Programming Language :: Python :: 3, Programming Language :: Python :: 3.4, Programming Language :: Python :: 3.5, Programming Language :: Python :: 3.6, License :: OSI Approved :: MIT License, Operating System :: OS Independent",
+                "descriptionContentType": "text/markdown",
+                "homePage": "",
+                "keywords": null,
+                "license": "UNKNOWN",
+                "maintainer": null,
+                "maintainerEmail": null,
+                "platform": "UNKNOWN",
+                "projectUrl": null,
+                "providesExtra": null,
+                "requiresDist": null,
+                "requiresExternal": null,
+                "requiresPython": ">=3.6",
+                "summary": "Automate Adobe Analytics Reports API v2 requests to export to Azure Blob Storage programmatically.",
+                "hash": "10406349bd2242082bc03596b364312fb7a23df594342cc41c165d2b88438fc1",
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8021/api/v2/manager/python/packages/3"
+                    },
+                    {
+                        "rel": "packageList",
+                        "href": "http://localhost:8021/api/v2/manager/python/packages"
+                    }
+                ]
+            },
+            {
+                "id": 4,
+                "user": {
+                    "id": 4,
+                    "name": "Albert Einstein",
+                    "login": "einstein",
+                    "email": "einstein@ldap.forumsys.com"
+                },
+                "repository": {
+                    "id": 1,
+                    "name": "X",
+                    "publicationUri": "http://localhost/repo/X",
+                    "published": true,
+                    "requiresAuthentication": true,
+                    "technology": "Python",
+                    "lastPublicationSuccessful": true
+                },
+                "submission": {
+                    "id": 4,
+                    "state": "ACCEPTED"
+                },
+                "name": "ArmyOfEvilRobots",
+                "version": "0.4.1dev",
+                "source": "/opt/rdepot/repositories/1/19358553/ArmyOfEvilRobots-0.4.1dev.tar.gz",
+                "active": true,
+                "deleted": false,
+                "technology": "Python",
+                "binary": false,
+                "description": "UNKNOWN",
+                "author": "Derek Anderson",
+                "title": "Utility library. Contains per app cross platform config library tools for now.",
+                "url": "",
+                "authorEmail": null,
+                "classifiers": null,
+                "descriptionContentType": "",
+                "homePage": "",
+                "keywords": null,
+                "license": "MIT",
+                "maintainer": null,
+                "maintainerEmail": null,
+                "platform": "UNKNOWN",
+                "projectUrl": null,
+                "providesExtra": null,
+                "requiresDist": null,
+                "requiresExternal": null,
+                "requiresPython": null,
+                "summary": "Utility library. Contains per app cross platform config library tools for now.",
+                "hash": "ebb8949f7ad16c6d743b5c2da7d31bea06c81215532bb68b4179916157741549",
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8021/api/v2/manager/python/packages/4"
+                    },
+                    {
+                        "rel": "packageList",
+                        "href": "http://localhost:8021/api/v2/manager/python/packages"
+                    }
+                ]
+            }
+        ],
+        "page": {
+            "size": 20,
+            "totalElements": 4,
+            "totalPages": 1,
+            "number": 0
+        }
+    }
+}

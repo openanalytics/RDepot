@@ -63,6 +63,7 @@
 					"active": true,
 					"description": "Package for visualizing data quality of partially accruing data.",
 					"technology": "R",
+					"descriptionContentType": "txt",
 					"repository": {
 						"name": "testrepo2",
 						"id": 3,

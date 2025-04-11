@@ -54,7 +54,8 @@ public class RepositoryIndexGenerator extends IndexesGenerator {
             publicationUri = packageBag.getRepository().getPublicationUri();
         }
 
-        return String.format(anchor, publicationUri + separator + packageBag.getName(), packageBag.getName());
+        return String.format(
+                anchor, publicationUri + separator + packageBag.getNormalizedName(), packageBag.getNormalizedName());
     }
 
     protected String prepareTemplateString(String template, PythonRepository repository) {

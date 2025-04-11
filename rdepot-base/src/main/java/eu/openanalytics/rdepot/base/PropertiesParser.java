@@ -34,7 +34,7 @@ public class PropertiesParser extends Properties {
     @Serial
     private static final long serialVersionUID = 356227594180997607L;
 
-    private final Pattern isKeyValue = Pattern.compile("^[a-zA-Z0-9][a-zA-Z0-9-/@_]*:(?:.*|\\n)$");
+    private final Pattern isKeyValue = Pattern.compile("^[a-zA-Z0-9][a-zA-Z0-9-/@_.]*:(?:.*|\\n)$");
     private final Pattern isPartOfValue = Pattern.compile("^(?:[\\t ]+.*|)$");
 
     public PropertiesParser(File descriptionFile) throws IOException {
@@ -67,7 +67,7 @@ public class PropertiesParser extends Properties {
     }
 
     private void load0(Scanner scanner) throws IOException {
-        scanner.useDelimiter("\\n");
+        scanner.useDelimiter("(\r\\n|\r|\\n)");
         String currentKey = null;
         String currentValue = null;
         String line = null;

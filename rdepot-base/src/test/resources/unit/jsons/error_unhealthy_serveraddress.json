@@ -1,0 +1,7 @@
+{
+  "status": "ERROR",
+  "code": 422,
+  "message": "The server at the provided address is not healthy.",
+  "messageCode": "error.unhealthy.serveraddress",
+  "data": null
+}

@@ -1,0 +1,33 @@
+databaseChangeLog:
+  - changeSet:
+      id: 17_01_description_content_type
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+          - columnExists:
+              tableName: package
+              schemaName: public
+              columnName: description_content_type
+      changes:
+        - addColumn:
+            tableName: package
+            schemaName: public
+            columns:
+            - column:
+                name: description_content_type
+                type: text
+                defaultValue: ""
+                constraints:
+                  nullable: false
+        - sql:
+            sql: "UPDATE public.package \
+              SET description_content_type = 'txt' \
+              WHERE resource_technology='R'; \
+              UPDATE public.package p \
+              SET \
+                description_content_type=py2.description_content_type \
+              FROM \
+              	(SELECT id, COALESCE(py.description_content_type, '') AS description_content_type \
+              FROM public.pythonpackage py) AS py2 \
+              WHERE p.id = py2.id;"

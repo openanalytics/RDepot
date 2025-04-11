@@ -46,6 +46,7 @@ public class RPackageDto extends PackageDto {
     private String linkingTo;
     private String priority;
     private String needsCompilation;
+    private String maintainer;
 
     public RPackageDto(RPackage packageBag) {
         super(packageBag);
@@ -63,6 +64,7 @@ public class RPackageDto extends PackageDto {
         this.linkingTo = packageBag.getLinkingTo();
         this.priority = packageBag.getPriority();
         this.needsCompilation = packageBag.isNeedsCompilation() ? "yes" : "no";
+        this.maintainer = packageBag.getMaintainer();
     }
 
     @Override

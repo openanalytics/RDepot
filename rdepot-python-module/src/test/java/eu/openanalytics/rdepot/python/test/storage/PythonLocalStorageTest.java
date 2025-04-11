@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.storage.implementations.CommonLocalStorage;
+import eu.openanalytics.rdepot.python.config.PythonProperties;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.storage.implementations.PythonLocalStorage;
@@ -60,8 +61,8 @@ public class PythonLocalStorageTest extends UnitTest {
 
     private final ResourceLoader resourceLoader = new DefaultResourceLoader();
     private final Resource resource = resourceLoader.getResource("classpath:templates/index_template.html");
-    private final PythonLocalStorage storage =
-            new PythonLocalStorage(new PackageIndexGenerator(resource), new RepositoryIndexGenerator(resource));
+    private final PythonLocalStorage storage = new PythonLocalStorage(
+            new PackageIndexGenerator(resource), new RepositoryIndexGenerator(resource), new PythonProperties());
 
     @BeforeEach
     public void setUpDirectories() throws Exception {
@@ -120,6 +121,7 @@ public class PythonLocalStorageTest extends UnitTest {
         pandasRemotePackage.setSource(
                 new File(packageUploadDirectory + "/repositories/1/86085553/pandas-2.0.1.tar.gz").getAbsolutePath());
         pandasRemotePackage.setName("pandas");
+        pandasRemotePackage.setNormalizedName("pandas");
         pandasRemotePackage.setVersion("2.0.1");
         pandasRemotePackage.setHash("7053d7ff8c563324b9a76110fabbd227c96c11d337521a57d94973bbb5f2a7ad");
         pandasRemotePackage.setActive(true);
@@ -128,6 +130,7 @@ public class PythonLocalStorageTest extends UnitTest {
         pandasPackage.setSource(
                 new File(packageUploadDirectory + "/repositories/1/87108158/pandas-2.0.3.tar.gz").getAbsolutePath());
         pandasPackage.setName("pandas");
+        pandasPackage.setNormalizedName("pandas");
         pandasPackage.setVersion("2.0.3");
         pandasPackage.setHash("c02f372a88e0d17f36d3093a644c73cfc1788e876a7c4bcb4020a77512e2043c");
         pandasPackage.setActive(true);
@@ -137,6 +140,7 @@ public class PythonLocalStorageTest extends UnitTest {
                 new File(packageUploadDirectory + "/repositories/1/36342644/cryptography-41.0.1.tar.gz")
                         .getAbsolutePath());
         cryptographyPackage.setName("cryptography");
+        cryptographyPackage.setNormalizedName("cryptography");
         cryptographyPackage.setVersion("41.0.1");
         cryptographyPackage.setHash("4a0740db3e223fcd38a6ad062cdae927429a0894132e643d613d43b647bf488a");
         cryptographyPackage.setActive(true);
@@ -194,6 +198,7 @@ public class PythonLocalStorageTest extends UnitTest {
         pandasPackage1.setSource(
                 new File(packageUploadDirectory + "/repositories/2/86085553/pandas-2.0.1.tar.gz").getAbsolutePath());
         pandasPackage1.setName("pandas");
+        pandasPackage1.setNormalizedName("pandas");
         pandasPackage1.setVersion("2.0.1");
         pandasPackage1.setHash("7053d7ff8c563324b9a76110fabbd227c96c11d337521a57d94973bbb5f2a7ad");
         pandasPackage1.setActive(true);
@@ -202,6 +207,7 @@ public class PythonLocalStorageTest extends UnitTest {
         pandasPackage2.setSource(
                 new File(packageUploadDirectory + "/repositories/2/87108158/pandas-2.0.3.tar.gz").getAbsolutePath());
         pandasPackage2.setName("pandas");
+        pandasPackage2.setNormalizedName("pandas");
         pandasPackage2.setVersion("2.0.3");
         pandasPackage2.setHash("c02f372a88e0d17f36d3093a644c73cfc1788e876a7c4bcb4020a77512e2043c");
         pandasPackage2.setActive(true);
@@ -243,6 +249,7 @@ public class PythonLocalStorageTest extends UnitTest {
         pandasPackage.setSource(
                 new File(packageUploadDirectory + "/repositories/3/87108158/pandas-2.0.3.tar.gz").getAbsolutePath());
         pandasPackage.setName("pandas");
+        pandasPackage.setNormalizedName("pandas");
         pandasPackage.setVersion("2.0.3");
         pandasPackage.setHash("c02f372a88e0d17f36d3093a644c73cfc1788e876a7c4bcb4020a77512e2043c");
         pandasPackage.setActive(true);
@@ -252,6 +259,7 @@ public class PythonLocalStorageTest extends UnitTest {
                 new File(packageUploadDirectory + "/repositories/3/36342644/cryptography-41.0.1.tar.gz")
                         .getAbsolutePath());
         cryptographyPackage.setName("cryptography");
+        cryptographyPackage.setNormalizedName("cryptography");
         cryptographyPackage.setVersion("41.0.1");
         cryptographyPackage.setHash("4a0740db3e223fcd38a6ad062cdae927429a0894132e643d613d43b647bf488a");
         cryptographyPackage.setActive(true);
@@ -302,6 +310,7 @@ public class PythonLocalStorageTest extends UnitTest {
         pandasRemotePackage.setSource(
                 new File(packageUploadDirectory + "/repositories/1/86085553/pandas-2.0.1.tar.gz").getAbsolutePath());
         pandasRemotePackage.setName("pandas");
+        pandasRemotePackage.setNormalizedName("pandas");
         pandasRemotePackage.setVersion("2.0.1");
         pandasRemotePackage.setHash("7053d7ff8c563324b9a76110fabbd227c96c11d337521a57d94973bbb5f2a7ad");
         pandasRemotePackage.setActive(true);
@@ -311,6 +320,7 @@ public class PythonLocalStorageTest extends UnitTest {
         pandasPackage.setSource(
                 new File(packageUploadDirectory + "/repositories/1/87108158/pandas-2.0.3.tar.gz").getAbsolutePath());
         pandasPackage.setName("pandas");
+        pandasPackage.setNormalizedName("pandas");
         pandasPackage.setVersion("2.0.3");
         pandasPackage.setHash("c02f372a88e0d17f36d3093a644c73cfc1788e876a7c4bcb4020a77512e2043c");
         pandasPackage.setActive(true);
@@ -321,12 +331,24 @@ public class PythonLocalStorageTest extends UnitTest {
                 new File(packageUploadDirectory + "/repositories/1/36342644/cryptography-41.0.1.tar.gz")
                         .getAbsolutePath());
         cryptographyPackage.setName("cryptography");
+        cryptographyPackage.setNormalizedName("cryptography");
         cryptographyPackage.setVersion("41.0.1");
         cryptographyPackage.setHash("4a0740db3e223fcd38a6ad062cdae927429a0894132e643d613d43b647bf488a");
         cryptographyPackage.setActive(true);
         cryptographyPackage.setRequiresPython(">=3.7");
 
-        List<PythonPackage> packages = List.of(pandasRemotePackage, pandasPackage, cryptographyPackage);
+        final PythonPackage armyOfEvilRobotsPackage = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
+        armyOfEvilRobotsPackage.setSource(
+                new File(packageUploadDirectory + "/repositories/1/90752524/ArmyOfEvilRobots-0.4.1dev.tar.gz")
+                        .getAbsolutePath());
+        armyOfEvilRobotsPackage.setName("ArmyOfEvilRobots");
+        armyOfEvilRobotsPackage.setNormalizedName("ArmyOfEvilRobots");
+        armyOfEvilRobotsPackage.setVersion("0.4.1dev");
+        armyOfEvilRobotsPackage.setHash("ebb8949f7ad16c6d743b5c2da7d31bea06c81215532bb68b4179916157741549");
+        armyOfEvilRobotsPackage.setActive(true);
+
+        List<PythonPackage> packages =
+                List.of(pandasRemotePackage, pandasPackage, cryptographyPackage, armyOfEvilRobotsPackage);
 
         storage.organizePackagesInStorage(datestamp, packages, repository);
 
@@ -337,6 +359,8 @@ public class PythonLocalStorageTest extends UnitTest {
         final File actualPandasIndexFile = new File(repositoryGenerationDirectory + "/1/20240228/pandas/index.html");
         final File actualCryptographyIndexFile =
                 new File(repositoryGenerationDirectory + "/1/20240228/cryptography/index.html");
+        final File actualArmyOfEvilRobotsIndexFile =
+                new File(repositoryGenerationDirectory + "/1/20240228/armyofevilrobots/index.html");
 
         final String actualRepositoryIndexFileContent =
                 Files.readString(actualRepositoryIndexFile.toPath()).replaceAll("\\s+", " ");
@@ -344,6 +368,8 @@ public class PythonLocalStorageTest extends UnitTest {
                 Files.readString(actualPandasIndexFile.toPath()).replaceAll("\\s+", " ");
         final String actualCryptographyIndexFileContent =
                 Files.readString(actualCryptographyIndexFile.toPath()).replaceAll("\\s+", " ");
+        final String actualArmyOfEvilRobotsIndexFileContent =
+                Files.readString(actualArmyOfEvilRobotsIndexFile.toPath()).replaceAll("\\s+", " ");
 
         final String expectedRepositoryIndexFileContent =
                 getExpectedRepositoryIndexFileContent().replaceAll("\\s+", " ");
@@ -351,10 +377,14 @@ public class PythonLocalStorageTest extends UnitTest {
                 getExpectedPandasIndexFileContent().replaceAll("\\s+", " ");
         final String expectedCryptographyIndexFileContent =
                 getExpectedCryptographyIndexFileContent().replaceAll("\\s+", " ");
+        final String expectedArmyOfEvilRobotsIndexFileContent =
+                getExpectedArmyOfEvilRobotsIndexFileContent().replaceAll("\\s+", " ");
 
         verifyPackage(currentGeneratedDirectory, "pandas", "pandas-2.0.1.tar.gz");
         verifyPackage(currentGeneratedDirectory, "pandas", "pandas-2.0.3.tar.gz");
         verifyPackage(currentGeneratedDirectory, "cryptography", "cryptography-41.0.1.tar.gz");
+        verifyPackage(currentGeneratedDirectory, "armyofevilrobots", "ArmyOfEvilRobots-0.4.1dev.tar.gz");
+
         assertEquals(
                 expectedRepositoryIndexFileContent,
                 actualRepositoryIndexFileContent,
@@ -364,6 +394,10 @@ public class PythonLocalStorageTest extends UnitTest {
                 expectedCryptographyIndexFileContent,
                 actualCryptographyIndexFileContent,
                 "Incorrect cryptography index file");
+        assertEquals(
+                expectedArmyOfEvilRobotsIndexFileContent,
+                actualArmyOfEvilRobotsIndexFileContent,
+                "Incorrect ArmyOfEvilRobots index file");
         assertTrue(currentDatestampGeneratedDirectory.isDirectory(), "Directory was not generated");
         assertTrue(Files.isSymbolicLink(currentGeneratedDirectory.toPath()), "current should be a symlink");
         assertEquals(
@@ -386,6 +420,7 @@ public class PythonLocalStorageTest extends UnitTest {
                   <h1></h1>
                   <a href="/repo/testrepo/pandas">pandas</a>\s
                   <a href="/repo/testrepo/cryptography">cryptography</a>\s
+                  <a href="/repo/testrepo/armyofevilrobots">armyofevilrobots</a>\s
                 </body>
                 </html>
                 """;
@@ -428,6 +463,24 @@ public class PythonLocalStorageTest extends UnitTest {
                 """;
     }
 
+    private String getExpectedArmyOfEvilRobotsIndexFileContent() {
+        return """
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <meta name="Test Python Repository:repository-version" content="10">
+                    <title>Links for ArmyOfEvilRobots</title>
+                </head>
+                <body>
+                  <h1>Links for ArmyOfEvilRobots</h1>
+                  <a href="/repo/testrepo/armyofevilrobots/ArmyOfEvilRobots-0.4.1dev.tar.gz" data-requires-python="" data-version="0.4.1dev">ArmyOfEvilRobots-0.4.1dev.tar.gz</a><br>
+                </body>
+                </html>
+                """;
+    }
+
     private void verifyPackage(File currentGeneratedDirectory, String packageName, String filename) {
         final File packageFile = new File(currentGeneratedDirectory + "/" + packageName + "/" + filename);
         assertTrue(packageFile.exists(), "Package file " + packageFile.getAbsolutePath() + " does not exists.");
@@ -444,6 +497,7 @@ public class PythonLocalStorageTest extends UnitTest {
         final PythonPackage packageToMove = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
         packageToMove.setSource(packageFileToMove.getAbsolutePath());
         packageToMove.setName("coconutpy");
+        packageToMove.setNormalizedName("coconutpy");
         packageToMove.setVersion("2.2.1");
         packageToMove.setActive(true);
         packageToMove.setDeleted(false);
@@ -529,6 +583,7 @@ public class PythonLocalStorageTest extends UnitTest {
         final PythonPackage packageBag = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
         packageBag.setSource(packageFile.getAbsolutePath());
         packageBag.setName("cryptography");
+        packageBag.setNormalizedName("cryptography");
         packageBag.setVersion("41.0.1");
         packageBag.setActive(true);
         packageBag.setDeleted(false);

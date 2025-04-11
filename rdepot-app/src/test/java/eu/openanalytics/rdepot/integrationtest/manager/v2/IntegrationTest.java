@@ -161,7 +161,11 @@ public abstract class IntegrationTest {
                 break;
             case POST:
                 testPostEndpoint(
-                        req.getBody().orElseThrow(), req.getExpectedJsonPath(), req.getStatusCode(), req.getToken());
+                        req.getBody().orElseThrow(),
+                        req.getExpectedJsonPath(),
+                        req.getStatusCode(),
+                        req.getToken(),
+                        req.getUrlSuffix());
                 break;
             case POST_UNAUTHENTICATED:
                 testPostEndpoint_asUnauthenticated(req.getBody().orElseThrow());
@@ -174,7 +178,8 @@ public abstract class IntegrationTest {
                         req.getSubmissionMultipartBody().orElseThrow(),
                         req.getExpectedJsonPath(),
                         req.getStatusCode(),
-                        req.getToken());
+                        req.getToken(),
+                        req.getPath().orElse(apiPath));
                 break;
             case DELETE:
                 testDeleteEndpoint(req.getUrlSuffix(), req.getStatusCode(), req.getToken());
@@ -377,6 +382,30 @@ public abstract class IntegrationTest {
         Assertions.assertEquals(expectedJSON, actualJSON, "Incorrect JSON output");
     }
 
+    protected void testPostEndpoint(
+            String body, String expectedJsonPath, int statusCode, String token, String urlSuffix) throws Exception {
+        JSONParser jsonParser = new JSONParser();
+
+        FileReader reader = new FileReader(JSON_PATH + expectedJsonPath);
+        JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
+
+        String data = given().header(AUTHORIZATION, BASIC + token)
+                .accept(ContentType.JSON)
+                .contentType(ContentType.JSON)
+                .body(body)
+                .when()
+                .post(apiPath + urlSuffix)
+                .then()
+                .statusCode(statusCode)
+                .extract()
+                .asString();
+
+        JSONObject actualJSON = (JSONObject) jsonParser.parse(data);
+        removeFields(actualJSON, false);
+        removeFields(expectedJSON, false);
+        Assertions.assertEquals(expectedJSON, actualJSON, "There are some differences in packages that user sees.");
+    }
+
     protected void testPostEndpoint(String body, String expectedJsonPath, int statusCode, String token)
             throws Exception {
         JSONParser jsonParser = new JSONParser();
@@ -426,7 +455,8 @@ public abstract class IntegrationTest {
     }
 
     protected void testPostMultipartEndpoint(
-            SubmissionMultipartBody body, String expectedJsonPath, int statusCode, String token) throws Exception {
+            SubmissionMultipartBody body, String expectedJsonPath, int statusCode, String token, String path)
+            throws Exception {
         JSONParser jsonParser = new JSONParser();
 
         FileReader reader = new FileReader(JSON_PATH + expectedJsonPath);
@@ -442,7 +472,7 @@ public abstract class IntegrationTest {
                     .multiPart("changes", body.getChanges())
                     .multiPart(body.getMultipartFile())
                     .when()
-                    .post(apiPath)
+                    .post(path)
                     .then()
                     .statusCode(statusCode)
                     .extract()
@@ -530,21 +560,6 @@ public abstract class IntegrationTest {
 
         JSONObject actualJSON = (JSONObject) jsonParser.parse(data);
         Assertions.assertEquals(expectedJSON, actualJSON, "Incorrect JSON output");
-    }
-
-    @SuppressWarnings("unchecked")
-    protected List<JSONObject> convert(JSONArray rootJSON) throws ParseException {
-        List<JSONObject> JSON = new ArrayList<>();
-        for (Object o : rootJSON) {
-            JSONObject objJSON = (JSONObject) o;
-            String source = objJSON.get("source").toString();
-            objJSON.remove("lastLoggedInOn");
-            objJSON.remove("source");
-            String newSource = source.replaceFirst("/[0-9]{2}[0-9]+", "");
-            objJSON.put("source", newSource);
-            JSON.add(objJSON);
-        }
-        return JSON;
     }
 
     protected String extractContent(byte[] pdf) throws IOException {
@@ -649,13 +664,59 @@ public abstract class IntegrationTest {
     private void removeFields(JSONObject json, boolean newSubmission) {
         try {
             JSONObject jsonData = (JSONObject) json.get("data");
-            if (jsonData != null) {
-                if (jsonData.get("packageBag") != null) {
-                    JSONObject jsonPackage = (JSONObject) jsonData.get("packageBag");
+            if (jsonData == null) return;
+            if (jsonData.get("packageBag") != null) {
+                JSONObject jsonPackage = (JSONObject) jsonData.get("packageBag");
+                jsonPackage.remove("source");
+            }
+            if (jsonData.get("relatedResource") != null) {
+                JSONObject jsonRelatedResource = (JSONObject) jsonData.get("relatedResource");
+                if (jsonRelatedResource.get("lastLoggedInOn") != null) {
+                    jsonRelatedResource.remove("lastLoggedInOn");
+                }
+                if (jsonRelatedResource.get("lastUsed") != null) {
+                    jsonRelatedResource.remove("lastUsed");
+                }
+            }
+            if (jsonData.get("lastLoggedInOn") != null) {
+                jsonData.remove("lastLoggedInOn");
+            }
+            if (jsonData.get("createdOn") != null) {
+                jsonData.remove("createdOn");
+            }
+            if (jsonData.get("creationDate") != null) {
+                jsonData.remove("creationDate");
+            }
+            if (jsonData.get("expirationDate") != null) {
+                jsonData.remove("expirationDate");
+            }
+            if (jsonData.get("lastUsed") != null) {
+                jsonData.remove("lastUsed");
+            }
+            if (jsonData.get("value") != null) {
+                jsonData.remove("value");
+            }
+            if (jsonData.get("lastPublicationTimestamp") != null) {
+                jsonData.remove("lastPublicationTimestamp");
+            }
+            if (jsonData.get("lastModifiedTimestamp") != null) {
+                jsonData.remove("lastModifiedTimestamp");
+            }
+            if (newSubmission) {
+                jsonData.remove("created");
+            }
+
+            JSONArray expectedContent =
+                    (JSONArray) Objects.requireNonNull(jsonData).get("content");
+            if (expectedContent == null) return;
+            for (int i = 0; i < expectedContent.size(); i++) {
+                JSONObject el = (JSONObject) expectedContent.get(i);
+                if (el.get("packageBag") != null) {
+                    JSONObject jsonPackage = (JSONObject) el.get("packageBag");
                     jsonPackage.remove("source");
                 }
-                if (jsonData.get("relatedResource") != null) {
-                    JSONObject jsonRelatedResource = (JSONObject) jsonData.get("relatedResource");
+                if (el.get("relatedResource") != null) {
+                    JSONObject jsonRelatedResource = (JSONObject) el.get("relatedResource");
                     if (jsonRelatedResource.get("lastLoggedInOn") != null) {
                         jsonRelatedResource.remove("lastLoggedInOn");
                     }
@@ -663,80 +724,32 @@ public abstract class IntegrationTest {
                         jsonRelatedResource.remove("lastUsed");
                     }
                 }
-                if (jsonData.get("lastLoggedInOn") != null) {
-                    jsonData.remove("lastLoggedInOn");
+                if (el.get("lastLoggedInOn") != null) {
+                    el.remove("lastLoggedInOn");
                 }
-                if (jsonData.get("createdOn") != null) {
-                    jsonData.remove("createdOn");
+                if (el.get("createdOn") != null) {
+                    el.remove("createdOn");
                 }
-                if (jsonData.get("creationDate") != null) {
-                    jsonData.remove("creationDate");
+                if (el.get("creationDate") != null) {
+                    el.remove("creationDate");
                 }
-                if (jsonData.get("expirationDate") != null) {
-                    jsonData.remove("expirationDate");
+                if (el.get("expirationDate") != null) {
+                    el.remove("expirationDate");
                 }
-                if (jsonData.get("lastUsed") != null) {
-                    jsonData.remove("lastUsed");
+                if (el.get("lastUsed") != null) {
+                    el.remove("lastUsed");
                 }
-                if (jsonData.get("value") != null) {
-                    jsonData.remove("value");
+                if (el.get("value") != null) {
+                    el.remove("value");
                 }
-                if (jsonData.get("lastPublicationTimestamp") != null) {
-                    jsonData.remove("lastPublicationTimestamp");
+                if (el.get("lastPublicationTimestamp") != null) {
+                    el.remove("lastPublicationTimestamp");
                 }
-                if (jsonData.get("lastModifiedTimestamp") != null) {
-                    jsonData.remove("lastModifiedTimestamp");
+                if (el.get("lastModifiedTimestamp") != null) {
+                    el.remove("lastModifiedTimestamp");
                 }
-                if (newSubmission) {
-                    jsonData.remove("created");
-                }
-            }
-
-            JSONArray expectedContent =
-                    (JSONArray) Objects.requireNonNull(jsonData).get("content");
-            if (expectedContent != null) {
-                for (int i = 0; i < expectedContent.size(); i++) {
-                    JSONObject el = (JSONObject) expectedContent.get(i);
-                    if (el.get("packageBag") != null) {
-                        JSONObject jsonPackage = (JSONObject) el.get("packageBag");
-                        jsonPackage.remove("source");
-                    }
-                    if (el.get("relatedResource") != null) {
-                        JSONObject jsonRelatedResource = (JSONObject) el.get("relatedResource");
-                        if (jsonRelatedResource.get("lastLoggedInOn") != null) {
-                            jsonRelatedResource.remove("lastLoggedInOn");
-                        }
-                        if (jsonRelatedResource.get("lastUsed") != null) {
-                            jsonRelatedResource.remove("lastUsed");
-                        }
-                    }
-                    if (el.get("lastLoggedInOn") != null) {
-                        el.remove("lastLoggedInOn");
-                    }
-                    if (el.get("createdOn") != null) {
-                        el.remove("createdOn");
-                    }
-                    if (el.get("creationDate") != null) {
-                        el.remove("creationDate");
-                    }
-                    if (el.get("expirationDate") != null) {
-                        el.remove("expirationDate");
-                    }
-                    if (el.get("lastUsed") != null) {
-                        el.remove("lastUsed");
-                    }
-                    if (el.get("value") != null) {
-                        el.remove("value");
-                    }
-                    if (el.get("lastPublicationTimestamp") != null) {
-                        el.remove("lastPublicationTimestamp");
-                    }
-                    if (el.get("lastModifiedTimestamp") != null) {
-                        el.remove("lastModifiedTimestamp");
-                    }
-                    if (newSubmission && i == 0) {
-                        el.remove("created");
-                    }
+                if (newSubmission && i == 0) {
+                    el.remove("created");
                 }
             }
         } catch (ClassCastException ignored) {

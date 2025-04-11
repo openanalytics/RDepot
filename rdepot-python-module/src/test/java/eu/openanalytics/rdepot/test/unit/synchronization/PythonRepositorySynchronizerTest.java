@@ -227,8 +227,8 @@ public class PythonRepositorySynchronizerTest extends UnitTest {
                 .buildSynchronizeRequestBody(populatedContent, new ArrayList<>(), repository, versionBefore);
 
         List<File> expectedFirstChunk = new ArrayList<>(expectedFirstFilesToUpload);
-        List<File> expectedSeondChunk = new ArrayList<>(expectedNextFilesToUpload);
-        List<List<File>> chunksToUpload = List.of(expectedFirstChunk, expectedSeondChunk);
+        List<File> expectedSecondChunk = new ArrayList<>(expectedNextFilesToUpload);
+        List<List<File>> chunksToUpload = List.of(expectedFirstChunk, expectedSecondChunk);
 
         doAnswer(new UploadMultipleChunksRequestAssertionAnswer(
                         2, repository, versionBefore, versionAfter, packagesToDelete, chunksToUpload))

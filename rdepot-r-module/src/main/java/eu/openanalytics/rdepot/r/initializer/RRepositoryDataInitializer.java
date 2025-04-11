@@ -106,10 +106,11 @@ public class RRepositoryDataInitializer
             final Strategy<?> strategy = factory.updateRepositoryStrategy(existingRepository, requester, newRepository);
             strategyExecutor.execute(strategy);
         } catch (AdminNotFound e1) {
-            log.error("When trying to create a preconfigured repositories, we couldn't find any valid administrator");
+            log.error("When trying to create a configured repository, no valid administrators were found");
         } catch (StrategyFailure e) {
-            log.error("We tried to update " + existingRepository.getName() + " repository from preconfigured "
-                    + "repositories but unexpected error occured");
+            log.error(
+                    "When trying to update repository {} based on the declarative configuration, an unexpected error occurred",
+                    existingRepository.getName());
         }
     }
 }

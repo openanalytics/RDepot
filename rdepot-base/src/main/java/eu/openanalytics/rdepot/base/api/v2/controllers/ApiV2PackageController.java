@@ -116,8 +116,7 @@ public class ApiV2PackageController extends ApiV2ReadingController<Package, Pack
             @ParameterObject Pageable pageable,
             @RequestParam(name = "repository", required = false) List<String> repositories,
             @RequestParam(name = "deleted", required = false) Optional<Boolean> deleted,
-            @RequestParam(name = "submissionState", required = false, defaultValue = "ACCEPTED")
-                    List<SubmissionState> submissionStates,
+            @RequestParam(name = "submissionState", required = false) List<SubmissionState> submissionStates,
             @RequestParam(name = "technology", required = false) List<String> technologies,
             @RequestParam(name = "search", required = false) Optional<String> search,
             @RequestParam(name = "maintainer", required = false) List<String> maintainers)

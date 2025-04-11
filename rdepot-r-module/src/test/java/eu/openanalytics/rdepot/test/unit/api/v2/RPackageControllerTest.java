@@ -138,7 +138,7 @@ public class RPackageControllerTest extends ApiV2ControllerUnitTest {
 
         when(userService.findActiveByLogin("user")).thenReturn(user);
         when(userService.isAdmin(user.get())).thenReturn(true);
-        when(rPackageService.findAllBySpecification(any(), any()))
+        when(rPackageService.findAll(any()))
                 .thenReturn(RPackageTestFixture.GET_EXAMPLE_PACKAGES_PAGED(repository, user.get()));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/r/packages")
@@ -160,7 +160,7 @@ public class RPackageControllerTest extends ApiV2ControllerUnitTest {
         when(rPackageService.findAllBySpecification(any(), any())).thenReturn(packagesPage);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/r/packages")
-                        .param("repositoryName", repository.getName())
+                        .param("repository", repository.getName())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(Files.readString(Path.of(EXAMPLE_PACKAGES_REPO_PATH))));

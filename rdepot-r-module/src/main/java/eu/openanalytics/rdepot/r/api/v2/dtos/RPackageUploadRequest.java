@@ -42,6 +42,7 @@ public class RPackageUploadRequest extends PackageUploadRequest<RRepository> {
     private String rVersion;
     private String architecture;
     private String distribution;
+    private boolean generateManual = true;
 
     public RPackageUploadRequest(
             MultipartFile fileData,
@@ -53,10 +54,11 @@ public class RPackageUploadRequest extends PackageUploadRequest<RRepository> {
             String architecture,
             String distribution,
             String changes) {
-        super(fileData, repository, generateManual, replace, changes);
+        super(fileData, repository, replace, changes);
         this.binaryPackage = binaryPackage;
         this.rVersion = rVersion;
         this.architecture = architecture;
         this.distribution = distribution;
+        this.generateManual = generateManual;
     }
 }

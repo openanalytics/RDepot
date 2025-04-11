@@ -42,6 +42,7 @@ import eu.openanalytics.rdepot.base.api.v2.validation.PageableValidator;
 import eu.openanalytics.rdepot.base.entities.AccessToken;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.mediator.deletion.AccessTokenDeleter;
+import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.service.AccessTokenService;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
@@ -274,6 +275,10 @@ public class ApiV2AccessTokenController extends ApiV2Controller<AccessToken, Acc
         try {
             AccessTokenDto accessTokenDto = applyPatchToEntity(jsonPatch, accessToken);
             updated = dtoConverter.resolveDtoToEntity(accessTokenDto);
+
+            if (updated.isDeleted()) {
+                return handleValidationError(MessageCodes.ACCESS_TOKENS_CANNOT_BE_SOFT_DELETED);
+            }
 
             accessTokenPatchValidator.validatePatch(jsonPatch, accessToken, accessTokenDto);
 

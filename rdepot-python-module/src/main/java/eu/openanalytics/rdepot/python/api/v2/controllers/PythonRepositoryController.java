@@ -34,12 +34,14 @@ import eu.openanalytics.rdepot.base.api.v2.exceptions.MalformedPatchException;
 import eu.openanalytics.rdepot.base.api.v2.exceptions.NotAllowedInDeclarativeMode;
 import eu.openanalytics.rdepot.base.api.v2.exceptions.RepositoryDeletionException;
 import eu.openanalytics.rdepot.base.api.v2.exceptions.RepositoryNotFound;
+import eu.openanalytics.rdepot.base.api.v2.exceptions.SynchronizationNotFound;
 import eu.openanalytics.rdepot.base.api.v2.exceptions.UserNotAuthorized;
 import eu.openanalytics.rdepot.base.api.v2.hateoas.RoleAwareRepresentationModelAssembler;
 import eu.openanalytics.rdepot.base.api.v2.resolvers.CommonPageableSortResolver;
 import eu.openanalytics.rdepot.base.api.v2.resolvers.DtoResolvedPageable;
 import eu.openanalytics.rdepot.base.api.v2.validation.PageableValidator;
 import eu.openanalytics.rdepot.base.entities.Role;
+import eu.openanalytics.rdepot.base.entities.SynchronizationStatus;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
@@ -55,6 +57,7 @@ import eu.openanalytics.rdepot.python.api.v2.converters.PythonRepositoryDtoConve
 import eu.openanalytics.rdepot.python.api.v2.dtos.PythonRepositoryDto;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.mediator.deletion.PythonRepositoryDeleter;
+import eu.openanalytics.rdepot.python.mirroring.PypiMirrorSynchronizer;
 import eu.openanalytics.rdepot.python.services.PythonRepositoryService;
 import eu.openanalytics.rdepot.python.strategy.factory.PythonStrategyFactory;
 import eu.openanalytics.rdepot.python.validation.PythonRepositoryValidator;
@@ -63,6 +66,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.json.JsonException;
 import jakarta.json.JsonPatch;
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
@@ -108,6 +112,7 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
     private final PageableValidator pageableValidator;
     private final CommonPageableSortResolver pageableSortResolver;
     private final StrategyExecutor strategyExecutor;
+    private final PypiMirrorSynchronizer mirrorSynchronizer;
 
     @Value("${declarative}")
     private String declarative;
@@ -129,7 +134,8 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
             PythonRepositoryDeleter deleter,
             PageableValidator pageableValidator,
             CommonPageableSortResolver pageableSortResolver,
-            StrategyExecutor strategyExecutor) {
+            StrategyExecutor strategyExecutor,
+            PypiMirrorSynchronizer mirrorSynchronizer) {
         super(
                 messageSource,
                 LocaleContextHolder.getLocale(),
@@ -148,6 +154,7 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
         this.pageableValidator = pageableValidator;
         this.pageableSortResolver = pageableSortResolver;
         this.strategyExecutor = strategyExecutor;
+        this.mirrorSynchronizer = mirrorSynchronizer;
     }
 
     @PreAuthorize("hasAuthority('user')")
@@ -346,6 +353,51 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
             log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new CreateException(messageSource, locale);
         }
+    }
+
+    /**
+     * Synchronizes repository with mirror.
+     */
+    @PreAuthorize("hasAuthority('repositorymaintainer')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PostMapping(value = "/{id}/synchronize-mirrors")
+    public void synchronizeWithMirrors(@PathVariable("id") Integer id, Principal principal) throws ApiException {
+        if (userService.findActiveByLogin(principal.getName()).isEmpty()) {
+            throw new UserNotAuthorized(messageSource, locale);
+        }
+        PythonRepository repository =
+                pythonRepositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
+
+        mirrorSynchronizer
+                .findByRepository(repository)
+                .forEach(m -> mirrorSynchronizer.synchronizeAsync(repository, m));
+    }
+
+    /**
+     * Fetches synchronization status for the given repository.
+     */
+    @PreAuthorize("hasAuthority('repositorymaintainer')")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/{id}/synchronization-status")
+    public ResponseDto<?> getSynchronizationStatus(@PathVariable("id") Integer id, Principal principal)
+            throws ApiException {
+        User requester = userService
+                .findActiveByLogin(principal.getName())
+                .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
+        PythonRepository repository =
+                pythonRepositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
+
+        if (!securityMediator.isAuthorizedToEdit(repository, requester))
+            throw new UserNotAuthorized(messageSource, locale);
+
+        List<SynchronizationStatus> status = mirrorSynchronizer.getSynchronizationStatusList();
+
+        for (SynchronizationStatus s : status) {
+            if (s.getRepositoryId() == repository.getId())
+                return ResponseDto.generateSuccessBody(messageSource, locale, s);
+        }
+
+        throw new SynchronizationNotFound(messageSource, locale);
     }
 
     private void checkDeclarative() throws NotAllowedInDeclarativeMode {

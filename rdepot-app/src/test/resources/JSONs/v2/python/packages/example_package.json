@@ -22,7 +22,7 @@
 		"platform": null,
 		"requiresPython": ">=3.8",
 		"requiresExternal": null,
-		"descriptionContentType": null,
+		"descriptionContentType": "text/markdown",
 		"classifiers": "Development Status :: 5 - Production\/Stable, Environment :: Console, Intended Audience :: Science\/Research, License :: OSI Approved :: BSD License, Operating System :: OS Independent, Programming Language :: Cython, Programming Language :: Python, Programming Language :: Python :: 3, Programming Language :: Python :: 3 :: Only, Programming Language :: Python :: 3.8, Programming Language :: Python :: 3.9, Programming Language :: Python :: 3.10, Programming Language :: Python :: 3.11, Topic :: Scientific\/Engineering",
 		"links": [
 			{

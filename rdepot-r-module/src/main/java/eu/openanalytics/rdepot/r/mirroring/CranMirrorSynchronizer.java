@@ -24,7 +24,9 @@ import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.exception.AdminNotFound;
 import eu.openanalytics.rdepot.base.mediator.BestMaintainerChooser;
+import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.mirroring.MirrorSynchronizer;
+import eu.openanalytics.rdepot.base.mirroring.exceptions.UpdatePackageException;
 import eu.openanalytics.rdepot.base.storage.exceptions.CreateTemporaryFolderException;
 import eu.openanalytics.rdepot.base.storage.exceptions.DeleteFileException;
 import eu.openanalytics.rdepot.base.storage.exceptions.DownloadFileException;
@@ -35,10 +37,8 @@ import eu.openanalytics.rdepot.r.api.v2.dtos.RPackageUploadRequest;
 import eu.openanalytics.rdepot.r.config.declarative.RYamlDeclarativeConfigurationSource;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
-import eu.openanalytics.rdepot.r.messaging.RMessageCodes;
 import eu.openanalytics.rdepot.r.mirroring.exceptions.DownloadPackagesFileException;
 import eu.openanalytics.rdepot.r.mirroring.exceptions.NoSuchPackageException;
-import eu.openanalytics.rdepot.r.mirroring.exceptions.UpdatePackageException;
 import eu.openanalytics.rdepot.r.mirroring.pojos.MirroredRPackage;
 import eu.openanalytics.rdepot.r.mirroring.pojos.MirroredRRepository;
 import eu.openanalytics.rdepot.r.services.RPackageService;
@@ -143,7 +143,7 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
                     if (localPackage.isEmpty()
                             || !getPackageMd5(packageBag.getName(), remotePackages)
                                     .equals(localPackage.get().getMd5sum())) {
-                        updatePackage(
+                        uploadPackage(
                                 packageBag.getName(),
                                 getVersion(packageBag.getName(), remotePackages),
                                 mirror,
@@ -152,7 +152,7 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
                                 packageBag.getGenerateManuals());
                     }
                 } else if (localPackage.isEmpty()) {
-                    updatePackage(
+                    uploadPackage(
                             packageBag.getName(),
                             packageBag.getVersion(),
                             mirror,
@@ -207,7 +207,7 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
         throw new NoSuchPackageException(name);
     }
 
-    private void updatePackage(
+    private void uploadPackage(
             String name,
             String version,
             CranMirror mirror,
@@ -258,7 +258,7 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
                 log.error(
                         "{}\nLocation: {}",
                         messageSource.getMessage(
-                                RMessageCodes.ERROR_CLEAN_FS, null, RMessageCodes.ERROR_CLEAN_FS, locale),
+                                MessageCodes.ERROR_CLEAN_FS, null, MessageCodes.ERROR_CLEAN_FS, locale),
                         remotePackageDir.toPath().toAbsolutePath());
             }
         }
@@ -284,7 +284,7 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
                     log.error(
                             "{}\nLocation: {}",
                             messageSource.getMessage(
-                                    RMessageCodes.ERROR_CLEAN_FS, null, RMessageCodes.ERROR_CLEAN_FS, locale),
+                                    MessageCodes.ERROR_CLEAN_FS, null, MessageCodes.ERROR_CLEAN_FS, locale),
                             remotePackagesFilePath.toAbsolutePath());
                 }
             }

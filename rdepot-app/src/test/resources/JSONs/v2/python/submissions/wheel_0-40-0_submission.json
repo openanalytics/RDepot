@@ -51,6 +51,7 @@
 				"state": "ACCEPTED"
 			},
 			"technology": "Python",
+			"descriptionContentType": "text/x-rst",
 			"title": "A built-package format for Python",
 			"url": "Changelog, https:\/\/wheel.readthedocs.io\/en\/stable\/news.html, Documentation, https:\/\/wheel.readthedocs.io\/, Issue Tracker, https:\/\/github.com\/pypa\/wheel\/issues",
 			"user": {

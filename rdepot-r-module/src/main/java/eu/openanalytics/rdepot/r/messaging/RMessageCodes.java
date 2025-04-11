@@ -24,7 +24,6 @@ public class RMessageCodes {
     public static final String ERROR_MISSING_DATA_FOR_BINARY_PACKAGE = "error.missing.data.for.binary.package";
     public static final String ERROR_PARAMETERS_NOT_ALLOWED_FOR_NON_BINARY_PACKAGE =
             "error.parameters.not.allowed.for.non.binary.package";
-    public static final String ERROR_CLEAN_FS = "error.clean.fs";
     public static final String READ_R_PACKAGE_DESCRIPTION_EXCEPTION = "read.r.package.description.exception";
     public static final String EMPTY_AUTHOR = "empty.author";
     public static final String EMPTY_TITLE = "empty.title";
@@ -39,7 +38,6 @@ public class RMessageCodes {
     public static final String EMPTY_BUILT = "empty.built";
 
     public static final String COULD_NOT_PARSE_PACKAGES_FILE = "could.not.parse.packages.file";
-    public static final String UPDATE_PACKAGE_EXCEPTION = "error.update.package";
     public static final String COULD_NOT_DOWNLOAD_PACKAGES_FILE = "could.not.download.packages.file";
     public static final String COULD_NOT_GET_REFERENCE_MANUAL = "could.not.get.reference.manual";
     public static final String COULD_NOT_GET_VIGNETTE = "could.not.get.vignette";

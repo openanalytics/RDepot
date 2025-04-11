@@ -33,6 +33,7 @@
 			"active": false,
 			"description": "The 'abc' package provides various functions for parameter estimation and model selection in an ABC framework. Three main",
 			"technology": "R",
+			"descriptionContentType": "txt",
 			"repository": {
 				"name": "testrepo4",
 				"id": 5,

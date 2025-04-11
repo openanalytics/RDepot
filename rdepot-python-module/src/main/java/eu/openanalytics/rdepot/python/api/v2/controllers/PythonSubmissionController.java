@@ -178,8 +178,6 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
      *
      * @param multipartFile  package file
      * @param repository     name of the destination repository
-     * @param generateManual specifies if manuals should be generated for the
-     *                       package
      * @param replaceRequestParam specified if previous version should be replaced
      * @param principal      used for authorization
      * @return DTO with created submission
@@ -194,7 +192,6 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
     public @ResponseBody ResponseEntity<?> submitPackage(
             @RequestParam("file") MultipartFile multipartFile,
             @RequestParam("repository") final String repository,
-            @RequestParam(name = "generateManual", defaultValue = "${generate-manuals}") final Boolean generateManual,
             @RequestParam(name = "replace", defaultValue = "false") final Boolean replaceRequestParam,
             @RequestParam(name = "changes") Optional<String> changes,
             Principal principal)
@@ -215,8 +212,8 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
             return handleValidationError(validationResult);
         }
 
-        PackageUploadRequest<PythonRepository> request = new PackageUploadRequest<>(
-                multipartFile, repositoryEntity, generateManual, replace, changes.orElse(""));
+        PackageUploadRequest<PythonRepository> request =
+                new PackageUploadRequest<>(multipartFile, repositoryEntity, replace, changes.orElse(""));
 
         Strategy<Submission> strategy = strategyFactory.uploadPackageStrategy(request, uploader);
 

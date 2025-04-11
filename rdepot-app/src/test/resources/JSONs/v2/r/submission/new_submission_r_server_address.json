@@ -1,0 +1,87 @@
+{
+	"code": 201,
+	"data": {
+		"approver": {
+			"name": "Albert Einstein",
+			"id": 4,
+			"login": "einstein",
+			"email": "einstein@ldap.forumsys.com"
+		},
+		"submitter": {
+			"name": "Albert Einstein",
+			"id": 4,
+			"login": "einstein",
+			"email": "einstein@ldap.forumsys.com"
+		},
+		"changes": "",
+		"links": [
+			{
+				"rel": "self",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/48"
+			},
+			{
+				"rel": "submissionList",
+				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions"
+			}
+		],
+		"id": 48,
+		"state": "ACCEPTED",
+		"technology": "R",
+		"packageBag": {
+			"author": "Peter Bogetoft and Lars Otto",
+			"active": true,
+			"description": "Estimates and graphs deterministic (DEA) frontier models\\n with different technology assumptions (fdh, vrs, drs, crs, irs,\\n add). Also handles possible slacks, peers and their weights\\n (lambdas), optimal cost, revenue and profit allocation,\\n super--efficiency, and mergers. A comparative method for\\n estimating SFA efficiencies is included.",
+			"technology": "R",
+			"descriptionContentType": "txt",
+			"repository": {
+				"name": "testrepo7",
+				"lastPublicationSuccessful": false,
+				"id": 13,
+				"published": false,
+				"technology": "R",
+				"requiresAuthentication": true,
+				"publicationUri": "http:\/\/localhost\/repo\/testrepo7"
+			},
+			"title": "Benchmark and frontier analysis using DEA and SFA",
+			"version": "0.10",
+			"url": null,
+			"deleted": false,
+			"binary": false,
+			"name": "Benchmarking",
+			"submission": {
+				"id": 48,
+				"state": "ACCEPTED"
+			},
+			"links": [
+				{
+					"rel": "self",
+					"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/48"
+				},
+				{
+					"rel": "packageList",
+					"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+				},
+				{
+					"rel": "self",
+					"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/48",
+					"type": "PATCH"
+				},
+				{
+					"rel": "self",
+					"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/48",
+					"type": "DELETE"
+				}
+			],
+			"id": 48,
+			"user": {
+				"name": "Albert Einstein",
+				"id": 4,
+				"login": "einstein",
+				"email": "einstein@ldap.forumsys.com"
+			}
+		}
+	},
+	"messageCode": "success.resource.created",
+	"message": "Your resource has been created successfully.",
+	"status": "SUCCESS"
+}

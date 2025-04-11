@@ -23,4 +23,5 @@ package eu.openanalytics.rdepot.python.messaging;
 public class PythonMessageCodes {
     public static final String EMPTY_HASH = "empty.hash";
     public static final String READ_PYTHON_PKG_INFO_EXCEPTION = "read.python.pkg.info.exception";
+    public static final String COULD_NOT_PARSE_INDEX_FILE = "could.not.parse.index.file";
 }

@@ -57,7 +57,7 @@ public class PythonFileUploadController extends FileUploadController<Synchronize
         this.storageService = storageService;
     }
 
-    @PostMapping("/{repository:.+}")
+    @PostMapping("/{repository:.+}/")
     public ResponseEntity<SynchronizeRepositoryResponseBody> handleSynchronizeRequest(
             @PathVariable("repository") String repository,
             @RequestPart(value = "files", required = false) MultipartFile[] filesToUpload,
@@ -75,7 +75,7 @@ public class PythonFileUploadController extends FileUploadController<Synchronize
 
     @GetMapping("/{repository}/")
     public ResponseEntity<List<String>> recentUploads(@PathVariable("repository") String repository) {
-        ArrayList<String> uploads = new ArrayList<String>();
+        ArrayList<String> uploads = new ArrayList<>();
         try {
             uploads.add(storageService.getRepositoryVersion(repository));
         } catch (GetRepositoryVersionException e) {

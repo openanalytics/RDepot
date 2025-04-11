@@ -91,6 +91,7 @@ public class RPackageUploadStrategy extends DefaultPackageUploadStrategy<RReposi
         if (rPackageRequest.isBinaryPackage()) packageBag = parseTechnologySpecificBinaryPackageProperties(properties);
 
         packageBag.setDescription(properties.getProperty("Description"));
+        packageBag.setDescriptionContentType("txt");
         packageBag.setDepends(properties.getProperty("Depends"));
         packageBag.setImports(properties.getProperty("Imports"));
         packageBag.setSuggests(properties.getProperty("Suggests"));
@@ -103,6 +104,7 @@ public class RPackageUploadStrategy extends DefaultPackageUploadStrategy<RReposi
         packageBag.setNeedsCompilation(
                 properties.getProperty("NeedsCompilation", "no").equalsIgnoreCase("yes"));
         packageBag.setPriority(properties.getProperty("Priority"));
+        packageBag.setMaintainer(properties.getProperty("Maintainer"));
 
         return packageBag;
     }
@@ -124,7 +126,7 @@ public class RPackageUploadStrategy extends DefaultPackageUploadStrategy<RReposi
     protected Submission actualStrategy() throws StrategyFailure {
         Submission submission = super.actualStrategy();
         try {
-            if (request.isGenerateManual() && !rPackageRequest.isBinaryPackage()) {
+            if (rPackageRequest.isGenerateManual() && !rPackageRequest.isBinaryPackage()) {
                 rStorage.generateManual(packageBag);
             }
         } catch (GenerateManualException e) {

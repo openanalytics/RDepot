@@ -50,6 +50,7 @@
 					"active": false,
 					"description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
 					"technology": "R",
+					"descriptionContentType": "txt",
 					"repository": {
 						"name": "testrepo2",
 						"lastPublicationSuccessful": true,
@@ -124,6 +125,7 @@
 					"active": false,
 					"description": "The Universal Scalability Law (Gunther 2007)",
 					"technology": "R",
+					"descriptionContentType": "txt",
 					"repository": {
 						"name": "testrepo2",
 						"lastPublicationSuccessful": true,
@@ -198,6 +200,7 @@
 					"active": false,
 					"description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
 					"technology": "R",
+					"descriptionContentType": "txt",
 					"repository": {
 						"name": "testrepo4",
 						"lastPublicationSuccessful": false,
@@ -272,6 +275,7 @@
 					"active": false,
 					"description": "The 'abc' package provides various functions for parameter estimation and model selection in an ABC framework. Three main",
 					"technology": "R",
+					"descriptionContentType": "txt",
 					"repository": {
 						"name": "testrepo4",
 						"lastPublicationSuccessful": false,

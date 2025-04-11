@@ -63,7 +63,7 @@
 					}
 				],
 				"id": 135,
-				"technology": "RDepot version: 2.5.2",
+				"technology": "RDepot version: 2.6.0",
 				"time": "2020-03-28T20:05:55Z",
 				"eventType": "upload",
 				"user": {
@@ -144,7 +144,7 @@
 					}
 				],
 				"id": 38,
-				"technology": "RDepot version: 2.5.2",
+				"technology": "RDepot version: 2.6.0",
 				"time": "2020-03-28T20:08:08Z",
 				"eventType": "delete",
 				"user": {
@@ -225,7 +225,7 @@
 					}
 				],
 				"id": 25,
-				"technology": "RDepot version: 2.5.2",
+				"technology": "RDepot version: 2.6.0",
 				"time": "2020-03-28T20:05:58Z",
 				"eventType": "create",
 				"user": {

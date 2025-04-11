@@ -18,21 +18,23 @@
  * You should have received a copy of the Apache License
  * along with this program. If not, see <http://www.apache.org/licenses/>
  */
-package eu.openanalytics.rdepot.r.mirroring.exceptions;
+package eu.openanalytics.rdepot.repo.python.api;
 
-import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
-import eu.openanalytics.rdepot.base.mirroring.Mirror;
-import eu.openanalytics.rdepot.r.messaging.RMessageCodes;
-import java.io.Serial;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-public class UpdatePackageException extends Exception {
-
-    @Serial
-    private static final long serialVersionUID = 6799693422535662386L;
-
-    public UpdatePackageException(String name, String version, Mirror<?> mirror) {
-        super(StaticMessageResolver.getMessage(RMessageCodes.UPDATE_PACKAGE_EXCEPTION)
-                + ": {name: \"" + name + "\", version:\""
-                + version + "\", mirror: \"" + mirror.toString() + "\"}");
+@RestController
+@RequestMapping("/python")
+public class PythonStatusController {
+    /**
+     * Should be available under the path of the repository + "/status" to indicate
+     * whether the path is correct.
+     * @return "OK" by default
+     */
+    @GetMapping("/{repository:.+}/status")
+    public ResponseEntity<String> status() {
+        return ResponseEntity.ok("OK");
     }
 }

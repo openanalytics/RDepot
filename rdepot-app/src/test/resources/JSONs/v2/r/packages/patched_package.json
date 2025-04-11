@@ -5,18 +5,20 @@
 		"description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
 		"source": "\/opt\/rdepot\/repositories\/2\/9907084\/A3_0.9.2.tar.gz",
 		"repository": {
-			"requiresAuthentication": false,
 			"name": "testrepo1",
+			"lastPublicationSuccessful": true,
 			"id": 2,
 			"published": true,
 			"technology": "R",
-			"publicationUri": "http:\/\/localhost\/repo\/testrepo1",
-			"lastPublicationSuccessful": true
+			"requiresAuthentication": false,
+			"publicationUri": "http:\/\/localhost\/repo\/testrepo1"
 		},
 		"title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
 		"distribution": null,
+		"maintainer": null,
 		"suggests": "randomForest, e1071",
 		"systemRequirements": null,
+		"descriptionContentType": "txt",
 		"md5sum": "76d726aee8dd7c6ed94d150d5718015b",
 		"links": [
 			{

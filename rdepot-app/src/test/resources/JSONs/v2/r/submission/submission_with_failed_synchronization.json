@@ -32,6 +32,7 @@
 			"active": true,
 			"description": "The R package 'ggplot2' is a plotting system based on the grammar of graphics.\\n 'GGally' extends 'ggplot2' by adding several functions\\n to reduce the complexity of combining geometric objects with transformed data.\\n Some of these functions include a pairwise plot matrix, a two group pairwise plot\\n matrix, a parallel coordinates plot, a survival plot, and several functions to\\n plot networks.",
 			"technology": "R",
+			"descriptionContentType": "txt",
 			"repository": {
 				"name": "testrepo2",
 				"lastPublicationSuccessful": true,

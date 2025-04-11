@@ -91,12 +91,9 @@ public class SecurityMediatorImpl implements SecurityMediator {
             } else if (submissionDto.getState().equals(SubmissionState.CANCELLED)
                     && isAuthorizedToCancel(submission, requester)) {
                 return true;
-            } else if (submissionDto.getState().equals(SubmissionState.REJECTED)
-                    && isAuthorizedToReject(submission, requester)) {
-                return true;
-            }
-
-            return false;
+            } else
+                return submissionDto.getState().equals(SubmissionState.REJECTED)
+                        && isAuthorizedToReject(submission, requester);
         } else {
             return isAuthorizedToEdit(submission.getPackage(), requester);
         }
@@ -131,8 +128,9 @@ public class SecurityMediatorImpl implements SecurityMediator {
                         return true;
                     }
                 }
+            default:
+                return false;
         }
-
         return false;
     }
 
@@ -146,8 +144,9 @@ public class SecurityMediatorImpl implements SecurityMediator {
                         repositoryMaintainerService.findByUserAndRepository(requester, repository)) {
                     if (!maintainer.isDeleted()) return true;
                 }
+            default:
+                return false;
         }
-        return false;
     }
 
     @Override
@@ -168,7 +167,7 @@ public class SecurityMediatorImpl implements SecurityMediator {
                         .getName()));
             }
         } else {
-            log.error(userLogin + " has been deactivated or deleted");
+            log.error("{} has been deactivated or deleted", userLogin);
         }
 
         return authorities;

@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 17a_01_clean_description_content_type
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - columnExists:
+            tableName: pythonpackage
+            schemaName: public
+            columnName: description_content_type
+      changes:
+        - dropColumn:
+            tableName: pythonpackage
+            schemaName: public
+            columns:
+            - column:
+                name: description_content_type

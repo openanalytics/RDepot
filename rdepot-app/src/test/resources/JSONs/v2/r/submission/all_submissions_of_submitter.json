@@ -46,6 +46,7 @@
           "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
           "active": false,
           "technology": "R",
+          "descriptionContentType": "txt",
           "repository": {
             "name": "testrepo1",
             "id": 2,
@@ -112,6 +113,7 @@
           "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
           "active": true,
           "technology": "R",
+          "descriptionContentType": "txt",
           "repository": {
             "name": "testrepo1",
             "id": 2,
@@ -178,6 +180,7 @@
           "description": "The package implements several ABC algorithms for performing parameter estimation and model selection. Cross-validation tools are also available for measuring the accuracy of ABC estimates, and to calculate the misclassification probabilities of different models.",
           "active": true,
           "technology": "R",
+          "descriptionContentType": "txt",
           "repository": {
             "name": "testrepo1",
             "id": 2,
@@ -247,6 +250,7 @@
           "description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
           "active": false,
           "technology": "R",
+          "descriptionContentType": "txt",
           "repository": {
             "name": "testrepo2",
             "id": 3,
@@ -313,6 +317,7 @@
           "description": "Is a collection of models to analyze genome scale codon data using a Bayesian framework. Provides visualization routines and checkpointing for model fittings. Currently published models to analyze gene data for selection on codon",
           "active": true,
           "technology": "R",
+          "descriptionContentType": "txt",
           "repository": {
             "name": "testrepo4",
             "id": 5,

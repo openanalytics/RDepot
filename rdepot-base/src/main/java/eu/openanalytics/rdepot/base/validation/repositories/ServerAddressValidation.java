@@ -24,6 +24,8 @@ import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.base.validation.ChainValidator;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.validation.Errors;
@@ -39,15 +41,19 @@ public class ServerAddressValidation<R extends Repository> extends ChainValidato
     private final RepositoryService<R> service;
 
     public void validateField(R repository, Errors errors) {
-        if (repository.getServerAddress() == null
-                || repository.getServerAddress().isBlank()) {
+        final String serverAddress = repository.getServerAddress();
+        if (serverAddress == null || serverAddress.isBlank()) {
             errors.rejectValue("serverAddress", MessageCodes.EMPTY_SERVERADDRESS);
-        } else {
-            Optional<R> duplicateServerAddress = service.findByServerAddress(repository.getServerAddress());
-            if (duplicateServerAddress.isPresent()
-                    && duplicateServerAddress.get().getId() != repository.getId()) {
-                errors.rejectValue("serverAddress", MessageCodes.DUPLICATE_SERVERADDRESS);
-            }
+            return;
+        }
+        Optional<R> duplicateServerAddress = service.findByServerAddress(serverAddress);
+        if (duplicateServerAddress.isPresent() && duplicateServerAddress.get().getId() != repository.getId()) {
+            errors.rejectValue("serverAddress", MessageCodes.DUPLICATE_SERVERADDRESS);
+        }
+        try {
+            new URL(serverAddress);
+        } catch (MalformedURLException e) {
+            errors.rejectValue("serverAddress", MessageCodes.ERROR_INVALID_SERVERADDRESS);
         }
     }
 }

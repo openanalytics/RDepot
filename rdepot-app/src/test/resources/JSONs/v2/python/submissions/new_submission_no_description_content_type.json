@@ -32,6 +32,7 @@
 			"active": true,
 			"description": null,
 			"technology": "Python",
+			"descriptionContentType": "",
 			"repository": {
 				"name": "testrepo9",
 				"lastPublicationSuccessful": false,

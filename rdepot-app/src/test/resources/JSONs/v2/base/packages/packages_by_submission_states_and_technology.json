@@ -20,6 +20,7 @@
 				"description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
 				"source": "",
 				"technology": "R",
+				"descriptionContentType": "txt",
 				"repository": {
 					"name": "testrepo1",
 					"lastPublicationSuccessful": true,
@@ -63,6 +64,7 @@
 				"description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
 				"source": "\/opt\/rdepot\/new\/70032548\/visdat_0.1.0.tar.gz",
 				"technology": "R",
+				"descriptionContentType": "txt",
 				"repository": {
 					"name": "testrepo2",
 					"lastPublicationSuccessful": true,
@@ -106,6 +108,7 @@
 				"description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
 				"source": "",
 				"technology": "R",
+				"descriptionContentType": "txt",
 				"repository": {
 					"name": "testrepo1",
 					"lastPublicationSuccessful": true,
@@ -149,6 +152,7 @@
 				"description": "Estimates and graphs deterministic (DEA) frontier models with different technology assumptions (fdh, vrs, drs, crs, irs, add). Also handles possible slacks, peers and their weights (lambdas), optimal cost, revenue and profit allocation, super--efficiency, and mergers. A comparative method for estimating SFA efficiencies is included.",
 				"source": "",
 				"technology": "R",
+				"descriptionContentType": "txt",
 				"repository": {
 					"name": "testrepo4",
 					"lastPublicationSuccessful": false,
@@ -192,6 +196,7 @@
 				"description": "The Universal Scalability Law (Gunther 2007)",
 				"source": "\/opt\/rdepot\/new\/54345476\/usl_2.0.0.tar.gz",
 				"technology": "R",
+				"descriptionContentType": "txt",
 				"repository": {
 					"name": "testrepo2",
 					"lastPublicationSuccessful": true,
@@ -235,6 +240,7 @@
 				"description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
 				"source": "\/opt\/rdepot\/new\/92253304\/A3_0.9.1.tar.gz",
 				"technology": "R",
+				"descriptionContentType": "txt",
 				"repository": {
 					"name": "testrepo4",
 					"lastPublicationSuccessful": false,
@@ -278,6 +284,7 @@
 				"description": "The 'abc' package provides various functions for parameter estimation and model selection in an ABC framework. Three main",
 				"source": "\/opt\/rdepot\/new\/51328701\/abc_1.0.tar.gz",
 				"technology": "R",
+				"descriptionContentType": "txt",
 				"repository": {
 					"name": "testrepo4",
 					"lastPublicationSuccessful": false,

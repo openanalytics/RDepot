@@ -45,7 +45,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -86,7 +85,7 @@ public class RepositoryMaintainerControllerUnitTest extends ApiV2ControllerUnitT
             JSON_PATH + "/example_repositorymaintainer_patched.json";
     public static final String EDITING_DELETED_RESOURCE_PATH = JSON_PATH + "/editing_deleted_resource.json";
 
-    private Optional<User> user;
+    private User user;
 
     @Autowired
     MockMvc mockMvc;
@@ -105,13 +104,13 @@ public class RepositoryMaintainerControllerUnitTest extends ApiV2ControllerUnitT
 
     @BeforeEach
     public void initEach() {
-        user = Optional.of(UserTestFixture.GET_ADMIN());
+        user = UserTestFixture.GET_ADMIN();
     }
 
     @Test
     @WithMockUser(authorities = {"admin", "user"})
     public void getAllRepositoryMaintainers() throws Exception {
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         when(repositoryMaintainerService.findAllBySpecification(any(), any()))
                 .thenReturn(RepositoryMaintainerTestFixture.GET_EXAMPLE_REPOSITORY_MAINTAINERS_PAGED());
 
@@ -141,10 +140,10 @@ public class RepositoryMaintainerControllerUnitTest extends ApiV2ControllerUnitT
     @Test
     @WithMockUser(authorities = {"admin", "user"})
     public void getRepositoryMaintainer_returns404_whenRepositoryMaintainerIsNotFound() throws Exception {
-        final Integer ID = 123;
+        final int ID = 123;
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(repositoryMaintainerService.findById(ID)).thenReturn(Optional.ofNullable(null));
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
+        when(repositoryMaintainerService.findById(ID)).thenReturn(Optional.empty());
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/repository-maintainers/" + ID)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -174,10 +173,10 @@ public class RepositoryMaintainerControllerUnitTest extends ApiV2ControllerUnitT
     public void getRepositoryMaintainer() throws Exception {
         final RepositoryMaintainer repositoryMaintainer =
                 RepositoryMaintainerTestFixture.GET_FIXTURE_REPOSITORY_MAINTAINER();
-        final Integer ID = repositoryMaintainer.getId();
+        final int ID = repositoryMaintainer.getId();
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(userService.isAdmin(user.get())).thenReturn(true);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
+        when(userService.isAdmin(user)).thenReturn(true);
         when(repositoryMaintainerService.findById(ID)).thenReturn(Optional.of(repositoryMaintainer));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/repository-maintainers/" + ID)
@@ -213,18 +212,14 @@ public class RepositoryMaintainerControllerUnitTest extends ApiV2ControllerUnitT
     public void createRepositoryMaintainer_throws422_whenValidationFails() throws Exception {
         final String exampleJson = Files.readString(Path.of(EXAMPLE_NEW_REPOSITORYMAINTAINER_PATH));
         Repository repository = RepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        doReturn(Optional.of(repository)).when(commonRepositoryService).findById(201);
-        when(userService.findById(111)).thenReturn(user);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        doReturn(Optional.of(repository)).when(repositoryService).findById(201);
+        when(userService.findById(111)).thenReturn(Optional.of(user));
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         when(repositoryMaintainerValidator.supports(RepositoryMaintainer.class)).thenReturn(true);
-        doAnswer(new Answer<Object>() {
-
-                    @Override
-                    public Object answer(InvocationOnMock invocation) throws Throwable {
-                        BindingResult bindingResult = invocation.getArgument(1);
-                        bindingResult.rejectValue("repository", MessageCodes.ERROR_REPOSITORY_NOT_FOUND);
-                        return null;
-                    }
+        doAnswer((Answer<Object>) invocation -> {
+                    BindingResult bindingResult = invocation.getArgument(1);
+                    bindingResult.rejectValue("repository", MessageCodes.ERROR_REPOSITORY_NOT_FOUND);
+                    return null;
                 })
                 .when(repositoryMaintainerValidator)
                 .validate(any(), any());
@@ -245,17 +240,17 @@ public class RepositoryMaintainerControllerUnitTest extends ApiV2ControllerUnitT
         repository.setId(201);
         created.setId(100);
         created.setRepository(repository);
-        user.get().setId(111);
+        user.setId(111);
 
-        Strategy<RepositoryMaintainer> strategy = Mockito.spy(new SuccessfulStrategy<RepositoryMaintainer>(
-                created, newsfeedEventService, repositoryMaintainerService, user.get()));
+        Strategy<RepositoryMaintainer> strategy =
+                Mockito.spy(new SuccessfulStrategy<>(created, newsfeedEventService, repositoryMaintainerService, user));
 
         when(strategyFactory.createRepositoryMaintainerStrategy(any(), any())).thenReturn(strategy);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         doNothing().when(repositoryMaintainerValidator).validate(any(), any());
         when(repositoryMaintainerValidator.supports(RepositoryMaintainer.class)).thenReturn(true);
-        doReturn(Optional.of(repository)).when(commonRepositoryService).findById(201);
-        when(userService.findById(111)).thenReturn(user);
+        doReturn(Optional.of(repository)).when(repositoryService).findById(201);
+        when(userService.findById(111)).thenReturn(Optional.of(user));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v2/manager/repository-maintainers")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -274,14 +269,14 @@ public class RepositoryMaintainerControllerUnitTest extends ApiV2ControllerUnitT
 
         Repository repository = RepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
 
-        Strategy<RepositoryMaintainer> strategy = Mockito.spy(new FailureStrategy<RepositoryMaintainer>(
-                created, newsfeedEventService, repositoryMaintainerService, user.get()));
+        Strategy<RepositoryMaintainer> strategy =
+                Mockito.spy(new FailureStrategy<>(created, newsfeedEventService, repositoryMaintainerService, user));
 
         when(strategyFactory.createRepositoryMaintainerStrategy(any(), any())).thenReturn(strategy);
         when(repositoryMaintainerValidator.supports(RepositoryMaintainer.class)).thenReturn(true);
-        doReturn(Optional.of(repository)).when(commonRepositoryService).findById(201);
-        when(userService.findById(111)).thenReturn(user);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        doReturn(Optional.of(repository)).when(repositoryService).findById(201);
+        when(userService.findById(111)).thenReturn(Optional.of(user));
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         doNothing().when(repositoryMaintainerValidator).validate(any(), any());
         when(repositoryMaintainerValidator.supports(RepositoryMaintainer.class)).thenReturn(true);
 
@@ -304,10 +299,10 @@ public class RepositoryMaintainerControllerUnitTest extends ApiV2ControllerUnitT
     @Test
     @WithMockUser(authorities = {"admin", "user"})
     public void deleteRepositoryMaintainer_returns404_whenRepositoryMaintainerIsNotFound() throws Exception {
-        final Integer ID = 123;
+        final int ID = 123;
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(repositoryMaintainerService.findOneDeleted(ID)).thenReturn(Optional.ofNullable(null));
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
+        when(repositoryMaintainerService.findOneDeleted(ID)).thenReturn(Optional.empty());
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v2/manager/repository-maintainers/" + 123)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -318,7 +313,7 @@ public class RepositoryMaintainerControllerUnitTest extends ApiV2ControllerUnitT
     @Test
     @WithMockUser
     public void deleteRepositoryMaintainer_returns403_whenUserIsNotAdmin() throws Exception {
-        final Integer ID = 123;
+        final int ID = 123;
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v2/manager/repository-maintainers/" + ID)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -331,9 +326,9 @@ public class RepositoryMaintainerControllerUnitTest extends ApiV2ControllerUnitT
     public void deleteRepositoryMaintainer() throws Exception {
         final RepositoryMaintainer maintainer = RepositoryMaintainerTestFixture.GET_FIXTURE_REPOSITORY_MAINTAINER();
         maintainer.setDeleted(true);
-        final Integer ID = maintainer.getId();
+        final int ID = maintainer.getId();
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         when(repositoryMaintainerService.findOneDeleted(ID)).thenReturn(Optional.of(maintainer));
         doNothing().when(repositoryMaintainerDeleter).delete(maintainer);
 
@@ -359,10 +354,10 @@ public class RepositoryMaintainerControllerUnitTest extends ApiV2ControllerUnitT
     @WithMockUser(authorities = {"admin", "user"})
     public void patchRepositoryMaintainer_returns404_whenRepositoryMaintainerIsNotFound() throws Exception {
         String patchJson = "[{\"op\": \"replace\",\"path\":\"/repositoryId\",\"value\":1234}]";
-        final Integer ID = 123;
+        final int ID = 123;
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(repositoryMaintainerService.findById(ID)).thenReturn(Optional.ofNullable(null));
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
+        when(repositoryMaintainerService.findById(ID)).thenReturn(Optional.empty());
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/repository-maintainers/" + ID)
                         .contentType("application/json-patch+json")
@@ -375,7 +370,7 @@ public class RepositoryMaintainerControllerUnitTest extends ApiV2ControllerUnitT
     @WithMockUser(authorities = "user")
     public void patchRepositoryMaintainer_returns403_whenUserIsNotAdmin() throws Exception {
         String patchJson = "[{\"op\": \"replace\",\"path\":\"/repositoryId\",\"value\":1234}]";
-        final Integer ID = 123;
+        final int ID = 123;
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/repository-maintainers/" + ID)
                         .contentType("application/json-patch+json")
@@ -389,11 +384,11 @@ public class RepositoryMaintainerControllerUnitTest extends ApiV2ControllerUnitT
     public void patchRepositoryMaintainer_returns405_whenRepositoryMaintainerIsDeleted() throws Exception {
         String patchJson = "[{\"op\": \"replace\", \"path\":\"/repositoryId\",\"value\":\"1234\"}]";
         final RepositoryMaintainer maintainer = RepositoryMaintainerTestFixture.GET_FIXTURE_REPOSITORY_MAINTAINER();
-        final Integer ID = maintainer.getId();
-        user.get().setId(111);
+        final int ID = maintainer.getId();
+        user.setId(111);
         maintainer.setDeleted(true);
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         when(repositoryMaintainerService.findById(ID)).thenReturn(Optional.of(maintainer));
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/repository-maintainers/" + ID)
@@ -408,9 +403,9 @@ public class RepositoryMaintainerControllerUnitTest extends ApiV2ControllerUnitT
     public void patchRepositoryMaintainer_returns422_whenPatchIsIncorrect() throws Exception {
         String patchJson = "[{\"op\": \"replace\",\"path\":\"/repositoryyyyyyId\",\"value\":1234}]";
         final RepositoryMaintainer maintainer = RepositoryMaintainerTestFixture.GET_FIXTURE_REPOSITORY_MAINTAINER();
-        final Integer ID = maintainer.getId();
+        final int ID = maintainer.getId();
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         when(repositoryMaintainerService.findById(ID)).thenReturn(Optional.of(maintainer));
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/repository-maintainers/" + ID)
@@ -425,20 +420,20 @@ public class RepositoryMaintainerControllerUnitTest extends ApiV2ControllerUnitT
     public void patchRepositoryMaintainer() throws Exception {
         String patchJson = "[{\"op\": \"replace\",\"path\":\"/repository/id\",\"value\":1234}]";
         final RepositoryMaintainer maintainer = RepositoryMaintainerTestFixture.GET_FIXTURE_REPOSITORY_MAINTAINER();
-        final Integer ID = maintainer.getId();
-        user.get().setId(111);
+        final int ID = maintainer.getId();
+        user.setId(111);
         maintainer.getRepository().setId(1234);
 
         Repository repository = RepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        Strategy<RepositoryMaintainer> strategy = Mockito.spy(new SuccessfulStrategy<RepositoryMaintainer>(
-                maintainer, newsfeedEventService, repositoryMaintainerService, user.get()));
+        Strategy<RepositoryMaintainer> strategy = Mockito.spy(
+                new SuccessfulStrategy<>(maintainer, newsfeedEventService, repositoryMaintainerService, user));
 
         when(strategyFactory.updateRepositoryMaintainerStrategy(any(), any(), any()))
                 .thenReturn(strategy);
         when(repositoryMaintainerValidator.supports(RepositoryMaintainer.class)).thenReturn(true);
-        doReturn(Optional.of(repository)).when(commonRepositoryService).findById(1234);
-        when(userService.findById(111)).thenReturn(user);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        doReturn(Optional.of(repository)).when(repositoryService).findById(1234);
+        when(userService.findById(111)).thenReturn(Optional.of(user));
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         when(repositoryMaintainerService.findById(ID)).thenReturn(Optional.of(maintainer));
         doNothing().when(repositoryMaintainerValidator).validate(any(), any());
         when(repositoryMaintainerValidator.supports(RepositoryMaintainer.class)).thenReturn(true);

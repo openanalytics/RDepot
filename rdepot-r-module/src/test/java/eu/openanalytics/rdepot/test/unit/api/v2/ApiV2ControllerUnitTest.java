@@ -36,24 +36,12 @@ import eu.openanalytics.rdepot.base.mediator.deletion.PackageMaintainerDeleter;
 import eu.openanalytics.rdepot.base.mediator.deletion.RepositoryMaintainerDeleter;
 import eu.openanalytics.rdepot.base.mediator.deletion.SubmissionDeleter;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
-import eu.openanalytics.rdepot.base.service.AccessTokenService;
-import eu.openanalytics.rdepot.base.service.CommonPackageService;
-import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
-import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
-import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
-import eu.openanalytics.rdepot.base.service.RepositoryService;
-import eu.openanalytics.rdepot.base.service.RoleService;
-import eu.openanalytics.rdepot.base.service.SubmissionService;
-import eu.openanalytics.rdepot.base.service.UserService;
-import eu.openanalytics.rdepot.base.service.UserSettingsService;
+import eu.openanalytics.rdepot.base.service.*;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.factory.StrategyFactory;
-import eu.openanalytics.rdepot.base.validation.AccessTokenPatchValidator;
-import eu.openanalytics.rdepot.base.validation.PackageMaintainerValidator;
-import eu.openanalytics.rdepot.base.validation.RepositoryMaintainerValidator;
-import eu.openanalytics.rdepot.base.validation.UserSettingsValidator;
-import eu.openanalytics.rdepot.base.validation.UserValidator;
+import eu.openanalytics.rdepot.base.synchronization.healthcheck.ServerAddressHealthcheckService;
+import eu.openanalytics.rdepot.base.validation.*;
 import eu.openanalytics.rdepot.r.config.RBinaryProperties;
 import eu.openanalytics.rdepot.r.mediator.deletion.RPackageDeleter;
 import eu.openanalytics.rdepot.r.mediator.deletion.RRepositoryDeleter;
@@ -67,6 +55,7 @@ import eu.openanalytics.rdepot.r.validation.RPackageValidator;
 import eu.openanalytics.rdepot.r.validation.RRepositoryValidator;
 import eu.openanalytics.rdepot.test.fixture.UserTestFixture;
 import java.security.Principal;
+import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.parsson.JsonProviderImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -80,11 +69,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 public abstract class ApiV2ControllerUnitTest {
 
-    /**
-     * JsonProvider issue fix; For some reason,
-     * Glassfish's JsonProvider implementation is not resolved properly in the test environment.
-     * Setting this property forces Spring to use this particular class as implementation.
-     */
+    /*
+     JsonProvider issue fix; For some reason,
+     Glassfish's JsonProvider implementation is not resolved properly in the test environment.
+     Setting this property forces Spring to use this particular class as implementation.
+    */
     static {
         System.setProperty("jakarta.json.provider", JsonProviderImpl.class.getCanonicalName());
     }
@@ -123,7 +112,7 @@ public abstract class ApiV2ControllerUnitTest {
     PackageMaintainerDeleter packageMaintainerDeleter;
 
     @MockBean
-    RepositoryService<Repository> commonRepositoryService;
+    RepositoryService<Repository> repositoryService;
 
     @MockBean
     CommonPackageService commonPackageService;
@@ -203,6 +192,9 @@ public abstract class ApiV2ControllerUnitTest {
     @MockBean
     RBinaryProperties rBinaryProperties;
 
+    @MockBean
+    ServerAddressHealthcheckService serverAddressHealthcheckService;
+
     @Mock
     protected BestMaintainerChooser bestMaintainerChooser;
 
@@ -214,8 +206,9 @@ public abstract class ApiV2ControllerUnitTest {
                 .execute(ArgumentMatchers.any());
     }
 
-    public static final String JSON_PATH_COMMON =
-            ClassLoader.getSystemClassLoader().getResource("unit/jsonscommon").getPath();
+    public static final String JSON_PATH_COMMON = Objects.requireNonNull(
+                    ClassLoader.getSystemClassLoader().getResource("unit/jsonscommon"))
+            .getPath();
 
     public static final String ERROR_NOT_AUTHENTICATED_PATH = JSON_PATH_COMMON + "/error_not_authenticated.json";
     public static final String ERROR_NOT_AUTHORIZED_PATH = JSON_PATH_COMMON + "/error_not_authorized.json";

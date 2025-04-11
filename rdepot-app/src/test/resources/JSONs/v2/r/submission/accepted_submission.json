@@ -33,6 +33,7 @@
 			"active": true,
 			"description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
 			"technology": "R",
+			"descriptionContentType": "txt",
 			"repository": {
 				"name": "testrepo4",
 				"lastPublicationSuccessful": false,

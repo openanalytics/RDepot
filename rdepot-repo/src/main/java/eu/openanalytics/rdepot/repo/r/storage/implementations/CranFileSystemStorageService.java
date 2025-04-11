@@ -381,32 +381,38 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
                 if (Files.notExists(archive) || !Files.isDirectory(archive)) {
                     return;
                 }
+
                 try (DirectoryStream<Path> archiveFiles = Files.newDirectoryStream(archive)) {
                     for (Path archiveFile : archiveFiles) {
-                        if (!Files.isDirectory(archiveFile)) {
-                            continue;
-                        }
-                        try (Stream<Path> files = Files.list(archiveFile)) {
-                            if (files.findAny().isEmpty()) {
-                                FileUtils.forceDelete(archiveFile.toFile());
-                            }
+                        if (Files.isDirectory(archiveFile) && isDirectoryEmpty(archiveFile)) {
+                            FileUtils.forceDelete(archiveFile.toFile());
                         }
                     }
                 }
+
                 try (Stream<Path> archiveFiles = Files.list(archive)) {
                     if (archiveFiles.count() == 2) {
-                        if (Files.exists(archive.resolve(PACKAGES))) {
-                            FileUtils.forceDelete(archive.resolve(PACKAGES).toFile());
-                        }
-                        if (Files.exists(archive.resolve(PACKAGES_GZ))) {
-                            FileUtils.forceDelete(archive.resolve(PACKAGES_GZ).toFile());
-                        }
+                        deleteIfExists(archive.resolve(PACKAGES));
+                        deleteIfExists(archive.resolve(PACKAGES_GZ));
                     }
                 }
+
             } catch (IOException e) {
                 logger.error("Could not remove archive directory!", e);
                 throw new RemoveEmptyArchiveException(repository);
             }
+        }
+    }
+
+    private void deleteIfExists(Path filePath) throws IOException {
+        if (Files.exists(filePath)) {
+            FileUtils.forceDelete(filePath.toFile());
+        }
+    }
+
+    private boolean isDirectoryEmpty(Path directory) throws IOException {
+        try (Stream<Path> files = Files.list(directory)) {
+            return files.findAny().isEmpty();
         }
     }
 

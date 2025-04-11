@@ -32,6 +32,7 @@
 			"active": true,
 			"deleted": false,
 			"technology": "R",
+			"descriptionContentType": "txt",
 			"binary": false,
 			"description": "This package supplies tools for tabulating and analyzing\\n the results of predictive models. The methods employed are\\n applicable to virtually any predictive model and make\\n comparisons between different methodologies straightforward.",
 			"author": "Scott Fortmann-Roe",

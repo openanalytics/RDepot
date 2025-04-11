@@ -112,7 +112,7 @@ public class TransactionManagementTest {
         @Override
         public MvcResult call() throws Exception {
             latch.await();
-            return mockMvc.perform(MockMvcRequestBuilders.multipart("/r/" + testRepo.getName())
+            return mockMvc.perform(MockMvcRequestBuilders.multipart("/r/" + testRepo.getName() + "/")
                             .file(new MockMultipartFile(filename, file))
                             .file(new MockMultipartFile(
                                     "checksums",
@@ -179,7 +179,7 @@ public class TransactionManagementTest {
             futures.add(executorService.submit(new SubmitFirstChunkCallable(entry.getKey(), entry.getValue(), latch)));
         }
         latch.countDown();
-        int succeded = 0;
+        int succeeded = 0;
         int failed = 0;
 
         for (Future<MvcResult> f : futures) {
@@ -187,12 +187,12 @@ public class TransactionManagementTest {
             result.getResponse().getContentAsString();
             result.getResponse().getErrorMessage();
             result.getRequest();
-            if (result.getResponse().getStatus() == MockHttpServletResponse.SC_OK) succeded++;
+            if (result.getResponse().getStatus() == MockHttpServletResponse.SC_OK) succeeded++;
             else if (result.getResponse().getStatus() == MockHttpServletResponse.SC_BAD_REQUEST) failed++;
             else fail("Wrong status code returned.");
         }
 
-        assertEquals(1, succeded, "One and only one request should have succeeded.");
+        assertEquals(1, succeeded, "One and only one request should have succeeded.");
         assertEquals(3, failed, "Three requests should have failed.");
 
         verify(cranFileSystemStorageService).initTrashDirectory(anyString());
@@ -243,16 +243,16 @@ public class TransactionManagementTest {
         }
 
         latch.countDown();
-        int succeded = 0;
+        int succeeded = 0;
 
         for (Future<MvcResult> f : futures) {
             final MvcResult result = f.get();
 
-            if (result.getResponse().getStatus() == MockHttpServletResponse.SC_OK) succeded++;
+            if (result.getResponse().getStatus() == MockHttpServletResponse.SC_OK) succeeded++;
             else fail("Wrong status code returned.");
         }
 
-        assertEquals(4, succeded, "All 4 requests should have succeeded.");
+        assertEquals(4, succeeded, "All 4 requests should have succeeded.");
         verify(cranFileSystemStorageService, times(4)).initTrashDirectory(anyString());
         verify(cranFileSystemStorageService, times(8)).getRepositoryVersion(anyString());
         verify(cranFileSystemStorageService, times(4)).storeAndDeleteFiles(any());
@@ -263,7 +263,7 @@ public class TransactionManagementTest {
     public void secondDetachedChunkForFreeRepo_shouldFail() throws Exception {
         final String transactionTestId = "test321498320948";
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/r/testrepo1")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/r/testrepo1/")
                         .file(new MockMultipartFile(
                                 "Benchmarking_0.10.tar.gz",
                                 TestUtils.readTestPackage("recent/12345_Benchmarking_0.10.tar.gz")))
@@ -315,7 +315,7 @@ public class TransactionManagementTest {
         doReturn(Technology.R).when(cranFileSystemStorageService).getTechnology();
         doReturn(Technology.PYTHON).when(pythonFileSystemStorageService).getTechnology();
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/r/" + TEST_REPO.getName())
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/r/" + TEST_REPO.getName() + "/")
                         .file(new MockMultipartFile(
                                 "Benchmarking_0.10.tar.gz",
                                 TestUtils.readTestPackage("recent/12345_Benchmarking_0.10.tar.gz")))
@@ -376,7 +376,7 @@ public class TransactionManagementTest {
     @Test
     public void secondDetachedChunkForBusyRepo_shouldFail() throws Exception {
         final String transactionTestId = "2323323223";
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/r/" + TEST_REPO)
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/r/" + TEST_REPO + "/")
                         .file(new MockMultipartFile(
                                 "filesToUpload",
                                 "Benchmarking_0.10.tar.gz",
@@ -391,7 +391,7 @@ public class TransactionManagementTest {
 
     @Test
     public void thirdOutOfOrderAttachedChunkForBusyRepo_shouldFail() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/r/" + TEST_REPO.getName())
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/r/" + TEST_REPO.getName() + "/")
                         .file(new MockMultipartFile(
                                 "Benchmarking_0.10.tar.gz",
                                 TestUtils.readTestPackage("recent/12345_Benchmarking_0.10.tar.gz")))
@@ -415,7 +415,7 @@ public class TransactionManagementTest {
         doNothing().when(cranFileSystemStorageService).handleLastChunk(any(), anyString());
         doNothing().when(cranFileSystemStorageService).emptyTrash(TEST_REPO.getName(), TEST_ID);
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/r/" + TEST_REPO.getName())
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/r/" + TEST_REPO.getName() + "/")
                         .file(new MockMultipartFile(
                                 "filesToUpload",
                                 "Benchmarking_0.10.tar.gz",
@@ -469,7 +469,7 @@ public class TransactionManagementTest {
         doNothing().when(cranFileSystemStorageService).storeAndDeleteFiles(any());
         doNothing().when(cranFileSystemStorageService).boostRepositoryVersion(TEST_REPO.getName());
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/r/" + TEST_REPO.getName())
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/r/" + TEST_REPO.getName() + "/")
                         .file(new MockMultipartFile(
                                 "files",
                                 "12345_Benchmarking_0.10.tar.gz",

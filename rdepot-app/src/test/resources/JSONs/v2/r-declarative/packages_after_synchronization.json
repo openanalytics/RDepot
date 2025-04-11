@@ -36,6 +36,7 @@
         "active": true,
         "deleted": false,
         "technology": "R",
+        "descriptionContentType": "txt",
         "binary": false,
         "description": "Some basic functions for filtering genes.",
         "author": "Robert Gentleman [aut],\\n Vincent J. Carey [aut],\\n Wolfgang Huber [aut],\\n Florian Hahne [aut],\\n Emmanuel Taiwo [ctb] ('howtogenefinder' vignette translation from\\n Sweave to RMarkdown / HTML.),\\n Khadijah Amusat [ctb] (Converted genefilter vignette from Sweave to\\n RMarkdown / HTML.),\\n Bioconductor Package Maintainer [cre]",
@@ -55,6 +56,7 @@
         "source": "",
         "priority": null,
         "needsCompilation": "yes",
+        "maintainer": "Bioconductor Package Maintainer <maintainer@bioconductor.org>",
         "rversion": "",
         "links": [
           {
@@ -93,6 +95,7 @@
         "active": true,
         "deleted": false,
         "technology": "R",
+        "descriptionContentType": "txt",
         "binary": false,
         "source": "",
         "description": "A system for 'declaratively' creating graphics,\\n based on \"The Grammar of Graphics\". You provide the data, tell 'ggplot2'\\n how to map variables to aesthetics, what graphical primitives to use,\\n and it takes care of the details.",
@@ -112,6 +115,7 @@
         "linkingTo": null,
         "priority": null,
         "needsCompilation": "no",
+        "maintainer": "Thomas Lin Pedersen <thomas.pedersen@rstudio.com>",
         "rversion": "",
         "links": [
           {
@@ -151,6 +155,7 @@
         "deleted": false,
         "source": "",
         "technology": "R",
+        "descriptionContentType": "txt",
         "binary": false,
         "description": "Create interactive web graphics from 'ggplot2' graphs and/or a custom interface to the (MIT-licensed) JavaScript library 'plotly.js' inspired by the grammar of graphics.",
         "author": "Carson Sievert [aut, cre] (<https://orcid.org/0000-0002-4958-2844>),\\n Chris Parmer [aut],\\n Toby Hocking [aut],\\n Scott Chamberlain [aut],\\n Karthik Ram [aut],\\n Marianne Corvellec [aut] (<https://orcid.org/0000-0002-1994-3581>),\\n Pedro Despouy [aut],\\n Salim Brüggemann [ctb] (<https://orcid.org/0000-0002-5329-5987>),\\n Plotly Technologies Inc. [cph]",
@@ -169,6 +174,7 @@
         "linkingTo": null,
         "priority": null,
         "needsCompilation": "no",
+        "maintainer": "Carson Sievert <cpsievert1@gmail.com>",
         "rversion": "",
         "links": [
           {
@@ -207,6 +213,7 @@
         "active": true,
         "deleted": false,
         "technology": "R",
+        "descriptionContentType": "txt",
         "source": "",
         "binary": false,
         "description": "Using R enviroments for annotation.",
@@ -226,6 +233,7 @@
         "linkingTo": null,
         "priority": null,
         "needsCompilation": "no",
+        "maintainer": "Bioconductor Package Maintainer <maintainer@bioconductor.org>",
         "rversion": "",
         "links": [
           {

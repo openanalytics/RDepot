@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 
     private final RepositoryMaintainerTestData testData;
-    private static String EVENTS_PATH = "/v2/base/events/repositorymaintainers/";
+    private static final String EVENTS_PATH = "/v2/base/events/repositorymaintainers/";
 
     public RepositoryMaintainerIntegrationTest() {
         super("/api/v2/manager/repository-maintainers");
@@ -324,11 +324,13 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 
     @Test
     public void patchMaintainer_returns401_whenUserIsNotAuthenticated() throws Exception {
-        final String patch = "[{\n"
-                + "    \"op\": \"replace\",\n"
-                + "    \"path\": \"/repositoryId\",\n"
-                + "    \"value\": \"3\"\n"
-                + "}]";
+        final String patch =
+                """
+                [{
+                    "op": "replace",
+                    "path": "/repositoryId",
+                    "value": "3"
+                }]""";
 
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.PATCH_UNAUTHENTICATED)
@@ -351,11 +353,13 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 
     @Test
     public void patchMaintainer_returns403_whenUserIsRepositoryMaintainer() throws Exception {
-        final String patch = "[{\n"
-                + "    \"op\": \"replace\",\n"
-                + "    \"path\": \"/repositoryId\",\n"
-                + "    \"value\": \"3\"\n"
-                + "}]";
+        final String patch =
+                """
+                [{
+                    "op": "replace",
+                    "path": "/repositoryId",
+                    "value": "3"
+                }]""";
 
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.PATCH_UNAUTHORIZED)
@@ -379,11 +383,13 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 
     @Test
     public void patchMaintainer_returns404_whenMaintainerIsNotFound() throws Exception {
-        final String patch = "[{\n"
-                + "    \"op\": \"replace\",\n"
-                + "    \"path\": \"/repositoryId\",\n"
-                + "    \"value\": \"3\"\n"
-                + "}]";
+        final String patch =
+                """
+                [{
+                    "op": "replace",
+                    "path": "/repositoryId",
+                    "value": "3"
+                }]""";
 
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.PATCH)
@@ -436,11 +442,13 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 
     @Test
     public void patchMaintainer_returns422_whenValidationFails() throws Exception {
-        final String patch = "[{\n"
-                + "    \"op\": \"replace\",\n"
-                + "    \"path\": \"/repositoryId\",\n"
-                + "    \"value\": \"3333\"\n"
-                + "}]";
+        final String patch =
+                """
+                [{
+                    "op": "replace",
+                    "path": "/repositoryId",
+                    "value": "3333"
+                }]""";
 
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.PATCH)
@@ -466,11 +474,15 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 
     @Test
     public void createMaintainer() throws Exception {
-        final String body = "{\n" + "    \"user\": {\"id\": 5},\n" + "    \"repository\": { \"id\": 3}\n" + "}";
+        final String body =
+                """
+                {
+                    "user": {"id": 5},
+                    "repository": { "id": 3}
+                }""";
 
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.POST)
-                .urlSuffix("/3")
                 .token(ADMIN_TOKEN)
                 .statusCode(201)
                 .howManyNewEventsShouldBeCreated(testData.getChangeEndpointNewEventsAmount())
@@ -492,8 +504,13 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    public void createMaintianer_returns401_whenUserIsNotAuthenticated() throws Exception {
-        final String body = "{\n" + "    \"userId\": 5,\n" + "    \"repositoryId\": 3\n" + "}";
+    public void createMaintainer_returns401_whenUserIsNotAuthenticated() throws Exception {
+        final String body =
+                """
+                {
+                    "userId": 5,
+                    "repositoryId": 3
+                }""";
 
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.POST_UNAUTHENTICATED)
@@ -516,7 +533,12 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 
     @Test
     public void createMaintainer_returns403_whenUserIsRepositoryMaintainer() throws Exception {
-        final String body = "{\n" + "    \"userId\": 5,\n" + "    \"repositoryId\": 3\n" + "}";
+        final String body =
+                """
+                {
+                    "userId": 5,
+                    "repositoryId": 3
+                }""";
 
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.POST_UNAUTHORIZED)
@@ -540,11 +562,15 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 
     @Test
     public void createMaintainer_returns422_whenValidationFails() throws Exception {
-        final String body = "{\n" + "    \"user\": {\"id\": 5},\n" + "    \"repository\": {\"id\": 3333}\n" + "}";
+        final String body =
+                """
+                {
+                    "user": {"id": 5},
+                    "repository": {"id": 3333}
+                }""";
 
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.POST)
-                .urlSuffix("/3")
                 .statusCode(422)
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())

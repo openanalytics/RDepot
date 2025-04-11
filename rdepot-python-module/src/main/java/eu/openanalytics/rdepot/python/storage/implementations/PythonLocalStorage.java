@@ -23,8 +23,17 @@ package eu.openanalytics.rdepot.python.storage.implementations;
 import eu.openanalytics.rdepot.base.PropertiesParser;
 import eu.openanalytics.rdepot.base.ReadmeParser;
 import eu.openanalytics.rdepot.base.entities.Package;
-import eu.openanalytics.rdepot.base.storage.exceptions.*;
+import eu.openanalytics.rdepot.base.storage.exceptions.CheckSumCalculationException;
+import eu.openanalytics.rdepot.base.storage.exceptions.CleanUpAfterSynchronizationException;
+import eu.openanalytics.rdepot.base.storage.exceptions.CreateFolderStructureException;
+import eu.openanalytics.rdepot.base.storage.exceptions.DeleteFileException;
+import eu.openanalytics.rdepot.base.storage.exceptions.LinkFoldersException;
+import eu.openanalytics.rdepot.base.storage.exceptions.Md5MismatchException;
+import eu.openanalytics.rdepot.base.storage.exceptions.OrganizePackagesException;
+import eu.openanalytics.rdepot.base.storage.exceptions.PackageFolderPopulationException;
+import eu.openanalytics.rdepot.base.storage.exceptions.ReadPackageDescriptionException;
 import eu.openanalytics.rdepot.base.storage.implementations.CommonLocalStorage;
+import eu.openanalytics.rdepot.python.config.PythonProperties;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.entities.enums.HashMethod;
@@ -37,7 +46,9 @@ import eu.openanalytics.rdepot.python.storage.utils.PopulatedRepositoryContent;
 import eu.openanalytics.rdepot.python.synchronization.SynchronizeRepositoryRequestBody;
 import jakarta.annotation.Resource;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -51,10 +62,15 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Local storage implementation for Python.
@@ -78,13 +94,16 @@ public class PythonLocalStorage extends CommonLocalStorage<PythonRepository, Pyt
     private final Pattern pythonPackageVersion = Pattern.compile("-([0-9]+[.][0-9]+[.][0-9])");
 
     private static final String INDEX_FILE = "index.html";
+    private static final String DESCRIPTION = "Description";
+
+    private final PythonProperties pythonProperties;
 
     @Override
     public Properties getPropertiesFromExtractedFile(final String extractedFile)
             throws ReadPackageDescriptionException {
         try {
             Properties properties = new PropertiesParser(new File(extractedFile + separator + "PKG-INFO"));
-            if (Objects.nonNull(properties.getProperty("Description"))) return properties;
+            if (Objects.nonNull(properties.getProperty(DESCRIPTION))) return properties;
 
             String fileExtension = "";
             switch (properties.getProperty("Description-Content-Type", "")) {
@@ -101,15 +120,15 @@ public class PythonLocalStorage extends CommonLocalStorage<PythonRepository, Pyt
             }
             if (Files.exists(Paths.get(extractedFile + separator + "README" + fileExtension))) {
                 properties.setProperty(
-                        "Description",
+                        DESCRIPTION,
                         ReadmeParser.loadReadme(new File(extractedFile + separator + "README" + fileExtension)));
             } else if (Files.exists(Paths.get(extractedFile + separator + "Readme" + fileExtension))) {
                 properties.setProperty(
-                        "Description",
+                        DESCRIPTION,
                         ReadmeParser.loadReadme(new File(extractedFile + separator + "Readme" + fileExtension)));
             } else if (Files.exists(Paths.get(extractedFile + separator + "readme" + fileExtension))) {
                 properties.setProperty(
-                        "Description",
+                        DESCRIPTION,
                         ReadmeParser.loadReadme(new File(extractedFile + separator + "readme" + fileExtension)));
             }
             return properties;
@@ -142,7 +161,7 @@ public class PythonLocalStorage extends CommonLocalStorage<PythonRepository, Pyt
     }
 
     private void createPackageIndexTemplate(String path, PythonPackage packageBag) throws IOException {
-        packageIndexGenerator.createIndexFile(packageBag, path + separator + packageBag.getName());
+        packageIndexGenerator.createIndexFile(packageBag, path + separator + packageBag.getNormalizedName());
         repositoryIndexGenerator.addPackageToIndex(packageBag, path);
     }
 
@@ -161,7 +180,7 @@ public class PythonLocalStorage extends CommonLocalStorage<PythonRepository, Pyt
             repositoryIndexGenerator.createIndexFile(repository, dateStampFolder.getAbsolutePath());
 
             for (PythonPackage packageBag : packages) {
-                createFolderStructure(dateStampFolder + separator + packageBag.getName());
+                createFolderStructure(dateStampFolder + separator + packageBag.getNormalizedName());
                 createPackageIndexTemplate(dateStampFolder.toString(), packageBag);
             }
 
@@ -204,8 +223,9 @@ public class PythonLocalStorage extends CommonLocalStorage<PythonRepository, Pyt
     }
 
     private void addPackageFiles(PythonPackage packageBag, List<File> toUpload, Map<String, String> checksums) {
-        String packageFilePath = this.current + separator + packageBag.getName() + separator + packageBag.getFileName();
-        String indexFilePath = this.current + separator + packageBag.getName() + separator + INDEX_FILE;
+        String packageFilePath =
+                this.current + separator + packageBag.getNormalizedName() + separator + packageBag.getFileName();
+        String indexFilePath = this.current + separator + packageBag.getNormalizedName() + separator + INDEX_FILE;
         final File indexFile = new File(indexFilePath);
         final File packageFile = new File(packageFilePath);
         toUpload.add(packageFile);
@@ -230,7 +250,7 @@ public class PythonLocalStorage extends CommonLocalStorage<PythonRepository, Pyt
     private void addRepositoryIndexFile(
             List<File> toUpload, List<String> remotePackages, List<PythonPackage> localPackages) {
         Set<String> localPackagesNames =
-                localPackages.stream().map(Package::getName).collect(Collectors.toSet());
+                localPackages.stream().map(PythonPackage::getNormalizedName).collect(Collectors.toSet());
 
         Set<String> remotePackagesNames = remotePackages.stream()
                 .map(remotePackage -> {
@@ -342,11 +362,12 @@ public class PythonLocalStorage extends CommonLocalStorage<PythonRepository, Pyt
     public void populatePackage(PythonPackage packageBag, String folderPath) throws PackageFolderPopulationException {
         if (packageBag.isActive()) {
             String targetFilePath = packageBag.getSource();
-            String destinationFilePath = folderPath + separator + packageBag.getName() + separator
+            String destinationFilePath = folderPath + separator + packageBag.getNormalizedName() + separator
                     + packageBag.getName() + "-" + packageBag.getVersion() + ".tar.gz";
             try {
                 checkHash(packageBag);
-                packageIndexGenerator.addPackageToIndex(packageBag, folderPath + separator + packageBag.getName());
+                packageIndexGenerator.addPackageToIndex(
+                        packageBag, folderPath + separator + packageBag.getNormalizedName());
                 Files.copy(new File(targetFilePath).toPath(), new File(destinationFilePath).toPath());
             } catch (IOException | Md5MismatchException | CheckSumCalculationException e) {
                 log.error("{}: {}", e.getClass(), e.getMessage());
@@ -383,5 +404,67 @@ public class PythonLocalStorage extends CommonLocalStorage<PythonRepository, Pyt
         final File sourceFile = new File(packageBag.getSource());
         final HashMethod hashMethod = packageBag.getRepository().getHashMethod();
         packageBag.setHash(calculateCheckSum(sourceFile, hashMethod));
+    }
+
+    @Override
+    public MultipartFile returnMultipartFile(String url, File destination) {
+        return new MultipartFile() {
+
+            @Override
+            public void transferTo(@NonNull File dest) throws IOException, IllegalStateException {
+                FileCopyUtils.copy(getInputStream(), Files.newOutputStream(dest.toPath()));
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public long getSize() {
+                try {
+                    return Files.size(destination.toPath());
+                } catch (IOException e) {
+                    log.error(e.getMessage(), e);
+                    return -1;
+                }
+            }
+
+            @Override
+            public @NonNull String getOriginalFilename() {
+                String[] tokens = url.split("/");
+                if (tokens.length == 0) return "downloaded";
+
+                String hashFunctionsRegex = String.join("|", pythonProperties.getHashFunctions());
+                Pattern hashesPattern = Pattern.compile(hashFunctionsRegex);
+                Matcher matcher = hashesPattern.matcher(tokens[tokens.length - 1]);
+
+                if (matcher.find()) {
+                    return StringUtils.substringBefore(tokens[tokens.length - 1], "#" + matcher.group());
+                } else {
+                    return tokens[tokens.length - 1];
+                }
+            }
+
+            @Override
+            public @NonNull String getName() {
+                return getOriginalFilename();
+            }
+
+            @Override
+            public @NonNull InputStream getInputStream() throws IOException {
+                return new FileInputStream(destination);
+            }
+
+            @Override
+            public String getContentType() {
+                return "application/gzip";
+            }
+
+            @Override
+            public byte @NonNull [] getBytes() throws IOException {
+                return FileUtils.readFileToByteArray(destination);
+            }
+        };
     }
 }

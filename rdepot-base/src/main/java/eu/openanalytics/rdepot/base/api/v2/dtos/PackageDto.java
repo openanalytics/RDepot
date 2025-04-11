@@ -39,9 +39,11 @@ public class PackageDto extends PackageSimpleDto {
     protected String author;
     protected String title;
     protected String url;
+    protected String descriptionContentType;
 
     public PackageDto(Package packageBag) {
         super(packageBag);
+        this.descriptionContentType = packageBag.getDescriptionContentType();
         this.description = packageBag.getDescription();
         this.author = packageBag.getAuthor();
         this.title = packageBag.getTitle();

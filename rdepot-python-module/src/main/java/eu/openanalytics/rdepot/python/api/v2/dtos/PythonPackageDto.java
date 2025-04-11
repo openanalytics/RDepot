@@ -34,7 +34,6 @@ public class PythonPackageDto extends PackageDto {
 
     private String authorEmail;
     private String classifiers;
-    private String descriptionContentType;
     private String homePage;
     private String keywords;
     private String license;
@@ -53,7 +52,6 @@ public class PythonPackageDto extends PackageDto {
         super(packageBag);
         this.authorEmail = packageBag.getAuthorEmail();
         this.classifiers = packageBag.getClassifiers();
-        this.descriptionContentType = packageBag.getDescriptionContentType();
         this.homePage = packageBag.getHomePage();
         this.keywords = packageBag.getKeywords();
         this.license = packageBag.getLicense();

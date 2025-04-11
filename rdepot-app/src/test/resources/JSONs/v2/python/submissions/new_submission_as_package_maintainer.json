@@ -32,6 +32,7 @@
             "active": true,
             "deleted": false,
             "technology": "Python",
+            "descriptionContentType": "text/x-rst",
             "binary": false,
             "description": "wheel\\n=====\\n\\nThis library is the reference implementation of the Python wheel packaging\\nstandard, as defined in `PEP 427`_.\\n\\nIt has two different roles:\\n\\n#. A setuptools_ extension for building wheels that provides the\\n   ``bdist_wheel`` setuptools command\\n#. A command line tool for working with wheel files\\n\\nIt should be noted that wheel is **not** intended to be used as a library, and\\nas such there is no stable, public API.\\n\\n.. _PEP 427: https://www.python.org/dev/peps/pep-0427/\\n.. _setuptools: https://pypi.org/project/setuptools/\\n\\nDocumentation\\n-------------\\n\\nThe documentation_ can be found on Read The Docs.\\n\\n.. _documentation: https://wheel.readthedocs.io/\\n\\nCode of Conduct\\n---------------\\n\\nEveryone interacting in the wheel project's codebases, issue trackers, chat\\nrooms, and mailing lists is expected to follow the `PSF Code of Conduct`_.\\n\\n.. _PSF Code of Conduct: https://github.com/pypa/.github/blob/main/CODE_OF_CONDUCT.md\\n",
             "author": null,

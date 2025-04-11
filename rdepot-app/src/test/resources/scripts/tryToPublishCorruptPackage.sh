@@ -1,7 +1,7 @@
 #!/bin/bash
 CONTAINER_R_TEST=$(docker ps | tr -s ' ' | cut -d' ' -f1,2 | grep "r-test" | cut -d' ' -f1)
 
-docker exec $CONTAINER_R_TEST /bin/bash -c "curl --no-progress-meter --location 'http://oa-rdepot-repo:8080/r/testrepo6' \
+docker exec $CONTAINER_R_TEST /bin/bash -c "curl --no-progress-meter --location 'http://oa-rdepot-repo:8080/r/testrepo6/' \
 -w \"%{http_code}\" \
 --form 'files=@\"abc_1.3.tar.gz\"' \
 --form 'files=@\"PACKAGES\"' \

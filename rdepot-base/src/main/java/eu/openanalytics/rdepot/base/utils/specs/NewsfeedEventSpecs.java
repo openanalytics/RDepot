@@ -68,6 +68,9 @@ public class NewsfeedEventSpecs {
 
     private static final String AUTHOR = "author";
     private static final String RESOURCE_TECHNOLOGY = "resourceTechnology";
+    private static final String VERSION = "version";
+    private static final String REPOSITORY_GENERIC = "repositoryGeneric";
+    private static final String NAME = "name";
 
     private static class RelatedResourceSpecification implements Specification<NewsfeedEvent> {
 
@@ -116,13 +119,13 @@ public class NewsfeedEventSpecs {
 
     public static Specification<NewsfeedEvent> byUserName(List<String> userNames) {
         return (root, query, criteriaBuilder) ->
-                criteriaBuilder.in(root.get(AUTHOR).get("name")).value(userNames);
+                criteriaBuilder.in(root.get(AUTHOR).get(NAME)).value(userNames);
     }
 
     public static Specification<NewsfeedEvent> byPackageNames(List<String> packageNames) {
         return (root, query, criteriaBuilder) -> criteriaBuilder
                 .in(root.join(RESOURCE_TYPES.get(ResourceType.PACKAGE), JoinType.LEFT)
-                        .get("name"))
+                        .get(NAME))
                 .value(packageNames);
     }
 
@@ -132,8 +135,8 @@ public class NewsfeedEventSpecs {
             Join<?, ?> joinPackages = root.join(RESOURCE_TYPES.get(ResourceType.PACKAGE), JoinType.LEFT);
 
             List<Predicate> predicates = new ArrayList<>();
-            predicates.add(criteriaBuilder.in(joinPackages.get("name")).value(packageNames));
-            predicates.add(criteriaBuilder.in(joinPackages.get("version")).value(packageVersions));
+            predicates.add(criteriaBuilder.in(joinPackages.get(NAME)).value(packageNames));
+            predicates.add(criteriaBuilder.in(joinPackages.get(VERSION)).value(packageVersions));
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
@@ -142,8 +145,8 @@ public class NewsfeedEventSpecs {
     public static Specification<NewsfeedEvent> bySubmissionAndPackageNames(List<String> packageNames) {
         return (root, query, criteriaBuilder) -> criteriaBuilder
                 .in(root.join(RESOURCE_TYPES.get(ResourceType.SUBMISSION), JoinType.LEFT)
-                        .join("packageBag", JoinType.LEFT)
-                        .get("name"))
+                        .join(RESOURCE_TYPES.get(ResourceType.PACKAGE), JoinType.LEFT)
+                        .get(NAME))
                 .value(packageNames);
     }
 
@@ -151,11 +154,11 @@ public class NewsfeedEventSpecs {
             List<String> packageNames, List<String> packageVersions) {
         return (root, query, criteriaBuilder) -> {
             Join<?, ?> joinPackages = root.join(RESOURCE_TYPES.get(ResourceType.SUBMISSION), JoinType.LEFT)
-                    .join("packageBag", JoinType.LEFT);
+                    .join(RESOURCE_TYPES.get(ResourceType.PACKAGE), JoinType.LEFT);
 
             List<Predicate> predicates = new ArrayList<>();
-            predicates.add(criteriaBuilder.in(joinPackages.get("name")).value(packageNames));
-            predicates.add(criteriaBuilder.in(joinPackages.get("version")).value(packageVersions));
+            predicates.add(criteriaBuilder.in(joinPackages.get(NAME)).value(packageNames));
+            predicates.add(criteriaBuilder.in(joinPackages.get(VERSION)).value(packageVersions));
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
@@ -172,11 +175,11 @@ public class NewsfeedEventSpecs {
             List<String> packageNames, List<String> repositoryNames) {
         return (root, query, criteriaBuilder) -> {
             Join<?, ?> joinPackages = root.join(RESOURCE_TYPES.get(ResourceType.PACKAGE), JoinType.LEFT);
-            Join<?, ?> joinRepositories = joinPackages.join("repositoryGeneric", JoinType.LEFT);
+            Join<?, ?> joinRepositories = joinPackages.join(REPOSITORY_GENERIC, JoinType.LEFT);
 
             List<Predicate> predicates = new ArrayList<>();
-            predicates.add(criteriaBuilder.in(joinPackages.get("name")).value(packageNames));
-            predicates.add(criteriaBuilder.in(joinRepositories.get("name")).value(repositoryNames));
+            predicates.add(criteriaBuilder.in(joinPackages.get(NAME)).value(packageNames));
+            predicates.add(criteriaBuilder.in(joinRepositories.get(NAME)).value(repositoryNames));
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
@@ -186,12 +189,12 @@ public class NewsfeedEventSpecs {
             List<String> packageNames, List<String> packageVersions, List<String> repositoryNames) {
         return (root, query, criteriaBuilder) -> {
             Join<?, ?> joinPackages = root.join(RESOURCE_TYPES.get(ResourceType.PACKAGE), JoinType.LEFT);
-            Join<?, ?> joinRepositories = joinPackages.join("repositoryGeneric", JoinType.LEFT);
+            Join<?, ?> joinRepositories = joinPackages.join(REPOSITORY_GENERIC, JoinType.LEFT);
 
             List<Predicate> predicates = new ArrayList<>();
-            predicates.add(criteriaBuilder.in(joinPackages.get("name")).value(packageNames));
-            predicates.add(criteriaBuilder.in(joinPackages.get("version")).value(packageVersions));
-            predicates.add(criteriaBuilder.in(joinRepositories.get("name")).value(repositoryNames));
+            predicates.add(criteriaBuilder.in(joinPackages.get(NAME)).value(packageNames));
+            predicates.add(criteriaBuilder.in(joinPackages.get(VERSION)).value(packageVersions));
+            predicates.add(criteriaBuilder.in(joinRepositories.get(NAME)).value(repositoryNames));
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
@@ -201,12 +204,12 @@ public class NewsfeedEventSpecs {
             List<String> packageNames, List<String> repositoryNames) {
         return (root, query, criteriaBuilder) -> {
             Join<?, ?> joinPackages = root.join(RESOURCE_TYPES.get(ResourceType.SUBMISSION), JoinType.LEFT)
-                    .join("packageBag", JoinType.LEFT);
-            Join<?, ?> joinRepositories = joinPackages.join("repositoryGeneric", JoinType.LEFT);
+                    .join(RESOURCE_TYPES.get(ResourceType.PACKAGE), JoinType.LEFT);
+            Join<?, ?> joinRepositories = joinPackages.join(REPOSITORY_GENERIC, JoinType.LEFT);
 
             List<Predicate> predicates = new ArrayList<>();
-            predicates.add(criteriaBuilder.in(joinPackages.get("name")).value(packageNames));
-            predicates.add(criteriaBuilder.in(joinRepositories.get("name")).value(repositoryNames));
+            predicates.add(criteriaBuilder.in(joinPackages.get(NAME)).value(packageNames));
+            predicates.add(criteriaBuilder.in(joinRepositories.get(NAME)).value(repositoryNames));
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
@@ -216,13 +219,13 @@ public class NewsfeedEventSpecs {
             List<String> packageNames, List<String> packageVersions, List<String> repositoryNames) {
         return (root, query, criteriaBuilder) -> {
             Join<?, ?> joinPackages = root.join(RESOURCE_TYPES.get(ResourceType.SUBMISSION), JoinType.LEFT)
-                    .join("packageBag", JoinType.LEFT);
-            Join<?, ?> joinRepositories = joinPackages.join("repositoryGeneric", JoinType.LEFT);
+                    .join(RESOURCE_TYPES.get(ResourceType.PACKAGE), JoinType.LEFT);
+            Join<?, ?> joinRepositories = joinPackages.join(REPOSITORY_GENERIC, JoinType.LEFT);
 
             List<Predicate> predicates = new ArrayList<>();
-            predicates.add(criteriaBuilder.in(joinPackages.get("name")).value(packageNames));
-            predicates.add(criteriaBuilder.in(joinPackages.get("version")).value(packageVersions));
-            predicates.add(criteriaBuilder.in(joinRepositories.get("name")).value(repositoryNames));
+            predicates.add(criteriaBuilder.in(joinPackages.get(NAME)).value(packageNames));
+            predicates.add(criteriaBuilder.in(joinPackages.get(VERSION)).value(packageVersions));
+            predicates.add(criteriaBuilder.in(joinRepositories.get(NAME)).value(repositoryNames));
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
@@ -233,13 +236,14 @@ public class NewsfeedEventSpecs {
         return (root, query, criteriaBuilder) -> {
             Join<?, ?> joinPackageMaintainers =
                     root.join(RESOURCE_TYPES.get(ResourceType.PACKAGE_MAINTAINER), JoinType.LEFT);
-            Join<?, ?> joinRepositories = joinPackageMaintainers.join("repository", JoinType.LEFT);
+            Join<?, ?> joinRepositories =
+                    joinPackageMaintainers.join(RESOURCE_TYPES.get(ResourceType.REPOSITORY), JoinType.LEFT);
 
             List<Predicate> predicates = new ArrayList<>();
             predicates.add(criteriaBuilder
                     .in(joinPackageMaintainers.get("packageName"))
                     .value(packageNames));
-            predicates.add(criteriaBuilder.in(joinRepositories.get("name")).value(repositoryNames));
+            predicates.add(criteriaBuilder.in(joinRepositories.get(NAME)).value(repositoryNames));
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
@@ -248,31 +252,31 @@ public class NewsfeedEventSpecs {
     public static Specification<NewsfeedEvent> byRepositoryNames(List<String> repositoryNames) {
         return (root, query, criteriaBuilder) -> criteriaBuilder
                 .in(root.join(RESOURCE_TYPES.get(ResourceType.REPOSITORY), JoinType.LEFT)
-                        .get("name"))
+                        .get(NAME))
                 .value(repositoryNames);
     }
 
     public static Specification<NewsfeedEvent> byPackageAndRepositoryNames(List<String> repositoryNames) {
         return (root, query, criteriaBuilder) -> criteriaBuilder
                 .in(root.join(RESOURCE_TYPES.get(ResourceType.PACKAGE), JoinType.LEFT)
-                        .join("repositoryGeneric", JoinType.LEFT)
-                        .get("name"))
+                        .join(REPOSITORY_GENERIC, JoinType.LEFT)
+                        .get(NAME))
                 .value(repositoryNames);
     }
 
     public static Specification<NewsfeedEvent> byPackageMaintainerAndRepositoryNames(List<String> repositoryNames) {
         return (root, query, criteriaBuilder) -> criteriaBuilder
                 .in(root.join(RESOURCE_TYPES.get(ResourceType.PACKAGE_MAINTAINER), JoinType.LEFT)
-                        .join("repository", JoinType.LEFT)
-                        .get("name"))
+                        .join(RESOURCE_TYPES.get(ResourceType.REPOSITORY), JoinType.LEFT)
+                        .get(NAME))
                 .value(repositoryNames);
     }
 
     public static Specification<NewsfeedEvent> byRepositoryMaintainerAndRepositoryNames(List<String> repositoryNames) {
         return (root, query, criteriaBuilder) -> criteriaBuilder
                 .in(root.join(RESOURCE_TYPES.get(ResourceType.REPOSITORY_MAINTAINER), JoinType.LEFT)
-                        .join("repository", JoinType.LEFT)
-                        .get("name"))
+                        .join(RESOURCE_TYPES.get(ResourceType.REPOSITORY), JoinType.LEFT)
+                        .get(NAME))
                 .value(repositoryNames);
     }
 

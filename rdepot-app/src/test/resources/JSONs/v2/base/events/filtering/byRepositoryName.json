@@ -65,7 +65,7 @@
 					}
 				],
 				"id": 360,
-				"technology": "RDepot version: 2.5.2",
+				"technology": "RDepot version: 2.6.0",
 				"time": "2020-03-28T20:04:24Z",
 				"eventType": "create",
 				"user": {
@@ -108,7 +108,7 @@
 					}
 				],
 				"id": 359,
-				"technology": "RDepot version: 2.5.2",
+				"technology": "RDepot version: 2.6.0",
 				"time": "2020-03-29T10:43:10Z",
 				"eventType": "update",
 				"user": {
@@ -151,7 +151,7 @@
 					}
 				],
 				"id": 358,
-				"technology": "RDepot version: 2.5.2",
+				"technology": "RDepot version: 2.6.0",
 				"time": "2020-03-29T10:43:10Z",
 				"eventType": "update",
 				"user": {
@@ -194,7 +194,7 @@
 					}
 				],
 				"id": 357,
-				"technology": "RDepot version: 2.5.2",
+				"technology": "RDepot version: 2.6.0",
 				"time": "2020-03-29T10:43:10Z",
 				"eventType": "update",
 				"user": {
@@ -237,7 +237,7 @@
 					}
 				],
 				"id": 356,
-				"technology": "RDepot version: 2.5.2",
+				"technology": "RDepot version: 2.6.0",
 				"time": "2020-03-29T10:43:05Z",
 				"eventType": "update",
 				"user": {
@@ -280,7 +280,7 @@
 					}
 				],
 				"id": 355,
-				"technology": "RDepot version: 2.5.2",
+				"technology": "RDepot version: 2.6.0",
 				"time": "2020-03-29T10:43:05Z",
 				"eventType": "update",
 				"user": {
@@ -323,7 +323,7 @@
 					}
 				],
 				"id": 354,
-				"technology": "RDepot version: 2.5.2",
+				"technology": "RDepot version: 2.6.0",
 				"time": "2020-03-29T10:43:05Z",
 				"eventType": "update",
 				"user": {
@@ -366,7 +366,7 @@
 					}
 				],
 				"id": 319,
-				"technology": "RDepot version: 2.5.2",
+				"technology": "RDepot version: 2.6.0",
 				"time": "2020-03-28T20:10:08Z",
 				"eventType": "update",
 				"user": {
@@ -409,7 +409,7 @@
 					}
 				],
 				"id": 318,
-				"technology": "RDepot version: 2.5.2",
+				"technology": "RDepot version: 2.6.0",
 				"time": "2020-03-28T20:10:08Z",
 				"eventType": "update",
 				"user": {
@@ -452,7 +452,7 @@
 					}
 				],
 				"id": 317,
-				"technology": "RDepot version: 2.5.2",
+				"technology": "RDepot version: 2.6.0",
 				"time": "2020-03-28T20:10:08Z",
 				"eventType": "update",
 				"user": {
@@ -495,7 +495,7 @@
 					}
 				],
 				"id": 303,
-				"technology": "RDepot version: 2.5.2",
+				"technology": "RDepot version: 2.6.0",
 				"time": "2020-03-28T20:08:48Z",
 				"eventType": "update",
 				"user": {
@@ -538,7 +538,7 @@
 					}
 				],
 				"id": 302,
-				"technology": "RDepot version: 2.5.2",
+				"technology": "RDepot version: 2.6.0",
 				"time": "2020-03-28T20:08:48Z",
 				"eventType": "update",
 				"user": {
@@ -581,7 +581,7 @@
 					}
 				],
 				"id": 296,
-				"technology": "RDepot version: 2.5.2",
+				"technology": "RDepot version: 2.6.0",
 				"time": "2020-03-28T20:08:23Z",
 				"eventType": "update",
 				"user": {
@@ -624,7 +624,7 @@
 					}
 				],
 				"id": 295,
-				"technology": "RDepot version: 2.5.2",
+				"technology": "RDepot version: 2.6.0",
 				"time": "2020-03-28T20:08:23Z",
 				"eventType": "update",
 				"user": {
@@ -667,7 +667,7 @@
 					}
 				],
 				"id": 294,
-				"technology": "RDepot version: 2.5.2",
+				"technology": "RDepot version: 2.6.0",
 				"time": "2020-03-28T20:08:23Z",
 				"eventType": "update",
 				"user": {
@@ -710,7 +710,7 @@
 					}
 				],
 				"id": 293,
-				"technology": "RDepot version: 2.5.2",
+				"technology": "RDepot version: 2.6.0",
 				"time": "2020-03-28T20:08:23Z",
 				"eventType": "update",
 				"user": {
@@ -753,7 +753,7 @@
 					}
 				],
 				"id": 292,
-				"technology": "RDepot version: 2.5.2",
+				"technology": "RDepot version: 2.6.0",
 				"time": "2020-03-28T20:08:23Z",
 				"eventType": "update",
 				"user": {
@@ -796,7 +796,7 @@
 					}
 				],
 				"id": 291,
-				"technology": "RDepot version: 2.5.2",
+				"technology": "RDepot version: 2.6.0",
 				"time": "2020-03-28T20:08:18Z",
 				"eventType": "update",
 				"user": {
@@ -839,7 +839,7 @@
 					}
 				],
 				"id": 290,
-				"technology": "RDepot version: 2.5.2",
+				"technology": "RDepot version: 2.6.0",
 				"time": "2020-03-28T20:08:18Z",
 				"eventType": "update",
 				"user": {
@@ -882,7 +882,7 @@
 					}
 				],
 				"id": 289,
-				"technology": "RDepot version: 2.5.2",
+				"technology": "RDepot version: 2.6.0",
 				"time": "2020-03-28T20:08:18Z",
 				"eventType": "update",
 				"user": {

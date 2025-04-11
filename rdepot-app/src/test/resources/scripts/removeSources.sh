@@ -2,4 +2,4 @@
 
 LOCATION=$(dirname "$(readlink -f -)");
 cd $LOCATION/..
-rm -rf itestGenerated itestNewFiles itestPackages itestServer itestSourceFiles itestPdf
+rm -rf itestGenerated itestNewFiles itestPackages itestServer itestSourceFiles itestPdf itestRepo

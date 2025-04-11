@@ -3,3 +3,17 @@
  serverAddress: http://oa-rdepot-repo:8080/X
  technology: PYTHON
  requiresAuthentication: true
+ mirrors:
+    - name: PyPi
+      uri: https://pypi.org/simple
+      syncInterval: ""
+      type: tarball
+      packages:
+        - name: abo_tools
+          version: 1.0
+        - name: tetrapolyscope
+          version: 0.0.1
+        - name: adobe_analytic_API_V2.0-azure
+          version: 0.0.3
+        - name: armyofevilrobots
+          version: 0.4.1dev

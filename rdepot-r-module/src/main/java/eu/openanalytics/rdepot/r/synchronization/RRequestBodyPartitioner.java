@@ -197,6 +197,26 @@ public class RRequestBodyPartitioner {
         return getChunks(elementsPerChunk, originalFilenames, requestBody, true);
     }
 
+    private void addFilesToFinalChunk(
+            Map<File, String> recentChunk,
+            MultiValueMap<String, Object> map,
+            Map<String, String> checksumsForChunk,
+            Map<String, String> pathsForChunk,
+            Map<String, Map<String, String>> allChecksums,
+            boolean archive) {
+
+        String prefix = archive ? "archive/" : "recent/";
+
+        recentChunk.forEach((file, filePath) -> {
+            map.add(archive ? "files_archive" : "files", new FileSystemResource(file));
+            String getChecksum = file.getName().contains(PACKAGES)
+                    ? prefix + StringUtils.substringAfter(file.getName(), "_")
+                    : StringUtils.substringAfter(file.getName(), "_");
+            checksumsForChunk.put(file.getName(), allChecksums.get(filePath).get(getChecksum));
+            pathsForChunk.put(file.getName(), filePath);
+        });
+    }
+
     public ChunksData toChunks(SynchronizeRepositoryRequestBody requestBody, int elementsPerChunk) {
         List<MultiValueMap<String, Object>> chunks = new ArrayList<>();
         Map<File, String> originalFilenames = new HashMap<>();
@@ -221,30 +241,16 @@ public class RRequestBodyPartitioner {
 
             if (!recentChunks.isEmpty()) {
                 Map<File, String> recentChunk = recentChunks.remove(0);
-                recentChunk.forEach((file, filePath) -> {
-                    map.add("files", new FileSystemResource(file));
-                    String getChecksum = file.getName().contains(PACKAGES)
-                            ? "recent/" + StringUtils.substringAfter(file.getName(), "_")
-                            : StringUtils.substringAfter(file.getName(), "_");
-                    checksumsForChunk.put(
-                            file.getName(),
-                            requestBody.getChecksums().get(filePath).get(getChecksum));
-                    pathsForChunk.put(file.getName(), filePath);
-                });
+
+                addFilesToFinalChunk(
+                        recentChunk, map, checksumsForChunk, pathsForChunk, requestBody.getChecksums(), false);
             }
 
             if (!archiveChunks.isEmpty()) {
                 Map<File, String> archiveChunk = archiveChunks.remove(0);
-                archiveChunk.forEach((file, filePath) -> {
-                    map.add("files_archive", new FileSystemResource(file));
-                    String getChecksum = file.getName().contains(PACKAGES)
-                            ? "archive/" + StringUtils.substringAfter(file.getName(), "_")
-                            : StringUtils.substringAfter(file.getName(), "_");
-                    checksumsForChunk.put(
-                            file.getName(),
-                            requestBody.getChecksums().get(filePath).get(getChecksum));
-                    archivePathsForChunk.put(file.getName(), filePath);
-                });
+
+                addFilesToFinalChunk(
+                        archiveChunk, map, checksumsForChunk, archivePathsForChunk, requestBody.getChecksums(), true);
             }
 
             if (currentPage == 1) {

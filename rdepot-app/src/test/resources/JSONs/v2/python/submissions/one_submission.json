@@ -33,6 +33,7 @@
 			"active": true,
 			"description": null,
 			"technology": "Python",
+			"descriptionContentType": "text/markdown",
 			"repository": {
 				"name": "testrepo9",
 				"id": 9,

@@ -38,6 +38,8 @@ public class PropertiesFromMetaDataFileTest {
     private static final String MATRIX_FILE = JSON_PATH + "/test_files/properties_files/DESCRIPTION_matrix";
     private static final String GGALLY_FILE = JSON_PATH + "/test_files/properties_files/DESCRIPTION_ggally";
     private static final String ACTUAR_FILE = JSON_PATH + "/test_files/properties_files/DESCRIPTION_actuar";
+    private static final String ALKAHEST_FILE = JSON_PATH + "/test_files/properties_files/DESCRIPTION_alkahest";
+    private static final String AION_FILE = JSON_PATH + "/test_files/properties_files/DESCRIPTION_aion";
 
     @Test
     public void readPropertiesFromAccruedFile() throws Exception {
@@ -284,6 +286,44 @@ public class PropertiesFromMetaDataFileTest {
                         "Ross Ihaka [aut] (Parts of the R to C interface),\\n ",
                         "R Core Team [aut] (Parts of the R to C interface),\\n ",
                         "R Foundation [aut] (Parts of the R to C interface)"),
+                properties.getProperty("Author"));
+    }
+
+    @Test
+    public void readPropertiesFromAlkahestFile() throws Exception {
+        final Properties properties = new PropertiesParser(new File(ALKAHEST_FILE));
+        assertEquals(24, properties.size());
+        assertEquals("https://www.tesselle.org", properties.getProperty("X-schema.org-isPartOf"));
+        assertEquals("spectroscopy, archaeometry, r-package", properties.getProperty("X-schema.org-keywords"));
+        assertEquals(
+                String.join(
+                        "",
+                        "Nicolas Frerebeau [aut, cre] (<https://orcid.org/0000-0001-5759-4944>),\\n ",
+                        "Brice Lebrun [art] (<https://orcid.org/0000-0001-7503-8685>, Logo\\n ",
+                        "designer),\\n ",
+                        "Université Bordeaux Montaigne [fnd] (03pbgwk21),\\n ",
+                        "CNRS [fnd] (02feahw73)"),
+                properties.getProperty("Author"));
+    }
+
+    @Test
+    public void readPropertiesFromAionFile() throws Exception {
+        final Properties properties = new PropertiesParser(new File(AION_FILE));
+        assertEquals(25, properties.size());
+        assertEquals("Archaeological Science", properties.getProperty("X-schema.org-applicationCategory"));
+        assertEquals("https://www.tesselle.org", properties.getProperty("X-schema.org-isPartOf"));
+        assertEquals(
+                "time-series, r-package, archaeology,\\n archaeological-science, chronology, r-package",
+                properties.getProperty("X-schema.org-keywords"));
+        assertEquals(
+                String.join(
+                        "",
+                        "Nicolas Frerebeau [aut, cre] (<https://orcid.org/0000-0001-5759-4944>),\\n ",
+                        "Joe Roe [aut] (<https://orcid.org/0000-0002-1011-1244>),\\n ",
+                        "Brice Lebrun [art] (<https://orcid.org/0000-0001-7503-8685>, Logo\\n ",
+                        "designer),\\n ",
+                        "Université Bordeaux Montaigne [fnd] (03pbgwk21),\\n ",
+                        "CNRS [fnd] (02feahw73)"),
                 properties.getProperty("Author"));
     }
 }

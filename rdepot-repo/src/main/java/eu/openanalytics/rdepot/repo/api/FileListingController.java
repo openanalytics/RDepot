@@ -20,18 +20,14 @@
  */
 package eu.openanalytics.rdepot.repo.api;
 
-import com.google.gson.Gson;
 import eu.openanalytics.rdepot.repo.exception.GetRepositoryVersionException;
 import eu.openanalytics.rdepot.repo.r.storage.CranStorageService;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.xml.bind.DatatypeConverter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -67,9 +63,8 @@ public class FileListingController {
 
             files.forEach(file -> uploads.add(StringUtils.substringAfter(file.toString(), repository + "/")));
 
-            binaryFiles.forEach((path, packageList) -> {
-                packageList.forEach(file -> uploads.add(StringUtils.substringAfter(file.toString(), repository + "/")));
-            });
+            binaryFiles.forEach((path, packageList) -> packageList.forEach(
+                    file -> uploads.add(StringUtils.substringAfter(file.toString(), repository + "/"))));
 
         } catch (IOException e) {
             log.error(e.getMessage(), e);
@@ -89,35 +84,6 @@ public class FileListingController {
 
             return ResponseEntity.ok(uploads);
         } catch (IOException e) {
-            log.error(e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @GetMapping("/{repository}/checksum")
-    public ResponseEntity<String> checksum(@PathVariable("repository") String repository) {
-        try {
-            List<String> recentUploads = storageService.getRecentPackagesFromRepository(repository).stream()
-                    .map(Path::getFileName)
-                    .map(Path::toString)
-                    .toList();
-            List<String> archiveUploads = storageService.getArchiveFromRepository(repository).values().stream()
-                    .flatMap(List::stream)
-                    .map(Path::getFileName)
-                    .map(Path::toString)
-                    .toList();
-
-            Gson gson = new Gson();
-            String recentJson = gson.toJson(recentUploads);
-            String archiveJson = gson.toJson(archiveUploads);
-
-            MessageDigest digest = MessageDigest.getInstance("MD5");
-
-            String recentChecksum = DatatypeConverter.printHexBinary(digest.digest(recentJson.getBytes()));
-            String archiveChecksum = DatatypeConverter.printHexBinary(digest.digest(archiveJson.getBytes()));
-
-            return ResponseEntity.ok().body(recentChecksum + archiveChecksum);
-        } catch (NoSuchAlgorithmException | IOException e) {
             log.error(e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -149,5 +115,15 @@ public class FileListingController {
                 log.error("Could not send error response!", e);
             }
         }
+    }
+
+    /**
+     * Should be available under the path of the repository + "/status" to indicate
+     * whether the path is correct.
+     * @return "OK" by default
+     */
+    @GetMapping("/{repository:.+}/status")
+    public ResponseEntity<String> status() {
+        return ResponseEntity.ok("OK");
     }
 }

@@ -22,6 +22,7 @@
         "active": true,
         "source": "\/opt\/rdepot\/repositories\/4\/47098069\/A3_0.9.1.tar.gz",
         "technology": "R",
+        "descriptionContentType": "txt",
         "repository": {
           "name": "testrepo3",
           "id": 4,

@@ -1,0 +1,41 @@
+{
+    "code": 200,
+    "data": {
+        "deleted": false,
+        "hashMethod": "SHA256",
+        "id": 13,
+        "lastPublicationSuccessful": true,
+        "links": [
+            {
+                "href": "http://localhost:8017/api/v2/manager/python/repositories/13",
+                "rel": "self"
+            },
+            {
+                "href": "http://localhost:8017/api/v2/manager/python/repositories",
+                "rel": "repositoryList"
+            },
+            {
+                "href": "http://localhost:8017/api/v2/manager/python/repositories/13",
+                "rel": "self",
+                "type": "PATCH"
+            },
+            {
+                "href": "http://localhost:8017/api/v2/manager/python/repositories/13",
+                "rel": "self",
+                "type": "DELETE"
+            }
+        ],
+        "name": "testrepo13",
+        "numberOfPackages": 1,
+        "publicationUri": "http://localhost/repo/testrepo13",
+        "published": true,
+        "requiresAuthentication": true,
+        "serverAddress": "http://oa-rdepot-repo:8080/python/testrepo13",
+        "synchronizing": false,
+        "technology": "Python",
+        "version": 2
+    },
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "status": "SUCCESS"
+}

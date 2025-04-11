@@ -11,9 +11,127 @@
 			"number": 0,
 			"size": 20,
 			"totalPages": 1,
-			"totalElements": 1
+			"totalElements": 3
 		},
 		"content": [
+			{
+				"authorEmail": null,
+				"projectUrl": "Documentation, https:\/\/wheel.readthedocs.io\/, Changelog, https:\/\/wheel.readthedocs.io\/en\/stable\/news.html, Issue Tracker, https:\/\/github.com\/pypa\/wheel\/issues",
+				"keywords": "wheel,packaging",
+				"description": "wheel =====\n \n This library is the reference implementation of the Python wheel packaging\n standard, as defined in `PEP 427`_.\n \n It has two different roles:\n \n #. A setuptools_ extension for building wheels that provides the\n ``bdist_wheel`` setuptools command\n #. A command line tool for working with wheel files\n \n It should be noted that wheel is **not** intended to be used as a library, and\n as such there is no stable, public API.\n \n .. _PEP 427: https:\/\/www.python.org\/dev\/peps\/pep-0427\/\n .. _setuptools: https:\/\/pypi.org\/project\/setuptools\/\n \n Documentation\n -------------\n \n The documentation_ can be found on Read The Docs.\n \n .. _documentation: https:\/\/wheel.readthedocs.io\/\n \n Code of Conduct\n ---------------\n \n Everyone interacting in the wheel project's codebases, issue trackers, chat\n rooms, and mailing lists is expected to follow the `PSF Code of Conduct`_.\n \n .. _PSF Code of Conduct: https:\/\/github.com\/pypa\/.github\/blob\/main\/CODE_OF_CONDUCT.md\n \n \n",
+				"source": "\/opt\/rdepot\/trash\/10\/74692077\/wheel-0.36.1.tar.gz",
+				"repository": {
+					"name": "testrepo10",
+					"lastPublicationSuccessful": false,
+					"id": 10,
+					"published": false,
+					"technology": "Python",
+					"requiresAuthentication": false,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo10"
+				},
+				"title": "A built-package format for Python",
+				"requiresDist": null,
+				"homePage": "",
+				"maintainer": "Alex Grönholm",
+				"platform": null,
+				"requiresPython": "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7",
+				"requiresExternal": null,
+				"descriptionContentType": "",
+				"classifiers": "Development Status :: 5 - Production\/Stable, Intended Audience :: Developers, Topic :: System :: Archiving :: Packaging, License :: OSI Approved :: MIT License, Programming Language :: Python, Programming Language :: Python :: 2, Programming Language :: Python :: 2.7, Programming Language :: Python :: 3, Programming Language :: Python :: 3.5, Programming Language :: Python :: 3.6, Programming Language :: Python :: 3.7, Programming Language :: Python :: 3.8, Programming Language :: Python :: 3.9",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/35"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages"
+					}
+				],
+				"id": 35,
+				"summary": "A built-package format for Python",
+				"author": "Daniel Holth",
+				"active": false,
+				"maintainerEmail": null,
+				"technology": "Python",
+				"version": "0.36.1",
+				"url": "Documentation, https:\/\/wheel.readthedocs.io\/, Changelog, https:\/\/wheel.readthedocs.io\/en\/stable\/news.html, Issue Tracker, https:\/\/github.com\/pypa\/wheel\/issues",
+				"providesExtra": "test",
+				"license": "MIT",
+				"deleted": true,
+				"binary": false,
+				"name": "wheel",
+				"submission": {
+					"id": 35,
+					"state": "REJECTED"
+				},
+				"user": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				},
+				"hash": "af4088d75044efec6858bfaeb7822a9123db40ac0919e2ce364aa89b"
+			},
+			{
+				"authorEmail": null,
+				"projectUrl": "Documentation, https:\/\/wheel.readthedocs.io\/, Changelog, https:\/\/wheel.readthedocs.io\/en\/stable\/news.html, Issue Tracker, https:\/\/github.com\/pypa\/wheel\/issues",
+				"keywords": "wheel,packaging",
+				"description": null,
+				"source": "\/opt\/rdepot\/trash\/10\/37007947\/wheel-0.38.0.tar.gz",
+				"repository": {
+					"name": "testrepo10",
+					"lastPublicationSuccessful": false,
+					"id": 10,
+					"published": false,
+					"technology": "Python",
+					"requiresAuthentication": false,
+					"publicationUri": "http:\/\/localhost\/repo\/testrepo10"
+				},
+				"title": "A built-package format for Python",
+				"requiresDist": null,
+				"homePage": "",
+				"maintainer": "Alex Grönholm",
+				"platform": null,
+				"requiresPython": ">=3.7",
+				"requiresExternal": null,
+				"descriptionContentType": "",
+				"classifiers": "Development Status :: 5 - Production\/Stable, Intended Audience :: Developers, Topic :: System :: Archiving :: Packaging, License :: OSI Approved :: MIT License, Programming Language :: Python, Programming Language :: Python :: 3 :: Only, Programming Language :: Python :: 3.7, Programming Language :: Python :: 3.8, Programming Language :: Python :: 3.9, Programming Language :: Python :: 3.10, Programming Language :: Python :: 3.11",
+				"links": [
+					{
+						"rel": "self",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/36"
+					},
+					{
+						"rel": "packageList",
+						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages"
+					}
+				],
+				"id": 36,
+				"summary": "A built-package format for Python",
+				"author": "Daniel Holth",
+				"active": false,
+				"maintainerEmail": null,
+				"technology": "Python",
+				"version": "0.38.0",
+				"url": "Documentation, https:\/\/wheel.readthedocs.io\/, Changelog, https:\/\/wheel.readthedocs.io\/en\/stable\/news.html, Issue Tracker, https:\/\/github.com\/pypa\/wheel\/issues",
+				"providesExtra": "test",
+				"license": "MIT",
+				"deleted": true,
+				"binary": false,
+				"name": "wheel",
+				"submission": {
+					"id": 36,
+					"state": "REJECTED"
+				},
+				"user": {
+					"name": "Albert Einstein",
+					"id": 4,
+					"login": "einstein",
+					"email": "einstein@ldap.forumsys.com"
+				},
+				"hash": "83918396bc14b8602518944f3772061832b73a580d62d1f67a4dc2b3"
+			},
 			{
 				"authorEmail": null,
 				"projectUrl": "Documentation, https:\/\/boto3.amazonaws.com\/v1\/documentation\/api\/latest\/index.html, Source, https:\/\/github.com\/boto\/boto3",
@@ -36,7 +154,7 @@
 				"platform": null,
 				"requiresPython": ">= 3.7",
 				"requiresExternal": null,
-				"descriptionContentType": null,
+				"descriptionContentType": "",
 				"classifiers": "Development Status :: 5 - Production\/Stable, Intended Audience :: Developers, Natural Language :: English, License :: OSI Approved :: Apache Software License, Programming Language :: Python, Programming Language :: Python :: 3, Programming Language :: Python :: 3.7, Programming Language :: Python :: 3.8, Programming Language :: Python :: 3.9, Programming Language :: Python :: 3.10, Programming Language :: Python :: 3.11",
 				"links": [
 					{
@@ -51,7 +169,7 @@
 				"id": 42,
 				"summary": "The AWS SDK for Python",
 				"author": "Amazon Web Services",
-				"active": true,
+				"active": false,
 				"maintainerEmail": null,
 				"technology": "Python",
 				"version": "1.26.156",

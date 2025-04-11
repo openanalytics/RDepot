@@ -33,6 +33,7 @@
 			"active": false,
 			"description": null,
 			"technology": "Python",
+			"descriptionContentType": "text/markdown",
 			"repository": {
 				"name": "testrepo8",
 				"lastPublicationSuccessful": true,

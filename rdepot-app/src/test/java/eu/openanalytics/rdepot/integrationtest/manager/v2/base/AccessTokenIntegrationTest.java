@@ -241,6 +241,28 @@ public class AccessTokenIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    public void softDelete_returns422() throws Exception {
+        final String patch = "[\n"
+                + "    {\n"
+                + "        \"op\" : \"replace\",\n"
+                + "        \"path\" : \"/deleted\",\n"
+                + "        \"value\" : \"true\"\n"
+                + "    }"
+                + "]";
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.PATCH)
+                .urlSuffix("/" + testData.getTokenIdNotActive())
+                .statusCode(422)
+                .token(USER_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/base/access-tokens/soft_delete_access_token.json")
+                .body(patch)
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
     public void deleteToken() throws Exception {
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.DELETE)

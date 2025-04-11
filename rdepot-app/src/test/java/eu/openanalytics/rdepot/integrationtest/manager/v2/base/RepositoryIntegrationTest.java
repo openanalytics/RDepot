@@ -21,7 +21,6 @@
 package eu.openanalytics.rdepot.integrationtest.manager.v2.base;
 
 import static io.restassured.RestAssured.given;
-import static org.junit.Assert.assertEquals;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -32,6 +31,8 @@ import eu.openanalytics.rdepot.integrationtest.manager.v2.testData.RepositoryTes
 import io.restassured.http.ContentType;
 import java.io.FileReader;
 import java.util.Arrays;
+import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class RepositoryIntegrationTest extends IntegrationTest {
@@ -42,7 +43,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
         super("/api/v2/manager/repositories");
         this.testData = RepositoryTestData.builder()
                 .technologies(Arrays.asList("R", "python"))
-                .maintainers(Arrays.asList("Nikola%20Tesla"))
+                .maintainers(List.of("Nikola%20Tesla"))
                 .deleted(true)
                 .published(true)
                 .search("repo1")
@@ -69,11 +70,11 @@ public class RepositoryIntegrationTest extends IntegrationTest {
         final JsonObject expectedResponse = (JsonObject) JsonParser.parseReader(reader);
         final JsonObject actualResponse = (JsonObject) JsonParser.parseString(response);
 
-        assertEquals("Incorrect public configuration returned.", expectedResponse, actualResponse);
+        Assertions.assertEquals(expectedResponse, actualResponse, "Incorrect public configuration returned.");
     }
 
     @Test
-    public void getConfig_returns401_whenUnauthenticated() throws Exception {
+    public void getConfig_returns401_whenUnauthenticated() {
         given().accept(ContentType.JSON)
                 .when()
                 .get("/api/v2/manager/config")

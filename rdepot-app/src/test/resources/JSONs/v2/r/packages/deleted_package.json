@@ -15,8 +15,10 @@
 		},
 		"title": "Nonparametric Tests for Equality of Location Against Ordered Alternatives",
 		"distribution": null,
+		"maintainer": null,
 		"suggests": null,
 		"systemRequirements": null,
+		"descriptionContentType": "txt",
 		"md5sum": "da8be1247d3145b757bd62e01fc6eb8b",
 		"links": [
 			{
