@@ -28,6 +28,7 @@ import eu.openanalytics.rdepot.base.api.v2.converters.PackageDtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.converters.SubmissionDtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.converters.UserSettingsDtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.validation.PageableValidator;
+import eu.openanalytics.rdepot.base.config.RepositoryNameValidationProperties;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.mediator.BestMaintainerChooser;
@@ -194,6 +195,9 @@ public abstract class ApiV2ControllerUnitTest {
 
     @MockBean
     ServerAddressHealthcheckService serverAddressHealthcheckService;
+
+    @MockBean
+    RepositoryNameValidationProperties repositoryNameValidationProperties;
 
     @Mock
     protected BestMaintainerChooser bestMaintainerChooser;

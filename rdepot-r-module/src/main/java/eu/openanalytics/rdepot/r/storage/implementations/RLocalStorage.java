@@ -744,8 +744,10 @@ public class RLocalStorage extends CommonLocalStorage<RRepository, RPackage> imp
     private void addPackageToPackagesFile(RPackage packageBag, String folderPath) throws GeneratePackagesFileException {
         File packagesFile = new File(folderPath + separator + PACKAGES);
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(packagesFile, true))) {
-            writer.append(generatePackageString(packageBag));
+        try {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(packagesFile, true))) {
+                writer.append(generatePackageString(packageBag));
+            }
             gzipFile(packagesFile);
         } catch (IOException | GzipFileException e) {
             log.error("{}: {}", e.getClass(), e.getMessage());

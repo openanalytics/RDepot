@@ -22,6 +22,7 @@ package eu.openanalytics.rdepot.base.api.v2.controllers;
 
 import eu.openanalytics.rdepot.base.api.v2.dtos.PublicConfigurationDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.ResponseDto;
+import eu.openanalytics.rdepot.base.config.RepositoryNameValidationProperties;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.Locale;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,6 +46,7 @@ public class ApiV2ConfigController {
     private final boolean accessTokenLifetimeConfigurable;
     private final boolean generateManuals;
     private final int accessTokenLifetimeDefault;
+    private final RepositoryNameValidationProperties nameValidationProperties;
     private final MessageSource messageSource;
     private final Locale locale = LocaleContextHolder.getLocale();
 
@@ -56,7 +58,8 @@ public class ApiV2ConfigController {
             @Value("${replacing.packages.enabled}") String replacingPackagesEnabled,
             @Value("${access-token.lifetime-configurable}") String accessTokenLifetimeConfigurable,
             @Value("${access-token.lifetime-default}") String accessTokenLifetimeDefault,
-            @Value("${generate-manuals}") String generateManuals) {
+            @Value("${generate-manuals}") String generateManuals,
+            RepositoryNameValidationProperties nameValidationProperties) {
         this.messageSource = messageSource;
         this.declarative = Boolean.parseBoolean(declarative);
         this.deletingPackagesEnabled = Boolean.parseBoolean(deletingPackagesEnabled);
@@ -65,6 +68,7 @@ public class ApiV2ConfigController {
         this.accessTokenLifetimeConfigurable = Boolean.parseBoolean(accessTokenLifetimeConfigurable);
         this.accessTokenLifetimeDefault = Integer.parseInt(accessTokenLifetimeDefault);
         this.generateManuals = Boolean.parseBoolean(generateManuals);
+        this.nameValidationProperties = nameValidationProperties;
     }
 
     @GetMapping
@@ -80,7 +84,8 @@ public class ApiV2ConfigController {
                         replacingPackagesEnabled,
                         accessTokenLifetimeConfigurable,
                         accessTokenLifetimeDefault,
-                        generateManuals));
+                        generateManuals,
+                        nameValidationProperties.getValidationNameRegex()));
 
         return ResponseEntity.ok(dto);
     }

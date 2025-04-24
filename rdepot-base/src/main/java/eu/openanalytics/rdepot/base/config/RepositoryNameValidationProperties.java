@@ -18,16 +18,19 @@
  * You should have received a copy of the Apache License
  * along with this program. If not, see <http://www.apache.org/licenses/>
  */
-package eu.openanalytics.rdepot.base.api.v2.dtos;
+package eu.openanalytics.rdepot.base.config;
 
+import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
-public record PublicConfigurationDto(
-        boolean declarativeModeEnabled,
-        boolean deletingPackagesEnabled,
-        boolean deletingRepositoriesEnabled,
-        boolean replacingPackagesEnabled,
-        boolean accessTokenLifetimeConfigurable,
-        int accessTokenLifetimeDefault,
-        boolean generateManuals,
-        Map<String, Object> repositoryNameValidationRegex) {}
+@Component
+@Getter
+@Setter
+@ConfigurationProperties(prefix = "repository")
+public class RepositoryNameValidationProperties {
+    private Map<String, Object> validationNameRegex = new HashMap<>();
+}

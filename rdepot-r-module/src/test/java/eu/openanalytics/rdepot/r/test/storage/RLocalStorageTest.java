@@ -20,7 +20,10 @@
  */
 package eu.openanalytics.rdepot.r.test.storage;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -48,12 +51,16 @@ import eu.openanalytics.rdepot.test.fixture.RPackageTestFixture;
 import eu.openanalytics.rdepot.test.fixture.RRepositoryTestFixture;
 import eu.openanalytics.rdepot.test.fixture.UserTestFixture;
 import eu.openanalytics.rdepot.test.unit.UnitTest;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.zip.GZIPInputStream;
 import org.apache.http.entity.ContentType;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -577,6 +584,13 @@ public class RLocalStorageTest extends UnitTest {
         final String actualArchiveSourcePackagesFileContent =
                 Files.readString(actualArchiveSourcePackagesFile.toPath());
 
+        final File actualLatestSourcePackagesGzFile =
+                new File(repositoryGenerationDirectory + "/2/20240110/src/contrib/latest/PACKAGES.gz");
+        final File actualArchiveSourcePackagesGzFile =
+                new File(repositoryGenerationDirectory + "/2/20240110/src/contrib/Archive/PACKAGES.gz");
+        final String actualLatestSourcePackagesGzFileContent = readGzFileContent(actualLatestSourcePackagesGzFile);
+        final String actualArchiveSourcePackagesGzFileContent = readGzFileContent(actualArchiveSourcePackagesGzFile);
+
         final File actualLatestBinaryPackagesFile_HigherRVersion =
                 new File(repositoryGenerationDirectory + "/2/20240110/bin/linux/centos7/x86_64/4.5/latest/PACKAGES");
         final File actualLatestBinaryPackagesFile_LowerRVersion =
@@ -590,6 +604,20 @@ public class RLocalStorageTest extends UnitTest {
                 Files.readString(actualLatestBinaryPackagesFile_LowerRVersion.toPath());
         final String actualArchiveBinaryPackagesFileContent_LowerRVersion =
                 Files.readString(actualArchiveBinaryPackagesFile_LowerRVersion.toPath());
+
+        final File actualLatestBinaryPackagesGzFile_HigherRVersion =
+                new File(repositoryGenerationDirectory + "/2/20240110/bin/linux/centos7/x86_64/4.5/latest/PACKAGES.gz");
+        final File actualLatestBinaryPackagesGzFile_LowerRVersion =
+                new File(repositoryGenerationDirectory + "/2/20240110/bin/linux/centos7/x86_64/4.2/latest/PACKAGES.gz");
+        final File actualArchiveBinaryPackagesGzFile_LowerRVersion = new File(
+                repositoryGenerationDirectory + "/2/20240110/bin/linux/centos7/x86_64/4.2/Archive/PACKAGES.gz");
+
+        final String actualLatestBinaryPackagesGzFileContent_HigherRVersion =
+                readGzFileContent(actualLatestBinaryPackagesGzFile_HigherRVersion);
+        final String actualLatestBinaryPackagesGzFileContent_LowerRVersion =
+                readGzFileContent(actualLatestBinaryPackagesGzFile_LowerRVersion);
+        final String actualArchiveBinaryPackagesGzFileContent_LowerRVersion =
+                readGzFileContent(actualArchiveBinaryPackagesGzFile_LowerRVersion);
 
         final String expectedLatestSourcePackagesFileContent = getExpectedLatestPackagesFile();
         final String expectedArchiveSourcePackagesFileContent = getExpectedArchivePackagesFile();
@@ -629,6 +657,28 @@ public class RLocalStorageTest extends UnitTest {
                 expectedArchiveBinaryPackagesFileContent_LowerRVersion,
                 actualArchiveBinaryPackagesFileContent_LowerRVersion,
                 "Incorrect archive binary PACKAGES file");
+
+        assertEquals(
+                expectedLatestSourcePackagesFileContent,
+                actualLatestSourcePackagesGzFileContent,
+                "Incorrect latest source PACKAGES.gz file");
+        assertEquals(
+                expectedArchiveSourcePackagesFileContent,
+                actualArchiveSourcePackagesGzFileContent,
+                "Incorrect archive source PACKAGES.gz file");
+        assertEquals(
+                expectedLatestBinaryPackagesFileContent_HigherRVersion,
+                actualLatestBinaryPackagesGzFileContent_HigherRVersion,
+                "Incorrect latest binary PACKAGES.gz file");
+        assertEquals(
+                expectedLatestBinaryPackagesFileContent_LowerRVersion,
+                actualLatestBinaryPackagesGzFileContent_LowerRVersion,
+                "Incorrect latest binary PACKAGES.gz file");
+        assertEquals(
+                expectedArchiveBinaryPackagesFileContent_LowerRVersion,
+                actualArchiveBinaryPackagesGzFileContent_LowerRVersion,
+                "Incorrect archive binary PACKAGES.gz file");
+
         assertTrue(currentDatestampGeneratedDirectory.isDirectory(), "Directory was not generated.");
         assertTrue(Files.isSymbolicLink(currentGeneratedDirectory.toPath()), "current should be a symlink");
         assertEquals(
@@ -772,6 +822,13 @@ public class RLocalStorageTest extends UnitTest {
         final String actualArchiveSourcePackagesFileContent =
                 Files.readString(actualArchiveSourcePackagesFile.toPath());
 
+        final File actualLatestSourcePackagesGzFile =
+                new File(repositoryGenerationDirectory + "/2/20240110/src/contrib/latest/PACKAGES.gz");
+        final File actualArchiveSourcePackagesGzFile =
+                new File(repositoryGenerationDirectory + "/2/20240110/src/contrib/Archive/PACKAGES.gz");
+        final String actualLatestSourcePackagesGzFileContent = readGzFileContent(actualLatestSourcePackagesGzFile);
+        final String actualArchiveSourcePackagesGzFileContent = readGzFileContent(actualArchiveSourcePackagesGzFile);
+
         final File actualLatestBinaryPackagesFile_HigherRVersion =
                 new File(repositoryGenerationDirectory + "/2/20240110/bin/linux/centos7/x86_64/4.5/latest/PACKAGES");
         final File actualLatestBinaryPackagesFile_LowerRVersion =
@@ -785,6 +842,20 @@ public class RLocalStorageTest extends UnitTest {
                 Files.readString(actualLatestBinaryPackagesFile_LowerRVersion.toPath());
         final String actualArchiveBinaryPackagesFileContent_LowerRVersion =
                 Files.readString(actualArchiveBinaryPackagesFile_LowerRVersion.toPath());
+
+        final File actualLatestBinaryPackagesGzFile_HigherRVersion =
+                new File(repositoryGenerationDirectory + "/2/20240110/bin/linux/centos7/x86_64/4.5/latest/PACKAGES.gz");
+        final File actualLatestBinaryPackagesGzFile_LowerRVersion =
+                new File(repositoryGenerationDirectory + "/2/20240110/bin/linux/centos7/x86_64/4.2/latest/PACKAGES.gz");
+        final File actualArchiveBinaryPackagesGzFile_LowerRVersion = new File(
+                repositoryGenerationDirectory + "/2/20240110/bin/linux/centos7/x86_64/4.2/Archive/PACKAGES.gz");
+
+        final String actualLatestBinaryPackagesGzFileContent_HigherRVersion =
+                readGzFileContent(actualLatestBinaryPackagesGzFile_HigherRVersion);
+        final String actualLatestBinaryPackagesGzFileContent_LowerRVersion =
+                readGzFileContent(actualLatestBinaryPackagesGzFile_LowerRVersion);
+        final String actualArchiveBinaryPackagesGzFileContent_LowerRVersion =
+                readGzFileContent(actualArchiveBinaryPackagesGzFile_LowerRVersion);
 
         final String expectedLatestSourcePackagesFileContent = getExpectedLatestPackagesFile_forRedirectToSource();
         final String expectedArchiveSourcePackagesFileContent = getExpectedArchivePackagesFile_forRedirectToSource();
@@ -832,12 +903,47 @@ public class RLocalStorageTest extends UnitTest {
                 expectedArchiveBinaryPackagesFileContent_LowerRVersion,
                 actualArchiveBinaryPackagesFileContent_LowerRVersion,
                 "Incorrect archive binary PACKAGES file");
+        assertEquals(
+                expectedLatestSourcePackagesFileContent,
+                actualLatestSourcePackagesGzFileContent,
+                "Incorrect latest source PACKAGES.gz file");
+        assertEquals(
+                expectedArchiveSourcePackagesFileContent,
+                actualArchiveSourcePackagesGzFileContent,
+                "Incorrect archive source PACKAGES.gz file");
+        assertEquals(
+                expectedLatestBinaryPackagesFileContent_HigherRVersion,
+                actualLatestBinaryPackagesGzFileContent_HigherRVersion,
+                "Incorrect latest binary PACKAGES.gz file");
+        assertEquals(
+                expectedLatestBinaryPackagesFileContent_LowerRVersion,
+                actualLatestBinaryPackagesGzFileContent_LowerRVersion,
+                "Incorrect latest binary PACKAGES.gz file");
+        assertEquals(
+                expectedArchiveBinaryPackagesFileContent_LowerRVersion,
+                actualArchiveBinaryPackagesGzFileContent_LowerRVersion,
+                "Incorrect archive binary PACKAGES.gz file");
         assertTrue(currentDatestampGeneratedDirectory.isDirectory(), "Directory was not generated.");
         assertTrue(Files.isSymbolicLink(currentGeneratedDirectory.toPath()), "current should be a symlink");
         assertEquals(
                 currentDatestampGeneratedDirectory.getAbsolutePath(),
                 currentGeneratedDirectory.toPath().toRealPath().toFile().getAbsolutePath(),
                 "Symlink does not point at a right dir.");
+    }
+
+    private String readGzFileContent(File gzFile) throws IOException {
+
+        try (GZIPInputStream gzipInputStream = new GZIPInputStream(new FileInputStream(gzFile));
+                InputStreamReader inputStreamReader = new InputStreamReader(gzipInputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
+
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                sb.append(line).append(System.lineSeparator());
+            }
+            return sb.toString();
+        }
     }
 
     private String getExpectedBinaryArchivePackagesFileForLowerRVersion_forRedirectToSource() {
