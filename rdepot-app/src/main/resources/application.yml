@@ -139,8 +139,8 @@ repository:
   validation-name-regex:
     general: ".+"
     technology:
-      python: "[A-Za-z0-9\\-_.~]+"
-      r: "[A-Za-z0-9 \\-_.]+"
+      python: "^[A-Za-z0-9\\-_.~]+$"
+      r: "^[A-Za-z0-9 \\-_.]+$"
 
 #spring.mvc.view.prefix=/WEB-INF/pages/
 #spring.mvc.view.suffix=.jsp
@@ -214,6 +214,10 @@ logging:
         web:
           filter:
             CommonsRequestLoggingFilter: INFO
+
+multipart-upload:
+  max-part-count: 10
+  max-part-header-size: 1024
 
 #storage related properties
 local-storage:

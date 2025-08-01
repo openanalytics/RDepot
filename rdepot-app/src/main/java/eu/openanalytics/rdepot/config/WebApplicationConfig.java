@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.embedded.tomcat.TomcatConnectorCustomizer;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -129,6 +130,12 @@ public class WebApplicationConfig implements WebMvcConfigurer, ApplicationContex
 
     @Value("${repository.generation.dir}")
     private String repositoryGenerationDir;
+
+    @Value("${multipart-upload.max-part-count}")
+    private int maxPartCount;
+
+    @Value("${multipart-upload.max-part-header-size}")
+    private int maxPartHeaderSize;
 
     @Resource
     private Environment env;
@@ -393,5 +400,13 @@ public class WebApplicationConfig implements WebMvcConfigurer, ApplicationContex
     @Override
     public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
         this.context = applicationContext;
+    }
+
+    @Bean
+    TomcatConnectorCustomizer connectorCustomizer() {
+        return (connector) -> {
+            connector.setMaxPartCount(maxPartCount);
+            connector.setMaxPartHeaderSize(maxPartHeaderSize);
+        };
     }
 }

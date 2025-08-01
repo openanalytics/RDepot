@@ -50,9 +50,9 @@ public interface RPackageDao extends PackageDao<RPackage> {
                     + "AND rp.repository = :repositoryGeneric "
                     + "AND rp.binary = :binaryPackage "
                     + "AND rp.deleted = :deleted "
-                    + "AND rp.rVersion = :rVersion "
-                    + "AND rp.architecture = :architecture "
-                    + "AND rp.distribution = :distribution "
+                    + "AND (rp.rVersion = :rVersion OR (rp.rVersion IS NULL AND :rVersion IS NULL)) "
+                    + "AND (rp.architecture = :architecture OR (rp.architecture IS NULL AND :architecture IS NULL)) "
+                    + "AND (rp.distribution = :distribution OR (rp.distribution IS NULL AND :distribution IS NULL)) "
                     + "AND rp.version IN :versions")
     Optional<RPackage> findByNameAndRepositoryGenericAndDeletedAndBinaryAndVersionIn(
             @Param("name") String name,
@@ -70,9 +70,9 @@ public interface RPackageDao extends PackageDao<RPackage> {
                     + "AND rp.repository = :repositoryGeneric "
                     + "AND rp.binary = :binaryPackage "
                     + "AND rp.deleted = :deleted "
-                    + "AND rp.rVersion = :rVersion "
-                    + "AND rp.architecture = :architecture "
-                    + "AND rp.distribution = :distribution "
+                    + "AND (rp.rVersion = :rVersion OR (rp.rVersion IS NULL AND :rVersion IS NULL)) "
+                    + "AND (rp.architecture = :architecture OR (rp.architecture IS NULL AND :architecture IS NULL)) "
+                    + "AND (rp.distribution = :distribution OR (rp.distribution IS NULL AND :distribution IS NULL)) "
                     + "AND rp.version IN :versions")
     List<RPackage> findAllByNameAndRepositoryGenericAndDeletedAndBinaryAndVersionIn(
             @Param("name") String name,

@@ -883,9 +883,9 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
 
     @Test
     public void submitPackage_asPackageMaintainer() throws Exception {
-        File packageBag = new File("src/test/resources/itestPackages/A3_0.9.3.tar.gz");
+        File packageBag = new File("src/test/resources/itestPackages/accrued_1.1.tar.gz");
         SubmissionMultipartBody body = new SubmissionMultipartBody(
-                "testrepo3",
+                "testrepo1",
                 false,
                 false,
                 "",

@@ -1,89 +1,87 @@
 {
-    "status": "SUCCESS",
     "code": 201,
-    "message": "Your resource has been created successfully.",
-    "messageCode": "success.resource.created",
     "data": {
-        "id": 48,
-        "packageBag": {
-            "id": 48,
-            "user": {
-                "id": 4,
-                "name": "Albert Einstein",
-                "login": "einstein",
-                "email": "einstein@ldap.forumsys.com"
-            },
-            "repository": {
-                "id": 4,
-                "name": "testrepo3",
-                "publicationUri": "http://localhost/repo/testrepo3",
-                "published": false,
-                "requiresAuthentication": true,
-                "technology": "R",
-                "lastPublicationSuccessful": false
-            },
-            "submission": {
-                "id": 48,
-                "state": "ACCEPTED"
-            },
-            "name": "A3",
-            "version": "0.9.3",
-            "source": "/opt/rdepot/repositories/4/95517882/A3_0.9.3.tar.gz",
-            "active": true,
-            "deleted": false,
-            "technology": "R",
-            "descriptionContentType": "txt",
-            "binary": false,
-            "description": "This ąęćśöäüß package supplies tools for tabulating and analyzing\\n the results of predictive models. The methods employed are\\n applicable to virtually any predictive model and make\\n comparisons between different methodologies straightforward.",
-            "author": "Scott Fortmann-Roe",
-            "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for\\n Predictive Models - test exotic letters ąęćśöäüß",
-            "url": null,
-            "links": [
-                {
-                    "rel": "self",
-                    "href": "http://localhost:8017/api/v2/manager/r/packages/48"
-                },
-                {
-                    "rel": "packageList",
-                    "href": "http://localhost:8017/api/v2/manager/packages"
-                },
-                {
-                    "rel": "self",
-                    "href": "http://localhost:8017/api/v2/manager/r/packages/48",
-                    "type": "PATCH"
-                },
-                {
-                    "rel": "self",
-                    "href": "http://localhost:8017/api/v2/manager/r/packages/48",
-                    "type": "DELETE"
-                }
-            ]
-        },
-        "submitter": {
-            "id": 6,
+        "approver": {
             "name": "Galileo Galilei",
+            "id": 6,
             "login": "galieleo",
             "email": "galieleo@ldap.forumsys.com"
         },
-        "approver": {
-            "id": 6,
+        "submitter": {
             "name": "Galileo Galilei",
+            "id": 6,
             "login": "galieleo",
             "email": "galieleo@ldap.forumsys.com"
         },
         "changes": "",
-        "state": "ACCEPTED",
-        "created": "2025-01-27T12:50:12.170511589Z",
-        "technology": "R",
         "links": [
             {
                 "rel": "self",
-                "href": "http://localhost:8017/api/v2/manager/r/submissions/48"
+                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/48"
             },
             {
                 "rel": "submissionList",
-                "href": "http://localhost:8017/api/v2/manager/r/submissions"
+                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions"
             }
-        ]
-    }
+        ],
+        "id": 48,
+        "state": "ACCEPTED",
+        "technology": "R",
+        "packageBag": {
+            "author": "Julie Eaton and Ian Painter",
+            "active": true,
+            "description": "Package for visualizing data quality of partially accruing time series.",
+            "technology": "R",
+            "repository": {
+                "name": "testrepo1",
+                "lastPublicationSuccessful": true,
+                "id": 2,
+                "published": true,
+                "technology": "R",
+                "requiresAuthentication": false,
+                "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+            },
+            "title": "Visualization tools for partially accruing data",
+            "version": "1.1",
+            "url": null,
+            "deleted": false,
+            "descriptionContentType": "txt",
+            "binary": false,
+            "name": "accrued",
+            "submission": {
+                "id": 48,
+                "state": "ACCEPTED"
+            },
+            "links": [
+                {
+                    "rel": "self",
+                    "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/48"
+                },
+                {
+                    "rel": "packageList",
+                    "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                },
+                {
+                    "rel": "self",
+                    "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/48",
+                    "type": "PATCH"
+                },
+                {
+                    "rel": "self",
+                    "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/48",
+                    "type": "DELETE"
+                }
+            ],
+            "id": 48,
+            "user": {
+                "name": "Nikola Tesla",
+                "id": 5,
+                "login": "tesla",
+                "email": "tesla@ldap.forumsys.com"
+            }
+        }
+    },
+    "messageCode": "success.resource.created",
+    "message": "Your resource has been created successfully.",
+    "status": "SUCCESS"
 }

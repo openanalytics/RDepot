@@ -50,14 +50,14 @@
         "license": "GPL (>= 2)",
         "md5sum": "8eb4760cd574f5489e61221dc9bb0076",
         "built": null,
-        "architecture": "",
-        "distribution": "",
+        "architecture": null,
+        "distribution": null,
         "enhances": null,
         "linkingTo": null,
         "priority": null,
         "needsCompilation": "no",
         "maintainer": "Scott Fortmann-Roe <scottfr@berkeley.edu>",
-        "rversion": "",
+        "rversion": null,
         "links": [
           {
             "rel": "self",

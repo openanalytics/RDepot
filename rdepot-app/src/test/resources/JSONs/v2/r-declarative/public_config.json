@@ -14,8 +14,8 @@
 		"repositoryNameValidationRegex": {
 			"general": ".+",
 			"technology": {
-				"python": "[A-Za-z0-9\\-_.~]+",
-				"r": "[A-Za-z0-9 \\-_.]+"
+				"python": "^[A-Za-z0-9\\-_.~]+$",
+				"r": "^[A-Za-z0-9 \\-_.]+$"
 			}
 		}
 	}

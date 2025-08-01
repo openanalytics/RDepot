@@ -302,9 +302,9 @@ public class RPackageValidatorTest {
                         packageBag.getRepository(),
                         false,
                         false,
-                        "",
-                        "",
-                        ""))
+                        null,
+                        null,
+                        null))
                 .thenReturn(Optional.of(duplicatedPackageBag));
         when(submissionService.findByPackage(duplicatedPackageBag)).thenReturn(Optional.of(submission));
 
@@ -325,9 +325,9 @@ public class RPackageValidatorTest {
                         packageBag.getRepository(),
                         false,
                         false,
-                        "",
-                        "",
-                        ""))
+                        null,
+                        null,
+                        null))
                 .thenReturn(Optional.of(duplicatedPackageBag));
         when(submissionService.findByPackage(duplicatedPackageBag)).thenReturn(Optional.of(submission));
 

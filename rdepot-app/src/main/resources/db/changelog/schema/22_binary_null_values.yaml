@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 22_01_r_binary_null_values
+      author: dglebowska
+      preConditions:
+        - onFail: MARK_RAN
+        - columnExists:
+            tableName: rpackage
+            schemaName: public
+            columnName: r_version
+      changes:
+        - sql:
+            sql: "UPDATE public.rpackage rp \
+              SET r_version = null, \
+                architecture = null, \
+                distribution = null \
+              WHERE BTRIM(rp.r_version) = '';"

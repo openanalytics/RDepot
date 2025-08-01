@@ -65,9 +65,19 @@ pipeline {
     }
     stage('tests') {
       steps {
-          configFileProvider([configFile(fileId: 'maven-settings-rsb', variable: 'MAVEN_SETTINGS_RSB')]) {
-            sh "mvn -s $MAVEN_SETTINGS_RSB clean deploy -Ddependency-check.skip=true"
+        configFileProvider([configFile(fileId: 'maven-settings-rsb', variable: 'MAVEN_SETTINGS_RSB')]) {
+          script {
+            echo "working on branch ${env.BRANCH_NAME}"
+            if (env.BRANCH_NAME.startsWith('release/') || env.BRANCH_NAME.startsWith('PR-')) {
+              sh "mvn -s $MAVEN_SETTINGS_RSB clean install -Ddependency-check.skip=true"
+            } else {
+              sh "mvn -s $MAVEN_SETTINGS_RSB clean deploy -Ddependency-check.skip=true"
+            }
           }
+        }
+      }
+      post {
+        always {
           publishHTML([
             reportDir: 'rdepot-app/target/site/', reportFiles: 'failsafe-report.html',
             reportName: 'Integration Test / App Test Report',
@@ -88,6 +98,7 @@ pipeline {
             reportDir: 'target/', reportFiles: 'dependency-check-report.html',
             reportName: 'OWASP Dependency Analysis Report',
             allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true])
+        }
       }
     }
     stage('build images') {
