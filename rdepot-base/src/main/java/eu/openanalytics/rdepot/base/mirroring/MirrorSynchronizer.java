@@ -21,14 +21,17 @@
 package eu.openanalytics.rdepot.base.mirroring;
 
 import eu.openanalytics.rdepot.base.config.declarative.DeclarativeConfigurationSource;
+import eu.openanalytics.rdepot.base.entities.PackageSynchronizationStatus;
 import eu.openanalytics.rdepot.base.entities.Repository;
-import eu.openanalytics.rdepot.base.entities.SynchronizationStatus;
+import eu.openanalytics.rdepot.base.entities.RepositorySynchronizationStatus;
 import eu.openanalytics.rdepot.base.mirroring.pojos.MirroredPackage;
 import eu.openanalytics.rdepot.base.mirroring.pojos.MirroredRepository;
-import java.util.ArrayList;
+import eu.openanalytics.rdepot.base.mirroring.pojos.SynchronizationStatus;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import lombok.Getter;
@@ -45,11 +48,15 @@ public abstract class MirrorSynchronizer<
     private final DeclarativeConfigurationSource<R, P, M> declarativeConfigurationSource;
 
     @Getter
-    private final List<SynchronizationStatus> synchronizationStatusList;
+    private final Map<Integer, RepositorySynchronizationStatus> synchronizationStatuses;
 
     protected MirrorSynchronizer(DeclarativeConfigurationSource<R, P, M> declarativeConfigurationSource) {
-        this.synchronizationStatusList = new ArrayList<>();
+        this.synchronizationStatuses = new HashMap<>();
         this.declarativeConfigurationSource = declarativeConfigurationSource;
+    }
+
+    public RepositorySynchronizationStatus getSynchronizationStatus(int id) {
+        return synchronizationStatuses.get(id);
     }
 
     /**
@@ -82,42 +89,66 @@ public abstract class MirrorSynchronizer<
      * Checks if synchronization for a given repository is currently ongoing.
      * If it is not the previous status will be removed and a new ongoing one will be added.
      */
-    protected Boolean isPendingAddNewStatusIfFinished(Repository repository) {
-        synchronized (synchronizationStatusList) {
-            Optional<SynchronizationStatus> status = synchronizationStatusList.stream()
-                    .filter(s -> s.getRepositoryId().equals(repository.getId())
-                            && s.getTechnology().equals(repository.getTechnology()))
-                    .findFirst();
+    protected Boolean isPendingAddNewStatusIfFinished(
+            Repository repository, List<PackageSynchronizationStatus> packages) {
+        synchronized (synchronizationStatuses) {
+            Optional<RepositorySynchronizationStatus> status =
+                    Optional.ofNullable(synchronizationStatuses.get(repository.getId()));
 
             if (status.isPresent()) {
                 if (status.get().isPending()) {
                     return true;
                 }
 
-                synchronizationStatusList.remove(status.get());
+                synchronizationStatuses.remove(status.get().getRepository().getId());
             }
 
-            SynchronizationStatus newStatus = new SynchronizationStatus();
-            newStatus.setRepositoryId(repository.getId());
+            RepositorySynchronizationStatus newStatus = new RepositorySynchronizationStatus();
+            newStatus.setRepository(repository);
             newStatus.setTimestamp(new Date());
             newStatus.setPending(true);
             newStatus.setTechnology(repository.getTechnology());
+            newStatus.setPackages(packages);
 
-            synchronizationStatusList.add(newStatus);
+            synchronizationStatuses.put(repository.getId(), newStatus);
 
             return false;
         }
     }
 
     /**
-     * Register synchronization error for a given repository.
+     * Register synchronization error for a given package in a given repository.
      */
-    protected void registerSynchronizationError(Repository repository, Exception e) {
-        synchronized (synchronizationStatusList) {
-            synchronizationStatusList.stream()
-                    .filter(s -> s.getRepositoryId().equals(repository.getId()))
+    protected void registerPackageSynchronizationStatus(
+            Repository repository,
+            String packageName,
+            String packageVersion,
+            M mirror,
+            SynchronizationStatus status,
+            String error) {
+        synchronized (synchronizationStatuses) {
+            synchronizationStatuses.get(repository.getId()).getPackages().stream()
+                    .filter(p -> p.equals(packageName, packageVersion, mirror))
                     .findFirst()
-                    .ifPresent(s -> s.setError(Optional.of(e)));
+                    .ifPresent(ps -> {
+                        ps.setStatus(status);
+                        ps.setError(error);
+                    });
+        }
+    }
+
+    /**
+     * Register synchronization status for a given repository.
+     */
+    protected void registerRepositorySynchronizationStatus(Repository repository, SynchronizationStatus status) {
+        synchronized (synchronizationStatuses) {
+            RepositorySynchronizationStatus repoStatus = synchronizationStatuses.get(repository.getId());
+
+            if (repoStatus.getStatus() == SynchronizationStatus.PENDING) {
+                repoStatus.setStatus(status);
+            } else if (!repoStatus.getStatus().equals(status)) {
+                repoStatus.setStatus(SynchronizationStatus.MIXED);
+            }
         }
     }
 
@@ -126,11 +157,9 @@ public abstract class MirrorSynchronizer<
      * This method has to be triggered after finished synchronization.
      */
     protected void registerFinishedSynchronization(Repository repository) {
-        synchronized (synchronizationStatusList) {
-            synchronizationStatusList.stream()
-                    .filter(s -> s.getRepositoryId().equals(repository.getId()))
-                    .findFirst()
-                    .ifPresent(s -> s.setPending(false));
+        synchronized (synchronizationStatuses) {
+            if (synchronizationStatuses.get(repository.getId()) != null)
+                synchronizationStatuses.get(repository.getId()).setPending(false);
         }
     }
 }

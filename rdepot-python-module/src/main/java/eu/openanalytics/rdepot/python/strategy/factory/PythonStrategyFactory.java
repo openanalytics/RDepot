@@ -30,7 +30,6 @@ import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
-import eu.openanalytics.rdepot.base.storage.Storage;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.update.UpdateSubmissionStrategy;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
@@ -38,6 +37,8 @@ import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.mediator.deletion.PythonPackageDeleter;
 import eu.openanalytics.rdepot.python.services.PythonPackageService;
 import eu.openanalytics.rdepot.python.services.PythonRepositoryService;
+import eu.openanalytics.rdepot.python.storage.implementations.fs.PythonFSPopulator;
+import eu.openanalytics.rdepot.python.storage.implementations.fs.PythonLocalStorage;
 import eu.openanalytics.rdepot.python.strategy.create.PythonRepositoryCreateStrategy;
 import eu.openanalytics.rdepot.python.strategy.republish.PythonRepositoryRepublishStrategy;
 import eu.openanalytics.rdepot.python.strategy.update.PythonPackageUpdateStrategy;
@@ -62,7 +63,8 @@ public class PythonStrategyFactory {
     private final BestMaintainerChooser bestMaintainerChooser;
     private final EmailService emailService;
     private final SecurityMediator securityMediator;
-    private final Storage<PythonRepository, PythonPackage> storage;
+    private final PythonLocalStorage storage;
+    private final PythonFSPopulator populator;
     private final PythonRepositorySynchronizer repositorySynchronizer;
     private final PythonPackageDeleter packageDeleter;
 
@@ -80,7 +82,9 @@ public class PythonStrategyFactory {
                 bestMaintainerChooser,
                 repositorySynchronizer,
                 securityMediator,
-                packageDeleter);
+                packageDeleter,
+                populator,
+                packageMaintainerService);
     }
 
     public Strategy<PythonPackage> updatePackageStrategy(
@@ -107,7 +111,7 @@ public class PythonStrategyFactory {
                 requester,
                 updatedResource,
                 packageService,
-                storage,
+                populator,
                 emailService,
                 securityMediator,
                 repositorySynchronizer,

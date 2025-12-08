@@ -27,8 +27,6 @@ import java.util.List;
 
 public class PackageMaintainerTestFixture {
 
-    public static final Boolean DELETED = false;
-
     public static List<PackageMaintainer> GET_PACKAGE_MAINTAINERS_FOR_REPOSITORY(int count, RRepository repository) {
         List<PackageMaintainer> maintainers = new ArrayList<>();
 

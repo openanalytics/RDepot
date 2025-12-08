@@ -130,8 +130,11 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
                 "file", "coconutpy-2.2.1.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
         final boolean replace = false;
 
-        final Submission submission =
-                PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user).getSubmission();
+        final PythonPackage packageBag = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
+        packageBag.setName("coconutpy");
+        packageBag.setVersion("2.2.1");
+        packageBag.setSource("coconutpy-2.2.1.tar.gz");
+        final Submission submission = packageBag.getSubmission();
         submission.setState(SubmissionState.WAITING);
         Strategy<Submission> strategy =
                 Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user));
@@ -269,7 +272,7 @@ public class PythonSubmissionReplacingDisabledControllerTest extends ApiV2Contro
                     return null;
                 })
                 .when(pythonPackageValidator)
-                .validate(any(MultipartFile.class), any());
+                .validate(any(MultipartFile.class), any(), eq(false));
         when(pythonStrategyFactory.uploadPackageStrategy(any(), eq(user))).thenReturn(strategy);
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v2/manager/python/submissions")

@@ -25,12 +25,14 @@ import static org.mockito.Mockito.*;
 
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.synchronization.RepoResponse;
+import eu.openanalytics.rdepot.base.synchronization.checksums.Checksums;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.services.PythonPackageService;
-import eu.openanalytics.rdepot.python.storage.PythonStorage;
-import eu.openanalytics.rdepot.python.storage.implementations.PythonPackageLocalArchiver;
-import eu.openanalytics.rdepot.python.storage.utils.PopulatedRepositoryContent;
+import eu.openanalytics.rdepot.python.storage.PythonPopulator;
+import eu.openanalytics.rdepot.python.storage.implementations.fs.PythonPackageLocalArchiver;
+import eu.openanalytics.rdepot.python.storage.implementations.fs.PythonPopulatedPackage;
+import eu.openanalytics.rdepot.python.storage.models.PopulatedRepositoryContent;
 import eu.openanalytics.rdepot.python.synchronization.PythonRepositorySynchronizer;
 import eu.openanalytics.rdepot.python.synchronization.PythonRequestBodyPartitioner;
 import eu.openanalytics.rdepot.python.synchronization.SynchronizeRepositoryRequestBody;
@@ -52,13 +54,13 @@ import org.springframework.web.client.RestTemplate;
 public class PythonRepositorySynchronizerTest extends UnitTest {
 
     @Mock
-    PythonStorage storage;
+    PythonPopulator storage;
 
     @Mock
     PythonPackageService packageService;
 
     @Mock
-    RestTemplate rest;
+    RestTemplate repoApiClient;
 
     @Spy
     PythonRequestBodyPartitioner pythonRequestBodyPartitioner =
@@ -81,8 +83,8 @@ public class PythonRepositorySynchronizerTest extends UnitTest {
         final String versionBefore = "1";
         final String versionAfter = "2";
         doReturn(new ResponseEntity<>("[1]", HttpStatus.OK))
-                .when(rest)
-                .getForEntity(eq("http://127.0.0.1/python/testrepo1/"), eq(String.class));
+                .when(repoApiClient)
+                .getForEntity(eq("http://127.0.0.1/python/testrepo1/?hashMethod=SHA256"), eq(String.class));
 
         final List<PythonPackage> packages =
                 PythonPackageTestFixture.GET_PACKAGES_WITH_MULTIPLE_VERSIONS_OF_THE_SAME_PACKAGE(repository, user);
@@ -93,7 +95,11 @@ public class PythonRepositorySynchronizerTest extends UnitTest {
         packages.sort(PythonRepositorySynchronizer.PACKAGE_COMPARATOR);
         onlyLatest.sort(PythonRepositorySynchronizer.PACKAGE_COMPARATOR);
 
-        final PopulatedRepositoryContent populatedContent = new PopulatedRepositoryContent(packages, path);
+        final PopulatedRepositoryContent populatedContent = new PopulatedRepositoryContent(
+                packages.stream()
+                        .map(p -> new PythonPopulatedPackage(p, p.getSource()))
+                        .toList(),
+                path);
         final List<File> filesToUpload = List.of(
                 new File(TEST_PACKAGES_PATH + "/boto3/boto3-1.26.156.tar.gz"),
                 new File(TEST_PACKAGES_PATH + "/boto3/index.html"),
@@ -126,10 +132,11 @@ public class PythonRepositorySynchronizerTest extends UnitTest {
         doReturn(populatedContent).when(storage).organizePackagesInStorage(DATESTAMP, packages, repository);
         doReturn(requestBody)
                 .when(storage)
-                .buildSynchronizeRequestBody(populatedContent, new ArrayList<>(), repository, versionBefore);
+                .buildSynchronizeRequestBody(
+                        populatedContent, new ArrayList<>(), new Checksums(), repository, versionBefore);
         doAnswer(new UploadSingleChunkRequestAssertionAnswer(
                         repository, "", versionBefore, versionAfter, packagesToDelete, expectedFilesToUpload))
-                .when(rest)
+                .when(repoApiClient)
                 .postForEntity(anyString(), any(Object.class), eq(RepoResponse.class));
         doNothing().when(storage).cleanUpAfterSynchronization(populatedContent);
 
@@ -151,8 +158,8 @@ public class PythonRepositorySynchronizerTest extends UnitTest {
         final String versionBefore = "1";
         final String versionAfter = "2";
         doReturn(new ResponseEntity<>("[1]", HttpStatus.OK))
-                .when(rest)
-                .getForEntity(eq("http://127.0.0.1/python/testrepo2/"), eq(String.class));
+                .when(repoApiClient)
+                .getForEntity(eq("http://127.0.0.1/python/testrepo2/?hashMethod=SHA256"), eq(String.class));
 
         ReflectionTestUtils.setField(repositorySynchronizer, "maxRequestSize", 10);
 
@@ -170,7 +177,11 @@ public class PythonRepositorySynchronizerTest extends UnitTest {
                 "9_testpackage3_1.1.1",
                 "10_testpackage3_2.2.2");
 
-        final PopulatedRepositoryContent populatedContent = new PopulatedRepositoryContent(packages, path);
+        final PopulatedRepositoryContent populatedContent = new PopulatedRepositoryContent(
+                packages.stream()
+                        .map(p -> new PythonPopulatedPackage(p, p.getSource()))
+                        .toList(),
+                path);
 
         final List<File> filesToUpload = List.of(
                 new File(TEST_PACKAGES_PATH + "/testpackage1/testpackage1_1.0.0.tar.gz"),
@@ -224,7 +235,8 @@ public class PythonRepositorySynchronizerTest extends UnitTest {
 
         doReturn(requestBody)
                 .when(storage)
-                .buildSynchronizeRequestBody(populatedContent, new ArrayList<>(), repository, versionBefore);
+                .buildSynchronizeRequestBody(
+                        populatedContent, new ArrayList<>(), new Checksums(), repository, versionBefore);
 
         List<File> expectedFirstChunk = new ArrayList<>(expectedFirstFilesToUpload);
         List<File> expectedSecondChunk = new ArrayList<>(expectedNextFilesToUpload);
@@ -232,7 +244,7 @@ public class PythonRepositorySynchronizerTest extends UnitTest {
 
         doAnswer(new UploadMultipleChunksRequestAssertionAnswer(
                         2, repository, versionBefore, versionAfter, packagesToDelete, chunksToUpload))
-                .when(rest)
+                .when(repoApiClient)
                 .postForEntity(anyString(), any(Object.class), eq(RepoResponse.class));
 
         repositorySynchronizer.storeRepositoryOnRemoteServer(repository, DATESTAMP);

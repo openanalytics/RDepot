@@ -34,4 +34,30 @@ public class SubmissionMultipartBody {
     private Boolean replace;
     private String changes;
     private MultiPartSpecification multipartFile;
+    private Boolean binary;
+    private String rVersion;
+    private String architecture;
+    private String distribution;
+
+    public SubmissionMultipartBody(
+            String repository, Boolean replace, String changes, MultiPartSpecification multipartFile, Boolean binary) {
+        this.repository = repository;
+        this.replace = replace;
+        this.changes = changes;
+        this.multipartFile = multipartFile;
+        this.binary = binary;
+    }
+
+    public SubmissionMultipartBody(
+            String repository,
+            Boolean generateManual,
+            Boolean replace,
+            String changes,
+            MultiPartSpecification multipartFile) {
+        this.repository = repository;
+        this.generateManual = generateManual;
+        this.replace = replace;
+        this.changes = changes;
+        this.multipartFile = multipartFile;
+    }
 }

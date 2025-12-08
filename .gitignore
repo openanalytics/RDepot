@@ -34,6 +34,7 @@ rdepot-app/src/test/resources/itestSourceFiles
 rdepot-app/src/test/resources/itestPdf
 rdepot-app/src/test/resources/itestTrashFiles
 rdepot-app/src/test/resources/itestRepo
+rdepot-app/src/test/resources/itestPublicationTestPackages
 rdepot-repo/target
 rdepot-app/target
 rdepot-base/target
@@ -44,3 +45,4 @@ target/
 .metadata
 =
 .theia
+rdepot-python-module/src/test/resources/unit/storage_tests/rdepot

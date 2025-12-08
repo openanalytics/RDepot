@@ -571,7 +571,7 @@ It is a little bit different when it comes to package uploads:
 public class RPackageUploadStrategy
 	extends DefaultPackageUploadStrategy<RRepository, RPackage> {
 
-	private final RStorage rStorage;
+	private final RStorage rPopulator;
 
 	public RPackageUploadStrategy(
 			PackageUploadRequest<RRepository> request,
@@ -586,7 +586,7 @@ public class RPackageUploadStrategy
 			BestMaintainerChooser bestMaintainerChooser,
 			RRepositorySynchronizer repositorySynchronizer,
 			SecurityMediator securityMediator,
-			RStorage rStorage,
+			RStorage rPopulator,
 			RPackageDeleter packageDeleter) {
 		super(request,
 				requester,
@@ -601,7 +601,7 @@ public class RPackageUploadStrategy
 				repositorySynchronizer,
 				securityMediator,
 				packageDeleter);
-		this.rStorage = rStorage;
+		this.rPopulator = rPopulator;
 	}
 
 	@Override
@@ -625,7 +625,7 @@ public class RPackageUploadStrategy
 		Submission submission = super.actualStrategy();
 		try {
 			if(request.isGenerateManual())
-				rStorage.generateManual(packageBag);
+				rPopulator.generateManual(packageBag);
 		} catch (GenerateManualException e) {
 			logger.error(e.getMessage(), e);
 			throw new StrategyFailure(e);
@@ -679,7 +679,7 @@ public class RStrategyFactory {
 	private final SecurityMediator securityMediator;
 	private final PackageMaintainerService packageMaintainerService;
 	private final RepositoryMaintainerService repositoryMaintainerService;
-	private final RStorage rStorage;
+	private final RStorage rPopulator;
     private final RPackageDeleter rPackageDeleter;
 
 	public Strategy<RPackage> updatePackageStrategy(RPackage resource, User requester, RPackage updatedPackage) {

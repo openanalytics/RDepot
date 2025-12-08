@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>eu.openanalytics</groupId>
 		<artifactId>rdepot</artifactId>
-		<version>2.6.2</version>
+		<version>2.7.0</version>
 	</parent>
 	<artifactId>rdepot-repo</artifactId>
 	<name>RDepot R Repo App</name>
@@ -102,7 +102,15 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+	    	<groupId>org.springframework.boot</groupId>
+	    	<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>

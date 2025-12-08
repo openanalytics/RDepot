@@ -21,7 +21,9 @@
 package eu.openanalytics.rdepot.integrationtest.manager.v2.python;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.*;
 
+import eu.openanalytics.rdepot.integrationtest.environment.BashScriptExecutor;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.IntegrationTest;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.RequestType;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.TestRequestBody;
@@ -29,31 +31,78 @@ import eu.openanalytics.rdepot.integrationtest.manager.v2.testData.PackageTestDa
 import io.restassured.http.ContentType;
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 
 public class PythonPackageIntegrationTest extends IntegrationTest {
 
     private final PackageTestData testData;
-    private static String PACKAGES_PATH = "/v2/python/packages/";
-    private static String EVENTS_PATH = "/v2/python/events/packages/";
-    private static String PACKAGE_ID_TO_DOWNLOAD = "41";
-    private static String PACKAGE_NAME_TO_DOWNLOAD = "pandas";
-    private static String PACKAGE_VERSION_TO_DOWNLOAD = "2.0.1";
-
+    private static final String PACKAGES_PATH = "/v2/python/packages/";
+    private static final String EVENTS_PATH = "/v2/python/events/packages/";
+    private static final String PACKAGE_ID_TO_DOWNLOAD = "41";
+    private static final String PACKAGE_NAME_TO_DOWNLOAD = "pandas";
+    private static final String PACKAGE_VERSION_TO_DOWNLOAD = "2.0.1";
+    private static final BashScriptExecutor bashScriptExecutor = new BashScriptExecutor();
     private static final String API_PATH = "/api/v2/manager/python/packages";
 
     public PythonPackageIntegrationTest() {
         super(API_PATH);
         this.testData = PackageTestData.builder()
-                .technologies(Arrays.asList("Python"))
                 .examplePackageId("41")
                 .deletedPackageId("42")
                 .getEndpointNewEventsAmount(0)
                 .deleteEndpointNewEventsAmount(-1)
                 .changeEndpointNewEventsAmount(1)
                 .toBeActivatedPackageId("38")
+                .submissionStates(List.of("waiting"))
+                .search("numpy")
+                .repositories(List.of("testrepo8"))
+                .maintainer(Arrays.asList("Nikola%20Tesla", "Galileo%20Galilei"))
                 .build();
+    }
+
+    @Test
+    public void getPackagesByNameSearching() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .token(USER_TOKEN)
+                .statusCode(200)
+                .urlSuffix("?search=" + testData.getSearch() + "&sort=id,desc")
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/python/packages/packages_searching.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getPackagesByMaintainers() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .token(USER_TOKEN)
+                .statusCode(200)
+                .urlSuffix("?maintainer=" + testData.getMaintainer().get(0) + ","
+                        + testData.getMaintainer().get(1) + "&sort=id,desc")
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/python/packages/packages_by_maintainers.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getPackagesByRepositoriesAndSubmissionState() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .token(USER_TOKEN)
+                .statusCode(200)
+                .urlSuffix("?repository=" + testData.getRepositories().get(0)
+                        + "&submissionState=" + testData.getSubmissionStates().get(0)
+                        + "&sort=id,desc")
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/python/packages/packages_by_repositories_and_submission_state.json")
+                .build();
+        testEndpoint(requestBody);
     }
 
     @Test
@@ -127,6 +176,19 @@ public class PythonPackageIntegrationTest extends IntegrationTest {
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
                 .expectedJsonPath(PACKAGES_PATH + "example_package.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getPackagesNotMaintainedBy() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .token(USER_TOKEN)
+                .statusCode(200)
+                .urlSuffix("?notMaintainedBy=" + testData.getMaintainer().get(1))
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath(PACKAGES_PATH + "packages_not_maintained_by.json")
                 .build();
         testEndpoint(requestBody);
     }
@@ -433,24 +495,8 @@ public class PythonPackageIntegrationTest extends IntegrationTest {
         testEndpoint(requestBody);
     }
 
-    //	@Test
-    //	public void getManual() throws Exception {
-    //		byte[] data = given()
-    //				.header(AUTHORIZATION, BEARER + USER_TOKEN)
-    //				.accept(ContentType.BINARY)
-    //			.when()
-    //				.get(apiPath + "/17/manual")
-    //			.then()
-    //				.statusCode(200)
-    //				.extract()
-    //				.asByteArray();
-    //
-    //		assertTrue("Returned manual is incorrect.", extractContent(data).contains("Version 0.9.2"));
-    //	}
-    //
-
     @Test
-    public void downloadPackage() throws Exception {
+    public void downloadPackage() {
         byte[] pkg = given().header(AUTHORIZATION, BASIC + ADMIN_TOKEN)
                 .accept(ContentType.ANY)
                 .when()
@@ -467,5 +513,31 @@ public class PythonPackageIntegrationTest extends IntegrationTest {
         byte[] expectedpkg = readFileToByteArray(file);
 
         Assertions.assertArrayEquals(expectedpkg, pkg, "Wrong package has been downloaded");
+    }
+
+    @Test
+    public void downloadSourcePackage() throws Exception {
+
+        String targetDirectoryName = "src/test/resources/downloading/";
+
+        createDownloadTestFolder(targetDirectoryName);
+        bashScriptExecutor.executeBashCommand(
+                "curl http://localhost:8017/repo/testrepo8/pandas/pandas-2.0.1.tar.gz --output " + targetDirectoryName
+                        + "pandas-2.0.1.tar.gz");
+
+        File targetDirectory = new File(targetDirectoryName);
+        File[] files = targetDirectory.listFiles();
+
+        Assertions.assertNotNull(files);
+        byte[] actual = FileUtils.readFileToByteArray(files[0]);
+
+        byte[] expected =
+                FileUtils.readFileToByteArray(new File("src/test/resources/itestPackages/pandas-2.0.1.tar.gz"));
+
+        assertEquals(1, files.length, "There is no package in the folder");
+        assertEquals("pandas-2.0.1.tar.gz", files[0].getName(), "Package pandas of version 2.0.1 should be downloaded");
+        assertArrayEquals(expected, actual, "Downloaded package is incorrect.");
+
+        cleanAfterDownloading(targetDirectoryName);
     }
 }

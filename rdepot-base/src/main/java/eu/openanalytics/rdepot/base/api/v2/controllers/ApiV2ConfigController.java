@@ -22,6 +22,7 @@ package eu.openanalytics.rdepot.base.api.v2.controllers;
 
 import eu.openanalytics.rdepot.base.api.v2.dtos.PublicConfigurationDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.ResponseDto;
+import eu.openanalytics.rdepot.base.config.DefaultUserConfigurationProperties;
 import eu.openanalytics.rdepot.base.config.RepositoryNameValidationProperties;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.Locale;
@@ -49,6 +50,7 @@ public class ApiV2ConfigController {
     private final RepositoryNameValidationProperties nameValidationProperties;
     private final MessageSource messageSource;
     private final Locale locale = LocaleContextHolder.getLocale();
+    private final DefaultUserConfigurationProperties userConfiguration;
 
     public ApiV2ConfigController(
             MessageSource messageSource,
@@ -59,7 +61,8 @@ public class ApiV2ConfigController {
             @Value("${access-token.lifetime-configurable}") String accessTokenLifetimeConfigurable,
             @Value("${access-token.lifetime-default}") String accessTokenLifetimeDefault,
             @Value("${generate-manuals}") String generateManuals,
-            RepositoryNameValidationProperties nameValidationProperties) {
+            RepositoryNameValidationProperties nameValidationProperties,
+            DefaultUserConfigurationProperties userConfiguration) {
         this.messageSource = messageSource;
         this.declarative = Boolean.parseBoolean(declarative);
         this.deletingPackagesEnabled = Boolean.parseBoolean(deletingPackagesEnabled);
@@ -69,6 +72,7 @@ public class ApiV2ConfigController {
         this.accessTokenLifetimeDefault = Integer.parseInt(accessTokenLifetimeDefault);
         this.generateManuals = Boolean.parseBoolean(generateManuals);
         this.nameValidationProperties = nameValidationProperties;
+        this.userConfiguration = userConfiguration;
     }
 
     @GetMapping
@@ -85,7 +89,8 @@ public class ApiV2ConfigController {
                         accessTokenLifetimeConfigurable,
                         accessTokenLifetimeDefault,
                         generateManuals,
-                        nameValidationProperties.getValidationNameRegex()));
+                        nameValidationProperties.getValidationNameRegex(),
+                        userConfiguration.getSupportedLanguages()));
 
         return ResponseEntity.ok(dto);
     }

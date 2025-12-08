@@ -29,6 +29,7 @@ public enum RequestType {
     GET_OTHER_RESOURCE("getOtherResource"),
     GET_AFTER_NEW_SUBMISSION("getAfterNewSubmission"),
     PATCH("patch"),
+    PATCH_OTHER_RESOURCE("pathOtherResource"),
     PATCH_UNAUTHENTICATED("patchUnautenticated"),
     PATCH_UNAUTHORIZED("patchUnauthorized"),
     POST("post"),

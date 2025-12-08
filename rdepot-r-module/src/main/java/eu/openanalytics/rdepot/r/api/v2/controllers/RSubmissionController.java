@@ -137,6 +137,9 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
     @Value("${replacing.packages.enabled}")
     private boolean replacingPackagesEnabled;
 
+    @Value("${generate-manuals}")
+    private boolean generateManualsByDefault;
+
     public RSubmissionController(
             MessageSource messageSource,
             RSubmissionModelAssembler modelAssembler,
@@ -180,7 +183,7 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
      * Submits package archive and creates submission.
      * @param multipartFile package file
      * @param repository name of the destination repository
-     * @param generateManual specifies if manuals should be generated for the package
+     * @param generateManualRequestParam specifies if manuals should be generated for the package
      * @param replaceRequestParam specified if previous version should be replaced
      * @param principal used for authorization
      * @return DTO with created submission
@@ -195,7 +198,7 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
     public @ResponseBody ResponseEntity<?> submitPackage(
             @RequestParam("file") MultipartFile multipartFile,
             @RequestParam("repository") final String repository,
-            @RequestParam(name = "generateManual", defaultValue = "${generate-manuals}") final Boolean generateManual,
+            @RequestParam(name = "generateManual") Optional<Boolean> generateManualRequestParam,
             @RequestParam(name = "replace", defaultValue = "false") final Boolean replaceRequestParam,
             @RequestParam(name = "binary", defaultValue = "false") final Boolean binaryPackage,
             @RequestParam(name = "rVersion") Optional<String> rVersion,
@@ -224,10 +227,12 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
         if (!replacingPackagesEnabled) replace = false;
 
         if (binaryPackage && (rVersion.isEmpty() || architecture.isEmpty() || distribution.isEmpty()))
-            return handleValidationError(RMessageCodes.ERROR_MISSING_DATA_FOR_BINARY_PACKAGE);
+            return handleValidationError(MessageCodes.ERROR_MISSING_DATA_FOR_BINARY_PACKAGE);
 
         if (!binaryPackage && (rVersion.isPresent() || architecture.isPresent() || distribution.isPresent()))
-            return handleValidationError(RMessageCodes.ERROR_PARAMETERS_NOT_ALLOWED_FOR_NON_BINARY_PACKAGE);
+            return handleValidationError(MessageCodes.ERROR_PARAMETERS_NOT_ALLOWED_FOR_NON_BINARY_PACKAGE);
+
+        boolean generateManual = generateManualRequestParam.orElse(!binaryPackage && generateManualsByDefault);
 
         final RPackageUploadRequest request = new RPackageUploadRequest(
                 multipartFile,
@@ -242,9 +247,14 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
         final Strategy<Submission> strategy = strategyFactory.uploadPackageStrategy(request, uploader);
 
         try {
+            String originalFilename = multipartFile.getOriginalFilename();
             final Submission submission = strategyExecutor.execute(strategy);
+            String packageFilenameAfterCreation = submission.getPackageBag().getFileName();
 
-            if (generateManual && binaryPackage) {
+            if (!Objects.equals(originalFilename, packageFilenameAfterCreation)) {
+                return handleWarningForSingleEntity(
+                        submission, MessageCodes.WARNING_FILE_NAME_HAS_BEEN_UPDATED, uploader, true);
+            } else if (generateManual && binaryPackage) {
                 return handleWarningForSingleEntity(
                         submission, RMessageCodes.GENERATE_MANUAL_NOT_SUPPORTED, uploader, true);
             } else {
@@ -277,7 +287,6 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
                 log.debug(e.getMessage(), e);
                 return handleValidationError(e.getReason());
             }
-
             log.error(e.getMessage(), e);
             throw new CreateException(messageSource, locale);
         }

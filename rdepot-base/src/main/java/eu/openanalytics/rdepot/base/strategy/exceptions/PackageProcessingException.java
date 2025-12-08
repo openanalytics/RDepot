@@ -22,12 +22,14 @@ package eu.openanalytics.rdepot.base.strategy.exceptions;
 
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
+import java.io.Serial;
 
 /**
  * Thrown when Package validation and processing fail in
  * {@link eu.openanalytics.rdepot.base.strategy.upload.DefaultPackageUploadStrategy the Strategy}.
  */
 public class PackageProcessingException extends LocalizedException {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public PackageProcessingException() {

@@ -39,6 +39,7 @@ import eu.openanalytics.rdepot.base.api.v2.resolvers.DtoResolvedPageable;
 import eu.openanalytics.rdepot.base.api.v2.validation.PageableValidator;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.entities.UserSettings;
+import eu.openanalytics.rdepot.base.exception.NoAdminLeftException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.RoleService;
@@ -283,6 +284,7 @@ public class ApiV2UserController extends ApiV2Controller<User, UserDto> {
         } catch (JsonException | JsonProcessingException | EntityResolutionException e) {
             throw new MalformedPatchException(messageSource, locale, e);
         } catch (StrategyFailure e) {
+            if (e.getReason() instanceof NoAdminLeftException) return handleValidationError(e.getReason());
             throw new ApplyPatchException(messageSource, locale);
         }
 

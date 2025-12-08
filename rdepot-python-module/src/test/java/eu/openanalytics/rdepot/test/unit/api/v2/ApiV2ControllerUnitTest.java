@@ -24,12 +24,14 @@ import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2NewsfeedEventControl
 import eu.openanalytics.rdepot.base.api.v2.converters.PackageDtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.converters.SubmissionDtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.converters.UserSettingsDtoConverter;
+import eu.openanalytics.rdepot.base.config.DefaultUserConfigurationProperties;
 import eu.openanalytics.rdepot.base.config.RepositoryNameValidationProperties;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.mediator.deletion.AccessTokenDeleter;
 import eu.openanalytics.rdepot.base.mediator.deletion.PackageMaintainerDeleter;
 import eu.openanalytics.rdepot.base.mediator.deletion.RepositoryMaintainerDeleter;
 import eu.openanalytics.rdepot.base.mediator.deletion.SubmissionDeleter;
+import eu.openanalytics.rdepot.base.mirroring.converters.PackageSynchronizationStatusDtoConverter;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.*;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
@@ -37,13 +39,15 @@ import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.factory.StrategyFactory;
 import eu.openanalytics.rdepot.base.synchronization.healthcheck.ServerAddressHealthcheckService;
 import eu.openanalytics.rdepot.base.validation.*;
+import eu.openanalytics.rdepot.python.entities.PythonRepositoryAllowedFiles;
 import eu.openanalytics.rdepot.python.mediator.deletion.PythonPackageDeleter;
 import eu.openanalytics.rdepot.python.mediator.deletion.PythonRepositoryDeleter;
 import eu.openanalytics.rdepot.python.mediator.deletion.PythonSubmissionDeleter;
 import eu.openanalytics.rdepot.python.mirroring.PypiMirrorSynchronizer;
 import eu.openanalytics.rdepot.python.services.PythonPackageService;
 import eu.openanalytics.rdepot.python.services.PythonRepositoryService;
-import eu.openanalytics.rdepot.python.storage.implementations.PythonLocalStorage;
+import eu.openanalytics.rdepot.python.storage.implementations.fs.PythonFSPopulator;
+import eu.openanalytics.rdepot.python.storage.implementations.fs.PythonLocalStorage;
 import eu.openanalytics.rdepot.python.strategy.factory.PythonStrategyFactory;
 import eu.openanalytics.rdepot.python.validation.PythonPackageValidator;
 import eu.openanalytics.rdepot.python.validation.PythonRepositoryValidator;
@@ -147,7 +151,10 @@ public abstract class ApiV2ControllerUnitTest {
     PythonPackageDeleter pythonPackageDeleter;
 
     @MockBean
-    PythonLocalStorage pythonStorage;
+    PythonFSPopulator pythonFsPopulator;
+
+    @MockBean
+    PythonLocalStorage pythonLocalStorage;
 
     @MockBean
     PythonRepositoryValidator pythonRepositoryValidator;
@@ -184,6 +191,15 @@ public abstract class ApiV2ControllerUnitTest {
 
     @MockBean
     RepositoryNameValidationProperties repositoryNameValidationProperties;
+
+    @MockBean
+    PythonRepositoryAllowedFiles repositoryAllowedFiles;
+
+    @MockBean
+    DefaultUserConfigurationProperties defaultUserConfigurationProperties;
+
+    @MockBean
+    PackageSynchronizationStatusDtoConverter packageSynchronizationStatusDtoConverter;
 
     @BeforeEach
     public void clearContext() throws Exception {

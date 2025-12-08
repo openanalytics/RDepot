@@ -22,11 +22,13 @@ package eu.openanalytics.rdepot.python.mediator.deletion;
 
 import eu.openanalytics.rdepot.base.mediator.deletion.PackageDeleter;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
+import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
 import eu.openanalytics.rdepot.base.storage.Storage;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.services.PythonPackageService;
+import eu.openanalytics.rdepot.python.storage.PythonPopulator;
 import eu.openanalytics.rdepot.python.synchronization.PythonRepositorySynchronizer;
 import eu.openanalytics.rdepot.python.utils.PythonPackageRepositoryResolver;
 import org.springframework.stereotype.Component;
@@ -37,16 +39,20 @@ public class PythonPackageDeleter extends PackageDeleter<PythonPackage, PythonRe
     public PythonPackageDeleter(
             NewsfeedEventService newsfeedEventService,
             PythonPackageService resourceService,
-            Storage<?, PythonPackage> storage,
+            PythonPopulator pythonPopulator,
+            Storage<PythonPackage> storage,
             SubmissionService submissionService,
             PythonRepositorySynchronizer repositorySynchronizer,
-            PythonPackageRepositoryResolver pythonPackageRepositoryResolver) {
+            PythonPackageRepositoryResolver pythonPackageRepositoryResolver,
+            PackageMaintainerService maintainerService) {
         super(
                 newsfeedEventService,
                 resourceService,
+                pythonPopulator,
                 storage,
                 submissionService,
                 repositorySynchronizer,
-                pythonPackageRepositoryResolver);
+                pythonPackageRepositoryResolver,
+                maintainerService);
     }
 }

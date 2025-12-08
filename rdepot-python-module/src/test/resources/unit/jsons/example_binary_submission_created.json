@@ -1,0 +1,59 @@
+{
+	"status": "SUCCESS",
+	"code": 201,
+	"message": "Your resource has been created successfully.",
+	"messageCode": "success.resource.created",
+	"data": {
+		"id": 1,
+		"submitter": {
+			"id": 123,
+			"name": "Test Admin",
+			"login": "testadmin",
+			"email": "admin@example.org"
+		},
+		"approver": null,
+		"packageBag": {
+			"id": 1,
+			"version": "0.0.4",
+			"repository": {
+				"name": "Test Python Repository",
+				"id": 123,
+				"publicationUri": "http://localhost/repo/testrepo"
+			},
+			"submission": {
+		        "id": 1,
+		        "state": "WAITING"
+		      },
+			"name": "tetrapolyscope",
+			"description": "Simple test package1",
+			"author": "Albert Einstein1",
+			"title": "",
+			"url": "",
+			"source": "tetrapolyscope-0.0.4-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl",
+			"active": true,
+			"deleted": false,
+			"binary": true,
+			"links": [
+				{
+					"rel": "self",
+					"href": "http://localhost/api/v2/manager/python/packages/1"
+				},
+				{
+					"rel": "packageList",
+					"href": "http://localhost/api/v2/manager/packages"
+				}
+			]
+		},
+		"changes": "Some changes 123",
+		"links": [
+			{
+				"rel": "self",
+				"href": "http://localhost/api/v2/manager/python/submissions/1"
+			},
+			{
+				"rel": "submissionList",
+				"href": "http://localhost/api/v2/manager/python/submissions"
+			}
+		]
+	}
+}

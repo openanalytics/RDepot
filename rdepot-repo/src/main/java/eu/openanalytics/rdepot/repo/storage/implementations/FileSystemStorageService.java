@@ -45,7 +45,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 
@@ -90,7 +89,7 @@ public abstract class FileSystemStorageService<T extends SynchronizeRepositoryRe
         if (dirs == null) {
             throw new IllegalStateException("Upload directory array is null.");
         }
-        return Arrays.stream(dirs).map(File::getName).collect(Collectors.toList());
+        return Arrays.stream(dirs).map(File::getName).toList();
     }
 
     public void moveToTrash(String id, Path packageFile) throws MoveToTrashException {

@@ -44,34 +44,32 @@ public abstract class UploadChunkRequestAssertionAnswer implements Answer<Respon
         if (callCount == 0) {
 
             assertEquals(
-                    List.of(assertion.getExpectedId()),
-                    entity.get("id"),
-                    "For the first chunk, the id should be empty.");
+                    List.of(assertion.expectedId()), entity.get("id"), "For the first chunk, the id should be empty.");
             assertEquals(
-                    List.of(assertion.getExpectedVersionBefore()),
+                    List.of(assertion.expectedVersionBefore()),
                     entity.get("version_before"),
                     "Incorrect version before the request.");
             assertEquals(
-                    List.of(assertion.getExpectedVersionAfter()),
+                    List.of(assertion.expectedVersionAfter()),
                     entity.get("version_after"),
                     "Incorrect version after the request.");
-            assertEquals(assertion.getExpectedPages(), entity.get("page"), "Incorrect number of chunks.");
+            assertEquals(assertion.expectedPages(), entity.get("page"), "Incorrect number of chunks.");
 
-            assertEquals(assertion.getExpectedToDelete(), entity.get("to_delete"), "Incorrect packages to delete.");
+            assertEquals(assertion.expectedToDelete(), entity.get("to_delete"), "Incorrect packages to delete.");
             assertEquals(
-                    assertion.getExpectedToDeleteFromArchive(),
+                    assertion.expectedToDeleteFromArchive(),
                     entity.get("to_delete_archive"),
                     "Incorrect packages to delete from archive.");
         }
 
         assertTrue(
-                assertion.getFilesToUpload().containsAll(entity.get("files"))
-                        && entity.get("files").containsAll(assertion.getFilesToUpload()),
+                assertion.filesToUpload().containsAll(entity.get("files"))
+                        && entity.get("files").containsAll(assertion.filesToUpload()),
                 "Incorrect files uploaded.");
         if (entity.get("files_archive") != null) {
             assertTrue(
-                    assertion.getFilesToUploadToArchive().containsAll(entity.get("files_archive"))
-                            && entity.get("files_archive").containsAll(assertion.getFilesToUploadToArchive()),
+                    assertion.filesToUploadToArchive().containsAll(entity.get("files_archive"))
+                            && entity.get("files_archive").containsAll(assertion.filesToUploadToArchive()),
                     "Incorrect files uploaded to archive.");
         }
     }

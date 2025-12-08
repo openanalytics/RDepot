@@ -1,330 +1,330 @@
 {
-	"code": 200,
-	"data": {
-		"links": [
-			{
-				"rel": "self",
-				"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages?repository=testrepo4,testrepo5&page=0&size=20&sort=id,asc"
-			}
-		],
-		"page": {
-			"number": 0,
-			"size": 20,
-			"totalPages": 1,
-			"totalElements": 7
-		},
-		"content": [
-			{
-				"author": "Cedric Landerer [aut, cre], Gabriel Hanas [ctb], Jeremy Rogers [ctb], Alex Cope [ctb], Denizhan Pak [ctb]",
-				"active": true,
-				"description": "Is a collection of models to analyze genome scale codon data using a Bayesian framework. Provides visualization routines and checkpointing for model fittings. Currently published models to analyze gene data for selection on codon",
-				"source": "\/opt\/rdepot\/repositories\/5\/39437028\/AnaCoDa_0.1.2.3.tar.gz",
-				"technology": "R",
-				"repository": {
-					"name": "testrepo4",
-					"lastPublicationSuccessful": false,
-					"id": 5,
-					"published": false,
-					"technology": "R",
-					"requiresAuthentication": true,
-					"publicationUri": "http:\/\/localhost\/repo\/testrepo4"
-				},
-				"title": "Analysis of Codon Data under Stationarity using a Bayesian Framework",
-				"version": "0.1.2.3",
-				"url": "https:\/\/github.com\/clandere\/AnaCoDa",
-				"deleted": false,
-				"descriptionContentType": "txt",
-				"binary": false,
-				"name": "AnaCoDa",
-				"submission": {
-					"id": 20,
-					"state": "ACCEPTED"
-				},
-				"links": [
-					{
-						"rel": "self",
-						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/20"
-					},
-					{
-						"rel": "packageList",
-						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
-					}
-				],
-				"id": 20,
-				"user": {
-					"name": "Galileo Galilei",
-					"id": 6,
-					"login": "galieleo",
-					"email": "galieleo@ldap.forumsys.com"
-				}
-			},
-			{
-				"author": "Peter Bogetoft and Lars Otto",
-				"active": false,
-				"description": "Estimates and graphs deterministic (DEA) frontier models with different technology assumptions (fdh, vrs, drs, crs, irs, add). Also handles possible slacks, peers and their weights (lambdas), optimal cost, revenue and profit allocation, super--efficiency, and mergers. A comparative method for estimating SFA efficiencies is included.",
-				"source": "",
-				"technology": "R",
-				"repository": {
-					"name": "testrepo4",
-					"lastPublicationSuccessful": false,
-					"id": 5,
-					"published": false,
-					"technology": "R",
-					"requiresAuthentication": true,
-					"publicationUri": "http:\/\/localhost\/repo\/testrepo4"
-				},
-				"title": "Benchmark and frontier analysis using DEA and SFA",
-				"version": "0.10",
-				"url": null,
-				"deleted": false,
-				"descriptionContentType": "txt",
-				"binary": false,
-				"name": "Benchmarking",
-				"submission": {
-					"id": 24,
-					"state": "REJECTED"
-				},
-				"links": [
-					{
-						"rel": "self",
-						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/24"
-					},
-					{
-						"rel": "packageList",
-						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
-					}
-				],
-				"id": 24,
-				"user": {
-					"name": "Albert Einstein",
-					"id": 4,
-					"login": "einstein",
-					"email": "einstein@ldap.forumsys.com"
-				}
-			},
-			{
-				"author": "Neil J. Gunther [aut], Stefan Moeding [aut, cre]",
-				"active": false,
-				"description": "The Universal Scalability Law (Gunther 2007)",
-				"source": "\/opt\/rdepot\/repositories\/6\/21695389\/usl_2.0.0.tar.gz",
-				"technology": "R",
-				"repository": {
-					"name": "testrepo5",
-					"lastPublicationSuccessful": false,
-					"id": 6,
-					"published": false,
-					"technology": "R",
-					"requiresAuthentication": true,
-					"publicationUri": "http:\/\/localhost\/repo\/testrepo5"
-				},
-				"title": "Analyze System Scalability with the Universal Scalability Law",
-				"version": "2.0.0",
-				"url": null,
-				"deleted": true,
-				"descriptionContentType": "txt",
-				"binary": false,
-				"name": "usl",
-				"submission": {
-					"id": 27,
-					"state": "ACCEPTED"
-				},
-				"links": [
-					{
-						"rel": "self",
-						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/27"
-					},
-					{
-						"rel": "packageList",
-						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
-					}
-				],
-				"id": 27,
-				"user": {
-					"name": "Local Admin User",
-					"id": 8,
-					"login": "admin",
-					"email": "admin@localhost"
-				}
-			},
-			{
-				"author": "Nicholas Tierney [aut, cre]",
-				"active": false,
-				"description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
-				"source": "\/opt\/rdepot\/repositories\/6\/70325377\/visdat_0.1.0.tar.gz",
-				"technology": "R",
-				"repository": {
-					"name": "testrepo5",
-					"lastPublicationSuccessful": false,
-					"id": 6,
-					"published": false,
-					"technology": "R",
-					"requiresAuthentication": true,
-					"publicationUri": "http:\/\/localhost\/repo\/testrepo5"
-				},
-				"title": "Preliminary Data Visualisation",
-				"version": "0.1.0",
-				"url": "https:\/\/github.com\/njtierney\/visdat\/",
-				"deleted": true,
-				"descriptionContentType": "txt",
-				"binary": false,
-				"name": "visdat",
-				"submission": {
-					"id": 28,
-					"state": "ACCEPTED"
-				},
-				"links": [
-					{
-						"rel": "self",
-						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/28"
-					},
-					{
-						"rel": "packageList",
-						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
-					}
-				],
-				"id": 28,
-				"user": {
-					"name": "Local Admin User",
-					"id": 8,
-					"login": "admin",
-					"email": "admin@localhost"
-				}
-			},
-			{
-				"author": "Scott Fortmann-Roe",
-				"active": false,
-				"description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-				"source": "\/opt\/rdepot\/new\/92253304\/A3_0.9.1.tar.gz",
-				"technology": "R",
-				"repository": {
-					"name": "testrepo4",
-					"lastPublicationSuccessful": false,
-					"id": 5,
-					"published": false,
-					"technology": "R",
-					"requiresAuthentication": true,
-					"publicationUri": "http:\/\/localhost\/repo\/testrepo4"
-				},
-				"title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
-				"version": "0.9.1",
-				"url": null,
-				"deleted": false,
-				"descriptionContentType": "txt",
-				"binary": false,
-				"name": "A3",
-				"submission": {
-					"id": 30,
-					"state": "WAITING"
-				},
-				"links": [
-					{
-						"rel": "self",
-						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/30"
-					},
-					{
-						"rel": "packageList",
-						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
-					}
-				],
-				"id": 30,
-				"user": {
-					"name": "Local Admin User",
-					"id": 8,
-					"login": "admin",
-					"email": "admin@localhost"
-				}
-			},
-			{
-				"author": "Katalin Csillery, with contributions from Michael Blum and Olivier Francois",
-				"active": false,
-				"description": "The 'abc' package provides various functions for parameter estimation and model selection in an ABC framework. Three main",
-				"source": "\/opt\/rdepot\/new\/51328701\/abc_1.0.tar.gz",
-				"technology": "R",
-				"repository": {
-					"name": "testrepo4",
-					"lastPublicationSuccessful": false,
-					"id": 5,
-					"published": false,
-					"technology": "R",
-					"requiresAuthentication": true,
-					"publicationUri": "http:\/\/localhost\/repo\/testrepo4"
-				},
-				"title": "Functions to perform Approximate Bayesian Computation (ABC) using simulated data",
-				"version": "1.0",
-				"url": null,
-				"deleted": false,
-				"descriptionContentType": "txt",
-				"binary": false,
-				"name": "abc",
-				"submission": {
-					"id": 31,
-					"state": "WAITING"
-				},
-				"links": [
-					{
-						"rel": "self",
-						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/31"
-					},
-					{
-						"rel": "packageList",
-						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
-					}
-				],
-				"id": 31,
-				"user": {
-					"name": "Local Admin User",
-					"id": 8,
-					"login": "admin",
-					"email": "admin@localhost"
-				}
-			},
-			{
-				"author": "Neal Richardson [aut, cre],\n Ian Cook [aut],\n Nic Crane [aut],\n Dewey Dunnington [aut] (<https:\/\/orcid.org\/0000-0002-9415-4582>),\n Romain François [aut] (<https:\/\/orcid.org\/0000-0002-2444-4226>),\n Jonathan Keane [aut],\n Dragoș Moldovan-Grünfeld [aut],\n Jeroen Ooms [aut],\n Javier Luraschi [ctb],\n Karl Dunkle Werner [ctb] (<https:\/\/orcid.org\/0000-0003-0523-7309>),\n Jeffrey Wong [ctb],\n Apache Arrow [aut, cph]",
-				"active": true,
-				"description": "'Apache' 'Arrow' <https:\/\/arrow.apache.org\/> is a cross-language\n development platform for in-memory data. It specifies a standardized\n language-independent columnar memory format for flat and hierarchical data,\n organized for efficient analytic operations on modern hardware. This\n package provides an interface to the 'Arrow C++' library",
-				"source": "\/opt\/rdepot\/repositories\/5\/32912654\/arrow_8.0.0.tar.gz",
-				"technology": "R",
-				"repository": {
-					"name": "testrepo4",
-					"lastPublicationSuccessful": false,
-					"id": 5,
-					"published": false,
-					"technology": "R",
-					"requiresAuthentication": true,
-					"publicationUri": "http:\/\/localhost\/repo\/testrepo4"
-				},
-				"title": "Integration to 'Apache' 'Arrow'",
-				"version": "8.0.0",
-				"url": "https:\/\/github.com\/apache\/arrow\/, https:\/\/arrow.apache.org\/docs\/r\/",
-				"deleted": false,
-				"descriptionContentType": "txt",
-				"binary": true,
-				"name": "arrow",
-				"submission": {
-					"id": 47,
-					"state": "ACCEPTED"
-				},
-				"links": [
-					{
-						"rel": "self",
-						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/47"
-					},
-					{
-						"rel": "packageList",
-						"href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
-					}
-				],
-				"id": 47,
-				"user": {
-					"name": "Nikola Tesla",
-					"id": 5,
-					"login": "tesla",
-					"email": "tesla@ldap.forumsys.com"
-				}
-			}
-		]
-	},
-	"messageCode": "success.request.processed",
-	"message": "Your request has been processed successfully.",
-	"status": "SUCCESS"
+    "code": 200,
+    "data": {
+        "links": [
+            {
+                "rel": "self",
+                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages?repository=testrepo4,testrepo5&page=0&size=20&sort=id,asc"
+            }
+        ],
+        "page": {
+            "number": 0,
+            "size": 20,
+            "totalPages": 1,
+            "totalElements": 7
+        },
+        "content": [
+            {
+                "author": "Cedric Landerer [aut, cre], Gabriel Hanas [ctb], Jeremy Rogers [ctb], Alex Cope [ctb], Denizhan Pak [ctb]",
+                "active": true,
+                "description": "Is a collection of models to analyze genome scale codon data using a Bayesian framework. Provides visualization routines and checkpointing for model fittings. Currently published models to analyze gene data for selection on codon",
+                "source": "\/opt\/rdepot\/repositories\/5\/39437028\/AnaCoDa_0.1.2.3.tar.gz",
+                "technology": "R",
+                "repository": {
+                    "name": "testrepo4",
+                    "lastPublicationSuccessful": false,
+                    "id": 5,
+                    "published": false,
+                    "technology": "R",
+                    "requiresAuthentication": true,
+                    "publicationUri": "http:\/\/localhost\/repo\/testrepo4"
+                },
+                "title": "Analysis of Codon Data under Stationarity using a Bayesian Framework",
+                "version": "0.1.2.3",
+                "url": "https:\/\/github.com\/clandere\/AnaCoDa",
+                "deleted": false,
+                "descriptionContentType": "txt",
+                "binary": false,
+                "name": "AnaCoDa",
+                "submission": {
+                    "id": 20,
+                    "state": "ACCEPTED"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/20"
+                    },
+                    {
+                        "rel": "packageList",
+                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    }
+                ],
+                "id": 20,
+                "user": {
+                    "name": "Galileo Galilei",
+                    "id": 6,
+                    "login": "galieleo",
+                    "email": "galieleo@ldap.forumsys.com"
+                }
+            },
+            {
+                "author": "Peter Bogetoft and Lars Otto",
+                "active": false,
+                "description": "Estimates and graphs deterministic (DEA) frontier models with different technology assumptions (fdh, vrs, drs, crs, irs, add). Also handles possible slacks, peers and their weights (lambdas), optimal cost, revenue and profit allocation, super--efficiency, and mergers. A comparative method for estimating SFA efficiencies is included.",
+                "source": "",
+                "technology": "R",
+                "repository": {
+                    "name": "testrepo4",
+                    "lastPublicationSuccessful": false,
+                    "id": 5,
+                    "published": false,
+                    "technology": "R",
+                    "requiresAuthentication": true,
+                    "publicationUri": "http:\/\/localhost\/repo\/testrepo4"
+                },
+                "title": "Benchmark and frontier analysis using DEA and SFA",
+                "version": "0.10",
+                "url": null,
+                "deleted": false,
+                "descriptionContentType": "txt",
+                "binary": false,
+                "name": "Benchmarking",
+                "submission": {
+                    "id": 24,
+                    "state": "REJECTED"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/24"
+                    },
+                    {
+                        "rel": "packageList",
+                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    }
+                ],
+                "id": 24,
+                "user": {
+                    "name": "Albert Einstein",
+                    "id": 4,
+                    "login": "einstein",
+                    "email": "einstein@ldap.forumsys.com"
+                }
+            },
+            {
+                "author": "Neil J. Gunther [aut], Stefan Moeding [aut, cre]",
+                "active": false,
+                "description": "The Universal Scalability Law (Gunther 2007)",
+                "source": "\/opt\/rdepot\/repositories\/6\/21695389\/usl_2.0.0.tar.gz",
+                "technology": "R",
+                "repository": {
+                    "name": "testrepo5",
+                    "lastPublicationSuccessful": false,
+                    "id": 6,
+                    "published": false,
+                    "technology": "R",
+                    "requiresAuthentication": true,
+                    "publicationUri": "http:\/\/localhost\/repo\/testrepo5"
+                },
+                "title": "Analyze System Scalability with the Universal Scalability Law",
+                "version": "2.0.0",
+                "url": null,
+                "deleted": true,
+                "descriptionContentType": "txt",
+                "binary": false,
+                "name": "usl",
+                "submission": {
+                    "id": 27,
+                    "state": "ACCEPTED"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/27"
+                    },
+                    {
+                        "rel": "packageList",
+                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    }
+                ],
+                "id": 27,
+                "user": {
+                    "name": "Local Admin User",
+                    "id": 8,
+                    "login": "admin",
+                    "email": "admin@localhost"
+                }
+            },
+            {
+                "author": "Nicholas Tierney [aut, cre]",
+                "active": false,
+                "description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
+                "source": "\/opt\/rdepot\/repositories\/6\/70325377\/visdat_0.1.0.tar.gz",
+                "technology": "R",
+                "repository": {
+                    "name": "testrepo5",
+                    "lastPublicationSuccessful": false,
+                    "id": 6,
+                    "published": false,
+                    "technology": "R",
+                    "requiresAuthentication": true,
+                    "publicationUri": "http:\/\/localhost\/repo\/testrepo5"
+                },
+                "title": "Preliminary Data Visualisation",
+                "version": "0.1.0",
+                "url": "https:\/\/github.com\/njtierney\/visdat\/",
+                "deleted": true,
+                "descriptionContentType": "txt",
+                "binary": false,
+                "name": "visdat",
+                "submission": {
+                    "id": 28,
+                    "state": "ACCEPTED"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/28"
+                    },
+                    {
+                        "rel": "packageList",
+                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    }
+                ],
+                "id": 28,
+                "user": {
+                    "name": "Local Admin User",
+                    "id": 8,
+                    "login": "admin",
+                    "email": "admin@localhost"
+                }
+            },
+            {
+                "author": "Scott Fortmann-Roe",
+                "active": false,
+                "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
+                "source": "\/opt\/rdepot\/new\/92253304\/A3_0.9.1.tar.gz",
+                "technology": "R",
+                "repository": {
+                    "name": "testrepo4",
+                    "lastPublicationSuccessful": false,
+                    "id": 5,
+                    "published": false,
+                    "technology": "R",
+                    "requiresAuthentication": true,
+                    "publicationUri": "http:\/\/localhost\/repo\/testrepo4"
+                },
+                "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
+                "version": "0.9.1",
+                "url": null,
+                "deleted": false,
+                "descriptionContentType": "txt",
+                "binary": false,
+                "name": "A3",
+                "submission": {
+                    "id": 30,
+                    "state": "WAITING"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/30"
+                    },
+                    {
+                        "rel": "packageList",
+                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    }
+                ],
+                "id": 30,
+                "user": {
+                    "name": "Local Admin User",
+                    "id": 8,
+                    "login": "admin",
+                    "email": "admin@localhost"
+                }
+            },
+            {
+                "author": "Katalin Csillery, with contributions from Michael Blum and Olivier Francois",
+                "active": false,
+                "description": "The 'abc' package provides various functions for parameter estimation and model selection in an ABC framework. Three main",
+                "source": "\/opt\/rdepot\/new\/51328701\/abc_1.0.tar.gz",
+                "technology": "R",
+                "repository": {
+                    "name": "testrepo4",
+                    "lastPublicationSuccessful": false,
+                    "id": 5,
+                    "published": false,
+                    "technology": "R",
+                    "requiresAuthentication": true,
+                    "publicationUri": "http:\/\/localhost\/repo\/testrepo4"
+                },
+                "title": "Functions to perform Approximate Bayesian Computation (ABC) using simulated data",
+                "version": "1.0",
+                "url": null,
+                "deleted": false,
+                "descriptionContentType": "txt",
+                "binary": false,
+                "name": "abc",
+                "submission": {
+                    "id": 31,
+                    "state": "WAITING"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/31"
+                    },
+                    {
+                        "rel": "packageList",
+                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    }
+                ],
+                "id": 31,
+                "user": {
+                    "name": "Local Admin User",
+                    "id": 8,
+                    "login": "admin",
+                    "email": "admin@localhost"
+                }
+            },
+            {
+                "author": "Neal Richardson [aut, cre],\n Ian Cook [aut],\n Nic Crane [aut],\n Dewey Dunnington [aut] (<https:\/\/orcid.org\/0000-0002-9415-4582>),\n Romain François [aut] (<https:\/\/orcid.org\/0000-0002-2444-4226>),\n Jonathan Keane [aut],\n Dragoș Moldovan-Grünfeld [aut],\n Jeroen Ooms [aut],\n Javier Luraschi [ctb],\n Karl Dunkle Werner [ctb] (<https:\/\/orcid.org\/0000-0003-0523-7309>),\n Jeffrey Wong [ctb],\n Apache Arrow [aut, cph]",
+                "active": true,
+                "description": "'Apache' 'Arrow' <https:\/\/arrow.apache.org\/> is a cross-language\n development platform for in-memory data. It specifies a standardized\n language-independent columnar memory format for flat and hierarchical data,\n organized for efficient analytic operations on modern hardware. This\n package provides an interface to the 'Arrow C++' library",
+                "source": "\/opt\/rdepot\/repositories\/5\/32912654\/arrow_8.0.0.tar.gz",
+                "technology": "R",
+                "repository": {
+                    "name": "testrepo4",
+                    "lastPublicationSuccessful": false,
+                    "id": 5,
+                    "published": false,
+                    "technology": "R",
+                    "requiresAuthentication": true,
+                    "publicationUri": "http:\/\/localhost\/repo\/testrepo4"
+                },
+                "title": "Integration to 'Apache' 'Arrow'",
+                "version": "8.0.0",
+                "url": "https:\/\/github.com\/apache\/arrow\/, https:\/\/arrow.apache.org\/docs\/r\/",
+                "deleted": false,
+                "descriptionContentType": "txt",
+                "binary": true,
+                "name": "arrow",
+                "submission": {
+                    "id": 47,
+                    "state": "ACCEPTED"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/47"
+                    },
+                    {
+                        "rel": "packageList",
+                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    }
+                ],
+                "id": 47,
+                "user": {
+                    "name": "Nikola Tesla",
+                    "id": 5,
+                    "login": "tesla",
+                    "email": "tesla@ldap.forumsys.com"
+                }
+            }
+        ]
+    },
+    "messageCode": "success.request.processed",
+    "message": "Your request has been processed successfully.",
+    "status": "SUCCESS"
 }

@@ -20,6 +20,7 @@
  */
 package eu.openanalytics.rdepot.python.services;
 
+import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.comparators.PackageComparator;
 import eu.openanalytics.rdepot.base.service.PackageService;
 import eu.openanalytics.rdepot.python.daos.PythonPackageDao;
@@ -57,5 +58,41 @@ public class PythonPackageService extends PackageService<PythonPackage> {
         if (packages.isEmpty()) return Optional.empty();
 
         return Optional.of(packages.get(0));
+    }
+
+    public Optional<PythonPackage> findByNormalizedNameAndVersionAndRepositoryAndDeletedAndBinary(
+            String name,
+            String version,
+            Repository repository,
+            Boolean deleted,
+            Boolean binary,
+            String buildTag,
+            String pythonTag,
+            String abiTag,
+            String platformTag) {
+        return packageDao.findByNormalizedNameAndRepositoryGenericAndDeletedAndBinaryAndVersionIn(
+                name,
+                repository,
+                deleted,
+                binary,
+                buildTag,
+                pythonTag,
+                abiTag,
+                platformTag,
+                generateVariantsOfVersion(version));
+    }
+
+    @Override
+    protected List<PythonPackage> findSameVersions(PythonPackage entity) {
+        return packageDao.findAllByNameAndRepositoryGenericAndDeletedAndBinaryAndVersionIn(
+                entity.getName(),
+                entity.getRepository(),
+                false,
+                entity.isBinary(),
+                entity.getBuildTag(),
+                entity.getPythonTag(),
+                entity.getAbiTag(),
+                entity.getPlatformTag(),
+                generateVariantsOfVersion(entity.getVersion()));
     }
 }

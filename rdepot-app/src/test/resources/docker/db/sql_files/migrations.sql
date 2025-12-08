@@ -1,3 +1,4 @@
+-- DO NOT MODIFY OR CHANGE THIS FILE
 --
 -- PostgreSQL database dump
 --

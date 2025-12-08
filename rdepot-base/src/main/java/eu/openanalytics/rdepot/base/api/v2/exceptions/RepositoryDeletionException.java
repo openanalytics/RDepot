@@ -21,12 +21,14 @@
 package eu.openanalytics.rdepot.base.api.v2.exceptions;
 
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
+import java.io.Serial;
 import java.util.Locale;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 
 public class RepositoryDeletionException extends ApiException {
 
+    @Serial
     private static final long serialVersionUID = 1070543066115103905L;
 
     public RepositoryDeletionException(MessageSource messageSource, Locale locale) {

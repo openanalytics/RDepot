@@ -41,7 +41,7 @@ public class PythonPackageUpdateStrategy extends UpdatePackageStrategy<PythonPac
             PythonPackageService service,
             User requester,
             PythonPackage updatedPackage,
-            Storage<?, PythonPackage> storage,
+            Storage<PythonPackage> storage,
             BestMaintainerChooser bestMaintainerChooser,
             PythonRepositorySynchronizer repositorySynchronizer) {
         super(

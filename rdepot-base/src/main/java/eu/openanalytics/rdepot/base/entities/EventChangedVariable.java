@@ -84,8 +84,7 @@ public class EventChangedVariable {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
+        if (obj == null || getClass() != obj.getClass()) return false;
         EventChangedVariable other = (EventChangedVariable) obj;
         return Objects.equals(changedVariable, other.changedVariable)
                 && id == other.id

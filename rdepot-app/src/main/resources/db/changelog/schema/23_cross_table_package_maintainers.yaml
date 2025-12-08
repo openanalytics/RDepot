@@ -1,0 +1,100 @@
+databaseChangeLog:
+  - changeSet:
+      id: 23_01_package_package_maintainer_table
+      author: dglebowska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+          - tableExists:
+              tableName: package_package_maintainer
+              schemaName: public
+      changes:
+        - createTable:
+            tableName:  package_package_maintainer
+            schemaName: public
+            columns:
+              - column:
+                  name: package_id
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: package_maintainer_id
+                  type: integer
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 23_02_addForeignKeyConstraint_maintained_package
+      author: dglebowska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - foreignKeyConstraintExists:
+                foreignKeyName: fk_maintained_package
+                schemaName: public
+                foreignKeyTableName: package
+            - tableExists:
+                tableName: package
+                schemaName: public
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: package_package_maintainer
+            baseColumnNames: package_id
+            constraintName: fk_maintained_package
+            referencedTableSchemaName: public
+            referencedTableName: package
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 23_03_addForeignKeyConstraint_by_package_maintainer
+      author: dglebowska
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+          - foreignKeyConstraintExists:
+              foreignKeyName: fk_by_package_maintainer
+              schemaName: public
+              foreignKeyTableName: package_maintainer
+          - tableExists:
+              tableName: package_maintainer
+              schemaName: public
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: package_package_maintainer
+            baseColumnNames: package_maintainer_id
+            constraintName: fk_by_package_maintainer
+            referencedTableSchemaName: public
+            referencedTableName: package_maintainer
+            referencedColumnNames: id
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+  - changeSet:
+      id: 23_04_unique_constraint
+      author: dglebowska
+      preConditions:
+        - columnExists:
+            tableName: package_package_maintainer
+            columnName: package_id
+        - columnExists:
+            tableName: package_package_maintainer
+            columnName: package_maintainer_id
+      changes:
+        - addUniqueConstraint:
+            tableName: package_package_maintainer
+            columnNames: package_id, package_maintainer_id
+            constraintName: uq_package_package_maintainer_pair
+  - changeSet:
+      id: 23_05_insert_data_into_package_package_maintainer
+      author: dglebowska
+      changes:
+        - sql:
+            sql: "INSERT INTO public.package_package_maintainer (package_id, package_maintainer_id) \
+              SELECT DISTINCT p.id, pm.id \
+              FROM public.package_maintainer pm \
+              LEFT JOIN public.package p on p.name = pm.package and p.repository_id = pm.repository_id \
+              WHERE NOT EXISTS( \
+                SELECT package_id, package_maintainer_id \
+                FROM package_package_maintainer);"

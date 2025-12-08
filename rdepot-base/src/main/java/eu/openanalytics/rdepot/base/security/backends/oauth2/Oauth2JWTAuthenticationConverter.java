@@ -33,12 +33,14 @@ public class Oauth2JWTAuthenticationConverter implements Converter<Jwt, RDepotAu
 
     private final Oauth2CustomBindAuthenticator authenticator;
     private final String loginField;
+    private final String emailField;
+    private final String fullNameField;
 
     @Override
     public RDepotAuthenticationToken convert(Jwt source) throws AuthException {
         String login = source.getClaimAsString(loginField);
-        String email = source.getClaimAsString("email");
-        String fullName = source.getClaimAsString("name");
+        String email = source.getClaimAsString(emailField);
+        String fullName = source.getClaimAsString(fullNameField);
 
         Collection<? extends GrantedAuthority> authorities = authenticator.authenticate(login, email, fullName);
 

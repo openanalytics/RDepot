@@ -26,7 +26,6 @@ import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2UserController;
 import eu.openanalytics.rdepot.base.api.v2.dtos.RoleDto;
 import eu.openanalytics.rdepot.base.entities.Role;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.NonNull;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -43,7 +42,7 @@ public class RoleCollectionModelAssembler
     @Override
     public @NonNull CollectionModel<RoleDto> toModel(List<Role> entities) {
         return CollectionModel.of(
-                entities.stream().map(RoleDto::new).collect(Collectors.toList()),
+                entities.stream().map(RoleDto::new).toList(),
                 linkTo(ApiV2UserController.class).slash("roles").withSelfRel());
     }
 }

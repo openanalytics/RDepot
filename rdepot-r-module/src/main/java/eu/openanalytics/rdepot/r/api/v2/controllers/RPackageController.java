@@ -26,17 +26,7 @@ import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2Controller;
 import eu.openanalytics.rdepot.base.api.v2.converters.exceptions.EntityResolutionException;
 import eu.openanalytics.rdepot.base.api.v2.dtos.PackageDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.ResponseDto;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.ApiException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.ApplyPatchException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.DeleteException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.DownloadReferenceManualException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.DownloadVignetteException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.MalformedPatchException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.ManualNotFound;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.PackageDeletionException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.PackageNotFound;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.UserNotAuthorized;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.VignetteNotFound;
+import eu.openanalytics.rdepot.base.api.v2.exceptions.*;
 import eu.openanalytics.rdepot.base.api.v2.resolvers.DtoResolvedPageable;
 import eu.openanalytics.rdepot.base.api.v2.resolvers.PackagePageableSortResolver;
 import eu.openanalytics.rdepot.base.api.v2.validation.PageableValidator;
@@ -47,6 +37,7 @@ import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
+import eu.openanalytics.rdepot.base.storage.Storage;
 import eu.openanalytics.rdepot.base.storage.exceptions.SourceNotFoundException;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
@@ -63,9 +54,10 @@ import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.Vignette;
 import eu.openanalytics.rdepot.r.mediator.deletion.RPackageDeleter;
 import eu.openanalytics.rdepot.r.services.RPackageService;
-import eu.openanalytics.rdepot.r.storage.RStorage;
 import eu.openanalytics.rdepot.r.storage.exceptions.GetReferenceManualException;
 import eu.openanalytics.rdepot.r.storage.exceptions.ReadPackageVignetteException;
+import eu.openanalytics.rdepot.r.storage.implementations.RLocalStorage;
+import eu.openanalytics.rdepot.r.storage.population.RPopulator;
 import eu.openanalytics.rdepot.r.strategy.factory.RStrategyFactory;
 import eu.openanalytics.rdepot.r.validation.RPackageValidator;
 import io.swagger.v3.oas.annotations.Operation;
@@ -91,16 +83,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * REST controller implementation for R packages.
@@ -121,10 +104,11 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
     private final RStrategyFactory strategyFactory;
     private final RPackageDeleter deleter;
     private final SecurityMediator securityMediator;
-    private final RStorage storage;
+    private final RPopulator populator;
     private final PageableValidator pageableValidator;
     private final PackagePageableSortResolver pageableSortResolver;
     private final StrategyExecutor strategyExecutor;
+    private final Storage<RPackage> storage;
 
     public RPackageController(
             MessageSource messageSource,
@@ -137,11 +121,12 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
             RStrategyFactory strategyFactory,
             RPackageDeleter rPackageDeleter,
             SecurityMediator securityMediator,
-            RStorage storage,
+            RPopulator rPopulator,
             PageableValidator pageableValidator,
             PackagePageableSortResolver pageableSortResolver,
             RPackageDtoConverter rPackageDtoConverter,
-            StrategyExecutor strategyExecutor) {
+            StrategyExecutor strategyExecutor,
+            RLocalStorage rLocalStorage) {
         super(
                 messageSource,
                 LocaleContextHolder.getLocale(),
@@ -159,9 +144,10 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
         this.strategyFactory = strategyFactory;
         this.deleter = rPackageDeleter;
         this.securityMediator = securityMediator;
-        this.storage = storage;
+        this.populator = rPopulator;
         this.pageableValidator = pageableValidator;
         this.pageableSortResolver = pageableSortResolver;
+        this.storage = rLocalStorage;
     }
 
     /**
@@ -183,7 +169,10 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
             @RequestParam(name = "repository", required = false) List<String> repositories,
             @RequestParam(name = "deleted", required = false) Optional<Boolean> deleted,
             @RequestParam(name = "submissionState", required = false) List<SubmissionState> submissionStates,
-            @RequestParam(name = "name", required = false) Optional<String> name)
+            @RequestParam(name = "technology", required = false) List<String> technologies,
+            @RequestParam(name = "search", required = false) Optional<String> search,
+            @RequestParam(name = "maintainer", required = false) List<String> maintainers,
+            @RequestParam(name = "notMaintainedBy", required = false) List<String> notMaintainers)
             throws ApiException {
         final User requester = userService
                 .findActiveByLogin(principal.getName())
@@ -195,7 +184,7 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
         Specification<RPackage> specification = null;
 
         if (Objects.nonNull(repositories)) {
-            specification = SpecificationUtils.andComponent(specification, PackageSpecs.ofRepository(repositories));
+            specification = SpecificationUtils.andComponent(null, PackageSpecs.ofRepository(repositories));
         }
 
         if (deleted.isPresent()) {
@@ -208,14 +197,26 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
             }
         }
 
-        if (name.isPresent()) {
-            Specification<RPackage> component = PackageSpecs.ofName(name.get());
-            specification = SpecificationUtils.andComponent(specification, component);
+        if (search.isPresent()) {
+            specification = SpecificationUtils.andComponent(specification, PackageSpecs.ofName(search.get()));
+        }
+
+        if (Objects.nonNull(technologies)) {
+            specification = SpecificationUtils.andComponent(specification, PackageSpecs.ofTechnology(technologies));
         }
 
         if (Objects.nonNull(submissionStates)) {
             Specification<RPackage> component = PackageSpecs.ofSubmissionState(submissionStates);
             specification = SpecificationUtils.andComponent(specification, component);
+        }
+
+        if (Objects.nonNull(maintainers)) {
+            specification = SpecificationUtils.andComponent(specification, PackageSpecs.ofMaintainer(maintainers));
+        }
+
+        if (Objects.nonNull(notMaintainers)) {
+            specification =
+                    SpecificationUtils.andComponent(specification, PackageSpecs.notMaintainedBy(notMaintainers));
         }
 
         if (specification == null) {
@@ -288,12 +289,12 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
 
             packageBag = strategyExecutor.execute(strategy);
         } catch (EntityResolutionException e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             return handleValidationError(e.getMessage());
         } catch (JsonProcessingException | JsonException e) {
             throw new MalformedPatchException(messageSource, locale, e);
         } catch (StrategyFailure e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new ApplyPatchException(messageSource, locale);
         }
 
@@ -309,7 +310,7 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
     public void shiftDeletePackage(Principal principal, @PathVariable("id") Integer id) throws ApiException {
         final RPackage packageBag =
                 packageService.findOneDeleted(id).orElseThrow(() -> new PackageNotFound(messageSource, locale));
-        if (!userService.findActiveByLogin(principal.getName()).isPresent()) {
+        if (userService.findActiveByLogin(principal.getName()).isEmpty()) {
             throw new UserNotAuthorized(messageSource, locale);
         }
 
@@ -318,7 +319,7 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
         try {
             deleter.delete(packageBag);
         } catch (DeleteEntityException e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new DeleteException(messageSource, locale);
         }
     }
@@ -333,7 +334,7 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
         final RPackage packageBag =
                 packageService.findOneNonDeleted(id).orElseThrow(() -> new PackageNotFound(messageSource, locale));
 
-        return ResponseDto.generateSuccessBody(messageSource, locale, storage.getAvailableVignettes(packageBag));
+        return ResponseDto.generateSuccessBody(messageSource, locale, populator.getAvailableVignettes(packageBag));
     }
 
     /**
@@ -349,7 +350,7 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
             throws ApiException {
         RPackage packageBag =
                 packageService.findOneNonDeleted(id).orElseThrow(() -> new PackageNotFound(messageSource, locale));
-        byte[] bytes = null;
+        byte[] bytes;
         HttpHeaders httpHeaders = new HttpHeaders();
         HttpStatus httpStatus = HttpStatus.OK;
 
@@ -380,14 +381,14 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
                 "attachment; filename=\"" + packageBag.getName() + "_" + packageBag.getVersion() + "_manual.pdf\"");
 
         try {
-            byte[] manualRaw = storage.getReferenceManual(packageBag);
+            byte[] manualRaw = populator.getReferenceManual(packageBag);
 
             return new ResponseEntity<>(manualRaw, headers, HttpStatus.OK);
         } catch (GetReferenceManualException e) {
             if (e.getReason() instanceof FileNotFoundException) {
                 throw new ManualNotFound(messageSource, locale);
             }
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new DownloadReferenceManualException(messageSource, locale);
         }
     }
@@ -406,7 +407,7 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
 
     /**
      * Fetches an HTML vignette.
-     * @param id
+     * @param id package id
      * @param name vignette's name
      */
     @GetMapping("/{id}/vignettes/{name}.html")
@@ -426,9 +427,9 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
         headers.set(CONTENT_DISPOSITION, "attachment; filename= \"" + filename + "\"");
 
         try {
-            byte[] vignetteRaw = storage.readVignette(packageBag, filename);
+            byte[] vignetteRaw = populator.readVignette(packageBag, filename);
 
-            return new ResponseEntity<byte[]>(vignetteRaw, headers, HttpStatus.OK);
+            return new ResponseEntity<>(vignetteRaw, headers, HttpStatus.OK);
         } catch (ReadPackageVignetteException e) {
             if (e.getReason() instanceof FileNotFoundException) {
                 throw new VignetteNotFound(messageSource, locale);

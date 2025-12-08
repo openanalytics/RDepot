@@ -21,6 +21,7 @@
 package eu.openanalytics.rdepot.base.strategy.exceptions;
 
 import eu.openanalytics.rdepot.base.entities.Submission;
+import java.io.Serial;
 import lombok.Getter;
 
 /**
@@ -29,7 +30,9 @@ import lombok.Getter;
 @Getter
 public class NonFatalSubmissionStrategyFailure extends StrategyFailure {
 
+    @Serial
     private static final long serialVersionUID = 1L;
+
     private final Submission submission;
 
     public NonFatalSubmissionStrategyFailure(Exception reason, Submission submission) {

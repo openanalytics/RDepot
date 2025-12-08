@@ -21,12 +21,8 @@
 package eu.openanalytics.rdepot.base.strategy.update;
 
 import eu.openanalytics.rdepot.base.email.EmailService;
-import eu.openanalytics.rdepot.base.entities.EventChangedVariable;
-import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
+import eu.openanalytics.rdepot.base.entities.*;
 import eu.openanalytics.rdepot.base.entities.Package;
-import eu.openanalytics.rdepot.base.entities.Repository;
-import eu.openanalytics.rdepot.base.entities.Submission;
-import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.entities.enums.SubmissionState;
 import eu.openanalytics.rdepot.base.event.NewsfeedEventType;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
@@ -34,7 +30,7 @@ import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.PackageService;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
-import eu.openanalytics.rdepot.base.storage.Storage;
+import eu.openanalytics.rdepot.base.storage.Populator;
 import eu.openanalytics.rdepot.base.storage.exceptions.InvalidSourceException;
 import eu.openanalytics.rdepot.base.storage.exceptions.MovePackageSourceException;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
@@ -49,7 +45,7 @@ import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryExcepti
  */
 public class UpdateSubmissionStrategy<P extends Package, R extends Repository> extends UpdateStrategy<Submission> {
 
-    private final Storage<R, P> storage;
+    private final Populator<R, P> populator;
     private final PackageService<P> packageService;
     private final RepositoryService<R> repositoryService;
     private final EmailService emailService;
@@ -68,7 +64,7 @@ public class UpdateSubmissionStrategy<P extends Package, R extends Repository> e
             User requester,
             Submission updateSubmission,
             PackageService<P> packageService,
-            Storage<R, P> storage,
+            Populator<R, P> populator,
             EmailService emailService,
             SecurityMediator securityMediator,
             RepositorySynchronizer<R> repositorySynchronizer,
@@ -76,12 +72,12 @@ public class UpdateSubmissionStrategy<P extends Package, R extends Repository> e
             RepositoryService<R> repositoryService) {
         super(resource, service, eventService, requester, updateSubmission, new Submission(resource));
         this.packageService = packageService;
-        this.storage = storage;
         this.emailService = emailService;
         this.securityMediator = securityMediator;
         this.repositorySynchronizer = repositorySynchronizer;
         this.repository = repository;
         this.repositoryService = repositoryService;
+        this.populator = populator;
     }
 
     @Override
@@ -136,7 +132,7 @@ public class UpdateSubmissionStrategy<P extends Package, R extends Repository> e
         try {
             P packageBag =
                     packageService.findById(submission.getPackage().getId()).orElseThrow(WrongServiceException::new);
-            packageBag.setSource(storage.moveToTrashDirectory(packageBag));
+            packageBag.setSource(populator.moveToTrashDirectory(packageBag));
             packageBag.setActive(false);
             packageBag.setDeleted(true);
         } catch (WrongServiceException | MovePackageSourceException e) {
@@ -154,7 +150,7 @@ public class UpdateSubmissionStrategy<P extends Package, R extends Repository> e
                     // TODO: #32886 We can cast it in the service method
                     // so that not to fetch it twice
                     .orElseThrow(WrongServiceException::new);
-            packageBag.setSource(storage.moveToMainDirectory(packageBag));
+            packageBag.setSource(populator.moveToMainDirectory(packageBag));
             packageBag.setActive(true);
             requiresRepublishing = packageBag.getRepository().getPublished();
             repositoryService.incrementVersion(repository);

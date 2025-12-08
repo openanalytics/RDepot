@@ -93,7 +93,6 @@ public class ArchiveIndex {
             final String classAttr = "class";
             final String posixct = "POSIXct";
             final String posixt = "POSIXt";
-
             for (Map.Entry<String, List<ArchiveInfo>> entry : archives.entrySet()) {
 
                 names.add(entry.getKey());

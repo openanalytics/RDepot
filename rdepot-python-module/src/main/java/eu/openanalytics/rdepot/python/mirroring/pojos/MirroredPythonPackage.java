@@ -23,8 +23,12 @@ package eu.openanalytics.rdepot.python.mirroring.pojos;
 import eu.openanalytics.rdepot.base.mirroring.pojos.MirroredPackage;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class MirroredPythonPackage extends MirroredPackage {
@@ -41,5 +45,9 @@ public class MirroredPythonPackage extends MirroredPackage {
         PythonPackage entity = new PythonPackage();
         entity.setNormalizedName(name);
         return entity.getNormalizedName();
+    }
+
+    public String toString() {
+        return this.getNormalizedName() + "-" + this.version;
     }
 }

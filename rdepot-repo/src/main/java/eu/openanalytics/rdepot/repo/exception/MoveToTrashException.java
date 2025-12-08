@@ -21,9 +21,11 @@
 package eu.openanalytics.rdepot.repo.exception;
 
 import java.io.File;
+import java.io.Serial;
 
 public class MoveToTrashException extends Exception {
 
+    @Serial
     private static final long serialVersionUID = -4858067042675508423L;
 
     public MoveToTrashException(String id, File packageFile) {

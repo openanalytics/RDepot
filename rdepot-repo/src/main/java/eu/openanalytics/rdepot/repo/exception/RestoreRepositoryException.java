@@ -21,9 +21,11 @@
 package eu.openanalytics.rdepot.repo.exception;
 
 import java.io.File;
+import java.io.Serial;
 
 public class RestoreRepositoryException extends Exception {
 
+    @Serial
     private static final long serialVersionUID = -1957175283780724741L;
 
     public RestoreRepositoryException(String repository) {

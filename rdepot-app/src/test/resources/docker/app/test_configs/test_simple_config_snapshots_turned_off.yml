@@ -15,7 +15,8 @@ default-user-configuration:
   page-size: 10
   supported-languages:
     - en-US
-    - de
+    - de-DE
+    - nl-NL
     - pl-PL
   supported-themes:
     - light
@@ -26,7 +27,7 @@ declarative: false
 spring:
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
-# Enable Liquibase
+  # Enable Liquibase
   liquibase:
     user: postgres
     enabled: true

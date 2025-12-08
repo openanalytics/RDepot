@@ -179,7 +179,7 @@ public class ConcurrentPublicationIntegrationTest extends IntegrationTest {
                             .asByteArray();
 
                     byte[] expectedPackage = Files.readAllBytes(packageFile.toPath());
-                    Assertions.assertArrayEquals(uploadedPackage, expectedPackage);
+                    Assertions.assertArrayEquals(expectedPackage, uploadedPackage);
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();

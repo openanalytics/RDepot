@@ -38,9 +38,12 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
@@ -58,8 +61,9 @@ import lombok.Setter;
         name = "resource_technology",
         discriminatorType = DiscriminatorType.STRING,
         columnDefinition = "varchar default 'Repository'")
-public abstract class Repository extends EventableResource implements Serializable {
+public abstract class Repository extends EventableResource implements Serializable, Hashable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     protected Repository() {
@@ -103,6 +107,9 @@ public abstract class Repository extends EventableResource implements Serializab
     private Boolean synchronizing = false;
 
     @Transient
+    private List<Map<String, String>> allowedFiles;
+
+    @Transient
     public Boolean isSynchronizing() {
         return synchronizing;
     }
@@ -127,6 +134,7 @@ public abstract class Repository extends EventableResource implements Serializab
         this.lastModifiedTimestamp = that.lastModifiedTimestamp;
         this.lastPublicationTimestamp = that.lastPublicationTimestamp;
         this.requiresAuthentication = that.getRequiresAuthentication();
+        this.allowedFiles = that.allowedFiles;
     }
 
     protected Repository(Technology technology) {
@@ -134,7 +142,11 @@ public abstract class Repository extends EventableResource implements Serializab
     }
 
     protected <D extends RepositoryDto> Repository(
-            Technology technology, D repositoryDto, Instant lastPublicationTimestamp, Instant lastModifiedTimestamp) {
+            Technology technology,
+            D repositoryDto,
+            Instant lastPublicationTimestamp,
+            Instant lastModifiedTimestamp,
+            List<Map<String, String>> allowedFiles) {
         this(technology);
         this.id = repositoryDto.getId();
         this.version = repositoryDto.getVersion();
@@ -147,6 +159,7 @@ public abstract class Repository extends EventableResource implements Serializab
         this.synchronizing = repositoryDto.isSynchronizing();
         this.lastPublicationTimestamp = lastPublicationTimestamp;
         this.lastModifiedTimestamp = lastModifiedTimestamp;
+        this.allowedFiles = allowedFiles;
     }
 
     @Override

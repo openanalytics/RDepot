@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
+import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -63,7 +64,53 @@ public class RRepositoryIntegrationTest extends IntegrationTest {
                 .getEndpointNewEventsAmount(0)
                 .deleteEndpointNewEventsAmount(-35)
                 .changeEndpointNewEventsAmount(1)
+                .maintainers(List.of("Nikola%20Tesla"))
+                .published(false)
+                .search("repo")
+                .name("testrepo3")
                 .build();
+    }
+
+    @Test
+    public void getRepositoriesByMaintainerAndUnpublished() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .token(USER_TOKEN)
+                .statusCode(200)
+                .urlSuffix("?maintainer="
+                        + testData.getMaintainers().get(0)
+                        + "&published=" + testData.isPublished()
+                        + "&sort=id,desc")
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/r/repositories/unpublished_repositories_by_maintainers.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getRepositoriesByNameSearching() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .token(USER_TOKEN)
+                .statusCode(200)
+                .urlSuffix("?search=" + testData.getSearch() + "&sort=id,desc")
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/r/repositories/repositories_searching.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getRepositoryByName() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .token(USER_TOKEN)
+                .statusCode(200)
+                .urlSuffix("?name=" + testData.getName() + "&sort=id,desc")
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/r/repositories/repository_by_name.json")
+                .build();
+        testEndpoint(requestBody);
     }
 
     @Test

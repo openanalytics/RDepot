@@ -21,6 +21,7 @@
 package eu.openanalytics.rdepot.base.service;
 
 import eu.openanalytics.rdepot.base.daos.PackageMaintainerDao;
+import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.User;
@@ -36,6 +37,26 @@ public class PackageMaintainerService extends Service<PackageMaintainer> {
     public PackageMaintainerService(PackageMaintainerDao packageMaintainerDao) {
         super(packageMaintainerDao);
         this.packageMaintainerDao = packageMaintainerDao;
+    }
+
+    public void updateWithNewPackages(PackageMaintainer maintainer, List<Package> packages) {
+        maintainer.getPackages().addAll(packages);
+        packageMaintainerDao.save(maintainer);
+    }
+
+    /**
+     * Should be used when the package name or repository of a package maintainer entity has changed.
+     * Example:
+     * If P is a package maintainer for package ABC in repository R,
+     * and package maintainer P is updated by changing the maintained package name from ABC to XYZ,
+     * then all packages with name ABC from repository R should be removed from the list of packages
+     * maintained by package maintainer P.
+     * @param maintainer the package maintainer which has an updated package name or repository
+     * @param oldPackageName the package name which was previously maintained by the package maintainer
+     */
+    public void updateRemoveOldPackages(PackageMaintainer maintainer, String oldPackageName) {
+        maintainer.getPackages().removeIf(packageBag -> packageBag.getName().equals(oldPackageName));
+        packageMaintainerDao.save(maintainer);
     }
 
     @Transactional
@@ -80,5 +101,9 @@ public class PackageMaintainerService extends Service<PackageMaintainer> {
 
     public List<PackageMaintainer> findNonDeletedByUser(User user) {
         return packageMaintainerDao.findByUserAndDeleted(user, false);
+    }
+
+    public List<PackageMaintainer> findAllByPackageNameAndRepository(String packageName, Repository repository) {
+        return packageMaintainerDao.findAllByPackageNameAndRepositoryId(packageName, repository.getId());
     }
 }

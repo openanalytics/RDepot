@@ -39,7 +39,7 @@ import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.mediator.deletion.RPackageDeleter;
 import eu.openanalytics.rdepot.r.services.RPackageService;
 import eu.openanalytics.rdepot.r.services.RRepositoryService;
-import eu.openanalytics.rdepot.r.storage.RStorage;
+import eu.openanalytics.rdepot.r.storage.population.implementations.RLocalPopulator;
 import eu.openanalytics.rdepot.r.strategy.create.RRepositoryCreateStrategy;
 import eu.openanalytics.rdepot.r.strategy.republish.RRepositoryRepublishStrategy;
 import eu.openanalytics.rdepot.r.strategy.update.RPackageUpdateStrategy;
@@ -56,7 +56,7 @@ public class RStrategyFactory {
     private final SubmissionService submissionService;
     private final PackageValidator<RPackage> packageValidator;
     private final RRepositoryService repositoryService;
-    private final Storage<RRepository, RPackage> storage;
+    private final Storage<RPackage> storage;
     private final RPackageService packageService;
     private final EmailService emailService;
     private final BestMaintainerChooser bestMaintainerChooser;
@@ -65,7 +65,7 @@ public class RStrategyFactory {
     private final SecurityMediator securityMediator;
     private final PackageMaintainerService packageMaintainerService;
     private final RepositoryMaintainerService repositoryMaintainerService;
-    private final RStorage rStorage;
+    private final RLocalPopulator rPopulator;
     private final RPackageDeleter rPackageDeleter;
 
     public Strategy<Submission> uploadPackageStrategy(RPackageUploadRequest request, User requester) {
@@ -82,9 +82,10 @@ public class RStrategyFactory {
                 bestMaintainerChooser,
                 repositorySynchronizer,
                 securityMediator,
-                rStorage,
+                rPopulator,
                 rPackageDeleter,
-                request);
+                request,
+                packageMaintainerService);
     }
 
     public Strategy<RPackage> updatePackageStrategy(RPackage resource, User requester, RPackage updatedPackage) {
@@ -127,7 +128,7 @@ public class RStrategyFactory {
                 requester,
                 updatedResource,
                 packageService,
-                storage,
+                rPopulator,
                 emailService,
                 securityMediator,
                 repositorySynchronizer,

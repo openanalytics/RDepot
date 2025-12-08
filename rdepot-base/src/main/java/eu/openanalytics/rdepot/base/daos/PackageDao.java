@@ -36,6 +36,8 @@ public interface PackageDao<T extends Package> extends Dao<T> {
 
     List<T> findByNameAndRepositoryGenericAndDeleted(String name, Repository repositoryGeneric, boolean deleted);
 
+    List<T> findByNameAndRepositoryGeneric(String name, Repository repositoryGeneric);
+
     Optional<T> findByNameAndRepositoryGenericAndDeletedAndVersionIn(
             String name, Repository repositoryGeneric, Boolean deleted, Collection<String> versions);
 

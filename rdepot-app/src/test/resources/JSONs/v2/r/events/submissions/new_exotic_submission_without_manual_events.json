@@ -7,26 +7,26 @@
         "links": [
             {
                 "rel": "first",
-                "href": "http://localhost:8017/api/v2/manager/events?page=0&size=20&sort=date,time,desc"
+                "href": "http://localhost:8017/api/v2/manager/events?page=0&size=20&sort=time,desc"
             },
             {
                 "rel": "self",
-                "href": "http://localhost:8017/api/v2/manager/events?page=0&size=20&sort=date,time,desc"
+                "href": "http://localhost:8017/api/v2/manager/events?page=0&size=20&sort=time,desc"
             },
             {
                 "rel": "next",
-                "href": "http://localhost:8017/api/v2/manager/events?page=1&size=20&sort=date,time,desc"
+                "href": "http://localhost:8017/api/v2/manager/events?page=1&size=20&sort=time,desc"
             },
             {
                 "rel": "last",
-                "href": "http://localhost:8017/api/v2/manager/events?page=19&size=20&sort=date,time,desc"
+                "href": "http://localhost:8017/api/v2/manager/events?page=19&size=20&sort=time,desc"
             }
         ],
         "content": [
             {
                 "id": 400,
-                "technology": "RDepot version: 2.6.2",
-                "time": "2024-08-14T15:14:42.113362",
+                "technology": "RDepot version: 2.7.0",
+                "time": "2025-05-07T15:40:03.822026Z",
                 "user": {
                     "id": 4,
                     "name": "Albert Einstein",
@@ -52,9 +52,9 @@
                             "name": "testrepo2",
                             "publicationUri": "http://localhost/repo/testrepo2",
                             "published": true,
-                            "requiresAuthentication":true,
+                            "requiresAuthentication": true,
                             "technology": "R",
-                            "lastPublicationSuccessful":true
+                            "lastPublicationSuccessful": true
                         },
                         "submission": {
                             "id": 48,
@@ -62,7 +62,7 @@
                         },
                         "name": "A3",
                         "version": "0.9.3",
-                        "source": "/opt/rdepot/repositories/3/4170645/A3_0.9.3.tar.gz",
+                        "source": "/opt/rdepot/repositories/3/48308500/A3_0.9.3.tar.gz",
                         "active": true,
                         "deleted": false,
                         "technology": "R",
@@ -83,7 +83,7 @@
                     },
                     "changes": "",
                     "state": "ACCEPTED",
-                    "created": "2024-08-14T00:00:00Z",
+                    "created": "2025-05-07T15:40:03.822026Z",
                     "technology": "R"
                 },
                 "links": [
@@ -99,13 +99,13 @@
             },
             {
                 "id": 399,
-                "technology": "RDepot version: 2.6.2",
-                "time": "2024-08-13T10:20:48.575567",
+                "technology": "RDepot version: 2.7.0",
+                "time": "2024-11-19T11:22:33Z",
                 "user": {
-                    "id": 4,
-                    "name": "Albert Einstein",
-                    "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
+                    "id": 7,
+                    "name": "Isaac Newton",
+                    "login": "newton",
+                    "email": "newton@ldap.forumsys.com"
                 },
                 "eventType": "upload",
                 "resourceId": 47,
@@ -126,7 +126,9 @@
                             "name": "testrepo4",
                             "publicationUri": "http://localhost/repo/testrepo4",
                             "published": false,
-                            "technology": "R"
+                            "requiresAuthentication": true,
+                            "technology": "R",
+                            "lastPublicationSuccessful": false
                         },
                         "submission": {
                             "id": 47,
@@ -155,7 +157,7 @@
                     },
                     "changes": null,
                     "state": "ACCEPTED",
-                    "created": "2024-08-13T00:00:00Z",
+                    "created": "2024-11-19T11:22:33Z",
                     "technology": "R"
                 },
                 "links": [
@@ -171,8 +173,8 @@
             },
             {
                 "id": 398,
-                "technology": "RDepot version: 2.6.2",
-                "time": "2024-01-19T13:42:35.326969",
+                "technology": "RDepot version: 2.7.0",
+                "time": "2024-01-19T13:42:35Z",
                 "user": {
                     "id": 7,
                     "name": "Isaac Newton",
@@ -196,7 +198,8 @@
                         "name": "Isaac Newton",
                         "login": "newton",
                         "email": "newton@ldap.forumsys.com"
-                    }
+                    },
+                    "lastUsed": ""
                 },
                 "links": [
                     {
@@ -211,8 +214,8 @@
             },
             {
                 "id": 397,
-                "technology": "RDepot version: 2.6.2",
-                "time": "2024-01-19T13:42:34.341632",
+                "technology": "RDepot version: 2.7.0",
+                "time": "2024-01-19T13:42:34Z",
                 "user": {
                     "id": 6,
                     "name": "Galileo Galilei",
@@ -236,7 +239,8 @@
                         "name": "Galileo Galilei",
                         "login": "galieleo",
                         "email": "galieleo@ldap.forumsys.com"
-                    }
+                    },
+                    "lastUsed": ""
                 },
                 "links": [
                     {
@@ -251,8 +255,8 @@
             },
             {
                 "id": 396,
-                "technology": "RDepot version: 2.6.2",
-                "time": "2024-01-19T13:42:32.681292",
+                "technology": "RDepot version: 2.7.0",
+                "time": "2024-01-19T13:42:32Z",
                 "user": {
                     "id": 5,
                     "name": "Nikola Tesla",
@@ -276,7 +280,8 @@
                         "name": "Nikola Tesla",
                         "login": "tesla",
                         "email": "tesla@ldap.forumsys.com"
-                    }
+                    },
+                    "lastUsed": ""
                 },
                 "links": [
                     {
@@ -291,8 +296,8 @@
             },
             {
                 "id": 395,
-                "technology": "RDepot version: 2.6.2",
-                "time": "2024-01-19T13:42:26.568523",
+                "technology": "RDepot version: 2.7.0",
+                "time": "2024-01-19T13:42:26Z",
                 "user": {
                     "id": 4,
                     "name": "Albert Einstein",
@@ -316,7 +321,8 @@
                         "name": "Albert Einstein",
                         "login": "einstein",
                         "email": "einstein@ldap.forumsys.com"
-                    }
+                    },
+                    "lastUsed": "2025-05-07T15:40:27.840466Z"
                 },
                 "links": [
                     {
@@ -331,8 +337,8 @@
             },
             {
                 "id": 394,
-                "technology": "RDepot version: 2.6.2",
-                "time": "2023-12-07T23:59:59.99999",
+                "technology": "RDepot version: 2.7.0",
+                "time": "2023-12-07T23:59:59Z",
                 "user": {
                     "id": 7,
                     "name": "Isaac Newton",
@@ -362,7 +368,8 @@
                         "name": "Isaac Newton",
                         "login": "newton",
                         "email": "newton@ldap.forumsys.com"
-                    }
+                    },
+                    "lastUsed": ""
                 },
                 "links": [
                     {
@@ -377,8 +384,8 @@
             },
             {
                 "id": 393,
-                "technology": "RDepot version: 2.6.2",
-                "time": "2023-12-06T11:49:44.78367",
+                "technology": "RDepot version: 2.7.0",
+                "time": "2023-12-06T11:49:44Z",
                 "user": {
                     "id": 7,
                     "name": "Isaac Newton",
@@ -402,7 +409,8 @@
                         "name": "Isaac Newton",
                         "login": "newton",
                         "email": "newton@ldap.forumsys.com"
-                    }
+                    },
+                    "lastUsed": ""
                 },
                 "links": [
                     {
@@ -417,8 +425,8 @@
             },
             {
                 "id": 392,
-                "technology": "RDepot version: 2.6.2",
-                "time": "2023-12-06T09:13:31.7944",
+                "technology": "RDepot version: 2.7.0",
+                "time": "2023-12-06T09:13:31Z",
                 "user": {
                     "id": 7,
                     "name": "Isaac Newton",
@@ -448,7 +456,8 @@
                         "name": "Isaac Newton",
                         "login": "newton",
                         "email": "newton@ldap.forumsys.com"
-                    }
+                    },
+                    "lastUsed": ""
                 },
                 "links": [
                     {
@@ -463,8 +472,8 @@
             },
             {
                 "id": 391,
-                "technology": "RDepot version: 2.6.2",
-                "time": "2023-12-05T11:12:54.853912",
+                "technology": "RDepot version: 2.7.0",
+                "time": "2023-12-05T11:12:54Z",
                 "user": {
                     "id": 7,
                     "name": "Isaac Newton",
@@ -488,7 +497,8 @@
                         "name": "Isaac Newton",
                         "login": "newton",
                         "email": "newton@ldap.forumsys.com"
-                    }
+                    },
+                    "lastUsed": ""
                 },
                 "links": [
                     {
@@ -503,8 +513,8 @@
             },
             {
                 "id": 390,
-                "technology": "RDepot version: 2.6.2",
-                "time": "2023-12-04T11:12:25.346875",
+                "technology": "RDepot version: 2.7.0",
+                "time": "2023-12-04T11:12:25Z",
                 "user": {
                     "id": 7,
                     "name": "Isaac Newton",
@@ -528,7 +538,8 @@
                         "name": "Isaac Newton",
                         "login": "newton",
                         "email": "newton@ldap.forumsys.com"
-                    }
+                    },
+                    "lastUsed": ""
                 },
                 "links": [
                     {
@@ -543,8 +554,8 @@
             },
             {
                 "id": 389,
-                "technology": "RDepot version: 2.6.2",
-                "time": "2023-11-15T11:11:11.951486",
+                "technology": "RDepot version: 2.7.0",
+                "time": "2023-11-15T11:11:11Z",
                 "user": {
                     "id": 4,
                     "name": "Albert Einstein",
@@ -568,7 +579,8 @@
                         "name": "Albert Einstein",
                         "login": "einstein",
                         "email": "einstein@ldap.forumsys.com"
-                    }
+                    },
+                    "lastUsed": ""
                 },
                 "links": [
                     {
@@ -583,8 +595,8 @@
             },
             {
                 "id": 388,
-                "technology": "RDepot version: 2.6.2",
-                "time": "2023-07-10T12:36:18.482532",
+                "technology": "RDepot version: 2.7.0",
+                "time": "2023-07-10T12:36:18Z",
                 "user": {
                     "id": 7,
                     "name": "Isaac Newton",
@@ -610,7 +622,9 @@
                             "name": "testrepo8",
                             "publicationUri": "http://localhost/repo/testrepo8",
                             "published": true,
-                            "technology": "Python"
+                            "requiresAuthentication": true,
+                            "technology": "Python",
+                            "lastPublicationSuccessful": true
                         },
                         "submission": {
                             "id": 46,
@@ -634,7 +648,7 @@
                     "approver": null,
                     "changes": null,
                     "state": "WAITING",
-                    "created": "2023-07-10T00:00:00Z",
+                    "created": "2023-07-10T12:36:18Z",
                     "technology": "Python"
                 },
                 "links": [
@@ -650,8 +664,8 @@
             },
             {
                 "id": 387,
-                "technology": "RDepot version: 2.6.2",
-                "time": "2023-07-10T12:36:04.077593",
+                "technology": "RDepot version: 2.7.0",
+                "time": "2023-07-10T12:36:04Z",
                 "user": {
                     "id": 7,
                     "name": "Isaac Newton",
@@ -677,7 +691,9 @@
                             "name": "testrepo8",
                             "publicationUri": "http://localhost/repo/testrepo8",
                             "published": true,
-                            "technology": "Python"
+                            "requiresAuthentication": true,
+                            "technology": "Python",
+                            "lastPublicationSuccessful": true
                         },
                         "submission": {
                             "id": 45,
@@ -701,7 +717,7 @@
                     "approver": null,
                     "changes": null,
                     "state": "WAITING",
-                    "created": "2023-07-10T00:00:00Z",
+                    "created": "2023-07-10T12:36:04Z",
                     "technology": "Python"
                 },
                 "links": [
@@ -717,8 +733,8 @@
             },
             {
                 "id": 386,
-                "technology": "RDepot version: 2.6.2",
-                "time": "2023-07-10T12:35:21.693706",
+                "technology": "RDepot version: 2.7.0",
+                "time": "2023-07-10T12:35:21Z",
                 "user": {
                     "id": 4,
                     "name": "Albert Einstein",
@@ -743,7 +759,9 @@
                         "name": "testrepo8",
                         "publicationUri": "http://localhost/repo/testrepo8",
                         "published": true,
-                        "technology": "Python"
+                        "requiresAuthentication": true,
+                        "technology": "Python",
+                        "lastPublicationSuccessful": true
                     },
                     "deleted": false
                 },
@@ -760,8 +778,8 @@
             },
             {
                 "id": 385,
-                "technology": "RDepot version: 2.6.2",
-                "time": "2023-07-10T12:35:08.081333",
+                "technology": "RDepot version: 2.7.0",
+                "time": "2023-07-10T12:35:08Z",
                 "user": {
                     "id": 4,
                     "name": "Albert Einstein",
@@ -786,7 +804,9 @@
                         "name": "testrepo8",
                         "publicationUri": "http://localhost/repo/testrepo8",
                         "published": true,
-                        "technology": "Python"
+                        "requiresAuthentication": true,
+                        "technology": "Python",
+                        "lastPublicationSuccessful": true
                     },
                     "deleted": false
                 },
@@ -803,8 +823,8 @@
             },
             {
                 "id": 384,
-                "technology": "RDepot version: 2.6.2",
-                "time": "2023-07-10T12:35:00.699712",
+                "technology": "RDepot version: 2.7.0",
+                "time": "2023-07-10T12:35:00Z",
                 "user": {
                     "id": 4,
                     "name": "Albert Einstein",
@@ -829,7 +849,9 @@
                         "name": "testrepo8",
                         "publicationUri": "http://localhost/repo/testrepo8",
                         "published": true,
-                        "technology": "Python"
+                        "requiresAuthentication": true,
+                        "technology": "Python",
+                        "lastPublicationSuccessful": true
                     },
                     "deleted": false
                 },
@@ -846,8 +868,8 @@
             },
             {
                 "id": 383,
-                "technology": "RDepot version: 2.6.2",
-                "time": "2023-07-10T12:34:38.748343",
+                "technology": "RDepot version: 2.7.0",
+                "time": "2023-07-10T12:34:38Z",
                 "user": {
                     "id": 4,
                     "name": "Albert Einstein",
@@ -872,7 +894,9 @@
                         "name": "testrepo8",
                         "publicationUri": "http://localhost/repo/testrepo8",
                         "published": true,
-                        "technology": "Python"
+                        "requiresAuthentication": true,
+                        "technology": "Python",
+                        "lastPublicationSuccessful": true
                     },
                     "deleted": false
                 },
@@ -889,8 +913,8 @@
             },
             {
                 "id": 382,
-                "technology": "RDepot version: 2.6.2",
-                "time": "2023-07-10T12:34:02.690264",
+                "technology": "RDepot version: 2.7.0",
+                "time": "2023-07-10T12:34:02Z",
                 "user": {
                     "id": 4,
                     "name": "Albert Einstein",
@@ -916,7 +940,9 @@
                             "name": "testrepo8",
                             "publicationUri": "http://localhost/repo/testrepo8",
                             "published": true,
-                            "technology": "Python"
+                            "requiresAuthentication": true,
+                            "technology": "Python",
+                            "lastPublicationSuccessful": true
                         },
                         "submission": {
                             "id": 44,
@@ -945,7 +971,7 @@
                     },
                     "changes": null,
                     "state": "ACCEPTED",
-                    "created": "2023-07-10T00:00:00Z",
+                    "created": "2023-07-10T12:34:02Z",
                     "technology": "Python"
                 },
                 "links": [
@@ -961,8 +987,8 @@
             },
             {
                 "id": 381,
-                "technology": "RDepot version: 2.6.2",
-                "time": "2023-07-10T12:33:27.912225",
+                "technology": "RDepot version: 2.7.0",
+                "time": "2023-07-10T12:33:27Z",
                 "user": {
                     "id": 4,
                     "name": "Albert Einstein",
@@ -988,7 +1014,9 @@
                             "name": "testrepo8",
                             "publicationUri": "http://localhost/repo/testrepo8",
                             "published": true,
-                            "technology": "Python"
+                            "requiresAuthentication": true,
+                            "technology": "Python",
+                            "lastPublicationSuccessful": true
                         },
                         "submission": {
                             "id": 43,
@@ -1017,7 +1045,7 @@
                     },
                     "changes": null,
                     "state": "ACCEPTED",
-                    "created": "2023-07-10T00:00:00Z",
+                    "created": "2023-07-10T12:33:27Z",
                     "technology": "Python"
                 },
                 "links": [

@@ -49,7 +49,7 @@ public abstract class Service<E extends Resource> extends SpringDataJpaCapableRe
 
     /**
      * Creates entity in the database.
-     * @param entity created entity, its id must 0
+     * @param entity created entity, its id must be 0
      */
     public E create(E entity) throws CreateEntityException {
         try {
@@ -85,9 +85,4 @@ public abstract class Service<E extends Resource> extends SpringDataJpaCapableRe
             }
         });
     }
-
-    /*
-     * Deletes same version of the given package.
-     */
-    public void deleteSameVersion(E entity) {}
 }

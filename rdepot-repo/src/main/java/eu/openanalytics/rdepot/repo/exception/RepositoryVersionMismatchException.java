@@ -21,12 +21,14 @@
 package eu.openanalytics.rdepot.repo.exception;
 
 import eu.openanalytics.rdepot.repo.model.SynchronizeRepositoryRequestBody;
+import java.io.Serial;
 
 public class RepositoryVersionMismatchException extends Exception {
 
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -6950465626649080331L;
 
     public RepositoryVersionMismatchException(SynchronizeRepositoryRequestBody requestBody) {

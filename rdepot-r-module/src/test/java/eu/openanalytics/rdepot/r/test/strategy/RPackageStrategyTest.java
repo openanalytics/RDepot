@@ -52,7 +52,6 @@ import java.util.HashSet;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 public class RPackageStrategyTest extends StrategyTest {
@@ -64,7 +63,7 @@ public class RPackageStrategyTest extends StrategyTest {
     RPackageService service;
 
     @Mock
-    Storage<RRepository, RPackage> storage;
+    Storage<RPackage> storage;
 
     @Test
     public void updatePackage_shouldRepublishRepository_whenRepositoryIsPublished() throws Exception {
@@ -80,14 +79,7 @@ public class RPackageStrategyTest extends StrategyTest {
         updatedPackageBag.setActive(false);
 
         when(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag)).thenReturn(user);
-        doAnswer(new Answer<NewsfeedEvent>() {
-
-                    @Override
-                    public NewsfeedEvent answer(InvocationOnMock invocation) throws Throwable {
-                        NewsfeedEvent event = invocation.getArgument(0);
-                        return event;
-                    }
-                })
+        doAnswer((Answer<NewsfeedEvent>) invocation -> invocation.getArgument(0))
                 .when(eventService)
                 .create(any());
         doNothing().when(repositorySynchronizer).storeRepositoryOnRemoteServer(eq(repository));
@@ -122,14 +114,7 @@ public class RPackageStrategyTest extends StrategyTest {
         updatedPackageBag.setActive(false);
 
         when(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag)).thenReturn(user);
-        doAnswer(new Answer<NewsfeedEvent>() {
-
-                    @Override
-                    public NewsfeedEvent answer(InvocationOnMock invocation) throws Throwable {
-                        NewsfeedEvent event = invocation.getArgument(0);
-                        return event;
-                    }
-                })
+        doAnswer((Answer<NewsfeedEvent>) invocation -> invocation.getArgument(0))
                 .when(eventService)
                 .create(any());
         doNothing().when(eventService).attachVariables(any(), any());
@@ -187,14 +172,7 @@ public class RPackageStrategyTest extends StrategyTest {
         updatedPackageBag.setActive(false);
 
         when(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag)).thenReturn(newMaintainer);
-        doAnswer(new Answer<NewsfeedEvent>() {
-
-                    @Override
-                    public NewsfeedEvent answer(InvocationOnMock invocation) throws Throwable {
-                        NewsfeedEvent event = invocation.getArgument(0);
-                        return event;
-                    }
-                })
+        doAnswer((Answer<NewsfeedEvent>) invocation -> invocation.getArgument(0))
                 .when(eventService)
                 .create(any());
         doNothing().when(repositorySynchronizer).storeRepositoryOnRemoteServer(eq(repository));
@@ -229,14 +207,7 @@ public class RPackageStrategyTest extends StrategyTest {
         updatedPackageBag.setId(0);
         updatedPackageBag.setDeleted(true);
 
-        doAnswer(new Answer<NewsfeedEvent>() {
-
-                    @Override
-                    public NewsfeedEvent answer(InvocationOnMock invocation) throws Throwable {
-                        NewsfeedEvent event = invocation.getArgument(0);
-                        return event;
-                    }
-                })
+        doAnswer((Answer<NewsfeedEvent>) invocation -> invocation.getArgument(0))
                 .when(eventService)
                 .create(any());
         doNothing().when(repositorySynchronizer).storeRepositoryOnRemoteServer(eq(repository));
@@ -271,14 +242,7 @@ public class RPackageStrategyTest extends StrategyTest {
         updatedPackageBag.setActive(false);
 
         when(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag)).thenReturn(user);
-        doAnswer(new Answer<NewsfeedEvent>() {
-
-                    @Override
-                    public NewsfeedEvent answer(InvocationOnMock invocation) throws Throwable {
-                        NewsfeedEvent event = invocation.getArgument(0);
-                        return event;
-                    }
-                })
+        doAnswer((Answer<NewsfeedEvent>) invocation -> invocation.getArgument(0))
                 .when(eventService)
                 .create(any());
         doThrow(new SynchronizeRepositoryException())
@@ -296,7 +260,7 @@ public class RPackageStrategyTest extends StrategyTest {
                 bestMaintainerChooser,
                 repositorySynchronizer);
         strategy.perform();
-        assertThrows(StrategyFailure.class, () -> strategy.postStrategy());
+        assertThrows(StrategyFailure.class, strategy::postStrategy);
     }
 
     @Test
@@ -324,7 +288,7 @@ public class RPackageStrategyTest extends StrategyTest {
                 bestMaintainerChooser,
                 repositorySynchronizer);
 
-        assertThrows(StrategyFailure.class, () -> strategy.perform());
+        assertThrows(StrategyFailure.class, strategy::perform);
     }
 
     @Test
@@ -347,14 +311,7 @@ public class RPackageStrategyTest extends StrategyTest {
         expectedValues.add(new EventChangedVariable("deleted", "false", "true"));
 
         when(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag)).thenReturn(user);
-        doAnswer(new Answer<NewsfeedEvent>() {
-
-                    @Override
-                    public NewsfeedEvent answer(InvocationOnMock invocation) throws Throwable {
-                        NewsfeedEvent event = invocation.getArgument(0);
-                        return event;
-                    }
-                })
+        doAnswer((Answer<NewsfeedEvent>) invocation -> invocation.getArgument(0))
                 .when(eventService)
                 .create(any());
         doAnswer(new AssertEventChangedValuesAnswer(expectedValues))

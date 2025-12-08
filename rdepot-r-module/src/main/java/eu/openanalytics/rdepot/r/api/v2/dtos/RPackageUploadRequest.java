@@ -38,7 +38,6 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 public class RPackageUploadRequest extends PackageUploadRequest<RRepository> {
 
-    private boolean binaryPackage;
     private String rVersion;
     private String architecture;
     private String distribution;
@@ -54,8 +53,7 @@ public class RPackageUploadRequest extends PackageUploadRequest<RRepository> {
             String architecture,
             String distribution,
             String changes) {
-        super(fileData, repository, replace, changes);
-        this.binaryPackage = binaryPackage;
+        super(fileData, repository, replace, changes, binaryPackage);
         this.rVersion = rVersion;
         this.architecture = architecture;
         this.distribution = distribution;

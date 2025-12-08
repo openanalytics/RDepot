@@ -22,8 +22,8 @@ package eu.openanalytics.rdepot.python.api.v2.dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import eu.openanalytics.rdepot.base.api.v2.dtos.RepositoryDto;
+import eu.openanalytics.rdepot.base.entities.enums.HashMethod;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
-import eu.openanalytics.rdepot.python.entities.enums.HashMethod;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

@@ -81,8 +81,35 @@ public class RPackageValidator implements PackageValidator<RPackage> {
         validateNotEmpty("title", packageBag.getTitle(), RMessageCodes.EMPTY_TITLE, validationResult);
         validateNotEmpty("md5sum", packageBag.getMd5sum(), RMessageCodes.EMPTY_MD5SUM, validationResult);
         validateVersion(packageBag, replace, validationResult);
+        validateFilename(packageBag.getFileName(), packageBag.getName(), packageBag.getVersion(), validationResult);
+        validateEncoding(packageBag.getEncoding(), validationResult);
 
         if (packageBag.isBinary()) validateBinaryProperties(packageBag, validationResult);
+    }
+
+    private void validateEncoding(String encoding, DataSpecificValidationResult<Submission> validationResult) {
+        if (encoding != null && !encoding.matches(env.getProperty("package.r.encoding", "[A-Za-a0-9-_.,+:=]+")))
+            validationResult.error("encoding", RMessageCodes.INVALID_ENCODING);
+    }
+
+    private void validateFilename(
+            String fileName,
+            String packageName,
+            String packageVersion,
+            DataSpecificValidationResult<Submission> validationResult) {
+
+        String[] splitFileName = fileName.split("_|\\.tar.gz");
+
+        if (splitFileName.length < 2) {
+            validationResult.error("filename", MessageCodes.INVALID_FILENAME);
+            return;
+        }
+
+        if (!packageName.equals(splitFileName[0]))
+            validationResult.warning("name", MessageCodes.MISMATCHED_DATA_IN_THE_FILENAME);
+
+        if (!packageVersion.equals(splitFileName[1]))
+            validationResult.warning("version", MessageCodes.MISMATCHED_DATA_IN_THE_FILENAME);
     }
 
     private void validateName(final String name, final DataSpecificValidationResult<Submission> validationResult) {
@@ -94,12 +121,12 @@ public class RPackageValidator implements PackageValidator<RPackage> {
     public void validate(RPackage packageBag, boolean replace, DataSpecificValidationResult<Submission> errors) {
         validateUploadPackage(packageBag, replace, errors);
         if (packageBag.getId() > 0) {
-            Optional<RPackage> exsitingPackageOptional = packageService.findOneNonDeleted(packageBag.getId());
+            Optional<RPackage> existingOptionalPackage = packageService.findOneNonDeleted(packageBag.getId());
 
-            if (exsitingPackageOptional.isEmpty()) {
+            if (existingOptionalPackage.isEmpty()) {
                 errors.error("id", MessageCodes.NO_SUCH_PACKAGE_ERROR);
             } else {
-                RPackage existingPackage = exsitingPackageOptional.get();
+                RPackage existingPackage = existingOptionalPackage.get();
                 validatePropertyChange(existingPackage, packageBag, errors);
             }
         }
@@ -267,11 +294,11 @@ public class RPackageValidator implements PackageValidator<RPackage> {
 
     private boolean compareRVersions(String allowedVersion, final String rVersion) {
 
-        String[] allowedVersionSplitted = StringUtils.splitByWholeSeparator(allowedVersion, ".");
-        String[] rVersionSplitted = StringUtils.splitByWholeSeparator(rVersion, ".");
+        String[] allowedVersionSplit = StringUtils.splitByWholeSeparator(allowedVersion, ".");
+        String[] rVersionSplit = StringUtils.splitByWholeSeparator(rVersion, ".");
 
         for (int i = 0; i < 2; i++) {
-            if (!Integer.valueOf(allowedVersionSplitted[i]).equals(Integer.valueOf(rVersionSplitted[i]))) {
+            if (!Integer.valueOf(allowedVersionSplit[i]).equals(Integer.valueOf(rVersionSplit[i]))) {
                 return false;
             }
         }
@@ -286,9 +313,9 @@ public class RPackageValidator implements PackageValidator<RPackage> {
         if (!rBinaryProperties.getArchitectures().contains(architecture))
             validationResult.error("architecture", RMessageCodes.ARCHITECTURE_NOT_ALLOWED);
 
-        String builtOSinfo = built.split(";")[1].trim();
-        if (!builtOSinfo.isEmpty()) {
-            String builtArch = builtOSinfo.split("-")[0];
+        String builtOSInfo = built.split(";")[1].trim();
+        if (!builtOSInfo.isEmpty()) {
+            String builtArch = builtOSInfo.split("-")[0];
             if (!builtArch.equals(architecture))
                 validationResult.error("architecture", RMessageCodes.INVALID_ARCHITECTURE);
         }

@@ -31,6 +31,8 @@ import eu.openanalytics.rdepot.base.service.CommonPackageService;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -61,10 +63,16 @@ public class CreatePackageMaintainerStrategy extends CreateStrategy<PackageMaint
         PackageMaintainer maintainer;
         Optional<PackageMaintainer> packageMaintainer = packageMaintainerService.findByPackageAndRepositoryAndDeleted(
                 resource.getPackageName(), resource.getRepository());
+        List<Package> packages = packageService.findAllByNameAndRepositoryIncludeDeleted(
+                resource.getPackageName(), resource.getRepository());
+
         if (packageMaintainer.isPresent()) {
             maintainer = packageMaintainer.get();
             maintainer.setDeleted(false);
+            packageMaintainerService.updateWithNewPackages(maintainer, packages);
+
         } else {
+            resource.setPackages(new HashSet<>(packages));
             maintainer = super.actualStrategy();
         }
         try {

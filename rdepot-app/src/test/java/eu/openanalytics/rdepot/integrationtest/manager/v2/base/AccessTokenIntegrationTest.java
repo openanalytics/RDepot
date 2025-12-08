@@ -140,7 +140,12 @@ public class AccessTokenIntegrationTest extends IntegrationTest {
 
     @Test
     public void createToken_returns422_whenInvalidLifetime() throws Exception {
-        final String body = "{\n" + "    \"lifetime\": \"-14\",\n" + "    \"name\": \"test\"\n" + "}";
+        final String body =
+                """
+                {
+                    "lifetime": "-14",
+                    "name": "test"
+                }""";
 
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.POST)
@@ -156,7 +161,12 @@ public class AccessTokenIntegrationTest extends IntegrationTest {
 
     @Test
     public void createToken() throws Exception {
-        final String body = "{\n" + "    \"lifetime\": \"14\",\n" + "    \"name\": \"test\"\n" + "}";
+        final String body =
+                """
+                {
+                    "lifetime": "14",
+                    "name": "test"
+                }""";
 
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.POST)
@@ -182,18 +192,20 @@ public class AccessTokenIntegrationTest extends IntegrationTest {
 
     @Test
     public void patchToken() throws Exception {
-        final String patch = "[\n"
-                + "    {\n"
-                + "        \"op\" : \"replace\",\n"
-                + "        \"path\" : \"/active\",\n"
-                + "        \"value\" : \"false\"\n"
-                + "    },\n"
-                + "    {\n"
-                + "        \"op\" : \"replace\",\n"
-                + "        \"path\" : \"/name\",\n"
-                + "        \"value\" : \"change\"\n"
-                + "    }\n"
-                + "]";
+        final String patch =
+                """
+                [
+                    {
+                        "op" : "replace",
+                        "path" : "/active",
+                        "value" : "false"
+                    },
+                    {
+                        "op" : "replace",
+                        "path" : "/name",
+                        "value" : "change"
+                    }
+                ]""";
 
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.PATCH)
@@ -220,13 +232,15 @@ public class AccessTokenIntegrationTest extends IntegrationTest {
 
     @Test
     public void reactivateToken_returns422() throws Exception {
-        final String patch = "[\n"
-                + "    {\n"
-                + "        \"op\" : \"replace\",\n"
-                + "        \"path\" : \"/active\",\n"
-                + "        \"value\" : \"true\"\n"
-                + "    }"
-                + "]";
+        final String patch =
+                """
+                [
+                    {
+                        "op" : "replace",
+                        "path" : "/active",
+                        "value" : "true"
+                    }\
+                ]""";
 
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.PATCH)
@@ -242,13 +256,15 @@ public class AccessTokenIntegrationTest extends IntegrationTest {
 
     @Test
     public void softDelete_returns422() throws Exception {
-        final String patch = "[\n"
-                + "    {\n"
-                + "        \"op\" : \"replace\",\n"
-                + "        \"path\" : \"/deleted\",\n"
-                + "        \"value\" : \"true\"\n"
-                + "    }"
-                + "]";
+        final String patch =
+                """
+                [
+                    {
+                        "op" : "replace",
+                        "path" : "/deleted",
+                        "value" : "true"
+                    }\
+                ]""";
 
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.PATCH)

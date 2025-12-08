@@ -46,7 +46,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.springframework.context.MessageSource;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
@@ -152,7 +151,7 @@ public abstract class ApiV2Controller<E extends Resource, D extends IDto> extend
         final List<String> errorMessages = bindingResult.getAllErrors().stream()
                 .map(err ->
                         messageSource.getMessage(Objects.requireNonNull(err.getCode()), null, err.getCode(), locale))
-                .collect(Collectors.toList());
+                .toList();
 
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
                 .body(ResponseDto.generateErrorBody(
@@ -173,7 +172,7 @@ public abstract class ApiV2Controller<E extends Resource, D extends IDto> extend
         final List<String> errorMessages = validationResult.getErrors().stream()
                 .map(err -> messageSource.getMessage(
                         Objects.requireNonNull(err.messageCode()), null, err.messageCode(), locale))
-                .collect(Collectors.toList());
+                .toList();
 
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
                 .body(ResponseDto.generateErrorBody(
@@ -196,7 +195,7 @@ public abstract class ApiV2Controller<E extends Resource, D extends IDto> extend
                     return messageSource.getMessage(
                             Objects.requireNonNull(err.getCode()), null, err.getDefaultMessage(), locale);
                 })
-                .collect(Collectors.toList());
+                .toList();
 
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
                 .body(ResponseDto.generateErrorBody(

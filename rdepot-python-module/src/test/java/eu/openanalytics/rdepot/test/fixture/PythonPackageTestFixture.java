@@ -34,11 +34,11 @@ import org.springframework.data.domain.PageImpl;
 
 public class PythonPackageTestFixture {
 
-    public static final String NAME = "TestPackage";
+    public static final String NAME = "test_package";
     public static final String DESCRIPTION = "Simple test package";
     public static final String AUTHOR = "Albert Einstein";
     public static final String LICENSE = "Some license";
-    public static final String SOURCE = "test_package.tar.gz";
+    public static final String TARGZ = ".tar.gz";
     public static final String TITLE = "Test Package";
     public static final String HASH = "1234567";
     public static final String VERSION = "4.5.6";
@@ -59,7 +59,7 @@ public class PythonPackageTestFixture {
                     DESCRIPTION + Integer.toString(i),
                     AUTHOR + Integer.toString(i),
                     LICENSE + Integer.toString(i),
-                    Integer.toString(i) + SOURCE,
+                    NAME + Integer.toString(i) + "-" + VERSION + TARGZ,
                     TITLE + Integer.toString(i),
                     HASH + Integer.toString(i),
                     ACTIVATED,
@@ -246,5 +246,21 @@ public class PythonPackageTestFixture {
         }
 
         return packages;
+    }
+
+    public static PythonPackage GET_FIXTURE_BINARY_PACKAGE(PythonRepository repository, User user) {
+        PythonPackage binaryPackage = GET_FIXTURE_PACKAGE(repository, user);
+        binaryPackage.setSource("test_package1-4.5.6-py3-none-any.whl");
+        binaryPackage.setBinary(true);
+        binaryPackage.setCompatibilityTags("py3-none-any");
+        binaryPackage.setPythonTag("py3");
+        binaryPackage.setAbiTag("none");
+        binaryPackage.setPlatformTag("any");
+
+        Submission submission = PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, binaryPackage);
+        submission.setId(binaryPackage.getSubmission().getId());
+        submission.setCreatedDate(DateProvider.now());
+        binaryPackage.setSubmission(submission);
+        return binaryPackage;
     }
 }

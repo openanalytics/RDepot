@@ -20,12 +20,15 @@
  */
 package eu.openanalytics.rdepot.repo.exception;
 
+import java.io.Serial;
+
 /**
  * @author wiktor
  *
  */
 public class InitTransactionException extends Exception {
 
+    @Serial
     private static final long serialVersionUID = 2646203454906790194L;
 
     public InitTransactionException(String id) {

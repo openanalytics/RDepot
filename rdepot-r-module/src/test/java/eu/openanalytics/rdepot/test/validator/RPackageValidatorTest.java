@@ -88,9 +88,6 @@ public class RPackageValidatorTest {
         user = UserTestFixture.GET_ADMIN();
         RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
         packageBag = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
-        packageBag.setTitle("someTitle");
-        packageBag.setVersion("1");
-        packageBag.setName("someName");
         updatedPackageBag = new RPackage(packageBag);
         duplicatedPackageBag = new RPackage(packageBag);
         binaryPackage = RPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user);
@@ -107,6 +104,18 @@ public class RPackageValidatorTest {
         prepareTest();
         packageValidator.validateUploadPackage(packageBag, true, errors);
         assertFalse(errors.hasErrors(), "Validation results should be empty for a standard package");
+    }
+
+    @Test
+    public void validateUploadPackageWithWrongEncoding_shouldFail() {
+        prepareTest();
+        packageBag.setEncoding("ąęóćżźń");
+
+        when(env.getProperty("package.r.encoding", "[A-Za-a0-9-_.,+:=]+")).thenReturn("[A-Za-a0-9-_.,+:=]+");
+
+        packageValidator.validateUploadPackage(packageBag, true, errors);
+        assertTrue(errors.hasErrors(), "Validation should return encoding error");
+        verify(errors, times(1)).error("encoding", RMessageCodes.INVALID_ENCODING);
     }
 
     @Test
@@ -212,6 +221,33 @@ public class RPackageValidatorTest {
         packageValidator.validateUploadPackage(packageBag, true, errors);
         assertTrue(errors.hasErrors(), "Validation should return title error");
         verify(errors, times(1)).error("title", RMessageCodes.EMPTY_TITLE);
+    }
+
+    @Test
+    public void validateUploadPackageWithoutVersionInFilename_shouldFail() {
+        prepareTest();
+        packageBag.setSource("testPackage.tar.gz");
+        packageValidator.validateUploadPackage(packageBag, true, errors);
+        assertTrue(errors.hasErrors(), "Validation should return filename error");
+        verify(errors, times(1)).error("filename", MessageCodes.INVALID_FILENAME);
+    }
+
+    @Test
+    public void validateUploadPackageWithMismatchName_shouldWarn() {
+        prepareTest();
+        packageBag.setName("testPackage");
+        packageValidator.validateUploadPackage(packageBag, true, errors);
+        assertTrue(errors.hasWarnings(), "Validation should return package name warning");
+        verify(errors, times(1)).warning("name", MessageCodes.MISMATCHED_DATA_IN_THE_FILENAME);
+    }
+
+    @Test
+    public void validateUploadPackageWithMismatchVersion_shouldWarn() {
+        prepareTest();
+        packageBag.setSource("TestPackage_1.2.3.tar.gz");
+        packageValidator.validateUploadPackage(packageBag, true, errors);
+        assertTrue(errors.hasWarnings(), "Validation should return package version warning");
+        verify(errors, times(1)).warning("version", MessageCodes.MISMATCHED_DATA_IN_THE_FILENAME);
     }
 
     @Test
@@ -566,7 +602,7 @@ public class RPackageValidatorTest {
 
     private void prepareTest() {
         errors = Mockito.spy(ValidationResultImpl.createDataSpecificResult());
-        when(env.getProperty("package.version.max-numbers", "10")).thenReturn("1");
+        when(env.getProperty("package.version.max-numbers", "10")).thenReturn("10");
     }
 
     private void validateUpdatedPackageBag() {

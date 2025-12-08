@@ -1,0 +1,79 @@
+{
+    "status": "SUCCESS",
+    "code": 200,
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "data": {
+        "id": 49,
+        "packageBag": {
+            "id": 49,
+            "user": {
+                "id": 5,
+                "name": "Nikola Tesla",
+                "login": "tesla",
+                "email": "tesla@ldap.forumsys.com"
+            },
+            "repository": {
+                "id": 9,
+                "name": "testrepo9",
+                "publicationUri": "http://localhost/repo/testrepo9",
+                "published": true,
+                "requiresAuthentication": true,
+                "technology": "Python",
+                "lastPublicationSuccessful": true
+            },
+            "submission": {
+                "id": 49,
+                "state": "ACCEPTED"
+            },
+            "name": "ArmyOfEvilRobots",
+            "version": "0.4.1dev",
+            "source": "/opt/rdepot/repositories/9/80479871/ArmyOfEvilRobots-0.4.1dev.tar.gz",
+            "active": true,
+            "deleted": false,
+            "technology": "Python",
+            "binary": false,
+            "description": "UNKNOWN",
+            "author": "Derek Anderson",
+            "title": "Utility library. Contains per app cross platform config library tools for now.",
+            "url": "http://www.armyofevilrobots.com/",
+            "descriptionContentType": "",
+            "links": [
+                {
+                    "rel": "self",
+                    "href": "http://localhost:8017/api/v2/manager/python/packages/49"
+                },
+                {
+                    "rel": "packageList",
+                    "href": "http://localhost:8017/api/v2/manager/packages"
+                }
+            ]
+        },
+        "submitter": {
+            "id": 4,
+            "name": "Albert Einstein",
+            "login": "einstein",
+            "email": "einstein@ldap.forumsys.com"
+        },
+        "approver": {
+            "id": 4,
+            "name": "Albert Einstein",
+            "login": "einstein",
+            "email": "einstein@ldap.forumsys.com"
+        },
+        "changes": "",
+        "state": "ACCEPTED",
+        "created": "2025-12-01T21:57:01.656270Z",
+        "technology": "Python",
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/python/submissions/49"
+            },
+            {
+                "rel": "submissionList",
+                "href": "http://localhost:8017/api/v2/manager/python/submissions"
+            }
+        ]
+    }
+}

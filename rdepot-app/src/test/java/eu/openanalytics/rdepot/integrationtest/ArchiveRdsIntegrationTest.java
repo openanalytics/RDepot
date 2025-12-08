@@ -41,9 +41,9 @@ public class ArchiveRdsIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    public void shouldNotHaveArchiveRdsFile() throws IOException {
+    public void shouldNotHaveArchiveRdsFile() {
         //		testrepo1 does not contain archived packages initially
-        given().accept(ContentType.BINARY)
+        given().accept("application/octet-stream, application/json")
                 .when()
                 .get(PUBLICATION_URI_PATH + "/testrepo1/src/contrib/Meta/archive.rds")
                 .then()
@@ -174,7 +174,7 @@ public class ArchiveRdsIntegrationTest extends IntegrationTest {
                 .then()
                 .statusCode(200);
 
-        given().accept(ContentType.BINARY)
+        given().accept("application/octet-stream, application/json")
                 .when()
                 .get(PUBLICATION_URI_PATH + "/testrepo2/src/contrib/Meta/archive.rds")
                 .then()

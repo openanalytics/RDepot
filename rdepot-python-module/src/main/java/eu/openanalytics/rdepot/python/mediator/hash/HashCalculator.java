@@ -20,8 +20,8 @@
  */
 package eu.openanalytics.rdepot.python.mediator.hash;
 
+import eu.openanalytics.rdepot.base.entities.enums.HashMethod;
 import eu.openanalytics.rdepot.base.storage.exceptions.CheckSumCalculationException;
-import eu.openanalytics.rdepot.python.entities.enums.HashMethod;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -91,7 +91,7 @@ public class HashCalculator {
         hash = DigestUtils.sha384Hex(getFileInputStream());
     }
 
-    private void calculateSha512() throws FileNotFoundException, IOException {
+    private void calculateSha512() throws IOException {
         hash = DigestUtils.sha512Hex(getFileInputStream());
     }
 }

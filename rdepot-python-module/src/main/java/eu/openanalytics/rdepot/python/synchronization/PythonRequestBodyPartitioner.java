@@ -20,8 +20,8 @@
  */
 package eu.openanalytics.rdepot.python.synchronization;
 
+import eu.openanalytics.rdepot.base.entities.enums.HashMethod;
 import eu.openanalytics.rdepot.base.storage.exceptions.CheckSumCalculationException;
-import eu.openanalytics.rdepot.python.entities.enums.HashMethod;
 import eu.openanalytics.rdepot.python.mediator.hash.HashCalculator;
 import eu.openanalytics.rdepot.python.storage.PythonPackageArchiver;
 import java.io.File;
@@ -133,7 +133,7 @@ public class PythonRequestBodyPartitioner {
      *
      * <p><b>Process:</b>
      * <ol>
-     *   <li>Files with the same parent directory (the same packagename) are grouped together.</li>
+     *   <li>Files with the same parent directory (the same package name) are grouped together.</li>
      *   <li>Once a group of files is ready, it is archived into a tar file using {@code tarPackages}.</li>
      *   <li>The checksum of the tar file is calculated and stored.</li>
      *   <li>If any files remain at the end, they are archived and processed in the same way.</li>

@@ -1,0 +1,144 @@
+{
+    "code": 200,
+    "data": {
+        "links": [
+            {
+                "rel": "self",
+                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages?repository=testrepo4&submissionState=waiting&page=0&size=20&sort=id,desc"
+            }
+        ],
+        "page": {
+            "number": 0,
+            "size": 20,
+            "totalPages": 1,
+            "totalElements": 2
+        },
+        "content": [
+            {
+                "id": 31,
+                "rversion": null,
+                "architecture": null,
+                "imports": null,
+                "depends": "R (>= 1.8.0), nnet, quantreg, locfit, methods",
+                "built": null,
+                "author": "Katalin Csillery, with contributions from Michael Blum and Olivier Francois",
+                "active": false,
+                "technology": "R",
+                "priority": null,
+                "encoding": null,
+                "version": "1.0",
+                "url": null,
+                "license": "Unlimited",
+                "deleted": false,
+                "binary": false,
+                "name": "abc",
+                "submission": {
+                    "id": 31,
+                    "state": "WAITING"
+                },
+                "linkingTo": null,
+                "user": {
+                    "name": "Local Admin User",
+                    "id": 8,
+                    "login": "admin",
+                    "email": "admin@localhost"
+                },
+                "needsCompilation": "no",
+                "manualAvailable": null,
+                "enhances": null,
+                "description": "The 'abc' package provides various functions for parameter estimation and model selection in an ABC framework. Three main",
+                "source": "\/opt\/rdepot\/new\/51328701\/abc_1.0.tar.gz",
+                "repository": {
+                    "name": "testrepo4",
+                    "lastPublicationSuccessful": false,
+                    "id": 5,
+                    "published": false,
+                    "technology": "R",
+                    "requiresAuthentication": true,
+                    "publicationUri": "http:\/\/localhost\/repo\/testrepo4"
+                },
+                "title": "Functions to perform Approximate Bayesian Computation (ABC) using simulated data",
+                "distribution": null,
+                "maintainer": null,
+                "suggests": null,
+                "systemRequirements": null,
+                "descriptionContentType": "txt",
+                "md5sum": "91599204c92275ed4b36d55e8d7c144b",
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/31"
+                    },
+                    {
+                        "rel": "packageList",
+                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+                    }
+                ]
+            },
+            {
+                "id": 30,
+                "rversion": null,
+                "architecture": null,
+                "imports": null,
+                "depends": "xtable, pbapply",
+                "built": null,
+                "author": "Scott Fortmann-Roe",
+                "active": false,
+                "technology": "R",
+                "priority": null,
+                "encoding": null,
+                "version": "0.9.1",
+                "url": null,
+                "license": "GPL (>= 2)",
+                "deleted": false,
+                "binary": false,
+                "name": "A3",
+                "submission": {
+                    "id": 30,
+                    "state": "WAITING"
+                },
+                "linkingTo": null,
+                "user": {
+                    "name": "Local Admin User",
+                    "id": 8,
+                    "login": "admin",
+                    "email": "admin@localhost"
+                },
+                "needsCompilation": "no",
+                "manualAvailable": null,
+                "enhances": null,
+                "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
+                "source": "\/opt\/rdepot\/new\/92253304\/A3_0.9.1.tar.gz",
+                "repository": {
+                    "name": "testrepo4",
+                    "lastPublicationSuccessful": false,
+                    "id": 5,
+                    "published": false,
+                    "technology": "R",
+                    "requiresAuthentication": true,
+                    "publicationUri": "http:\/\/localhost\/repo\/testrepo4"
+                },
+                "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
+                "distribution": null,
+                "maintainer": null,
+                "suggests": "randomForest, e1071",
+                "systemRequirements": null,
+                "descriptionContentType": "txt",
+                "md5sum": "8eb4760cd574f5489e61221dc9bb0076",
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/30"
+                    },
+                    {
+                        "rel": "packageList",
+                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+                    }
+                ]
+            }
+        ]
+    },
+    "messageCode": "success.request.processed",
+    "message": "Your request has been processed successfully.",
+    "status": "SUCCESS"
+}

@@ -33,6 +33,7 @@ import eu.openanalytics.rdepot.base.security.RestAccessDeniedHandler;
 import eu.openanalytics.rdepot.base.security.RestAuthenticationEntryPoint;
 import eu.openanalytics.rdepot.base.technology.InternalTechnology;
 import eu.openanalytics.rdepot.base.technology.Technology;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -179,6 +180,7 @@ public class ApiTestConfig implements WebMvcConfigurer {
     public MessageCodesResolver getMessageCodesResolver() {
         return new DefaultMessageCodesResolver() {
 
+            @Serial
             private static final long serialVersionUID = -6517730864672588910L;
 
             @Override

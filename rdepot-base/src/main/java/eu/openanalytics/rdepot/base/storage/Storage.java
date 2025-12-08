@@ -21,54 +21,19 @@
 package eu.openanalytics.rdepot.base.storage;
 
 import eu.openanalytics.rdepot.base.entities.Package;
-import eu.openanalytics.rdepot.base.entities.Repository;
-import eu.openanalytics.rdepot.base.storage.exceptions.CheckSumCalculationException;
-import eu.openanalytics.rdepot.base.storage.exceptions.DeleteFileException;
-import eu.openanalytics.rdepot.base.storage.exceptions.ExtractFileException;
-import eu.openanalytics.rdepot.base.storage.exceptions.InvalidSourceException;
-import eu.openanalytics.rdepot.base.storage.exceptions.MovePackageSourceException;
-import eu.openanalytics.rdepot.base.storage.exceptions.PackageFolderPopulationException;
-import eu.openanalytics.rdepot.base.storage.exceptions.ReadPackageDescriptionException;
-import eu.openanalytics.rdepot.base.storage.exceptions.SourceFileDeleteException;
-import eu.openanalytics.rdepot.base.storage.exceptions.SourceNotFoundException;
-import eu.openanalytics.rdepot.base.storage.exceptions.WriteToWaitingRoomException;
-import java.util.Properties;
-import org.springframework.web.multipart.MultipartFile;
+import eu.openanalytics.rdepot.base.storage.exceptions.*;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Allows to access storage to save persistent binary data like files.
  */
-public interface Storage<R extends Repository, P extends Package> {
-
-    /**
-     * This method saves package in so-called "waiting room" where it stays
-     * until it's accepted by administrator
-     * @param fileData Multipart containing uploaded file.
-     * @param repository repository where the package should be uploaded to
-     * @return package file
-     */
-    String writeToWaitingRoom(MultipartFile fileData, R repository) throws WriteToWaitingRoomException;
-
-    /**
-     * When submission is accepted, its source can be moved from waiting room to the main directory.
-     * @return new source file
-     */
-    String moveToMainDirectory(P packageBag) throws InvalidSourceException, MovePackageSourceException;
+public interface Storage<P extends Package> {
 
     /**
      * Extracts the package
      */
     String extractTarGzPackageFile(String storedFile) throws ExtractFileException;
-
-    /**
-     * Fetches properties from extracted package file.
-     */
-    Properties getPropertiesFromExtractedFile(String extractedFile) throws ReadPackageDescriptionException;
-
-    /**
-     * Moves cancelled/rejected submission to a trash directory.
-     */
-    String moveToTrashDirectory(P packageBag) throws MovePackageSourceException;
 
     /**
      * Removes package source from persistent storage.
@@ -86,20 +51,29 @@ public interface Storage<R extends Repository, P extends Package> {
      */
     String moveSource(P packageBag, String newSource) throws MovePackageSourceException;
 
+    File move(File source, File destination) throws MoveFileException;
+
+    void deleteFile(File file) throws DeleteFileException;
+
+    File linkTwoFolders(String targetPath, String linkPath) throws LinkFoldersException;
     /**
      * Reads package from storage.
      */
     byte[] getPackageInBytes(P packageBag) throws SourceNotFoundException;
 
+    String calculateMd5Sum(String targetPath) throws Md5SumCalculationException;
     /**
      * Calculates and assigns a checksum to the package.
      */
-    void calculateCheckSum(P packageBag) throws CheckSumCalculationException;
+    void setCheckSum(P packageBag) throws CheckSumCalculationException;
 
-    /**
-     * Populates package in generated repository structure.
-     * @param packageBag package to populate
-     * @param folderPath population directory path (e.g. "archive" or "latest")
-     */
-    void populatePackage(P packageBag, String folderPath) throws PackageFolderPopulationException;
+    boolean exists(String path);
+
+    void appendText(String content, String path) throws IOException;
+
+    void removeContentFromEnd(String content, String path) throws IOException;
+
+    File createFolderStructure(String path) throws CreateFolderStructureException;
+
+    void gzipFile(final String source) throws GzipFileException;
 }

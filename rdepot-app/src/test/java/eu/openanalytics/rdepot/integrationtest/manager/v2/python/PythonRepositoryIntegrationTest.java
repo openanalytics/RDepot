@@ -30,6 +30,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
+import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -42,7 +43,6 @@ public class PythonRepositoryIntegrationTest extends IntegrationTest {
     public PythonRepositoryIntegrationTest() {
         super("/api/v2/manager/python/repositories");
         this.testData = RepositoryTechnologyTestData.builder()
-                .technology("python")
                 .repoNameToCreate("testrepo13")
                 .repoNameToDuplicate("testrepo8")
                 .repoNameToEdit("newName")
@@ -57,7 +57,53 @@ public class PythonRepositoryIntegrationTest extends IntegrationTest {
                 .getEndpointNewEventsAmount(0)
                 .deleteEndpointNewEventsAmount(-9)
                 .changeEndpointNewEventsAmount(1)
+                .maintainers(List.of("Nikola%20Tesla"))
+                .published(false)
+                .search("repo")
+                .name("testrepo8")
                 .build();
+    }
+
+    @Test
+    public void getRepositoriesByMaintainerAndPublished() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .token(USER_TOKEN)
+                .statusCode(200)
+                .urlSuffix("?maintainer="
+                        + testData.getMaintainers().get(0)
+                        + "&published=" + testData.isPublished()
+                        + "&sort=id,asc")
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/python/repositories/unpublished_repositories_by_maintainers.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getRepositoriesByNameSearching() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .token(USER_TOKEN)
+                .statusCode(200)
+                .urlSuffix("?search=" + testData.getSearch() + "&sort=id,asc")
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/python/repositories/repositories_searching.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getRepositoryByName() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .token(USER_TOKEN)
+                .statusCode(200)
+                .urlSuffix("?name=" + testData.getName())
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/python/repositories/repository_by_name.json")
+                .build();
+        testEndpoint(requestBody);
     }
 
     @Test

@@ -36,7 +36,6 @@ import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -92,7 +91,7 @@ public class UpdateRepositoryMaintainerStrategy extends UpdateStrategy<Repositor
                         packageService.findAllByRepository(oldRepository),
                         packageService.findAllByRepository(repository))
                 .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+                .toList();
 
         try {
             bestMaintainerChooser.refreshMaintainerForPackages(packages);

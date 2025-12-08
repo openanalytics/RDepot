@@ -21,12 +21,18 @@
 package eu.openanalytics.rdepot.python.utils;
 
 import eu.openanalytics.rdepot.python.config.PythonProperties;
-import eu.openanalytics.rdepot.python.entities.PythonPackage;
+import eu.openanalytics.rdepot.python.mirroring.PypiMirror;
+import eu.openanalytics.rdepot.python.mirroring.pojos.IndexFileParseResult;
+import eu.openanalytics.rdepot.python.mirroring.pojos.MirroredPythonPackage;
+import eu.openanalytics.rdepot.python.mirroring.pojos.ParseResult;
 import eu.openanalytics.rdepot.python.utils.exceptions.ParseIndexFileException;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
@@ -42,41 +48,65 @@ import org.jsoup.select.Elements;
 public class IndexFileParser {
 
     private final PythonProperties pythonProperties;
+    private Pattern hashesPattern;
 
-    public Map<PythonPackage, String> parseIndexFile(List<String> subfoldersUris) throws ParseIndexFileException {
-        Map<PythonPackage, String> packages = new HashMap<>();
+    private Pattern getHashesPattern() {
+        if (hashesPattern != null) return hashesPattern;
+
         String hashFunctionsRegex = String.join("|", pythonProperties.getHashFunctions());
-        Pattern hashesPattern = Pattern.compile(hashFunctionsRegex);
+        hashesPattern = Pattern.compile(hashFunctionsRegex);
+        return hashesPattern;
+    }
 
-        for (String url : subfoldersUris) {
-            try {
-                Document indexFile = Jsoup.connect(url).get();
+    private void readIndexFile(Map<String, ParseResult> packages, MirroredPythonPackage mirrorPackage, String mirrorUrl)
+            throws ParseIndexFileException, MalformedURLException {
 
-                Elements packagesLinks = indexFile.select("a[href]");
+        URL subfolderUrl = new URL(mirrorUrl.concat(mirrorPackage.getNormalizedName()));
 
-                for (Element packageLink : packagesLinks) {
-                    String fileName = packageLink.text();
-                    if (!fileName.endsWith(".tar.gz")) continue;
-                    PythonPackage packageBag = new PythonPackage();
-                    String packageVersion =
-                            StringUtils.substringBefore(StringUtils.substringAfterLast(fileName, "-"), ".tar.gz");
-                    String downloadUrl = packageLink.attr("href");
+        try {
+            Document indexFile = Jsoup.connect(subfolderUrl.toString()).get();
 
-                    packageBag.setName(StringUtils.substringBeforeLast(fileName, "-"));
-                    packageBag.setNormalizedName(packageBag.getName());
-                    packageBag.setVersion(packageVersion);
+            Elements packagesLinks = indexFile.select("a[href]");
 
-                    Matcher matcher = hashesPattern.matcher(downloadUrl);
+            for (Element packageLink : packagesLinks) {
+                String fileName = packageLink.text();
+                String version = StringUtils.substringBetween(
+                        fileName, StringUtils.substringBeforeLast(fileName, "-").concat("-"), ".tar.gz");
+                if (!fileName.endsWith(".tar.gz") || !Objects.equals(version, mirrorPackage.getVersion())) continue;
 
-                    if (matcher.find()) {
-                        packageBag.setHash(StringUtils.substringAfter(downloadUrl, matcher.group() + "="));
-                    }
-                    packages.put(packageBag, downloadUrl);
+                ParseResult parseResult = new ParseResult();
+
+                String downloadUrl = packageLink.attr("href");
+                parseResult.setDownloadUrl(Optional.of(downloadUrl));
+                parseResult.setParseResult(IndexFileParseResult.OK);
+
+                getHashesPattern();
+                Matcher matcher = hashesPattern.matcher(downloadUrl);
+
+                if (matcher.find()) {
+                    parseResult.setHash(Optional.of(StringUtils.substringAfter(downloadUrl, matcher.group() + "=")));
                 }
 
-            } catch (IOException e) {
-                log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
-                throw new ParseIndexFileException(" repository");
+                packages.put(mirrorPackage.toString(), parseResult);
+            }
+        } catch (IOException e) {
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
+            throw new ParseIndexFileException(mirrorUrl.concat(mirrorPackage.getNormalizedName()));
+        }
+    }
+
+    public Map<String, ParseResult> parseIndexFile(PypiMirror mirror) {
+        Map<String, ParseResult> packages = new HashMap<>();
+        String url = mirror.getUriWithTrailingSlash();
+
+        for (MirroredPythonPackage packageBag : mirror.getPackages()) {
+            try {
+                readIndexFile(packages, packageBag, url);
+            } catch (ParseIndexFileException e) {
+                packages.put(packageBag.toString(), new ParseResult(IndexFileParseResult.PARSE_EXCEPTION));
+            } catch (MalformedURLException e) {
+                log.error("{} for {} in {} mirror", e.getMessage(), packageBag.getName(), mirror.getName());
+                packages.put(packageBag.toString(), new ParseResult(IndexFileParseResult.MALFORMED_URL));
             }
         }
 

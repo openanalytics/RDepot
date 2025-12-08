@@ -47,6 +47,11 @@ public class PythonPackageDto extends PackageDto {
     private String requiresPython;
     private String summary;
     private String hash;
+    private String compatibilityTags;
+    private String builtTag;
+    private String pythonTag;
+    private String abiTag;
+    private String platformTag;
 
     public PythonPackageDto(PythonPackage packageBag) {
         super(packageBag);
@@ -65,6 +70,11 @@ public class PythonPackageDto extends PackageDto {
         this.summary = packageBag.getSummary();
         this.summary = packageBag.getSummary();
         this.hash = packageBag.getHash();
+        this.compatibilityTags = packageBag.getCompatibilityTags();
+        this.builtTag = packageBag.getBuildTag();
+        this.pythonTag = packageBag.getPythonTag();
+        this.abiTag = packageBag.getAbiTag();
+        this.platformTag = packageBag.getPlatformTag();
     }
 
     @Override

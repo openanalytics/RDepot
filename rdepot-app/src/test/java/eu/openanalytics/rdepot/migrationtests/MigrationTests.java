@@ -20,7 +20,7 @@
  */
 package eu.openanalytics.rdepot.migrationtests;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import eu.openanalytics.rdepot.integrationtest.IntegrationTestContainers;
 import java.io.File;
@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Collections;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -71,6 +72,7 @@ public class MigrationTests {
                 .trim()
                 .replaceAll("\\t", " ")
                 .replaceAll("\\s{2,}", " ");
+        String[] expectedLines = Arrays.stream(expected.split("\n")).sorted().toArray(String[]::new);
 
         String[] cmd = new String[] {"bash", "src/test/resources/scripts/checkIfModulesMigrationWasSuccessful.sh"};
         Process process = Runtime.getRuntime().exec(cmd);
@@ -81,8 +83,9 @@ public class MigrationTests {
                 .trim()
                 .replaceAll("\\t", " ")
                 .replaceAll("\\s{2,}", " ");
+        String[] actualLines = Arrays.stream(actual.split("\n")).sorted().toArray(String[]::new);
 
         process.destroy();
-        assertEquals(expected, actual, "Migration failed");
+        assertArrayEquals(expectedLines, actualLines, "Migration failed.");
     }
 }

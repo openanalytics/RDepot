@@ -27,12 +27,14 @@ import eu.openanalytics.rdepot.base.storage.exceptions.OrganizePackagesException
 import eu.openanalytics.rdepot.base.synchronization.RepoResponse;
 import eu.openanalytics.rdepot.base.synchronization.RepositorySynchronizer;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
+import eu.openanalytics.rdepot.base.synchronization.checksums.Checksum;
+import eu.openanalytics.rdepot.base.synchronization.checksums.Checksums;
 import eu.openanalytics.rdepot.base.synchronization.exceptions.SendSynchronizeRequestException;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.services.PythonPackageService;
-import eu.openanalytics.rdepot.python.storage.PythonStorage;
-import eu.openanalytics.rdepot.python.storage.utils.PopulatedRepositoryContent;
+import eu.openanalytics.rdepot.python.storage.PythonPopulator;
+import eu.openanalytics.rdepot.python.storage.models.PopulatedRepositoryContent;
 import eu.openanalytics.rdepot.python.technology.PythonLanguage;
 import java.io.File;
 import java.io.IOException;
@@ -55,10 +57,10 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class PythonRepositorySynchronizer extends RepositorySynchronizer<PythonRepository> {
     public static final Comparator<PythonPackage> PACKAGE_COMPARATOR = Comparator.comparingInt(PythonPackage::getId);
-    private final PythonStorage storage;
+    private final PythonPopulator storage;
     private final PythonPackageService packageService;
     private final PythonRequestBodyPartitioner pythonRequestBodyPartitioner;
-    private final RestTemplate rest;
+    private final RestTemplate repoApiClient;
 
     @Value("${local-storage.max-request-size}")
     private Integer maxRequestSize;
@@ -132,16 +134,25 @@ public class PythonRepositorySynchronizer extends RepositorySynchronizer<PythonR
 
         Gson gson = new Gson();
 
-        ResponseEntity<String> response = rest.getForEntity(
-                attachTechnologyIfNeeded(serverAndPort, repositoryDirectory, PythonLanguage.instance), String.class);
+        ResponseEntity<String> response = repoApiClient.getForEntity(
+                attachTechnologyIfNeeded(serverAndPort, repositoryDirectory, PythonLanguage.instance)
+                        .concat("?hashMethod=" + repository.getHashMethod()),
+                String.class);
 
-        List<String> remotePackages = new ArrayList<>(Arrays.asList(gson.fromJson(response.getBody(), String[].class)));
+        Checksums checksums = new Checksums();
+        List<String> body = new ArrayList<>(Arrays.asList(gson.fromJson(response.getBody(), String[].class)));
+        String versionBefore = body.remove(0);
 
-        String versionBefore = remotePackages.remove(0);
+        List<String> remotePackages = new ArrayList<>();
+        body.forEach(rp -> {
+            String filename = rp.substring(rp.indexOf('/') + 1, rp.indexOf("="));
+            checksums.addChecksum(new Checksum(filename, rp.substring(rp.indexOf("=") + 1)));
+            remotePackages.add(rp.substring(0, rp.indexOf("=")));
+        });
 
         try {
             SynchronizeRepositoryRequestBody requestBody = storage.buildSynchronizeRequestBody(
-                    populatedRepositoryContent, remotePackages, repository, versionBefore);
+                    populatedRepositoryContent, remotePackages, checksums, repository, versionBefore);
 
             sendSynchronizeRequest(requestBody, serverAndPort, repositoryDirectory);
             storage.cleanUpAfterSynchronization(populatedRepositoryContent);
@@ -185,7 +196,7 @@ public class PythonRepositorySynchronizer extends RepositorySynchronizer<PythonR
                 chunk.add("id", id);
 
                 HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(chunk);
-                ResponseEntity<RepoResponse> httpResponse = rest.postForEntity(
+                ResponseEntity<RepoResponse> httpResponse = repoApiClient.postForEntity(
                         attachTechnologyIfNeeded(serverAddress, repositoryDirectory, PythonLanguage.instance),
                         entity,
                         RepoResponse.class);

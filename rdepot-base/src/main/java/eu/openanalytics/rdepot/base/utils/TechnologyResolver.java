@@ -22,7 +22,6 @@ package eu.openanalytics.rdepot.base.utils;
 
 import eu.openanalytics.rdepot.base.technology.Technology;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
@@ -38,6 +37,6 @@ public class TechnologyResolver {
         return technologies.stream()
                 .map(technology -> technology.substring(0, 1).toUpperCase()
                         + technology.substring(1).toLowerCase())
-                .collect(Collectors.toList());
+                .toList();
     }
 }

@@ -119,7 +119,8 @@ public class ApiV2PackageController extends ApiV2ReadingController<Package, Pack
             @RequestParam(name = "submissionState", required = false) List<SubmissionState> submissionStates,
             @RequestParam(name = "technology", required = false) List<String> technologies,
             @RequestParam(name = "search", required = false) Optional<String> search,
-            @RequestParam(name = "maintainer", required = false) List<String> maintainers)
+            @RequestParam(name = "maintainer", required = false) List<String> maintainers,
+            @RequestParam(name = "notMaintainedBy", required = false) List<String> notMaintainers)
             throws ApiException {
         User requester = userService
                 .findActiveByLogin(principal.getName())
@@ -155,6 +156,11 @@ public class ApiV2PackageController extends ApiV2ReadingController<Package, Pack
 
         if (Objects.nonNull(maintainers)) {
             specification = SpecificationUtils.andComponent(specification, PackageSpecs.ofMaintainer(maintainers));
+        }
+
+        if (Objects.nonNull(notMaintainers)) {
+            specification =
+                    SpecificationUtils.andComponent(specification, PackageSpecs.notMaintainedBy(notMaintainers));
         }
 
         return handleSuccessForPagedCollection(

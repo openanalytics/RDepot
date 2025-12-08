@@ -15,3 +15,21 @@ databaseChangeLog:
                 architecture = null, \
                 distribution = null \
               WHERE BTRIM(rp.r_version) = '';"
+  - changeSet:
+      id: 22_02_python_binary_null_values
+      author: dglebowska
+      preConditions:
+        - onFail: MARK_RAN
+        - columnExists:
+            tableName: pythonpackage
+            schemaName: public
+            columnName: compatibility_tags
+      changes:
+        - sql:
+            sql: "UPDATE public.pythonpackage pp \
+              SET compatibility_tags = null, \
+                build_tag = null, \
+                python_tag = null, \
+                abi_tag = null, \
+                platform_tag = null \
+              WHERE BTRIM(pp.compatibility_tags) = '';"

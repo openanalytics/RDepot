@@ -20,11 +20,14 @@
  */
 package eu.openanalytics.rdepot.repo.exception;
 
+import java.io.Serial;
+
 public class ProcessRequestException extends Exception {
 
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -7667534203765408215L;
 
     public ProcessRequestException() {

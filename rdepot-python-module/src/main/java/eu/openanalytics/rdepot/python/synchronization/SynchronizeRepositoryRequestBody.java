@@ -20,7 +20,7 @@
  */
 package eu.openanalytics.rdepot.python.synchronization;
 
-import eu.openanalytics.rdepot.python.entities.enums.HashMethod;
+import eu.openanalytics.rdepot.base.entities.enums.HashMethod;
 import java.io.File;
 import java.nio.file.FileSystems;
 import java.util.List;

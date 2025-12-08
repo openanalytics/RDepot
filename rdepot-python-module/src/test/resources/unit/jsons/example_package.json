@@ -18,13 +18,13 @@
 			"publicationUri": "http://localhost/repo/testrepo",
 			"technology": "Python"
 		},
-		"name": "TestPackage100",
+		"name": "test_package100",
 		"description": "Simple test package100",
 		"author": "Albert Einstein100",
 		"license": "Some license100",
 		"title": "",
 		"url": "",
-		"source": "100test_package.tar.gz",
+		"source": "test_package100-4.5.6.tar.gz",
 		"active": true,
 		"deleted": false,
 		"links": [

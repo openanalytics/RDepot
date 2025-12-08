@@ -21,13 +21,16 @@
 package eu.openanalytics.rdepot.integrationtest.manager.v2;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import eu.openanalytics.rdepot.integrationtest.IntegrationTestContainers;
+import eu.openanalytics.rdepot.integrationtest.environment.BashScriptExecutor;
 import eu.openanalytics.rdepot.integrationtest.environment.BashTestEnvironmentConfigurator;
+import eu.openanalytics.rdepot.integrationtest.environment.ExecutionResult;
 import eu.openanalytics.rdepot.integrationtest.environment.TestEnvironmentConfigurator;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.testData.SubmissionMultipartBody;
 import io.restassured.RestAssured;
@@ -72,6 +75,7 @@ public abstract class IntegrationTest {
 
     private static final boolean RUN_CONTAINERS = true;
     protected static final TestEnvironmentConfigurator testEnv = BashTestEnvironmentConfigurator.getInstance();
+    protected static final BashScriptExecutor bashScriptExecutor = new BashScriptExecutor();
 
     public final String apiPath;
     public String technology;
@@ -129,7 +133,8 @@ public abstract class IntegrationTest {
                         req.getPath().orElseThrow(),
                         req.getUrlSuffix(),
                         req.getStatusCode(),
-                        req.getToken());
+                        req.getToken(),
+                        req.isIgnoreSource());
                 break;
             case GET_ARRAY:
                 testGetArrayEndpoint(
@@ -149,6 +154,15 @@ public abstract class IntegrationTest {
                 testPatchEndpoint(
                         req.getBody().orElseThrow(),
                         req.getExpectedJsonPath(),
+                        req.getUrlSuffix(),
+                        req.getStatusCode(),
+                        req.getToken());
+                break;
+            case PATCH_OTHER_RESOURCE:
+                testPatchEndpoint(
+                        req.getBody().orElseThrow(),
+                        req.getExpectedJsonPath(),
+                        req.getPath().orElseThrow(),
                         req.getUrlSuffix(),
                         req.getStatusCode(),
                         req.getToken());
@@ -213,8 +227,8 @@ public abstract class IntegrationTest {
                 .asString();
 
         JSONObject actualJSON = (JSONObject) jsonParser.parse(data);
-        if (actualJSON.get("data") != null) removeFields(actualJSON, newSubmission);
-        if (expectedJSON.get("data") != null) removeFields(expectedJSON, newSubmission);
+        if (actualJSON.get("data") != null) removeFields(actualJSON, newSubmission, false);
+        if (expectedJSON.get("data") != null) removeFields(expectedJSON, newSubmission, false);
 
         Assertions.assertEquals(expectedJSON, actualJSON, "Incorrect JSON output.");
     }
@@ -236,13 +250,14 @@ public abstract class IntegrationTest {
                 .asString();
 
         JSONObject actualJSON = (JSONObject) jsonParser.parse(data);
-        if (actualJSON.get("data") != null) removeFields(actualJSON, false);
-        if (expectedJSON.get("data") != null) removeFields(expectedJSON, false);
+        if (actualJSON.get("data") != null) removeFields(actualJSON, false, false);
+        if (expectedJSON.get("data") != null) removeFields(expectedJSON, false, false);
 
         Assertions.assertEquals(expectedJSON, actualJSON, "Incorrect JSON output.");
     }
 
-    protected void testGetEndpoint(String expectedJsonPath, String path, String urlSuffix, int statusCode, String token)
+    protected void testGetEndpoint(
+            String expectedJsonPath, String path, String urlSuffix, int statusCode, String token, boolean ignoreSource)
             throws Exception {
 
         JSONParser jsonParser = new JSONParser();
@@ -260,8 +275,8 @@ public abstract class IntegrationTest {
                 .asString();
 
         JSONObject actualJSON = (JSONObject) jsonParser.parse(data);
-        if (actualJSON.get("data") != null) removeFields(actualJSON, false);
-        if (expectedJSON.get("data") != null) removeFields(expectedJSON, false);
+        if (actualJSON.get("data") != null) removeFields(actualJSON, false, ignoreSource);
+        if (expectedJSON.get("data") != null) removeFields(expectedJSON, false, ignoreSource);
 
         Assertions.assertEquals(expectedJSON, actualJSON, "Incorrect JSON output.");
     }
@@ -271,6 +286,15 @@ public abstract class IntegrationTest {
                 .accept(ContentType.JSON)
                 .when()
                 .delete(apiPath + urlSuffix)
+                .then()
+                .statusCode(statusCode);
+    }
+
+    protected void testDeleteEndpoint(String path, String urlSuffix, int statusCode, String token) {
+        given().header(AUTHORIZATION, BASIC + token)
+                .accept(ContentType.JSON)
+                .when()
+                .delete(path + urlSuffix)
                 .then()
                 .statusCode(statusCode);
     }
@@ -377,8 +401,33 @@ public abstract class IntegrationTest {
                 .asString();
 
         JSONObject actualJSON = (JSONObject) jsonParser.parse(data);
-        if (actualJSON.get("data") != null) removeFields(actualJSON, false);
-        if (expectedJSON.get("data") != null) removeFields(expectedJSON, false);
+        if (actualJSON.get("data") != null) removeFields(actualJSON, false, false);
+        if (expectedJSON.get("data") != null) removeFields(expectedJSON, false, false);
+        Assertions.assertEquals(expectedJSON, actualJSON, "Incorrect JSON output");
+    }
+
+    protected void testPatchEndpoint(
+            String patch, String expectedJsonPath, String path, String urlSuffix, int statusCode, String token)
+            throws Exception {
+        JSONParser jsonParser = new JSONParser();
+
+        FileReader reader = new FileReader(JSON_PATH + expectedJsonPath);
+        JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
+
+        String data = given().header(AUTHORIZATION, BASIC + token)
+                .accept(ContentType.JSON)
+                .contentType("application/json-patch+json")
+                .body(patch)
+                .when()
+                .patch(path + urlSuffix)
+                .then()
+                .statusCode(statusCode)
+                .extract()
+                .asString();
+
+        JSONObject actualJSON = (JSONObject) jsonParser.parse(data);
+        if (actualJSON.get("data") != null) removeFields(actualJSON, false, false);
+        if (expectedJSON.get("data") != null) removeFields(expectedJSON, false, false);
         Assertions.assertEquals(expectedJSON, actualJSON, "Incorrect JSON output");
     }
 
@@ -401,8 +450,8 @@ public abstract class IntegrationTest {
                 .asString();
 
         JSONObject actualJSON = (JSONObject) jsonParser.parse(data);
-        removeFields(actualJSON, false);
-        removeFields(expectedJSON, false);
+        removeFields(actualJSON, false, false);
+        removeFields(expectedJSON, false, false);
         Assertions.assertEquals(expectedJSON, actualJSON, "There are some differences in packages that user sees.");
     }
 
@@ -425,8 +474,8 @@ public abstract class IntegrationTest {
                 .asString();
 
         JSONObject actualJSON = (JSONObject) jsonParser.parse(data);
-        removeFields(actualJSON, false);
-        removeFields(expectedJSON, false);
+        removeFields(actualJSON, false, false);
+        removeFields(expectedJSON, false, false);
         Assertions.assertEquals(expectedJSON, actualJSON, "There are some differences in packages that user sees.");
     }
 
@@ -449,8 +498,8 @@ public abstract class IntegrationTest {
                 .asString();
 
         JSONObject actualJSON = (JSONObject) jsonParser.parse(data);
-        removeFields(actualJSON, false);
-        removeFields(expectedJSON, false);
+        removeFields(actualJSON, false, false);
+        removeFields(expectedJSON, false, false);
         Assertions.assertEquals(expectedJSON, actualJSON, "There are some differences in packages that user sees.");
     }
 
@@ -462,7 +511,47 @@ public abstract class IntegrationTest {
         FileReader reader = new FileReader(JSON_PATH + expectedJsonPath);
         JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
         String data;
-        if (body.getReplace() != null && body.getGenerateManual() != null) {
+
+        if (body.getReplace() != null
+                && body.getGenerateManual() != null
+                && body.getBinary() != null
+                && body.getRVersion() != null
+                && body.getArchitecture() != null
+                && body.getDistribution() != null) {
+            data = given().header(AUTHORIZATION, BASIC + token)
+                    .accept(ContentType.JSON)
+                    .contentType("multipart/form-data")
+                    .multiPart("repository", body.getRepository())
+                    .multiPart("generateManual", body.getGenerateManual())
+                    .multiPart("replace", body.getReplace())
+                    .multiPart("changes", body.getChanges())
+                    .multiPart("binary", body.getBinary())
+                    .multiPart("rVersion", body.getRVersion())
+                    .multiPart("architecture", body.getArchitecture())
+                    .multiPart("distribution", body.getDistribution())
+                    .multiPart(body.getMultipartFile())
+                    .when()
+                    .post(path)
+                    .then()
+                    .statusCode(statusCode)
+                    .extract()
+                    .asString();
+        } else if (body.getReplace() != null && body.getBinary() != null) {
+            data = given().header(AUTHORIZATION, BASIC + token)
+                    .accept(ContentType.JSON)
+                    .contentType("multipart/form-data")
+                    .multiPart("repository", body.getRepository())
+                    .multiPart("replace", body.getReplace())
+                    .multiPart("changes", body.getChanges())
+                    .multiPart("binary", body.getBinary())
+                    .multiPart(body.getMultipartFile())
+                    .when()
+                    .post(apiPath)
+                    .then()
+                    .statusCode(statusCode)
+                    .extract()
+                    .asString();
+        } else if (body.getReplace() != null && body.getGenerateManual() != null) {
             data = given().header(AUTHORIZATION, BASIC + token)
                     .accept(ContentType.JSON)
                     .contentType("multipart/form-data")
@@ -493,8 +582,8 @@ public abstract class IntegrationTest {
         }
 
         JSONObject actualJSON = (JSONObject) jsonParser.parse(data);
-        removeFields(actualJSON, true);
-        removeFields(expectedJSON, true);
+        removeFields(actualJSON, true, false);
+        removeFields(expectedJSON, true, false);
         Assertions.assertEquals(expectedJSON, actualJSON, "There are some differences in packages that user sees.");
     }
 
@@ -575,6 +664,17 @@ public abstract class IntegrationTest {
             ioExp.printStackTrace();
         }
         return new byte[] {};
+    }
+
+    protected void createDownloadTestFolder(String targetDir) {
+        final ExecutionResult result = bashScriptExecutor.executeBashCommand("mkdir -p " + targetDir);
+        if (result.exitCode() != 0) {
+            fail("Failed to create directory: " + targetDir);
+        }
+    }
+
+    protected void cleanAfterDownloading(String targetDir) {
+        bashScriptExecutor.executeBashCommand("rm -rf " + targetDir);
     }
 
     private int getTotalEventsAmount() throws JsonProcessingException {
@@ -661,7 +761,7 @@ public abstract class IntegrationTest {
         toRemove.forEach(relatedResourceObject::remove);
     }
 
-    private void removeFields(JSONObject json, boolean newSubmission) {
+    private void removeFields(JSONObject json, boolean newSubmission, boolean ignoreSource) {
         try {
             JSONObject jsonData = (JSONObject) json.get("data");
             if (jsonData == null) return;
@@ -704,6 +804,9 @@ public abstract class IntegrationTest {
             }
             if (newSubmission) {
                 jsonData.remove("created");
+            }
+            if (ignoreSource) {
+                jsonData.remove("source");
             }
 
             JSONArray expectedContent =
@@ -750,6 +853,9 @@ public abstract class IntegrationTest {
                 }
                 if (newSubmission && i == 0) {
                     el.remove("created");
+                }
+                if (ignoreSource) {
+                    el.remove("source");
                 }
             }
         } catch (ClassCastException ignored) {

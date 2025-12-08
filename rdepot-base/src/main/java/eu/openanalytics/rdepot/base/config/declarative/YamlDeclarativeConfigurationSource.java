@@ -33,6 +33,8 @@ import eu.openanalytics.rdepot.base.validation.repositories.NameValidationResult
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
@@ -86,7 +88,8 @@ public abstract class YamlDeclarativeConfigurationSource<
             return declaredRepositories;
         }
 
-        File[] filesInDir = dir.listFiles();
+        List<File> filesInDir = Arrays.asList(dir.listFiles());
+        Collections.sort(filesInDir);
         if (filesInDir == null) return declaredRepositories;
 
         for (File configFile : filesInDir) {

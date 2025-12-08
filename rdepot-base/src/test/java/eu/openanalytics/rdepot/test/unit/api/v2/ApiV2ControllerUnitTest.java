@@ -28,40 +28,21 @@ import eu.openanalytics.rdepot.base.api.v2.converters.PackageDtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.converters.SubmissionDtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.converters.UserSettingsDtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.validation.PageableValidator;
+import eu.openanalytics.rdepot.base.config.DefaultUserConfigurationProperties;
 import eu.openanalytics.rdepot.base.config.RepositoryNameValidationProperties;
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.mediator.BestMaintainerChooser;
-import eu.openanalytics.rdepot.base.mediator.deletion.AccessTokenDeleter;
-import eu.openanalytics.rdepot.base.mediator.deletion.PackageDeleter;
-import eu.openanalytics.rdepot.base.mediator.deletion.PackageMaintainerDeleter;
-import eu.openanalytics.rdepot.base.mediator.deletion.RepositoryDeleter;
-import eu.openanalytics.rdepot.base.mediator.deletion.RepositoryMaintainerDeleter;
-import eu.openanalytics.rdepot.base.mediator.deletion.SubmissionDeleter;
+import eu.openanalytics.rdepot.base.mediator.deletion.*;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
-import eu.openanalytics.rdepot.base.service.AccessTokenService;
-import eu.openanalytics.rdepot.base.service.CommonPackageService;
-import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
-import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
-import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
-import eu.openanalytics.rdepot.base.service.RepositoryService;
-import eu.openanalytics.rdepot.base.service.RoleService;
-import eu.openanalytics.rdepot.base.service.SubmissionService;
-import eu.openanalytics.rdepot.base.service.UserService;
-import eu.openanalytics.rdepot.base.service.UserSettingsService;
+import eu.openanalytics.rdepot.base.service.*;
 import eu.openanalytics.rdepot.base.storage.Storage;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.factory.StrategyFactory;
 import eu.openanalytics.rdepot.base.synchronization.healthcheck.ServerAddressHealthcheckService;
-import eu.openanalytics.rdepot.base.validation.AccessTokenPatchValidator;
-import eu.openanalytics.rdepot.base.validation.PackageMaintainerValidator;
-import eu.openanalytics.rdepot.base.validation.PackageValidator;
-import eu.openanalytics.rdepot.base.validation.RepositoryMaintainerValidator;
-import eu.openanalytics.rdepot.base.validation.RepositoryValidator;
-import eu.openanalytics.rdepot.base.validation.UserSettingsValidator;
-import eu.openanalytics.rdepot.base.validation.UserValidator;
+import eu.openanalytics.rdepot.base.validation.*;
 import eu.openanalytics.rdepot.test.fixture.UserTestFixture;
 import java.security.Principal;
 import java.util.Objects;
@@ -154,7 +135,7 @@ public class ApiV2ControllerUnitTest {
     PackageDeleter<Package, Repository> packageDeleter;
 
     @MockBean
-    Storage<Repository, Package> storage;
+    Storage<Package> storage;
 
     @MockBean
     RepositoryValidator<Repository> repositoryValidator;
@@ -188,6 +169,9 @@ public class ApiV2ControllerUnitTest {
 
     @MockBean
     RepositoryNameValidationProperties repositoryNameValidationProperties;
+
+    @MockBean
+    DefaultUserConfigurationProperties defaultUserConfigurationProperties;
 
     @Mock
     protected BestMaintainerChooser bestMaintainerChooser;

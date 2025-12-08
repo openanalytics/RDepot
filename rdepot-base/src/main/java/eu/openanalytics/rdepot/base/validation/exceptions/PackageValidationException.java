@@ -39,6 +39,6 @@ public class PackageValidationException extends Exception {
     }
 
     public PackageValidationException(List<ValidationResultItem<?>> messageCodes) {
-        super(messageCodes.stream().map(i -> "\"" + i.messageCode() + "\"").collect(Collectors.joining(", ")));
+        super(messageCodes.stream().map(i -> i.messageCode()).collect(Collectors.joining(", ")));
     }
 }

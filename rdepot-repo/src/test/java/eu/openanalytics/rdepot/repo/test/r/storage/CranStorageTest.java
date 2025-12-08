@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -216,14 +217,14 @@ public class CranStorageTest {
         pathsToUploadToArchive.put("12349_abc_1.3.tar.gz", SOURCE_PATH);
         pathsToUploadToArchive.put("12340_accrued_1.2.tar.gz", SOURCE_PATH);
         pathsToUploadToArchive.put("23456_accrued_1.3.tar.gz", SOURCE_PATH);
-        pathsToUploadToArchive.put("23457_PACKAGES", SOURCE_PATH);
-        pathsToUploadToArchive.put("23458_PACKAGES.gz", SOURCE_PATH);
+        pathsToUploadToArchive.put("23457_PACKAGES", SOURCE_PATH + "/Archive");
+        pathsToUploadToArchive.put("23458_PACKAGES.gz", SOURCE_PATH + "/Archive");
         pathsToUpload.put("23459_arrow_8.0.0.tar.gz", BINARY_PATH);
         pathsToUpload.put("23450_PACKAGES", BINARY_PATH);
         pathsToUpload.put("34567_PACKAGES.gz", BINARY_PATH);
         pathsToUploadToArchive.put("34568_OpenSpecy_1.0.99.tar.gz", BINARY_PATH);
-        pathsToUploadToArchive.put("34569_PACKAGES", BINARY_PATH);
-        pathsToUploadToArchive.put("34560_PACKAGES.gz", BINARY_PATH);
+        pathsToUploadToArchive.put("34569_PACKAGES", BINARY_PATH + "/Archive");
+        pathsToUploadToArchive.put("34560_PACKAGES.gz", BINARY_PATH + "/Archive");
         pathsToUpload.put("45678_OpenSpecy_1.1.0.tar.gz", BINARY_HIGHER_VERSION_PATH);
         pathsToUpload.put("45679_PACKAGES", BINARY_HIGHER_VERSION_PATH);
         pathsToUpload.put("45670_PACKAGES.gz", BINARY_HIGHER_VERSION_PATH);
@@ -369,14 +370,14 @@ public class CranStorageTest {
         final Map<String, String> pathsToDelete = new HashMap<>();
         final Map<String, String> pathsToDeleteToArchive = new HashMap<>();
 
-        pathsToDelete.put("12345_Benchmarking_0.10.tar.gz", SOURCE_PATH);
-        pathsToDelete.put("12348_usl_2.0.0.tar.gz", SOURCE_PATH);
-        pathsToDeleteToArchive.put("12349_abc_1.3.tar.gz", SOURCE_PATH);
-        pathsToDeleteToArchive.put("12340_accrued_1.2.tar.gz", SOURCE_PATH);
-        pathsToDeleteToArchive.put("23456_accrued_1.3.tar.gz", SOURCE_PATH);
-        pathsToDelete.put("23459_arrow_8.0.0.tar.gz", BINARY_PATH);
-        pathsToDeleteToArchive.put("34568_OpenSpecy_1.0.99.tar.gz", BINARY_PATH);
-        pathsToDelete.put("45678_OpenSpecy_1.1.0.tar.gz", BINARY_HIGHER_VERSION_PATH);
+        pathsToDelete.put("Benchmarking_0.10.tar.gz", SOURCE_PATH);
+        pathsToDelete.put("usl_2.0.0.tar.gz", SOURCE_PATH);
+        pathsToDeleteToArchive.put("abc_1.3.tar.gz", SOURCE_PATH);
+        pathsToDeleteToArchive.put("accrued_1.2.tar.gz", SOURCE_PATH);
+        pathsToDeleteToArchive.put("accrued_1.3.tar.gz", SOURCE_PATH);
+        pathsToDelete.put("arrow_8.0.0.tar.gz", BINARY_PATH);
+        pathsToDeleteToArchive.put("OpenSpecy_1.0.99.tar.gz", BINARY_PATH);
+        pathsToDelete.put("OpenSpecy_1.1.0.tar.gz", BINARY_HIGHER_VERSION_PATH);
 
         final Map<String, String> checksums = getChecksumsForTestFiles();
 
@@ -400,10 +401,10 @@ public class CranStorageTest {
         storageService.handleLastChunk(requestBody, TEST_REPO);
 
         assertEquals(3, Objects.requireNonNull(recentSourceDir.listFiles()).length);
-        assertEquals(0, Objects.requireNonNull(archiveSourceDir.listFiles()).length);
-        assertEquals(3, recentBinaryLowerVersionDir.listFiles().length);
-        assertEquals(3, recentBinaryHigherVersionDir.listFiles().length);
-        assertEquals(0, archiveBinaryLowerVersionDir.listFiles().length);
+        assertEquals(2, Objects.requireNonNull(archiveSourceDir.listFiles()).length);
+        assertEquals(3, Objects.requireNonNull(recentBinaryLowerVersionDir.listFiles()).length);
+        assertEquals(3, Objects.requireNonNull(recentBinaryHigherVersionDir.listFiles()).length);
+        assertEquals(2, Objects.requireNonNull(archiveBinaryLowerVersionDir.listFiles()).length);
 
         assertFalse(Files.exists(recentSourceDir.toPath().resolve("Meta")));
         assertFalse(Files.exists(recentSourceDir.toPath().resolve("Meta").resolve("archive.rds")));
@@ -422,7 +423,9 @@ public class CranStorageTest {
             if (!file.getName().contains("PACKAGES")) filenameList.add(file.getName());
         }
 
-        return filenameList;
+        return filenameList.stream()
+                .map(f -> StringUtils.substringAfter(f, "_"))
+                .collect(Collectors.toList());
     }
 
     private File copyTestPackagesToTemporaryFolder(

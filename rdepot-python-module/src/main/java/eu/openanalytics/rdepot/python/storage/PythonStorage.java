@@ -20,44 +20,9 @@
  */
 package eu.openanalytics.rdepot.python.storage;
 
-import eu.openanalytics.rdepot.base.storage.exceptions.CleanUpAfterSynchronizationException;
-import eu.openanalytics.rdepot.base.storage.exceptions.OrganizePackagesException;
-import eu.openanalytics.rdepot.python.entities.PythonPackage;
-import eu.openanalytics.rdepot.python.entities.PythonRepository;
-import eu.openanalytics.rdepot.python.storage.utils.PopulatedRepositoryContent;
-import eu.openanalytics.rdepot.python.synchronization.SynchronizeRepositoryRequestBody;
-import java.util.List;
+import eu.openanalytics.rdepot.base.entities.enums.HashMethod;
+import eu.openanalytics.rdepot.base.storage.exceptions.CheckSumCalculationException;
 
-/**
- * Provides features specific for Python Packages storage management.
- */
 public interface PythonStorage {
-    /**
-     * Builds request body with objects ready to be uploaded to the remote server.
-     * @param populatedRepositoryContent
-     * @param repository repository to synchronized
-     * @param versionBefore version of the repository before synchronization
-     * @return request body
-     */
-    SynchronizeRepositoryRequestBody buildSynchronizeRequestBody(
-            PopulatedRepositoryContent populatedRepositoryContent,
-            List<String> remotePackages,
-            PythonRepository repository,
-            String versionBefore);
-
-    /**
-     * Populates packages and generates directory structure ready for synchronization
-     * @param packages all packages
-     * @return
-     */
-    PopulatedRepositoryContent organizePackagesInStorage(
-            String dateStamp, List<PythonPackage> packages, PythonRepository repository)
-            throws OrganizePackagesException;
-
-    /**
-     * Cleans temporary directories after synchronization.
-     * @param populatedRepositoryContent
-     */
-    void cleanUpAfterSynchronization(PopulatedRepositoryContent populatedRepositoryContent)
-            throws CleanUpAfterSynchronizationException;
+    String calculateChecksum(HashMethod hashMethod, String path) throws CheckSumCalculationException;
 }

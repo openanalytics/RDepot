@@ -41,20 +41,13 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -76,8 +69,11 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
     private static final String ARCHIVE_FOLDER = "Archive";
     private static final String BIN_FOLDER = "bin";
     private static final String ARCHIVE_RDS = "archive.rds";
+    private static final String INDEX_HTML = "index.html";
+    private static final String META_FOLDER = "Meta";
 
-    private final Set<String> excludedFiles = new HashSet<>(Arrays.asList(PACKAGES, PACKAGES_GZ));
+    private final Set<String> excludedFiles =
+            new HashSet<>(Arrays.asList(PACKAGES, PACKAGES_GZ, ARCHIVE_RDS, INDEX_HTML));
 
     public CranFileSystemStorageService(StorageProperties properties) {
         super(properties);
@@ -96,7 +92,9 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
     }
 
     private boolean onlyReadableFiles(Path path) {
-        return Files.isReadable(path) && !Files.isDirectory(path);
+        return Files.isReadable(path)
+                && !Files.isDirectory(path)
+                && path.toString().endsWith(".tar.gz");
     }
 
     private ArchiveInfo getArchiveInfoFromPath(Path path) throws IOException {
@@ -130,11 +128,11 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
                 ? this.rootLocation.resolve(repository)
                 : this.rootLocation;
 
-        Path latestLocation = Paths.get(repoLocation.toString(), path);
-        Path archiveLocation = latestLocation.resolve(ARCHIVE_FOLDER);
+        final Path latestLocation = Paths.get(repoLocation.toString(), path);
+        final Path archiveLocation = latestLocation.resolve(ARCHIVE_FOLDER);
 
         if (Files.notExists(archiveLocation) || !Files.isDirectory(archiveLocation)) {
-            Path archiveRds = latestLocation.resolve("Meta").resolve(ARCHIVE_RDS);
+            Path archiveRds = latestLocation.resolve(META_FOLDER).resolve(ARCHIVE_RDS);
             Files.deleteIfExists(archiveRds);
             return;
         }
@@ -160,13 +158,13 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
         }
 
         if (archives.isEmpty()) {
-            Path archiveRds = latestLocation.resolve("Meta").resolve(ARCHIVE_RDS);
+            Path archiveRds = latestLocation.resolve(META_FOLDER).resolve(ARCHIVE_RDS);
             Files.deleteIfExists(archiveRds);
             return;
         }
 
         ArchiveIndex archiveIndex = new ArchiveIndex(archives);
-        Path metaLocation = latestLocation.resolve("Meta");
+        Path metaLocation = latestLocation.resolve(META_FOLDER);
         if (Files.notExists(metaLocation)) {
             Files.createDirectories(metaLocation);
         }
@@ -200,33 +198,60 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
     public void handleLastChunk(SynchronizeCranRepositoryRequestBody request, String repository)
             throws StorageException {
         try {
-            Set<String> archivePaths =
-                    new HashSet<>(request.getPathsToUploadToArchive().values());
+            Set<String> archivePaths = new HashSet<>(request.getPathsToUpload().values());
             for (String archivePath : archivePaths) {
                 generateArchiveRds(repository, archivePath);
             }
-            removeEmptyArchives(
-                    repository,
-                    new HashSet<>(request.getPathsToDeleteFromArchive().values()));
+            final Set<String> paths =
+                    new HashSet<>(request.getPathsToDeleteFromArchive().values());
+            paths.add(SRC_FOLDER + "/" + CONTRIB_FOLDER);
+            removeEmptyArchives(repository, paths);
         } catch (IOException | RemoveEmptyArchiveException e) {
             throw new StorageException(e.getMessage(), e);
         }
         super.handleLastChunk(request, repository);
     }
 
+    @Override
+    public List<String> getBinaryPlatformDirectories(String repository) {
+        final Path location = ((repository != null) && (!repository.trim().isEmpty()))
+                ? this.rootLocation.resolve(repository)
+                : this.rootLocation;
+
+        if (!location.toFile().exists() || !location.toFile().isDirectory()) {
+            return List.of();
+        }
+
+        try (Stream<Path> files = Files.walk(location, 5)) {
+            return files.filter(Files::isDirectory)
+                    .map(location::relativize)
+                    .filter(p -> p.getNameCount() == 5)
+                    .map(Path::toString)
+                    .filter(p -> p.startsWith("bin"))
+                    .toList();
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            throw new StorageException(e.getMessage(), e);
+        }
+    }
+
     private void copyToDedicatedDirectory(MultipartFile file, Path rootDirectory, String id)
             throws IOException, MoveToTrashException {
         String fileName = StringUtils.substringAfter(file.getOriginalFilename(), "_");
         assert !StringUtils.isBlank(fileName);
-        Path saveLocation = rootDirectory.resolve(fileName.split("_")[0]);
+        Path saveLocation = rootDirectory.resolve("Archive").resolve(fileName.split("_")[0]);
         if (!Files.exists(saveLocation)) {
-            Files.createDirectory(saveLocation);
+            Files.createDirectories(saveLocation);
         }
         Path destination = saveLocation.resolve(fileName);
         if (Files.exists(destination)) {
             moveToTrash(id, destination);
         }
         Files.copy(file.getInputStream(), saveLocation.resolve(fileName));
+    }
+
+    private boolean isIndex(String originalFilename) {
+        return originalFilename.endsWith(".html") && originalFilename.contains("index");
     }
 
     private void storeInArchive(MultipartFile[] files, String repository, Map<String, String> paths, String id) {
@@ -236,7 +261,6 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
 
         for (MultipartFile file : files) {
             Path saveLocation = Paths.get(repoLocation.toString(), paths.get(file.getOriginalFilename()));
-            saveLocation = saveLocation.resolve(ARCHIVE_FOLDER);
             logger.debug("Saving to location {}", saveLocation);
             try {
                 Files.createDirectories(saveLocation);
@@ -245,10 +269,11 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
                         "Failed to create directory " + saveLocation.toFile().getAbsolutePath(), e);
             }
 
-            String fileName = StringUtils.substringAfter(file.getOriginalFilename(), "_");
+            final boolean isIndex = isIndex(Objects.requireNonNull(file.getOriginalFilename()));
+            String fileName = isIndex ? "index.html" : StringUtils.substringAfter(file.getOriginalFilename(), "_");
             assert !StringUtils.isBlank(fileName);
             try {
-                if (fileName.equals(PACKAGES) || fileName.equals(PACKAGES_GZ)) {
+                if (fileName.equals(PACKAGES) || fileName.equals(PACKAGES_GZ) || isIndex) {
                     Path destination = saveLocation.resolve(fileName);
                     if (Files.exists(destination)) {
                         moveToTrash(id, destination);
@@ -372,31 +397,48 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
         }
     }
 
-    public void removeEmptyArchives(String repository, Set<String> archivePaths) throws RemoveEmptyArchiveException {
+    private void cleanMetaFolderIfNotEmpty(Path repoPath) throws IOException {
+        final Path metaFolder = Paths.get(repoPath.toString(), META_FOLDER);
+        if (!Files.exists(metaFolder) || !Files.isDirectory(metaFolder)) {
+            return;
+        }
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(metaFolder)) {
+            for (Path file : stream) {
+                FileUtils.forceDelete(file.toFile());
+            }
+        }
+    }
 
+    public void removeEmptyArchives(String repository, Set<String> archivePaths) throws RemoveEmptyArchiveException {
         Path repoPath = this.rootLocation.resolve(repository);
         for (String archivePath : archivePaths) {
             try {
-                Path archive = Paths.get(repoPath.toString(), archivePath, ARCHIVE_FOLDER);
+                final Path resolvedArchivePath = Paths.get(repoPath.toString(), archivePath);
+                final Path archive = Paths.get(resolvedArchivePath.toString(), ARCHIVE_FOLDER);
                 if (Files.notExists(archive) || !Files.isDirectory(archive)) {
-                    return;
+                    cleanMetaFolderIfNotEmpty(resolvedArchivePath);
+                    continue;
                 }
 
                 try (DirectoryStream<Path> archiveFiles = Files.newDirectoryStream(archive)) {
                     for (Path archiveFile : archiveFiles) {
-                        if (Files.isDirectory(archiveFile) && isDirectoryEmpty(archiveFile)) {
+                        if (Files.isDirectory(archiveFile) && areThereNoPackages(archiveFile)) {
                             FileUtils.forceDelete(archiveFile.toFile());
                         }
                     }
                 }
-
-                try (Stream<Path> archiveFiles = Files.list(archive)) {
-                    if (archiveFiles.count() == 2) {
-                        deleteIfExists(archive.resolve(PACKAGES));
-                        deleteIfExists(archive.resolve(PACKAGES_GZ));
+                try (DirectoryStream<Path> archiveFiles = Files.newDirectoryStream(archive)) {
+                    boolean anyDirectoryLeft = false;
+                    for (Path archiveFile : archiveFiles) {
+                        if (Files.isDirectory(archiveFile)) {
+                            anyDirectoryLeft = true;
+                            break;
+                        }
+                    }
+                    if (!anyDirectoryLeft) {
+                        cleanMetaFolderIfNotEmpty(resolvedArchivePath);
                     }
                 }
-
             } catch (IOException e) {
                 logger.error("Could not remove archive directory!", e);
                 throw new RemoveEmptyArchiveException(repository);
@@ -404,15 +446,17 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
         }
     }
 
-    private void deleteIfExists(Path filePath) throws IOException {
-        if (Files.exists(filePath)) {
-            FileUtils.forceDelete(filePath.toFile());
-        }
-    }
-
-    private boolean isDirectoryEmpty(Path directory) throws IOException {
+    private boolean areThereNoPackages(Path directory) throws IOException {
         try (Stream<Path> files = Files.list(directory)) {
-            return files.findAny().isEmpty();
+            Set<Path> maxTwoFiles = files.limit(2).collect(Collectors.toSet());
+            return maxTwoFiles.isEmpty()
+                    || maxTwoFiles.size() == 1
+                            && maxTwoFiles
+                                    .iterator()
+                                    .next()
+                                    .getFileName()
+                                    .toString()
+                                    .equals(INDEX_HTML);
         }
     }
 
@@ -461,6 +505,12 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
                 || Objects.equals(fileName, PACKAGES_GZ));
     }
 
+    private String resolvePackageName(String packageFilename) {
+        if (packageFilename.endsWith("index.html")) {
+            return StringUtils.substringBefore(packageFilename, "index.html");
+        } else return packageFilename;
+    }
+
     private void delete(
             String[] fileNames, String repository, Map<String, String> paths, String requestId, Boolean fromArchive)
             throws StorageException {
@@ -468,16 +518,19 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
         Path repoLocation = ((repository != null) && (!repository.trim().isEmpty()))
                 ? this.rootLocation.resolve(repository)
                 : this.rootLocation;
+        final Set<String> allFilenames = new HashSet<>(paths.keySet());
+        allFilenames.addAll(Arrays.asList(fileNames));
 
-        for (String fileName : fileNames) {
-            Path saveLocation = Paths.get(repoLocation.toString(), paths.get(fileName));
+        for (String fileName : allFilenames) {
+            Path saveLocation =
+                    Paths.get(repoLocation.toString(), paths.getOrDefault(fileName, SRC_FOLDER + "/" + CONTRIB_FOLDER));
             saveLocation = fromArchive ? saveLocation.resolve(ARCHIVE_FOLDER) : saveLocation;
 
             if (Files.notExists(saveLocation) || !Files.isDirectory(saveLocation)) {
                 return;
             }
 
-            String packageName = StringUtils.substringAfter(fileName, "_");
+            final String packageName = resolvePackageName(fileName);
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(saveLocation)) {
                 if (StringUtils.isBlank(packageName) && !fromArchive) {
                     for (Path packageFile : stream) {

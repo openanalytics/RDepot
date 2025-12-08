@@ -38,7 +38,7 @@ import eu.openanalytics.rdepot.python.synchronization.PythonRepositorySynchroniz
 public class PythonRepositoryUpdateStrategy extends UpdateRepositoryStrategy<PythonRepository> {
 
     private final PythonPackageService packageService;
-    private final Storage<PythonRepository, PythonPackage> storage;
+    private final Storage<PythonPackage> storage;
 
     public PythonRepositoryUpdateStrategy(
             PythonRepository resource,
@@ -51,7 +51,7 @@ public class PythonRepositoryUpdateStrategy extends UpdateRepositoryStrategy<Pyt
             RepositoryMaintainerService repositoryMaintainerService,
             PackageMaintainerService packageMaintainerService,
             PythonPackageService packageService,
-            Storage<PythonRepository, PythonPackage> storage) {
+            Storage<PythonPackage> storage) {
         super(
                 resource,
                 eventService,
@@ -82,7 +82,7 @@ public class PythonRepositoryUpdateStrategy extends UpdateRepositoryStrategy<Pyt
         if (recalculateHashes) {
             try {
                 for (PythonPackage packageBag : packageService.findAllByRepository(resource)) {
-                    storage.calculateCheckSum(packageBag);
+                    storage.setCheckSum(packageBag);
                 }
             } catch (CheckSumCalculationException e) {
                 throw new StrategyFailure(e);

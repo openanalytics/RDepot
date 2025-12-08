@@ -20,8 +20,11 @@
  */
 package eu.openanalytics.rdepot.repo.exception;
 
+import java.io.Serial;
+
 public class RemoveEmptyArchiveException extends Exception {
 
+    @Serial
     private static final long serialVersionUID = 9106380056354411446L;
 
     public RemoveEmptyArchiveException(String repository) {

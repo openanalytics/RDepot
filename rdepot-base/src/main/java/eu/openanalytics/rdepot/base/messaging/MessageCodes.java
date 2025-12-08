@@ -112,6 +112,11 @@ public class MessageCodes {
     public static final String INVALID_VERSION = "invalid.version";
     public static final String DUPLICATE_VERSION_REPLACE_ON = "duplicate.version.replace.on";
     public static final String DUPLICATE_VERSION_REPLACE_OFF = "duplicate.version.replace.off";
+    public static final String MISMATCHED_DATA_IN_THE_FILENAME = "mismatched.data.in.the.filename";
+
+    public static final String ERROR_MISSING_DATA_FOR_BINARY_PACKAGE = "error.missing.data.for.binary.package";
+    public static final String ERROR_PARAMETERS_NOT_ALLOWED_FOR_NON_BINARY_PACKAGE =
+            "error.parameters.not.allowed.for.non.binary.package";
 
     // PACKAGES
 
@@ -199,4 +204,7 @@ public class MessageCodes {
     public static final String WARNING_SYNCHRONIZATION_FAILURE = "warning.synchronization.failure";
     public static final String WARNING_UNKNOWN = "warning.unknown";
     public static final String ERROR_MALFORMED_URL = "error.malformed.url";
+    public static final String WARNING_FILE_NAME_HAS_BEEN_UPDATED = "warning.file.name.has.been.updated";
+    public static final String INVALID_INDEX_TEMPLATE = "error.invalid.index.template";
+    public static final String PACKAGE_ANCHOR_LIST_PLACEHOLDER_NOT_FOUND = "package.anchor.list.placeholder.not.found";
 }

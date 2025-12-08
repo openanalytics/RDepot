@@ -31,12 +31,11 @@ import eu.openanalytics.rdepot.base.mediator.BestMaintainerChooser;
 import eu.openanalytics.rdepot.base.mediator.deletion.exceptions.NoSuitableMaintainerFound;
 import eu.openanalytics.rdepot.base.service.CommonPackageService;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
-import eu.openanalytics.rdepot.base.service.Service;
+import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -47,12 +46,13 @@ import java.util.stream.Stream;
 public class UpdatePackageMaintainerStrategy extends UpdateStrategy<PackageMaintainer> {
 
     private final CommonPackageService packageService;
+    private final PackageMaintainerService maintainerService;
     private final BestMaintainerChooser bestMaintainerChooser;
 
     public UpdatePackageMaintainerStrategy(
             PackageMaintainer resource,
             NewsfeedEventService eventService,
-            Service<PackageMaintainer> service,
+            PackageMaintainerService service,
             User requester,
             PackageMaintainer updatedMaintainer,
             CommonPackageService packageService,
@@ -60,6 +60,7 @@ public class UpdatePackageMaintainerStrategy extends UpdateStrategy<PackageMaint
         super(resource, service, eventService, requester, updatedMaintainer, new PackageMaintainer(resource));
         this.packageService = packageService;
         this.bestMaintainerChooser = bestMaintainerChooser;
+        this.maintainerService = service;
     }
 
     @Override
@@ -90,13 +91,23 @@ public class UpdatePackageMaintainerStrategy extends UpdateStrategy<PackageMaint
     private void updateRepository(PackageMaintainer resource, Repository repository) throws StrategyFailure {
         resource.setRepository(repository);
 
-        List<Package> packagesToRefresh = Stream.of(
-                        packageService.findAllByRepository(oldResourceCopy.getRepository()),
-                        packageService.findAllByRepository(resource.getRepository()))
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+        List<Package> oldRepoPackages = packageService.findAllByRepository(oldResourceCopy.getRepository());
+        List<Package> newRepoPackages = packageService.findAllByRepository(resource.getRepository());
 
-        refreshPackageMaintainers(packagesToRefresh, resource.getPackageName());
+        List<Package> packagesToRefresh = Stream.of(oldRepoPackages, newRepoPackages)
+                .flatMap(Collection::stream)
+                .toList();
+
+        oldRepoPackages.forEach(packageBag -> {
+            if (packageBag.getName().equals(resource.getPackageName()))
+                maintainerService.updateRemoveOldPackages(oldResourceCopy, packageBag.getName());
+        });
+
+        List<Package> newPackages = packageService.findAllByNameAndRepositoryIncludeDeleted(
+                resource.getPackageName(), resource.getRepository());
+        maintainerService.updateWithNewPackages(resource, newPackages);
+
+        refreshChosenPackageMaintainers(packagesToRefresh, resource.getPackageName());
 
         changedValues.add(new EventChangedVariable(
                 "repository", oldResourceCopy.getRepository().toString(), repository.toString()));
@@ -104,17 +115,21 @@ public class UpdatePackageMaintainerStrategy extends UpdateStrategy<PackageMaint
 
     private void updatePackage(PackageMaintainer resource, String packageName) throws StrategyFailure {
         resource.setPackageName(packageName);
+        List<Package> newPackages = packageService.findAllByNameAndRepositoryIncludeDeleted(
+                resource.getPackageName(), resource.getRepository());
+        maintainerService.updateWithNewPackages(resource, newPackages);
+        maintainerService.updateRemoveOldPackages(resource, oldResourceCopy.getPackageName());
         List<Package> packages = packageService.findAllByRepository(resource.getRepository());
-        refreshPackageMaintainers(new ArrayList<>(packages), resource.getPackageName());
-        refreshPackageMaintainers(new ArrayList<>(packages), oldResourceCopy.getPackageName());
+        refreshChosenPackageMaintainers(new ArrayList<>(packages), resource.getPackageName());
+        refreshChosenPackageMaintainers(new ArrayList<>(packages), oldResourceCopy.getPackageName());
 
         changedValues.add(new EventChangedVariable("package", oldResourceCopy.getPackageName(), packageName));
     }
 
-    private void refreshPackageMaintainers(List<Package> packages, String packageName) throws StrategyFailure {
+    private void refreshChosenPackageMaintainers(List<Package> packages, String packageName) throws StrategyFailure {
         for (Package packageBag : packages) {
             logger.debug(packageBag.getName());
-            logger.debug("resource: " + packageName);
+            logger.debug("resource: {}", packageName);
             if (packageBag.getName().equals(packageName)) {
                 try {
                     packageBag.setUser(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag));

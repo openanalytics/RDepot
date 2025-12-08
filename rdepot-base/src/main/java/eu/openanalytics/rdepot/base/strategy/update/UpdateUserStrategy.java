@@ -29,7 +29,6 @@ import eu.openanalytics.rdepot.base.entities.RepositoryMaintainer;
 import eu.openanalytics.rdepot.base.entities.Role;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.event.NewsfeedEventType;
-import eu.openanalytics.rdepot.base.exception.AdminNotFound;
 import eu.openanalytics.rdepot.base.exception.NoAdminLeftException;
 import eu.openanalytics.rdepot.base.mediator.BestMaintainerChooser;
 import eu.openanalytics.rdepot.base.mediator.deletion.exceptions.NoSuitableMaintainerFound;
@@ -39,6 +38,7 @@ import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
+import java.util.List;
 
 /**
  * Updates {@link User}.
@@ -89,7 +89,9 @@ public class UpdateUserStrategy extends UpdateStrategy<User> {
         try {
             switch (currentRole.getValue()) {
                 case Role.VALUE.ADMIN:
-                    if (userService.findByRole(currentRole).size() <= 1) throw new AdminNotFound();
+                    List<User> admins = userService.findByRole(currentRole);
+                    if ((admins.size() == 1 && admins.get(0).equals(user)) || admins.isEmpty())
+                        throw new NoAdminLeftException();
                     else {
                         user.setRole(role);
                         refreshMaintainerForAll();
@@ -107,7 +109,7 @@ public class UpdateUserStrategy extends UpdateStrategy<User> {
                     user.setRole(role);
                     break;
             }
-        } catch (AdminNotFound | NoSuitableMaintainerFound e) {
+        } catch (NoAdminLeftException | NoSuitableMaintainerFound e) {
             throw new StrategyFailure(e);
         }
 

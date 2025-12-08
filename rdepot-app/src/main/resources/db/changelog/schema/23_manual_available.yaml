@@ -1,0 +1,24 @@
+databaseChangeLog:
+  - changeSet:
+      id: 23_01_manual_available
+      author: pgleska
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: rpackage
+            schemaName: public
+        - not:
+            - columnExists:
+                tableName: rpackage
+                schemaName: public
+                columnName: manual_available
+      changes:
+        - addColumn:
+            tableName: rpackage
+            schemaName: public
+            columns:
+              - column:
+                  name: manual_available
+                  type: boolean
+                  constraints:
+                    nullable: true

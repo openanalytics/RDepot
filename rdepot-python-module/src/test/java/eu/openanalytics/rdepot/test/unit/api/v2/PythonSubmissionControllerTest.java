@@ -96,7 +96,11 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
     private static final String JSON_PATH = "src/test/resources/unit/jsons";
     private static final String TEST_PACKAGE_PATH =
             "src/test/resources/unit/test_packages/strategy_tests/coconutpy-2.2.1.tar.gz";
+    private static final String TEST_BINARY_PACKAGE_PATH =
+            "src/test/resources/unit/test_packages/binary_packages/tetrapolyscope-0.0.4-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl";
     private static final String EXAMPLE_SUBMISSION_CREATED_PATH = JSON_PATH + "/example_submission_created.json";
+    private static final String EXAMPLE_BINARY_SUBMISSION_CREATED_PATH =
+            JSON_PATH + "/example_binary_submission_created.json";
     private static final String ERROR_SUBMISSION_NOT_FOUND_PATH = JSON_PATH + "/error_submission_notfound.json";
     private static final String EXAMPLE_SUBMISSIONS_PATH = JSON_PATH + "/example_submissions.json";
     private static final String EXAMPLE_SUBMISSION_PATCHED_PATH = JSON_PATH + "/example_submission_patched.json";
@@ -142,9 +146,13 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
                 "file", "coconutpy-2.2.1.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
         final boolean replace = false;
 
-        final Submission submission =
-                PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user).getSubmission();
+        final PythonPackage packageBag = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
+        packageBag.setName("coconutpy");
+        packageBag.setVersion("2.2.1");
+        packageBag.setSource("coconutpy-2.2.1.tar.gz");
+        final Submission submission = packageBag.getSubmission();
         submission.setState(SubmissionState.WAITING);
+
         Strategy<Submission> strategy =
                 Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user));
         final PackageDto packageDto = PythonPackageTestFixture.GET_EXAMPLE_PACKAGE_DTO(submission.getPackageBag());
@@ -172,6 +180,57 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
                         .param("replace", Boolean.toString(replace)))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(Files.readString(Path.of(EXAMPLE_SUBMISSION_CREATED_PATH))));
+    }
+
+    @Test
+    @WithMockUser(authorities = "user")
+    public void submitBinaryPackage() throws Exception {
+        final PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
+        final byte[] packageFile = Files.readAllBytes(Path.of(TEST_BINARY_PACKAGE_PATH));
+        final MockMultipartFile multipartFile = new MockMultipartFile(
+                "file",
+                "tetrapolyscope-0.0.4-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl",
+                ContentType.MULTIPART_FORM_DATA.toString(),
+                packageFile);
+        final boolean replace = false;
+        final boolean binary = true;
+
+        final PythonPackage packageBag = PythonPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user);
+        packageBag.setName("tetrapolyscope");
+        packageBag.setVersion("0.0.4");
+        packageBag.setSource("tetrapolyscope-0.0.4-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl");
+        final Submission submission = packageBag.getSubmission();
+        submission.setState(SubmissionState.WAITING);
+
+        Strategy<Submission> strategy =
+                Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user));
+        final PackageDto packageDto = PythonPackageTestFixture.GET_EXAMPLE_PACKAGE_DTO(submission.getPackageBag());
+        final SubmissionDto submissionDto =
+                PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, submission.getPackageBag());
+
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.ofNullable(user));
+        when(pythonRepositoryService.findByNameAndDeleted(any(String.class), eq(false)))
+                .thenReturn(Optional.of(repository));
+        doNothing().when(pythonPackageValidator).validate(any(), any(ValidationResult.class));
+        when(commonPackageDtoConverter.convertEntityToDto(any())).thenReturn(packageDto);
+        when(submissionDtoConverter.convertEntityToDto(submission)).thenReturn(submissionDto);
+        when(pythonStrategyFactory.uploadPackageStrategy(any(), any()))
+                .thenAnswer((Answer<Strategy<Submission>>) invocation -> {
+                    PackageUploadRequest<PythonRepository> request = invocation.getArgument(0);
+                    assertEquals(packageFile, request.getFileData().getBytes());
+                    assertEquals(repository.getName(), request.getRepository().getName());
+                    assertEquals(replace, request.isReplace());
+                    assertEquals(binary, request.isBinaryPackage());
+                    return strategy;
+                });
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v2/manager/python/submissions")
+                        .file(multipartFile)
+                        .param("repository", repository.getName())
+                        .param("replace", Boolean.toString(replace))
+                        .param("binary", Boolean.toString(binary)))
+                .andExpect(status().isCreated())
+                .andExpect(content().json(Files.readString(Path.of(EXAMPLE_BINARY_SUBMISSION_CREATED_PATH))));
     }
 
     @Test
@@ -232,6 +291,7 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
         final MockMultipartFile multipartFile = new MockMultipartFile(
                 "file", "abc_1.3.tar.gz", ContentType.MULTIPART_FORM_DATA.toString(), packageFile);
         final boolean replace = false;
+
         final Submission submission =
                 PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user).getSubmission();
         Strategy<Submission> strategy =
@@ -246,7 +306,7 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
                     return null;
                 })
                 .when(pythonPackageValidator)
-                .validate(any(MultipartFile.class), any());
+                .validate(any(), any(), eq(false));
         when(pythonStrategyFactory.uploadPackageStrategy(any(), eq(user))).thenReturn(strategy);
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v2/manager/python/submissions")

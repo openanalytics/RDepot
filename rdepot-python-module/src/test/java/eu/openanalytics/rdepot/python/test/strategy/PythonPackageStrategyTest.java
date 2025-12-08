@@ -58,7 +58,7 @@ public class PythonPackageStrategyTest extends StrategyTest {
     PythonPackageService service;
 
     @Mock
-    Storage<PythonRepository, PythonPackage> storage;
+    Storage<PythonPackage> storage;
 
     @Test
     public void updatePackage_shouldRepublishRepository_whenRepositoryIsPublished() throws Exception {

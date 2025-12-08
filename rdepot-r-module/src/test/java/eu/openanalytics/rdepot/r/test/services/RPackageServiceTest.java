@@ -22,6 +22,7 @@ package eu.openanalytics.rdepot.r.test.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import eu.openanalytics.rdepot.base.daos.PackageMaintainerDao;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.r.daos.RPackageDao;
 import eu.openanalytics.rdepot.r.entities.RPackage;
@@ -50,6 +51,9 @@ public class RPackageServiceTest extends UnitTest {
 
     @Mock
     RPackageDao rPackageDao;
+
+    @Mock
+    PackageMaintainerDao maintainerDao;
 
     private final RPackageService packageService = new RPackageService(rPackageDao);
 

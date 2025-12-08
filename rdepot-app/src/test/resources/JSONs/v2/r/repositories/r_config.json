@@ -17,7 +17,9 @@
             "centos7",
             "centos8",
             "rhel9",
+            "rhel10",
             "opensuse155",
+            "opensuse156",
             "focal",
             "jammy",
             "noble",
@@ -26,7 +28,8 @@
         ],
         "allowedArchitectures": [
             "x86_64",
-            "x86"
+            "x86",
+            "aarch64"
         ]
     }
 }

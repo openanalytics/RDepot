@@ -27,15 +27,20 @@ import eu.openanalytics.rdepot.base.service.PackageService;
 import eu.openanalytics.rdepot.base.time.DateProvider;
 import eu.openanalytics.rdepot.r.api.v2.dtos.RRepositoryDto;
 import eu.openanalytics.rdepot.r.entities.RRepository;
+import eu.openanalytics.rdepot.r.entities.RRepositoryAllowedFiles;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
 public class RRepositoryDtoConverter implements DtoConverter<RRepository, RRepositoryDto> {
     private final PackageService<Package> packageService;
+
+    @Autowired
+    private RRepositoryAllowedFiles repoAllowedFiles;
 
     @Override
     public RRepository resolveDtoToEntity(RRepositoryDto dto) throws EntityResolutionException {
@@ -48,7 +53,7 @@ public class RRepositoryDtoConverter implements DtoConverter<RRepository, RRepos
                             && !dto.getLastModifiedTimestamp().isEmpty()
                     ? DateProvider.timestampToInstant(dto.getLastModifiedTimestamp())
                     : DateProvider.now();
-            return new RRepository(dto, lastPublicationTimestamp, lastModifiedTimestamp);
+            return new RRepository(dto, lastPublicationTimestamp, lastModifiedTimestamp, repoAllowedFiles.getR());
         } catch (DateTimeParseException e) {
             throw new EntityResolutionException(dto);
         }

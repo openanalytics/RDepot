@@ -29,8 +29,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -54,8 +58,16 @@ public class PackageMaintainer extends EventableResource {
     @JoinColumn(name = "repository_id", nullable = false)
     private Repository repository;
 
-    @Column(name = "package", unique = false, nullable = false)
+    @Column(name = "package", nullable = false)
     private String packageName;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "package_package_maintainer",
+            joinColumns = @JoinColumn(name = "package_maintainer_id"),
+            inverseJoinColumns = @JoinColumn(name = "package_id"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"package_id", "package_maintainer_id"}))
+    private Set<Package> packages;
 
     public PackageMaintainer() {
         super(InternalTechnology.instance, ResourceType.PACKAGE_MAINTAINER);
@@ -86,6 +98,7 @@ public class PackageMaintainer extends EventableResource {
         this.packageName = that.packageName;
         this.repository = that.repository;
         this.user = that.user;
+        this.packages = that.packages;
     }
 
     @Override

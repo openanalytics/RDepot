@@ -47,6 +47,8 @@ public class RPackageDto extends PackageDto {
     private String priority;
     private String needsCompilation;
     private String maintainer;
+    private String encoding;
+    private Boolean manualAvailable;
 
     public RPackageDto(RPackage packageBag) {
         super(packageBag);
@@ -65,6 +67,8 @@ public class RPackageDto extends PackageDto {
         this.priority = packageBag.getPriority();
         this.needsCompilation = packageBag.isNeedsCompilation() ? "yes" : "no";
         this.maintainer = packageBag.getMaintainer();
+        this.encoding = packageBag.getEncoding();
+        this.manualAvailable = packageBag.getManualAvailable();
     }
 
     @Override

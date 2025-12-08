@@ -21,21 +21,13 @@
 package eu.openanalytics.rdepot.repo.python.api;
 
 import eu.openanalytics.rdepot.repo.api.FileUploadController;
-import eu.openanalytics.rdepot.repo.exception.GetRepositoryVersionException;
 import eu.openanalytics.rdepot.repo.hash.model.HashMethod;
 import eu.openanalytics.rdepot.repo.model.SynchronizeRepositoryResponseBody;
 import eu.openanalytics.rdepot.repo.python.chunks.coordination.PythonUploadRequestChunkCoordinator;
 import eu.openanalytics.rdepot.repo.python.model.SynchronizePythonRepositoryRequestBody;
-import eu.openanalytics.rdepot.repo.python.storage.PythonFileSystemStorageService;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,12 +41,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping(value = "/python")
 public class PythonFileUploadController extends FileUploadController<SynchronizePythonRepositoryRequestBody> {
 
-    private final PythonFileSystemStorageService storageService;
-
-    public PythonFileUploadController(
-            PythonUploadRequestChunkCoordinator requestCoordinator, PythonFileSystemStorageService storageService) {
+    public PythonFileUploadController(PythonUploadRequestChunkCoordinator requestCoordinator) {
         super(requestCoordinator);
-        this.storageService = storageService;
     }
 
     @PostMapping("/{repository:.+}/")
@@ -71,25 +59,5 @@ public class PythonFileUploadController extends FileUploadController<Synchronize
         SynchronizePythonRepositoryRequestBody requestBody = new SynchronizePythonRepositoryRequestBody(
                 id, filesToUpload, filesToDelete, versionBefore, versionAfter, page, repository, checksums, hashMethod);
         return handleSynchronizeRequest(requestBody);
-    }
-
-    @GetMapping("/{repository}/")
-    public ResponseEntity<List<String>> recentUploads(@PathVariable("repository") String repository) {
-        ArrayList<String> uploads = new ArrayList<>();
-        try {
-            uploads.add(storageService.getRepositoryVersion(repository));
-        } catch (GetRepositoryVersionException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-
-        try {
-            List<Path> files = storageService.getRecentPackagesFromRepository(repository);
-            files.forEach(file -> uploads.add(file.getParent().getFileName().toString() + "/"
-                    + file.getFileName().toString()));
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-        return ResponseEntity.ok(uploads);
     }
 }

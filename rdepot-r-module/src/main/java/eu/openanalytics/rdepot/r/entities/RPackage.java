@@ -26,7 +26,11 @@ import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.r.api.v2.dtos.RPackageDto;
 import eu.openanalytics.rdepot.r.technology.RLanguage;
 import jakarta.persistence.*;
+import java.io.File;
 import java.io.Serial;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -94,6 +98,12 @@ public class RPackage extends Package {
     @Column(name = "maintainer", table = "rpackage")
     private String maintainer;
 
+    @Column(name = "encoding", table = "rpackage")
+    private String encoding;
+
+    @Column(name = "manual_available", table = "rpackage")
+    private Boolean manualAvailable;
+
     @Transient
     private Boolean generateManuals;
 
@@ -131,6 +141,8 @@ public class RPackage extends Package {
         this.priority = packageBag.priority;
         this.needsCompilation = packageBag.needsCompilation;
         this.maintainer = packageBag.maintainer;
+        this.encoding = packageBag.encoding;
+        this.manualAvailable = packageBag.manualAvailable;
     }
 
     public RPackage() {
@@ -155,6 +167,8 @@ public class RPackage extends Package {
         this.priority = dto.getPriority();
         this.needsCompilation = dto.getNeedsCompilation().equals("yes");
         this.maintainer = dto.getMaintainer();
+        this.encoding = dto.getEncoding();
+        this.manualAvailable = dto.getManualAvailable();
     }
 
     public RPackage(
@@ -210,7 +224,8 @@ public class RPackage extends Package {
             String priority,
             boolean needsCompilation,
             boolean active,
-            boolean deleted) {
+            boolean deleted,
+            Boolean manualAvailable) {
         super(
                 RLanguage.instance,
                 id,
@@ -235,5 +250,26 @@ public class RPackage extends Package {
         this.linkingTo = linkingTo;
         this.priority = priority;
         this.needsCompilation = needsCompilation;
+        this.manualAvailable = manualAvailable;
+    }
+
+    public String getPackageFilename() {
+        return this.getName() + "_" + this.getVersion() + ".tar.gz";
+    }
+
+    public Path getManualPath() {
+        final String separator = FileSystems.getDefault().getSeparator();
+        final String manualPath = new File(this.getSource()).getParent()
+                + separator + this.getName()
+                + separator + this.getName() + ".pdf";
+        return Paths.get(manualPath);
+    }
+
+    public String getPackageFolderPath() {
+        if (!this.isBinary()) return "src/contrib/" + this.getPackageFilename();
+        else
+            return "bin/linux/" + this.distribution
+                    + "/" + this.architecture + "/" + this.rVersion
+                    + "/" + this.getPackageFilename();
     }
 }

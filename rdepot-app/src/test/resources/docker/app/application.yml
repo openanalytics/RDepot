@@ -8,10 +8,18 @@ api-token:
 allowed-origin: http://localhost:3001
 
 repository-snapshots: true
+check-manuals: false
+
+repository:
+  api:
+    authentication: simple
+    simple:
+      username: rdepot
+      password: P@ssw0rd
 
 replacing:
-   packages:
-      enabled: true
+  packages:
+    enabled: true
 deleting:
   repositories:
     enabled: true
@@ -19,8 +27,14 @@ deleting:
     enabled: true
 
 oauth2:
-  jwk-set-uri: http://192.168.49.17:8080/auth/realms/RDepot/protocol/openid-connect/certs
+  jwk-set-uri: http://192.168.49.17:8080/realms/RDepot/protocol/openid-connect/certs
   login-field: preferred_username
+  email-field: email
+  full-name-field: name
+  jwt-types:
+    - application/okta-internal-at+jwt
+    - JOSE
+    - JWT
 
 default-user-configuration:
   language: en-US
@@ -28,7 +42,8 @@ default-user-configuration:
   page-size: 10
   supported-languages:
     - en-US
-    - de
+    - de-DE
+    - nl-NL
     - pl-PL
   supported-themes:
     - light
@@ -54,7 +69,7 @@ spring:
     host: 192.168.49.1
     port: 3925
 
-# Enable Liquibase
+  # Enable Liquibase
   liquibase:
     user: postgres
     enabled: true

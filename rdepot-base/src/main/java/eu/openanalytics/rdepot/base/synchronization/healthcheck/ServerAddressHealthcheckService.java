@@ -35,19 +35,19 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class ServerAddressHealthcheckService {
 
-    private final RestTemplate restTemplate;
+    private final RestTemplate repoApiClient;
     static final String STATUS_ENDPOINT = "/status";
     static final String OK_RESPONSE = "OK";
 
     public boolean isHealthy(final URL serverAddress) {
-        final String addr = serverAddress.toString().replaceAll("/$", "");
-        final String[] tokens = addr.split("/"); // "http://oa-rdepot-repo:8080/testrepo1/status"
+        final String address = serverAddress.toString().replaceAll("/$", "");
+        final String[] tokens = address.split("/"); // "http://oa-rdepot-repo:8080/testrepo1/status"
         if (tokens.length < 4) return false;
-        final String healthcheckUrl = String.format("%s%s", addr, STATUS_ENDPOINT);
+        final String healthcheckUrl = String.format("%s%s", address, STATUS_ENDPOINT);
 
         final String responseStr;
         try {
-            final ResponseEntity<String> response = restTemplate.getForEntity(healthcheckUrl, String.class);
+            final ResponseEntity<String> response = repoApiClient.getForEntity(healthcheckUrl, String.class);
             if (response.getStatusCode() != HttpStatus.OK || !response.hasBody()) return false;
             responseStr = response.getBody();
         } catch (RestClientException e) {

@@ -1,0 +1,89 @@
+{
+    "status": "SUCCESS",
+    "code": 201,
+    "message": "Your resource has been created successfully.",
+    "messageCode": "success.resource.created",
+    "data": {
+        "id": 48,
+        "packageBag": {
+            "id": 48,
+            "user": {
+                "id": 6,
+                "name": "Galileo Galilei",
+                "login": "galieleo",
+                "email": "galieleo@ldap.forumsys.com"
+            },
+            "repository": {
+                "id": 2,
+                "name": "testrepo1",
+                "publicationUri": "http://localhost/repo/testrepo1",
+                "published": true,
+                "requiresAuthentication": false,
+                "technology": "R",
+                "lastPublicationSuccessful": true
+            },
+            "submission": {
+                "id": 48,
+                "state": "ACCEPTED"
+            },
+            "name": "accrued",
+            "version": "1.1",
+            "source": "/opt/rdepot/repositories/2/8875194/accrued_1.1.tar.gz",
+            "active": true,
+            "deleted": false,
+            "technology": "R",
+            "binary": false,
+            "description": "Package for visualizing data quality of partially accruing time series.",
+            "author": "Julie Eaton and Ian Painter",
+            "title": "Visualization tools for partially accruing data",
+            "url": null,
+            "descriptionContentType": "txt",
+            "links": [
+                {
+                    "rel": "self",
+                    "href": "http://localhost:8017/api/v2/manager/r/packages/48"
+                },
+                {
+                    "rel": "packageList",
+                    "href": "http://localhost:8017/api/v2/manager/packages"
+                },
+                {
+                    "rel": "self",
+                    "href": "http://localhost:8017/api/v2/manager/r/packages/48",
+                    "type": "PATCH"
+                },
+                {
+                    "rel": "self",
+                    "href": "http://localhost:8017/api/v2/manager/r/packages/48",
+                    "type": "DELETE"
+                }
+            ]
+        },
+        "submitter": {
+            "id": 4,
+            "name": "Albert Einstein",
+            "login": "einstein",
+            "email": "einstein@ldap.forumsys.com"
+        },
+        "approver": {
+            "id": 4,
+            "name": "Albert Einstein",
+            "login": "einstein",
+            "email": "einstein@ldap.forumsys.com"
+        },
+        "changes": "",
+        "state": "ACCEPTED",
+        "created": "2025-07-03T07:58:14.283793062Z",
+        "technology": "R",
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/r/submissions/48"
+            },
+            {
+                "rel": "submissionList",
+                "href": "http://localhost:8017/api/v2/manager/r/submissions"
+            }
+        ]
+    }
+}

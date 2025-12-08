@@ -1,0 +1,70 @@
+app:
+  openid-groups-claim: "groups"
+  openid-issuer-uri: "http://192.168.49.17:8080/realms/RDepot"
+  storage-location: "/srv/crane/"
+  repositories:
+    testrepo1:
+      rewrites:
+        - matcher: "#{parse('.*R \\((\\d+\\.\\d+)[^ ]* ([^ ]+) ([^ ]+) ([^ ]+)\\)', request.getHeader('User-Agent')) && parse('/linux/([^/]+)/src/contrib/(.+)', path.toString())}"
+          destination: "/testrepo1/bin/linux/#{parsed[1].group(1)}/#{parsed[0].group(3)}/#{parsed[0].group(1)}/#{parsed[1].group(2)}"
+      on-error-expression: "#{response.status == 404 && parse('R \\((\\d+\\.\\d+)[^ ]* ([^ ]+) ([^ ]+) ([^ ]+)\\)', request.getHeader('User-Agent')) && parse('/repo/__file/testrepo1/bin/linux/([^/]+)/([^/]+)/([^/]+)/([^/]+)', request.getRequestURI().toString()) ? eval(true, request.getRequestDispatcher('/testrepo1/src/contrib/' + parsed[1].group(4)).forward(request, response)) : false}"
+      read-access:
+        public: true
+    testrepo2:
+      rewrites:
+        - matcher: "#{parse('.*R \\((\\d+\\.\\d+)[^ ]* ([^ ]+) ([^ ]+) ([^ ]+)\\)', request.getHeader('User-Agent')) && parse('/linux/([^/]+)/src/contrib/(.+)', path.toString())}"
+          destination: "/testrepo2/bin/linux/#{parsed[1].group(1)}/#{parsed[0].group(3)}/#{parsed[0].group(1)}/#{parsed[1].group(2)}"
+      read-access:
+        public: true
+    testrepo3:
+      rewrites:
+        - matcher: "#{parse('.*R \\((\\d+\\.\\d+)[^ ]* ([^ ]+) ([^ ]+) ([^ ]+)\\)', request.getHeader('User-Agent')) && parse('/linux/([^/]+)/src/contrib/(.+)', path.toString())}"
+          destination: "/testrepo3/bin/linux/#{parsed[1].group(1)}/#{parsed[0].group(3)}/#{parsed[0].group(1)}/#{parsed[1].group(2)}"
+      read-access:
+        public: true
+    testrepo4:
+      rewrites:
+        - matcher: "#{parse('.*R \\((\\d+\\.\\d+)[^ ]* ([^ ]+) ([^ ]+) ([^ ]+)\\)', request.getHeader('User-Agent')) && parse('/linux/([^/]+)/src/contrib/(.+)', path.toString())}"
+          destination: "/testrepo4/bin/linux/#{parsed[1].group(1)}/#{parsed[0].group(3)}/#{parsed[0].group(1)}/#{parsed[1].group(2)}"
+      read-access:
+        public: true
+    testrepo8:
+      on-error-expression: "#{(response.status == 404 ? true : false) && (response.status == 404 ? response.sendRedirect('https://pypi.org/simple/' + request.getRequestURI().split('/', 5)[4]) == null : false)}"
+      read-access:
+        public: true
+    testrepo9:
+      on-error-expression: "#{(response.status == 404 ? true : false) && (response.status == 404 ? response.sendRedirect('https://pypi.org/simple/' + request.getRequestURI().split('/', 5)[4]) == null : false)}"
+      read-access:
+        public: true
+    testrepo10:
+      on-error-expression: "#{(response.status == 404 ? true : false) && (response.status == 404 ? response.sendRedirect('https://pypi.org/simple/' + request.getRequestURI().split('/', 5)[4]) == null : false)}"
+      read-access:
+        public: true
+    my-test-repo-123:
+      rewrites:
+        - matcher: "#{parse('.*R \\((\\d+\\.\\d+)[^ ]* ([^ ]+) ([^ ]+) ([^ ]+)\\)', request.getHeader('User-Agent')) && parse('/linux/([^/]+)/src/contrib/(.+)', path.toString())}"
+          destination: "/my-test-repo-123/bin/linux/#{parsed[1].group(1)}/#{parsed[0].group(3)}/#{parsed[0].group(1)}/#{parsed[1].group(2)}"
+      read-access:
+        public: true
+    newRepository:
+      rewrites:
+        - matcher: "#{parse('.*R \\((\\d+\\.\\d+)[^ ]* ([^ ]+) ([^ ]+) ([^ ]+)\\)', request.getHeader('User-Agent')) && parse('/linux/([^/]+)/src/contrib/(.+)', path.toString())}"
+          destination: "/newRepository/bin/linux/#{parsed[1].group(1)}/#{parsed[0].group(3)}/#{parsed[0].group(1)}/#{parsed[1].group(2)}"
+      on-error-expression: "#{(response.status == 404 ? true : false) && (response.status == 404 ? response.sendRedirect('https://pypi.org/simple/' + request.getRequestURI().split('/', 5)[4]) == null : false)}"
+      read-access:
+        public: true
+server:
+  servlet:
+    context-path: /repo
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          crane:
+            client-secret: "EIsPIgHE0y0HPciSMs4bghJDTjT1FVzz"
+            client-id: crane
+            scope: openid
+        provider:
+          crane:
+            issuer-uri: "http://192.168.49.17:8080/realms/RDepot"

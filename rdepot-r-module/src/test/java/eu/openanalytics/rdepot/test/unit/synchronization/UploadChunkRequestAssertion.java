@@ -22,23 +22,18 @@ package eu.openanalytics.rdepot.test.unit.synchronization;
 
 import java.util.List;
 import java.util.Map;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.springframework.core.io.FileSystemResource;
 
-@AllArgsConstructor
-@Getter
-public class UploadChunkRequestAssertion {
-    public final String expectedId;
-    public final String expectedVersionBefore;
-    public final String expectedVersionAfter;
-    public final List<String> expectedPages;
-    public final List<String> expectedToDelete;
-    public final List<String> expectedToDeleteFromArchive;
-    public final List<FileSystemResource> filesToUpload;
-    public final List<FileSystemResource> filesToUploadToArchive;
-    public final Map<String, String> expectedToUploadPaths;
-    public final Map<String, String> expectedToUploadToArchivePaths;
-    public final Map<String, String> expectedToDeletePaths;
-    public final Map<String, String> expectedToDeleteFromArchivePaths;
-}
+public record UploadChunkRequestAssertion(
+        String expectedId,
+        String expectedVersionBefore,
+        String expectedVersionAfter,
+        List<String> expectedPages,
+        List<String> expectedToDelete,
+        List<String> expectedToDeleteFromArchive,
+        List<FileSystemResource> filesToUpload,
+        List<FileSystemResource> filesToUploadToArchive,
+        Map<String, String> expectedToUploadPaths,
+        Map<String, String> expectedToUploadToArchivePaths,
+        Map<String, String> expectedToDeletePaths,
+        Map<String, String> expectedToDeleteFromArchivePaths) {}

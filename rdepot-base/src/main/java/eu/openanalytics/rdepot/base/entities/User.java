@@ -27,6 +27,7 @@ import eu.openanalytics.rdepot.base.entities.enums.ResourceType;
 import eu.openanalytics.rdepot.base.event.EventableResource;
 import eu.openanalytics.rdepot.base.technology.InternalTechnology;
 import jakarta.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashSet;
@@ -45,6 +46,7 @@ import lombok.Setter;
         uniqueConstraints = {@UniqueConstraint(columnNames = "login"), @UniqueConstraint(columnNames = "email")})
 public class User extends EventableResource implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @ManyToOne(fetch = FetchType.EAGER)

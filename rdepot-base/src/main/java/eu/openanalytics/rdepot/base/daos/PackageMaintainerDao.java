@@ -64,6 +64,12 @@ public interface PackageMaintainerDao extends Dao<PackageMaintainer> {
             @Param("deleted") boolean deleted);
 
     @Query(
+            value = "SELECT pm FROM PackageMaintainer pm "
+                    + "WHERE pm.packageName = :packageName AND pm.repository.id = :repositoryId")
+    List<PackageMaintainer> findAllByPackageNameAndRepositoryId(
+            @Param("packageName") String packageName, @Param("repositoryId") int repositoryId);
+
+    @Query(
             value =
                     "SELECT pm FROM PackageMaintainer pm "
                             + "WHERE pm.user.id = :userId AND pm.packageName = :packageName AND pm.repository.id = :repositoryId AND pm.deleted = :deleted")

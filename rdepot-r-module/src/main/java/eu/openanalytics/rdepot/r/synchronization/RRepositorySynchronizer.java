@@ -26,17 +26,29 @@ import eu.openanalytics.rdepot.base.storage.exceptions.OrganizePackagesException
 import eu.openanalytics.rdepot.base.synchronization.RepoResponse;
 import eu.openanalytics.rdepot.base.synchronization.RepositorySynchronizer;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
+import eu.openanalytics.rdepot.base.synchronization.checksums.Checksum;
+import eu.openanalytics.rdepot.base.synchronization.checksums.Checksums;
 import eu.openanalytics.rdepot.base.synchronization.exceptions.SendSynchronizeRequestException;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.services.RPackageService;
-import eu.openanalytics.rdepot.r.storage.RStorage;
-import eu.openanalytics.rdepot.r.storage.utils.PopulatedRepositoryContent;
+import eu.openanalytics.rdepot.r.storage.population.PopulatedRepositoryContent;
+import eu.openanalytics.rdepot.r.storage.population.RPopulator;
+import eu.openanalytics.rdepot.r.synchronization.partitioning.RRequestBodyPartitioner;
+import eu.openanalytics.rdepot.r.synchronization.partitioning.structs.ChunkedRequestBody;
 import eu.openanalytics.rdepot.r.technology.RLanguage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.StandardCopyOption;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -61,9 +73,9 @@ import org.springframework.web.client.RestTemplate;
 public class RRepositorySynchronizer extends RepositorySynchronizer<RRepository> {
 
     public static final Comparator<RPackage> PACKAGE_COMPARATOR = Comparator.comparingInt(RPackage::getId);
-    private final RStorage storage;
+    private final RPopulator populator;
     private final RPackageService packageService;
-    private final RestTemplate rest;
+    private final RestTemplate repoApiClient;
     private final RRequestBodyPartitioner rRequestBodyPartitioner;
 
     @Value("${local-storage.max-request-size}")
@@ -122,8 +134,9 @@ public class RRepositorySynchronizer extends RepositorySynchronizer<RRepository>
             List<RPackage> latestBinaryPackages)
             throws SynchronizeRepositoryException {
         try {
+            final List<String> binaryPlatforms = getBinaryPlatformsForRepository(repository);
             synchronizeRepository(
-                    storage.organizePackagesInStorage(
+                    populator.organizePackagesInStorage(
                             dateStamp,
                             sourcePackages,
                             latestSourcePackages,
@@ -131,6 +144,7 @@ public class RRepositorySynchronizer extends RepositorySynchronizer<RRepository>
                             binaryPackages,
                             latestBinaryPackages,
                             archiveBinaryPackages,
+                            binaryPlatforms,
                             repository),
                     repository);
         } catch (OrganizePackagesException e) {
@@ -139,10 +153,30 @@ public class RRepositorySynchronizer extends RepositorySynchronizer<RRepository>
         }
     }
 
-    private RemoteState getRemoteState(String serverAndPort, String repositoryDirectory, boolean archive) {
+    /**
+     * @return e.g. "bin/linux/x86_64/centos/4.5"
+     */
+    private List<String> getBinaryPlatformsForRepository(RRepository repository) {
+        final Gson gson = new Gson();
+        final ServerAddressPortAndDirectory serverAddressPortAndDirectory = parseServerAddress(repository);
+
+        final String serverAndPort = serverAddressPortAndDirectory.serverAndPort();
+        final String repositoryDirectory = serverAddressPortAndDirectory.repositoryDirectory();
+
+        final ResponseEntity<String> response = repoApiClient.getForEntity(
+                serverAndPort
+                        + (repositoryDirectory.startsWith("r/") ? "/" : "/r/")
+                        + repositoryDirectory + "/platforms",
+                String.class);
+
+        return new ArrayList<>(Arrays.asList(gson.fromJson(response.getBody(), String[].class)));
+    }
+
+    private RemoteState getRemoteState(
+            String serverAndPort, String repositoryDirectory, Checksums checksums, boolean archive) {
         final Gson gson = new Gson();
 
-        final ResponseEntity<String> response = rest.getForEntity(
+        final ResponseEntity<String> response = repoApiClient.getForEntity(
                 attachTechnologyIfNeeded(serverAndPort, repositoryDirectory, RLanguage.instance)
                         + (archive ? "archive/" : ""),
                 String.class);
@@ -150,51 +184,71 @@ public class RRepositorySynchronizer extends RepositorySynchronizer<RRepository>
         final List<String> remotePackages =
                 new ArrayList<>(Arrays.asList(gson.fromJson(response.getBody(), String[].class)));
 
-        final List<String> remoteSourcePackages = remotePackages.stream()
+        final List<String> remoteSourcePackages = new ArrayList<>();
+        remotePackages.stream()
                 .filter(file -> StringUtils.contains(file, "src/contrib/"))
-                .map(file -> StringUtils.substringAfterLast(file, "/"))
-                .toList();
+                .forEach(file -> {
+                    String filePath = file.substring(0, file.indexOf("="));
+                    remoteSourcePackages.add(StringUtils.substringAfterLast(filePath, "/"));
+                    checksums.addChecksum(new Checksum(filePath, file.substring(file.indexOf("=") + 1)));
+                });
 
         // <path = "bin/... , filename>
         final MultiValueMap<String, String> remoteBinaryPackages = new LinkedMultiValueMap<>();
         remotePackages.stream()
                 .filter(file -> StringUtils.startsWith(file, "bin/"))
-                .forEach(file -> remoteBinaryPackages.add(
-                        StringUtils.substringBeforeLast(file, "/"), StringUtils.substringAfterLast(file, "/")));
+                .forEach(file -> {
+                    String filePath = file.substring(0, file.indexOf("="));
+                    remoteBinaryPackages.add(
+                            StringUtils.substringBeforeLast(filePath, "/"),
+                            StringUtils.substringAfterLast(filePath, "/"));
+                    checksums.addChecksum(new Checksum(filePath, file.substring(file.indexOf("=") + 1)));
+                });
 
         return new RemoteState(remoteSourcePackages, remoteBinaryPackages, remotePackages);
+    }
+
+    private record ServerAddressPortAndDirectory(String serverAndPort, String repositoryDirectory) {}
+
+    private ServerAddressPortAndDirectory parseServerAddress(RRepository repository) {
+        final String[] serverAddressComponents = repository.getServerAddress().split("/");
+        if (serverAddressComponents.length < 4) {
+            throw new IllegalStateException("Incorrect server address: " + repository.getServerAddress());
+        }
+
+        final String serverAndPort = serverAddressComponents[0] + "//" + serverAddressComponents[2];
+        final String repositoryDirectory = String.join(
+                "/",
+                Arrays.stream(serverAddressComponents, 3, serverAddressComponents.length)
+                        .toArray(String[]::new));
+        return new ServerAddressPortAndDirectory(serverAndPort, repositoryDirectory);
     }
 
     private void synchronizeRepository(PopulatedRepositoryContent populatedRepositoryContent, RRepository repository)
             throws SynchronizeRepositoryException {
 
-        String[] serverAddressComponents = repository.getServerAddress().split("/");
-        if (serverAddressComponents.length < 4) {
-            throw new IllegalStateException("Incorrect server address: " + repository.getServerAddress());
-        }
-
-        String serverAndPort = serverAddressComponents[0] + "//" + serverAddressComponents[2];
-        String repositoryDirectory = String.join(
-                "/",
-                Arrays.stream(serverAddressComponents, 3, serverAddressComponents.length)
-                        .toArray(String[]::new));
+        final ServerAddressPortAndDirectory serverAddressPortAndDirectory = parseServerAddress(repository);
+        final String repositoryDirectory = serverAddressPortAndDirectory.repositoryDirectory();
+        final String serverAndPort = serverAddressPortAndDirectory.serverAndPort();
 
         try {
-            final RemoteState remoteLatestState = getRemoteState(serverAndPort, repositoryDirectory, false);
-            final RemoteState remoteArchiveState = getRemoteState(serverAndPort, repositoryDirectory, true);
+            final Checksums checksums = new Checksums();
+            final RemoteState remoteLatestState = getRemoteState(serverAndPort, repositoryDirectory, checksums, false);
+            final RemoteState remoteArchiveState = getRemoteState(serverAndPort, repositoryDirectory, checksums, true);
             final String versionBefore = remoteLatestState.getPackages().remove(0);
 
-            final SynchronizeRepositoryRequestBody requestBody = storage.buildSynchronizeRequestBody(
+            final SynchronizeRepositoryRequestBody requestBody = populator.buildSynchronizeRequestBody(
                     populatedRepositoryContent,
                     remoteLatestState.getSourcePackages(),
                     remoteArchiveState.getSourcePackages(),
                     remoteLatestState.getBinaryPackages(),
                     remoteArchiveState.getBinaryPackages(),
+                    checksums,
                     repository,
                     versionBefore);
 
             sendSynchronizeRequest(requestBody, serverAndPort, repositoryDirectory);
-            storage.cleanUpAfterSynchronization(populatedRepositoryContent);
+            populator.cleanUpAfterSynchronization(populatedRepositoryContent);
         } catch (SendSynchronizeRequestException | RestClientException e) {
             log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new SynchronizeRepositoryException();
@@ -204,40 +258,41 @@ public class RRepositorySynchronizer extends RepositorySynchronizer<RRepository>
         }
     }
 
+    private String postChunk(MultiValueMap<String, Object> chunk, String serverAddress, String repositoryDirectory)
+            throws SendSynchronizeRequestException {
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, ContentType.MULTIPART_FORM_DATA.getMimeType());
+        final HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(chunk, headers);
+        final ResponseEntity<RepoResponse> httpResponse = repoApiClient.postForEntity(
+                attachTechnologyIfNeeded(serverAddress, repositoryDirectory, RLanguage.instance),
+                entity,
+                RepoResponse.class);
+
+        if (!httpResponse.getStatusCode().is2xxSuccessful()
+                || !Objects.equals(
+                        Objects.requireNonNull(httpResponse.getBody()).getMessage(), "OK")) {
+            throw new SendSynchronizeRequestException();
+        }
+
+        return httpResponse.getBody().getId();
+    }
+
     private void sendSynchronizeRequest(
             SynchronizeRepositoryRequestBody request, String serverAddress, String repositoryDirectory)
             throws SendSynchronizeRequestException {
-        final ChunksData chunksData = rRequestBodyPartitioner.toChunks(request, maxRequestSize);
-
+        final ChunkedRequestBody chunks = rRequestBodyPartitioner.partition(request, maxRequestSize);
         log.debug("Sending chunk to repo...");
 
         try {
-            String id = "";
-            for (MultiValueMap<String, Object> chunk : chunksData.getChunks()) {
-                chunk.add("id", id);
-
-                final HttpHeaders headers = new HttpHeaders();
-                headers.add(HttpHeaders.CONTENT_TYPE, ContentType.MULTIPART_FORM_DATA.getMimeType());
-                final HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(chunk, headers);
-                final ResponseEntity<RepoResponse> httpResponse = rest.postForEntity(
-                        attachTechnologyIfNeeded(serverAddress, repositoryDirectory, RLanguage.instance),
-                        entity,
-                        RepoResponse.class);
-
-                if (!httpResponse.getStatusCode().is2xxSuccessful()
-                        || !Objects.equals(
-                                Objects.requireNonNull(httpResponse.getBody()).getMessage(), "OK")) {
-                    throw new SendSynchronizeRequestException();
-                }
-
-                id = httpResponse.getBody().getId();
+            final String id = postChunk(chunks.firstChunkToMap(), serverAddress, repositoryDirectory);
+            for (MultiValueMap<String, Object> chunk : chunks.otherChunksToMaps(id)) {
+                postChunk(chunk, serverAddress, repositoryDirectory);
             }
-
-            revertFileNamesChange(chunksData.getOldFilenames());
-
         } catch (RestClientException e) {
             log.error("{}: {}", e.getClass().getCanonicalName(), e.getMessage(), e);
             throw new SendSynchronizeRequestException();
+        } finally {
+            revertFileNamesChange(chunks.getOriginalFileNames());
         }
     }
 

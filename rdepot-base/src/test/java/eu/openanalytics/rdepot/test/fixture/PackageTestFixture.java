@@ -26,6 +26,7 @@ import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.time.DateProvider;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -47,6 +48,7 @@ public class PackageTestFixture {
         for (int i = idShift; i < packageCount + idShift; i++) {
             Package packageBag = new Package() {
 
+                @Serial
                 private static final long serialVersionUID = 1L;
 
                 @Override

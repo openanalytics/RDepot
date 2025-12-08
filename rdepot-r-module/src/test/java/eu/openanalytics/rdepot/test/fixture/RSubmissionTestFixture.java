@@ -56,7 +56,7 @@ public class RSubmissionTestFixture {
     }
 
     public static List<SubmissionDto> GET_FIXTURE_SUBMISSION_DTOS(List<Submission> submissions) {
-        List<SubmissionDto> submissionDtos = new ArrayList<SubmissionDto>();
+        List<SubmissionDto> submissionDtos = new ArrayList<>();
         submissions.forEach(submission -> {
             PackageDto packageDto = new PackageDto(submission.getPackageBag());
             submissionDtos.add(new SubmissionDto(submission, packageDto));

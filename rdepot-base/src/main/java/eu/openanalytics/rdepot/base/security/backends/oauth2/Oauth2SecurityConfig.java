@@ -21,12 +21,17 @@
 package eu.openanalytics.rdepot.base.security.backends.oauth2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.jose.JOSEObjectType;
+import com.nimbusds.jose.proc.DefaultJOSEObjectTypeVerifier;
 import eu.openanalytics.rdepot.base.security.RestAuthenticationEntryPoint;
 import eu.openanalytics.rdepot.base.security.authenticators.Oauth2CustomBindAuthenticator;
 import eu.openanalytics.rdepot.base.security.basic.AccessTokenAuthenticationFilter;
 import eu.openanalytics.rdepot.base.security.basic.AccessTokenBindAuthenticator;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.MessageSource;
@@ -53,11 +58,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @ConditionalOnProperty(value = "app.authentication", havingValue = "oauth2")
 public class Oauth2SecurityConfig {
 
-    @Value("${oauth2.jwk-set-uri}")
-    private String jwkSetUri;
-
-    @Value("${oauth2.login-field}")
-    private String loginField;
+    @Autowired
+    private Oauth2Properties oauth2Properties;
 
     @Value("${allowed-origin}")
     private String origin;
@@ -124,11 +126,25 @@ public class Oauth2SecurityConfig {
 
     @Bean
     JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
+        Set<JOSEObjectType> allowedTypes = new HashSet<>();
+        allowedTypes.add(null);
+        for (String el : oauth2Properties.getJwtTypes()) {
+            allowedTypes.add(new JOSEObjectType(el));
+        }
+
+        return NimbusJwtDecoder.withJwkSetUri(oauth2Properties.getJwkSetUri())
+                .jwtProcessorCustomizer(customizer -> {
+                    customizer.setJWSTypeVerifier(new DefaultJOSEObjectTypeVerifier<>(allowedTypes));
+                })
+                .build();
     }
 
     @Bean
     Oauth2JWTAuthenticationConverter oauth2JWTAuthenticationConverter() {
-        return new Oauth2JWTAuthenticationConverter(authenticator, loginField);
+        return new Oauth2JWTAuthenticationConverter(
+                authenticator,
+                oauth2Properties.getLoginField(),
+                oauth2Properties.getEmailField(),
+                oauth2Properties.getFullNameField());
     }
 }

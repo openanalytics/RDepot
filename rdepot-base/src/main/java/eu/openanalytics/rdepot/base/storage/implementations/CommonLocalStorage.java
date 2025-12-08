@@ -21,39 +21,14 @@
 package eu.openanalytics.rdepot.base.storage.implementations;
 
 import eu.openanalytics.rdepot.base.entities.Package;
-import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.storage.Storage;
-import eu.openanalytics.rdepot.base.storage.exceptions.CreateFolderStructureException;
-import eu.openanalytics.rdepot.base.storage.exceptions.CreateTemporaryFolderException;
-import eu.openanalytics.rdepot.base.storage.exceptions.DeleteFileException;
-import eu.openanalytics.rdepot.base.storage.exceptions.DownloadFileException;
-import eu.openanalytics.rdepot.base.storage.exceptions.ExtractFileException;
-import eu.openanalytics.rdepot.base.storage.exceptions.GzipFileException;
-import eu.openanalytics.rdepot.base.storage.exceptions.InvalidSourceException;
-import eu.openanalytics.rdepot.base.storage.exceptions.LinkFoldersException;
-import eu.openanalytics.rdepot.base.storage.exceptions.Md5SumCalculationException;
-import eu.openanalytics.rdepot.base.storage.exceptions.MoveFileException;
-import eu.openanalytics.rdepot.base.storage.exceptions.MovePackageSourceException;
-import eu.openanalytics.rdepot.base.storage.exceptions.PackageFolderPopulationException;
-import eu.openanalytics.rdepot.base.storage.exceptions.SourceFileDeleteException;
-import eu.openanalytics.rdepot.base.storage.exceptions.SourceNotFoundException;
-import eu.openanalytics.rdepot.base.storage.exceptions.WriteToWaitingRoomException;
-import jakarta.annotation.Resource;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import eu.openanalytics.rdepot.base.storage.exceptions.*;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.zip.GZIPInputStream;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -64,6 +39,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.ReversedLinesFileReader;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -81,163 +57,12 @@ import org.springframework.web.multipart.MultipartFile;
  * It provides basic features for moving resources around
  * and processing them without parsing the contents
  * (e.g. compression, checksum calculation etc.).
- * @param <R> Technology-specific {@link Repository} class.
  * @param <P> Technology-specific {@link Package} class.
  */
 @Slf4j
-public abstract class CommonLocalStorage<R extends Repository, P extends Package> implements Storage<R, P> {
+public abstract class CommonLocalStorage<P extends Package> implements Storage<P> {
 
     protected final String separator = FileSystems.getDefault().getSeparator();
-    private final Random random = new Random();
-
-    @Resource(name = "packageUploadDirectory")
-    private File packageUploadDirectory;
-
-    @Resource(name = "repositoryGenerationDirectory")
-    private File repositoryGenerationDirectory;
-
-    @Override
-    public String writeToWaitingRoom(final MultipartFile fileData, final Repository repository)
-            throws WriteToWaitingRoomException {
-        try {
-            final File waitingRoom = generateWaitingRoom(packageUploadDirectory, repository);
-            final File file = new File(waitingRoom.getAbsolutePath() + separator + fileData.getOriginalFilename());
-
-            fileData.transferTo(file);
-
-            return file.getAbsolutePath();
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-            throw new WriteToWaitingRoomException();
-        }
-    }
-
-    /**
-     * Creates a "current" symbolic link pointing at the latest generated repository.
-     */
-    protected File linkCurrentFolderToGeneratedFolder(Repository repository, String dateStamp)
-            throws LinkFoldersException {
-        return linkTwoFolders(
-                repositoryGenerationDirectory.getAbsolutePath()
-                        + separator
-                        + repository.getId()
-                        + separator
-                        + dateStamp,
-                repositoryGenerationDirectory.getAbsolutePath() + separator + repository.getId() + separator
-                        + "current");
-    }
-
-    private File generateWaitingRoom(final File packageUploadDirectory, final Repository repository)
-            throws IOException {
-        File waitingRoom = new File(
-                packageUploadDirectory.getAbsolutePath() + separator + "new" + separator + random.nextInt(100000000));
-
-        while (waitingRoom.exists()) {
-            waitingRoom = new File(packageUploadDirectory.getAbsolutePath()
-                    + separator + "new" + separator + repository.getId()
-                    + random.nextInt(100000000));
-        }
-
-        FileUtils.forceMkdir(waitingRoom);
-        return waitingRoom;
-    }
-
-    @Override
-    public String moveToMainDirectory(final Package packageBag)
-            throws InvalidSourceException, MovePackageSourceException {
-        log.debug("Moving package to the main directory...");
-        final Repository repository = packageBag.getRepository();
-        File mainDir = new File(packageUploadDirectory.getAbsolutePath() + separator + "repositories" + separator
-                + repository.getId() + separator + (random.nextInt(100000000)));
-
-        while (mainDir.exists())
-            mainDir = new File(packageUploadDirectory.getAbsolutePath() + separator + "repositories" + separator
-                    + repository.getId() + separator + (random.nextInt(100000000)));
-
-        final File current = new File(packageBag.getSource());
-        if (!current.exists()) {
-            log.error("Source [{}] for package {} does not exist.", packageBag.getSource(), packageBag);
-            throw new InvalidSourceException();
-        }
-
-        File newDirectory;
-        try {
-            newDirectory = move(current.getParentFile(), mainDir);
-        } catch (MoveFileException e) {
-            if (mainDir.exists()) {
-                try {
-                    deleteFile(mainDir);
-                } catch (DeleteFileException dfe) {
-                    log.error(dfe.getMessage(), dfe);
-                }
-            }
-            log.error(e.getMessage(), e);
-            throw new MovePackageSourceException();
-        }
-
-        final String packageFilename = current.getName();
-        try {
-            deleteFile(current);
-        } catch (DeleteFileException e) {
-            log.error(e.getMessage(), e);
-            throw new MovePackageSourceException();
-        }
-        log.debug(
-                "Package moved to the following location: {}{}{}",
-                newDirectory.getAbsolutePath(),
-                separator,
-                packageFilename);
-        return new File(newDirectory.getAbsolutePath() + separator + packageFilename).getAbsolutePath();
-    }
-
-    /**
-     * Creates directories where the repository will be populated for publication.
-     */
-    protected void createFolderStructureForGeneration(Repository repository, String dateStamp)
-            throws CreateFolderStructureException {
-        File dateStampFolder = null;
-        try {
-            dateStampFolder = createFolderStructure(repositoryGenerationDirectory.getAbsolutePath()
-                    + separator
-                    + repository.getId()
-                    + separator
-                    + dateStamp);
-
-            createFolderStructure(getRepositoryGeneratedPath(dateStampFolder, separator));
-
-        } catch (CreateFolderStructureException e) {
-            if (dateStampFolder != null) {
-                try {
-                    deleteFile(dateStampFolder);
-                } catch (DeleteFileException dfe) {
-                    log.error(dfe.getMessage(), dfe);
-                }
-            }
-
-            throw e;
-        }
-    }
-
-    /**
-     * Returns subdirectory for repository content, specific for Technology.
-     * @return path to the subdirectory in the file system.
-     */
-    protected abstract String getRepositoryGeneratedPath(File dateStampFolder, String separator);
-
-    @Override
-    public String moveToTrashDirectory(Package packageBag) throws MovePackageSourceException {
-        File trashDir = new File(packageUploadDirectory.getAbsolutePath() + separator
-                + "trash" + separator + packageBag.getRepository().getId()
-                + separator + random.nextInt(100000000));
-
-        while (trashDir.exists()) {
-            trashDir = new File(packageUploadDirectory.getAbsolutePath() + separator
-                    + "trash" + separator + packageBag.getRepository().getId()
-                    + separator + random.nextInt(100000000));
-        }
-
-        return moveSource(packageBag, trashDir.getAbsolutePath());
-    }
 
     @Override
     public String moveSource(Package packageBag, String destinationDir) throws MovePackageSourceException {
@@ -280,33 +105,6 @@ public abstract class CommonLocalStorage<R extends Repository, P extends Package
         return newDirectory.getAbsolutePath() + separator + packageFilename;
     }
 
-    /**
-     * Filter out packages that are already uploaded to the remote server.
-     * @param remotePackages list of remote package names and versions
-     * @param localPackages packages that are stored locally, to be published
-     * @return list of {@link File} objects to upload to the remote server.
-     */
-    protected List<File> selectPackagesToUpload(List<String> remotePackages, List<P> localPackages) {
-        List<File> toUpload = new ArrayList<>();
-
-        for (Package packageBag : localPackages) {
-            if (!remotePackages.contains(packageBag.getFileName())) {
-                toUpload.add(new File(packageBag.getSource()));
-            }
-        }
-
-        return toUpload;
-    }
-
-    /**
-     * Populates every package in a generated directory.
-     */
-    protected void populatePackageFolder(List<P> packages, String folderPath) throws PackageFolderPopulationException {
-        for (P packageBag : packages) {
-            populatePackage(packageBag, folderPath);
-        }
-    }
-
     @Override
     public String extractTarGzPackageFile(String storedFilePath) throws ExtractFileException {
         log.debug("Extracting package file: {}", storedFilePath);
@@ -344,7 +142,7 @@ public abstract class CommonLocalStorage<R extends Repository, P extends Package
     /**
      * Forcibly removes file from the File System.
      */
-    protected void deleteFile(File file) throws DeleteFileException {
+    public void deleteFile(File file) throws DeleteFileException {
         if (file.exists()) {
             try {
                 FileUtils.forceDelete(file);
@@ -359,7 +157,7 @@ public abstract class CommonLocalStorage<R extends Repository, P extends Package
      * Forcibly cleans the directory.
      * If it does not exist or is not a directory, nothing will happen.
      */
-    protected void cleanDirectory(File directory) throws DeleteFileException {
+    public void cleanDirectory(File directory) throws DeleteFileException {
         if (directory.exists() && directory.isDirectory()) {
             try {
                 FileUtils.cleanDirectory(directory);
@@ -378,7 +176,7 @@ public abstract class CommonLocalStorage<R extends Repository, P extends Package
      * @param outputDir     the output directory file.
      */
     private List<String> unTar(final File inputFile, final File outputDir) throws IOException, ArchiveException {
-        log.debug("Extracting {} to dir {}.", inputFile.getAbsolutePath(), outputDir.getAbsolutePath());
+        log.debug("Extracting tar file {} to dir {}.", inputFile.getAbsolutePath(), outputDir.getAbsolutePath());
         final InputStream is = new FileInputStream(inputFile);
         TarArchiveEntry entry;
         List<String> filesInArchive = new ArrayList<>();
@@ -421,7 +219,7 @@ public abstract class CommonLocalStorage<R extends Repository, P extends Package
      * @return  The {@link File} with the extracted content.
      */
     private File unGzip(final File inputFile, final File outputDir) throws IOException {
-        log.debug("Extracting {} to dir {}.", inputFile.getAbsolutePath(), outputDir.getAbsolutePath());
+        log.debug("Extracting gzip file {} to dir {}.", inputFile.getAbsolutePath(), outputDir.getAbsolutePath());
 
         final File outputFile = new File(
                 outputDir, inputFile.getName().substring(0, inputFile.getName().length() - 3));
@@ -441,7 +239,8 @@ public abstract class CommonLocalStorage<R extends Repository, P extends Package
      * Moves file or directory to destination.
      * If destination path does not exist, subdirectories are created.
      */
-    protected File move(File source, File destination) throws MoveFileException {
+    @Override
+    public File move(File source, File destination) throws MoveFileException {
         try {
             if (!destination.getParentFile().exists()) createFolderStructure(destination.getParent());
 
@@ -465,7 +264,7 @@ public abstract class CommonLocalStorage<R extends Repository, P extends Package
      * @param path Path to the directory
      * @return Created directory
      */
-    protected File createFolderStructure(String path) throws CreateFolderStructureException {
+    public File createFolderStructure(String path) throws CreateFolderStructureException {
         File newFolder = new File(path);
         try {
             if (!newFolder.exists()) {
@@ -502,8 +301,9 @@ public abstract class CommonLocalStorage<R extends Repository, P extends Package
      * This method creates a compressed copy of a given file.
      * @param source Source file
      */
-    protected void gzipFile(final File source) throws GzipFileException {
-        File destination = new File(source.getAbsolutePath() + ".gz");
+    public void gzipFile(final String source) throws GzipFileException {
+        final File sourceFile = new File(source);
+        File destination = new File(sourceFile.getAbsolutePath() + ".gz");
         try (GzipCompressorOutputStream compressor =
                 new GzipCompressorOutputStream(new FileOutputStream(destination))) {
             try (FileInputStream inputSource = new FileInputStream(source)) {
@@ -517,7 +317,9 @@ public abstract class CommonLocalStorage<R extends Repository, P extends Package
     /**
      * This method calculates MD5 sum of a file.
      */
-    protected String calculateMd5Sum(File target) throws Md5SumCalculationException {
+    @Override
+    public String calculateMd5Sum(String targetPath) throws Md5SumCalculationException {
+        final File target = new File(targetPath);
         try (InputStream is = new FileInputStream(target)) {
             return DigestUtils.md5DigestAsHex(is);
         } catch (IOException e) {
@@ -532,7 +334,8 @@ public abstract class CommonLocalStorage<R extends Repository, P extends Package
      * @param linkPath Path to the link
      * @return created link
      */
-    protected File linkTwoFolders(String targetPath, String linkPath) throws LinkFoldersException {
+    @Override
+    public File linkTwoFolders(String targetPath, String linkPath) throws LinkFoldersException {
         Path link = Paths.get(linkPath);
 
         try {
@@ -596,8 +399,8 @@ public abstract class CommonLocalStorage<R extends Repository, P extends Package
         return new MultipartFile() {
 
             @Override
-            public void transferTo(@NonNull File dest) throws IOException, IllegalStateException {
-                FileCopyUtils.copy(getInputStream(), Files.newOutputStream(dest.toPath()));
+            public void transferTo(@NonNull File destination) throws IOException, IllegalStateException {
+                FileCopyUtils.copy(getInputStream(), Files.newOutputStream(destination.toPath()));
             }
 
             @Override
@@ -659,7 +462,7 @@ public abstract class CommonLocalStorage<R extends Repository, P extends Package
     /**
      * Reads file to a byte array.
      */
-    protected byte[] readFile(File file) throws IOException {
+    public byte[] readFile(File file) throws IOException {
         final FileSystemResource fsResource = new FileSystemResource(file);
         if (fsResource.exists()) {
             return Files.readAllBytes(fsResource.getFile().toPath());
@@ -676,5 +479,55 @@ public abstract class CommonLocalStorage<R extends Repository, P extends Package
             log.error(e.getMessage(), e);
             throw new SourceNotFoundException();
         }
+    }
+
+    @Override
+    public abstract void setCheckSum(P packageBag) throws CheckSumCalculationException;
+
+    @Override
+    public void appendText(String content, String path) throws IOException {
+        final Path resolved = Paths.get(path);
+        if (Files.isDirectory(resolved)) {
+            throw new IllegalArgumentException(path + " is a directory");
+        }
+        if (!Files.exists(resolved.getParent())) {
+            Files.createDirectories(resolved.getParent());
+        }
+        Files.writeString(
+                resolved, content, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+    }
+
+    @Override
+    public void removeContentFromEnd(String content, String path) throws IOException {
+        content = content.trim(); // Remove whitespace from the beginning and end
+        final String[] contentLines = content.split("\n"); // Split into separate lines
+        int charCounter = contentLines.length - 1; // Initialize with the expected number of newline characters
+        try (ReversedLinesFileReader reader = ReversedLinesFileReader.builder()
+                .setFile(path)
+                .setCharset(StandardCharsets.UTF_8)
+                .get()) { // Open the file from the end
+            int i = contentLines.length - 1; // Set the iteration at the end of expected content
+            String fileLine;
+            while ((fileLine = reader.readLine()) != null) {
+                final String trimmedFileLine = fileLine.trim();
+                final int whitespace = fileLine.length() - trimmedFileLine.length();
+                if (i >= 0
+                        && contentLines[i]
+                                .trim()
+                                .equals(fileLine.trim())) { // Remove whitespace, stop of all lines were matched
+                    i--;
+                    charCounter += fileLine.length() + whitespace + contentLines.length - 1 + i;
+                } else break;
+            }
+            if (i >= 0) return; // If all searched lines matched, 'i' should be exactly -1
+        }
+        try (final RandomAccessFile raf = new RandomAccessFile(path, "rw")) {
+            raf.setLength(raf.length() - charCounter);
+        }
+    }
+
+    @Override
+    public boolean exists(String path) {
+        return Paths.get(path).toFile().exists();
     }
 }

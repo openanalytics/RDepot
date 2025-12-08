@@ -5,6 +5,20 @@
         "hashMethod": "SHA256",
         "id": 13,
         "lastPublicationSuccessful": true,
+        "allowedFiles": [
+            {
+                "mimetype": "application/gzip",
+                "extension": ".tar.gz"
+            },
+            {
+                "mimetype": "application/x-gzip",
+                "extension": ".tar.gz"
+            },
+            {
+                "mimetype": "application/octet-stream",
+                "extension": ".whl"
+            }
+        ],
         "links": [
             {
                 "href": "http://localhost:8017/api/v2/manager/python/repositories/13",

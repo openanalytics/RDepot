@@ -9,6 +9,9 @@ allowed-origin: http://localhost:3001
 
 declarative: false
 
+on-start-up:
+  check-manuals: true
+
 repository-snapshots: true
 
 # Authentication related properties

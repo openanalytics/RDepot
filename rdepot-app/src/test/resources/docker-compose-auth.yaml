@@ -106,43 +106,23 @@ services:
 #    networks:
 #      oa-rdepot:
 #        ipv4_address: 192.168.49.16
-#
-#  keycloak:
-#    image: quay.io/keycloak/keycloak:10.0.2
-#    restart: unless-stopped
-#    hostname: oa-rdepot-keycloak
-#    container_name: oa-rdepot-keycloak
-#    ports:
-#      - 8080:8080
-#    environment:
-#      - DB_VENDOR=h2
-#      - KEYCLOAK_USER=admin
-#      - KEYCLOAK_PASSWORD=testpassword
-#      - KEYCLOAK_IMPORT=/opt/rdepot/realm-rdepot.json
-#      - PROXY_ADDRESS_FORWARDING=true
-#    volumes:
-#     - ./docker/keycloak/realm-rdepot-vue.json:/opt/rdepot/realm-rdepot.json
-#     - ./docker/keycloak/test-realm-rdepot.json:/opt/rdepot/realm-rdepot.json
-#     - ./docker/keycloak/realm-rdepot.json:/opt/rdepot/realm-rdepot.json
-#    networks:
-#      oa-rdepot:
-#        ipv4_address: 192.168.49.17
 
-#  ldap:
-#    build: ./docker/ldap
-#    restart: unless-stopped
-#    hostname: oa-rdepot-ldap
-#    container_name: oa-rdepot-ldap
-#    environment:
-#      - LDAP_TLS=false
-#      - LDAP_ORGANISATION=Test Company
-#      - LDAP_DOMAIN=example.org
-#      - LDAP_ADMIN_PASSWORD=testpassword
-#    volumes:
-#      - ./docker/ldap/import/config:/etc/ldap/slapd.d/
-#      - ./docker/ldap/import/db:/var/lib/ldap/
-#    networks:
-#      - oa-rdepot
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.2
+    restart: unless-stopped
+    hostname: oa-rdepot-keycloak
+    container_name: oa-rdepot-keycloak
+    command: start-dev --import-realm --hostname=http://192.168.49.17:8080
+    ports:
+      - 8080:8080
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=testpassword
+    volumes:
+     - ./docker/keycloak/realm-rdepot.json:/opt/keycloak/data/import/realm-rdepot.json:ro
+    networks:
+      oa-rdepot:
+        ipv4_address: 192.168.49.17
 
 #  greenmail:
 #    image: greenmail/standalone

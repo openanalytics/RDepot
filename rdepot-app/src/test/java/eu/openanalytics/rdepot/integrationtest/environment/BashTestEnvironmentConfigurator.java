@@ -80,15 +80,11 @@ public class BashTestEnvironmentConfigurator implements TestEnvironmentConfigura
 
     @Override
     public void blockRepoContainer(Runnable testMethod) throws Exception {
-        executeWithRetries(() -> {
-            bashScriptExecutor.executeBashScript("src/test/resources/scripts/blockRepo.sh");
-        });
+        executeWithRetries(() -> bashScriptExecutor.executeBashScript("src/test/resources/scripts/blockRepo.sh"));
         try {
             testMethod.run();
         } finally {
-            executeWithRetries(() -> {
-                bashScriptExecutor.executeBashScript("src/test/resources/scripts/unblockRepo.sh");
-            });
+            executeWithRetries(() -> bashScriptExecutor.executeBashScript("src/test/resources/scripts/unblockRepo.sh"));
         }
     }
 
@@ -105,9 +101,7 @@ public class BashTestEnvironmentConfigurator implements TestEnvironmentConfigura
             } catch (TimeoutException e) {
                 future.cancel(true);
                 bashScriptExecutor.executeBashCommand("pkill -9 -f 'docker exec'");
-
-                log.warn(
-                        "Restore timeout! [ATTEMPT " + (MAX_RETRIES - remainingAttempts + 1) + "/" + MAX_RETRIES + "]");
+                log.warn("Restore timeout! [ATTEMPT {}/" + MAX_RETRIES + "]", MAX_RETRIES - remainingAttempts + 1);
                 remainingAttempts--;
                 executor.shutdownNow();
             }

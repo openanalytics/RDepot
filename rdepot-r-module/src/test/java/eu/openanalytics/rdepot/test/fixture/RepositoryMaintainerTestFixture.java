@@ -27,8 +27,6 @@ import java.util.List;
 
 public class RepositoryMaintainerTestFixture {
 
-    public static final Boolean DELETED = false;
-
     public static List<RepositoryMaintainer> GET_REPOSITORY_MAINTAINERS_FOR_REPOSITORY(
             int count, Repository repository) {
         List<RepositoryMaintainer> maintainers = new ArrayList<>();

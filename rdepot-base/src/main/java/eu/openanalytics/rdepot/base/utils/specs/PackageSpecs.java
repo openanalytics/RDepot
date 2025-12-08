@@ -23,6 +23,9 @@ package eu.openanalytics.rdepot.base.utils.specs;
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.enums.SubmissionState;
 import eu.openanalytics.rdepot.base.utils.TechnologyResolver;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -61,5 +64,19 @@ public class PackageSpecs {
     public static <P extends Package> Specification<P> ofMaintainer(List<String> maintainers) {
         return (root, query, criteriaBuilder) ->
                 criteriaBuilder.in(root.get("user").get("name")).value(maintainers);
+    }
+
+    public static <P extends Package> Specification<P> notMaintainedBy(List<String> maintainers) {
+        return (root, query, criteriaBuilder) -> {
+            Join<?, ?> joinMaintainers = root.join("maintainers", JoinType.LEFT);
+            Join<?, ?> joinUsers = joinMaintainers.join("user", JoinType.LEFT);
+
+            Predicate notName = criteriaBuilder.not(
+                    criteriaBuilder.in(joinUsers.get("name")).value(maintainers));
+            Predicate nullName = criteriaBuilder.isNull(joinUsers.get("name"));
+            Predicate notDeleted = criteriaBuilder.equal(joinMaintainers.get("deleted"), false);
+
+            return criteriaBuilder.or(nullName, criteriaBuilder.and(notName, notDeleted));
+        };
     }
 }

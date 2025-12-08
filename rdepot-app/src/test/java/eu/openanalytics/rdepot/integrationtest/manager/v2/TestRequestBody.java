@@ -36,6 +36,9 @@ public class TestRequestBody {
     @Builder.Default
     private String urlSuffix = "";
 
+    @Builder.Default
+    private boolean ignoreSource = false;
+
     private int statusCode;
     private String token;
     private int howManyNewEventsShouldBeCreated;

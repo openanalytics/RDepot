@@ -24,9 +24,9 @@
         "id": 1,
         "state": "WAITING"
       },
-      "name": "TestPackage1",
+      "name": "test_package1",
       "version": "4.5.6",
-      "source": "1test_package.tar.gz",
+      "source": "test_package1-4.5.6.tar.gz",
       "active": true,
       "deleted": false,
       "technology": "Python",

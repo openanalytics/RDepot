@@ -23,6 +23,7 @@ package eu.openanalytics.rdepot.base.entities;
 import eu.openanalytics.rdepot.base.api.v2.dtos.IDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.PackageDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.PackageSimpleDto;
+import eu.openanalytics.rdepot.base.entities.enums.HashMethod;
 import eu.openanalytics.rdepot.base.entities.enums.ResourceType;
 import eu.openanalytics.rdepot.base.event.EventableResource;
 import eu.openanalytics.rdepot.base.technology.InternalTechnology;
@@ -35,12 +36,15 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -61,7 +65,7 @@ import lombok.Setter;
         name = "resource_technology",
         discriminatorType = DiscriminatorType.STRING,
         columnDefinition = "varchar default 'Package'")
-public abstract class Package extends EventableResource implements Comparable<Package>, Serializable {
+public abstract class Package extends EventableResource implements Comparable<Package>, Serializable, Hashable {
 
     protected Package() {
         super(InternalTechnology.instance, ResourceType.PACKAGE);
@@ -115,6 +119,9 @@ public abstract class Package extends EventableResource implements Comparable<Pa
     @Column(name = "description_content_type", nullable = false)
     private String descriptionContentType = "";
 
+    @ManyToMany(mappedBy = "packages")
+    private Set<PackageMaintainer> maintainers;
+
     protected Package(Package packageBag) {
         super(packageBag.id, packageBag.getTechnology(), ResourceType.PACKAGE);
         this.user = packageBag.user;
@@ -131,6 +138,12 @@ public abstract class Package extends EventableResource implements Comparable<Pa
         this.resourceTechnology = packageBag.resourceTechnology;
         this.repositoryGeneric = packageBag.repositoryGeneric;
         this.binary = packageBag.binary;
+        this.descriptionContentType = packageBag.descriptionContentType;
+        if (packageBag.maintainers != null) {
+            this.maintainers = new HashSet<>(packageBag.maintainers);
+        } else {
+            this.maintainers = new HashSet<>();
+        }
     }
 
     protected Package(Technology technology) {
@@ -177,6 +190,7 @@ public abstract class Package extends EventableResource implements Comparable<Pa
         this.active = active;
         this.deleted = deleted;
         this.repositoryGeneric = repository;
+        this.binary = binary;
     }
 
     protected Package(
@@ -206,6 +220,7 @@ public abstract class Package extends EventableResource implements Comparable<Pa
         this.submission = submission;
         this.deleted = deleted;
         this.repositoryGeneric = repository;
+        this.binary = binary;
     }
 
     @Transient
@@ -276,5 +291,10 @@ public abstract class Package extends EventableResource implements Comparable<Pa
     @Override
     public IDto createSimpleDto() {
         return new PackageSimpleDto(this);
+    }
+
+    @Override
+    public HashMethod getHashMethod() {
+        return this.repositoryGeneric.getHashMethod();
     }
 }

@@ -23,17 +23,9 @@ package eu.openanalytics.rdepot.test.unit.mediator.deleter;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
-import eu.openanalytics.rdepot.base.entities.RepositoryMaintainer;
-import eu.openanalytics.rdepot.base.entities.Resource;
-import eu.openanalytics.rdepot.base.entities.Submission;
-import eu.openanalytics.rdepot.base.entities.User;
+import eu.openanalytics.rdepot.base.entities.*;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
@@ -45,11 +37,7 @@ import eu.openanalytics.rdepot.r.mediator.deletion.RRepositoryDeleter;
 import eu.openanalytics.rdepot.r.mediator.deletion.RSubmissionDeleter;
 import eu.openanalytics.rdepot.r.services.RPackageService;
 import eu.openanalytics.rdepot.r.services.RRepositoryService;
-import eu.openanalytics.rdepot.test.fixture.PackageMaintainerTestFixture;
-import eu.openanalytics.rdepot.test.fixture.RPackageTestFixture;
-import eu.openanalytics.rdepot.test.fixture.RRepositoryTestFixture;
-import eu.openanalytics.rdepot.test.fixture.RepositoryMaintainerTestFixture;
-import eu.openanalytics.rdepot.test.fixture.UserTestFixture;
+import eu.openanalytics.rdepot.test.fixture.*;
 import eu.openanalytics.rdepot.test.unit.UnitTest;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,7 +59,7 @@ public class RRepositoryDeleterTest extends UnitTest {
     RepositoryMaintainerService repositoryMaintainerService;
 
     @Mock
-    Storage<RRepository, RPackage> storage;
+    Storage<RPackage> storage;
 
     @Mock
     RSubmissionDeleter submissionDeleter;
@@ -83,7 +71,6 @@ public class RRepositoryDeleterTest extends UnitTest {
     RRepositoryDeleter deleter;
 
     private RRepository repository;
-    private User user;
     private List<PackageMaintainer> packageMaintainers;
     private List<RepositoryMaintainer> repositoryMaintainers;
     private List<RPackage> packages;
@@ -91,7 +78,7 @@ public class RRepositoryDeleterTest extends UnitTest {
     @BeforeEach
     public void setUpResources() {
         repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        user = UserTestFixture.GET_PACKAGE_MAINTAINER();
+        User user = UserTestFixture.GET_PACKAGE_MAINTAINER();
         packageMaintainers = PackageMaintainerTestFixture.GET_PACKAGE_MAINTAINERS_FOR_REPOSITORY(2, repository);
         repositoryMaintainers =
                 RepositoryMaintainerTestFixture.GET_REPOSITORY_MAINTAINERS_FOR_REPOSITORY(2, repository);

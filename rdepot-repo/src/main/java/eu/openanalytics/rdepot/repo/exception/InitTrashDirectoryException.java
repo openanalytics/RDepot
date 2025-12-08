@@ -20,8 +20,11 @@
  */
 package eu.openanalytics.rdepot.repo.exception;
 
+import java.io.Serial;
+
 public class InitTrashDirectoryException extends Exception {
 
+    @Serial
     private static final long serialVersionUID = 2434381662852803993L;
 
     public InitTrashDirectoryException(String id) {

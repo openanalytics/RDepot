@@ -23,6 +23,7 @@ package eu.openanalytics.rdepot.base.config.declarative.exceptions;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
 import java.io.IOException;
+import java.io.Serial;
 
 /**
  * Thrown when the technology of a declarative repository config does not match the object mapper's
@@ -30,6 +31,7 @@ import java.io.IOException;
  */
 public class DeclaredRepositoryTechnologyMismatch extends IOException {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public DeclaredRepositoryTechnologyMismatch(String repositoryName) {

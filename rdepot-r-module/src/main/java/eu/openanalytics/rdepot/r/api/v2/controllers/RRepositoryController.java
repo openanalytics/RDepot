@@ -39,10 +39,14 @@ import eu.openanalytics.rdepot.base.api.v2.exceptions.UserNotAuthorized;
 import eu.openanalytics.rdepot.base.api.v2.resolvers.CommonPageableSortResolver;
 import eu.openanalytics.rdepot.base.api.v2.resolvers.DtoResolvedPageable;
 import eu.openanalytics.rdepot.base.api.v2.validation.PageableValidator;
+import eu.openanalytics.rdepot.base.entities.PackageSynchronizationStatus;
+import eu.openanalytics.rdepot.base.entities.RepositorySynchronizationStatus;
 import eu.openanalytics.rdepot.base.entities.Role;
-import eu.openanalytics.rdepot.base.entities.SynchronizationStatus;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
+import eu.openanalytics.rdepot.base.mirroring.converters.PackageSynchronizationStatusDtoConverter;
+import eu.openanalytics.rdepot.base.mirroring.dtos.PackageSynchronizationStatusDto;
+import eu.openanalytics.rdepot.base.mirroring.dtos.RepositorySynchronizationStatusDto;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
@@ -66,6 +70,7 @@ import jakarta.json.JsonException;
 import jakarta.json.JsonPatch;
 import java.security.Principal;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
@@ -73,11 +78,14 @@ import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.hateoas.PagedModel.PageMetadata;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -113,6 +121,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
     private final PageableValidator pageableValidator;
     private final CommonPageableSortResolver pageableSortResolver;
     private final StrategyExecutor strategyExecutor;
+    private final PackageSynchronizationStatusDtoConverter packageSynchronizationStatusDtoConverter;
 
     @Value("${declarative}")
     private String declarative;
@@ -135,7 +144,8 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
             RRepositoryDtoConverter rRepositoryDtoConverter,
             PageableValidator pageableValidator,
             CommonPageableSortResolver pageableSortResolver,
-            StrategyExecutor strategyExecutor) {
+            StrategyExecutor strategyExecutor,
+            PackageSynchronizationStatusDtoConverter packageSynchronizationStatusDtoConverter) {
         super(
                 messageSource,
                 LocaleContextHolder.getLocale(),
@@ -155,6 +165,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
         this.pageableValidator = pageableValidator;
         this.pageableSortResolver = pageableSortResolver;
         this.strategyExecutor = strategyExecutor;
+        this.packageSynchronizationStatusDtoConverter = packageSynchronizationStatusDtoConverter;
     }
 
     /**
@@ -172,7 +183,10 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
             Principal principal,
             @ParameterObject Pageable pageable,
             @RequestParam(name = "deleted", required = false, defaultValue = "false") Boolean deleted,
-            @RequestParam(name = "name", required = false) Optional<String> name)
+            @RequestParam(name = "published", required = false) Optional<Boolean> published,
+            @RequestParam(name = "maintainer", required = false) List<String> maintainers,
+            @RequestParam(name = "name", required = false) Optional<String> name,
+            @RequestParam(name = "search", required = false) Optional<String> search)
             throws ApiException {
 
         User requester = userService
@@ -186,6 +200,19 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
 
         Specification<RRepository> specs = SpecificationUtils.andComponent(null, RepositorySpecs.isDeleted(deleted));
         if (name.isPresent()) specs = SpecificationUtils.andComponent(specs, RepositorySpecs.ofName(name.get()));
+
+        if (published.isPresent()) {
+            specs = SpecificationUtils.andComponent(specs, RepositorySpecs.isPublished(published.get()));
+        }
+
+        if (Objects.nonNull(maintainers)) {
+            specs = SpecificationUtils.andComponent(specs, RepositorySpecs.ofMaintainer(maintainers));
+        }
+
+        if (search.isPresent()) {
+            specs = SpecificationUtils.andComponent(specs, RepositorySpecs.ofNameSearching(search.get()));
+        }
+
         return handleSuccessForPagedCollection(
                 rRepositoryService.findAllBySpecification(specs, resolvedPageable), requester);
     }
@@ -356,9 +383,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
         RRepository repository =
                 rRepositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
 
-        mirrorSynchronizer
-                .findByRepository(repository)
-                .forEach(m -> mirrorSynchronizer.synchronizeAsync(repository, m));
+        mirrorSynchronizer.synchronizeAsync(repository, mirrorSynchronizer.findByRepository(repository));
     }
 
     /**
@@ -367,7 +392,8 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
     @PreAuthorize("hasAuthority('repositorymaintainer')")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{id}/synchronization-status")
-    public ResponseDto<?> getSynchronizationStatus(@PathVariable("id") Integer id, Principal principal)
+    public ResponseDto<RepositorySynchronizationStatusDto> getSynchronizationStatus(
+            @PathVariable("id") Integer id, Principal principal, @ParameterObject Pageable pageable)
             throws ApiException {
         User requester = userService
                 .findActiveByLogin(principal.getName())
@@ -378,17 +404,31 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
         if (!securityMediator.isAuthorizedToEdit(repository, requester))
             throw new UserNotAuthorized(messageSource, locale);
 
-        List<SynchronizationStatus> status =
-                mirrorSynchronizer
-                        .getSynchronizationStatusList(); // TODO: #32977 it would be better to fetch it for specific
-        // repository
+        RepositorySynchronizationStatus repositoryStatus =
+                mirrorSynchronizer.getSynchronizationStatus(repository.getId());
 
-        for (SynchronizationStatus s : status) {
-            if (s.getRepositoryId() == repository.getId())
-                return ResponseDto.generateSuccessBody(messageSource, locale, s);
-        }
+        if (repositoryStatus == null) throw new SynchronizationNotFound(messageSource, locale);
 
-        throw new SynchronizationNotFound(messageSource, locale);
+        int start = (int) pageable.getOffset();
+        int end = Math.min(
+                (start + pageable.getPageSize()), repositoryStatus.getPackages().size());
+
+        Page<PackageSynchronizationStatus> packagesStatusPage = new PageImpl<>(
+                repositoryStatus.getPackages().subList(start, end),
+                pageable,
+                repositoryStatus.getPackages().size());
+
+        Page<PackageSynchronizationStatusDto> packagesStatusDtoPage =
+                packagesStatusPage.map(packageSynchronizationStatusDtoConverter::convertEntityToDto);
+
+        PageMetadata page = new PageMetadata(
+                pageable.getPageSize(),
+                pageable.getPageNumber(),
+                repositoryStatus.getPackages().size());
+        RepositorySynchronizationStatusDto repositoryStatusDto =
+                new RepositorySynchronizationStatusDto(repositoryStatus, packagesStatusDtoPage.getContent(), page);
+
+        return ResponseDto.generateSuccessBody(messageSource, locale, repositoryStatusDto);
     }
 
     /**

@@ -43,7 +43,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -57,15 +56,7 @@ public class PythonDeclarativeIntegrationTest extends DeclarativeIntegrationTest
             new DockerComposeContainer<>(new File("src/test/resources/docker-compose-declarative.yaml"));
     private static final String API_PATH = "/api/v2/manager/python";
     public static final TestEnvironmentConfigurator testEnv = TestEnvironmentConfigurator.getDefaultInstance();
-    public static final String AUTHORIZATION = "Authorization";
-    public static final String BEARER = "Bearer ";
-    public static final String ADMIN_TOKEN =
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJlaW5zdGVpbiIsIm5hbWUiOiJBbGJlcnQgRWluc3RlaW4iLCJlbWFpbCI6ImVpbnN0ZWluQGxkYXAuZm9ydW1zeXMuY29tIiwiYXVkIjoiUkRlcG90Iiwicm9sZXMiOlsidXNlciIsInBhY2thZ2VtYWludGFpbmVyIiwicmVwb3NpdG9yeW1haW50YWluZXIiLCJhZG1pbiJdLCJpc3MiOiJSRGVwb3QiLCJleHAiOjIwMDcwMjcyNDgsImlhdCI6MTY5MTY2NzI0OH0.SycsCWDmEFZfWV7cMpc05KareRXQ3iKfM9iprBa-j6M27D0hg0uKS1eGEPIuAHXEdqyUSD6yv7WMeXNY9BuYdw";
-    public static final String PACKAGEMAINTAINER_TOKEN =
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnYWxpZWxlbyIsImVtYWlsIjoiZ2FsaWVsZW9AbGRhcC5mb3J1bXN5cy5jb20iLCJuYW1lIjoiR2FsaWxlbyBHYWxpbGVpIiwiYXVkIjoiUkRlcG90Iiwicm9sZXMiOlsidXNlciIsInBhY2thZ2VtYWludGFpbmVyIl0sImlzcyI6IlJEZXBvdCIsImV4cCI6MjAwNzAyNzQ5MSwiaWF0IjoxNjkxNjY3NDkxfQ.24gRyDswxCmos1mUTkRJEKkrt3L2MFfyHEXa_H5EBhi3yirIN8AT7Bn_NYaTEtGcEfVd8NUQtgzm9uck76N2SQ";
     public static final String JSON_PATH = "src/test/resources/JSONs/v2/python-declarative";
-    public static final String USER_TOKEN =
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJuZXd0b24iLCJuYW1lIjoiSXNhYWMgTmV3dG9uIiwiZW1haWwiOiJuZXd0b25AbGRhcC5mb3J1bXN5cy5jb20iLCJhdWQiOiJSRGVwb3QiLCJyb2xlcyI6WyJ1c2VyIl0sImlzcyI6IlJEZXBvdCIsImV4cCI6MjAwNzAyNzUwOSwiaWF0IjoxNjkxNjY3NTA5fQ.waNTEOoLL0jkDpvihngEg_O6_W91wvIcSdtcXIBYiTeE5SbyLL60FFztYwuUwo-aEghzqnQlfVj4NATZMWgA-g";
     private static final String REPO_NAME_TO_EDIT = "newName";
     private static final String REPO_NAME_TO_CREATE = "New Test Repo";
 
@@ -80,7 +71,7 @@ public class PythonDeclarativeIntegrationTest extends DeclarativeIntegrationTest
                             .withStartupTimeout(Duration.ofMinutes(5)));
 
     public PythonDeclarativeIntegrationTest() {
-        super(AUTHORIZATION, BEARER, USER_TOKEN, API_PATH);
+        super(API_PATH);
     }
 
     @BeforeAll
@@ -121,7 +112,7 @@ public class PythonDeclarativeIntegrationTest extends DeclarativeIntegrationTest
     }
 
     @Test
-    public void shouldUploadPackageToPublishedPythonRepository() throws IOException, ParseException {
+    public void shouldUploadPackageToPublishedPythonRepository() throws IOException {
         File packageBag = new File("src/test/resources/itestPackages/coconutpy-2.2.1.tar.gz");
 
         given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -148,7 +139,7 @@ public class PythonDeclarativeIntegrationTest extends DeclarativeIntegrationTest
     }
 
     @Test
-    public void shouldUploadPackageToUnpublishedPythonRepository() throws IOException, ParseException {
+    public void shouldUploadPackageToUnpublishedPythonRepository() throws IOException {
         File packageBag = new File("src/test/resources/itestPackages/coconutpy-2.2.1.tar.gz");
 
         given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -179,7 +170,7 @@ public class PythonDeclarativeIntegrationTest extends DeclarativeIntegrationTest
     protected void updateMd5SumsAndVersion(JsonArray expectedContent) {}
 
     @Test
-    public void shouldSynchronizePythonRepositoryWithMirror() throws ParseException, IOException {
+    public void shouldSynchronizePythonRepositoryWithMirror() throws IOException {
         final String repositoryId = "1";
 
         given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -195,11 +186,43 @@ public class PythonDeclarativeIntegrationTest extends DeclarativeIntegrationTest
                 .pollInterval(5, TimeUnit.SECONDS)
                 .until(() -> assertSynchronizationFinished(repositoryId));
 
-        FileReader reader = new FileReader(JSON_PATH + "/repositories_after_synchronization.json");
+        FileReader reader = new FileReader(JSON_PATH + "/synchronization_status_paged.json");
+        JsonObject expectedSynchronizationStatus = (JsonObject) JsonParser.parseReader(reader);
+        reader = new FileReader(JSON_PATH + "/repositories_after_synchronization.json");
         JsonObject expectedRepositories = (JsonObject) JsonParser.parseReader(reader);
         reader = new FileReader(JSON_PATH + "/packages_after_synchronization.json");
         JsonObject expectedPackages = (JsonObject) JsonParser.parseReader(reader);
 
+        assertSynchronizationStatus(expectedSynchronizationStatus, repositoryId, "3", "1");
+        assertRepositories(expectedRepositories);
+        assertPackages(expectedPackages, true);
+    }
+
+    @Test
+    public void synchronizationStatus_withError() throws IOException {
+        final String repositoryId = "14";
+
+        given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .when()
+                .post(API_PATH + "/repositories/" + repositoryId + "/synchronize-mirrors")
+                .then()
+                .statusCode(204);
+
+        await().atMost(180, TimeUnit.SECONDS)
+                .with()
+                .pollInterval(5, TimeUnit.SECONDS)
+                .until(() -> assertSynchronizationFinished(repositoryId));
+
+        FileReader reader = new FileReader(JSON_PATH + "/synchronization_status_error.json");
+        JsonObject expectedSynchronizationStatus = (JsonObject) JsonParser.parseReader(reader);
+        reader = new FileReader(JSON_PATH + "/repositories_after_synchronization_with_error.json");
+        JsonObject expectedRepositories = (JsonObject) JsonParser.parseReader(reader);
+        reader = new FileReader(JSON_PATH + "/packages_after_synchronization_with_error.json");
+        JsonObject expectedPackages = (JsonObject) JsonParser.parseReader(reader);
+
+        assertSynchronizationStatus(expectedSynchronizationStatus, repositoryId, null, null);
         assertRepositories(expectedRepositories);
         assertPackages(expectedPackages, true);
     }
@@ -254,31 +277,5 @@ public class PythonDeclarativeIntegrationTest extends DeclarativeIntegrationTest
                 .post(API_PATH + "/repositories")
                 .then()
                 .statusCode(405);
-    }
-
-    private Boolean assertSynchronizationFinished(String repositoryId) {
-        String response = given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
-                .accept(ContentType.JSON)
-                .when()
-                .get(API_PATH + "/repositories/" + repositoryId + "/synchronization-status")
-                .then()
-                .statusCode(200)
-                .extract()
-                .asString();
-
-        JsonObject actualJson = (JsonObject) JsonParser.parseString(response);
-
-        return actualJson
-                        .get("data")
-                        .getAsJsonObject()
-                        .get("repositoryId")
-                        .getAsString()
-                        .equals(repositoryId)
-                && actualJson
-                        .get("data")
-                        .getAsJsonObject()
-                        .get("pending")
-                        .getAsString()
-                        .equals("false");
     }
 }

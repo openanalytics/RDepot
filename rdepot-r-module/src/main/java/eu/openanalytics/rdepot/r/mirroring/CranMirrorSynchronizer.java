@@ -20,6 +20,7 @@
  */
 package eu.openanalytics.rdepot.r.mirroring;
 
+import eu.openanalytics.rdepot.base.entities.PackageSynchronizationStatus;
 import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.exception.AdminNotFound;
@@ -27,6 +28,7 @@ import eu.openanalytics.rdepot.base.mediator.BestMaintainerChooser;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.mirroring.MirrorSynchronizer;
 import eu.openanalytics.rdepot.base.mirroring.exceptions.UpdatePackageException;
+import eu.openanalytics.rdepot.base.mirroring.pojos.SynchronizationStatus;
 import eu.openanalytics.rdepot.base.storage.exceptions.CreateTemporaryFolderException;
 import eu.openanalytics.rdepot.base.storage.exceptions.DeleteFileException;
 import eu.openanalytics.rdepot.base.storage.exceptions.DownloadFileException;
@@ -49,10 +51,11 @@ import eu.openanalytics.rdepot.r.utils.PackagesFileParser;
 import eu.openanalytics.rdepot.r.utils.exceptions.ParsePackagesFileException;
 import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -105,16 +108,36 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
         RRepository repositoryEntity = repositoryService
                 .findByName(mirroredRepository.getName())
                 .orElseThrow(() -> new IllegalStateException("Cannot synchronize non-existing repository."));
-        synchronize(repositoryEntity, mirror);
+
+        List<PackageSynchronizationStatus> packages = new ArrayList<>();
+
+        mirror.getPackages().forEach(p -> packages.add(new PackageSynchronizationStatus(p, mirror)));
+
+        if (isPendingAddNewStatusIfFinished(repositoryEntity, packages)) {
+            log.warn(
+                    "Cannot start synchronization because it is already pending for this repository: {}",
+                    repositoryEntity.getId());
+            return;
+        }
+        log.info("Synchronization started for repository: {}", repositoryEntity.getId());
+        synchronizeMirror(repositoryEntity, mirror);
+
+        log.info("Synchronization finished for repository: {}", repositoryEntity.getId());
+        registerFinishedSynchronization(repositoryEntity);
     }
 
     @Async
-    public void synchronizeAsync(RRepository repository, CranMirror mirror) {
-        synchronize(repository, mirror);
+    public void synchronizeAsync(RRepository repository, Set<CranMirror> mirrors) {
+        synchronizeMirrors(repository, mirrors);
     }
 
-    private void synchronize(RRepository repository, CranMirror mirror) {
-        if (isPendingAddNewStatusIfFinished(repository)) {
+    private void synchronizeMirrors(RRepository repository, Set<CranMirror> mirrors) {
+
+        List<PackageSynchronizationStatus> packages = new ArrayList<>();
+
+        mirrors.forEach(m -> m.getPackages().forEach(p -> packages.add(new PackageSynchronizationStatus(p, m))));
+
+        if (isPendingAddNewStatusIfFinished(repository, packages)) {
             log.warn(
                     "Cannot start synchronization because it is already pending for this repository: {}",
                     repository.getId());
@@ -123,6 +146,15 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
 
         log.info("Synchronization started for repository: {}", repository.getId());
 
+        for (CranMirror mirror : mirrors) {
+            synchronizeMirror(repository, mirror);
+        }
+
+        log.info("Synchronization finished for repository: {}", repository.getId());
+        registerFinishedSynchronization(repository);
+    }
+
+    private void synchronizeMirror(RRepository repository, CranMirror mirror) {
         try {
             List<RPackage> remotePackages = getPackageListFromRemoteRepository(mirror);
 
@@ -139,43 +171,61 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
                             packageBag.getName(), packageBag.getVersion(), repository);
                 }
 
-                if (packageBag.getVersion() == null) {
-                    if (localPackage.isEmpty()
-                            || !getPackageMd5(packageBag.getName(), remotePackages)
-                                    .equals(localPackage.get().getMd5sum())) {
+                try {
+                    if (packageBag.getVersion() == null) {
+                        if (localPackage.isEmpty()
+                                || !getPackageMd5(packageBag.getName(), remotePackages)
+                                        .equals(localPackage.get().getMd5sum())) {
+                            uploadPackage(
+                                    packageBag.getName(),
+                                    getVersion(packageBag.getName(), remotePackages),
+                                    mirror,
+                                    repository,
+                                    false,
+                                    packageBag.getGenerateManuals());
+                        }
+                    } else if (localPackage.isEmpty()) {
                         uploadPackage(
                                 packageBag.getName(),
-                                getVersion(packageBag.getName(), remotePackages),
+                                packageBag.getVersion(),
                                 mirror,
                                 repository,
-                                false,
+                                isOutdated(packageBag, remotePackages),
                                 packageBag.getGenerateManuals());
                     }
-                } else if (localPackage.isEmpty()) {
-                    uploadPackage(
+                    registerPackageSynchronizationStatus(
+                            repository,
                             packageBag.getName(),
                             packageBag.getVersion(),
                             mirror,
+                            SynchronizationStatus.SUCCESS,
+                            null);
+
+                } catch (NoSuchPackageException | ParsePackagesFileException | UpdatePackageException e) {
+
+                    registerPackageSynchronizationStatus(
                             repository,
-                            isOutdated(packageBag, remotePackages),
-                            packageBag.getGenerateManuals());
+                            packageBag.getName(),
+                            packageBag.getVersion(),
+                            mirror,
+                            SynchronizationStatus.ERROR,
+                            e.getMessage());
+                    registerRepositorySynchronizationStatus(repository, SynchronizationStatus.ERROR);
                 }
             }
-
-        } catch (NoSuchPackageException
-                | ParsePackagesFileException
-                | UpdatePackageException
-                | DownloadPackagesFileException e) {
+            registerRepositorySynchronizationStatus(repository, SynchronizationStatus.SUCCESS);
+        } catch (DownloadPackagesFileException e) {
             log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
-            registerSynchronizationError(repository, e);
-        } finally {
-            log.info("Synchronization finished for repository: {}", repository.getId());
-            registerFinishedSynchronization(repository);
+            mirror.getPackages().forEach(p -> {
+                registerPackageSynchronizationStatus(
+                        repository, p.getName(), p.getVersion(), mirror, SynchronizationStatus.ERROR, e.getMessage());
+            });
+            registerRepositorySynchronizationStatus(repository, SynchronizationStatus.ERROR);
         }
     }
 
     private List<RPackage> resolveMirroredPackagesToPackageEntities(List<MirroredRPackage> packages) {
-        return packages.stream().map(MirroredRPackage::toPackageEntity).collect(Collectors.toList());
+        return packages.stream().map(MirroredRPackage::toPackageEntity).toList();
     }
 
     private String getVersion(String name, List<RPackage> remotePackages) throws NoSuchPackageException {
@@ -249,7 +299,7 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
             log.info("Package mirrored.");
         } catch (CreateTemporaryFolderException | AdminNotFound | DownloadFileException | StrategyFailure e) {
             log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
-            throw new UpdatePackageException(name, version, mirror);
+            throw new UpdatePackageException(e.getMessage());
         } finally {
             try {
                 if (remotePackageDir != null) storage.removeFileIfExists(remotePackageDir.getAbsolutePath());
@@ -275,7 +325,7 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
             remotePackages = parser.parse(remotePackagesFilePath.toFile());
         } catch (DownloadFileException | ParsePackagesFileException e) {
             log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
-            throw new DownloadPackagesFileException(mirror);
+            throw new DownloadPackagesFileException();
         } finally {
             if (remotePackagesFilePath != null) {
                 try {

@@ -21,7 +21,6 @@
 package eu.openanalytics.rdepot.python.mirroring.exceptions;
 
 import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
-import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.messaging.PythonMessageCodes;
 import java.io.Serial;
 
@@ -30,7 +29,7 @@ public class EmptyHashException extends Exception {
     @Serial
     private static final long serialVersionUID = -5196811505721943807L;
 
-    public EmptyHashException(PythonPackage packageBag) {
-        super(StaticMessageResolver.getMessage(PythonMessageCodes.EMPTY_HASH) + ": " + packageBag.toString());
+    public EmptyHashException(String packageBag) {
+        super(StaticMessageResolver.getMessage(PythonMessageCodes.EMPTY_HASH) + ": " + packageBag);
     }
 }

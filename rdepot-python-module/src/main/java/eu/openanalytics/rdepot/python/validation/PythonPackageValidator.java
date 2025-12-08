@@ -71,6 +71,50 @@ public class PythonPackageValidator implements PackageValidator<PythonPackage> {
         validateNotEmpty("license", packageBag.getLicense(), MessageCodes.EMPTY_LICENSE, validationResult);
         validateNotEmpty("hash", packageBag.getHash(), PythonMessageCodes.EMPTY_HASH, validationResult);
         validateVersion(packageBag, replace, validationResult);
+        validateFilename(packageBag, validationResult);
+
+        if (packageBag.isBinary())
+            validateNotEmpty(
+                    "compatibilityTags",
+                    packageBag.getCompatibilityTags(),
+                    PythonMessageCodes.EMPTY_COMPATIBILITY_TAGS,
+                    validationResult);
+    }
+
+    private void validateFilename(PythonPackage packageBag, DataSpecificValidationResult<Submission> validationResult) {
+
+        final String version = "version";
+        String fileName = packageBag.getFileName();
+        String packageName = packageBag.getName();
+        String packageVersion = packageBag.getVersion();
+        String property = "";
+        int hasBuildTag = packageBag.getBuildTag() == null ? 0 : 1;
+
+        if (packageBag.isBinary()) {
+            String[] splitFileName = fileName.split("-|\\.whl");
+            if (splitFileName.length < (5 + hasBuildTag)) {
+                validationResult.error("filename", MessageCodes.INVALID_FILENAME);
+                return;
+            }
+
+            if (!packageName.equals(splitFileName[0])) property = "name";
+            else if (!packageVersion.equals(splitFileName[1])) property = version;
+            else if (!packageBag.getPythonTag().equals(splitFileName[2 + hasBuildTag])) property = "pythonTag";
+            else if (!packageBag.getAbiTag().equals(splitFileName[3 + hasBuildTag])) property = "abiTag";
+            else if (!packageBag.getPlatformTag().equals(splitFileName[4 + hasBuildTag])) property = "platformTag";
+
+        } else {
+            String[] splitFileName = fileName.split("-|\\.tar.gz");
+            if (splitFileName.length < 2) {
+                validationResult.error("filename", MessageCodes.INVALID_FILENAME);
+                return;
+            }
+
+            if (!packageName.equals(splitFileName[0])) property = "name";
+            else if (!packageVersion.equals(splitFileName[1])) property = version;
+        }
+
+        if (!property.isEmpty()) validationResult.warning(property, MessageCodes.MISMATCHED_DATA_IN_THE_FILENAME);
     }
 
     private void validateName(final String name, final DataSpecificValidationResult<Submission> validationResult) {
@@ -82,11 +126,11 @@ public class PythonPackageValidator implements PackageValidator<PythonPackage> {
     public void validate(PythonPackage packageBag, boolean replace, DataSpecificValidationResult<Submission> errors) {
         validateUploadPackage(packageBag, replace, errors);
         if (packageBag.getId() > 0) {
-            Optional<PythonPackage> exsitingPackageOptional = packageService.findById(packageBag.getId());
-            if (exsitingPackageOptional.isEmpty()) {
+            Optional<PythonPackage> existingOptionalPackage = packageService.findById(packageBag.getId());
+            if (existingOptionalPackage.isEmpty()) {
                 errors.error("id", MessageCodes.NO_SUCH_PACKAGE_ERROR);
             } else {
-                PythonPackage existingPackage = exsitingPackageOptional.get();
+                PythonPackage existingPackage = existingOptionalPackage.get();
                 validatePropertyChange(existingPackage, packageBag, errors);
             }
         }
@@ -121,8 +165,8 @@ public class PythonPackageValidator implements PackageValidator<PythonPackage> {
         final String version = "version";
         validateNotEmpty(version, packageVersion, MessageCodes.EMPTY_VERSION, validationResult);
 
-        String[] tokens = packageVersion.split("-|\\.");
-        String name = packageBag.getName();
+        String[] tokens = packageVersion.split("[-.]");
+        String name = packageBag.getNormalizedName();
         PythonRepository repository = packageBag.getRepository();
         int maxLength = Integer.parseInt(env.getProperty("package.version.max-numbers", "10"));
 
@@ -131,7 +175,16 @@ public class PythonPackageValidator implements PackageValidator<PythonPackage> {
         }
 
         Optional<PythonPackage> sameVersionOpt =
-                packageService.findByNameAndVersionAndRepositoryAndDeleted(name, packageVersion, repository, false);
+                packageService.findByNormalizedNameAndVersionAndRepositoryAndDeletedAndBinary(
+                        name,
+                        packageVersion,
+                        repository,
+                        false,
+                        packageBag.isBinary(),
+                        packageBag.getBuildTag(),
+                        packageBag.getPythonTag(),
+                        packageBag.getAbiTag(),
+                        packageBag.getPlatformTag());
 
         if (sameVersionOpt.isPresent() && packageBag.getId() <= 0) {
             Submission submission = submissionService
@@ -145,15 +198,19 @@ public class PythonPackageValidator implements PackageValidator<PythonPackage> {
         }
     }
 
+    public void validate(MultipartFile multipartFile, ValidationResult validationResult, boolean binary) {
+        validateContentType(multipartFile, validationResult, binary);
+        validate(multipartFile, validationResult);
+    }
+
     public void validate(MultipartFile multipartFile, ValidationResult validationResult) {
-        validateContentType(multipartFile, validationResult);
         validateSize(multipartFile, validationResult);
         validateFilename(multipartFile, validationResult);
     }
 
     private void validateFilename(MultipartFile multipartFile, ValidationResult validationResult) {
         String name = StringUtils.substringBeforeLast(multipartFile.getOriginalFilename(), "-");
-        if (!(name != null && !name.isEmpty() && !name.trim().equals(""))) {
+        if (!(name != null && !name.isEmpty() && !name.trim().isEmpty())) {
             validationResult.error("MULTIPART-FILE", MessageCodes.INVALID_FILENAME);
         }
     }
@@ -164,9 +221,11 @@ public class PythonPackageValidator implements PackageValidator<PythonPackage> {
         }
     }
 
-    private void validateContentType(MultipartFile multipartFile, ValidationResult validationResult) {
-        if (!(Objects.equals(multipartFile.getContentType(), "application/gzip")
-                || Objects.equals(multipartFile.getContentType(), "application/x-gzip"))) {
+    private void validateContentType(MultipartFile multipartFile, ValidationResult validationResult, boolean binary) {
+        if ((binary && !Objects.equals(multipartFile.getContentType(), "application/octet-stream"))
+                || (!binary
+                        && !(Objects.equals(multipartFile.getContentType(), "application/gzip")
+                                || Objects.equals(multipartFile.getContentType(), "application/x-gzip")))) {
             validationResult.error("CONTENT-TYPE", MessageCodes.INVALID_CONTENTTYPE);
         }
     }

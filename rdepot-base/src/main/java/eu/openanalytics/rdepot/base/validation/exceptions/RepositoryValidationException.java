@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serial;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.validation.BindingResult;
@@ -32,7 +33,9 @@ import org.springframework.validation.BindingResult;
 @Getter
 public class RepositoryValidationException extends Exception {
 
+    @Serial
     private static final long serialVersionUID = 1L;
+
     private transient BindingResult bindingResult;
 
     private void writeObject(ObjectOutputStream out)

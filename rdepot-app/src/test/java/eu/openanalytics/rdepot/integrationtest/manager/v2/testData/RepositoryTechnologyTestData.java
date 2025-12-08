@@ -20,6 +20,7 @@
  */
 package eu.openanalytics.rdepot.integrationtest.manager.v2.testData;
 
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -39,7 +40,11 @@ public class RepositoryTechnologyTestData {
     private String repoIdToRead;
     private String repoIdToPublishWithBinaryPackage;
     private String deletedRepoId;
+    private String search;
+    private String name;
     private int getEndpointNewEventsAmount;
     private int deleteEndpointNewEventsAmount;
     private int changeEndpointNewEventsAmount;
+    private List<String> maintainers;
+    private boolean published;
 }

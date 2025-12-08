@@ -45,7 +45,12 @@ public class InternalTechnology implements Technology {
 
     @Override
     public String getVersion() {
-        return "2.6.2";
+        final String version = getClass().getPackage().getImplementationVersion();
+        if (Objects.isNull(version)) {
+            return "unknown";
+        } else {
+            return version.split("-")[0];
+        }
     }
 
     @Override

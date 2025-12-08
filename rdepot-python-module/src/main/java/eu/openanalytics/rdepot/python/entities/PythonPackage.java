@@ -92,9 +92,25 @@ public class PythonPackage extends Package {
     @Column(name = "normalized_name", nullable = false, table = "pythonpackage")
     private String normalizedName;
 
+    @Column(name = "compatibility_tags", table = "pythonpackage")
+    private String compatibilityTags;
+
+    @Column(name = "build_tag", table = "pythonpackage")
+    private String buildTag;
+
+    @Column(name = "python_tag", table = "pythonpackage")
+    private String pythonTag;
+
+    @Column(name = "abi_tag", table = "pythonpackage")
+    private String abiTag;
+
+    @Column(name = "platform_tag", table = "pythonpackage")
+    private String platformTag;
+
     public PythonPackage(PythonPackage packageBag) {
         super(packageBag);
         this.repository = packageBag.repository;
+        this.normalizedName = packageBag.normalizedName;
     }
 
     public PythonPackage() {
@@ -156,6 +172,11 @@ public class PythonPackage extends Package {
         this.requiresPython = dto.getRequiresPython();
         this.summary = dto.getSummary();
         this.hash = dto.getHash();
+        this.compatibilityTags = dto.getCompatibilityTags();
+        this.buildTag = dto.getBuiltTag();
+        this.pythonTag = dto.getPythonTag();
+        this.abiTag = dto.getAbiTag();
+        this.platformTag = dto.getPlatformTag();
         setNormalizedName(dto.getName());
     }
 
@@ -176,5 +197,16 @@ public class PythonPackage extends Package {
 
     public void setNormalizedName(String name) {
         this.normalizedName = name.replaceAll("[-_.]", "-").toLowerCase();
+    }
+
+    public String getPackageFilename() {
+        if (!this.isBinary()) {
+            return this.getName() + "-" + this.getVersion() + ".tar.gz";
+        }
+        String tags = this.getBuildTag() == null
+                ? this.getPythonTag() + "-" + this.getAbiTag() + "-" + this.getPlatformTag()
+                : this.getBuildTag() + "-" + this.getPythonTag() + "-" + this.getAbiTag() + "-" + this.getPlatformTag();
+
+        return this.getName() + "-" + this.getVersion() + "-" + tags + ".whl";
     }
 }

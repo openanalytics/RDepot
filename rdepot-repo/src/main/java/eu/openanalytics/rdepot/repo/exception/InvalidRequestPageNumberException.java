@@ -20,8 +20,11 @@
  */
 package eu.openanalytics.rdepot.repo.exception;
 
+import java.io.Serial;
+
 public class InvalidRequestPageNumberException extends Exception {
 
+    @Serial
     private static final long serialVersionUID = 2742397456258305451L;
 
     public InvalidRequestPageNumberException(String page) {

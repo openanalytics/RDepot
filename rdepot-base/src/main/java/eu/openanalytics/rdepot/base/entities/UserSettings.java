@@ -28,6 +28,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,6 +44,7 @@ import lombok.Setter;
 @Table(name = "user_settings", schema = "public")
 public class UserSettings extends Resource implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Column(name = "language", nullable = false)

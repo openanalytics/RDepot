@@ -2,21 +2,69 @@ version: '3'
 services:
   proxy:
     image: registry.openanalytics.eu/proxy/library/nginx:alpine
-#    image: nginx:alpine
     restart: always
     volumes:
       - ./docker/proxy/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./docker/proxy/sites-enabled/rdepot:/etc/nginx/sites-enabled/rdepot:ro
-      - repository:/opt/rdepot/repo/:ro
     ports:
       - 8017:80
       - 8021:80
     depends_on:
-      - app
-      - repo
+      app:
+        condition: service_healthy
+      crane:
+        condition: service_healthy
     networks:
       - oa-rdepot
-
+  crane:
+    image: registry.openanalytics.eu/openanalytics/crane:1.0.0
+    restart: always
+    hostname: oa-rdepot-crane
+    volumes:
+      - repository:/srv/crane
+      - ./docker/crane/application.yml:/opt/crane/application.yml
+    networks:
+      oa-rdepot:
+        aliases:
+          - oa-rdepot-crane
+    ports:
+      - 8030:8080
+      - 8032:8001
+    healthcheck:
+      test: ["CMD-SHELL", "curl http://localhost:8080/repo -H 'Accept: application/json' -I 2>/dev/null | grep 'HTTP/1.1' | cut -d' ' -f2 | grep 302 || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    environment:
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8001
+    depends_on:
+      keycloak:
+        condition: service_healthy
+  ##
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.2
+    restart: unless-stopped
+    hostname: oa-rdepot-keycloak
+    command: start-dev --import-realm --hostname=http://192.168.49.17:8080
+    ports:
+      - 8031:8080
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=testpassword
+      - KC_HEALTH_ENABLED=true
+    volumes:
+      - ./docker/keycloak/realm-rdepot.json:/opt/keycloak/data/import/realm-rdepot.json:ro
+    networks:
+      oa-rdepot:
+        ipv4_address: 192.168.49.17
+        aliases:
+          - oa-rdepot-keycloak
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3>/dev/tcp/127.0.0.1/9000;echo -e \"GET /health/ready HTTP/1.1\r\nhost: http://localhost\r\nConnection: close\r\n\r\n\" >&3;grep \"HTTP/1.1 200 OK\" <&3"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+  ##
   app:
     build: ./docker/app
     restart: always
@@ -34,8 +82,10 @@ services:
       - 8018:8080
       - 8019:8001
     depends_on:
-      - db
-      - repo
+      repo:
+        condition: service_healthy
+      db:
+        condition: service_started
     environment:
       - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/declarative
       - DB_USERNAME=postgres
@@ -55,12 +105,16 @@ services:
     hostname: oa-rdepot-repo
     volumes:
       - ./docker/repo/rdepot-repo.jar:/opt/repo/rdepot-repo.jar:ro
-      - ./docker/repo/application.yml:/opt/repo/application.yml:ro
+      - ./docker/repo/test_configs/application.yml:/opt/repo/application.yml:ro
       - repository:/opt/rdepot/
       - ./itestServer:/opt/testServer
     networks:
       - oa-rdepot
-
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health -H 'Accept: application/json' || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 100
   db:
     image: registry.openanalytics.eu/proxy/library/postgres:alpine
 #    image: postgres:alpine

@@ -31,18 +31,13 @@ public class RoleTestFixture {
         public static Role USER = new Role(3, 0, "user", "User");
         public static List<Role> ROLES = List.of(USER, PACKAGE_MAINTAINER, REPOSITORY_MAINTAINER, ADMIN);
     }
-    ;
 
     public static Role GET_BY_NAME(String name) {
-        switch (name) {
-            case "admin":
-                return ROLE.ADMIN;
-            case "repository_maintainer":
-                return ROLE.REPOSITORY_MAINTAINER;
-            case "package_maintainer":
-                return ROLE.PACKAGE_MAINTAINER;
-            default:
-                return ROLE.USER;
-        }
+        return switch (name) {
+            case "admin" -> ROLE.ADMIN;
+            case "repository_maintainer" -> ROLE.REPOSITORY_MAINTAINER;
+            case "package_maintainer" -> ROLE.PACKAGE_MAINTAINER;
+            default -> ROLE.USER;
+        };
     }
 }

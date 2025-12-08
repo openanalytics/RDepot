@@ -1,3 +1,11 @@
+app:
+  authentication: simple
+  simple:
+    username: rdepot
+    password: P@ssw0rd
 #server:
 #  servlet:
 #    context-path:
+logging:
+  level:
+    ROOT: DEBUG

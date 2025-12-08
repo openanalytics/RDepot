@@ -22,8 +22,11 @@ package eu.openanalytics.rdepot.base.strategy.exceptions;
 
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
+import java.io.Serial;
 
 public class CreateSubmissionException extends LocalizedException {
+
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public CreateSubmissionException() {

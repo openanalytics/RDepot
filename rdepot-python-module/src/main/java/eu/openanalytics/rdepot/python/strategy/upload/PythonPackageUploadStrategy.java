@@ -25,26 +25,49 @@ import eu.openanalytics.rdepot.base.email.EmailService;
 import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.mediator.BestMaintainerChooser;
+import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
+import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.PackageService;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
 import eu.openanalytics.rdepot.base.storage.Storage;
+import eu.openanalytics.rdepot.base.storage.exceptions.ExtractFileException;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.upload.DefaultPackageUploadStrategy;
+import eu.openanalytics.rdepot.base.validation.DataSpecificValidationResult;
 import eu.openanalytics.rdepot.base.validation.PackageValidator;
+import eu.openanalytics.rdepot.base.validation.ValidationResultItem;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.mediator.deletion.PythonPackageDeleter;
+import eu.openanalytics.rdepot.python.storage.PythonPopulator;
 import eu.openanalytics.rdepot.python.synchronization.PythonRepositorySynchronizer;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.StandardCopyOption;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
+import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
  * Implementation of upload strategy for R packages.
  */
+@Slf4j
 public class PythonPackageUploadStrategy extends DefaultPackageUploadStrategy<PythonRepository, PythonPackage> {
+
+    private final PythonPopulator pythonPopulator;
+    private static final String PROP_CLASSIFIER = "Classifier";
+    private static final String PROP_PROJECT_URL = "Project-URL";
+    private static final String PROP_NAME = "Name";
+    private static final String PROP_AUTHOR_EMAIL = "Author-email";
 
     public PythonPackageUploadStrategy(
             PackageUploadRequest<PythonRepository> request,
@@ -53,13 +76,15 @@ public class PythonPackageUploadStrategy extends DefaultPackageUploadStrategy<Py
             SubmissionService service,
             PackageValidator<PythonPackage> packageValidator,
             RepositoryService<PythonRepository> repositoryService,
-            Storage<PythonRepository, PythonPackage> storage,
+            Storage<PythonPackage> storage,
             PackageService<PythonPackage> packageService,
             EmailService emailService,
             BestMaintainerChooser bestMaintainerChooser,
             PythonRepositorySynchronizer repositorySynchronizer,
             SecurityMediator securityMediator,
-            PythonPackageDeleter packageDeleter) {
+            PythonPackageDeleter packageDeleter,
+            PythonPopulator pythonPopulator,
+            PackageMaintainerService maintainerService) {
         super(
                 request,
                 requester,
@@ -73,53 +98,68 @@ public class PythonPackageUploadStrategy extends DefaultPackageUploadStrategy<Py
                 bestMaintainerChooser,
                 repositorySynchronizer,
                 securityMediator,
-                packageDeleter);
+                packageDeleter,
+                pythonPopulator,
+                maintainerService);
+        this.pythonPopulator = pythonPopulator;
     }
 
     @Override
     protected PythonPackage parseTechnologySpecificPackageProperties(Properties properties) {
-        PythonPackage packageBag = new PythonPackage();
+        PythonPackage packageBag;
+        if (request.isBinaryPackage()) {
+            packageBag = parseTechnologySpecificBinaryPackageProperties(properties);
+        } else {
+            packageBag = new PythonPackage();
+        }
 
         packageBag.setDescription(properties.getProperty("Description"));
-        String author = (properties.getProperty("Author") + ", " + properties.getProperty("Author-Email")).trim();
-        packageBag.setAuthor(author);
-        packageBag.setAuthorEmail(properties.getProperty("Author-Email"));
-        packageBag.setClassifiers(properties.getProperty("Classifier"));
+        packageBag.setAuthor(properties.getProperty("Author"));
+        packageBag.setAuthorEmail(properties.getProperty(PROP_AUTHOR_EMAIL));
+        packageBag.setClassifiers(properties.getProperty(PROP_CLASSIFIER));
         packageBag.setDescriptionContentType(properties.getProperty("Description-Content-Type", ""));
         packageBag.setKeywords(properties.getProperty("Keywords"));
-        packageBag.setLicense(properties.getProperty("License"));
-        if (StringUtils.isAllEmpty(packageBag.getLicense())) {
-            getLicenseFromClassifiers(packageBag);
-        }
+        packageBag.setLicense(getLicense(properties));
         packageBag.setMaintainer(properties.getProperty("Maintainer"));
-        packageBag.setMaintainerEmail(properties.getProperty("Maintainer-Email"));
+        packageBag.setMaintainerEmail(properties.getProperty("Maintainer-email"));
         packageBag.setPlatform(properties.getProperty("Platform"));
-        packageBag.setProjectUrl(properties.getProperty("Project-URL"));
-        packageBag.setUrl(properties.getProperty("Project-URL"));
+        packageBag.setProjectUrl(properties.getProperty(PROP_PROJECT_URL));
+        packageBag.setUrl(properties.getProperty(PROP_PROJECT_URL));
         packageBag.setProvidesExtra(properties.getProperty("Provides-Extra"));
-        packageBag.setRequiresDist(properties.getProperty("Requires-DIST"));
+        packageBag.setRequiresDist(properties.getProperty("Requires-Dist"));
         packageBag.setRequiresExternal(properties.getProperty("Requires-External"));
         packageBag.setRequiresPython(properties.getProperty("Requires-Python"));
         packageBag.setSummary(properties.getProperty("Summary"));
-        packageBag.setName(properties.getProperty("Name"));
-        packageBag.setNormalizedName(properties.getProperty("Name"));
+        packageBag.setName(properties.getProperty(PROP_NAME));
+        packageBag.setNormalizedName(properties.getProperty(PROP_NAME));
+        packageBag.setHomePage(properties.getProperty("Home-page"));
         return packageBag;
     }
 
-    private void getLicenseFromClassifiers(PythonPackage packageBag) {
-        String classifiers = packageBag.getClassifiers();
+    private String getLicense(Properties properties) {
+        String licenseExpression = properties.getProperty("License-Expression");
+        if (!StringUtils.isAllEmpty(licenseExpression)) {
+            return licenseExpression;
+        }
+        String licenseProperty = properties.getProperty("License");
+        if (!StringUtils.isAllEmpty(licenseProperty)) {
+            return licenseProperty;
+        }
+        return getLicenseFromClassifiers(properties);
+    }
+
+    private String getLicenseFromClassifiers(Properties properties) {
+        String classifiers = properties.getProperty(PROP_CLASSIFIER);
         String classifierName = "License :: ";
+        if (classifiers == null || !classifiers.contains(classifierName)) return "";
+        String nextClassifier = ",";
         int classifierStartIndex = classifiers.indexOf(classifierName) + classifierName.length();
-        if (classifiers.contains(classifierName)) {
-            String nextClassifier = ",";
-            String classifiersWithLicense = classifiers.substring(classifierStartIndex);
-            int classifierEndIndex = classifiersWithLicense.indexOf(nextClassifier);
-            if (classifierEndIndex != -1) {
-                String license = classifiersWithLicense.substring(0, classifierEndIndex);
-                packageBag.setLicense(license);
-            } else {
-                packageBag.setLicense(classifiersWithLicense);
-            }
+        String classifiersWithLicense = classifiers.substring(classifierStartIndex);
+        int classifierEndIndex = classifiersWithLicense.indexOf(nextClassifier);
+        if (classifierEndIndex != -1) {
+            return classifiersWithLicense.substring(0, classifierEndIndex);
+        } else {
+            return classifiersWithLicense;
         }
     }
 
@@ -135,6 +175,69 @@ public class PythonPackageUploadStrategy extends DefaultPackageUploadStrategy<Py
 
     @Override
     protected PythonPackage parseTechnologySpecificBinaryPackageProperties(Properties properties) {
-        throw new UnsupportedOperationException();
+        PythonPackage packageBag = new PythonPackage();
+
+        packageBag.setBinary(true);
+
+        final String compatibilityTags = properties.getProperty("Tag");
+        packageBag.setCompatibilityTags(compatibilityTags);
+
+        Set<String> pythonTagsSet = new LinkedHashSet<>();
+        Set<String> abiTagsSet = new LinkedHashSet<>();
+        Set<String> platformTagsSet = new LinkedHashSet<>();
+
+        final String[] splitTags = compatibilityTags.split(",");
+        for (String tag : splitTags) {
+            final String[] splitTag = tag.split("-");
+            if (splitTag.length > 0) {
+                pythonTagsSet.add(splitTag[0].trim());
+            }
+            if (splitTag.length > 1) {
+                abiTagsSet.add(splitTag[1].trim());
+            }
+            if (splitTag.length > 2) {
+                platformTagsSet.add(splitTag[2].trim());
+            }
+        }
+
+        packageBag.setPythonTag(String.join(".", pythonTagsSet));
+        packageBag.setAbiTag(String.join(".", abiTagsSet));
+        packageBag.setPlatformTag(String.join(".", platformTagsSet));
+
+        final String[] filenameSplit = Objects.requireNonNull(
+                        request.getFileData().getOriginalFilename())
+                .split("-");
+        if (filenameSplit.length == 6) packageBag.setBuildTag(filenameSplit[2]);
+        return packageBag;
+    }
+
+    @Override
+    protected File extractPackageFile(File stored) throws ExtractFileException {
+        if (stored.getName().endsWith(".whl"))
+            return new File(pythonPopulator.extractWhlPackageFile(stored.getAbsolutePath()));
+        return super.extractPackageFile(stored);
+    }
+
+    @Override
+    protected void renamePackageFileIfNecessary(
+            PythonPackage packageBag, final DataSpecificValidationResult<Submission> validationResult) {
+        final List<ValidationResultItem<Submission>> packageDuplicateWarnings =
+                validationResult.getDataSpecificWarnings().stream()
+                        .filter(w -> w.messageCode().equals(MessageCodes.MISMATCHED_DATA_IN_THE_FILENAME))
+                        .toList();
+
+        if (packageDuplicateWarnings.isEmpty()) return;
+
+        String newName = packageBag.getPackageFilename();
+
+        File renamedPackage = new File(FilenameUtils.getPath(packageBag.getSource()), newName);
+        try {
+            FileUtils.moveFile(new File(packageBag.getSource()), renamedPackage, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            throw new IllegalStateException("Could not properly rename package file!");
+        }
+
+        packageBag.setSource(renamedPackage.getPath());
     }
 }

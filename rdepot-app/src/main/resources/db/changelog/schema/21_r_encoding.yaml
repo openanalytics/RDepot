@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: 21_01_add_encoding
+      author: dglebowska
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: rpackage
+            schemaName: public
+        - not:
+            - columnExists:
+                tableName: rpackage
+                schemaName: public
+                columnName: encoding
+      changes:
+        - addColumn:
+            tableName: rpackage
+            schemaName: public
+            columns:
+              - column:
+                  name: encoding
+                  type: text

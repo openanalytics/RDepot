@@ -34,6 +34,7 @@ import eu.openanalytics.rdepot.r.api.v2.controllers.RPackageController;
 import eu.openanalytics.rdepot.r.api.v2.controllers.RRepositoryController;
 import eu.openanalytics.rdepot.r.api.v2.controllers.RSubmissionController;
 import eu.openanalytics.rdepot.r.technology.RLanguage;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -187,6 +188,7 @@ public class ApiTestConfig implements WebMvcConfigurer {
             /**
              *
              */
+            @Serial
             private static final long serialVersionUID = -6517730864672588910L;
 
             @Override

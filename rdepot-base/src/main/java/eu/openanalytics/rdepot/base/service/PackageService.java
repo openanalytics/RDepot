@@ -25,7 +25,14 @@ import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.comparators.PackageComparator;
 import eu.openanalytics.rdepot.base.service.exceptions.CreateEntityException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -65,7 +72,6 @@ public class PackageService<E extends Package> extends Service<E> {
                 entity.getName(), entity.getRepository(), false, generateVariantsOfVersion(entity.getVersion()));
     }
 
-    @Override
     public void deleteSameVersion(E entity) {
         List<E> samePackages = findSameVersions(entity);
 
@@ -79,6 +85,10 @@ public class PackageService<E extends Package> extends Service<E> {
 
     public List<E> findAllByNameAndRepository(String name, Repository repository) {
         return packageDao.findByNameAndRepositoryGenericAndDeleted(name, repository, false);
+    }
+
+    public List<E> findAllByNameAndRepositoryIncludeDeleted(String name, Repository repository) {
+        return packageDao.findByNameAndRepositoryGeneric(name, repository);
     }
 
     public Optional<E> findByNameAndVersionAndRepositoryAndDeleted(
@@ -123,30 +133,34 @@ public class PackageService<E extends Package> extends Service<E> {
 
     protected Collection<String> generateVariantsOfVersion(String version) {
         List<String> variants = new ArrayList<>();
-        String[] splitted = version.split("-|\\.");
-        int length = splitted.length;
+        String[] versionSplit = version.split("[-.]");
 
-        int numberOfVariations = 1 << (length - 1);
+        int numberOfVariations = 1 << (versionSplit.length - 1);
 
         // 0 in schema means dot
         // 1 in schema means hyphen
         for (int i = 0; i < numberOfVariations; i++) {
-            String schema = String.format("%" + (length - 1) + "s", Integer.toBinaryString(i))
-                    .replace(' ', '0');
-            String newVersion = "";
-            for (int j = 0; j < length - 1; j++) {
-                newVersion += splitted[j];
-                char separator = schema.charAt(j);
-                if (separator == '0') {
-                    newVersion += ".";
-                } else {
-                    newVersion += "-";
-                }
-            }
-            newVersion += splitted[length - 1];
-            variants.add(newVersion);
+            variants.add(getVariant(i, versionSplit));
         }
 
         return variants;
+    }
+
+    private static String getVariant(int i, String[] versionSplit) {
+        int length = versionSplit.length;
+        String schema = String.format("%" + (length - 1) + "s", Integer.toBinaryString(i))
+                .replace(' ', '0');
+        StringBuilder newVersion = new StringBuilder();
+        for (int j = 0; j < length - 1; j++) {
+            newVersion.append(versionSplit[j]);
+            char separator = schema.charAt(j);
+            if (separator == '0') {
+                newVersion.append(".");
+            } else {
+                newVersion.append("-");
+            }
+        }
+        newVersion.append(versionSplit[length - 1]);
+        return newVersion.toString();
     }
 }

@@ -1,0 +1,89 @@
+{
+    "status": "WARNING",
+    "code": 201,
+    "message": "Your package has been submitted successfully but the filename has been changed due to a mismatch with the package metadata.",
+    "messageCode": "warning.file.name.has.been.updated",
+    "data": {
+        "id": 48,
+        "packageBag": {
+            "id": 48,
+            "user": {
+                "id": 4,
+                "name": "Albert Einstein",
+                "login": "einstein",
+                "email": "einstein@ldap.forumsys.com"
+            },
+            "repository": {
+                "id": 3,
+                "name": "testrepo2",
+                "publicationUri": "http://localhost/repo/testrepo2",
+                "published": true,
+                "requiresAuthentication": true,
+                "technology": "R",
+                "lastPublicationSuccessful": true
+            },
+            "submission": {
+                "id": 48,
+                "state": "ACCEPTED"
+            },
+            "name": "bea.R",
+            "version": "1.0.5",
+            "source": "/opt/rdepot/repositories/3/60650972/bea.R_1.0.5.tar.gz",
+            "active": true,
+            "deleted": false,
+            "technology": "R",
+            "binary": false,
+            "description": "Provides an R interface for the Bureau of Economic Analysis (BEA) \\n API (see <http://www.bea.gov/API/bea_web_service_api_user_guide.htm> for \\n more information) that serves two core purposes - \\n 1. To Extract/Transform/Load data [beaGet()] from the BEA API as R-friendly \\n formats in the user's work space [transformation done by default in beaGet() \\n can be modified using optional parameters; see, too, bea2List(), bea2Tab()].\\n 2. To enable the search of descriptive meta data [beaSearch()].\\n Other features of the library exist mainly as intermediate methods \\n or are in early stages of development.\\n Important Note - You must have an API key to use this library. \\n Register for a key at <http://www.bea.gov/API/signup/index.cfm> .",
+            "author": "Andrea Batch [aut, cre],\\n Jeff Chen [ctb],\\n Walt Kampas [ctb]",
+            "title": "Bureau of Economic Analysis API",
+            "url": "https://github.com/us-bea/beaR",
+            "descriptionContentType": "txt",
+            "links": [
+                {
+                    "rel": "self",
+                    "href": "http://localhost:8017/api/v2/manager/r/packages/48"
+                },
+                {
+                    "rel": "packageList",
+                    "href": "http://localhost:8017/api/v2/manager/packages"
+                },
+                {
+                    "rel": "self",
+                    "href": "http://localhost:8017/api/v2/manager/r/packages/48",
+                    "type": "PATCH"
+                },
+                {
+                    "rel": "self",
+                    "href": "http://localhost:8017/api/v2/manager/r/packages/48",
+                    "type": "DELETE"
+                }
+            ]
+        },
+        "submitter": {
+            "id": 4,
+            "name": "Albert Einstein",
+            "login": "einstein",
+            "email": "einstein@ldap.forumsys.com"
+        },
+        "approver": {
+            "id": 4,
+            "name": "Albert Einstein",
+            "login": "einstein",
+            "email": "einstein@ldap.forumsys.com"
+        },
+        "changes": "",
+        "state": "ACCEPTED",
+        "created": "2025-05-07T12:21:45.444631292Z",
+        "technology": "R",
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/r/submissions/48"
+            },
+            {
+                "rel": "submissionList",
+                "href": "http://localhost:8017/api/v2/manager/r/submissions"
+            }
+        ]
+    }
+}

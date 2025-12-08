@@ -20,6 +20,7 @@
  */
 package eu.openanalytics.rdepot.r.synchronization;
 
+import eu.openanalytics.rdepot.base.synchronization.checksums.Checksums;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
@@ -38,20 +39,72 @@ public class SynchronizeRepositoryRequestBody {
     String sourceDirectoryPath;
 
     String versionBefore;
-    String versionAfter;
 
-    // <binary_folder_path, binary_package>
+    /**
+     * e.g. <code><br/>
+     *     {<br/>
+     *     &emsp;"bin/linux/ubuntu/x86_64/v1.0.0": [<br/>
+     *     &emsp;&emsp;File(abc_1.0.0.tar.gz),<br/>
+     *     &emsp;&emsp;File(A3.1.0.0.tar.gz)<br/>
+     *     &emsp;],<br/>
+     *     &emsp;"bin/linux/centos7/x86_64/v1.0.0": [<br/>
+     *     &emsp;&emsp;File(oaColors_1.0.0.tar.gz)<br/>
+     *     &emsp;]<br/>
+     *     }
+     * </code>
+     */
     MultiValueMap<String, File> binaryPackagesToUpload;
+    /**
+     * e.g. <code><br/>
+     *     {<br/>
+     *     &emsp;"bin/linux/ubuntu/x86_64/v1.0.0": [<br/>
+     *     &emsp;&emsp;File(abc_1.0.0.tar.gz),<br/>
+     *     &emsp;&emsp;File(A3.1.0.0.tar.gz)<br/>
+     *     &emsp;],<br/>
+     *     &emsp;"bin/linux/centos7/x86_64/v1.0.0": [<br/>
+     *     &emsp;&emsp;File(oaColors_1.0.0.tar.gz)<br/>
+     *     &emsp;]<br/>
+     *     }
+     * </code>
+     */
     MultiValueMap<String, File> binaryPackagesToUploadToArchive;
+
     MultiValueMap<String, String> binaryPackagesToDelete;
     MultiValueMap<String, String> binaryPackagesToDeleteFromArchive;
 
-    // <folder_path, PACKAGES>
+    /**
+     * Key is the directory on the remote repo
+     *  (e.g. <code>src/contrib</code> or <code>src/contrib/Archive</code>)
+     */
     Map<String, File> packagesFiles;
+
+    /**
+     * Key is the directory on the remote repo
+     *  (e.g. <code>src/contrib</code> or <code>src/contrib/Archive</code>)
+     */
     Map<String, File> packagesGzFiles;
+
+    /**
+     * Key is the directory on the remote repo
+     *  (e.g. <code>src/contrib</code> or <code>src/contrib/Archive</code>)
+     */
     Map<String, File> packagesFilesForArchive;
+
+    /**
+     * Key is the directory on the remote repo
+     *  (e.g. <code>src/contrib</code> or <code>src/contrib/Archive</code>)
+     */
     Map<String, File> packagesGzFilesForArchive;
 
     // <folder_path, <file, checksum>>
-    Map<String, Map<String, String>> checksums;
+    //    Map<String, Map<String, String>> checksums;
+    // <full file path in storage, checksum>
+
+    /**
+     * <Full path in storage, checksum>
+     */
+    Checksums checksums;
+    // <folder_path, index.html>
+    Map<String, File> indexes;
+    Map<String, File> indexesForArchive;
 }

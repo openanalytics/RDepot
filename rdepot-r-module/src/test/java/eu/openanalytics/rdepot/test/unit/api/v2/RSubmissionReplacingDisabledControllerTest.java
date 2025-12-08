@@ -134,9 +134,13 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
         final boolean replace = true;
         final boolean binary = false;
 
-        final Submission submission =
-                RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get()).getSubmission();
+        final RPackage packageBag = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get());
+        packageBag.setName("abc");
+        packageBag.setVersion("1.3");
+        packageBag.setSource("abc_1.3.tar.gz");
+        final Submission submission = packageBag.getSubmission();
         submission.setState(SubmissionState.WAITING);
+
         Strategy<Submission> strategy =
                 Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user.get()));
         final PackageDto packageDto = RPackageTestFixture.GET_EXAMPLE_PACKAGE_DTO(submission.getPackageBag());

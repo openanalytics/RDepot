@@ -49,4 +49,11 @@ public interface CranStorageService extends StorageService<SynchronizeCranReposi
     default Technology getTechnology() {
         return Technology.R;
     }
+
+    /**
+     * Returns all platform directories for binary packages
+     * (even if currently there are no packages inside).
+     * @param repository repository name
+     */
+    List<String> getBinaryPlatformDirectories(String repository);
 }

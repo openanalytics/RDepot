@@ -41,19 +41,20 @@ public class ServerAddressValidation<R extends Repository> extends ChainValidato
     private final RepositoryService<R> service;
 
     public void validateField(R repository, Errors errors) {
-        final String serverAddress = repository.getServerAddress();
-        if (serverAddress == null || serverAddress.isBlank()) {
-            errors.rejectValue("serverAddress", MessageCodes.EMPTY_SERVERADDRESS);
+        final String serverAddressKey = "serverAddress";
+        final String serverAddressValue = repository.getServerAddress();
+        if (serverAddressValue == null || serverAddressValue.isBlank()) {
+            errors.rejectValue(serverAddressKey, MessageCodes.EMPTY_SERVERADDRESS);
             return;
         }
-        Optional<R> duplicateServerAddress = service.findByServerAddress(serverAddress);
+        Optional<R> duplicateServerAddress = service.findByServerAddress(serverAddressValue);
         if (duplicateServerAddress.isPresent() && duplicateServerAddress.get().getId() != repository.getId()) {
-            errors.rejectValue("serverAddress", MessageCodes.DUPLICATE_SERVERADDRESS);
+            errors.rejectValue(serverAddressKey, MessageCodes.DUPLICATE_SERVERADDRESS);
         }
         try {
-            new URL(serverAddress);
+            new URL(serverAddressValue);
         } catch (MalformedURLException e) {
-            errors.rejectValue("serverAddress", MessageCodes.ERROR_INVALID_SERVERADDRESS);
+            errors.rejectValue(serverAddressKey, MessageCodes.ERROR_INVALID_SERVERADDRESS);
         }
     }
 }

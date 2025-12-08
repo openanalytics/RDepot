@@ -62,7 +62,6 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
@@ -183,7 +182,7 @@ public class ApiV2PackageMaintainerController extends ApiV2Controller<PackageMai
         if (requester.getRole().getValue() == Role.VALUE.REPOSITORYMAINTAINER) {
             List<String> repos = repositoryMaintainerService.findByUserWithoutDeleted(requester).stream()
                     .map(m -> m.getRepository().getName())
-                    .collect(Collectors.toList());
+                    .toList();
 
             Specification<PackageMaintainer> allowedRepositories =
                     SpecificationUtils.component(PackageMaintainerSpecs.ofRepository(repos));

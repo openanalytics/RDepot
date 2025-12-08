@@ -35,7 +35,7 @@ public class IntegrationTestContainers {
     private static final DockerComposeContainer<?> DOCKER_COMPOSE_CONTAINER =
             new DockerComposeContainer<>(new File("src/test/resources/docker-compose.yaml"));
 
-    private static DockerComposeContainer<?> container = DOCKER_COMPOSE_CONTAINER
+    private static final DockerComposeContainer<?> container = DOCKER_COMPOSE_CONTAINER
             .withLocalCompose(true)
             .withOptions("--compatibility")
             .waitingFor(

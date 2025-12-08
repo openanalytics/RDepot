@@ -21,13 +21,16 @@
 package eu.openanalytics.rdepot.python.entities;
 
 import eu.openanalytics.rdepot.base.entities.Repository;
+import eu.openanalytics.rdepot.base.entities.enums.HashMethod;
 import eu.openanalytics.rdepot.python.api.v2.dtos.PythonRepositoryDto;
-import eu.openanalytics.rdepot.python.entities.enums.HashMethod;
+import eu.openanalytics.rdepot.python.entities.listener.PythonRepositoryListener;
 import eu.openanalytics.rdepot.python.technology.PythonLanguage;
 import jakarta.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -35,6 +38,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @DiscriminatorValue("Python")
+@EntityListeners(PythonRepositoryListener.class)
 @SecondaryTable(name = "pythonrepository", pkJoinColumns = @PrimaryKeyJoinColumn(name = "id"))
 public class PythonRepository extends Repository implements Serializable {
 
@@ -49,8 +53,12 @@ public class PythonRepository extends Repository implements Serializable {
         super(PythonLanguage.instance);
     }
 
-    public PythonRepository(PythonRepositoryDto dto, Instant lastPublicationTimestamp, Instant lastModifiedTimestamp) {
-        super(PythonLanguage.instance, dto, lastPublicationTimestamp, lastModifiedTimestamp);
+    public PythonRepository(
+            PythonRepositoryDto dto,
+            Instant lastPublicationTimestamp,
+            Instant lastModifiedTimestamp,
+            List<Map<String, String>> allowedFiles) {
+        super(PythonLanguage.instance, dto, lastPublicationTimestamp, lastModifiedTimestamp, allowedFiles);
         if (dto.getHashMethod() != null) {
             this.hashMethod = dto.getHashMethod();
         }

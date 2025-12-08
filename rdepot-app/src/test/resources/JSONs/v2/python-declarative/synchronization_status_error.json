@@ -1,0 +1,60 @@
+{
+    "status": "SUCCESS",
+    "code": 200,
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "data": {
+        "repository": {
+            "id": 14,
+            "name": "Z",
+            "publicationUri": "http://localhost/repo/Z",
+            "published": true,
+            "requiresAuthentication": true,
+            "technology": "Python",
+            "lastPublicationSuccessful": false
+        },
+        "status": "ERROR",
+        "timestamp": 1754486957143,
+        "packages": [
+            {
+                "name": "bad_package",
+                "version": "1.0",
+                "status": "ERROR",
+                "error": "could.not.parse.index.file for bad-package-1.0",
+                "mirror": {
+                    "name": "PyPi",
+                    "uri": "https://pypi.org/simple",
+                    "type": "tarball"
+                }
+            },
+            {
+                "name": "bad_package",
+                "version": "1.0",
+                "status": "ERROR",
+                "error": "error.malformed.url",
+                "mirror": {
+                    "name": "WrongUri",
+                    "uri": "htts://pypi.org/simple",
+                    "type": "tarball"
+                }
+            },
+            {
+                "name": "abo_tools",
+                "version": "1.0",
+                "status": "ERROR",
+                "error": "error.malformed.url",
+                "mirror": {
+                    "name": "WrongUri",
+                    "uri": "htts://pypi.org/simple",
+                    "type": "tarball"
+                }
+            }
+        ],
+        "page": {
+            "size": 20,
+            "totalElements": 3,
+            "totalPages": 1,
+            "number": 0
+        }
+    }
+}

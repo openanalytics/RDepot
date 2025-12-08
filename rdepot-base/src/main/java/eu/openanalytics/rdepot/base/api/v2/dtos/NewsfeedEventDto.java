@@ -24,7 +24,6 @@ import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
 import eu.openanalytics.rdepot.base.entities.enums.ResourceType;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.Getter;
 
 /**
@@ -65,7 +64,7 @@ public class NewsfeedEventDto implements IDto {
         this.changedProperties = entity.getEventChangedVariables().stream()
                 .map(ChangedVariableDto::of)
                 .sorted()
-                .collect(Collectors.toList());
+                .toList();
         this.relatedResource = entity.getRelatedResource().createSimpleDto();
     }
 }

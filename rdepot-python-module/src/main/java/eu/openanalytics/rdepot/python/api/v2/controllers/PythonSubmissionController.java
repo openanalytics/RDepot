@@ -193,6 +193,7 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
             @RequestParam("file") MultipartFile multipartFile,
             @RequestParam("repository") final String repository,
             @RequestParam(name = "replace", defaultValue = "false") final Boolean replaceRequestParam,
+            @RequestParam(name = "binary", defaultValue = "false") final Boolean binaryPackage,
             @RequestParam(name = "changes") Optional<String> changes,
             Principal principal)
             throws UserNotAuthorized, CreateException, RepositoryNotFound {
@@ -207,19 +208,27 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
                 .orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
 
         final ValidationResult validationResult = ValidationResultImpl.createResult();
-        packageValidator.validate(multipartFile, validationResult);
+        packageValidator.validate(multipartFile, validationResult, binaryPackage);
         if (validationResult.hasErrors()) {
             return handleValidationError(validationResult);
         }
 
         PackageUploadRequest<PythonRepository> request =
-                new PackageUploadRequest<>(multipartFile, repositoryEntity, replace, changes.orElse(""));
+                new PackageUploadRequest<>(multipartFile, repositoryEntity, replace, changes.orElse(""), binaryPackage);
 
         Strategy<Submission> strategy = strategyFactory.uploadPackageStrategy(request, uploader);
 
         try {
+            String originalFilename = multipartFile.getOriginalFilename();
             final Submission submission = strategyExecutor.execute(strategy);
-            return handleCreatedForSingleEntity(submission);
+            String packageFilenameAfterCreation = submission.getPackageBag().getFileName();
+
+            if (!Objects.equals(originalFilename, packageFilenameAfterCreation)) {
+                return handleWarningForSingleEntity(
+                        submission, MessageCodes.WARNING_FILE_NAME_HAS_BEEN_UPDATED, uploader, true);
+            }
+
+            return handleCreatedForSingleEntity(submission, uploader);
         } catch (NonFatalSubmissionStrategyFailure e) {
             if (e.getReason() instanceof SynchronizeRepositoryException) {
                 log.debug(e.getMessage(), e);
@@ -230,8 +239,8 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
                 return handleWarningForSingleEntity(e.getSubmission(), MessageCodes.WARNING_UNKNOWN, uploader, true);
             }
         } catch (StrategyFailure e) {
-            log.error(e.getMessage(), e);
             if (e.getReason() instanceof PackageDuplicateWithReplaceOff replaceOffWarning) {
+                log.debug(e.getMessage(), e);
                 log.debug(
                         "warning: {}",
                         Pair.of(Objects.requireNonNull(multipartFile.getOriginalFilename()), e.getMessage()));
@@ -244,11 +253,11 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
                 else
                     return handleWarningForSingleEntity(
                             replaceOffWarning.getSubmission(), MessageCodes.WARNING_PACKAGE_DUPLICATE, uploader, false);
-            }
-            if (e.getReason() instanceof PackageValidationException) {
+            } else if (e.getReason() instanceof PackageValidationException) {
+                log.debug(e.getMessage(), e);
                 return handleValidationError(e.getReason());
             }
-
+            log.error(e.getMessage(), e);
             throw new CreateException(messageSource, locale);
         }
     }
@@ -358,7 +367,6 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
             Principal principal,
             @ParameterObject Pageable pageable,
             @RequestParam(name = "state", required = false) List<SubmissionState> states,
-            @RequestParam(name = "technology", required = false) List<String> technologies,
             @RequestParam(name = "repository", required = false) List<String> repositories,
             @RequestParam(name = "fromDate", required = false) Optional<String> fromDate,
             @RequestParam(name = "toDate", required = false) Optional<String> toDate,
@@ -380,10 +388,6 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
             specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.ofState(states));
         }
 
-        if (Objects.nonNull(technologies)) {
-            specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.ofTechnology(technologies));
-        }
-
         if (Objects.nonNull(repositories)) {
             specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.ofRepository(repositories));
         }
@@ -403,12 +407,8 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
                     .or(SubmissionSpecs.ofApprover(search.get()));
         }
 
-        if (specification != null) {
-            return handleSuccessForPagedCollection(
-                    submissionService.findAllBySpecification(specification, resolvedPageable));
-        } else {
-            return handleSuccessForPagedCollection(submissionService.findAll(resolvedPageable));
-        }
+        return handleSuccessForPagedCollection(
+                submissionService.findAllBySpecification(specification, resolvedPageable));
     }
 
     /**

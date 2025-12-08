@@ -21,9 +21,6 @@
 package eu.openanalytics.rdepot.r.messaging;
 
 public class RMessageCodes {
-    public static final String ERROR_MISSING_DATA_FOR_BINARY_PACKAGE = "error.missing.data.for.binary.package";
-    public static final String ERROR_PARAMETERS_NOT_ALLOWED_FOR_NON_BINARY_PACKAGE =
-            "error.parameters.not.allowed.for.non.binary.package";
     public static final String READ_R_PACKAGE_DESCRIPTION_EXCEPTION = "read.r.package.description.exception";
     public static final String EMPTY_AUTHOR = "empty.author";
     public static final String EMPTY_TITLE = "empty.title";
@@ -44,4 +41,5 @@ public class RMessageCodes {
     public static final String COULD_NOT_GENERATE_MANUAL = "could.not.generate.manual";
     public static final String GENERATE_MANUAL_NOT_SUPPORTED = "generate.manual.not.supported";
     public static final String COULD_NOT_GENERATE_PACKAGES_FILE = "could.not.generate.packages.file";
+    public static final String INVALID_ENCODING = "invalid.encoding";
 }

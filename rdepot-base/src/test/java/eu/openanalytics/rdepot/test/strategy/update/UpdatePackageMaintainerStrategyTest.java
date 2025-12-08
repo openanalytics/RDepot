@@ -20,7 +20,9 @@
  */
 package eu.openanalytics.rdepot.test.strategy.update;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.times;
@@ -34,7 +36,7 @@ import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.mediator.deletion.exceptions.NoSuitableMaintainerFound;
 import eu.openanalytics.rdepot.base.service.CommonPackageService;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
-import eu.openanalytics.rdepot.base.service.Service;
+import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.update.UpdatePackageMaintainerStrategy;
@@ -57,7 +59,7 @@ public class UpdatePackageMaintainerStrategyTest extends StrategyTest {
     NewsfeedEventService eventService;
 
     @Mock
-    Service<PackageMaintainer> service;
+    PackageMaintainerService service;
 
     @Mock
     CommonPackageService packageService;
@@ -75,7 +77,6 @@ public class UpdatePackageMaintainerStrategyTest extends StrategyTest {
     private static List<Package> packagesListAfterUpdate;
     private static int oldId;
     private static int newId;
-    private static String name;
     private static String updatedName;
 
     @BeforeAll
@@ -86,7 +87,7 @@ public class UpdatePackageMaintainerStrategyTest extends StrategyTest {
         oldId = 123;
         newId = 124;
         updatedName = "different_package_name";
-        name = "test_package";
+        String name = "test_package";
         packagesList = PackageMaintainerTestFixture.GET_LIST_OF_PACKAGE_MAINTAINERS_FOR_REPOSITORY(
                 3, tmpRepository, user, updatedName);
         packagesListBeforeUpdate = PackageMaintainerTestFixture.GET_LIST_OF_PACKAGE_MAINTAINERS_FOR_REPOSITORY(
@@ -106,7 +107,7 @@ public class UpdatePackageMaintainerStrategyTest extends StrategyTest {
     /**
      * function that prepare all conditions to run name changing tests
      */
-    private void prepareUpdatePackageName() throws Exception {
+    private void prepareUpdatePackageName() {
         when(packageService.findAllByRepository(repository)).thenReturn(packagesList);
 
         updatedMaintainer.setPackageName(updatedName);
@@ -148,7 +149,7 @@ public class UpdatePackageMaintainerStrategyTest extends StrategyTest {
     /**
      * function that prepare all conditions to run repository changing tests
      */
-    private void prepareUpdateRepository() throws Exception {
+    private void prepareUpdateRepository() {
         repository.setId(oldId);
         repositoryUpdated.setId(newId);
         updatedMaintainer.setRepository(repositoryUpdated);
@@ -174,7 +175,7 @@ public class UpdatePackageMaintainerStrategyTest extends StrategyTest {
     }
 
     @Test
-    public void updatePackageMaintainer_shouldGroupPacakgesFromOldAndUpdatedRepo() throws Exception {
+    public void updatePackageMaintainer_shouldGroupPackagesFromOldAndUpdatedRepo() throws Exception {
         doAnswer(invocation -> invocation.getArgument(0)).when(eventService).create(any());
         when(bestMaintainerChooser.chooseBestPackageMaintainer(any())).thenReturn(user);
 
@@ -196,7 +197,7 @@ public class UpdatePackageMaintainerStrategyTest extends StrategyTest {
     /**
      * function that prepare all conditions to run soft deletion tests
      */
-    private void prepareForSoftDelete() throws Exception {
+    private void prepareForSoftDelete() {
         when(packageService.findAllByNameAndRepository(updatedMaintainer.getPackageName(), repository))
                 .thenReturn(packagesList);
 

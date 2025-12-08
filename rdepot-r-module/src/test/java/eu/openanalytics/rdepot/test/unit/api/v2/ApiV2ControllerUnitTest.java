@@ -28,6 +28,7 @@ import eu.openanalytics.rdepot.base.api.v2.converters.PackageDtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.converters.SubmissionDtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.converters.UserSettingsDtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.validation.PageableValidator;
+import eu.openanalytics.rdepot.base.config.DefaultUserConfigurationProperties;
 import eu.openanalytics.rdepot.base.config.RepositoryNameValidationProperties;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.User;
@@ -36,6 +37,7 @@ import eu.openanalytics.rdepot.base.mediator.deletion.AccessTokenDeleter;
 import eu.openanalytics.rdepot.base.mediator.deletion.PackageMaintainerDeleter;
 import eu.openanalytics.rdepot.base.mediator.deletion.RepositoryMaintainerDeleter;
 import eu.openanalytics.rdepot.base.mediator.deletion.SubmissionDeleter;
+import eu.openanalytics.rdepot.base.mirroring.converters.PackageSynchronizationStatusDtoConverter;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.*;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
@@ -44,13 +46,15 @@ import eu.openanalytics.rdepot.base.strategy.factory.StrategyFactory;
 import eu.openanalytics.rdepot.base.synchronization.healthcheck.ServerAddressHealthcheckService;
 import eu.openanalytics.rdepot.base.validation.*;
 import eu.openanalytics.rdepot.r.config.RBinaryProperties;
+import eu.openanalytics.rdepot.r.entities.RRepositoryAllowedFiles;
 import eu.openanalytics.rdepot.r.mediator.deletion.RPackageDeleter;
 import eu.openanalytics.rdepot.r.mediator.deletion.RRepositoryDeleter;
 import eu.openanalytics.rdepot.r.mediator.deletion.RSubmissionDeleter;
 import eu.openanalytics.rdepot.r.mirroring.CranMirrorSynchronizer;
 import eu.openanalytics.rdepot.r.services.RPackageService;
 import eu.openanalytics.rdepot.r.services.RRepositoryService;
-import eu.openanalytics.rdepot.r.storage.RStorage;
+import eu.openanalytics.rdepot.r.storage.implementations.RLocalStorage;
+import eu.openanalytics.rdepot.r.storage.population.RPopulator;
 import eu.openanalytics.rdepot.r.strategy.factory.RStrategyFactory;
 import eu.openanalytics.rdepot.r.validation.RPackageValidator;
 import eu.openanalytics.rdepot.r.validation.RRepositoryValidator;
@@ -158,7 +162,10 @@ public abstract class ApiV2ControllerUnitTest {
     RPackageDeleter rPackageDeleter;
 
     @MockBean
-    RStorage rStorage;
+    RPopulator rPopulator;
+
+    @MockBean
+    RLocalStorage rLocalStorage;
 
     @MockBean
     RRepositoryValidator rRepositoryValidator;
@@ -199,8 +206,17 @@ public abstract class ApiV2ControllerUnitTest {
     @MockBean
     RepositoryNameValidationProperties repositoryNameValidationProperties;
 
+    @MockBean
+    RRepositoryAllowedFiles repositoryAllowedFiles;
+
     @Mock
     protected BestMaintainerChooser bestMaintainerChooser;
+
+    @MockBean
+    DefaultUserConfigurationProperties defaultUserConfigurationProperties;
+
+    @MockBean
+    PackageSynchronizationStatusDtoConverter packageSynchronizationStatusDtoConverter;
 
     @BeforeEach
     public void clearContext() throws Exception {

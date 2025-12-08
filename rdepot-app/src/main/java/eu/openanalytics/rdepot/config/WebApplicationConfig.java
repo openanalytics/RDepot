@@ -39,7 +39,11 @@ import jakarta.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
 import javax.sql.DataSource;
 import lombok.Getter;
 import lombok.NonNull;
@@ -48,6 +52,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ssl.SslBundles;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.boot.web.embedded.tomcat.TomcatConnectorCustomizer;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.ApplicationContext;
@@ -78,7 +84,11 @@ import org.springframework.validation.MessageCodesResolver;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
-import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
@@ -94,18 +104,24 @@ public class WebApplicationConfig implements WebMvcConfigurer, ApplicationContex
 
     private static final Map<Technology, Class<? extends ApiV2ReadingController<?, ?>>> packageControllerClasses =
             Map.of(
-                    RLanguage.instance, RPackageController.class,
-                    PythonLanguage.instance, PythonPackageController.class);
+                    RLanguage.instance,
+                    RPackageController.class,
+                    PythonLanguage.instance,
+                    PythonPackageController.class);
 
     private static final Map<Technology, Class<? extends ApiV2ReadingController<?, ?>>> repositoryControllerClasses =
             Map.of(
-                    RLanguage.instance, RRepositoryController.class,
-                    PythonLanguage.instance, PythonRepositoryController.class);
+                    RLanguage.instance,
+                    RRepositoryController.class,
+                    PythonLanguage.instance,
+                    PythonRepositoryController.class);
 
     private static final Map<Technology, Class<? extends ApiV2ReadingController<?, ?>>> submissionControllerClasses =
             Map.of(
-                    RLanguage.instance, RSubmissionController.class,
-                    PythonLanguage.instance, PythonSubmissionController.class);
+                    RLanguage.instance,
+                    RSubmissionController.class,
+                    PythonLanguage.instance,
+                    PythonSubmissionController.class);
 
     @Value("${db.driver}")
     private String databaseDriver;
@@ -137,8 +153,20 @@ public class WebApplicationConfig implements WebMvcConfigurer, ApplicationContex
     @Value("${multipart-upload.max-part-header-size}")
     private int maxPartHeaderSize;
 
+    @Value("${repository.api.authentication:none}")
+    private String repoApiAuthenticationType;
+
+    @Value("${repository.api.ssl.enabled:false}")
+    private boolean repoApiSslEnabled;
+
+    @Value("${repository.api.ssl.bundle:repo-api-client}")
+    private String repoApiSslBundle;
+
     @Resource
     private Environment env;
+
+    @Resource
+    private SslBundles sslBundles;
 
     @Getter
     private ApplicationContext context;
@@ -146,8 +174,17 @@ public class WebApplicationConfig implements WebMvcConfigurer, ApplicationContex
     final Logger logger = LoggerFactory.getLogger(WebApplicationConfig.class);
 
     @Bean
-    RestTemplate rest() {
-        return new RestTemplate();
+    RestTemplate repoApiClient() {
+        RestTemplateBuilder builder = new RestTemplateBuilder();
+        if (repoApiAuthenticationType.equals("simple")) {
+            builder = builder.basicAuthentication(
+                    env.getProperty("repository.api.simple.username"),
+                    env.getProperty("repository.api.simple.password"));
+        }
+        if (repoApiSslEnabled) {
+            builder = builder.setSslBundle(sslBundles.getBundle(repoApiSslBundle));
+        }
+        return builder.build();
     }
 
     @Bean
@@ -310,7 +347,6 @@ public class WebApplicationConfig implements WebMvcConfigurer, ApplicationContex
     @Override
     public MessageCodesResolver getMessageCodesResolver() {
         return new DefaultMessageCodesResolver() {
-
             private static final long serialVersionUID = 4328458877485113449L;
 
             @Override
@@ -404,7 +440,7 @@ public class WebApplicationConfig implements WebMvcConfigurer, ApplicationContex
 
     @Bean
     TomcatConnectorCustomizer connectorCustomizer() {
-        return (connector) -> {
+        return connector -> {
             connector.setMaxPartCount(maxPartCount);
             connector.setMaxPartHeaderSize(maxPartHeaderSize);
         };

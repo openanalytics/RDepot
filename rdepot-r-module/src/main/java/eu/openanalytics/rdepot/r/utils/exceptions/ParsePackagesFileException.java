@@ -22,9 +22,11 @@ package eu.openanalytics.rdepot.r.utils.exceptions;
 
 import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
 import eu.openanalytics.rdepot.r.messaging.RMessageCodes;
+import java.io.Serial;
 
 public class ParsePackagesFileException extends Exception {
 
+    @Serial
     private static final long serialVersionUID = -7221220068660991883L;
 
     public ParsePackagesFileException(String line) {

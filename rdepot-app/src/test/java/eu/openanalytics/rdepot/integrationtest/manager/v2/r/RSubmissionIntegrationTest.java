@@ -22,8 +22,10 @@ package eu.openanalytics.rdepot.integrationtest.manager.v2.r;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import eu.openanalytics.rdepot.integrationtest.environment.BashScriptExecutor;
+import eu.openanalytics.rdepot.integrationtest.environment.ExecutionResult;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.IntegrationTest;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.RequestType;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.TestRequestBody;
@@ -33,9 +35,11 @@ import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.http.ContentType;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.util.Arrays;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -250,16 +254,61 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
                 .build();
         testEndpoint(requestBody);
 
+        final ExecutionResult result = bashScriptExecutor.executeBashScript(
+                "src/test/resources/scripts/checkIfPublishedPackageCanBeInstalled.sh");
+        assertEquals(0, result.exitCode(), "Uploaded package was not published properly.");
+    }
+
+    @Test
+    public void submitBinaryPackage_installPackage() throws Exception {
+        File packageBag = new File("src/test/resources/itestPackages/arrow_8.0.0.tar.gz");
+        SubmissionMultipartBody body = new SubmissionMultipartBody(
+                "testrepo2",
+                false,
+                true,
+                "",
+                new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+                        .fileName(packageBag.getName())
+                        .mimeType("application/gzip")
+                        .controlName("file")
+                        .build(),
+                true,
+                "4.5",
+                "x86_64",
+                "centos7");
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST_MULTIPART)
+                .urlSuffix("/")
+                .statusCode(201)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getPostEndpointNewEventsAmount())
+                .expectedEventsJson(EVENTS_PATH + "new_binary_submission_events.json")
+                .expectedJsonPath("/v2/r/submission/new_binary_submission.json")
+                .submissionMultipartBody(body)
+                .build();
+        testEndpoint(requestBody);
+
         final Process process = new ProcessBuilder(
-                        "/bin/bash", "-c", "src/test/resources/scripts/checkIfPublishedPackageCanBeInstalled.sh")
+                        "/bin/bash", "-c", "src/test/resources/scripts/checkIfPublishedBinaryPackageCanBeInstalled.sh")
                 .redirectErrorStream(true)
                 .start();
         final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        while (reader.readLine() != null) {}
+
+        boolean installingBinary = false;
+        boolean loadedBinary = false;
+        String line;
+        while ((line = reader.readLine()) != null) {
+            System.out.println(line);
+            if (line.equals("* installing *binary* package ‘arrow’ ...")) installingBinary = true;
+            if (line.equals("Attaching package: ‘arrow’")) loadedBinary = true;
+        }
         process.waitFor();
         final int exitCode = process.exitValue();
         process.destroy();
         assertEquals(0, exitCode, "Uploaded package was not published properly.");
+        Assertions.assertTrue(installingBinary, "Information about installing binary package should be displayed");
+        Assertions.assertTrue(loadedBinary, "Package should be loaded in R");
     }
 
     @Test
@@ -290,8 +339,34 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    public void submitPackage_withExoticCharacters_notCreateManual() throws Exception {
+    public void submitPackage_returns422_exoticCharactersInName() throws Exception {
         File packageBag = new File("src/test/resources/itestPackages/A3_0.9.3.tar.gz");
+        SubmissionMultipartBody body = new SubmissionMultipartBody(
+                "testrepo2",
+                false,
+                true,
+                "",
+                new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+                        .fileName(packageBag.getName())
+                        .mimeType("application/gzip")
+                        .controlName("file")
+                        .build());
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST_MULTIPART)
+                .urlSuffix("/")
+                .statusCode(422)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/r/submission/422_exotic_submission.json")
+                .submissionMultipartBody(body)
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void submitPackage_withExoticCharacters_notCreateManual() throws Exception {
+        File packageBag = new File("src/test/resources/itestPackages/A3exotic_0.9.3.tar.gz");
         SubmissionMultipartBody body = new SubmissionMultipartBody(
                 "testrepo2",
                 false,
@@ -380,14 +455,14 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
         requestBody = TestRequestBody.builder()
                 .requestType(RequestType.GET_OTHER_RESOURCE)
                 .path("/api/v2/manager/packages")
-                .urlSuffix("?sort=id,asc")
+                .urlSuffix("?sort=id,asc&search=A3")
                 .statusCode(200)
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
-                .expectedJsonPath("/v2/r/packages/list_of_packages_with_replaced_package.json")
+                .expectedJsonPath("/v2/r/packages/list_of_A3_packages_with_replaced_package.json")
+                .ignoreSource(true)
                 .build();
         testEndpoint(requestBody);
-        // TODO: #34250
     }
 
     @Test
@@ -906,5 +981,294 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
                 .submissionMultipartBody(body)
                 .build();
         testEndpoint(requestBody);
+    }
+
+    @Test
+    public void submitPackage_withMismatchedVersion() throws Exception {
+        final File packageBag = new File("src/test/resources/itestPackages/bea.R_1.123.tar.gz");
+        SubmissionMultipartBody body = new SubmissionMultipartBody(
+                "testrepo2",
+                false,
+                true,
+                "",
+                new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+                        .fileName(packageBag.getName())
+                        .mimeType("application/gzip")
+                        .controlName("file")
+                        .build());
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST_MULTIPART)
+                .urlSuffix("/")
+                .statusCode(201)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getPostEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/r/submission/new_bea_with_mismatched_version_submission.json")
+                .expectedEventsJson(EVENTS_PATH + "new_bea_with_mismatched_version_events.json")
+                .submissionMultipartBody(body)
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void submitPackage_replaceLatestSamePackage() throws Exception {
+
+        final String patchRepository =
+                "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/published\"," + "\"value\":\"true\"" + "}" + "]";
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.PATCH_OTHER_RESOURCE)
+                .path("/api/v2/manager/r/repositories")
+                .urlSuffix("/5")
+                .statusCode(200)
+                .token(REPOSITORYMAINTAINER_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getChangeEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/r/repositories/published_repository.json")
+                .expectedEventsJson("/v2/r/events/repositories/patched_published_repository_event.json")
+                .body(patchRepository)
+                .build();
+        testEndpoint(requestBody);
+
+        String targetDirectoryName = "src/test/resources/downloading/";
+        createDownloadTestFolder(targetDirectoryName);
+
+        String packageName = "A3_0.9.2.tar.gz";
+        File packageBag = new File("src/test/resources/itestPackages/" + packageName);
+
+        SubmissionMultipartBody body = new SubmissionMultipartBody(
+                "testrepo4",
+                false,
+                true,
+                "",
+                new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+                        .fileName(packageBag.getName())
+                        .mimeType("application/gzip")
+                        .controlName("file")
+                        .build());
+
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST_MULTIPART)
+                .urlSuffix("/")
+                .statusCode(201)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getPostEndpointNewEventsAmount())
+                .expectedEventsJson(EVENTS_PATH + "new_submission_before_replace_package_events.json")
+                .expectedJsonPath("/v2/r/submission/new_submission_before_replace_package.json")
+                .submissionMultipartBody(body)
+                .build();
+        testEndpoint(requestBody);
+
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET_AFTER_NEW_SUBMISSION)
+                .urlSuffix("/48")
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/r/submission/submission_before_replace_package.json")
+                .build();
+        testEndpoint(requestBody);
+
+        bashScriptExecutor.executeBashCommand(
+                "curl http://localhost:8017/repo/testrepo4/src/contrib/A3_0.9.2.tar.gz  --output " + targetDirectoryName
+                        + packageName);
+
+        File file = new File(targetDirectoryName + packageName);
+
+        String oldHash = DigestUtils.md5Hex(new FileInputStream(file));
+        cleanAfterDownloading(targetDirectoryName + packageName);
+
+        packageBag = new File("src/test/resources/itestPackages/A3_0-9-2.tar.gz");
+
+        body = new SubmissionMultipartBody(
+                "testrepo4",
+                false,
+                true,
+                "",
+                new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+                        .fileName(packageBag.getName())
+                        .mimeType("application/gzip")
+                        .controlName("file")
+                        .build());
+
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST_MULTIPART)
+                .urlSuffix("/")
+                .statusCode(201)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(0)
+                .expectedJsonPath("/v2/r/submission/new_submission_after_replace_package.json")
+                .expectedEventsJson(EVENTS_PATH + "new_submission_after_replace_package_events.json")
+                .submissionMultipartBody(body)
+                .build();
+        testEndpoint(requestBody);
+
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET_AFTER_NEW_SUBMISSION)
+                .urlSuffix("/49")
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/r/submission/submission_after_replace_package.json")
+                .build();
+        testEndpoint(requestBody);
+
+        bashScriptExecutor.executeBashCommand("curl http://localhost:8017/repo/testrepo4/src/contrib/" + packageName
+                + " --output " + targetDirectoryName + packageName);
+
+        file = new File(targetDirectoryName + packageName);
+
+        String newHash = DigestUtils.md5Hex(new FileInputStream(file));
+
+        assertNotEquals(oldHash, newHash, "Hashes should be different");
+        cleanAfterDownloading(targetDirectoryName);
+    }
+
+    @Test
+    public void submitPackage_replaceArchiveSamePackage() throws Exception {
+
+        final String patchRepository =
+                "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/published\"," + "\"value\":\"true\"" + "}" + "]";
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.PATCH_OTHER_RESOURCE)
+                .path("/api/v2/manager/r/repositories")
+                .urlSuffix("/5")
+                .statusCode(200)
+                .token(REPOSITORYMAINTAINER_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getChangeEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/r/repositories/published_repository.json")
+                .expectedEventsJson("/v2/r/events/repositories/patched_published_repository_event.json")
+                .body(patchRepository)
+                .build();
+        testEndpoint(requestBody);
+
+        String packageName = "A3exotic_0.9.3.tar.gz";
+        File packageBag = new File("src/test/resources/itestPackages/" + packageName);
+
+        SubmissionMultipartBody body = new SubmissionMultipartBody(
+                "testrepo4",
+                false,
+                true,
+                "",
+                new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+                        .fileName(packageBag.getName())
+                        .mimeType("application/gzip")
+                        .controlName("file")
+                        .build());
+
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST_MULTIPART)
+                .urlSuffix("/")
+                .statusCode(201)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getPostEndpointNewEventsAmount())
+                .expectedEventsJson(EVENTS_PATH + "new_A3_latest_submission_events.json")
+                .expectedJsonPath("/v2/r/submission/new_A3_latest_submission.json")
+                .submissionMultipartBody(body)
+                .build();
+        testEndpoint(requestBody);
+
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET_AFTER_NEW_SUBMISSION)
+                .urlSuffix("/48")
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/r/submission/A3_latest_submission.json")
+                .build();
+        testEndpoint(requestBody);
+
+        String targetDirectoryName = "src/test/resources/downloading/";
+        createDownloadTestFolder(targetDirectoryName);
+
+        packageName = "A3_0.9.2.tar.gz";
+        packageBag = new File("src/test/resources/itestPackages/" + packageName);
+
+        body = new SubmissionMultipartBody(
+                "testrepo4",
+                false,
+                true,
+                "",
+                new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+                        .fileName(packageBag.getName())
+                        .mimeType("application/gzip")
+                        .controlName("file")
+                        .build());
+
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST_MULTIPART)
+                .urlSuffix("/")
+                .statusCode(201)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getPostEndpointNewEventsAmount())
+                .expectedEventsJson(EVENTS_PATH + "new_submission_before_replace_archive_package_events.json")
+                .expectedJsonPath("/v2/r/submission/new_submission_before_replace_archive_package.json")
+                .submissionMultipartBody(body)
+                .build();
+        testEndpoint(requestBody);
+
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET_AFTER_NEW_SUBMISSION)
+                .urlSuffix("/49")
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/r/submission/submission_before_replace_archive_package.json")
+                .build();
+        testEndpoint(requestBody);
+
+        bashScriptExecutor.executeBashCommand(
+                "curl http://localhost:8017/repo/testrepo4/src/contrib/Archive/A3/A3_0.9.2.tar.gz  --output "
+                        + targetDirectoryName + packageName);
+
+        File file = new File(targetDirectoryName + packageName);
+
+        String oldHash = DigestUtils.md5Hex(new FileInputStream(file));
+        cleanAfterDownloading(targetDirectoryName + packageName);
+
+        packageBag = new File("src/test/resources/itestPackages/A3_0-9-2.tar.gz");
+
+        body = new SubmissionMultipartBody(
+                "testrepo4",
+                false,
+                true,
+                "",
+                new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+                        .fileName(packageBag.getName())
+                        .mimeType("application/gzip")
+                        .controlName("file")
+                        .build());
+
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST_MULTIPART)
+                .urlSuffix("/")
+                .statusCode(201)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(0)
+                .expectedJsonPath("/v2/r/submission/new_submission_after_replace_archive_package.json")
+                .expectedEventsJson(EVENTS_PATH + "new_submission_after_replace_archive_package_events.json")
+                .submissionMultipartBody(body)
+                .build();
+        testEndpoint(requestBody);
+
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET_AFTER_NEW_SUBMISSION)
+                .urlSuffix("/50")
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/r/submission/submission_after_replace_archive_package.json")
+                .build();
+        testEndpoint(requestBody);
+
+        bashScriptExecutor.executeBashCommand("curl http://localhost:8017/repo/testrepo4/src/contrib/Archive/A3/"
+                + packageName + " --output " + targetDirectoryName + packageName);
+
+        file = new File(targetDirectoryName + packageName);
+
+        String newHash = DigestUtils.md5Hex(new FileInputStream(file));
+
+        assertNotEquals(oldHash, newHash, "Hashes should be different");
+        cleanAfterDownloading(targetDirectoryName);
     }
 }

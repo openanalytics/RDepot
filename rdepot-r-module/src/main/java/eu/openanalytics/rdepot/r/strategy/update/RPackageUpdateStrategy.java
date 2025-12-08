@@ -40,7 +40,7 @@ public class RPackageUpdateStrategy extends UpdatePackageStrategy<RPackage> {
             RPackageService service,
             User requester,
             RPackage updatedPackage,
-            Storage<?, RPackage> storage,
+            Storage<RPackage> storage,
             BestMaintainerChooser bestMaintainerChooser,
             RRepositorySynchronizer repositorySynchronizer) {
         super(

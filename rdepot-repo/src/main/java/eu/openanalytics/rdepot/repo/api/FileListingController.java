@@ -21,12 +21,15 @@
 package eu.openanalytics.rdepot.repo.api;
 
 import eu.openanalytics.rdepot.repo.exception.GetRepositoryVersionException;
+import eu.openanalytics.rdepot.repo.hash.HashCalculator;
+import eu.openanalytics.rdepot.repo.hash.model.HashMethod;
 import eu.openanalytics.rdepot.repo.r.storage.CranStorageService;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +50,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @AllArgsConstructor
 public class FileListingController {
     private final CranStorageService storageService;
+    private final HashCalculator hashCalculator;
 
     @GetMapping("/{repository}/")
     public ResponseEntity<List<String>> recentUploads(@PathVariable("repository") String repository) {
@@ -61,10 +65,15 @@ public class FileListingController {
             List<Path> files = storageService.getRecentPackagesFromRepository(repository);
             Map<String, List<Path>> binaryFiles = storageService.getRecentBinaryPackagesFromRepository(repository);
 
-            files.forEach(file -> uploads.add(StringUtils.substringAfter(file.toString(), repository + "/")));
+            for (Path file : files) {
+                uploads.add(fileAndHash(file, repository));
+            }
 
-            binaryFiles.forEach((path, packageList) -> packageList.forEach(
-                    file -> uploads.add(StringUtils.substringAfter(file.toString(), repository + "/"))));
+            for (String path : binaryFiles.keySet()) {
+                for (Path file : binaryFiles.get(path)) {
+                    uploads.add(fileAndHash(file, repository));
+                }
+            }
 
         } catch (IOException e) {
             log.error(e.getMessage(), e);
@@ -74,14 +83,24 @@ public class FileListingController {
         return ResponseEntity.ok(uploads);
     }
 
+    private String fileAndHash(Path file, String repository) throws IOException {
+        return StringUtils.substringAfter(file.toString(), repository + "/")
+                + "="
+                + hashCalculator
+                        .calculate(Files.newInputStream(file), HashMethod.MD5)
+                        .get();
+    }
+
     @GetMapping("/{repository}/archive/")
     public ResponseEntity<List<String>> archiveUploads(@PathVariable("repository") String repository) {
         try {
-            List<String> uploads = storageService.getArchiveFromRepository(repository).values().stream()
-                    .flatMap(List::stream)
-                    .map(file -> StringUtils.substringAfter(file.toString(), repository + "/"))
-                    .toList();
-
+            List<String> uploads = new ArrayList<>();
+            Map<String, List<Path>> paths = storageService.getArchiveFromRepository(repository);
+            for (List<Path> files : paths.values()) {
+                for (Path file : files) {
+                    uploads.add(fileAndHash(file, repository));
+                }
+            }
             return ResponseEntity.ok(uploads);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
@@ -115,15 +134,5 @@ public class FileListingController {
                 log.error("Could not send error response!", e);
             }
         }
-    }
-
-    /**
-     * Should be available under the path of the repository + "/status" to indicate
-     * whether the path is correct.
-     * @return "OK" by default
-     */
-    @GetMapping("/{repository:.+}/status")
-    public ResponseEntity<String> status() {
-        return ResponseEntity.ok("OK");
     }
 }

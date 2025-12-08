@@ -17,6 +17,8 @@ default-user-configuration:
   page-size: 10
   supported-languages:
     - en-US
+    - de-DE
+    - nl-NL
     - pl-PL
   supported-themes:
     - light

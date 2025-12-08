@@ -117,7 +117,6 @@ public class SecurityMediatorImpl implements SecurityMediator {
                         return true;
                     }
                 }
-                break;
             case Role.VALUE.PACKAGEMAINTAINER:
                 for (PackageMaintainer maintainer : packageMaintainerService.findNonDeletedByUser(requester)) {
                     if (maintainer.getRepository().getId()
@@ -131,7 +130,6 @@ public class SecurityMediatorImpl implements SecurityMediator {
             default:
                 return false;
         }
-        return false;
     }
 
     @Override
@@ -205,7 +203,7 @@ public class SecurityMediatorImpl implements SecurityMediator {
 
     @Override
     public boolean isAuthorizedToEditWithPatch(JsonPatch patch, User user, User requester) {
-        return requester.getRole().getValue() == Role.VALUE.ADMIN && requester.getId() != user.getId();
+        return requester.getRole().getValue() == Role.VALUE.ADMIN;
     }
 
     @Override

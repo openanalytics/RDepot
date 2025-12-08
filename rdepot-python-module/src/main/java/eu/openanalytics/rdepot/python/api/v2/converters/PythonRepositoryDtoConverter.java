@@ -27,9 +27,11 @@ import eu.openanalytics.rdepot.base.service.PackageService;
 import eu.openanalytics.rdepot.base.time.DateProvider;
 import eu.openanalytics.rdepot.python.api.v2.dtos.PythonRepositoryDto;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
+import eu.openanalytics.rdepot.python.entities.PythonRepositoryAllowedFiles;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -37,6 +39,9 @@ import org.springframework.stereotype.Component;
 public class PythonRepositoryDtoConverter implements DtoConverter<PythonRepository, PythonRepositoryDto> {
 
     private final PackageService<Package> packageService;
+
+    @Autowired
+    private PythonRepositoryAllowedFiles repoAllowedFiles;
 
     @Override
     public PythonRepository resolveDtoToEntity(PythonRepositoryDto dto) throws EntityResolutionException {
@@ -49,7 +54,8 @@ public class PythonRepositoryDtoConverter implements DtoConverter<PythonReposito
                             && !dto.getLastModifiedTimestamp().isEmpty()
                     ? DateProvider.timestampToInstant(dto.getLastModifiedTimestamp())
                     : DateProvider.now();
-            return new PythonRepository(dto, lastPublicationTimestamp, lastModifiedTimestamp);
+            return new PythonRepository(
+                    dto, lastPublicationTimestamp, lastModifiedTimestamp, repoAllowedFiles.getPython());
         } catch (DateTimeParseException e) {
             throw new EntityResolutionException(dto);
         }

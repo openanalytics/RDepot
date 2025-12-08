@@ -37,6 +37,7 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -85,6 +86,8 @@ public class TransactionManagementTest {
         checksums.put("23457_PACKAGES", "11a6d192748004e42797862505409102");
         checksums.put("23458_PACKAGES.gz", "d198474d73e5cc542aa7a0348b104d72");
     }
+
+    private final String auth = Base64.getEncoder().encodeToString("rdepot:P@ssw0rd".getBytes());
 
     private class SubmitFirstChunkCallable implements Callable<MvcResult> {
 
@@ -142,7 +145,8 @@ public class TransactionManagementTest {
                             .param("version_before", "23")
                             .param("version_after", "24")
                             .param("page", "1/5")
-                            .param("id", ""))
+                            .param("id", "")
+                            .header("Authorization", "Basic " + auth))
                     .andReturn();
         }
     }
@@ -270,7 +274,8 @@ public class TransactionManagementTest {
                         .param("version_before", "23")
                         .param("version_after", "24")
                         .param("page", "3/5")
-                        .param("id", transactionTestId))
+                        .param("id", transactionTestId)
+                        .header("Authorization", "Basic " + auth))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
@@ -347,7 +352,8 @@ public class TransactionManagementTest {
                         .param("version_before", "23")
                         .param("version_after", "24")
                         .param("page", "1/5")
-                        .param("id", ""))
+                        .param("id", "")
+                        .header("Authorization", "Basic " + auth))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
 
         // abort previous transaction - verifications
@@ -385,7 +391,8 @@ public class TransactionManagementTest {
                         .param("version_before", "23")
                         .param("version_after", "24")
                         .param("page", "3/5")
-                        .param("id", transactionTestId))
+                        .param("id", transactionTestId)
+                        .header("Authorization", "Basic " + auth))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
@@ -398,7 +405,8 @@ public class TransactionManagementTest {
                         .param("version_before", "23")
                         .param("version_after", "24")
                         .param("page", "4/5")
-                        .param("id", TEST_ID))
+                        .param("id", TEST_ID)
+                        .header("Authorization", "Basic " + auth))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
@@ -449,7 +457,8 @@ public class TransactionManagementTest {
                         .param("version_before", "23")
                         .param("version_after", "24")
                         .param("page", "2/2")
-                        .param("id", TEST_ID))
+                        .param("id", TEST_ID)
+                        .header("Authorization", "Basic " + auth))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
 
         verify(cranFileSystemStorageService).storeAndDeleteFiles(any());
@@ -503,7 +512,8 @@ public class TransactionManagementTest {
                         .param("version_before", "23")
                         .param("version_after", "24")
                         .param("page", "2/3")
-                        .param("id", TEST_ID))
+                        .param("id", TEST_ID)
+                        .header("Authorization", "Basic " + auth))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
 
         verify(cranFileSystemStorageService).storeAndDeleteFiles(any());

@@ -22,14 +22,15 @@ package eu.openanalytics.rdepot.test.unit.validation;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
 import eu.openanalytics.rdepot.base.validation.DataSpecificValidationResult;
-import eu.openanalytics.rdepot.base.validation.PackageValidator;
 import eu.openanalytics.rdepot.base.validation.ValidationResultImpl;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
@@ -68,11 +69,14 @@ public class PythonPackageValidatorTest {
     @Mock
     PythonPackageService packageService;
 
-    private PackageValidator<PythonPackage> packageValidator;
+    private PythonPackageValidator packageValidator;
     private PythonPackage packageBag;
     private Submission submission;
+    private Submission binarySubmission;
     private PythonPackage updatedPackageBag;
     private PythonPackage duplicatedPackageBag;
+    private PythonPackage binaryPackage;
+    private PythonPackage duplicatedBinaryPackage;
     private DataSpecificValidationResult<Submission> errors;
 
     @BeforeEach
@@ -80,15 +84,14 @@ public class PythonPackageValidatorTest {
         User user = UserTestFixture.GET_ADMIN();
         PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
         packageBag = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
-        packageBag.setTitle("someTitle");
-        packageBag.setVersion("21");
-        packageBag.setName("accelerated");
-        packageBag.setHash("somehash");
         duplicatedPackageBag = new PythonPackage(packageBag);
         updatedPackageBag = new PythonPackage(packageBag);
         updatedPackageBag.setLicense(packageBag.getLicense());
         updatedPackageBag.setHash(packageBag.getHash());
         submission = PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, duplicatedPackageBag);
+        binaryPackage = PythonPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user);
+        duplicatedBinaryPackage = new PythonPackage(binaryPackage);
+        binarySubmission = PythonSubmissionTestFixture.GET_FIXTURE_SUBMISSION(user, duplicatedBinaryPackage);
         packageValidator = new PythonPackageValidator(submissionService, packageService, env);
     }
 
@@ -103,6 +106,7 @@ public class PythonPackageValidatorTest {
     public void validateUploadPackageWithDashInName_shouldSucceed() {
         prepareTest();
         packageBag.setName("accelerated-numpy");
+        packageBag.setNormalizedName("accelerated-numpy");
         packageValidator.validateUploadPackage(packageBag, true, errors);
         assertFalse(errors.hasErrors(), "Validation results should be empty for a package with dash in the name");
     }
@@ -179,8 +183,16 @@ public class PythonPackageValidatorTest {
     public void validateUploadPackageThatExistsWithReplaceSetToTrue_shouldWarn() {
         prepareTest();
         packageBag.setId(-1);
-        when(packageService.findByNameAndVersionAndRepositoryAndDeleted(
-                        packageBag.getName(), packageBag.getVersion(), packageBag.getRepository(), false))
+        when(packageService.findByNormalizedNameAndVersionAndRepositoryAndDeletedAndBinary(
+                        packageBag.getNormalizedName(),
+                        packageBag.getVersion(),
+                        packageBag.getRepository(),
+                        false,
+                        packageBag.isBinary(),
+                        packageBag.getBuildTag(),
+                        packageBag.getPythonTag(),
+                        packageBag.getAbiTag(),
+                        packageBag.getPlatformTag()))
                 .thenReturn(Optional.of(duplicatedPackageBag));
         when(submissionService.findByPackage(duplicatedPackageBag)).thenReturn(Optional.of(submission));
 
@@ -195,8 +207,16 @@ public class PythonPackageValidatorTest {
     public void validateUploadPackageThatExistsWithReplaceSetToFalse_shouldWarn() {
         prepareTest();
         packageBag.setId(-1);
-        when(packageService.findByNameAndVersionAndRepositoryAndDeleted(
-                        packageBag.getName(), packageBag.getVersion(), packageBag.getRepository(), false))
+        when(packageService.findByNormalizedNameAndVersionAndRepositoryAndDeletedAndBinary(
+                        packageBag.getNormalizedName(),
+                        packageBag.getVersion(),
+                        packageBag.getRepository(),
+                        false,
+                        packageBag.isBinary(),
+                        packageBag.getBuildTag(),
+                        packageBag.getPythonTag(),
+                        packageBag.getAbiTag(),
+                        packageBag.getPlatformTag()))
                 .thenReturn(Optional.of(duplicatedPackageBag));
         when(submissionService.findByPackage(duplicatedPackageBag)).thenReturn(Optional.of(submission));
 
@@ -284,7 +304,7 @@ public class PythonPackageValidatorTest {
                 "boto3-1.26.156.tar.gz",
                 ContentType.MULTIPART_FORM_DATA.toString(),
                 fileContent);
-        packageValidator.validate(multipart, errors);
+        packageValidator.validate(multipart, errors, false);
         assertTrue(errors.hasErrors(), "Validation should return content type error");
         verify(errors, times(1)).error("CONTENT-TYPE", MessageCodes.INVALID_CONTENTTYPE);
     }
@@ -312,7 +332,7 @@ public class PythonPackageValidatorTest {
 
     private void prepareTest() {
         errors = Mockito.spy(ValidationResultImpl.createDataSpecificResult());
-        when(env.getProperty("package.version.max-numbers", "10")).thenReturn("1");
+        when(env.getProperty("package.version.max-numbers", "10")).thenReturn("10");
     }
 
     private void validateUpdatedPackageBag() {
@@ -326,5 +346,116 @@ public class PythonPackageValidatorTest {
         updatedPackageBag.setId(100);
         packageValidator.validate(updatedPackageBag, true, errors);
         verify(errors, times(1)).error("id", MessageCodes.NO_SUCH_PACKAGE_ERROR);
+    }
+
+    @Test
+    public void validateUploadPackageWithoutVersionInFilename_shouldFail() {
+        prepareTest();
+        packageBag.setSource("testPackage.tar.gz");
+        packageValidator.validateUploadPackage(packageBag, true, errors);
+        assertTrue(errors.hasErrors(), "Validation should return filename error");
+        verify(errors, times(1)).error("filename", MessageCodes.INVALID_FILENAME);
+    }
+
+    @Test
+    public void validateUploadPackageWithMismatchName_shouldWarn() {
+        prepareTest();
+        packageBag.setName("testPackage");
+        packageBag.setSource("testpackage-4.5.6.tar.gz");
+        packageValidator.validateUploadPackage(packageBag, true, errors);
+        assertTrue(errors.hasWarnings(), "Validation should return package name warning");
+        verify(errors, times(1)).warning("name", MessageCodes.MISMATCHED_DATA_IN_THE_FILENAME);
+    }
+
+    @Test
+    public void validateUploadPackageWithMismatchVersion_shouldWarn() {
+        prepareTest();
+        packageBag.setName("testPackage");
+        packageBag.setSource("testPackage-1.2.3.tar.gz");
+        packageValidator.validateUploadPackage(packageBag, true, errors);
+        assertTrue(errors.hasWarnings(), "Validation should return package version warning");
+        verify(errors, times(1)).warning("version", MessageCodes.MISMATCHED_DATA_IN_THE_FILENAME);
+    }
+
+    @Test
+    public void validateUploadBinaryPackage_shouldSucceed() {
+        prepareTest();
+        when(env.getProperty("package.version.max-numbers", "10")).thenReturn("10");
+        packageValidator.validateUploadPackage(binaryPackage, true, errors);
+        assertFalse(errors.hasErrors(), "Validation results should be empty for a standard binary package");
+    }
+
+    @Test
+    public void validateUploadBinaryPackageWithoutCompatibilityTags_shouldFail() {
+        prepareTest();
+        binaryPackage.setCompatibilityTags("");
+        packageValidator.validateUploadPackage(binaryPackage, true, errors);
+        assertTrue(errors.hasErrors(), "Validation should return compatibility tags error");
+        verify(errors, times(1)).error("compatibilityTags", PythonMessageCodes.EMPTY_COMPATIBILITY_TAGS);
+    }
+
+    @Test
+    public void validateUploadBinaryPackageWithMismatchPythonTag_shouldFail() {
+        prepareTest();
+        binaryPackage.setPythonTag("cp311");
+        packageValidator.validateUploadPackage(binaryPackage, true, errors);
+        assertTrue(errors.hasWarnings(), "Validation should return python tag error");
+        verify(errors, times(1)).warning("pythonTag", MessageCodes.MISMATCHED_DATA_IN_THE_FILENAME);
+    }
+
+    @Test
+    public void validateUploadBinaryPackageWithMismatchAbiTag_shouldFail() {
+        prepareTest();
+        binaryPackage.setAbiTag("cp311");
+        packageValidator.validateUploadPackage(binaryPackage, true, errors);
+        assertTrue(errors.hasWarnings(), "Validation should return abi tag error");
+        verify(errors, times(1)).warning("abiTag", MessageCodes.MISMATCHED_DATA_IN_THE_FILENAME);
+    }
+
+    @Test
+    public void validateUploadBinaryPackageWithMismatchPlatformTag_shouldFail() {
+        prepareTest();
+        binaryPackage.setPlatformTag("manylinux_2_17_i686");
+        packageValidator.validateUploadPackage(binaryPackage, true, errors);
+        assertTrue(errors.hasWarnings(), "Validation should return platform tag error");
+        verify(errors, times(1)).warning("platformTag", MessageCodes.MISMATCHED_DATA_IN_THE_FILENAME);
+    }
+
+    @Test
+    public void validateUploadBinaryPackageThatExistForDifferentBinaryParameters_shouldSucceed() {
+        prepareTest();
+        binaryPackage.setId(-1);
+        duplicatedBinaryPackage.setBuildTag("1");
+        when(env.getProperty("package.version.max-numbers", "10")).thenReturn("10");
+
+        packageValidator.validateUploadPackage(binaryPackage, false, errors);
+
+        assertFalse(errors.hasErrors(), "Validation results should be empty for a standard binary package");
+    }
+
+    @Test
+    public void validateUploadBinaryPackageThatExistForTheSameBinaryParametersAndReplaceSetToFalse_shouldWarn() {
+        prepareTest();
+        binaryPackage.setId(-1);
+        when(packageService.findByNormalizedNameAndVersionAndRepositoryAndDeletedAndBinary(
+                        binaryPackage.getNormalizedName(),
+                        binaryPackage.getVersion(),
+                        binaryPackage.getRepository(),
+                        false,
+                        binaryPackage.isBinary(),
+                        binaryPackage.getBuildTag(),
+                        binaryPackage.getPythonTag(),
+                        binaryPackage.getAbiTag(),
+                        binaryPackage.getPlatformTag()))
+                .thenReturn(Optional.of(duplicatedBinaryPackage));
+
+        when(submissionService.findByPackage(duplicatedBinaryPackage)).thenReturn(Optional.of(binarySubmission));
+        when(env.getProperty("package.version.max-numbers", "10")).thenReturn("10");
+
+        packageValidator.validateUploadPackage(binaryPackage, false, errors);
+
+        assertFalse(errors.hasErrors(), "Validation results should be empty for a standard package");
+        assertTrue(errors.hasWarnings(), "Validation should return duplications warning");
+        verify(errors, times(1)).warning("version", MessageCodes.DUPLICATE_VERSION_REPLACE_OFF, binarySubmission);
     }
 }

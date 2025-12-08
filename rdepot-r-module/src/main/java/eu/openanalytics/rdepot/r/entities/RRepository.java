@@ -21,17 +21,22 @@
 package eu.openanalytics.rdepot.r.entities;
 
 import eu.openanalytics.rdepot.base.entities.Repository;
+import eu.openanalytics.rdepot.base.entities.enums.HashMethod;
 import eu.openanalytics.rdepot.r.api.v2.dtos.RRepositoryDto;
 import eu.openanalytics.rdepot.r.api.v2.dtos.RRepositorySimpleDto;
+import eu.openanalytics.rdepot.r.entities.listener.RRepositoryListener;
 import eu.openanalytics.rdepot.r.technology.RLanguage;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.SecondaryTable;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -39,6 +44,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @DiscriminatorValue("R")
+@EntityListeners(RRepositoryListener.class)
 @SecondaryTable(name = "rrepository", pkJoinColumns = @PrimaryKeyJoinColumn(name = "id"))
 public class RRepository extends Repository implements Serializable {
 
@@ -52,8 +58,12 @@ public class RRepository extends Repository implements Serializable {
         super(RLanguage.instance);
     }
 
-    public RRepository(RRepositoryDto dto, Instant lastPublicationTimestamp, Instant lastModifiedTimestamp) {
-        super(RLanguage.instance, dto, lastPublicationTimestamp, lastModifiedTimestamp);
+    public RRepository(
+            RRepositoryDto dto,
+            Instant lastPublicationTimestamp,
+            Instant lastModifiedTimestamp,
+            List<Map<String, String>> allowedFiles) {
+        super(RLanguage.instance, dto, lastPublicationTimestamp, lastModifiedTimestamp, allowedFiles);
         this.redirectToSource = dto.isRedirectToSource();
     }
 
@@ -65,5 +75,10 @@ public class RRepository extends Repository implements Serializable {
     @Override
     public RRepositorySimpleDto createSimpleDto() {
         return new RRepositorySimpleDto(this);
+    }
+
+    @Override
+    public HashMethod getHashMethod() {
+        return HashMethod.MD5;
     }
 }

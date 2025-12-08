@@ -21,18 +21,22 @@
 package eu.openanalytics.rdepot.base.mediator.deletion;
 
 import eu.openanalytics.rdepot.base.entities.Package;
+import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
+import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.PackageService;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
+import eu.openanalytics.rdepot.base.storage.Populator;
 import eu.openanalytics.rdepot.base.storage.Storage;
 import eu.openanalytics.rdepot.base.storage.exceptions.MovePackageSourceException;
 import eu.openanalytics.rdepot.base.storage.exceptions.SourceFileDeleteException;
 import eu.openanalytics.rdepot.base.synchronization.RepositorySynchronizer;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
 import eu.openanalytics.rdepot.base.utils.PackageRepositoryResolver;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,23 +50,29 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public abstract class PackageDeleter<P extends Package, R extends Repository> extends ResourceDeleter<P> {
 
-    protected final Storage<?, P> storage;
+    protected final Populator<?, P> populator;
+    protected final Storage<P> storage;
     protected final SubmissionService submissionService;
     protected final RepositorySynchronizer<R> repositorySynchronizer;
     protected final PackageRepositoryResolver<R, P> packageRepositoryResolver;
+    protected final PackageMaintainerService maintainerService;
 
     protected PackageDeleter(
             NewsfeedEventService newsfeedEventService,
             PackageService<P> resourceService,
-            Storage<?, P> storage,
+            Populator<?, P> populator,
+            Storage<P> storage,
             SubmissionService submissionService,
             RepositorySynchronizer<R> repositorySynchronizer,
-            PackageRepositoryResolver<R, P> packageRepositoryResolver) {
+            PackageRepositoryResolver<R, P> packageRepositoryResolver,
+            PackageMaintainerService maintainerService) {
         super(newsfeedEventService, resourceService);
+        this.populator = populator;
         this.storage = storage;
         this.submissionService = submissionService;
         this.repositorySynchronizer = repositorySynchronizer;
         this.packageRepositoryResolver = packageRepositoryResolver;
+        this.maintainerService = maintainerService;
     }
 
     private void synchronizeRepository(P resource) throws SynchronizeRepositoryException {
@@ -81,7 +91,7 @@ public abstract class PackageDeleter<P extends Package, R extends Repository> ex
     @Override
     public void delete(P packageBag) throws DeleteEntityException {
         if (packageBag.getSource() == null || packageBag.getSource().isBlank()) {
-            log.warn("Deleting package with empty source property: " + packageBag.toString());
+            log.warn("Deleting package with empty source property: {}", packageBag);
             deleteFromDatabase(packageBag);
             return;
         }
@@ -89,7 +99,7 @@ public abstract class PackageDeleter<P extends Package, R extends Repository> ex
         String recycledPackageSourcePath;
         final String oldPackageSourcePath = packageBag.getSource();
         try {
-            recycledPackageSourcePath = storage.moveToTrashDirectory(packageBag);
+            recycledPackageSourcePath = populator.moveToTrashDirectory(packageBag);
             packageBag.setSource(recycledPackageSourcePath);
 
             deleteFromDatabase(packageBag);
@@ -114,6 +124,10 @@ public abstract class PackageDeleter<P extends Package, R extends Repository> ex
         newsfeedEventService.deleteRelatedEvents(packageBag.getSubmission());
         newsfeedEventService.deleteRelatedEvents(packageBag);
         submissionService.delete(packageBag.getSubmission());
+
+        List<PackageMaintainer> maintainers =
+                maintainerService.findAllByPackageNameAndRepository(packageBag.getName(), packageBag.getRepository());
+        maintainers.forEach(maintainer -> maintainer.getPackages().remove(packageBag));
     }
 
     @Transactional

@@ -54,7 +54,7 @@ public class PythonRepositoryStrategyTest extends StrategyTest {
     protected NewsfeedEventService eventService;
 
     @Mock
-    protected Storage<PythonRepository, PythonPackage> storage;
+    protected Storage<PythonPackage> storage;
 
     @Test
     public void createRepository() throws Exception {

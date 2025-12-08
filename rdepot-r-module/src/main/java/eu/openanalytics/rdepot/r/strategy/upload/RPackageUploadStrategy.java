@@ -25,30 +25,42 @@ import eu.openanalytics.rdepot.base.email.EmailService;
 import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.mediator.BestMaintainerChooser;
+import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
+import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.PackageService;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
 import eu.openanalytics.rdepot.base.storage.Storage;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.upload.DefaultPackageUploadStrategy;
+import eu.openanalytics.rdepot.base.validation.DataSpecificValidationResult;
 import eu.openanalytics.rdepot.base.validation.PackageValidator;
+import eu.openanalytics.rdepot.base.validation.ValidationResultItem;
 import eu.openanalytics.rdepot.r.api.v2.dtos.RPackageUploadRequest;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.mediator.deletion.RPackageDeleter;
-import eu.openanalytics.rdepot.r.storage.RStorage;
 import eu.openanalytics.rdepot.r.storage.exceptions.GenerateManualException;
+import eu.openanalytics.rdepot.r.storage.population.RPopulator;
 import eu.openanalytics.rdepot.r.synchronization.RRepositorySynchronizer;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.Properties;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  * Implementation of upload strategy for R packages.
  */
+@Slf4j
 public class RPackageUploadStrategy extends DefaultPackageUploadStrategy<RRepository, RPackage> {
 
-    private final RStorage rStorage;
+    private final RPopulator rStorage;
     private final RPackageUploadRequest rPackageRequest;
 
     public RPackageUploadStrategy(
@@ -58,15 +70,16 @@ public class RPackageUploadStrategy extends DefaultPackageUploadStrategy<RReposi
             SubmissionService service,
             PackageValidator<RPackage> packageValidator,
             RepositoryService<RRepository> repositoryService,
-            Storage<RRepository, RPackage> storage,
+            Storage<RPackage> storage,
             PackageService<RPackage> packageService,
             EmailService emailService,
             BestMaintainerChooser bestMaintainerChooser,
             RRepositorySynchronizer repositorySynchronizer,
             SecurityMediator securityMediator,
-            RStorage rStorage,
+            RPopulator rPopulator,
             RPackageDeleter packageDeleter,
-            RPackageUploadRequest rPackageRequest) {
+            RPackageUploadRequest rPackageRequest,
+            PackageMaintainerService maintainerService) {
         super(
                 request,
                 requester,
@@ -80,8 +93,10 @@ public class RPackageUploadStrategy extends DefaultPackageUploadStrategy<RReposi
                 bestMaintainerChooser,
                 repositorySynchronizer,
                 securityMediator,
-                packageDeleter);
-        this.rStorage = rStorage;
+                packageDeleter,
+                rPopulator,
+                maintainerService);
+        this.rStorage = rPopulator;
         this.rPackageRequest = rPackageRequest;
     }
 
@@ -90,6 +105,7 @@ public class RPackageUploadStrategy extends DefaultPackageUploadStrategy<RReposi
         RPackage packageBag = new RPackage();
         if (rPackageRequest.isBinaryPackage()) packageBag = parseTechnologySpecificBinaryPackageProperties(properties);
 
+        packageBag.setName(properties.getProperty("Package"));
         packageBag.setDescription(properties.getProperty("Description"));
         packageBag.setDescriptionContentType("txt");
         packageBag.setDepends(properties.getProperty("Depends"));
@@ -105,7 +121,8 @@ public class RPackageUploadStrategy extends DefaultPackageUploadStrategy<RReposi
                 properties.getProperty("NeedsCompilation", "no").equalsIgnoreCase("yes"));
         packageBag.setPriority(properties.getProperty("Priority"));
         packageBag.setMaintainer(properties.getProperty("Maintainer"));
-
+        packageBag.setEncoding(properties.getProperty("Encoding"));
+        packageBag.setManualAvailable(rPackageRequest.isGenerateManual());
         return packageBag;
     }
 
@@ -140,5 +157,28 @@ public class RPackageUploadStrategy extends DefaultPackageUploadStrategy<RReposi
     @Override
     protected void assignRepositoryToPackage(RRepository repository, RPackage packageBag) {
         packageBag.setRepository(repository);
+    }
+
+    @Override
+    protected void renamePackageFileIfNecessary(
+            RPackage packageBag, final DataSpecificValidationResult<Submission> validationResult) {
+        final List<ValidationResultItem<Submission>> packageDuplicateWarnings =
+                validationResult.getDataSpecificWarnings().stream()
+                        .filter(w -> w.messageCode().equals(MessageCodes.MISMATCHED_DATA_IN_THE_FILENAME))
+                        .toList();
+
+        if (packageDuplicateWarnings.isEmpty()) return;
+
+        String newName = packageBag.getPackageFilename();
+
+        File renamedPackage = new File(FilenameUtils.getPath(packageBag.getSource()), newName);
+        try {
+            FileUtils.moveFile(new File(packageBag.getSource()), renamedPackage, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            throw new IllegalStateException("Could not properly rename package file!");
+        }
+
+        packageBag.setSource(renamedPackage.getPath());
     }
 }

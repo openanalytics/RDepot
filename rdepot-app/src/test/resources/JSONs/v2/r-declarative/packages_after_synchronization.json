@@ -1,257 +1,266 @@
 {
-  "status": "SUCCESS",
-  "code": 200,
-  "message": "Your request has been processed successfully.",
-  "messageCode": "success.request.processed",
-  "data": {
-    "links": [
-      {
-        "rel": "self",
-        "href": "http://localhost:8021/api/v2/manager/r/packages?page=0&size=20"
-      }
-    ],
-    "content": [
-      {
-        "id": 1,
-        "user": {
-          "id": 4,
-          "name": "Albert Einstein",
-          "login": "einstein",
-          "email": "einstein@ldap.forumsys.com"
-        },
-        "repository": {
-          "id": 3,
-          "name": "D",
-          "publicationUri": "http://localhost/repo/D",
-          "published": false,
-          "technology": "R",
-          "requiresAuthentication": true,
-          "lastPublicationSuccessful": false
-        },
-        "submission": {
-          "id": 1,
-          "state": "ACCEPTED"
-        },
-        "name": "genefilter",
-        "active": true,
-        "deleted": false,
-        "technology": "R",
-        "descriptionContentType": "txt",
-        "binary": false,
-        "description": "Some basic functions for filtering genes.",
-        "author": "Robert Gentleman [aut],\\n Vincent J. Carey [aut],\\n Wolfgang Huber [aut],\\n Florian Hahne [aut],\\n Emmanuel Taiwo [ctb] ('howtogenefinder' vignette translation from\\n Sweave to RMarkdown / HTML.),\\n Khadijah Amusat [ctb] (Converted genefilter vignette from Sweave to\\n RMarkdown / HTML.),\\n Bioconductor Package Maintainer [cre]",
-        "title": "genefilter: methods for filtering genes from high-throughput\\n experiments",
-        "url": null,
-        "depends": null,
-        "imports": "MatrixGenerics (>= 1.11.1), AnnotationDbi, annotate, Biobase,\\n graphics, methods, stats, survival, grDevices",
-        "suggests": "class, hgu95av2.db, tkWidgets, ALL, ROC, RColorBrewer,\\n BiocStyle, knitr",
-        "systemRequirements": null,
-        "license": "Artistic-2.0",
-        "md5sum": "0c5047689b3712935e2db374eb3bcc95",
-        "built": null,
-        "architecture": null,
-        "distribution": null,
-        "enhances": null,
-        "linkingTo": null,
-        "source": "",
-        "priority": null,
-        "needsCompilation": "yes",
-        "maintainer": "Bioconductor Package Maintainer <maintainer@bioconductor.org>",
-        "rversion": null,
+    "status": "SUCCESS",
+    "code": 200,
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "data": {
         "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8021/api/v2/manager/r/packages/1"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8021/api/v2/manager/r/packages"
-          }
-        ]
-      },
-      {
-        "id": 2,
-        "user": {
-          "id": 4,
-          "name": "Albert Einstein",
-          "login": "einstein",
-          "email": "einstein@ldap.forumsys.com"
-        },
-        "repository": {
-          "id": 3,
-          "name": "D",
-          "publicationUri": "http://localhost/repo/D",
-          "published": false,
-          "technology": "R",
-          "requiresAuthentication": true,
-          "lastPublicationSuccessful": false
-        },
-        "submission": {
-          "id": 2,
-          "state": "ACCEPTED"
-        },
-        "name": "ggplot2",
-        "version": "3.3.2",
-        "active": true,
-        "deleted": false,
-        "technology": "R",
-        "descriptionContentType": "txt",
-        "binary": false,
-        "source": "",
-        "description": "A system for 'declaratively' creating graphics,\\n based on \"The Grammar of Graphics\". You provide the data, tell 'ggplot2'\\n how to map variables to aesthetics, what graphical primitives to use,\\n and it takes care of the details.",
-        "author": "Hadley Wickham [aut] (<https://orcid.org/0000-0003-4757-117X>),\\n Winston Chang [aut] (<https://orcid.org/0000-0002-1576-2126>),\\n Lionel Henry [aut],\\n Thomas Lin Pedersen [aut, cre]\\n (<https://orcid.org/0000-0002-5147-4711>),\\n Kohske Takahashi [aut],\\n Claus Wilke [aut] (<https://orcid.org/0000-0002-7470-9261>),\\n Kara Woo [aut] (<https://orcid.org/0000-0002-5125-4188>),\\n Hiroaki Yutani [aut] (<https://orcid.org/0000-0002-3385-7233>),\\n Dewey Dunnington [aut] (<https://orcid.org/0000-0002-9415-4582>),\\n RStudio [cph, fnd]",
-        "title": "Create Elegant Data Visualisations Using the Grammar of Graphics",
-        "url": "http://ggplot2.tidyverse.org, https://github.com/tidyverse/ggplot2",
-        "depends": "R (>= 3.2)",
-        "imports": "digest, glue, grDevices, grid, gtable (>= 0.1.1), isoband,\\n MASS, mgcv, rlang (>= 0.3.0), scales (>= 0.5.0), stats, tibble,\\n withr (>= 2.0.0)",
-        "suggests": "covr, dplyr, ggplot2movies, hexbin, Hmisc, knitr, lattice,\\n mapproj, maps, maptools, multcomp, munsell, nlme, profvis,\\n quantreg, RColorBrewer, rgeos, rmarkdown, rpart, sf (>= 0.7-3),\\n svglite (>= 1.2.0.9001), testthat (>= 2.1.0), vdiffr (>= 0.3.0)",
-        "systemRequirements": null,
-        "license": "GPL-2 | file LICENSE",
-        "md5sum": "02d87290852410924eb816c2d4788afa",
-        "built": null,
-        "architecture": null,
-        "distribution": null,
-        "enhances": "sp",
-        "linkingTo": null,
-        "priority": null,
-        "needsCompilation": "no",
-        "maintainer": "Thomas Lin Pedersen <thomas.pedersen@rstudio.com>",
-        "rversion": null,
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8021/api/v2/manager/r/packages/2"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8021/api/v2/manager/r/packages"
-          }
-        ]
-      },
-      {
-        "id": 3,
-        "user": {
-          "id": 4,
-          "name": "Albert Einstein",
-          "login": "einstein",
-          "email": "einstein@ldap.forumsys.com"
-        },
-        "repository": {
-          "id": 3,
-          "name": "D",
-          "publicationUri": "http://localhost/repo/D",
-          "published": false,
-          "technology": "R",
-          "requiresAuthentication": true,
-          "lastPublicationSuccessful": false
-        },
-        "submission": {
-          "id": 3,
-          "state": "ACCEPTED"
-        },
-        "name": "plotly",
-        "version": "4.11.0",
-        "active": true,
-        "deleted": false,
-        "source": "",
-        "technology": "R",
-        "descriptionContentType": "txt",
-        "binary": false,
-        "description": "Create interactive web graphics from 'ggplot2' graphs and/or a custom interface to the (MIT-licensed) JavaScript library 'plotly.js' inspired by the grammar of graphics.",
-        "author": "Carson Sievert [aut, cre] (ORCID:\\n <https://orcid.org/0000-0002-4958-2844>),\\n Chris Parmer [aut],\\n Toby Hocking [aut],\\n Scott Chamberlain [aut],\\n Karthik Ram [aut],\\n Marianne Corvellec [aut] (ORCID:\\n <https://orcid.org/0000-0002-1994-3581>),\\n Pedro Despouy [aut],\\n Salim Brüggemann [ctb] (ORCID: <https://orcid.org/0000-0002-5329-5987>),\\n Plotly Technologies Inc. [cph]",
-        "title": "Create Interactive Web Graphics via 'plotly.js'",
-        "url": "https://plotly-r.com, https://github.com/plotly/plotly.R,\\n https://plotly.com/r/",
-        "depends": "R (>= 3.2.0), ggplot2 (>= 3.0.0)",
-        "imports": "tools, scales, httr (>= 1.3.0), jsonlite (>= 1.6), magrittr,\\n digest, viridisLite, base64enc, htmltools (>= 0.3.6),\\n htmlwidgets (>= 1.5.2.9001), tidyr (>= 1.0.0), RColorBrewer,\\n dplyr, vctrs, tibble, lazyeval (>= 0.2.0), rlang (>= 1.0.0),\\n crosstalk, purrr, data.table, promises",
-        "suggests": "MASS, maps, hexbin, ggthemes, GGally, ggalluvial, testthat,\\n knitr, shiny (>= 1.1.0), shinytest2, curl, rmarkdown, Cairo,\\n broom, webshot, listviewer, dendextend, sf, png, IRdisplay,\\n processx, plotlyGeoAssets, forcats, withr, palmerpenguins,\\n rversions, reticulate, rsvg, ggridges",
-        "systemRequirements": null,
-        "license": "MIT + file LICENSE",
-        "md5sum": "2b5620465fc14e4b294be3a18ffc2115",
-        "built": null,
-        "architecture": null,
-        "distribution": null,
-        "enhances": null,
-        "linkingTo": null,
-        "priority": null,
-        "needsCompilation": "no",
-        "maintainer": "Carson Sievert <cpsievert1@gmail.com>",
-        "rversion": null,
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8021/api/v2/manager/r/packages/3"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8021/api/v2/manager/r/packages"
-          }
-        ]
-      },
-      {
-        "id": 4,
-        "user": {
-          "id": 4,
-          "name": "Albert Einstein",
-          "login": "einstein",
-          "email": "einstein@ldap.forumsys.com"
-        },
-        "repository": {
-          "id": 3,
-          "name": "D",
-          "publicationUri": "http://localhost/repo/D",
-          "published": false,
-          "technology": "R",
-          "requiresAuthentication": true,
-          "lastPublicationSuccessful": false
-        },
-        "submission": {
-          "id": 4,
-          "state": "ACCEPTED"
-        },
-        "name": "annotate",
-        "version": "1.68.0",
-        "active": true,
-        "deleted": false,
-        "technology": "R",
-        "descriptionContentType": "txt",
-        "source": "",
-        "binary": false,
-        "description": "Using R enviroments for annotation.",
-        "author": "R. Gentleman",
-        "title": "Annotation for microarrays",
-        "url": null,
-        "depends": "R (>= 2.10), AnnotationDbi (>= 1.27.5), XML",
-        "imports": "Biobase, DBI, xtable, graphics, utils, stats, methods,\\n BiocGenerics (>= 0.13.8), httr",
-        "suggests": "hgu95av2.db, genefilter, Biostrings (>= 2.25.10), IRanges,\\n rae230a.db, rae230aprobe, tkWidgets, GO.db, org.Hs.eg.db,\\n org.Mm.eg.db, hom.Hs.inp.db, humanCHRLOC, Rgraphviz, RUnit,",
-        "systemRequirements": null,
-        "license": "Artistic-2.0",
-        "md5sum": "c06830f9bcfc0ae87023bfe03acb319e",
-        "built": null,
-        "architecture": null,
-        "distribution": null,
-        "enhances": null,
-        "linkingTo": null,
-        "priority": null,
-        "needsCompilation": "no",
-        "maintainer": "Bioconductor Package Maintainer <maintainer@bioconductor.org>",
-        "rversion": null,
-        "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8021/api/v2/manager/r/packages/4"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8021/api/v2/manager/r/packages"
-          }
-        ]
-      }
-    ],
-    "page": {
-      "size": 20,
-      "totalElements": 4,
-      "totalPages": 1,
-      "number": 0
+            {
+                "rel": "self",
+                "href": "http://localhost:8021/api/v2/manager/r/packages?page=0&size=20"
+            }
+        ],
+        "content": [
+            {
+                "id": 1,
+                "user": {
+                    "id": 4,
+                    "name": "Albert Einstein",
+                    "login": "einstein",
+                    "email": "einstein@ldap.forumsys.com"
+                },
+                "repository": {
+                    "id": 3,
+                    "name": "D",
+                    "publicationUri": "http://localhost/repo/D",
+                    "published": false,
+                    "technology": "R",
+                    "requiresAuthentication": true,
+                    "lastPublicationSuccessful": false
+                },
+                "submission": {
+                    "id": 1,
+                    "state": "ACCEPTED"
+                },
+                "name": "genefilter",
+                "version": "1.90.0",
+                "source": "/opt/rdepot/repositories/3/33385940/genefilter_1.90.0.tar.gz",
+                "active": true,
+                "deleted": false,
+                "technology": "R",
+                "binary": false,
+                "description": "Some basic functions for filtering genes.",
+                "author": "Robert Gentleman [aut],\\n Vincent J. Carey [aut],\\n Wolfgang Huber [aut],\\n Florian Hahne [aut],\\n Emmanuel Taiwo [ctb] ('howtogenefinder' vignette translation from\\n Sweave to RMarkdown / HTML.),\\n Khadijah Amusat [ctb] (Converted genefilter vignette from Sweave to\\n RMarkdown / HTML.),\\n Bioconductor Package Maintainer [cre]",
+                "title": "genefilter: methods for filtering genes from high-throughput\\n experiments",
+                "url": null,
+                "descriptionContentType": "txt",
+                "depends": null,
+                "imports": "MatrixGenerics (>= 1.11.1), AnnotationDbi, annotate, Biobase,\\n graphics, methods, stats, survival, grDevices",
+                "suggests": "class, hgu95av2.db, tkWidgets, ALL, ROC, RColorBrewer,\\n BiocStyle, knitr",
+                "systemRequirements": null,
+                "license": "Artistic-2.0",
+                "md5sum": "f910f7a166562df321c45c88b4f77b58",
+                "built": null,
+                "architecture": null,
+                "distribution": null,
+                "enhances": null,
+                "linkingTo": null,
+                "priority": null,
+                "needsCompilation": "yes",
+                "maintainer": "Bioconductor Package Maintainer <maintainer@bioconductor.org>",
+                "encoding": null,
+                "manualAvailable":false,
+                "rversion": null,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8021/api/v2/manager/r/packages/1"
+                    },
+                    {
+                        "rel": "packageList",
+                        "href": "http://localhost:8021/api/v2/manager/r/packages"
+                    }
+                ]
+            },
+            {
+                "id": 2,
+                "user": {
+                    "id": 4,
+                    "name": "Albert Einstein",
+                    "login": "einstein",
+                    "email": "einstein@ldap.forumsys.com"
+                },
+                "repository": {
+                    "id": 3,
+                    "name": "D",
+                    "publicationUri": "http://localhost/repo/D",
+                    "published": false,
+                    "requiresAuthentication": true,
+                    "technology": "R",
+                    "lastPublicationSuccessful": false
+                },
+                "submission": {
+                    "id": 2,
+                    "state": "ACCEPTED"
+                },
+                "name": "ggplot2",
+                "version": "3.3.2",
+                "source": "/opt/rdepot/repositories/3/17842409/ggplot2_3.3.2.tar.gz",
+                "active": true,
+                "deleted": false,
+                "technology": "R",
+                "binary": false,
+                "description": "A system for 'declaratively' creating graphics,\\n based on \"The Grammar of Graphics\". You provide the data, tell 'ggplot2'\\n how to map variables to aesthetics, what graphical primitives to use,\\n and it takes care of the details.",
+                "author": "Hadley Wickham [aut] (<https://orcid.org/0000-0003-4757-117X>),\\n Winston Chang [aut] (<https://orcid.org/0000-0002-1576-2126>),\\n Lionel Henry [aut],\\n Thomas Lin Pedersen [aut, cre]\\n (<https://orcid.org/0000-0002-5147-4711>),\\n Kohske Takahashi [aut],\\n Claus Wilke [aut] (<https://orcid.org/0000-0002-7470-9261>),\\n Kara Woo [aut] (<https://orcid.org/0000-0002-5125-4188>),\\n Hiroaki Yutani [aut] (<https://orcid.org/0000-0002-3385-7233>),\\n Dewey Dunnington [aut] (<https://orcid.org/0000-0002-9415-4582>),\\n RStudio [cph, fnd]",
+                "title": "Create Elegant Data Visualisations Using the Grammar of Graphics",
+                "url": "http://ggplot2.tidyverse.org, https://github.com/tidyverse/ggplot2",
+                "descriptionContentType": "txt",
+                "depends": "R (>= 3.2)",
+                "imports": "digest, glue, grDevices, grid, gtable (>= 0.1.1), isoband,\\n MASS, mgcv, rlang (>= 0.3.0), scales (>= 0.5.0), stats, tibble,\\n withr (>= 2.0.0)",
+                "suggests": "covr, dplyr, ggplot2movies, hexbin, Hmisc, knitr, lattice,\\n mapproj, maps, maptools, multcomp, munsell, nlme, profvis,\\n quantreg, RColorBrewer, rgeos, rmarkdown, rpart, sf (>= 0.7-3),\\n svglite (>= 1.2.0.9001), testthat (>= 2.1.0), vdiffr (>= 0.3.0)",
+                "systemRequirements": null,
+                "license": "GPL-2 | file LICENSE",
+                "md5sum": "02d87290852410924eb816c2d4788afa",
+                "built": null,
+                "architecture": null,
+                "distribution": null,
+                "enhances": "sp",
+                "linkingTo": null,
+                "priority": null,
+                "needsCompilation": "no",
+                "maintainer": "Thomas Lin Pedersen <thomas.pedersen@rstudio.com>",
+                "encoding": "UTF-8",
+                "manualAvailable":true,
+                "rversion": null,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8021/api/v2/manager/r/packages/2"
+                    },
+                    {
+                        "rel": "packageList",
+                        "href": "http://localhost:8021/api/v2/manager/r/packages"
+                    }
+                ]
+            },
+            {
+                "id": 3,
+                "user": {
+                    "id": 4,
+                    "name": "Albert Einstein",
+                    "login": "einstein",
+                    "email": "einstein@ldap.forumsys.com"
+                },
+                "repository": {
+                    "id": 3,
+                    "name": "D",
+                    "publicationUri": "http://localhost/repo/D",
+                    "published": false,
+                    "requiresAuthentication": true,
+                    "technology": "R",
+                    "lastPublicationSuccessful": false
+                },
+                "submission": {
+                    "id": 3,
+                    "state": "ACCEPTED"
+                },
+                "name": "plotly",
+                "version": "4.11.0",
+                "source": "/opt/rdepot/repositories/3/14876660/plotly_4.11.0.tar.gz",
+                "active": true,
+                "deleted": false,
+                "technology": "R",
+                "binary": false,
+                "description": "Create interactive web graphics from 'ggplot2' graphs and/or a custom interface to the (MIT-licensed) JavaScript library 'plotly.js' inspired by the grammar of graphics.",
+                "author": "Carson Sievert [aut, cre] (ORCID:\\n <https://orcid.org/0000-0002-4958-2844>),\\n Chris Parmer [aut],\\n Toby Hocking [aut],\\n Scott Chamberlain [aut],\\n Karthik Ram [aut],\\n Marianne Corvellec [aut] (ORCID:\\n <https://orcid.org/0000-0002-1994-3581>),\\n Pedro Despouy [aut],\\n Salim Brüggemann [ctb] (ORCID: <https://orcid.org/0000-0002-5329-5987>),\\n Plotly Technologies Inc. [cph]",
+                "title": "Create Interactive Web Graphics via 'plotly.js'",
+                "url": "https://plotly-r.com, https://github.com/plotly/plotly.R,\\n https://plotly.com/r/",
+                "descriptionContentType": "txt",
+                "depends": "R (>= 3.2.0), ggplot2 (>= 3.0.0)",
+                "imports": "tools, scales, httr (>= 1.3.0), jsonlite (>= 1.6), magrittr,\\n digest, viridisLite, base64enc, htmltools (>= 0.3.6),\\n htmlwidgets (>= 1.5.2.9001), tidyr (>= 1.0.0), RColorBrewer,\\n dplyr, vctrs, tibble, lazyeval (>= 0.2.0), rlang (>= 1.0.0),\\n crosstalk, purrr, data.table, promises",
+                "suggests": "MASS, maps, hexbin, ggthemes, GGally, ggalluvial, testthat,\\n knitr, shiny (>= 1.1.0), shinytest2, curl, rmarkdown, Cairo,\\n broom, webshot, listviewer, dendextend, sf, png, IRdisplay,\\n processx, plotlyGeoAssets, forcats, withr, palmerpenguins,\\n rversions, reticulate, rsvg, ggridges",
+                "systemRequirements": null,
+                "license": "MIT + file LICENSE",
+                "md5sum": "dd3c051bdd9772c38301e88d6dc355c6",
+                "built": null,
+                "architecture": null,
+                "distribution": null,
+                "enhances": null,
+                "linkingTo": null,
+                "priority": null,
+                "needsCompilation": "no",
+                "maintainer": "Carson Sievert <cpsievert1@gmail.com>",
+                "encoding": "UTF-8",
+                "manualAvailable":false,
+                "rversion": null,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8021/api/v2/manager/r/packages/3"
+                    },
+                    {
+                        "rel": "packageList",
+                        "href": "http://localhost:8021/api/v2/manager/r/packages"
+                    }
+                ]
+            },
+            {
+                "id": 4,
+                "user": {
+                    "id": 4,
+                    "name": "Albert Einstein",
+                    "login": "einstein",
+                    "email": "einstein@ldap.forumsys.com"
+                },
+                "repository": {
+                    "id": 3,
+                    "name": "D",
+                    "publicationUri": "http://localhost/repo/D",
+                    "published": false,
+                    "requiresAuthentication": true,
+                    "technology": "R",
+                    "lastPublicationSuccessful": false
+                },
+                "submission": {
+                    "id": 4,
+                    "state": "ACCEPTED"
+                },
+                "name": "annotate",
+                "version": "1.68.0",
+                "source": "/opt/rdepot/repositories/3/52339716/annotate_1.68.0.tar.gz",
+                "active": true,
+                "deleted": false,
+                "technology": "R",
+                "binary": false,
+                "description": "Using R enviroments for annotation.",
+                "author": "R. Gentleman",
+                "title": "Annotation for microarrays",
+                "url": null,
+                "descriptionContentType": "txt",
+                "depends": "R (>= 2.10), AnnotationDbi (>= 1.27.5), XML",
+                "imports": "Biobase, DBI, xtable, graphics, utils, stats, methods,\\n BiocGenerics (>= 0.13.8), httr",
+                "suggests": "hgu95av2.db, genefilter, Biostrings (>= 2.25.10), IRanges,\\n rae230a.db, rae230aprobe, tkWidgets, GO.db, org.Hs.eg.db,\\n org.Mm.eg.db, hom.Hs.inp.db, humanCHRLOC, Rgraphviz, RUnit,",
+                "systemRequirements": null,
+                "license": "Artistic-2.0",
+                "md5sum": "c06830f9bcfc0ae87023bfe03acb319e",
+                "built": null,
+                "architecture": null,
+                "distribution": null,
+                "enhances": null,
+                "linkingTo": null,
+                "priority": null,
+                "needsCompilation": "no",
+                "maintainer": "Bioconductor Package Maintainer <maintainer@bioconductor.org>",
+                "encoding": null,
+                "manualAvailable":false,
+                "rversion": null,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8021/api/v2/manager/r/packages/4"
+                    },
+                    {
+                        "rel": "packageList",
+                        "href": "http://localhost:8021/api/v2/manager/r/packages"
+                    }
+                ]
+            }
+        ],
+        "page": {
+            "size": 20,
+            "totalElements": 4,
+            "totalPages": 1,
+            "number": 0
+        }
     }
-  }
 }

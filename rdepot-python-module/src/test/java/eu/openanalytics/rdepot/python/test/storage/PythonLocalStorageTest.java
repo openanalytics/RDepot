@@ -23,21 +23,25 @@ package eu.openanalytics.rdepot.python.test.storage;
 import static org.junit.jupiter.api.Assertions.*;
 
 import eu.openanalytics.rdepot.base.entities.User;
-import eu.openanalytics.rdepot.base.storage.implementations.CommonLocalStorage;
+import eu.openanalytics.rdepot.base.synchronization.checksums.Checksum;
+import eu.openanalytics.rdepot.base.synchronization.checksums.Checksums;
 import eu.openanalytics.rdepot.python.config.PythonProperties;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
-import eu.openanalytics.rdepot.python.storage.implementations.PythonLocalStorage;
-import eu.openanalytics.rdepot.python.storage.indexes.PackageIndexGenerator;
-import eu.openanalytics.rdepot.python.storage.indexes.RepositoryIndexGenerator;
-import eu.openanalytics.rdepot.python.storage.utils.PopulatedRepositoryContent;
+import eu.openanalytics.rdepot.python.storage.implementations.fs.PythonFSPopulator;
+import eu.openanalytics.rdepot.python.storage.implementations.fs.PythonLocalStorage;
+import eu.openanalytics.rdepot.python.storage.indexes.PythonPackageIndexGenerator;
+import eu.openanalytics.rdepot.python.storage.indexes.PythonRepositoryIndexGenerator;
+import eu.openanalytics.rdepot.python.storage.models.PopulatedRepositoryContent;
 import eu.openanalytics.rdepot.python.synchronization.SynchronizeRepositoryRequestBody;
 import eu.openanalytics.rdepot.test.fixture.PythonPackageTestFixture;
 import eu.openanalytics.rdepot.test.fixture.PythonRepositoryTestFixture;
 import eu.openanalytics.rdepot.test.fixture.UserTestFixture;
 import eu.openanalytics.rdepot.test.unit.UnitTest;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 import org.apache.http.entity.ContentType;
@@ -60,30 +64,48 @@ public class PythonLocalStorageTest extends UnitTest {
             new File("src/test/resources/unit/storage_tests/rdepot/generated");
 
     private final ResourceLoader resourceLoader = new DefaultResourceLoader();
-    private final Resource resource = resourceLoader.getResource("classpath:templates/index_template.html");
-    private final PythonLocalStorage storage = new PythonLocalStorage(
-            new PackageIndexGenerator(resource), new RepositoryIndexGenerator(resource), new PythonProperties());
+    private final PythonLocalStorage storage = new PythonLocalStorage(new PythonProperties());
+    private final Resource packageTemplate =
+            resourceLoader.getResource("classpath:templates/python/package_template.html");
+    private final Resource packageAnchorTemplate =
+            resourceLoader.getResource("classpath:templates/python/package_anchor_template.html");
+    private final Resource indexTemplate = resourceLoader.getResource("classpath:templates/python/index_template.html");
+    private final Resource indexAnchorTemplate =
+            resourceLoader.getResource("classpath:templates/python/index_anchor_template.html");
+    private final PythonRepositoryIndexGenerator pythonRepositoryIndexGenerator =
+            new PythonRepositoryIndexGenerator(indexTemplate, indexAnchorTemplate, storage);
+    private final PythonPackageIndexGenerator pythonPackageIndexGenerator =
+            new PythonPackageIndexGenerator(packageTemplate, packageAnchorTemplate, storage);
+    private final PythonFSPopulator populator = new PythonFSPopulator(
+            repositoryGenerationDirectory,
+            packageUploadDirectory,
+            pythonRepositoryIndexGenerator,
+            pythonPackageIndexGenerator,
+            storage,
+            "false");
+
+    public PythonLocalStorageTest() throws IOException {}
 
     @BeforeEach
     public void setUpDirectories() throws Exception {
         restore();
         ReflectionTestUtils.setField(
-                storage, CommonLocalStorage.class, "packageUploadDirectory", packageUploadDirectory, File.class);
+                populator, PythonFSPopulator.class, "packageUploadDirectory", packageUploadDirectory, File.class);
         ReflectionTestUtils.setField(
-                storage,
-                CommonLocalStorage.class,
+                populator,
+                PythonFSPopulator.class,
                 "repositoryGenerationDirectory",
                 repositoryGenerationDirectory,
                 File.class);
         ReflectionTestUtils.setField(
-                storage, PythonLocalStorage.class, "packageUploadDirectory", packageUploadDirectory, File.class);
+                populator, PythonFSPopulator.class, "packageUploadDirectory", packageUploadDirectory, File.class);
         ReflectionTestUtils.setField(
-                storage,
-                PythonLocalStorage.class,
+                populator,
+                PythonFSPopulator.class,
                 "repositoryGenerationDirectory",
                 repositoryGenerationDirectory,
                 File.class);
-        ReflectionTestUtils.setField(storage, PythonLocalStorage.class, "snapshot", "true", String.class);
+        ReflectionTestUtils.setField(populator, PythonFSPopulator.class, "snapshot", "true", String.class);
     }
 
     @AfterEach
@@ -147,13 +169,16 @@ public class PythonLocalStorageTest extends UnitTest {
 
         List<PythonPackage> packages = List.of(pandasRemotePackage, pandasPackage, cryptographyPackage);
 
-        final PopulatedRepositoryContent content = storage.organizePackagesInStorage(datestamp, packages, repository);
+        final PopulatedRepositoryContent content = populator.organizePackagesInStorage(datestamp, packages, repository);
 
         List<String> remotePackages = List.of("pandas/pandas-2.0.1.tar.gz");
         int versionBefore = 1;
 
-        final SynchronizeRepositoryRequestBody requestBody =
-                storage.buildSynchronizeRequestBody(content, remotePackages, repository, versionBefore + "");
+        Checksums remoteChecksums = new Checksums();
+        remoteChecksums.addChecksum(new Checksum(pandasRemotePackage.getFileName(), pandasRemotePackage.getHash()));
+
+        final SynchronizeRepositoryRequestBody requestBody = populator.buildSynchronizeRequestBody(
+                content, remotePackages, remoteChecksums, repository, versionBefore + "");
 
         final File packageToUpload1 =
                 new File(repositoryGenerationDirectory + "/1/20240228/pandas/pandas-2.0.3.tar.gz");
@@ -214,15 +239,20 @@ public class PythonLocalStorageTest extends UnitTest {
 
         List<PythonPackage> packages = List.of(pandasPackage1, pandasPackage2);
 
-        final PopulatedRepositoryContent content = storage.organizePackagesInStorage(datestamp, packages, repository);
+        final PopulatedRepositoryContent content = populator.organizePackagesInStorage(datestamp, packages, repository);
 
         List<String> remotePackages = List.of(
                 "pandas/pandas-2.0.1.tar.gz", "pandas/pandas-2.0.3.tar.gz", "cryptography/cryptography-41.0.1.tar.gz");
 
+        Checksums remoteChecksums = new Checksums();
+        remoteChecksums.addChecksum(new Checksum(pandasPackage1.getFileName(), pandasPackage1.getHash()));
+        remoteChecksums.addChecksum(new Checksum(pandasPackage2.getFileName(), pandasPackage2.getHash()));
+        remoteChecksums.addChecksum(new Checksum("", ""));
+
         int versionBefore = 1;
 
-        final SynchronizeRepositoryRequestBody requestBody =
-                storage.buildSynchronizeRequestBody(content, remotePackages, repository, versionBefore + "");
+        final SynchronizeRepositoryRequestBody requestBody = populator.buildSynchronizeRequestBody(
+                content, remotePackages, remoteChecksums, repository, versionBefore + "");
 
         final String packageToDelete = "cryptography/cryptography-41.0.1.tar.gz";
         final File repositoryIndexFileToUpload = new File(repositoryGenerationDirectory + "/2/20240405/index.html");
@@ -266,15 +296,19 @@ public class PythonLocalStorageTest extends UnitTest {
 
         List<PythonPackage> packages = List.of(pandasPackage, cryptographyPackage);
 
-        final PopulatedRepositoryContent content = storage.organizePackagesInStorage(datestamp, packages, repository);
+        final PopulatedRepositoryContent content = populator.organizePackagesInStorage(datestamp, packages, repository);
 
         List<String> remotePackages = List.of(
                 "pandas/pandas-2.0.1.tar.gz", "pandas/pandas-2.0.3.tar.gz", "cryptography/cryptography-41.0.1.tar.gz");
 
+        Checksums remoteChecksums = new Checksums();
+        remoteChecksums.addChecksum(new Checksum(pandasPackage.getFileName(), pandasPackage.getHash()));
+        remoteChecksums.addChecksum(new Checksum(cryptographyPackage.getFileName(), cryptographyPackage.getHash()));
+
         int versionBefore = 1;
 
-        final SynchronizeRepositoryRequestBody requestBody =
-                storage.buildSynchronizeRequestBody(content, remotePackages, repository, versionBefore + "");
+        final SynchronizeRepositoryRequestBody requestBody = populator.buildSynchronizeRequestBody(
+                content, remotePackages, remoteChecksums, repository, versionBefore + "");
 
         final String packageToDelete = "pandas/pandas-2.0.1.tar.gz";
         final File packageIndexFileToUpload = new File(repositoryGenerationDirectory + "/3/20240405/pandas/index.html");
@@ -347,10 +381,30 @@ public class PythonLocalStorageTest extends UnitTest {
         armyOfEvilRobotsPackage.setHash("ebb8949f7ad16c6d743b5c2da7d31bea06c81215532bb68b4179916157741549");
         armyOfEvilRobotsPackage.setActive(true);
 
-        List<PythonPackage> packages =
-                List.of(pandasRemotePackage, pandasPackage, cryptographyPackage, armyOfEvilRobotsPackage);
+        final PythonPackage tetrapolyscopePackage =
+                PythonPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user);
+        tetrapolyscopePackage.setSource(new File(
+                        packageUploadDirectory
+                                + "/repositories/1/81087093/tetrapolyscope-0.0.4-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl")
+                .getAbsolutePath());
+        tetrapolyscopePackage.setName("tetrapolyscope");
+        tetrapolyscopePackage.setNormalizedName("tetrapolyscope");
+        tetrapolyscopePackage.setVersion("0.0.4");
+        tetrapolyscopePackage.setHash("f8fa209ca70c914b710bc705b99c6c4b51250a35593cecb319e9feb44f7a7849");
+        tetrapolyscopePackage.setActive(true);
+        tetrapolyscopePackage.setCompatibilityTags("cp311-cp311-manylinux_2_17_i686, cp311-cp311-manylinux2014_i686");
+        tetrapolyscopePackage.setPythonTag("cp311");
+        tetrapolyscopePackage.setAbiTag("cp311");
+        tetrapolyscopePackage.setPlatformTag("manylinux_2_17_i686.manylinux2014_i686");
 
-        storage.organizePackagesInStorage(datestamp, packages, repository);
+        List<PythonPackage> packages = List.of(
+                pandasRemotePackage,
+                pandasPackage,
+                cryptographyPackage,
+                armyOfEvilRobotsPackage,
+                tetrapolyscopePackage);
+
+        populator.organizePackagesInStorage(datestamp, packages, repository);
 
         final File currentDatestampGeneratedDirectory = new File(repositoryGenerationDirectory + "/1/20240228");
         final File currentGeneratedDirectory = new File(repositoryGenerationDirectory + "/1/current");
@@ -361,6 +415,8 @@ public class PythonLocalStorageTest extends UnitTest {
                 new File(repositoryGenerationDirectory + "/1/20240228/cryptography/index.html");
         final File actualArmyOfEvilRobotsIndexFile =
                 new File(repositoryGenerationDirectory + "/1/20240228/armyofevilrobots/index.html");
+        final File actualTetrapolyscopeIndexFile =
+                new File(repositoryGenerationDirectory + "/1/20240228/tetrapolyscope/index.html");
 
         final String actualRepositoryIndexFileContent =
                 Files.readString(actualRepositoryIndexFile.toPath()).replaceAll("\\s+", " ");
@@ -370,6 +426,8 @@ public class PythonLocalStorageTest extends UnitTest {
                 Files.readString(actualCryptographyIndexFile.toPath()).replaceAll("\\s+", " ");
         final String actualArmyOfEvilRobotsIndexFileContent =
                 Files.readString(actualArmyOfEvilRobotsIndexFile.toPath()).replaceAll("\\s+", " ");
+        final String actualTetrapolyscopeIndexFileContent =
+                Files.readString(actualTetrapolyscopeIndexFile.toPath()).replaceAll("\\s+", " ");
 
         final String expectedRepositoryIndexFileContent =
                 getExpectedRepositoryIndexFileContent().replaceAll("\\s+", " ");
@@ -379,11 +437,17 @@ public class PythonLocalStorageTest extends UnitTest {
                 getExpectedCryptographyIndexFileContent().replaceAll("\\s+", " ");
         final String expectedArmyOfEvilRobotsIndexFileContent =
                 getExpectedArmyOfEvilRobotsIndexFileContent().replaceAll("\\s+", " ");
+        final String expectedTetrapolyscopeIndexFileContent =
+                getExpectedTetrapolyscopeIndexFileContent().replaceAll("\\s+", " ");
 
         verifyPackage(currentGeneratedDirectory, "pandas", "pandas-2.0.1.tar.gz");
         verifyPackage(currentGeneratedDirectory, "pandas", "pandas-2.0.3.tar.gz");
         verifyPackage(currentGeneratedDirectory, "cryptography", "cryptography-41.0.1.tar.gz");
         verifyPackage(currentGeneratedDirectory, "armyofevilrobots", "ArmyOfEvilRobots-0.4.1dev.tar.gz");
+        verifyPackage(
+                currentGeneratedDirectory,
+                "tetrapolyscope",
+                "tetrapolyscope-0.0.4-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl");
 
         assertEquals(
                 expectedRepositoryIndexFileContent,
@@ -398,12 +462,34 @@ public class PythonLocalStorageTest extends UnitTest {
                 expectedArmyOfEvilRobotsIndexFileContent,
                 actualArmyOfEvilRobotsIndexFileContent,
                 "Incorrect ArmyOfEvilRobots index file");
+        assertEquals(
+                expectedTetrapolyscopeIndexFileContent,
+                actualTetrapolyscopeIndexFileContent,
+                "Incorrect tetrapolyscope index file");
         assertTrue(currentDatestampGeneratedDirectory.isDirectory(), "Directory was not generated");
         assertTrue(Files.isSymbolicLink(currentGeneratedDirectory.toPath()), "current should be a symlink");
         assertEquals(
                 currentDatestampGeneratedDirectory.getAbsolutePath(),
                 currentGeneratedDirectory.toPath().toRealPath().toFile().getAbsolutePath(),
                 "Symlink does not point at a right dir.");
+    }
+
+    private String getExpectedTetrapolyscopeIndexFileContent() {
+        return """
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <meta name="Test Python Repository:repository-version" content="10">
+                    <title>Links for tetrapolyscope</title>
+                </head>
+                <body>
+                  <h1>Links for tetrapolyscope</h1>
+                  <a href="/repo/testrepo/tetrapolyscope/tetrapolyscope-0.0.4-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl" data-requires-python="" data-version="0.0.4">tetrapolyscope-0.0.4-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl</a><br>
+                </body>
+                </html>
+                """;
     }
 
     private String getExpectedRepositoryIndexFileContent() {
@@ -420,7 +506,8 @@ public class PythonLocalStorageTest extends UnitTest {
                   <h1></h1>
                   <a href="/repo/testrepo/pandas">pandas</a>\s
                   <a href="/repo/testrepo/cryptography">cryptography</a>\s
-                  <a href="/repo/testrepo/armyofevilrobots">armyofevilrobots</a>\s
+                  <a href="/repo/testrepo/armyofevilrobots">ArmyOfEvilRobots</a>\s
+                  <a href="/repo/testrepo/tetrapolyscope">tetrapolyscope</a>
                 </body>
                 </html>
                 """;
@@ -502,7 +589,7 @@ public class PythonLocalStorageTest extends UnitTest {
         packageToMove.setActive(true);
         packageToMove.setDeleted(false);
 
-        final String newPackagePath = storage.moveToMainDirectory(packageToMove);
+        final String newPackagePath = populator.moveToMainDirectory(packageToMove);
         final File actualFile = new File(newPackagePath);
         String[] tokens = newPackagePath.split("/");
         int tl = tokens.length;
@@ -524,10 +611,10 @@ public class PythonLocalStorageTest extends UnitTest {
 
     @Test
     public void removesGenerationDirectoryContent() throws Exception {
-        ReflectionTestUtils.setField(storage, PythonLocalStorage.class, "snapshot", "false", String.class);
+        ReflectionTestUtils.setField(populator, PythonFSPopulator.class, "snapshot", "false", String.class);
         final PopulatedRepositoryContent populatedContent = new PopulatedRepositoryContent(
                 List.of(), repositoryGenerationDirectory.getAbsolutePath() + "/1/20240228");
-        storage.cleanUpAfterSynchronization(populatedContent);
+        populator.cleanUpAfterSynchronization(populatedContent);
 
         assertTrue(
                 repositoryGenerationDirectory.exists() && repositoryGenerationDirectory.isDirectory(),
@@ -551,7 +638,7 @@ public class PythonLocalStorageTest extends UnitTest {
                 ContentType.MULTIPART_FORM_DATA.toString(),
                 fileContent);
 
-        final String pathToWaitingRoom = storage.writeToWaitingRoom(multipart, repository);
+        final String pathToWaitingRoom = populator.writeToWaitingRoom(multipart, repository);
         final File actualFile = new File(pathToWaitingRoom);
         final byte[] actualContent = Files.readAllBytes(actualFile.toPath());
 
@@ -588,7 +675,7 @@ public class PythonLocalStorageTest extends UnitTest {
         packageBag.setActive(true);
         packageBag.setDeleted(false);
 
-        final String newPackagePath = storage.moveToTrashDirectory(packageBag);
+        final String newPackagePath = populator.moveToTrashDirectory(packageBag);
         final File actualFile = new File(newPackagePath);
 
         System.out.println("Path: " + newPackagePath);
@@ -608,5 +695,107 @@ public class PythonLocalStorageTest extends UnitTest {
         assertEquals("cryptography-41.0.1.tar.gz", fileName, "Incorrect file name.");
         assertTrue(Files.exists(actualFile.toPath()), "File does not exist in correct directory");
         assertArrayEquals(fileContent, Files.readAllBytes(actualFile.toPath()), "File content is incorrect.");
+    }
+
+    @Test
+    public void extractWhlPackageFile_linux() throws Exception {
+        Path linux_wheel = Path.of(
+                packageUploadDirectory.getAbsolutePath(),
+                "upload",
+                "tetrapolyscope-0.0.4-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl");
+        String outputLocation = populator.extractWhlPackageFile(linux_wheel.toString());
+        Path expectedOutputLocation =
+                Path.of(packageUploadDirectory.getAbsolutePath(), "upload", "tetrapolyscope-0.0.4");
+        assertEquals(expectedOutputLocation.toString(), outputLocation);
+    }
+
+    @Test
+    public void extractWhlPackageFile_any() throws Exception {
+        Path any_wheel =
+                Path.of(packageUploadDirectory.getAbsolutePath(), "upload", "setuptools-80.9.0-py3-none-any.whl");
+        String outputLocation = populator.extractWhlPackageFile(any_wheel.toString());
+        Path expectedOutputLocation = Path.of(packageUploadDirectory.getAbsolutePath(), "upload", "setuptools-80.9.0");
+        assertEquals(expectedOutputLocation.toString(), outputLocation);
+    }
+
+    @Test
+    public void buildSynchronizeRequestBody_replaceSamePackage() throws Exception {
+        final String datestamp = "20240228";
+        final User user = UserTestFixture.GET_PACKAGE_MAINTAINER();
+
+        final PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
+        repository.setId(1);
+        repository.setPublished(true);
+        repository.setVersion(5);
+
+        final PythonPackage pandasPackage = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
+        pandasPackage.setSource(
+                new File(packageUploadDirectory + "/repositories/1/86085553/pandas-2.0.1.tar.gz").getAbsolutePath());
+        pandasPackage.setName("pandas");
+        pandasPackage.setNormalizedName("pandas");
+        pandasPackage.setVersion("2.0.1");
+        pandasPackage.setHash("7053d7ff8c563324b9a76110fabbd227c96c11d337521a57d94973bbb5f2a7ad");
+        pandasPackage.setActive(true);
+
+        final PythonPackage pandasPackageToReplace = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
+        pandasPackageToReplace.setSource(
+                new File(packageUploadDirectory + "/repositories/1/87108158/pandas-2.0.3.tar.gz").getAbsolutePath());
+        pandasPackageToReplace.setName("pandas");
+        pandasPackageToReplace.setNormalizedName("pandas");
+        pandasPackageToReplace.setVersion("2.0.3");
+        pandasPackageToReplace.setHash("c02f372a88e0d17f36d3093a644c73cfc1788e876a7c4bcb4020a77512e2043c");
+        pandasPackageToReplace.setActive(true);
+
+        final PythonPackage cryptographyPackage = PythonPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
+        cryptographyPackage.setSource(
+                new File(packageUploadDirectory + "/repositories/1/36342644/cryptography-41.0.1.tar.gz")
+                        .getAbsolutePath());
+        cryptographyPackage.setName("cryptography");
+        cryptographyPackage.setNormalizedName("cryptography");
+        cryptographyPackage.setVersion("41.0.1");
+        cryptographyPackage.setHash("4a0740db3e223fcd38a6ad062cdae927429a0894132e643d613d43b647bf488a");
+        cryptographyPackage.setActive(true);
+
+        List<PythonPackage> packages = List.of(pandasPackage, pandasPackageToReplace, cryptographyPackage);
+
+        final PopulatedRepositoryContent content = populator.organizePackagesInStorage(datestamp, packages, repository);
+
+        List<String> remotePackages = List.of("pandas/pandas-2.0.1.tar.gz", "pandas/pandas-2.0.3.tar.gz");
+        int versionBefore = 1;
+
+        Checksums remoteChecksums = new Checksums();
+        remoteChecksums.addChecksum(new Checksum(pandasPackage.getFileName(), pandasPackage.getHash()));
+        remoteChecksums.addChecksum(new Checksum(pandasPackageToReplace.getFileName(), "differentHash"));
+
+        final SynchronizeRepositoryRequestBody requestBody = populator.buildSynchronizeRequestBody(
+                content, remotePackages, remoteChecksums, repository, versionBefore + "");
+
+        final File packageToUpload1 =
+                new File(repositoryGenerationDirectory + "/1/20240228/pandas/pandas-2.0.3.tar.gz");
+        final File packageIndexFileToUpload1 =
+                new File(repositoryGenerationDirectory + "/1/20240228/pandas/index.html");
+        final File packageToUpload2 =
+                new File(repositoryGenerationDirectory + "/1/20240228/cryptography/cryptography-41.0.1.tar.gz");
+        final File packageIndexFileToUpload2 =
+                new File(repositoryGenerationDirectory + "/1/20240228/cryptography/index.html");
+        final File repositoryIndexFileToUpload = new File(repositoryGenerationDirectory + "/1/20240228/index.html");
+
+        assertEquals(0, requestBody.getFilesToDelete().size(), "There should one package to delete.");
+        assertEquals(5, requestBody.getFilesToUpload().size(), "Too many packages to upload.");
+        assertTrue(
+                containsFile(packageToUpload1, requestBody.getFilesToUpload()),
+                "There is a missing package to upload (1st).");
+        assertTrue(
+                containsFile(packageToUpload2, requestBody.getFilesToUpload()),
+                "There is a missing package to upload (2nd).");
+        assertTrue(
+                containsFile(packageIndexFileToUpload1, requestBody.getFilesToUpload()),
+                "There is a missing package index file to upload (1st).");
+        assertTrue(
+                containsFile(packageIndexFileToUpload2, requestBody.getFilesToUpload()),
+                "There is a missing package index file to upload (2nd).");
+        assertTrue(
+                containsFile(repositoryIndexFileToUpload, requestBody.getFilesToUpload()),
+                "There is a missing repository index file to upload.");
     }
 }

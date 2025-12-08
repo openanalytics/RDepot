@@ -3,6 +3,9 @@
 CONTAINER=$(docker ps | tr -s ' ' | cut -d' ' -f1,2 | grep "app$" | cut -d' ' -f1)
 CONTAINER_DB=$(docker ps | tr -s ' ' | cut -d' ' -f1,2 | grep "postgres" | cut -d' ' -f1)
 CONTAINER_REPO=$(docker ps | tr -s ' ' | cut -d' ' -f1,2 | grep "repo" | cut -d' ' -f1)
+CONTAINER_TEST=$(docker ps | tr -s ' ' | cut -d' ' -f1,2 | grep "python" | cut -d' ' -f1)
+docker exec $CONTAINER_TEST /bin/bash -c "pip freeze | xargs pip uninstall -y"
+docker exec $CONTAINER_TEST /bin/bash -c "pip cache purge"
 while [ $# -gt 0 ]; do
     case "$1" in
         -s|--snapshots)
@@ -22,7 +25,7 @@ docker exec $CONTAINER /bin/sh -c "rm -rf /opt/rdepot/repositories; rm -rf /opt/
 
 echo "RESTORING $CONTAINER_DB";
 
-docker exec $CONTAINER_DB su - postgres -c "psql rdepot -c 'TRUNCATE public.access_token, public.changed_variable, public.newsfeed_event, public.submission, public.repository_maintainer, public.package_maintainer, public.rpackage, public.package, public.rrepository, public.pythonpackage, public.pythonrepository, public.repository, public.api_token, public.user, public.user_settings'; psql rdepot < /opt/sql_files/rdepot.sql"
+docker exec $CONTAINER_DB su - postgres -c "psql rdepot -c 'TRUNCATE public.access_token, public.changed_variable, public.newsfeed_event, public.submission, public.repository_maintainer, public.package_maintainer, public.rpackage, public.package, public.rrepository, public.pythonpackage, public.pythonrepository, public.repository, public.package_package_maintainer, public.api_token, public.user, public.user_settings'; psql rdepot < /opt/sql_files/rdepot.sql"
 docker exec $CONTAINER_REPO /bin/sh -c "rm -r /opt/rdepot/*; cp -rf /opt/testServer/* /opt/rdepot";
 
 if [ $? -eq 0 ]; then

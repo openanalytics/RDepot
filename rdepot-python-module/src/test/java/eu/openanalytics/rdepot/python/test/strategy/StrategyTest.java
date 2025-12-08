@@ -24,7 +24,6 @@ import static org.mockito.ArgumentMatchers.any;
 
 import eu.openanalytics.rdepot.base.mediator.BestMaintainerChooser;
 import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
-import eu.openanalytics.rdepot.base.service.AccessTokenService;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
 import eu.openanalytics.rdepot.python.mediator.deletion.PythonPackageDeleter;
@@ -38,7 +37,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 import org.springframework.context.MessageSource;
@@ -73,9 +71,6 @@ public abstract class StrategyTest {
     @Mock
     protected MessageSource messageSource;
 
-    @Mock
-    protected AccessTokenService accessTokenService;
-
     @BeforeEach
     public void setUp() {
         // This piece of code is used mainly to provide mock message source for static methods
@@ -86,13 +81,7 @@ public abstract class StrategyTest {
         listener.contextInitialized(event);
         Mockito.lenient()
                 .when(messageSource.getMessage(any(), any(), any(), any()))
-                .thenAnswer(new Answer<String>() {
-                    @Override
-                    public String answer(InvocationOnMock invocation) throws Throwable {
-                        String messageCode = invocation.getArgument(0);
-                        return messageCode;
-                    }
-                });
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0));
         new StaticMessageResolver(messageSource);
     }
 }

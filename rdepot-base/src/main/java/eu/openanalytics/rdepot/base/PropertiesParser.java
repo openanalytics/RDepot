@@ -21,7 +21,7 @@
 package eu.openanalytics.rdepot.base;
 
 import java.io.*;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -36,6 +36,8 @@ public class PropertiesParser extends Properties {
 
     private final Pattern isKeyValue = Pattern.compile("^[a-zA-Z0-9][a-zA-Z0-9-/@_.]*:(?:.*|\\n)$");
     private final Pattern isPartOfValue = Pattern.compile("^(?:[\\t ]+.*|)$");
+    private final Pattern newLineDelimiter = Pattern.compile("(\r\\n|\r|\\n)");
+    protected final Pattern newLinePattern = Pattern.compile("(\\\\n)");
 
     public PropertiesParser(File descriptionFile) throws IOException {
         super();
@@ -66,40 +68,51 @@ public class PropertiesParser extends Properties {
         load0(new Scanner(inStream));
     }
 
-    private void load0(Scanner scanner) throws IOException {
-        scanner.useDelimiter("(\r\\n|\r|\\n)");
+    private void load0(Scanner scanner) {
+        scanner.useDelimiter(newLineDelimiter);
         String currentKey = null;
-        String currentValue = null;
-        String line = null;
+        StringBuilder currentValue = null;
+        String line;
         boolean ifMetaData = true;
         while (scanner.hasNext() && ifMetaData) {
             line = scanner.next();
 
             if (isKeyValue.matcher(line).find()) {
-                saveKeyValue(currentKey, currentValue);
+                saveKeyValue(currentKey, currentValue == null ? null : currentValue.toString());
                 int index = line.indexOf(':');
                 currentKey = line.substring(0, index);
-                currentValue = line.substring(index + 1) + "\\n";
+                currentValue = new StringBuilder(line.substring(index + 1) + "\\n");
             } else if (isPartOfValue.matcher(line).find()) {
-                currentValue += line + "\\n";
+                String value = line + "\\n";
+                if (currentValue == null) {
+                    currentValue = new StringBuilder(value);
+                } else {
+                    currentValue.append(value);
+                }
             } else {
                 ifMetaData = false;
             }
         }
-        saveKeyValue(currentKey, currentValue);
+        saveKeyValue(currentKey, currentValue == null ? null : currentValue.toString());
     }
 
     private void saveKeyValue(String key, String value) {
-        if (Objects.nonNull(key) && Objects.nonNull(value)) {
-            value = value.replaceAll("\\s{2,}", " ")
-                    .replaceAll(" *(?:\\\\n)+ *$", "")
-                    .replaceAll("^ *(?:\\\\n)+ *", "")
-                    .replaceAll("\\t", " ")
-                    .strip();
-            if (containsKey(key)) {
-                value = get(key).toString() + ", " + value;
-            }
-            put(key, value);
+        if (key == null || value == null) return;
+        Optional<String> processedValue = processValue(value);
+        if (processedValue.isEmpty()) return;
+        String storeValue = processedValue.get();
+        if (containsKey(key)) {
+            storeValue = get(key).toString() + ", " + storeValue;
         }
+        put(key, storeValue);
+    }
+
+    protected Optional<String> processValue(String value) {
+        if (value == null) return Optional.empty();
+        return Optional.of(value.replaceAll("\\s{2,}", " ")
+                .replaceAll(" *(?:\\\\n)+ *$", "")
+                .replaceAll("^ *(?:\\\\n)+ *", "")
+                .replaceAll("\\t", " ")
+                .strip());
     }
 }

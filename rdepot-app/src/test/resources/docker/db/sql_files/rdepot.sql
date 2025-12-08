@@ -225,7 +225,7 @@ COPY public.rpackage (id, depends, imports, suggests, system_requirements, licen
 \.
 
 COPY public.rpackage (id, depends, imports, suggests, system_requirements, license, md5sum, needs_compilation, maintainer, r_version, architecture, distribution, built) FROM stdin;
-47	R (>= 3.4)	assertthat, bit64 (>= 0.9-7), methods, purrr, R6, rlang,\n stats, tidyselect (>= 1.0.0), utils, vctrs	DBI, dbplyr, decor, distro, dplyr, duckdb (>= 0.2.8), hms,\n knitr, lubridate, pkgload, reticulate, rmarkdown, stringi,\n stringr, testthat (>= 3.1.0), tibble, tzdb, withr	\N	Apache License (>= 2.0)	b55eb6a2f5adeff68f1ef15fd35b03de	yes	\N	4.2.0	x86_64	centos7	R 4.2.0; x86_64-pc-linux-gnu; 2022-06-07 00:49:30 UTC; unix
+47	R (>= 3.4)	assertthat, bit64 (>= 0.9-7), methods, purrr, R6, rlang,\n stats, tidyselect (>= 1.0.0), utils, vctrs	DBI, dbplyr, decor, distro, dplyr, duckdb (>= 0.2.8), hms,\n knitr, lubridate, pkgload, reticulate, rmarkdown, stringi,\n stringr, testthat (>= 3.1.0), tibble, tzdb, withr	\N	Apache License (>= 2.0)	87248e9731a8db308977df7821ee6471	yes	\N	4.2.0	x86_64	centos7	R 4.2.0; x86_64-pc-linux-gnu; 2022-06-07 00:49:30 UTC; unix
 \.
 
 --
@@ -1085,6 +1085,27 @@ COPY public.access_token (id, user_id, name, value, creation_date, expiration_da
 6	5	century	$2a$10$BCP6uFaJRLJD2fx3IWDRNOnFkkKTugWjCFIe8CNoC.iR.MbM.ubOO	2024-01-19	2124-12-31	t	f
 7	6	century	$2a$10$bAprhSNIWmFXBY5RA9SgKOpmGpaeTzcrDWXceawLbky6WFG.3nqqK	2024-01-19	2124-12-31	t	f
 8	7	century	$2a$10$sfnJ0DtxdmqCOGemySK1qOFT1COAWTHguCEa9NlIH/ZqcYt7fTLsK	2024-01-19	2124-12-31	t	f
+\.
+
+--
+-- Data for Name: package_package_maintainer; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.package_package_maintainer (package_id, package_maintainer_id) FROM stdin;
+13	1
+12	2
+11	2
+9	3
+10	3
+15	4
+20	5
+38	6
+39	6
+40	7
+41	8
+42	9
+43	10
+44	11
 \.
 
 --

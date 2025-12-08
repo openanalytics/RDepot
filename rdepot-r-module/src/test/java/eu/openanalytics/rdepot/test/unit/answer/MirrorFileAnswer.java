@@ -22,6 +22,7 @@ package eu.openanalytics.rdepot.test.unit.answer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.io.FileUtils;
@@ -34,6 +35,7 @@ public class MirrorFileAnswer implements Answer<File> {
         /**
          *
          */
+        @Serial
         private static final long serialVersionUID = -735580383274037138L;
 
         {

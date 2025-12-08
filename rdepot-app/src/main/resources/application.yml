@@ -8,6 +8,9 @@ access-token:
   length: 32
   allowed-characters: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
 
+on-start-up:
+  check-manuals: false
+
 generate-manuals: true
 
 declarative: false
@@ -25,6 +28,9 @@ default-user-configuration:
   page-size: 10
   supported-languages:
     - en-US
+    - de-DE
+    - nl-NL
+    - pl-PL
   supported-themes:
     - light
     - dark
@@ -46,6 +52,15 @@ replacing:
 #    starttls:
 
 # Authentication related properties
+oauth2:
+  #  jwk-set-uri: http://localhost/auth/realms/RDepot/protocol/openid-connect/certs
+  login-field: preferred_username
+  email-field: email
+  full-name-field: name
+  jwt-types:
+    - JWT
+    - JOSE
+
 app:
   authentication: simple
   simple:
@@ -113,11 +128,14 @@ package:
   architectures:
     - x86_64
     - x86
+    - aarch64
   distributions:
     - centos7
     - centos8
     - rhel9
+    - rhel10
     - opensuse155
+    - opensuse156
     - focal
     - jammy
     - noble
@@ -131,16 +149,50 @@ package:
       - sha256
       - sha384
       - sha512
+  r:
+    encoding: "[A-Za-a0-9-_.,+:=]+"
 
-# Repository generation related properties
+# Repository related properties
 repository:
+  # Repository API related properties
+  api:
+    # Repository API authentication
+    authentication: none  # none or simple
+  # Repository generation related properties
   generation:
+    # Local directory used when generating the repository files
     dir: /opt/rdepot/generated
+  # Regular expressions for repository name validation
   validation-name-regex:
+    # Fallback regular expression when a technology-specific regular expression is not present
     general: ".+"
+    # Regular expressions based on technology
     technology:
+      # Regular expression for validating Python repository names
       python: "^[A-Za-z0-9\\-_.~]+$"
+      # Regular expression for validating R repository names
       r: "^[A-Za-z0-9 \\-_.]+$"
+  # Files allowed to be uploaded per technology
+  allowed-files:
+    # Allowed files for Python repositories
+    python:
+      # Source packages
+      - mimetype: application/gzip
+        extension: .tar.gz
+      # Source packages
+      - mimetype: application/x-gzip
+        extension: .tar.gz
+      # Binary (wheel) packages
+      - mimetype: application/octet-stream
+        extension: .whl
+    # Allowed files for R repositories
+    r:
+      # Source and binary packages
+      - mimetype: application/gzip
+        extension: .tar.gz
+      # Source and binary packages
+      - mimetype: application/x-gzip
+        extension: .tar.gz
 
 #spring.mvc.view.prefix=/WEB-INF/pages/
 #spring.mvc.view.suffix=.jsp
@@ -159,7 +211,7 @@ spring:
     ansi:
       enabled: always
 
-#Liquibase related properties
+  # Liquibase related properties
   liquibase:
     # change-log: classpath:liquibase-changeLog.xml
     url: jdbc:postgresql://oa-rdepot-db:5432/rdepot
@@ -205,7 +257,7 @@ springdoc:
 
 logging:
   pattern:
-    console: '%d{yyyy-MM-dd HH:mm:ss.SSS} %-4r [%t] %5p traceId=%X{traceIdMDC} %c{1} : %m %n'
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-4r [%t] %5p traceId=%X{traceIdMDC} %c{1} : %m %n"
   level:
     liquibase:
       parser: INFO
@@ -216,12 +268,12 @@ logging:
             CommonsRequestLoggingFilter: INFO
 
 multipart-upload:
-  max-part-count: 10
+  max-part-count: 15
   max-part-header-size: 1024
 
 #storage related properties
 local-storage:
-  max-request-size: 10
+  max-request-size: 15
 
 storage:
   implementation: local

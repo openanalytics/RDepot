@@ -37,6 +37,7 @@ import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
+import eu.openanalytics.rdepot.base.storage.Storage;
 import eu.openanalytics.rdepot.base.storage.exceptions.SourceNotFoundException;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
@@ -53,7 +54,6 @@ import eu.openanalytics.rdepot.python.api.v2.hateoas.PythonPackageModelAssembler
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.mediator.deletion.PythonPackageDeleter;
 import eu.openanalytics.rdepot.python.services.PythonPackageService;
-import eu.openanalytics.rdepot.python.storage.implementations.PythonLocalStorage;
 import eu.openanalytics.rdepot.python.strategy.factory.PythonStrategyFactory;
 import eu.openanalytics.rdepot.python.validation.PythonPackageValidator;
 import io.swagger.v3.oas.annotations.Operation;
@@ -95,7 +95,7 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
     private final PythonStrategyFactory strategyFactory;
     private final PythonPackageDeleter deleter;
     private final SecurityMediator securityMediator;
-    private final PythonLocalStorage storage;
+    private final Storage<PythonPackage> storage;
     private final PageableValidator pageableValidator;
     private final PackagePageableSortResolver pageableSortResolver;
     private final StrategyExecutor strategyExecutor;
@@ -113,7 +113,7 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
             SecurityMediator securityMediator,
             PythonPackageDtoConverter converter,
             PageableValidator pageableValidator,
-            PythonLocalStorage storage,
+            Storage<PythonPackage> storage,
             PackagePageableSortResolver pageableSortResolver,
             StrategyExecutor strategyExecutor) {
         super(
@@ -157,7 +157,9 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
             @RequestParam(name = "repository", required = false) List<String> repositories,
             @RequestParam(name = "deleted", required = false) Optional<Boolean> deleted,
             @RequestParam(name = "submissionState", required = false) List<SubmissionState> submissionStates,
-            @RequestParam(name = "name", required = false) Optional<String> name)
+            @RequestParam(name = "search", required = false) Optional<String> search,
+            @RequestParam(name = "maintainer", required = false) List<String> maintainers,
+            @RequestParam(name = "notMaintainedBy", required = false) List<String> notMaintainers)
             throws ApiException {
         final User requester = userService
                 .findActiveByLogin(principal.getName())
@@ -169,7 +171,7 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
         Specification<PythonPackage> specification = null;
 
         if (Objects.nonNull(repositories)) {
-            specification = SpecificationUtils.andComponent(specification, PackageSpecs.ofRepository(repositories));
+            specification = SpecificationUtils.andComponent(null, PackageSpecs.ofRepository(repositories));
         }
 
         if (deleted.isPresent()) {
@@ -182,14 +184,22 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
             }
         }
 
-        if (name.isPresent()) {
-            Specification<PythonPackage> component = PackageSpecs.ofName(name.get());
-            specification = SpecificationUtils.andComponent(specification, component);
+        if (search.isPresent()) {
+            specification = SpecificationUtils.andComponent(specification, PackageSpecs.ofName(search.get()));
         }
 
         if (Objects.nonNull(submissionStates)) {
             Specification<PythonPackage> component = PackageSpecs.ofSubmissionState(submissionStates);
             specification = SpecificationUtils.andComponent(specification, component);
+        }
+
+        if (Objects.nonNull(maintainers)) {
+            specification = SpecificationUtils.andComponent(specification, PackageSpecs.ofMaintainer(maintainers));
+        }
+
+        if (Objects.nonNull(notMaintainers)) {
+            specification =
+                    SpecificationUtils.andComponent(specification, PackageSpecs.notMaintainedBy(notMaintainers));
         }
 
         if (specification == null) {

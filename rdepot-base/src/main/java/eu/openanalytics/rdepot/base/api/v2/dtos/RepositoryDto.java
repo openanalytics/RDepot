@@ -21,6 +21,9 @@
 package eu.openanalytics.rdepot.base.api.v2.dtos;
 
 import eu.openanalytics.rdepot.base.entities.Repository;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -39,6 +42,7 @@ public class RepositoryDto extends RepositorySimpleDto {
     private String lastPublicationTimestamp = "";
     private String lastModifiedTimestamp = "";
     private boolean lastPublicationSuccessful = false;
+    private List<Map<String, String>> allowedFiles = new ArrayList<>();
 
     public RepositoryDto(
             Repository repository,
@@ -51,5 +55,6 @@ public class RepositoryDto extends RepositorySimpleDto {
         this.lastPublicationSuccessful = lastPublicationSuccessful;
         this.lastPublicationTimestamp = lastPublicationTimestamp;
         this.lastModifiedTimestamp = lastModifiedTimestamp;
+        this.allowedFiles = repository.getAllowedFiles();
     }
 }

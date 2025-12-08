@@ -15,7 +15,8 @@ default-user-configuration:
   page-size: 10
   supported-languages:
     - en-US
-    - de
+    - de-DE
+    - nl-NL
     - pl-PL
   supported-themes:
     - light
@@ -34,7 +35,7 @@ spring:
     host: 192.168.49.1
     port: 3925
 
-# Enable Liquibase
+  # Enable Liquibase
   liquibase:
     user: postgres
     enabled: true

@@ -26,11 +26,13 @@ import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
 import eu.openanalytics.rdepot.test.context.TestWebApplicationContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
+import java.io.File;
+import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 import org.springframework.context.MessageSource;
@@ -45,7 +47,7 @@ public abstract class UnitTest {
     protected MessageSource messageSource;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws Exception {
         // This piece of code is used mainly to provide mock message source for static methods
         MockServletContext msc = new MockServletContext();
         msc.addInitParameter(ContextLoader.CONTEXT_CLASS_PARAM, TestWebApplicationContext.class.getName());
@@ -54,19 +56,23 @@ public abstract class UnitTest {
         listener.contextInitialized(event);
         Mockito.lenient()
                 .when(messageSource.getMessage(any(), any(), any(), any()))
-                .thenAnswer(new Answer<String>() {
-                    @Override
-                    public String answer(InvocationOnMock invocation) throws Throwable {
-                        String messageCode = invocation.getArgument(0);
-                        return messageCode;
-                    }
-                });
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0));
         new StaticMessageResolver(messageSource);
+        backupTestPackages();
     }
 
-    protected void executeBashCommand(String... args) throws Exception {
-        Process process = Runtime.getRuntime().exec(args);
-        process.waitFor();
-        process.destroy();
+    protected void backupTestPackages() throws Exception {
+        final File main = new File("src/test/resources/unit/test_packages");
+        final File backup = new File("src/test/resources/unit/test_packages_backup");
+        if (!main.exists()) FileUtils.copyDirectory(backup, main);
+        if (!backup.exists()) FileUtils.copyDirectory(main, backup);
+    }
+
+    @AfterEach
+    public void restoreTestPackages() throws Exception {
+        FileUtils.forceDelete(new File("src/test/resources/unit/test_packages"));
+        FileUtils.moveDirectory(
+                new File("src/test/resources/unit/test_packages_backup"),
+                new File("src/test/resources/unit/test_packages"));
     }
 }

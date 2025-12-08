@@ -38,4 +38,5 @@ public class PackageUploadRequest<T extends Repository> {
     private T repository;
     private boolean replace = false;
     private String changes;
+    private boolean binaryPackage;
 }

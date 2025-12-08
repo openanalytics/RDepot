@@ -21,24 +21,28 @@
 package eu.openanalytics.rdepot.integrationtest.manager.v2.python;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import eu.openanalytics.rdepot.integrationtest.environment.ExecutionResult;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.IntegrationTest;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.RequestType;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.TestRequestBody;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.testData.SubmissionMultipartBody;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.testData.SubmissionTestData;
 import io.restassured.builder.MultiPartSpecBuilder;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
+import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.util.Arrays;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.Test;
 
 public class PythonSubmissionIntegrationTest extends IntegrationTest {
 
     private final SubmissionTestData testData;
     private static final String EVENTS_PATH = "/v2/python/events/submissions/";
+    private static final int DOWNLOADED_FROM_PYPI_EXIT_CODE = 123;
 
     public PythonSubmissionIntegrationTest() {
         super("/api/v2/manager/python/submissions");
@@ -108,6 +112,67 @@ public class PythonSubmissionIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    public void submitPackage_withMismatchedVersion() throws Exception {
+        final File packageBag = new File("src/test/resources/itestPackages/abo_tools-1.123.tar.gz");
+        SubmissionMultipartBody body = new SubmissionMultipartBody(
+                "testrepo8",
+                false,
+                true,
+                "",
+                new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+                        .fileName(packageBag.getName())
+                        .mimeType("application/gzip")
+                        .controlName("file")
+                        .build());
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST_MULTIPART)
+                .urlSuffix("/")
+                .statusCode(201)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getPostEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/python/submissions/new_abo_tools_with_mismatched_version_submission.json")
+                .expectedEventsJson(EVENTS_PATH + "new_abo_tools_with_mismatched_version_events.json")
+                .submissionMultipartBody(body)
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void submitPackageWithDot_toPublishedRepository() throws Exception {
+        final File packageBag = new File("src/test/resources/itestPackages/zest_releaser-9.6.2.tar.gz");
+        final SubmissionMultipartBody body = new SubmissionMultipartBody(
+                "testrepo8",
+                false,
+                true,
+                "",
+                new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+                        .fileName(packageBag.getName())
+                        .mimeType("application/gzip")
+                        .controlName("file")
+                        .build());
+
+        final TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST_MULTIPART)
+                .urlSuffix("/")
+                .statusCode(201)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getPostEndpointNewEventsAmount())
+                .submissionMultipartBody(body)
+                .expectedJsonPath("/v2/python/submissions/new_zest_releaser_approved_submission_published.json")
+                .build();
+        testEndpoint(requestBody);
+
+        final ExecutionResult result = bashScriptExecutor.executeBashScript(
+                "src/test/resources/scripts/checkIfPublishedPythonPackageWithDotCanBeInstalled.sh");
+        assertNotEquals(
+                DOWNLOADED_FROM_PYPI_EXIT_CODE,
+                result.exitCode(),
+                "The package was downloaded from PyPi instead of local repository.");
+        assertEquals(0, result.exitCode(), "Uploaded package was not published properly.");
+    }
+
+    @Test
     public void submitPackage_toPublishedRepository() throws Exception {
         final File packageBag = new File("src/test/resources/itestPackages/coconutpy-2.2.1.tar.gz");
         final SubmissionMultipartBody body = new SubmissionMultipartBody(
@@ -132,16 +197,53 @@ public class PythonSubmissionIntegrationTest extends IntegrationTest {
                 .build();
         testEndpoint(requestBody);
 
-        final Process process = new ProcessBuilder(
-                        "/bin/bash", "-c", "src/test/resources/scripts/checkIfPublishedPythonPackageCanBeInstalled.sh")
-                .redirectErrorStream(true)
-                .start();
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        while (reader.readLine() != null) {}
-        process.waitFor();
-        final int exitCode = process.exitValue();
-        process.destroy();
-        assertEquals(0, exitCode, "Uploaded package was not published properly.");
+        final ExecutionResult result = bashScriptExecutor.executeBashScript(
+                "src/test/resources/scripts/checkIfPublishedPythonPackageCanBeInstalled.sh");
+        assertNotEquals(
+                DOWNLOADED_FROM_PYPI_EXIT_CODE,
+                result.exitCode(),
+                "The package was downloaded from PyPi instead of local repository.");
+        assertEquals(0, result.exitCode(), "Uploaded package was not published properly.");
+    }
+
+    @Test
+    public void submitBinaryPackage_installPackage() throws Exception {
+        final File packageBag = new File(
+                "src/test/resources/itestPackages/tetrapolyscope-0.0.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl");
+        final SubmissionMultipartBody body = new SubmissionMultipartBody(
+                "testrepo8",
+                true,
+                "",
+                new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+                        .fileName(packageBag.getName())
+                        .mimeType("application/octet-stream")
+                        .controlName("file")
+                        .build(),
+                true);
+
+        final TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST_MULTIPART)
+                .urlSuffix("/")
+                .statusCode(201)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getPostEndpointNewEventsAmount())
+                .submissionMultipartBody(body)
+                .expectedJsonPath("/v2/python/submissions/new_binary_submission.json")
+                .build();
+        testEndpoint(requestBody);
+
+        final ExecutionResult result = bashScriptExecutor.executeBashScript(
+                "src/test/resources/scripts/checkIfPublishedPythonBinaryPackageCanBeInstalled.sh");
+        assertNotEquals(
+                DOWNLOADED_FROM_PYPI_EXIT_CODE,
+                result.exitCode(),
+                "The package was downloaded from PyPi instead of local repository.");
+        assertTrue(
+                result.output()
+                        .contains("Downloading " + "http://oa-rdepot-proxy/repo/testrepo8/tetrapolyscope/"
+                                + "tetrapolyscope-0.0.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"),
+                "Package was not downloaded from RDepot.");
+        assertEquals(0, result.exitCode(), "Uploaded package was not published properly.");
     }
 
     @Test
@@ -721,5 +823,118 @@ public class PythonSubmissionIntegrationTest extends IntegrationTest {
                 .submissionMultipartBody(body)
                 .build();
         testEndpoint(requestBody);
+    }
+
+    @Test
+    public void submitPackage_replaceLatestSamePackage() throws Exception {
+
+        final String patchRepository =
+                "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/published\"," + "\"value\":\"true\"" + "}" + "]";
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.PATCH_OTHER_RESOURCE)
+                .path("/api/v2/manager/python/repositories")
+                .urlSuffix("/9")
+                .statusCode(200)
+                .token(REPOSITORYMAINTAINER_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getChangeEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/python/repositories/published_repository.json")
+                .expectedEventsJson("/v2/python/events/repositories/patched_published_repository_event.json")
+                .body(patchRepository)
+                .build();
+        testEndpoint(requestBody);
+
+        String targetDirectoryName = "src/test/resources/downloading/";
+        createDownloadTestFolder(targetDirectoryName);
+
+        String packageName = "ArmyOfEvilRobots-0.4.1dev.tar.gz";
+        File packageBag = new File("src/test/resources/itestPackages/" + packageName);
+
+        SubmissionMultipartBody body = new SubmissionMultipartBody(
+                "testrepo9",
+                false,
+                true,
+                "",
+                new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+                        .fileName(packageBag.getName())
+                        .mimeType("application/gzip")
+                        .controlName("file")
+                        .build());
+
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST_MULTIPART)
+                .urlSuffix("/")
+                .statusCode(201)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getPostEndpointNewEventsAmount())
+                .expectedEventsJson(EVENTS_PATH + "new_submission_before_replace_package_events.json")
+                .expectedJsonPath("/v2/python/submissions/new_submission_before_replace_package.json")
+                .submissionMultipartBody(body)
+                .build();
+        testEndpoint(requestBody);
+
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET_AFTER_NEW_SUBMISSION)
+                .urlSuffix("/48")
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/python/submissions/submission_before_replace_package.json")
+                .build();
+        testEndpoint(requestBody);
+
+        bashScriptExecutor.executeBashCommand(
+                "curl http://localhost:8017/repo/testrepo9/armyofevilrobots/ArmyOfEvilRobots-0.4.1dev.tar.gz  --output "
+                        + targetDirectoryName + packageName);
+
+        File file = new File(targetDirectoryName + packageName);
+
+        String oldHash = DigestUtils.md5Hex(new FileInputStream(file));
+        cleanAfterDownloading(targetDirectoryName + packageName);
+
+        packageBag = new File("src/test/resources/itestPackages/ArmyOfEvilRobots-0-4-1dev.tar.gz");
+
+        body = new SubmissionMultipartBody(
+                "testrepo9",
+                false,
+                true,
+                "",
+                new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+                        .fileName(packageBag.getName())
+                        .mimeType("application/gzip")
+                        .controlName("file")
+                        .build());
+
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST_MULTIPART)
+                .urlSuffix("/")
+                .statusCode(201)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(0)
+                .expectedJsonPath("/v2/python/submissions/new_submission_after_replace_package.json")
+                .expectedEventsJson(EVENTS_PATH + "new_submission_after_replace_package_events.json")
+                .submissionMultipartBody(body)
+                .build();
+        testEndpoint(requestBody);
+
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET_AFTER_NEW_SUBMISSION)
+                .urlSuffix("/49")
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/python/submissions/submission_after_replace_package.json")
+                .build();
+        testEndpoint(requestBody);
+
+        bashScriptExecutor.executeBashCommand("curl http://localhost:8017/repo/testrepo9/armyofevilrobots/"
+                + packageName + " --output " + targetDirectoryName + packageName);
+
+        file = new File(targetDirectoryName + packageName);
+
+        String newHash = DigestUtils.md5Hex(new FileInputStream(file));
+
+        assertNotEquals(oldHash, newHash, "Hashes should be different");
+        cleanAfterDownloading(targetDirectoryName);
     }
 }

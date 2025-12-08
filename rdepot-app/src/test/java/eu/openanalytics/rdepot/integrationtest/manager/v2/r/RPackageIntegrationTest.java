@@ -21,7 +21,11 @@
 package eu.openanalytics.rdepot.integrationtest.manager.v2.r;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import eu.openanalytics.rdepot.integrationtest.environment.BashScriptExecutor;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.IntegrationTest;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.RequestType;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.TestRequestBody;
@@ -29,6 +33,7 @@ import eu.openanalytics.rdepot.integrationtest.manager.v2.testData.PackageTestDa
 import io.restassured.http.ContentType;
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -42,18 +47,65 @@ public class RPackageIntegrationTest extends IntegrationTest {
     private static final String PACKAGE_NAME_TO_DOWNLOAD = "accrued";
     private static final String PACKAGE_VERSION_TO_DOWNLOAD = "1.3";
     private static final String PACKAGE_ID_TO_DOWNLOAD = "5";
+    private static final BashScriptExecutor bashScriptExecutor = new BashScriptExecutor();
 
     public RPackageIntegrationTest() {
         super("/api/v2/manager/r/packages");
         this.testData = PackageTestData.builder()
-                .technologies(Arrays.asList("r"))
+                .technologies(List.of("r"))
                 .examplePackageId("17")
                 .deletedPackageId("14")
                 .getEndpointNewEventsAmount(0)
                 .deleteEndpointNewEventsAmount(-8)
                 .changeEndpointNewEventsAmount(1)
                 .toBeActivatedPackageId("15")
+                .submissionStates(List.of("waiting"))
+                .search("bench")
+                .repositories(List.of("testrepo4"))
+                .maintainer(Arrays.asList("Nikola%20Tesla", "Galileo%20Galilei"))
                 .build();
+    }
+
+    @Test
+    public void getPackagesByNameSearching() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .token(USER_TOKEN)
+                .statusCode(200)
+                .urlSuffix("?search=" + testData.getSearch() + "&sort=id,desc")
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/r/packages/packages_searching.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getPackagesByMaintainers() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .token(USER_TOKEN)
+                .statusCode(200)
+                .urlSuffix("?maintainer=" + testData.getMaintainer().get(0) + ","
+                        + testData.getMaintainer().get(1) + "&sort=id,desc")
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/r/packages/packages_by_maintainers.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getPackagesByRepositoriesAndSubmissionState() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .token(USER_TOKEN)
+                .statusCode(200)
+                .urlSuffix("?repository=" + testData.getRepositories().get(0)
+                        + "&submissionState=" + testData.getSubmissionStates().get(0)
+                        + "&sort=id,desc")
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/r/packages/packages_by_repositories_and_submission_state.json")
+                .build();
+        testEndpoint(requestBody);
     }
 
     @Test
@@ -176,6 +228,19 @@ public class RPackageIntegrationTest extends IntegrationTest {
                 .token(USER_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
                 .expectedJsonPath("/v2/base/packages/404.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getPackagesNotMaintainedBy() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .token(USER_TOKEN)
+                .statusCode(200)
+                .urlSuffix("?notMaintainedBy=" + testData.getMaintainer().get(1))
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath(PACKAGES_PATH + "packages_not_maintained_by.json")
                 .build();
         testEndpoint(requestBody);
     }
@@ -485,7 +550,7 @@ public class RPackageIntegrationTest extends IntegrationTest {
                 .asByteArray();
 
         byte[] expected = FileUtils.readFileToByteArray(new File("src/test/resources/itestPdf/usl.pdf"));
-        Assertions.assertTrue(Arrays.equals(actual, expected), "Returned vignette is incorrect.");
+        Assertions.assertArrayEquals(actual, expected, "Returned vignette is incorrect.");
     }
 
     @Test
@@ -502,7 +567,7 @@ public class RPackageIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    public void downloadPackage() throws Exception {
+    public void downloadPackage() {
         byte[] pkg = given().header(AUTHORIZATION, BASIC + ADMIN_TOKEN)
                 .accept(ContentType.ANY)
                 .when()
@@ -519,5 +584,97 @@ public class RPackageIntegrationTest extends IntegrationTest {
         byte[] expectedpkg = readFileToByteArray(file);
 
         Assertions.assertArrayEquals(expectedpkg, pkg, "Wrong package has been downloaded");
+    }
+
+    @Test
+    public void downloadSourcePackage() throws Exception {
+
+        String targetDirectoryName = "src/test/resources/downloading/";
+
+        createDownloadTestFolder(targetDirectoryName);
+
+        bashScriptExecutor.executeBashCommand(
+                "curl http://localhost:8017/repo/testrepo1/src/contrib/A3_0.9.2.tar.gz  --output " + targetDirectoryName
+                        + "A3_0.9.2.tar.gz");
+        File targetDirectory = new File(targetDirectoryName);
+        File[] files = targetDirectory.listFiles();
+        assertNotNull(files);
+        assertEquals(1, files.length, "There is no package in the folder");
+
+        byte[] actual = FileUtils.readFileToByteArray(files[0]);
+
+        byte[] expected = FileUtils.readFileToByteArray(new File("src/test/resources/itestPackages/A3_0.9.2.tar.gz"));
+
+        assertEquals("A3_0.9.2.tar.gz", files[0].getName(), "Package A3 of version 0.9.2 should be downloaded");
+        assertArrayEquals(actual, expected, "Downloaded package is incorrect.");
+
+        cleanAfterDownloading(targetDirectoryName);
+    }
+
+    @Test
+    public void downloadBinaryPackage() throws Exception {
+        final String patch =
+                "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/published\"," + "\"value\":\"true\"" + "}" + "]";
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.PATCH_OTHER_RESOURCE)
+                .path("/api/v2/manager/r/repositories")
+                .urlSuffix("/5")
+                .statusCode(200)
+                .token(REPOSITORYMAINTAINER_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getChangeEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/r/repositories/published_repository_with_binary.json")
+                .expectedEventsJson("/v2/r/events/repositories/patched_published_repository_with_binary_event.json")
+                .body(patch)
+                .build();
+        testEndpoint(requestBody);
+
+        String targetDirectoryName = "src/test/resources/downloading/";
+
+        createDownloadTestFolder(targetDirectoryName);
+
+        bashScriptExecutor.executeBashCommand("curl -H \"User-Agent: R (4.2.0 x86_64-pc-linux-gnu x86_64 linux-gnu)\""
+                + " http://localhost:8017/repo/testrepo4/linux/centos7/src/contrib/arrow_8.0.0.tar.gz  --output "
+                + targetDirectoryName + "arrow_8.0.0.tar.gz");
+
+        File targetDirectory = new File(targetDirectoryName);
+        File[] files = targetDirectory.listFiles();
+
+        assertNotNull(files);
+        byte[] actual = FileUtils.readFileToByteArray(files[0]);
+
+        byte[] expected =
+                FileUtils.readFileToByteArray(new File("src/test/resources/itestPackages/arrow_8.0.0.tar.gz"));
+
+        assertEquals(1, files.length, "There is no package in the folder");
+        assertEquals("arrow_8.0.0.tar.gz", files[0].getName(), "Package arrow of version 8.0.0 should be downloaded");
+        assertArrayEquals(actual, expected, "Downloaded package is incorrect.");
+
+        cleanAfterDownloading(targetDirectoryName);
+    }
+
+    @Test
+    public void downloadSourcePackage_whenBinaryIsMissing() throws Exception {
+        String targetDirectoryName = "src/test/resources/downloading/";
+
+        createDownloadTestFolder(targetDirectoryName);
+
+        bashScriptExecutor.executeBashCommand("curl -H \"User-Agent: R (4.4.0 x86_64-pc-linux-gnu x86_64 linux-gnu)\""
+                + " http://localhost:8017/repo/testrepo1/linux/jammy/src/contrib/A3_0.9.2.tar.gz  --output "
+                + targetDirectoryName + "A3_0.9.2.tar.gz");
+
+        File targetDirectory = new File(targetDirectoryName);
+        File[] files = targetDirectory.listFiles();
+
+        assertNotNull(files);
+        byte[] actual = FileUtils.readFileToByteArray(files[0]);
+
+        byte[] expected = FileUtils.readFileToByteArray(new File("src/test/resources/itestPackages/A3_0.9.2.tar.gz"));
+
+        assertEquals(1, files.length, "There is no package in the folder");
+        assertEquals("A3_0.9.2.tar.gz", files[0].getName(), "Package A3 of version 0.9.2 should be downloaded");
+        assertArrayEquals(actual, expected, "Downloaded package is incorrect.");
+
+        cleanAfterDownloading(targetDirectoryName);
     }
 }

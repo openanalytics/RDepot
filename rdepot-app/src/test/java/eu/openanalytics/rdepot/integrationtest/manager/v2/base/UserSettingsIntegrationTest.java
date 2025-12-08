@@ -101,7 +101,7 @@ public class UserSettingsIntegrationTest extends IntegrationTest {
                 + "{"
                 + "\"op\": \"replace\","
                 + "\"path\":\"/language\","
-                + "\"value\":\"de\""
+                + "\"value\":\"de-DE\""
                 + "},"
                 + "{"
                 + "\"op\": \"replace\","

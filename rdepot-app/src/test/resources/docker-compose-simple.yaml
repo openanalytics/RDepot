@@ -1,4 +1,3 @@
-version: '3'
 services:
 ##
   proxy:
@@ -25,7 +24,7 @@ services:
 ##
   repo:
     build: ./docker/repo
-    # image: registry.openanalytics.eu/openanalytics/rdepot-repo-it:2.6.2
+    # image: registry.openanalytics.eu/openanalytics/rdepot-repo-it:2.7.0
     restart: always
     labels:
       eu.openanalytics.rdepot.container.name: "oa-rdepot-repo"
@@ -61,11 +60,10 @@ services:
           - oa-rdepot-db
     ports:
       - 5432:5432
-
 ##
   app:
     build: ./docker/app
-    # image: registry.openanalytics.eu/openanalytics/rdepot-app-it:2.6.2
+    # image: registry.openanalytics.eu/openanalytics/rdepot-app-it:2.7.0
     restart: always
     hostname: oa-rdepot-app
     labels:

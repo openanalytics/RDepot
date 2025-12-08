@@ -1,91 +1,133 @@
 {
-  "code": 200,
-  "data": {
-    "links": [
-      {
-        "rel": "self",
-        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/repositories?technology=python&page=0&size=20&sort=id,asc"
-      }
-    ],
-    "page": {
-      "number": 0,
-      "size": 20,
-      "totalPages": 1,
-      "totalElements": 3
+    "code": 200,
+    "data": {
+        "links": [
+            {
+                "rel": "self",
+                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/repositories?technology=python&page=0&size=20&sort=id,asc"
+            }
+        ],
+        "page": {
+            "number": 0,
+            "size": 20,
+            "totalPages": 1,
+            "totalElements": 3
+        },
+        "content": [
+            {
+                "deleted": false,
+                "synchronizing": false,
+                "name": "testrepo8",
+                "serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo8",
+                "allowedFiles": [
+                    {
+                        "mimetype": "application/gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/x-gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/octet-stream",
+                        "extension": ".whl"
+                    }
+                ],
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/8"
+                    },
+                    {
+                        "rel": "repositoryList",
+                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/repositories"
+                    }
+                ],
+                "id": 8,
+                "published": true,
+                "lastPublicationSuccessful": true,
+                "technology": "Python",
+                "version": 7,
+                "publicationUri": "http:\/\/localhost\/repo\/testrepo8",
+                "numberOfPackages": 5
+            },
+            {
+                "deleted": false,
+                "synchronizing": false,
+                "name": "testrepo9",
+                "serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo9",
+                "allowedFiles": [
+                    {
+                        "mimetype": "application/gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/x-gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/octet-stream",
+                        "extension": ".whl"
+                    }
+                ],
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/9"
+                    },
+                    {
+                        "rel": "repositoryList",
+                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/repositories"
+                    }
+                ],
+                "id": 9,
+                "published": false,
+                "lastPublicationSuccessful": false,
+                "technology": "Python",
+                "version": 4,
+                "publicationUri": "http:\/\/localhost\/repo\/testrepo9",
+                "numberOfPackages": 3
+            },
+            {
+                "deleted": false,
+                "synchronizing": false,
+                "name": "testrepo10",
+                "serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo10",
+                "allowedFiles": [
+                    {
+                        "mimetype": "application/gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/x-gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/octet-stream",
+                        "extension": ".whl"
+                    }
+                ],
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/10"
+                    },
+                    {
+                        "rel": "repositoryList",
+                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/repositories"
+                    }
+                ],
+                "id": 10,
+                "published": false,
+                "lastPublicationSuccessful": false,
+                "technology": "Python",
+                "version": 7,
+                "publicationUri": "http:\/\/localhost\/repo\/testrepo10",
+                "numberOfPackages": 2
+            }
+        ]
     },
-    "content": [
-      {
-        "deleted": false,
-        "synchronizing": false,
-        "name": "testrepo8",
-        "serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo8",
-        "links": [
-          {
-            "rel": "self",
-            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/8"
-          },
-          {
-            "rel": "repositoryList",
-            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/repositories"
-          }
-        ],
-        "id": 8,
-        "published": true,
-        "lastPublicationSuccessful": true,
-        "technology": "Python",
-        "version": 7,
-        "publicationUri": "http:\/\/localhost\/repo\/testrepo8",
-        "numberOfPackages": 5
-      },
-      {
-        "deleted": false,
-        "synchronizing": false,
-        "name": "testrepo9",
-        "serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo9",
-        "links": [
-          {
-            "rel": "self",
-            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/9"
-          },
-          {
-            "rel": "repositoryList",
-            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/repositories"
-          }
-        ],
-        "id": 9,
-        "published": false,
-        "lastPublicationSuccessful": false,
-        "technology": "Python",
-        "version": 4,
-        "publicationUri": "http:\/\/localhost\/repo\/testrepo9",
-        "numberOfPackages": 3
-      },
-      {
-        "deleted": false,
-        "synchronizing": false,
-        "name": "testrepo10",
-        "serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo10",
-        "links": [
-          {
-            "rel": "self",
-            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/10"
-          },
-          {
-            "rel": "repositoryList",
-            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/repositories"
-          }
-        ],
-        "id": 10,
-        "published": false,
-        "lastPublicationSuccessful": false,
-        "technology": "Python",
-        "version": 7,
-        "publicationUri": "http:\/\/localhost\/repo\/testrepo10",
-        "numberOfPackages": 2
-      }
-    ]
-  },
-  "messageCode": "success.request.processed",
-  "message": "Your request has been processed successfully.",
-  "status": "SUCCESS"
+    "messageCode": "success.request.processed",
+    "message": "Your request has been processed successfully.",
+    "status": "SUCCESS"
 }

@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20_01_update_python_package
+      author: dglebowska
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: pythonpackage
+            schemaName: public
+        - not:
+            - columnExists:
+                tableName: pythonpackage
+                schemaName: public
+                columnName: compatibility_tags
+      changes:
+        - addColumn:
+            tableName: pythonpackage
+            schemaName: public
+            columns:
+              - column:
+                  name: compatibility_tags
+                  type: text
+              - column:
+                  name: build_tag
+                  type: text
+              - column:
+                  name: python_tag
+                  type: text
+              - column:
+                  name: abi_tag
+                  type: text
+              - column:
+                  name: platform_tag
+                  type: text

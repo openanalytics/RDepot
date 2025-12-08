@@ -43,7 +43,6 @@ import java.nio.file.Files;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.*;
 import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -57,16 +56,6 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
     private static final String API_PATH = "/api/v2/manager/r";
     private static final String LINKS_PATH = "src/test/resources/declarative_packages_urls.csv";
 
-    public static final String ADMIN_TOKEN =
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJlaW5zdGVpbiIsIm5hbWUiOiJBbGJlcnQgRWluc3RlaW4iLCJlbWFpbCI6ImVpbnN0ZWluQGxkYXAuZm9ydW1zeXMuY29tIiwiYXVkIjoiUkRlcG90Iiwicm9sZXMiOlsidXNlciIsInBhY2thZ2VtYWludGFpbmVyIiwicmVwb3NpdG9yeW1haW50YWluZXIiLCJhZG1pbiJdLCJpc3MiOiJSRGVwb3QiLCJleHAiOjIwMDcwMjcyNDgsImlhdCI6MTY5MTY2NzI0OH0.SycsCWDmEFZfWV7cMpc05KareRXQ3iKfM9iprBa-j6M27D0hg0uKS1eGEPIuAHXEdqyUSD6yv7WMeXNY9BuYdw";
-    public static final String REPOSITORYMAINTAINER_TOKEN =
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXNsYSIsIm5hbWUiOiJOaWtvbGEgVGVzbGEiLCJlbWFpbCI6InRlc2xhQGxkYXAuZm9ydW1zeXMuY29tIiwiYXVkIjoiUkRlcG90Iiwicm9sZXMiOlsidXNlciIsInBhY2thZ2VtYWludGFpbmVyIiwicmVwb3NpdG9yeW1haW50YWluZXIiXSwiaXNzIjoiUkRlcG90IiwiZXhwIjoyMDA3MDI3NDU3LCJpYXQiOjE2OTE2Njc0NTd9.6o7URshlNb91K9DKig79XIk9ozhomwaBmLg6im1JgbeWfJJUOP9k-gLTmWWHZkBC32MGKKFR-U11QzYY6G7zsw";
-    public static final String PACKAGEMAINTAINER_TOKEN =
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnYWxpZWxlbyIsImVtYWlsIjoiZ2FsaWVsZW9AbGRhcC5mb3J1bXN5cy5jb20iLCJuYW1lIjoiR2FsaWxlbyBHYWxpbGVpIiwiYXVkIjoiUkRlcG90Iiwicm9sZXMiOlsidXNlciIsInBhY2thZ2VtYWludGFpbmVyIl0sImlzcyI6IlJEZXBvdCIsImV4cCI6MjAwNzAyNzQ5MSwiaWF0IjoxNjkxNjY3NDkxfQ.24gRyDswxCmos1mUTkRJEKkrt3L2MFfyHEXa_H5EBhi3yirIN8AT7Bn_NYaTEtGcEfVd8NUQtgzm9uck76N2SQ";
-    public static final String USER_TOKEN =
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJuZXd0b24iLCJuYW1lIjoiSXNhYWMgTmV3dG9uIiwiZW1haWwiOiJuZXd0b25AbGRhcC5mb3J1bXN5cy5jb20iLCJhdWQiOiJSRGVwb3QiLCJyb2xlcyI6WyJ1c2VyIl0sImlzcyI6IlJEZXBvdCIsImV4cCI6MjAwNzAyNzUwOSwiaWF0IjoxNjkxNjY3NTA5fQ.waNTEOoLL0jkDpvihngEg_O6_W91wvIcSdtcXIBYiTeE5SbyLL60FFztYwuUwo-aEghzqnQlfVj4NATZMWgA-g";
-    public static final String AUTHORIZATION = "Authorization";
-    public static final String BEARER = "Bearer ";
     public static final String JSON_PATH = "src/test/resources/JSONs/v2/r-declarative";
 
     public static final TestEnvironmentConfigurator testEnv = TestEnvironmentConfigurator.getDefaultInstance();
@@ -82,7 +71,7 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
                             .withStartupTimeout(Duration.ofMinutes(5)));
 
     public RDeclarativeIntegrationTest() {
-        super(AUTHORIZATION, BEARER, USER_TOKEN, API_PATH);
+        super(API_PATH);
     }
 
     @BeforeAll
@@ -141,7 +130,7 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
     }
 
     @Test
-    public void shouldSynchronizeRRepositoryWithMirror() throws ParseException, IOException {
+    public void shouldSynchronizeRRepositoryWithMirror() throws IOException {
         final String repositoryId = "3";
 
         given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -157,17 +146,49 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
                 .pollInterval(5, TimeUnit.SECONDS)
                 .until(() -> assertSynchronizationFinished(repositoryId));
 
-        FileReader reader = new FileReader(JSON_PATH + "/repositories_after_synchronization.json");
+        FileReader reader = new FileReader(JSON_PATH + "/synchronization_status_paged.json");
+        JsonObject expectedSynchronizationStatus = (JsonObject) JsonParser.parseReader(reader);
+        reader = new FileReader(JSON_PATH + "/repositories_after_synchronization.json");
         JsonObject expectedRepositories = (JsonObject) JsonParser.parseReader(reader);
         reader = new FileReader(JSON_PATH + "/packages_after_synchronization.json");
         JsonObject expectedPackages = (JsonObject) JsonParser.parseReader(reader);
 
+        assertSynchronizationStatus(expectedSynchronizationStatus, repositoryId, "2", "1");
         assertRepositories(expectedRepositories);
         assertPackages(expectedPackages, true);
     }
 
     @Test
-    public void shouldUploadPackageToPublishedRRepository() throws IOException, ParseException {
+    public void synchronizationStatus_withMixedSuccess() throws IOException {
+        final String repositoryId = "16";
+
+        given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .when()
+                .post(API_PATH + "/repositories/" + repositoryId + "/synchronize-mirrors")
+                .then()
+                .statusCode(204);
+
+        await().atMost(180, TimeUnit.SECONDS)
+                .with()
+                .pollInterval(5, TimeUnit.SECONDS)
+                .until(() -> assertSynchronizationFinished(repositoryId));
+
+        FileReader reader = new FileReader(JSON_PATH + "/synchronization_status_mixed_success.json");
+        JsonObject expectedSynchronizationStatus = (JsonObject) JsonParser.parseReader(reader);
+        reader = new FileReader(JSON_PATH + "/repositories_after_synchronization_mixed_success.json");
+        JsonObject expectedRepositories = (JsonObject) JsonParser.parseReader(reader);
+        reader = new FileReader(JSON_PATH + "/packages_after_synchronization_with_mixed_success.json");
+        JsonObject expectedPackages = (JsonObject) JsonParser.parseReader(reader);
+
+        assertSynchronizationStatus(expectedSynchronizationStatus, repositoryId, null, null);
+        assertRepositories(expectedRepositories);
+        assertPackages(expectedPackages, true);
+    }
+
+    @Test
+    public void shouldUploadPackageToPublishedRRepository() throws IOException {
         File packageBag = new File("src/test/resources/itestPackages/A3_0.9.1.tar.gz");
 
         given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -194,7 +215,7 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
     }
 
     @Test
-    public void shouldUploadPackageToUnpublishedRRepository() throws IOException, ParseException {
+    public void shouldUploadPackageToUnpublishedRRepository() throws IOException {
         File packageBag = new File("src/test/resources/itestPackages/A3_0.9.1.tar.gz");
 
         given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -286,32 +307,6 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
                 .patch(API_PATH + "/repositories/" + repositoryId + "/synchronize-mirrors")
                 .then()
                 .statusCode(405);
-    }
-
-    private Boolean assertSynchronizationFinished(String repositoryId) {
-        String response = given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
-                .accept(ContentType.JSON)
-                .when()
-                .get(API_PATH + "/repositories/" + repositoryId + "/synchronization-status")
-                .then()
-                .statusCode(200)
-                .extract()
-                .asString();
-
-        JsonObject actualJson = (JsonObject) JsonParser.parseString(response);
-
-        return actualJson
-                        .get("data")
-                        .getAsJsonObject()
-                        .get("repositoryId")
-                        .getAsString()
-                        .equals(repositoryId)
-                && actualJson
-                        .get("data")
-                        .getAsJsonObject()
-                        .get("pending")
-                        .getAsString()
-                        .equals("false");
     }
 
     @Override

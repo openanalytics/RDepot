@@ -25,6 +25,8 @@ services:
       - ./docker/app/test_configs/test_migration.yml:/opt/rdepot/application.yml
       - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
       - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
+      - ./itestSourceFiles/info:/opt/rdepot/repositories:ro
+      - ./itestNewFiles/new:/opt/rdepot/new:ro
     depends_on:
       - db
     environment:

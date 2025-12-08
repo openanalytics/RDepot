@@ -22,6 +22,7 @@ package eu.openanalytics.rdepot.base.strategy.exceptions;
 
 import eu.openanalytics.rdepot.base.exception.LocalizedException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
+import java.io.Serial;
 
 /**
  * Thrown when package creation failed in
@@ -29,6 +30,7 @@ import eu.openanalytics.rdepot.base.messaging.MessageCodes;
  */
 public class CreatePackageException extends LocalizedException {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public CreatePackageException() {

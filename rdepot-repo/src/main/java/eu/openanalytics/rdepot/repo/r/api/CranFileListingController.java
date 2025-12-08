@@ -21,6 +21,7 @@
 package eu.openanalytics.rdepot.repo.r.api;
 
 import eu.openanalytics.rdepot.repo.api.FileListingController;
+import eu.openanalytics.rdepot.repo.hash.HashCalculator;
 import eu.openanalytics.rdepot.repo.r.storage.CranStorageService;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -33,8 +34,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/r")
 public class CranFileListingController extends FileListingController {
-    public CranFileListingController(CranStorageService storageService) {
-        super(storageService);
+    private final CranStorageService cranStorageService;
+
+    public CranFileListingController(CranStorageService storageService, HashCalculator hashCalculator) {
+        super(storageService, hashCalculator);
+        this.cranStorageService = storageService;
     }
 
     @GetMapping("/{repository}/")
@@ -47,6 +51,11 @@ public class CranFileListingController extends FileListingController {
         return super.archiveUploads(repository);
     }
 
+    @GetMapping("/{repository}/platforms")
+    public ResponseEntity<List<String>> platformUploads(@PathVariable("repository") String repository) {
+        return ResponseEntity.ok(cranStorageService.getBinaryPlatformDirectories(repository));
+    }
+
     @GetMapping("/{repository}/{source}/{packagesFile}")
     public void downloadPackagesFile(
             @PathVariable("repository") String repository,
@@ -54,10 +63,5 @@ public class CranFileListingController extends FileListingController {
             @PathVariable("source") String source,
             HttpServletResponse response) {
         super.downloadPackagesFile(repository, packagesFile, source, response);
-    }
-
-    @GetMapping("/{repository:.+}/status")
-    public ResponseEntity<String> status() {
-        return super.status();
     }
 }

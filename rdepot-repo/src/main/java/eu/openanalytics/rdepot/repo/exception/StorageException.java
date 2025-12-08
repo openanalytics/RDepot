@@ -20,11 +20,14 @@
  */
 package eu.openanalytics.rdepot.repo.exception;
 
+import java.io.Serial;
+
 public class StorageException extends RuntimeException {
 
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -1050824522334250485L;
 
     public StorageException(String message) {

@@ -17,14 +17,28 @@
                 "publicationUri": "http://localhost/repo/X",
                 "name": "X",
                 "serverAddress": "http://oa-rdepot-repo:8080/X",
-                "lastPublicationSuccessful": true,
                 "deleted": false,
                 "published": true,
-                "requiresAuthentication": true,
                 "synchronizing": false,
                 "technology": "Python",
+                "requiresAuthentication": true,
                 "numberOfPackages": 0,
+                "lastPublicationSuccessful": true,
                 "hashMethod": "SHA256",
+                "allowedFiles": [
+                    {
+                        "mimetype": "application/gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/x-gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/octet-stream",
+                        "extension": ".whl"
+                    }
+                ],
                 "links": [
                     {
                         "rel": "self",
@@ -44,12 +58,26 @@
                 "serverAddress": "http://oa-rdepot-repo:8080/Y",
                 "deleted": false,
                 "published": false,
-                "requiresAuthentication": true,
-                "lastPublicationSuccessful": false,
                 "synchronizing": false,
                 "technology": "Python",
+                "requiresAuthentication": true,
                 "numberOfPackages": 1,
+                "lastPublicationSuccessful": false,
                 "hashMethod": "SHA256",
+                "allowedFiles": [
+                    {
+                        "mimetype": "application/gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/x-gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/octet-stream",
+                        "extension": ".whl"
+                    }
+                ],
                 "links": [
                     {
                         "rel": "self",
@@ -60,11 +88,50 @@
                         "href": "http://localhost:8021/api/v2/manager/python/repositories"
                     }
                 ]
+            },
+            {
+                "id": 14,
+                "version": 0,
+                "publicationUri": "http://localhost/repo/Z",
+                "name": "Z",
+                "serverAddress": "http://oa-rdepot-repo:8080/Z",
+                "deleted": false,
+                "published": true,
+                "synchronizing": false,
+                "technology": "Python",
+                "requiresAuthentication": true,
+                "numberOfPackages": 0,
+                "lastPublicationSuccessful": false,
+                "hashMethod": "SHA256",
+                "allowedFiles": [
+                    {
+                        "mimetype": "application/gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/x-gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/octet-stream",
+                        "extension": ".whl"
+                    }
+                ],
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8021/api/v2/manager/python/repositories/14"
+                    },
+                    {
+                        "rel": "repositoryList",
+                        "href": "http://localhost:8021/api/v2/manager/python/repositories"
+                    }
+                ]
             }
         ],
         "page": {
             "size": 20,
-            "totalElements": 2,
+            "totalElements": 3,
             "totalPages": 1,
             "number": 0
         }

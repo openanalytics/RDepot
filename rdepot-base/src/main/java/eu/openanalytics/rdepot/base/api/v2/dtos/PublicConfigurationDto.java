@@ -20,6 +20,7 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.dtos;
 
+import java.util.List;
 import java.util.Map;
 
 public record PublicConfigurationDto(
@@ -30,4 +31,5 @@ public record PublicConfigurationDto(
         boolean accessTokenLifetimeConfigurable,
         int accessTokenLifetimeDefault,
         boolean generateManuals,
-        Map<String, Object> repositoryNameValidationRegex) {}
+        Map<String, Object> repositoryNameValidationRegex,
+        List<String> supportedLanguages) {}

@@ -20,6 +20,7 @@
  */
 package eu.openanalytics.rdepot.repo.python.api;
 
+import eu.openanalytics.rdepot.repo.api.StatusController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,14 +28,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/python")
-public class PythonStatusController {
-    /**
-     * Should be available under the path of the repository + "/status" to indicate
-     * whether the path is correct.
-     * @return "OK" by default
-     */
+public class PythonStatusController extends StatusController {
+
     @GetMapping("/{repository:.+}/status")
     public ResponseEntity<String> status() {
-        return ResponseEntity.ok("OK");
+        return super.status();
     }
 }

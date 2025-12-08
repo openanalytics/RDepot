@@ -32,7 +32,6 @@ import eu.openanalytics.rdepot.base.service.Service;
 import eu.openanalytics.rdepot.base.storage.Storage;
 import eu.openanalytics.rdepot.base.storage.exceptions.InvalidSourceException;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
-import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
 import org.apache.commons.lang3.NotImplementedException;
 
@@ -43,7 +42,7 @@ import org.apache.commons.lang3.NotImplementedException;
  */
 public abstract class UpdatePackageStrategy<P extends Package> extends UpdateStrategy<P> {
 
-    protected final Storage<?, P> storage;
+    protected final Storage<P> storage;
     protected final BestMaintainerChooser bestMaintainerChooser;
 
     protected UpdatePackageStrategy(
@@ -53,7 +52,7 @@ public abstract class UpdatePackageStrategy<P extends Package> extends UpdateStr
             User requester,
             P updatedPackage,
             P oldResourceCopy,
-            Storage<?, P> storage,
+            Storage<P> storage,
             BestMaintainerChooser bestMaintainerChooser) {
         super(resource, service, eventService, requester, updatedPackage, oldResourceCopy);
         this.storage = storage;
@@ -132,9 +131,6 @@ public abstract class UpdatePackageStrategy<P extends Package> extends UpdateStr
      * This method should trigger repository (re)publication.
      */
     protected abstract void publishPackageRepository(P packageBag) throws SynchronizeRepositoryException;
-
-    @Override
-    public void revertChanges() throws StrategyReversionFailure {}
 
     @Override
     protected NewsfeedEvent generateEvent(P resource) {

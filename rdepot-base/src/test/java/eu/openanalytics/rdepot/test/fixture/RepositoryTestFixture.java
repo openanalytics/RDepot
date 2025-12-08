@@ -21,7 +21,9 @@
 package eu.openanalytics.rdepot.test.fixture;
 
 import eu.openanalytics.rdepot.base.entities.Repository;
+import eu.openanalytics.rdepot.base.entities.enums.HashMethod;
 import eu.openanalytics.rdepot.base.time.DateProvider;
+import java.io.Serial;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -30,6 +32,12 @@ public class RepositoryTestFixture {
 
     public static List<Repository> GET_EXAMPLE_REPOSITORIES() {
         Repository repository1 = new Repository() {
+            @Override
+            public HashMethod getHashMethod() {
+                return HashMethod.MD5;
+            }
+
+            @Serial
             private static final long serialVersionUID = 1L;
         };
         repository1.setId(123);
@@ -46,6 +54,12 @@ public class RepositoryTestFixture {
         repository1.setRequiresAuthentication(true);
 
         Repository repository2 = new Repository() {
+            @Override
+            public HashMethod getHashMethod() {
+                return HashMethod.MD5;
+            }
+
+            @Serial
             private static final long serialVersionUID = 1L;
         };
         repository2.setId(456);
@@ -60,6 +74,12 @@ public class RepositoryTestFixture {
         repository2.setRequiresAuthentication(false);
 
         Repository repository3 = new Repository() {
+            @Override
+            public HashMethod getHashMethod() {
+                return HashMethod.MD5;
+            }
+
+            @Serial
             private static final long serialVersionUID = 1L;
         };
         repository3.setId(234);
@@ -88,13 +108,6 @@ public class RepositoryTestFixture {
     public static Repository GET_EXAMPLE_REPOSITORY(int id) {
         Repository repository = GET_EXAMPLE_REPOSITORIES().get(0);
         repository.setId(id);
-        return repository;
-    }
-
-    public static Repository GET_NEW_REPOSITORY() {
-        Repository repository = GET_EXAMPLE_REPOSITORY(0);
-        repository.setName("New Repository");
-        repository.setVersion(1);
         return repository;
     }
 }

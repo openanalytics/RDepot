@@ -24,6 +24,10 @@ import eu.openanalytics.rdepot.integrationtest.manager.v2.IntegrationTest;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.RequestType;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.TestRequestBody;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.testData.PackageTestData;
+import eu.openanalytics.rdepot.integrationtest.manager.v2.testData.SubmissionMultipartBody;
+import io.restassured.builder.MultiPartSpecBuilder;
+import java.io.File;
+import java.nio.file.Files;
 import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
@@ -162,6 +166,133 @@ public class PackageIntegrationTest extends IntegrationTest {
                         + testData.getTechnologies().get(0) + "&sort=id,asc")
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
                 .expectedJsonPath("/v2/base/packages/packages_by_submission_states_and_technology.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getPackagesNotMaintainedBy() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .token(USER_TOKEN)
+                .statusCode(200)
+                .urlSuffix("?notMaintainedBy=" + testData.getMaintainer().get(1))
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/base/packages/packages_not_maintained_by.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getPackagesNotMaintainedBy_afterNewMaintainerCreation() throws Exception {
+        final String body = "{" + "\"user\": { \"id\": 6}," + "\"packageName\": \"accrued\","
+                + "\"repository\": {\"id\" : 3}" + "}";
+
+        testPostEndpoint(
+                body,
+                "/api/v2/manager/package-maintainers",
+                "/v2/base/package-maintainer/maintainer_accrued_created.json",
+                201,
+                ADMIN_TOKEN);
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .token(USER_TOKEN)
+                .statusCode(200)
+                .urlSuffix("?notMaintainedBy=" + testData.getMaintainer().get(1))
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/base/packages/packages_not_maintained_by_after_maintainer_creation.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getPackagesNotMaintainedBy_afterMaintainerUpdate() throws Exception {
+        final String patch =
+                "[" + "{" + "\"op\": \"replace\"," + "\"path\": \"/packageName\"," + "\"value\": \"abc\"" + "}" + "]";
+
+        testPatchEndpoint(
+                patch,
+                "/v2/base/package-maintainer/maintainer_patched.json",
+                "/api/v2/manager/package-maintainers",
+                "/1",
+                200,
+                ADMIN_TOKEN);
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .token(USER_TOKEN)
+                .statusCode(200)
+                .urlSuffix("?notMaintainedBy=" + testData.getMaintainer().get(1))
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/base/packages/packages_not_maintained_by_after_maintainer_update.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getPackagesNotMaintainedBy_afterMaintainerDeletion() throws Exception {
+        testDeleteEndpoint("/api/v2/manager/package-maintainers", "/4", 204, ADMIN_TOKEN);
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .token(USER_TOKEN)
+                .statusCode(200)
+                .urlSuffix("?notMaintainedBy=" + testData.getMaintainer().get(1))
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/base/packages/packages_not_maintained_by_after_maintainer_deletion.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getPackagesNotMaintainedBy_afterNewPackageUpload() throws Exception {
+        File packageBag = new File("src/test/resources/itestPackages/accrued_1.1.tar.gz");
+        SubmissionMultipartBody body = new SubmissionMultipartBody(
+                "testrepo1",
+                false,
+                true,
+                "",
+                new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+                        .fileName(packageBag.getName())
+                        .mimeType("application/gzip")
+                        .controlName("file")
+                        .build());
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST_MULTIPART)
+                .urlSuffix("/")
+                .statusCode(201)
+                .token(ADMIN_TOKEN)
+                .expectedJsonPath("/v2/r/submission/new_accrued_submission.json")
+                .howManyNewEventsShouldBeCreated(1)
+                .submissionMultipartBody(body)
+                .path("/api/v2/manager/r/submissions")
+                .build();
+        testEndpoint(requestBody);
+
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .token(USER_TOKEN)
+                .statusCode(200)
+                .urlSuffix("?notMaintainedBy=" + testData.getMaintainer().get(0))
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/base/packages/packages_not_maintained_by_after_new_package_upload.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getPackagesNotMaintainedBy_afterPackageDeletion() throws Exception {
+        testDeleteEndpoint("/api/v2/manager/python/packages", "/42", 204, ADMIN_TOKEN);
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .token(USER_TOKEN)
+                .statusCode(200)
+                .urlSuffix("?notMaintainedBy=" + testData.getMaintainer().get(0))
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/base/packages/packages_not_maintained_by_after_package_deletion.json")
                 .build();
         testEndpoint(requestBody);
     }

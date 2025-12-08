@@ -1,0 +1,22 @@
+name: Z
+publicationUri: http://localhost/repo/Z
+serverAddress: http://oa-rdepot-repo:8080/Z
+technology: PYTHON
+requiresAuthentication: true
+mirrors:
+  - name: PyPi
+    uri: https://pypi.org/simple
+    syncInterval: ""
+    type: tarball
+    packages:
+      - name: bad_package
+        version: 1.0
+  - name: WrongUri
+    uri: htts://pypi.org/simple
+    syncInterval: ""
+    type: tarball
+    packages:
+      - name: bad_package
+        version: 1.0
+      - name: abo_tools
+        version: 1.0

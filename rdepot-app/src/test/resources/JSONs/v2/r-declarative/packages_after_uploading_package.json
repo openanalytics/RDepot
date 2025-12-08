@@ -1,80 +1,82 @@
 {
-  "status": "SUCCESS",
-  "code": 200,
-  "message": "Your request has been processed successfully.",
-  "messageCode": "success.request.processed",
-  "data": {
-    "links": [
-      {
-        "rel": "self",
-        "href": "http://localhost:8021/api/v2/manager/r/packages?page=0&size=20"
-      }
-    ],
-    "content": [
-      {
-        "id": 1,
-        "user": {
-          "id": 4,
-          "name": "Albert Einstein",
-          "login": "einstein",
-          "email": "einstein@ldap.forumsys.com"
-        },
-        "repository": {
-          "id": 14,
-          "name": "A",
-          "publicationUri": "http://localhost/repo/A",
-          "published": true,
-          "technology": "R",
-          "requiresAuthentication": false,
-          "lastPublicationSuccessful": true
-        },
-        "submission": {
-          "id": 1,
-          "state": "ACCEPTED"
-        },
-        "name": "A3",
-        "version": "0.9.1",
-        "active": true,
-        "deleted": false,
-        "technology": "R",
-        "descriptionContentType": "txt",
-        "binary": false,
-        "description": "This package supplies tools for tabulating and analyzing\\n the results of predictive models. The methods employed are\\n applicable to virtually any predictive model and make\\n comparisons between different methodologies straightforward.",
-        "author": "Scott Fortmann-Roe",
-        "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for\\n Predictive Models",
-        "url": null,
-        "depends": "xtable, pbapply",
-        "imports": null,
-        "suggests": "randomForest, e1071",
-        "systemRequirements": null,
-        "license": "GPL (>= 2)",
-        "md5sum": "8eb4760cd574f5489e61221dc9bb0076",
-        "built": null,
-        "architecture": null,
-        "distribution": null,
-        "enhances": null,
-        "linkingTo": null,
-        "priority": null,
-        "needsCompilation": "no",
-        "maintainer": "Scott Fortmann-Roe <scottfr@berkeley.edu>",
-        "rversion": null,
+    "status": "SUCCESS",
+    "code": 200,
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "data": {
         "links": [
-          {
-            "rel": "self",
-            "href": "http://localhost:8021/api/v2/manager/r/packages/1"
-          },
-          {
-            "rel": "packageList",
-            "href": "http://localhost:8021/api/v2/manager/r/packages"
-          }
-        ]
-      }
-    ],
-    "page": {
-      "size": 20,
-      "totalElements": 1,
-      "totalPages": 1,
-      "number": 0
+            {
+                "rel": "self",
+                "href": "http://localhost:8021/api/v2/manager/r/packages?page=0&size=20"
+            }
+        ],
+        "content": [
+            {
+                "id": 1,
+                "user": {
+                    "id": 4,
+                    "name": "Albert Einstein",
+                    "login": "einstein",
+                    "email": "einstein@ldap.forumsys.com"
+                },
+                "repository": {
+                    "id": 15,
+                    "name": "A",
+                    "publicationUri": "http://localhost/repo/A",
+                    "published": true,
+                    "requiresAuthentication": false,
+                    "technology": "R",
+                    "lastPublicationSuccessful": true
+                },
+                "submission": {
+                    "id": 1,
+                    "state": "ACCEPTED"
+                },
+                "name": "A3",
+                "version": "0.9.1",
+                "active": true,
+                "deleted": false,
+                "technology": "R",
+                "binary": false,
+                "description": "This package supplies tools for tabulating and analyzing\\n the results of predictive models. The methods employed are\\n applicable to virtually any predictive model and make\\n comparisons between different methodologies straightforward.",
+                "author": "Scott Fortmann-Roe",
+                "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for\\n Predictive Models",
+                "url": null,
+                "descriptionContentType": "txt",
+                "depends": "xtable, pbapply",
+                "imports": null,
+                "suggests": "randomForest, e1071",
+                "systemRequirements": null,
+                "license": "GPL (>= 2)",
+                "md5sum": "8eb4760cd574f5489e61221dc9bb0076",
+                "built": null,
+                "architecture": null,
+                "distribution": null,
+                "enhances": null,
+                "linkingTo": null,
+                "priority": null,
+                "needsCompilation": "no",
+                "maintainer": "Scott Fortmann-Roe <scottfr@berkeley.edu>",
+                "encoding": null,
+                "manualAvailable": true,
+                "rversion": null,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8021/api/v2/manager/r/packages/1"
+                    },
+                    {
+                        "rel": "packageList",
+                        "href": "http://localhost:8021/api/v2/manager/r/packages"
+                    }
+                ]
+            }
+        ],
+        "page": {
+            "size": 20,
+            "totalElements": 1,
+            "totalPages": 1,
+            "number": 0
+        }
     }
-  }
 }

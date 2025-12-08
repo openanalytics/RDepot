@@ -74,10 +74,10 @@
             ],
             "id": 48,
             "user": {
-                "name": "Nikola Tesla",
-                "id": 5,
-                "login": "tesla",
-                "email": "tesla@ldap.forumsys.com"
+                "name": "Galileo Galilei",
+                "id": 6,
+                "login": "galieleo",
+                "email": "galieleo@ldap.forumsys.com"
             }
         }
     },

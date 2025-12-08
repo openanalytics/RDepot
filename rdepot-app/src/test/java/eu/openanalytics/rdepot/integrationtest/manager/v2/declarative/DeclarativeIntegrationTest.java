@@ -29,19 +29,23 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.restassured.http.ContentType;
 import java.io.IOException;
-import org.json.simple.parser.ParseException;
 
 public abstract class DeclarativeIntegrationTest {
 
-    private final String authorization;
-    private final String bearer;
-    private final String userToken;
+    public static final String ADMIN_TOKEN =
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJlaW5zdGVpbiIsIm5hbWUiOiJBbGJlcnQgRWluc3RlaW4iLCJlbWFpbCI6ImVpbnN0ZWluQGxkYXAuZm9ydW1zeXMuY29tIiwiYXVkIjoiUkRlcG90Iiwicm9sZXMiOlsidXNlciIsInBhY2thZ2VtYWludGFpbmVyIiwicmVwb3NpdG9yeW1haW50YWluZXIiLCJhZG1pbiJdLCJpc3MiOiJSRGVwb3QiLCJleHAiOjIwMDcwMjcyNDgsImlhdCI6MTY5MTY2NzI0OH0.SycsCWDmEFZfWV7cMpc05KareRXQ3iKfM9iprBa-j6M27D0hg0uKS1eGEPIuAHXEdqyUSD6yv7WMeXNY9BuYdw";
+    public static final String REPOSITORYMAINTAINER_TOKEN =
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXNsYSIsIm5hbWUiOiJOaWtvbGEgVGVzbGEiLCJlbWFpbCI6InRlc2xhQGxkYXAuZm9ydW1zeXMuY29tIiwiYXVkIjoiUkRlcG90Iiwicm9sZXMiOlsidXNlciIsInBhY2thZ2VtYWludGFpbmVyIiwicmVwb3NpdG9yeW1haW50YWluZXIiXSwiaXNzIjoiUkRlcG90IiwiZXhwIjoyMDA3MDI3NDU3LCJpYXQiOjE2OTE2Njc0NTd9.6o7URshlNb91K9DKig79XIk9ozhomwaBmLg6im1JgbeWfJJUOP9k-gLTmWWHZkBC32MGKKFR-U11QzYY6G7zsw";
+    public static final String PACKAGEMAINTAINER_TOKEN =
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnYWxpZWxlbyIsImVtYWlsIjoiZ2FsaWVsZW9AbGRhcC5mb3J1bXN5cy5jb20iLCJuYW1lIjoiR2FsaWxlbyBHYWxpbGVpIiwiYXVkIjoiUkRlcG90Iiwicm9sZXMiOlsidXNlciIsInBhY2thZ2VtYWludGFpbmVyIl0sImlzcyI6IlJEZXBvdCIsImV4cCI6MjAwNzAyNzQ5MSwiaWF0IjoxNjkxNjY3NDkxfQ.24gRyDswxCmos1mUTkRJEKkrt3L2MFfyHEXa_H5EBhi3yirIN8AT7Bn_NYaTEtGcEfVd8NUQtgzm9uck76N2SQ";
+    public static final String USER_TOKEN =
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJuZXd0b24iLCJuYW1lIjoiSXNhYWMgTmV3dG9uIiwiZW1haWwiOiJuZXd0b25AbGRhcC5mb3J1bXN5cy5jb20iLCJhdWQiOiJSRGVwb3QiLCJyb2xlcyI6WyJ1c2VyIl0sImlzcyI6IlJEZXBvdCIsImV4cCI6MjAwNzAyNzUwOSwiaWF0IjoxNjkxNjY3NTA5fQ.waNTEOoLL0jkDpvihngEg_O6_W91wvIcSdtcXIBYiTeE5SbyLL60FFztYwuUwo-aEghzqnQlfVj4NATZMWgA-g";
+    public static final String AUTHORIZATION = "Authorization";
+    public static final String BEARER = "Bearer ";
+
     private final String apiPath;
 
-    protected DeclarativeIntegrationTest(String authorization, String bearer, String userToken, String apiPath) {
-        this.authorization = authorization;
-        this.bearer = bearer;
-        this.userToken = userToken;
+    protected DeclarativeIntegrationTest(String apiPath) {
         this.apiPath = apiPath;
     }
 
@@ -94,7 +98,7 @@ public abstract class DeclarativeIntegrationTest {
     }
 
     protected void assertPackages(JsonObject expectedJSON, boolean isSynchronized) throws IOException {
-        String data = given().header(authorization, bearer + userToken)
+        String data = given().header(AUTHORIZATION, BEARER + USER_TOKEN)
                 .accept(ContentType.JSON)
                 .when()
                 .get(apiPath + "/packages?sort=id,asc")
@@ -135,8 +139,8 @@ public abstract class DeclarativeIntegrationTest {
         assertEquals("Incorrect JSON output.", expectedContent, actualContent);
     }
 
-    protected void assertRepositories(JsonObject expectedJSON) throws ParseException, IOException {
-        String data = given().header(authorization, bearer + userToken)
+    protected void assertRepositories(JsonObject expectedJSON) {
+        String data = given().header(AUTHORIZATION, BEARER + USER_TOKEN)
                 .accept(ContentType.JSON)
                 .when()
                 .get(apiPath + "/repositories?sort=id,asc")
@@ -151,6 +155,88 @@ public abstract class DeclarativeIntegrationTest {
         removeFields(expectedJSON);
 
         assertEquals("Incorrect JSON output.", expectedJSON, actualJSON);
+    }
+
+    protected Boolean assertSynchronizationFinished(String repositoryId) {
+        String response = given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+                .accept(ContentType.JSON)
+                .when()
+                .get(apiPath + "/repositories/" + repositoryId + "/synchronization-status")
+                .then()
+                .statusCode(200)
+                .extract()
+                .asString();
+
+        JsonObject actualJson = (JsonObject) JsonParser.parseString(response);
+
+        return actualJson
+                        .get("data")
+                        .getAsJsonObject()
+                        .get("repository")
+                        .getAsJsonObject()
+                        .get("id")
+                        .getAsString()
+                        .equals(repositoryId)
+                && !actualJson
+                        .get("data")
+                        .getAsJsonObject()
+                        .get("status")
+                        .getAsString()
+                        .equals("PENDING");
+    }
+
+    protected void assertSynchronizationStatus(JsonObject expectedJSON, String repoId, String size, String page) {
+
+        String data;
+
+        if (size != null && page != null) {
+            data = given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+                    .accept(ContentType.JSON)
+                    .when()
+                    .get(apiPath + "/repositories/" + repoId
+                            + "/synchronization-status"
+                            + "?size=" + size
+                            + "&page=" + page)
+                    .then()
+                    .statusCode(200)
+                    .extract()
+                    .asString();
+        } else if (size != null) {
+            data = given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+                    .accept(ContentType.JSON)
+                    .when()
+                    .get(apiPath + "/repositories/" + repoId + "/synchronization-status" + "?size=" + size)
+                    .then()
+                    .statusCode(200)
+                    .extract()
+                    .asString();
+        } else {
+            data = given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+                    .accept(ContentType.JSON)
+                    .when()
+                    .get(apiPath + "/repositories/" + repoId + "/synchronization-status")
+                    .then()
+                    .statusCode(200)
+                    .extract()
+                    .asString();
+        }
+
+        JsonObject actualJSON = (JsonObject) JsonParser.parseString(data);
+
+        removeTimestampField(actualJSON);
+        removeTimestampField(expectedJSON);
+
+        assertEquals("Incorrect JSON output.", expectedJSON, actualJSON);
+    }
+
+    private void removeTimestampField(JsonObject json) {
+        try {
+            final JsonObject jsonData = json.getAsJsonObject("data");
+            if (jsonData == null) return;
+            jsonData.remove("timestamp");
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
     }
 
     protected abstract void updateMd5SumsAndVersion(JsonArray expectedContent) throws IOException;

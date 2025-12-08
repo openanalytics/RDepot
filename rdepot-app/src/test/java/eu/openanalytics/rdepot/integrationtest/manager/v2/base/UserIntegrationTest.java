@@ -25,7 +25,6 @@ import eu.openanalytics.rdepot.integrationtest.manager.v2.RequestType;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.TestRequestBody;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.testData.UserTestData;
 import java.util.Arrays;
-import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Test;
 
 public class UserIntegrationTest extends IntegrationTest {
@@ -343,7 +342,7 @@ public class UserIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    public void patchUser_changeRole() throws Exception, ParseException {
+    public void patchUser_changeRole() throws Exception {
         final String patch = "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/roleId\"," + "\"value\":2" + "}" + "]";
 
         TestRequestBody requestBody = TestRequestBody.builder()
@@ -360,7 +359,7 @@ public class UserIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    public void patchUser_changeRoleOfUserWithSettings() throws Exception, ParseException {
+    public void patchUser_changeRoleOfUserWithSettings() throws Exception {
         final String patch = "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/roleId\"," + "\"value\":4" + "}" + "]";
 
         TestRequestBody requestBody = TestRequestBody.builder()
@@ -453,12 +452,12 @@ public class UserIntegrationTest extends IntegrationTest {
                 "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/active\"," + "\"value\":false" + "}" + "]";
 
         TestRequestBody requestBody = TestRequestBody.builder()
-                .requestType(RequestType.PATCH_UNAUTHORIZED)
+                .requestType(RequestType.PATCH)
                 .urlSuffix("/4")
-                .statusCode(403)
+                .statusCode(422)
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
-                .expectedJsonPath("/v2/403.json")
+                .expectedJsonPath("/v2/base/user/no_admin_left_error.json")
                 .body(patch)
                 .build();
         testEndpoint(requestBody);
@@ -513,6 +512,23 @@ public class UserIntegrationTest extends IntegrationTest {
                 .howManyNewEventsShouldBeCreated(testData.getChangeEndpointNewEventsAmount())
                 .expectedJsonPath("/v2/base/user/soft_delete_admin.json")
                 .expectedEventsJson("/v2/base/events/users/soft_delete_admin_event.json")
+                .body(patch)
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void patchUser_adminChangingAnotherAdminRole() throws Exception {
+        final String patch = "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/roleId\"," + "\"value\":3" + "}" + "]";
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.PATCH)
+                .urlSuffix("/8")
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getChangeEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/base/user/admin_changes_another_admin_role.json")
+                .expectedEventsJson("/v2/base/events/users/admin_changes_another_admin_role_event.json")
                 .body(patch)
                 .build();
         testEndpoint(requestBody);

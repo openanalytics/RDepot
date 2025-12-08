@@ -24,6 +24,7 @@ import eu.openanalytics.rdepot.base.api.v2.dtos.PackageUploadRequest;
 import eu.openanalytics.rdepot.base.email.EmailService;
 import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
 import eu.openanalytics.rdepot.base.entities.Package;
+import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.User;
@@ -35,11 +36,13 @@ import eu.openanalytics.rdepot.base.mediator.deletion.exceptions.NoSuitableMaint
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
+import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.PackageService;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
 import eu.openanalytics.rdepot.base.service.exceptions.CreateEntityException;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
+import eu.openanalytics.rdepot.base.storage.Populator;
 import eu.openanalytics.rdepot.base.storage.Storage;
 import eu.openanalytics.rdepot.base.storage.exceptions.CheckSumCalculationException;
 import eu.openanalytics.rdepot.base.storage.exceptions.DeleteFileException;
@@ -66,6 +69,7 @@ import eu.openanalytics.rdepot.base.validation.ValidationResultItem;
 import eu.openanalytics.rdepot.base.validation.exceptions.PackageDuplicateWithReplaceOff;
 import eu.openanalytics.rdepot.base.validation.exceptions.PackageValidationException;
 import java.io.File;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -88,7 +92,9 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
     protected final PackageValidator<P> packageValidator;
     protected final RepositoryService<R> repositoryService;
     protected final PackageService<P> packageService;
-    protected final Storage<R, P> storage;
+    protected final Storage<P> storage;
+    protected final Populator<R, P> populator;
+    protected final PackageMaintainerService maintainerService;
     protected final SubmissionService submissionService;
     protected final BestMaintainerChooser bestMaintainerChooser;
     protected final EmailService emailService;
@@ -104,19 +110,22 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
             NewsfeedEventService newsfeedEventService,
             PackageValidator<P> packageValidator,
             RepositoryService<R> repositoryService,
-            Storage<R, P> storage,
+            Storage<P> storage,
             PackageService<P> packageService,
             SubmissionService submissionService,
             EmailService emailService,
             BestMaintainerChooser bestMaintainerChooser,
             RepositorySynchronizer<R> repositorySynchronizer,
             SecurityMediator securityMediator,
-            PackageDeleter<P, R> packageDeleter) {
+            PackageDeleter<P, R> packageDeleter,
+            Populator<R, P> populator,
+            PackageMaintainerService maintainerService) {
         super(new Submission(), submissionService, requester, newsfeedEventService);
         this.request = request;
         this.packageValidator = packageValidator;
         this.repositoryService = repositoryService;
         this.storage = storage;
+        this.populator = populator;
         this.packageService = packageService;
         this.submissionService = submissionService;
         this.emailService = emailService;
@@ -124,6 +133,7 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
         this.repositorySynchronizer = repositorySynchronizer;
         this.securityMediator = securityMediator;
         this.packageDeleter = packageDeleter;
+        this.maintainerService = maintainerService;
     }
 
     protected File extractPackageFile(File stored) throws ExtractFileException {
@@ -140,42 +150,41 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
 
         File stored = null;
         File extracted = null;
-        Properties packageProperties;
         try {
-            stored = new File(storage.writeToWaitingRoom(fileData, repository));
+            stored = new File(populator.writeToWaitingRoom(fileData, repository));
             extracted = extractPackageFile(stored);
-            packageProperties = storage.getPropertiesFromExtractedFile(extracted.getAbsolutePath());
+            Properties packageProperties = populator.getPropertiesFromExtractedFile(extracted.getAbsolutePath());
             packageBag = createPackage(name, stored, packageProperties);
             submission = createSubmission(packageBag);
             log.debug("Submission created.");
             repositoryService.incrementVersion(repository);
-            log.debug("Package upload strategy finished.");
             packageBag.setSubmission(submission);
             return submission;
-        } catch (PackageValidationException
-                | WriteToWaitingRoomException
+        } catch (WriteToWaitingRoomException
                 | ExtractFileException
-                | PackageDuplicateWithReplaceOff
                 | CreatePackageException
                 | CreateSubmissionException e) {
+            log.error(e.getMessage(), e);
             cleanUpSource(stored, extracted);
-
-            if (e instanceof PackageDuplicateWithReplaceOff) {
-                log.debug(e.getMessage(), e);
-                throw new StrategyFailure(e, false);
-            } else {
-                log.error(e.getMessage(), e);
-                throw new FatalStrategyFailure(e);
-            }
+            throw new FatalStrategyFailure(e);
+        } catch (PackageDuplicateWithReplaceOff e) {
+            log.debug(e.getMessage(), e);
+            cleanUpSource(stored, extracted);
+            throw new StrategyFailure(e, false);
+        } catch (PackageValidationException e) {
+            log.debug(e.getMessage(), e);
+            cleanUpSource(stored, extracted);
+            throw new FatalStrategyFailure(e);
         } catch (ReadPackageDescriptionException e) {
             log.debug(e.getMessage(), e);
             cleanUpSource(stored, extracted);
-
             throw new FatalStrategyFailure(new PackageValidationException(e.getMessageCode()));
         } catch (Exception e) {
-            cleanUpSource(stored, extracted);
             log.error(e.getMessage(), e);
+            cleanUpSource(stored, extracted);
             throw e;
+        } finally {
+            log.debug("Package upload strategy finished.");
         }
     }
 
@@ -215,7 +224,7 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
 
             final String mainDirSource;
             try {
-                mainDirSource = storage.moveToMainDirectory(packageBag);
+                mainDirSource = populator.moveToMainDirectory(packageBag);
             } catch (InvalidSourceException | MovePackageSourceException e) {
                 log.error(e.getMessage(), e);
                 throw new CreateSubmissionException();
@@ -271,6 +280,7 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
                             replaceOffWarning.get().data());
             }
 
+            assignPackageToMaintainer(packageBag);
             packageBag = packageService.create(packageBag);
             log.debug("Package {} created.", packageBag.toString());
 
@@ -293,14 +303,24 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
         }
     }
 
+    private void assignPackageToMaintainer(P packageBag) {
+        List<PackageMaintainer> maintainers =
+                maintainerService.findAllByPackageNameAndRepository(packageBag.getName(), packageBag.getRepository());
+
+        packageBag.setMaintainers(new HashSet<>(maintainers));
+
+        maintainers.forEach(maintainer -> maintainer.getPackages().add(packageBag));
+    }
+
     private @NonNull DataSpecificValidationResult<Submission> validateAndProcessPackage(@NonNull P packageBag)
             throws PackageProcessingException {
         try {
-            storage.calculateCheckSum(packageBag);
+            storage.setCheckSum(packageBag);
 
             final DataSpecificValidationResult<Submission> validationResult =
                     ValidationResultImpl.createDataSpecificResult();
             packageValidator.validateUploadPackage(packageBag, request.isReplace(), validationResult);
+            renamePackageFileIfNecessary(packageBag, validationResult);
 
             try {
                 handleDuplicatesIfThereWereAny(validationResult);
@@ -336,6 +356,9 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
      */
     private P parseUniversalProperties(P packageBag, Properties properties, R repository, String name, File storedFile)
             throws NoSuitableMaintainerFound {
+        if (!Objects.nonNull(packageBag.getName())) {
+            packageBag.setName(name);
+        }
         packageBag.setVersion(properties.getProperty("Version"));
         packageBag.setAuthor(properties.getProperty("Author"));
         packageBag.setActive(false);
@@ -343,9 +366,7 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
         assignRepositoryToPackage(repository, packageBag);
         packageBag.setSource(storedFile.getAbsolutePath());
         packageBag.setUser(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag));
-        if (!Objects.nonNull(packageBag.getName())) {
-            packageBag.setName(name);
-        }
+
         return packageBag;
     }
 
@@ -369,6 +390,12 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
      * Used to link {@link Package} with {@link Repository} in a technology-specific way.
      */
     protected abstract void assignRepositoryToPackage(R repository, P packageBag);
+
+    /**
+     * Rename package file to match name and version
+     */
+    protected abstract void renamePackageFileIfNecessary(
+            P packageBag, final DataSpecificValidationResult<Submission> validationResult);
 
     @Override
     public void postStrategy() throws StrategyFailure {

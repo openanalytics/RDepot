@@ -110,37 +110,25 @@ public class WebApplicationTestConfig implements WebMvcConfigurer {
 
     @Bean
     MappingJackson2HttpMessageConverter jsonConverter() {
-        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        //        converter.setObjectMapper(new HibernateAwareObjectMapper());
-        return converter;
+        return new MappingJackson2HttpMessageConverter();
     }
 
     @Bean
     ByteArrayHttpMessageConverter byteConverter() {
         ByteArrayHttpMessageConverter converter = new ByteArrayHttpMessageConverter();
-        List<MediaType> mediaTypes = new ArrayList<MediaType>();
+        List<MediaType> mediaTypes = new ArrayList<>();
         mediaTypes.add(MediaType.valueOf("application/gzip"));
         mediaTypes.add(MediaType.valueOf("application/pdf"));
         converter.setSupportedMediaTypes(mediaTypes);
         return converter;
     }
 
-    //    @Override
-    //    public void addFormatters(FormatterRegistry registry)
-    //    {
-    //        registry.addFormatter(roleFormatter());
-    //        registry.addFormatter(repositoryFormatter());
-    //        registry.addFormatter(userFormatter());
-    //    }
-
     @Bean
     MessageSource messageSource() {
         ResourceBundleMessageSource source = new ResourceBundleMessageSource();
-        // source.setBasename(env.getRequiredProperty("message.source.basename"));
         source.setBasename("i18n/messages");
         source.setUseCodeAsDefaultMessage(true);
         return messageSource;
-        //		return source;
     }
 
     @Bean
