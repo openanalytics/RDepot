@@ -23,6 +23,7 @@ package eu.openanalytics.rdepot.repo.r.model;
 import eu.openanalytics.rdepot.repo.hash.model.HashMethod;
 import eu.openanalytics.rdepot.repo.model.SynchronizeRepositoryRequestBody;
 import eu.openanalytics.rdepot.repo.model.Technology;
+import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
@@ -65,8 +66,8 @@ public class SynchronizeCranRepositoryRequestBody extends SynchronizeRepositoryR
         this.filesToDeleteFromArchive = filesToDeleteFromArchive == null ? new String[0] : filesToDeleteFromArchive;
         this.pathsToUpload = paths;
         this.pathsToUploadToArchive = pathsToUploadToArchive;
-        this.pathsToDelete = pathsToDelete;
-        this.pathsToDeleteFromArchive = pathsToDeleteFromArchive;
+        this.pathsToDelete = pathsToDelete == null ? new HashMap<>() : pathsToDelete;
+        this.pathsToDeleteFromArchive = pathsToDeleteFromArchive == null ? new HashMap<>() : pathsToDeleteFromArchive;
     }
 
     @Override
