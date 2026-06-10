@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -26,7 +26,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.r.api.v2.controllers.RRepositoryController;
@@ -36,55 +35,44 @@ import eu.openanalytics.rdepot.test.fixture.RRepositoryTestFixture;
 import eu.openanalytics.rdepot.test.fixture.UserTestFixture;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 @ContextConfiguration(classes = {ApiTestConfig.class})
 @WebMvcTest(RRepositoryController.class)
 @ActiveProfiles("apiv2declarative")
 public class RRepositoryControllerDeclarativeTest extends ApiV2ControllerUnitTest {
 
-    public static final String JSON_PATH =
-            ClassLoader.getSystemClassLoader().getResource("unit/jsons").getPath();
+    public static final String JSON_PATH = Objects.requireNonNull(
+                    ClassLoader.getSystemClassLoader().getResource("unit/jsons"))
+            .getPath();
     public static final String ERROR_DECLARATIVE_MODE_PATH = JSON_PATH + "/error_declarative_mode.json";
     public static final String EXAMPLE_NEW_REPOSITORY_PATH = JSON_PATH + "/example_new_repository.json";
 
-    private Optional<User> user;
+    private final User user = UserTestFixture.GET_ADMIN();
 
     @Autowired
     MockMvc mockMvc;
 
-    @Autowired
-    ObjectMapper objectMapper;
-
-    @Autowired
-    WebApplicationContext webApplicationContext;
-
-    @BeforeEach
-    public void initEach() {
-        user = Optional.of(UserTestFixture.GET_ADMIN());
-    }
-
     @Test
     @WithMockUser(authorities = {"user", "repositorymaintainer"})
     public void patchRepository_returns405_whenDeclarativeModeIsEnabled() throws Exception {
-        final Integer ID = 123;
+        final int ID = 123;
         final RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/serverAddress\",\"value\":\"127.0.0.1\"}]";
 
         when(rRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(securityMediator.isAuthorizedToEdit(any(Repository.class), eq(user.get())))
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
+        when(securityMediator.isAuthorizedToEdit(any(Repository.class), eq(user)))
                 .thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/r/repositories/" + ID)
@@ -101,8 +89,8 @@ public class RRepositoryControllerDeclarativeTest extends ApiV2ControllerUnitTes
         final Path path = Path.of(EXAMPLE_NEW_REPOSITORY_PATH);
         final String exampleJson = Files.readString(path);
 
-        when(userService.isAdmin(user.get())).thenReturn(true);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.isAdmin(user)).thenReturn(true);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v2/manager/r/repositories")
                         .content(exampleJson)

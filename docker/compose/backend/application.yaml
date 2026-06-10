@@ -20,6 +20,7 @@ default-user-configuration:
     - de-DE
     - nl-NL
     - pl-PL
+    - fr-FR
   supported-themes:
     - light
     - dark

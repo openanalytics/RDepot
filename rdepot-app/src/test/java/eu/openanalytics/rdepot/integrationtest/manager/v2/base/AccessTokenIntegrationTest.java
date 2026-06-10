@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -171,7 +171,7 @@ public class AccessTokenIntegrationTest extends IntegrationTest {
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.POST)
                 .token(USER_TOKEN)
-                .statusCode(200)
+                .statusCode(201)
                 .howManyNewEventsShouldBeCreated(testData.getChangeEndpointNewEventsAmount())
                 .expectedJsonPath("/v2/base/access-tokens/access_token_created.json")
                 .expectedEventsJson("/v2/base/events/access-tokens/created_access_token.json")

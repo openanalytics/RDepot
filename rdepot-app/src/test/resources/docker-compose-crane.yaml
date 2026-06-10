@@ -1,0 +1,177 @@
+version: '3'
+services:
+##
+  proxy:
+    image: registry.openanalytics.eu/proxy/library/nginx:alpine
+    restart: always
+    labels:
+      eu.openanalytics.rdepot.container.name: "oa-rdepot-proxy"
+    volumes:
+      - ./docker/proxy/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/proxy/sites-enabled/rdepot:/etc/nginx/sites-enabled/rdepot:ro
+      - repository:/opt/rdepot/repo/:ro
+    ports:
+      - 8017:80
+      - 8021:90
+      - 8023:95
+    depends_on:
+      - app
+      - repo
+      # - app-declarative
+    networks:
+      oa-rdepot:
+        aliases:
+          - oa-rdepot-proxy
+##
+  repo:
+    build: ./docker/repo
+    # image: registry.openanalytics.eu/openanalytics/rdepot-repo-it:2.6.2
+    restart: always
+    labels:
+      eu.openanalytics.rdepot.container.name: "oa-rdepot-repo"
+    hostname: oa-rdepot-repo
+    volumes:
+      - ./docker/repo/rdepot-repo.jar:/opt/repo/rdepot-repo.jar:ro
+      - ./docker/repo/application.yml:/opt/repo/application.yml:ro
+      - repository:/opt/rdepot/
+      - ./itestServer:/opt/testServer
+    environment:
+      - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8001
+    networks:
+      oa-rdepot:
+        aliases:
+          - oa-rdepot-repo
+    ports:
+      - 8002:8001
+  db:
+    image: registry.openanalytics.eu/proxy/library/postgres:alpine
+    labels:
+      eu.openanalytics.rdepot.container.name: "oa-rdepot-db"
+    restart: always
+    hostname: oa-rdepot-db
+    # container_name: oa-rdepot-db
+    volumes:
+      - ./docker/db/initial_scripts/:/docker-entrypoint-initdb.d/:ro
+      - ./docker/db/sql_files/:/opt/sql_files/:ro
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+    networks:
+      oa-rdepot:
+        aliases:
+          - oa-rdepot-db
+    ports:
+      - 5432:5432
+
+##
+  app:
+    build: ./docker/app
+    # image: registry.openanalytics.eu/openanalytics/rdepot-app-it:2.6.2
+    restart: always
+    hostname: oa-rdepot-app
+    labels:
+      eu.openanalytics.rdepot.container.name: "oa-rdepot-app"
+    volumes:
+      - ./docker/app/application_with_crane.yml:/opt/rdepot/application.yml
+      - ./docker/app/rdepot.war:/opt/rdepot/rdepot.war:ro
+      - ./docker/app/rdepot.conf:/opt/rdepot/rdepot.conf:ro
+      - ./itestSourceFiles:/opt/testSourceFiles:ro
+      - ./itestGenerated:/opt/testGenerated:ro
+      - ./itestNewFiles:/opt/newFiles:ro
+    ports:
+      - 8001:8001
+      - 8018:8080
+      - 8019:8001
+    depends_on:
+      db:
+        condition: service_started
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:8080/actuator/health > /dev/null || exit 1"]
+      interval: 90s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    environment:
+      - DB_URL=jdbc:postgresql://oa-rdepot-db:5432/rdepot
+      - DB_USERNAME=postgres
+      - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8001 --add-opens java.base/java.time=ALL-UNNAMED
+    networks:
+      oa-rdepot:
+        aliases:
+          - oa-rdepot-app
+        ipv4_address: 192.168.49.21
+  r-test-container:
+    build: ./docker/r
+    stdin_open: true
+    hostname: oa-rdepot-r-test-container
+    labels:
+      eu.openanalytics.rdepot.container.name: "oa-rdepot-r-test-container"
+    networks:
+      oa-rdepot:
+        aliases:
+          - oa-rdepot-r-test-container
+    volumes:
+      - ./itestRepo:/opt/itestRepo:ro
+  python-test-container:
+    image: registry.openanalytics.eu/proxy/python:3.9.19
+    working_dir: /opt/itestRepo
+    stdin_open: true
+    hostname: oa-rdepot-python-test-container
+    labels:
+      eu.openanalytics.rdepot.container.name: "oa-rdepot-python-test-container"
+    networks:
+      oa-rdepot:
+        aliases:
+          - oa-rdepot-python-test-container
+    volumes:
+      - ./itestRepo:/opt/itestRepo:ro
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.2
+    restart: unless-stopped
+    hostname: oa-rdepot-keycloak
+    container_name: oa-rdepot-keycloak
+    command: start-dev --import-realm --hostname=http://192.168.49.17:8080
+    ports:
+      - 8080:8080
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=testpassword
+      - KC_HEALTH_ENABLED=true
+    volumes:
+      - ./docker/keycloak/realm-rdepot.json:/opt/keycloak/data/import/realm-rdepot.json:ro
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/9000 && echo -e 'GET /health/ready HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n' >&3 && cat <&3"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    networks:
+      oa-rdepot:
+        ipv4_address: 192.168.49.17
+  crane:
+    image: registry.openanalytics.eu/openanalytics/crane:1.0.0
+    restart: unless-stopped
+    hostname: crane
+    container_name: crane
+    volumes:
+      - repository:/srv/crane
+      - ./docker/app/test_configs/crane.application.yml:/opt/crane/application.yml
+    depends_on:
+     app:
+        condition: service_healthy
+    networks:
+      oa-rdepot:
+        ipv4_address: 192.168.49.25
+    ports:
+      - "8000:8080"
+      - "8003:8003"
+    environment:
+      - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8003
+networks:
+  oa-rdepot:
+    ipam:
+      config:
+        - subnet: 192.168.49.0/24
+volumes:
+  repository:

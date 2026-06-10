@@ -60,6 +60,20 @@
                 {
                     "rel": "packageList",
                     "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                },
+                {
+                    "rel": "repository",
+                    "href": "http://localhost:8017/api/v2/manager/python/repositories/9"
+                },
+                {
+                    "rel": "self",
+                    "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/48",
+                    "type": "PATCH"
+                },
+                {
+                    "rel": "self",
+                    "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/48",
+                    "type": "DELETE"
                 }
             ],
             "id": 48,

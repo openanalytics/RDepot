@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -53,6 +53,7 @@ public class PythonPackageLocalArchiver implements PythonPackageArchiver {
                 final BufferedOutputStream buffOut = new BufferedOutputStream(packagesArchive);
                 final GzipCompressorOutputStream gzOut = new GzipCompressorOutputStream(buffOut);
                 final TarArchiveOutputStream tarOut = new TarArchiveOutputStream(gzOut)) {
+            tarOut.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX);
             for (File file : files) {
                 final TarArchiveEntry tarEntry = new TarArchiveEntry(file, file.getName());
                 tarOut.putArchiveEntry(tarEntry);

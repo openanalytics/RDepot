@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -57,8 +57,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 public abstract class ApiV2ControllerUnitTest {
 
@@ -72,133 +72,136 @@ public abstract class ApiV2ControllerUnitTest {
         System.setProperty("jakarta.json.provider", JsonProviderImpl.class.getCanonicalName());
     }
 
-    @MockBean
+    @MockitoBean
     AccessTokenService accessTokenService;
 
-    @MockBean
+    @MockitoBean
     AccessTokenPatchValidator accessTokenPatchValidator;
 
-    @MockBean
+    @MockitoBean
     AccessTokenDeleter accessTokenDeleter;
 
-    @MockBean
+    @MockitoBean
     NewsfeedEventService newsfeedEventService;
 
-    @MockBean
+    @MockitoBean
     ApiV2NewsfeedEventController apiV2NewsfeedEventController;
 
-    @MockBean
+    @MockitoBean
     UserService userService;
 
-    @MockBean
+    @MockitoBean
+    MaintainedPackageService maintainedPackageService;
+
+    @MockitoBean
     SecurityMediator securityMediator;
 
-    @MockBean(name = "packageMaintainerValidator")
+    @MockitoBean(name = "packageMaintainerValidator")
     PackageMaintainerValidator packageMaintainerValidator;
 
-    @MockBean
+    @MockitoBean
     PackageMaintainerService packageMaintainerService;
 
-    @MockBean
+    @MockitoBean
     StrategyFactory strategyFactory;
 
-    @MockBean
+    @MockitoBean
     PackageMaintainerDeleter packageMaintainerDeleter;
 
-    @MockBean
+    @MockitoBean
     RepositoryService<Repository> commonRepositoryService;
 
-    @MockBean
+    @MockitoBean
     CommonPackageService commonPackageService;
 
-    @MockBean
+    @MockitoBean
     RepositoryMaintainerService repositoryMaintainerService;
 
-    @MockBean(name = "repositoryMaintainerValidator")
+    @MockitoBean(name = "repositoryMaintainerValidator")
     RepositoryMaintainerValidator repositoryMaintainerValidator;
 
-    @MockBean
+    @MockitoBean
     RepositoryMaintainerDeleter repositoryMaintainerDeleter;
 
-    @MockBean
+    @MockitoBean
     PythonRepositoryService pythonRepositoryService;
 
-    @MockBean
+    @MockitoBean
     RoleService roleService;
 
-    @MockBean
+    @MockitoBean
     UserSettingsService userSettingsService;
 
-    @MockBean
+    @MockitoBean
     UserValidator userValidator;
 
-    @MockBean
+    @MockitoBean
     SubmissionService submissionService;
 
-    @MockBean
+    @MockitoBean
     PythonStrategyFactory pythonStrategyFactory;
 
-    @MockBean
+    @MockitoBean
     SubmissionDeleter submissionDeleter;
 
-    @MockBean
+    @MockitoBean
     PythonSubmissionDeleter pythonSubmissionDeleter;
 
-    @MockBean
+    @MockitoBean
     PythonPackageService pythonPackageService;
 
-    @MockBean
+    @MockitoBean
     PythonPackageDeleter pythonPackageDeleter;
 
-    @MockBean
+    @MockitoBean
     PythonFSPopulator pythonFsPopulator;
 
-    @MockBean
+    @MockitoBean
     PythonLocalStorage pythonLocalStorage;
 
-    @MockBean
+    @MockitoBean
     PythonRepositoryValidator pythonRepositoryValidator;
 
-    @MockBean
+    @MockitoBean
     PythonPackageValidator pythonPackageValidator;
 
-    @MockBean
+    @MockitoBean
     PypiMirrorSynchronizer pypiMirrorSynchronizer;
 
-    @MockBean
+    @MockitoBean
     PythonRepositoryDeleter pythonRepositoryDeleter;
 
-    @MockBean
+    @MockitoBean
     SubmissionDtoConverter submissionDtoConverter;
 
-    @MockBean
+    @MockitoBean
     PackageDtoConverter commonPackageDtoConverter;
 
-    @MockBean
+    @MockitoBean
     UserSettingsDtoConverter userDtoConverter;
 
-    @MockBean
+    @MockitoBean
     UserSettingsValidator userSettingsValidator;
 
-    @MockBean
+    @MockitoBean
     SubmissionPatchValidator submissionPatchValidator;
 
-    @MockBean
+    @MockitoBean
     StrategyExecutor strategyExecutor;
 
-    @MockBean
+    @MockitoBean
     ServerAddressHealthcheckService serverAddressHealthcheckService;
 
-    @MockBean
+    @MockitoBean
     RepositoryNameValidationProperties repositoryNameValidationProperties;
 
-    @MockBean
+    @MockitoBean
     PythonRepositoryAllowedFiles repositoryAllowedFiles;
 
-    @MockBean
+    @MockitoBean
     DefaultUserConfigurationProperties defaultUserConfigurationProperties;
 
-    @MockBean
+    @MockitoBean
     PackageSynchronizationStatusDtoConverter packageSynchronizationStatusDtoConverter;
 
     @BeforeEach

@@ -48,6 +48,10 @@
                     {
                         "rel": "packageList",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/5"
                     }
                 ],
                 "id": 20,
@@ -92,6 +96,10 @@
                     {
                         "rel": "packageList",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/5"
                     }
                 ],
                 "id": 24,
@@ -136,6 +144,10 @@
                     {
                         "rel": "packageList",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/6"
                     }
                 ],
                 "id": 27,
@@ -180,6 +192,10 @@
                     {
                         "rel": "packageList",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/6"
                     }
                 ],
                 "id": 28,
@@ -224,6 +240,10 @@
                     {
                         "rel": "packageList",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/5"
                     }
                 ],
                 "id": 30,
@@ -268,6 +288,10 @@
                     {
                         "rel": "packageList",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/5"
                     }
                 ],
                 "id": 31,
@@ -312,6 +336,10 @@
                     {
                         "rel": "packageList",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/5"
                     }
                 ],
                 "id": 47,

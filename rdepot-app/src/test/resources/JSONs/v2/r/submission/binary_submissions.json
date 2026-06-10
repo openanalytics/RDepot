@@ -1,0 +1,99 @@
+{
+    "code": 200,
+    "data": {
+        "content": [
+            {
+                "approver": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "changes": null,
+                "created": "2024-11-19T11:22:33Z",
+                "id": 47,
+                "packageBag": {
+                    "active": true,
+                    "author": "Neal Richardson [aut, cre],\n Ian Cook [aut],\n Nic Crane [aut],\n Dewey Dunnington [aut] (<https://orcid.org/0000-0002-9415-4582>),\n Romain François [aut] (<https://orcid.org/0000-0002-2444-4226>),\n Jonathan Keane [aut],\n Dragoș Moldovan-Grünfeld [aut],\n Jeroen Ooms [aut],\n Javier Luraschi [ctb],\n Karl Dunkle Werner [ctb] (<https://orcid.org/0000-0003-0523-7309>),\n Jeffrey Wong [ctb],\n Apache Arrow [aut, cph]",
+                    "binary": true,
+                    "deleted": false,
+                    "description": "'Apache' 'Arrow' <https://arrow.apache.org/> is a cross-language\n development platform for in-memory data. It specifies a standardized\n language-independent columnar memory format for flat and hierarchical data,\n organized for efficient analytic operations on modern hardware. This\n package provides an interface to the 'Arrow C++' library",
+                    "descriptionContentType": "txt",
+                    "id": 47,
+                    "name": "arrow",
+                    "repository": {
+                        "id": 5,
+                        "lastPublicationSuccessful": false,
+                        "name": "testrepo4",
+                        "publicationUri": "http://localhost/repo/testrepo4",
+                        "published": false,
+                        "requiresAuthentication": true,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/repositories/5/32912654/arrow_8.0.0.tar.gz",
+                    "submission": {
+                        "id": 47,
+                        "state": "ACCEPTED"
+                    },
+                    "technology": "R",
+                    "title": "Integration to 'Apache' 'Arrow'",
+                    "url": "https://github.com/apache/arrow/, https://arrow.apache.org/docs/r/",
+                    "user": {
+                        "email": "tesla@ldap.forumsys.com",
+                        "id": 5,
+                        "login": "tesla",
+                        "name": "Nikola Tesla"
+                    },
+                    "version": "8.0.0",
+                    "links": [
+                        {
+                            "rel": "self",
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/47"
+                        },
+                        {
+                            "rel": "packageList",
+                            "href": "http://localhost:8017/api/v2/manager/packages"
+                        },
+                        {
+                            "rel": "repository",
+                            "href": "http://localhost:8017/api/v2/manager/r/repositories/5"
+                        }
+                    ]
+                },
+                "state": "ACCEPTED",
+                "submitter": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "technology": "R",
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/47"
+                    },
+                    {
+                        "rel": "submissionList",
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions"
+                    }
+                ]
+            }
+        ],
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/r/submissions?binary=true&page=0&size=20&sort=id,asc"
+            }
+        ],
+        "page": {
+            "number": 0,
+            "size": 20,
+            "totalElements": 1,
+            "totalPages": 1
+        }
+    },
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "status": "SUCCESS"
+}

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -32,9 +32,25 @@ import org.springframework.web.multipart.MultipartFile;
 public class SynchronizeCranRepositoryRequestBody extends SynchronizeRepositoryRequestBody {
     MultipartFile[] filesToUploadToArchive;
     String[] filesToDeleteFromArchive;
+
+    /**
+     * For example: binlinuxcentos7x866445_PACKAGES -> bin/linux/centos7/x86_64/4.5
+     */
     Map<String, String> pathsToUpload;
+
+    /**
+     * For example: binlinuxcentos7x866445Archive_index_archived.html -> bin/linux/centos7/x86_64/4.5/Archive
+     */
     Map<String, String> pathsToUploadToArchive;
+
+    /**
+     * For example: ggplot2_4.0.0.tar.gz -> bin/linux/centos7/x86_64/4.5
+     */
     Map<String, String> pathsToDelete;
+
+    /**
+     * For example: ggplot2_3.5.2.tar.gz -> bin/linux/centos7/x86_64/4.5
+     */
     Map<String, String> pathsToDeleteFromArchive;
 
     public SynchronizeCranRepositoryRequestBody(

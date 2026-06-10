@@ -12,55 +12,54 @@
         ],
         "content": [
             {
+                "active": true,
+                "architecture": null,
+                "author": "Frank DeFalco [aut, cre],\\n Patrick Ryan [aut],\\n Martijn Schuemie [aut],\\n Vojtech Huser [aut],\\n Chris Knoll [aut],\\n Ajit Londhe [aut],\\n Taha Abdul-Basser [aut],\\n Anthony Molinaro [aut],\\n Observational Health Data Science and Informatics [cph]",
+                "binary": false,
+                "built": null,
+                "deleted": false,
+                "depends": "DatabaseConnector (>= 2.0.0), R (>= 4.0.0)",
+                "description": "Automated Characterization of Health Information at Large-Scale \\n Longitudinal Evidence Systems. Creates a descriptive statistics summary for \\n an Observational Medical Outcomes Partnership Common Data Model standardized \\n data source. This package includes functions for executing summary queries on \\n the specified data source and exporting reporting content for use across a \\n variety of Observational Health Data Sciences and Informatics community \\n applications.",
+                "descriptionContentType": "txt",
+                "distribution": null,
+                "encoding": "UTF-8",
+                "enhances": null,
                 "id": 1,
-                "user": {
-                    "id": 4,
-                    "name": "Albert Einstein",
-                    "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
-                },
+                "imports": "SqlRender (>= 1.6.0), dplyr, jsonlite, ParallelLogger, readr,\\n data.table, lubridate, tseries, rlang",
+                "license": "Apache License",
+                "linkingTo": null,
+                "maintainer": "Frank DeFalco <fdefalco@ohdsi.org>",
+                "manualAvailable": false,
+                "md5sum": "ee06db13f1a1b54c653cf67041d81915",
+                "name": "Achilles",
+                "needsCompilation": "no",
+                "priority": null,
                 "repository": {
-                    "id": 16,
+                    "id": 18,
+                    "lastPublicationSuccessful": false,
                     "name": "F",
                     "publicationUri": "http://localhost/repo/F",
                     "published": true,
                     "requiresAuthentication": true,
-                    "technology": "R",
-                    "lastPublicationSuccessful": false
+                    "technology": "R"
                 },
+                "rversion": null,
                 "submission": {
                     "id": 1,
                     "state": "ACCEPTED"
                 },
-                "name": "Achilles",
-                "version": "1.7.2",
-                "source": "/opt/rdepot/repositories/16/89459863/Achilles_1.7.2.tar.gz",
-                "active": true,
-                "deleted": false,
-                "technology": "R",
-                "binary": false,
-                "description": "Automated Characterization of Health Information at Large-Scale \\n Longitudinal Evidence Systems. Creates a descriptive statistics summary for \\n an Observational Medical Outcomes Partnership Common Data Model standardized \\n data source. This package includes functions for executing summary queries on \\n the specified data source and exporting reporting content for use across a \\n variety of Observational Health Data Sciences and Informatics community \\n applications.",
-                "author": "Frank DeFalco [aut, cre],\\n Patrick Ryan [aut],\\n Martijn Schuemie [aut],\\n Vojtech Huser [aut],\\n Chris Knoll [aut],\\n Ajit Londhe [aut],\\n Taha Abdul-Basser [aut],\\n Anthony Molinaro [aut],\\n Observational Health Data Science and Informatics [cph]",
-                "title": "Achilles Data Source Characterization",
-                "url": null,
-                "descriptionContentType": "txt",
-                "depends": "DatabaseConnector (>= 2.0.0), R (>= 4.0.0)",
-                "imports": "SqlRender (>= 1.6.0), dplyr, jsonlite, ParallelLogger, readr,\\n data.table, lubridate, tseries, rlang",
                 "suggests": "DT, magrittr, tidyr, knitr, rmarkdown, testthat (>= 3.0.0),\\n withr",
                 "systemRequirements": null,
-                "license": "Apache License",
-                "md5sum": "ee06db13f1a1b54c653cf67041d81915",
-                "built": null,
-                "architecture": null,
-                "distribution": null,
-                "enhances": null,
-                "linkingTo": null,
-                "priority": null,
-                "needsCompilation": "no",
-                "maintainer": "Frank DeFalco <fdefalco@ohdsi.org>",
-                "encoding": "UTF-8",
-                "manualAvailable":false,
-                "rversion": null,
+                "technology": "R",
+                "title": "Achilles Data Source Characterization",
+                "url": null,
+                "user": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "version": "1.7.2",
                 "links": [
                     {
                         "rel": "self",
@@ -69,59 +68,62 @@
                     {
                         "rel": "packageList",
                         "href": "http://localhost:8021/api/v2/manager/r/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8021/api/v2/manager/r/repositories/18"
                     }
                 ]
             },
             {
+                "active": true,
+                "architecture": null,
+                "author": "Andrea Batch [aut, cre],\\n Jeff Chen [ctb],\\n Walt Kampas [ctb]",
+                "binary": false,
+                "built": null,
+                "deleted": false,
+                "depends": "R (>= 3.2.1), data.table",
+                "description": "Provides an R interface for the Bureau of Economic Analysis (BEA) \\n API (see <http://www.bea.gov/API/bea_web_service_api_user_guide.htm> for \\n more information) that serves two core purposes - \\n 1. To Extract/Transform/Load data [beaGet()] from the BEA API as R-friendly \\n formats in the user's work space [transformation done by default in beaGet() \\n can be modified using optional parameters; see, too, bea2List(), bea2Tab()].\\n 2. To enable the search of descriptive meta data [beaSearch()].\\n Other features of the library exist mainly as intermediate methods \\n or are in early stages of development.\\n Important Note - You must have an API key to use this library. \\n Register for a key at <http://www.bea.gov/API/signup/index.cfm> .",
+                "descriptionContentType": "txt",
+                "distribution": null,
+                "encoding": null,
+                "enhances": null,
                 "id": 2,
-                "user": {
-                    "id": 4,
-                    "name": "Albert Einstein",
-                    "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
-                },
+                "imports": "httr, DT, shiny, jsonlite, googleVis, shinydashboard, ggplot2,\\n stringr, chron, gtable, scales, htmltools, httpuv, xtable,\\n stringi, magrittr, htmlwidgets, Rcpp, munsell, colorspace,\\n plyr, yaml",
+                "license": "CC0",
+                "linkingTo": null,
+                "maintainer": "Andrea Batch <Andrea.Julca@bea.gov>",
+                "manualAvailable": false,
+                "md5sum": "0dc7ed4bf70f9872879b9fd6a07246af",
+                "name": "bea.R",
+                "needsCompilation": "no",
+                "priority": null,
                 "repository": {
-                    "id": 16,
+                    "id": 18,
+                    "lastPublicationSuccessful": false,
                     "name": "F",
                     "publicationUri": "http://localhost/repo/F",
                     "published": true,
                     "requiresAuthentication": true,
-                    "technology": "R",
-                    "lastPublicationSuccessful": false
+                    "technology": "R"
                 },
+                "rversion": null,
                 "submission": {
                     "id": 2,
                     "state": "ACCEPTED"
                 },
-                "name": "bea.R",
-                "version": "1.0.6",
-                "source": "/opt/rdepot/repositories/16/62995848/bea.R_1.0.6.tar.gz",
-                "active": true,
-                "deleted": false,
-                "technology": "R",
-                "binary": false,
-                "description": "Provides an R interface for the Bureau of Economic Analysis (BEA) \\n API (see <http://www.bea.gov/API/bea_web_service_api_user_guide.htm> for \\n more information) that serves two core purposes - \\n 1. To Extract/Transform/Load data [beaGet()] from the BEA API as R-friendly \\n formats in the user's work space [transformation done by default in beaGet() \\n can be modified using optional parameters; see, too, bea2List(), bea2Tab()].\\n 2. To enable the search of descriptive meta data [beaSearch()].\\n Other features of the library exist mainly as intermediate methods \\n or are in early stages of development.\\n Important Note - You must have an API key to use this library. \\n Register for a key at <http://www.bea.gov/API/signup/index.cfm> .",
-                "author": "Andrea Batch [aut, cre],\\n Jeff Chen [ctb],\\n Walt Kampas [ctb]",
-                "title": "Bureau of Economic Analysis API",
-                "url": "https://github.com/us-bea/bea.R",
-                "descriptionContentType": "txt",
-                "depends": "R (>= 3.2.1), data.table",
-                "imports": "httr, DT, shiny, jsonlite, googleVis, shinydashboard, ggplot2,\\n stringr, chron, gtable, scales, htmltools, httpuv, xtable,\\n stringi, magrittr, htmlwidgets, Rcpp, munsell, colorspace,\\n plyr, yaml",
                 "suggests": null,
                 "systemRequirements": null,
-                "license": "CC0",
-                "md5sum": "0dc7ed4bf70f9872879b9fd6a07246af",
-                "built": null,
-                "architecture": null,
-                "distribution": null,
-                "enhances": null,
-                "linkingTo": null,
-                "priority": null,
-                "needsCompilation": "no",
-                "maintainer": "Andrea Batch <Andrea.Julca@bea.gov>",
-                "encoding": null,
-                "manualAvailable":false,
-                "rversion": null,
+                "technology": "R",
+                "title": "Bureau of Economic Analysis API",
+                "url": "https://github.com/us-bea/bea.R",
+                "user": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "version": "1.0.6",
                 "links": [
                     {
                         "rel": "self",
@@ -130,6 +132,10 @@
                     {
                         "rel": "packageList",
                         "href": "http://localhost:8021/api/v2/manager/r/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8021/api/v2/manager/r/repositories/18"
                     }
                 ]
             }

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -30,7 +30,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.openanalytics.rdepot.base.api.v2.dtos.PackageDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.PackageUploadRequest;
 import eu.openanalytics.rdepot.base.api.v2.dtos.SubmissionDto;
@@ -43,7 +42,6 @@ import eu.openanalytics.rdepot.base.time.DateProvider;
 import eu.openanalytics.rdepot.base.validation.ValidationResult;
 import eu.openanalytics.rdepot.r.api.v2.controllers.RSubmissionController;
 import eu.openanalytics.rdepot.r.api.v2.dtos.RPackageDto;
-import eu.openanalytics.rdepot.r.api.v2.hateoas.RSubmissionModelAssembler;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.test.context.ApiTestConfig;
@@ -59,7 +57,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Locale;
 import java.util.Optional;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,8 +64,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.MessageSource;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -78,7 +74,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.MultipartFile;
 
 @ContextConfiguration(classes = {ApiTestConfig.class})
@@ -91,21 +86,7 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
     @Autowired
     MockMvc mockMvc;
 
-    @Autowired
-    ObjectMapper objectMapper;
-
-    @Autowired
-    MessageSource messageSource;
-
-    @Autowired
-    RSubmissionModelAssembler rSubmissionModelAssembler;
-
-    Locale locale = Locale.ENGLISH;
-
-    @Autowired
-    WebApplicationContext webApplicationContext;
-
-    private Optional<User> user;
+    private final User user = UserTestFixture.GET_ADMIN();
 
     private static final String JSON_PATH = "src/test/resources/unit/jsons";
     private static final String TEST_PACKAGE_PATH = "src/test/resources/unit/test_packages/abc_1.3.tar.gz";
@@ -117,7 +98,6 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
 
     @BeforeEach
     public void initEach() {
-        user = Optional.of(UserTestFixture.GET_ADMIN());
         DateProvider.setTestDate(LocalDateTime.of(2024, 3, 19, 0, 0)
                 .atZone(ZoneId.systemDefault())
                 .toInstant());
@@ -134,7 +114,7 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
         final boolean replace = true;
         final boolean binary = false;
 
-        final RPackage packageBag = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get());
+        final RPackage packageBag = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
         packageBag.setName("abc");
         packageBag.setVersion("1.3");
         packageBag.setSource("abc_1.3.tar.gz");
@@ -142,12 +122,12 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
         submission.setState(SubmissionState.WAITING);
 
         Strategy<Submission> strategy =
-                Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user.get()));
+                Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user));
         final PackageDto packageDto = RPackageTestFixture.GET_EXAMPLE_PACKAGE_DTO(submission.getPackageBag());
         final SubmissionDto submissionDto =
                 RSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, submission.getPackageBag());
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         when(rRepositoryService.findByNameAndDeleted(any(String.class), eq(false)))
                 .thenReturn(Optional.of(repository));
         doNothing().when(rPackageValidator).validate(any(), any(ValidationResult.class));
@@ -182,18 +162,18 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
         final boolean replace = false;
         final boolean binary = false;
 
-        final RPackage packageBag = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get());
+        final RPackage packageBag = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
         final Submission submission = packageBag.getSubmission();
         submission.setState(SubmissionState.WAITING);
-        Strategy<Submission> strategy = Mockito.spy(
-                new DuplicatePackageStrategy(submission, submissionService, user.get(), newsfeedEventService));
+        Strategy<Submission> strategy =
+                Mockito.spy(new DuplicatePackageStrategy(submission, submissionService, user, newsfeedEventService));
         final SubmissionDto submissionDto =
                 RSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, submission.getPackageBag());
         final RPackageDto packageDto = new RPackageDto(packageBag);
 
         doReturn(packageDto).when(commonPackageDtoConverter).convertEntityToDto(packageBag);
         doReturn(submissionDto).when(submissionDtoConverter).convertEntityToDto(submission);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
 
         doAnswer((i) -> {
                     final PackageUploadRequest<?> request = i.getArgument(0);
@@ -228,18 +208,18 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
         final boolean replace = true;
         final boolean binary = false;
 
-        final RPackage packageBag = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get());
+        final RPackage packageBag = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
         final Submission submission = packageBag.getSubmission();
         submission.setState(SubmissionState.WAITING);
-        Strategy<Submission> strategy = Mockito.spy(
-                new DuplicatePackageStrategy(submission, submissionService, user.get(), newsfeedEventService));
+        Strategy<Submission> strategy =
+                Mockito.spy(new DuplicatePackageStrategy(submission, submissionService, user, newsfeedEventService));
         final SubmissionDto submissionDto =
                 RSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, submission.getPackageBag());
         final RPackageDto packageDto = new RPackageDto(packageBag);
 
         doReturn(packageDto).when(commonPackageDtoConverter).convertEntityToDto(packageBag);
         doReturn(submissionDto).when(submissionDtoConverter).convertEntityToDto(submission);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
 
         doAnswer((i) -> {
                     final PackageUploadRequest<?> request = i.getArgument(0);
@@ -289,12 +269,12 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
         final boolean generateManuals = true;
         final boolean replace = false;
         final Submission submission =
-                RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get()).getSubmission();
+                RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user).getSubmission();
         Strategy<Submission> strategy =
-                Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user.get()));
+                Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user));
 
         when(rRepositoryService.findByNameAndDeleted(REPOSITORY_NAME, false)).thenReturn(Optional.of(repository));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         doAnswer((Answer<Object>) invocation -> {
                     ValidationResult validationResult = invocation.getArgument(1, ValidationResult.class);
                     validationResult.error("MULTIPART-FILE", MessageCodes.INVALID_FILENAME);
@@ -302,14 +282,14 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
                 })
                 .when(rPackageValidator)
                 .validate(any(), any());
-        when(rStrategyFactory.uploadPackageStrategy(any(), eq(user.get()))).thenReturn(strategy);
+        when(rStrategyFactory.uploadPackageStrategy(any(), eq(user))).thenReturn(strategy);
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v2/manager/r/submissions")
                         .file(multipartFile)
                         .param("repository", REPOSITORY_NAME)
                         .param("generateManual", Boolean.toString(generateManuals))
                         .param("replace", Boolean.toString(replace)))
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isUnprocessableContent())
                 .andExpect(content().json(Files.readString(Path.of(ERROR_SUBMISSION_INVALID_PATH))));
     }
 
@@ -324,12 +304,12 @@ public class RSubmissionReplacingDisabledControllerTest extends ApiV2ControllerU
         final boolean replace = false;
         final boolean binary = false;
         final Submission submission =
-                RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get()).getSubmission();
+                RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user).getSubmission();
         Strategy<Submission> strategy =
-                Mockito.spy(new FailureStrategy<>(submission, newsfeedEventService, submissionService, user.get()));
+                Mockito.spy(new FailureStrategy<>(submission, newsfeedEventService, submissionService, user));
 
-        when(rStrategyFactory.uploadPackageStrategy(any(), eq(user.get()))).thenReturn(strategy);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(rStrategyFactory.uploadPackageStrategy(any(), eq(user))).thenReturn(strategy);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         when(rRepositoryService.findByNameAndDeleted(any(String.class), eq(false)))
                 .thenReturn(Optional.of(repository));
 

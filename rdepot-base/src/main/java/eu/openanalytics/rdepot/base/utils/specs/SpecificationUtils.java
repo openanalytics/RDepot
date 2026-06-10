@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -22,9 +22,10 @@ package eu.openanalytics.rdepot.base.utils.specs;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.lang.Nullable;
 
 /**
  * Methods declared in this class are used to build
@@ -40,17 +41,10 @@ public class SpecificationUtils {
      * @param component right side of AND statement
      * @return "root AND component"
      */
-    public static <T> Specification<T> andComponent(@Nullable Specification<T> root, Specification<T> component) {
-        if (root == null) return component(component);
+    public static <T> Specification<@NonNull T> andComponent(
+            @Nullable Specification<@NonNull T> root, @NonNull Specification<@NonNull T> component) {
+        if (root == null) return component;
         else return root.and(component);
-    }
-
-    /**
-     * Makes a WHERE statement out of the given component.
-     * @return "where component"
-     */
-    public static <T> Specification<T> component(Specification<T> component) {
-        return Specification.where(component);
     }
 
     /**
@@ -60,8 +54,9 @@ public class SpecificationUtils {
      * @param component right side of the OR statement
      * @return "root OR component"
      */
-    public static <T> Specification<T> orComponent(@Nullable Specification<T> root, Specification<T> component) {
-        if (root == null) return component(component);
+    public static <T> Specification<@NonNull T> orComponent(
+            @Nullable Specification<@NonNull T> root, @NonNull Specification<@NonNull T> component) {
+        if (root == null) return component;
         else return root.or(component);
     }
 }

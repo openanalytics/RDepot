@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -307,7 +307,8 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
             @RequestParam(name = "repository", required = false) List<String> repositories,
             @RequestParam(name = "fromDate", required = false) Optional<String> fromDate,
             @RequestParam(name = "toDate", required = false) Optional<String> toDate,
-            @RequestParam(name = "search", required = false) Optional<String> search)
+            @RequestParam(name = "search", required = false) Optional<String> search,
+            @RequestParam(name = "binary", required = false) Optional<Boolean> binary)
             throws ApiException {
         User requester = userService
                 .findActiveByLogin(principal.getName())
@@ -319,7 +320,7 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
         final Optional<Instant> fromDateInstant = fromDate.flatMap(DateParser::parseTimestampStart);
         final Optional<Instant> toDateInstant = toDate.flatMap(DateParser::parseTimestampEnd);
 
-        Specification<Submission> specification = Specification.where(SubmissionSpecs.ofTechnology(List.of("R")));
+        Specification<Submission> specification = SubmissionSpecs.ofTechnology(List.of("R"));
 
         if (Objects.nonNull(states)) {
             specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.ofState(states));
@@ -336,6 +337,10 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
 
         if (toDateInstant.isPresent()) {
             specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.toDate(toDateInstant.get()));
+        }
+
+        if (binary.isPresent()) {
+            specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.isBinary(binary.get()));
         }
 
         if (search.isPresent()) {
@@ -395,7 +400,7 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
             throw new MalformedPatchException(messageSource, locale, e);
         }
 
-        return handleSuccessForSingleEntity(submission, requester);
+        return handleSuccessForSingleEntity(submission);
     }
 
     /**
@@ -444,7 +449,11 @@ public class RSubmissionController extends ApiV2Controller<Submission, Submissio
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
         Submission submission =
                 submissionService.findById(id).orElseThrow(() -> new SubmissionNotFound(messageSource, locale));
-        return handleSuccessForSingleEntity(submission, requester);
+        if (submission.getPackage().getTechnology().getName().equals("R")) {
+            return handleSuccessForSingleEntity(submission, requester);
+        } else {
+            throw new SubmissionNotFound(messageSource, locale);
+        }
     }
 
     /**

@@ -1,0 +1,87 @@
+{
+    "code": 200,
+    "data": {
+        "content": [
+            {
+                "active": true,
+                "architecture": "x86_64",
+                "author": "Neal Richardson [aut, cre],\n Ian Cook [aut],\n Nic Crane [aut],\n Dewey Dunnington [aut] (<https://orcid.org/0000-0002-9415-4582>),\n Romain François [aut] (<https://orcid.org/0000-0002-2444-4226>),\n Jonathan Keane [aut],\n Dragoș Moldovan-Grünfeld [aut],\n Jeroen Ooms [aut],\n Javier Luraschi [ctb],\n Karl Dunkle Werner [ctb] (<https://orcid.org/0000-0003-0523-7309>),\n Jeffrey Wong [ctb],\n Apache Arrow [aut, cph]",
+                "binary": true,
+                "built": "R 4.2.0; x86_64-pc-linux-gnu; 2022-06-07 00:49:30 UTC; unix",
+                "deleted": false,
+                "depends": "R (>= 3.4)",
+                "description": "'Apache' 'Arrow' <https://arrow.apache.org/> is a cross-language\n development platform for in-memory data. It specifies a standardized\n language-independent columnar memory format for flat and hierarchical data,\n organized for efficient analytic operations on modern hardware. This\n package provides an interface to the 'Arrow C++' library",
+                "descriptionContentType": "txt",
+                "distribution": "centos7",
+                "encoding": null,
+                "enhances": null,
+                "id": 47,
+                "imports": "assertthat, bit64 (>= 0.9-7), methods, purrr, R6, rlang,\n stats, tidyselect (>= 1.0.0), utils, vctrs",
+                "license": "Apache License (>= 2.0)",
+                "linkingTo": null,
+                "maintainer": null,
+                "manualAvailable": null,
+                "md5sum": "87248e9731a8db308977df7821ee6471",
+                "name": "arrow",
+                "needsCompilation": "yes",
+                "priority": null,
+                "repository": {
+                    "id": 5,
+                    "lastPublicationSuccessful": false,
+                    "name": "testrepo4",
+                    "publicationUri": "http://localhost/repo/testrepo4",
+                    "published": false,
+                    "requiresAuthentication": true,
+                    "technology": "R"
+                },
+                "rversion": "4.2.0",
+                "source": "/opt/rdepot/repositories/5/32912654/arrow_8.0.0.tar.gz",
+                "submission": {
+                    "id": 47,
+                    "state": "ACCEPTED"
+                },
+                "suggests": "DBI, dbplyr, decor, distro, dplyr, duckdb (>= 0.2.8), hms,\n knitr, lubridate, pkgload, reticulate, rmarkdown, stringi,\n stringr, testthat (>= 3.1.0), tibble, tzdb, withr",
+                "systemRequirements": null,
+                "technology": "R",
+                "title": "Integration to 'Apache' 'Arrow'",
+                "url": "https://github.com/apache/arrow/, https://arrow.apache.org/docs/r/",
+                "user": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "version": "8.0.0",
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/47"
+                    },
+                    {
+                        "rel": "packageList",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/5"
+                    }
+                ]
+            }
+        ],
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/r/packages?binary=true&page=0&size=20&sort=id,asc"
+            }
+        ],
+        "page": {
+            "number": 0,
+            "size": 20,
+            "totalElements": 1,
+            "totalPages": 1
+        }
+    },
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "status": "SUCCESS"
+}

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -40,9 +40,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Objects;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.pdfbox.Loader;
@@ -134,6 +132,17 @@ public abstract class IntegrationTest {
                         req.getUrlSuffix(),
                         req.getStatusCode(),
                         req.getToken(),
+                        false,
+                        req.isIgnoreSource());
+                break;
+            case GET_RESOURCE_AFTER_SUBMISSION:
+                testGetEndpoint(
+                        req.getExpectedJsonPath(),
+                        apiPath,
+                        req.getUrlSuffix(),
+                        req.getStatusCode(),
+                        req.getToken(),
+                        true,
                         req.isIgnoreSource());
                 break;
             case GET_ARRAY:
@@ -257,7 +266,13 @@ public abstract class IntegrationTest {
     }
 
     protected void testGetEndpoint(
-            String expectedJsonPath, String path, String urlSuffix, int statusCode, String token, boolean ignoreSource)
+            String expectedJsonPath,
+            String path,
+            String urlSuffix,
+            int statusCode,
+            String token,
+            boolean newSubmission,
+            boolean ignoreSource)
             throws Exception {
 
         JSONParser jsonParser = new JSONParser();
@@ -275,8 +290,8 @@ public abstract class IntegrationTest {
                 .asString();
 
         JSONObject actualJSON = (JSONObject) jsonParser.parse(data);
-        if (actualJSON.get("data") != null) removeFields(actualJSON, false, ignoreSource);
-        if (expectedJSON.get("data") != null) removeFields(expectedJSON, false, ignoreSource);
+        if (actualJSON.get("data") != null) removeFields(actualJSON, newSubmission, ignoreSource);
+        if (expectedJSON.get("data") != null) removeFields(expectedJSON, newSubmission, ignoreSource);
 
         Assertions.assertEquals(expectedJSON, actualJSON, "Incorrect JSON output.");
     }
@@ -546,7 +561,7 @@ public abstract class IntegrationTest {
                     .multiPart("binary", body.getBinary())
                     .multiPart(body.getMultipartFile())
                     .when()
-                    .post(apiPath)
+                    .post(path)
                     .then()
                     .statusCode(statusCode)
                     .extract()
@@ -749,14 +764,12 @@ public abstract class IntegrationTest {
         // throw new IllegalArgumentException("No related resource found in the event.");
 
         List<String> toRemove = new ArrayList<>();
-        Iterator<Entry<String, JsonNode>> fieldIterator = relatedResourceObject.fields();
-        while (fieldIterator.hasNext()) {
-            Entry<String, JsonNode> entry = fieldIterator.next();
+        relatedResourceObject.properties().forEach(entry -> {
             String value = entry.getValue().asText();
             if (GenericValidator.isDate(value, "yyyy-MM-dd", false)) {
                 toRemove.add(entry.getKey());
             }
-        }
+        });
 
         toRemove.forEach(relatedResourceObject::remove);
     }

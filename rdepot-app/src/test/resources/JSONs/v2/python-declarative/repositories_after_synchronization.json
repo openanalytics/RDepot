@@ -13,7 +13,7 @@
         "content": [
             {
                 "id": 1,
-                "version": 5,
+                "version": 7,
                 "publicationUri": "http://localhost/repo/X",
                 "name": "X",
                 "serverAddress": "http://oa-rdepot-repo:8080/X",
@@ -22,7 +22,7 @@
                 "synchronizing": false,
                 "technology": "Python",
                 "requiresAuthentication": true,
-                "numberOfPackages": 4,
+                "numberOfPackages": 6,
                 "lastPublicationSuccessful": true,
                 "hashMethod": "SHA256",
                 "allowedFiles": [
@@ -127,11 +127,50 @@
                         "href": "http://localhost:8021/api/v2/manager/python/repositories"
                     }
                 ]
+            },
+            {
+                "id": 15,
+                "version": 0,
+                "publicationUri": "http://localhost/repo/ZD",
+                "name": "ZD",
+                "serverAddress": "http://oa-rdepot-repo:8080/ZD",
+                "deleted": false,
+                "published": true,
+                "synchronizing": false,
+                "technology": "Python",
+                "requiresAuthentication": true,
+                "numberOfPackages": 0,
+                "lastPublicationSuccessful": false,
+                "allowedFiles": [
+                    {
+                        "mimetype": "application/gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/x-gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/octet-stream",
+                        "extension": ".whl"
+                    }
+                ],
+                "hashMethod": "SHA256",
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8021/api/v2/manager/python/repositories/15"
+                    },
+                    {
+                        "rel": "repositoryList",
+                        "href": "http://localhost:8021/api/v2/manager/python/repositories"
+                    }
+                ]
             }
         ],
         "page": {
             "size": 20,
-            "totalElements": 3,
+            "totalElements": 4,
             "totalPages": 1,
             "number": 0
         }

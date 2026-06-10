@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -29,6 +29,8 @@ public class PackageDtoToEntityPropertyMapping extends AbstractPropertyMapping {
     static {
         PROPERTIES.put("technology", "resourceTechnology");
         PROPERTIES.put("repository", "repositoryGeneric.name");
+        PROPERTIES.put("repositoryName", "repositoryGeneric.name");
+        PROPERTIES.put("repositoryId", "repositoryGeneric.id");
     }
 
     @Override

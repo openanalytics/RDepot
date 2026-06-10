@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -91,7 +91,7 @@ public class UpdateRepositoryMaintainerStrategyTest extends StrategyTest {
         newId = 124;
 
         packagesListBeforeUpdate = PackageMaintainerTestFixture.GET_LIST_OF_PACKAGE_MAINTAINERS_FOR_REPOSITORY(
-                3, tmpRepository, user, "pakckage_name");
+                3, tmpRepository, user, "package_name");
         packagesListAfterUpdate = PackageMaintainerTestFixture.GET_LIST_OF_PACKAGE_MAINTAINERS_FOR_REPOSITORY(
                 2, tmpRepository, user, "package_name");
         packagesAll = Stream.of(packagesListBeforeUpdate, packagesListAfterUpdate)
@@ -111,7 +111,7 @@ public class UpdateRepositoryMaintainerStrategyTest extends StrategyTest {
     /**
      * function that prepare all conditions to run repository changing tests
      */
-    private void updateRepositoryMaintainerRepositoryId() throws Exception {
+    private void updateRepositoryMaintainerRepositoryId() {
         repository.setId(oldId);
         repositoryUpdated.setId(newId);
         updatedMaintainer.setRepository(repositoryUpdated);
@@ -138,7 +138,7 @@ public class UpdateRepositoryMaintainerStrategyTest extends StrategyTest {
     }
 
     @Test
-    public void updateResourceMaintainer_shouldChangeRepsoitory() throws Exception {
+    public void updateResourceMaintainer_shouldChangeRepository() throws Exception {
         doAnswer(invocation -> invocation.getArgument(0)).when(eventService).create(any());
         doNothing().when(bestMaintainerChooser).refreshMaintainerForPackages(packagesAll);
 
@@ -192,7 +192,7 @@ public class UpdateRepositoryMaintainerStrategyTest extends StrategyTest {
     /**
      * function that prepare all conditions to run soft deletion tests
      */
-    private void prepareForSoftDelete() throws Exception {
+    private void prepareForSoftDelete() {
         when(packageService.findAllByRepository(resource.getRepository())).thenReturn(packagesListBeforeUpdate);
 
         resource.setDeleted(false);

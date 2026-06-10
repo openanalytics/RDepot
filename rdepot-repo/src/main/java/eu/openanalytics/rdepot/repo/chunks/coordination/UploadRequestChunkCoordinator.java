@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -35,7 +35,6 @@ import eu.openanalytics.rdepot.repo.transaction.backup.RepositoryBackupService;
 import eu.openanalytics.rdepot.repo.validation.ChunkValidator;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 
 /**
  * This class serves as an entrypoint to the business logic of publication,
@@ -55,9 +54,6 @@ public abstract class UploadRequestChunkCoordinator<REQ extends SynchronizeRepos
     private final RepositoryService repositoryService;
     private final UploadRequestChunkProcessor<REQ> uploadRequestChunkProcessor;
     private final RepositoryBackupService repositoryBackupService;
-
-    @Value("${transaction.timeout}")
-    private int transactionTimeout;
 
     protected UploadRequestChunkCoordinator(
             UploadTransactionManager transactionManager,
@@ -117,7 +113,8 @@ public abstract class UploadRequestChunkCoordinator<REQ extends SynchronizeRepos
         final Optional<Repository> repositoryOpt =
                 repositoryService.findByNameOrCreate(requestBody.getRepository(), requestBody.getTechnology());
         if (repositoryOpt.isEmpty()) {
-
+            // TODO #36524: Should really be a client error? If it was not found, then it should be created
+            // TODO: if it wasn't then it must be 500
             return RequestProcessingResult.CLIENT_ERROR;
         }
 

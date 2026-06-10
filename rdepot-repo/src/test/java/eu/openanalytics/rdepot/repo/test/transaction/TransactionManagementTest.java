@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -27,7 +27,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 import eu.openanalytics.rdepot.repo.model.Technology;
-import eu.openanalytics.rdepot.repo.python.storage.PythonFileSystemStorageService;
+import eu.openanalytics.rdepot.repo.python.storage.implementations.PythonFileSystemStorageService;
 import eu.openanalytics.rdepot.repo.r.api.CranFileUploadController;
 import eu.openanalytics.rdepot.repo.r.storage.implementations.CranFileSystemStorageService;
 import eu.openanalytics.rdepot.repo.r.transaction.backup.CranRepositoryBackup;
@@ -48,12 +48,12 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -64,10 +64,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @ActiveProfiles({"test"})
 public class TransactionManagementTest {
 
-    @MockBean
+    @MockitoBean
     private CranFileSystemStorageService cranFileSystemStorageService;
 
-    @MockBean
+    @MockitoBean
     private PythonFileSystemStorageService pythonFileSystemStorageService;
 
     @Autowired
@@ -301,7 +301,7 @@ public class TransactionManagementTest {
         doNothing().when(cranFileSystemStorageService).removeNonExistingPackagesFromRepo(anyList(), anyString());
         doNothing().when(cranFileSystemStorageService).restoreTrash(any());
         doNothing().when(cranFileSystemStorageService).setRepositoryVersion(eq(TEST_REPO.getName()), anyString());
-        doNothing().when(cranFileSystemStorageService).generateArchiveRds(eq(TEST_REPO.getName()), anyString());
+        doNothing().when(cranFileSystemStorageService).generateArchiveRds(eq(TEST_REPO.getName()));
 
         // handle chunk
         doReturn(List.of(TEST_REPO.getName()))
@@ -361,7 +361,7 @@ public class TransactionManagementTest {
         verify(cranFileSystemStorageService).removeNonExistingPackagesFromRepo(anyList(), anyString());
         verify(cranFileSystemStorageService).restoreTrash(any());
         verify(cranFileSystemStorageService).setRepositoryVersion(eq(TEST_REPO.getName()), anyString());
-        verify(cranFileSystemStorageService, times(0)).generateArchiveRds(eq(TEST_REPO.getName()), anyString());
+        verify(cranFileSystemStorageService, times(1)).generateArchiveRds(eq(TEST_REPO.getName()));
 
         // process chunk
         verify(cranFileSystemStorageService).initTrashDirectory(anyString());

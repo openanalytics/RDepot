@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -23,7 +23,7 @@ package eu.openanalytics.rdepot.repo.python.transaction.backup;
 import eu.openanalytics.rdepot.repo.exception.GetRepositoryVersionException;
 import eu.openanalytics.rdepot.repo.exception.InitTrashDirectoryException;
 import eu.openanalytics.rdepot.repo.exception.RestoreRepositoryException;
-import eu.openanalytics.rdepot.repo.python.storage.PythonFileSystemStorageService;
+import eu.openanalytics.rdepot.repo.python.storage.implementations.PythonFileSystemStorageService;
 import eu.openanalytics.rdepot.repo.transaction.Transaction;
 import eu.openanalytics.rdepot.repo.transaction.UploadTransactionManager;
 import eu.openanalytics.rdepot.repo.transaction.backup.implementations.AbstractRepositoryBackupService;

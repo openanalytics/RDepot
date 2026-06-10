@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import lombok.Getter;
+import org.jspecify.annotations.NonNull;
 import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -72,7 +72,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
+    public Authentication attemptAuthentication(HttpServletRequest request, @NonNull HttpServletResponse response)
             throws AuthenticationException {
         try {
             CredentialsDto creds = new ObjectMapper().readValue(request.getInputStream(), CredentialsDto.class);
@@ -85,7 +85,10 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     protected void successfulAuthentication(
-            HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult)
+            @NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain chain,
+            Authentication authResult)
             throws IOException {
         String login = authResult.getPrincipal().toString();
 
@@ -110,8 +113,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withIssuedAt(Date.from(Instant.now()))
                 .withExpiresAt(Date.from(Instant.now().plus(apiTokenProperties.getLifetime(), ChronoUnit.MINUTES)))
                 .withArrayClaim("roles", roles)
-                .withClaim("name", userOptional.get().getName())
-                .withClaim("email", userOptional.get().getEmail())
+                .withClaim("name", userOptional.get().name())
+                .withClaim("email", userOptional.get().email())
                 .sign(HMAC512(apiTokenProperties.getSecret()));
 
         String body = "{" + "\"status\": \"SUCCESS\","
@@ -126,21 +129,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.getWriter().close();
     }
 
-    private static class User {
-        private final String login;
-
-        @Getter
-        private final String email;
-
-        @Getter
-        private final String name;
-
-        public User(String login, String email, String name) {
-            this.login = login;
-            this.email = email;
-            this.name = name;
-        }
-
+    private record User(String login, String email, String name) {
         public boolean match(String login) {
             return this.login.equals(login);
         }

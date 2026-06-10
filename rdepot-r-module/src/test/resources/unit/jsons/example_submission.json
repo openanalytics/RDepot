@@ -35,7 +35,21 @@
         		{
         			"rel": "packageList",
         			"href": "http://localhost/api/v2/manager/packages"
-        		}
+        		},
+                {
+                    "rel": "repository",
+                    "href": "http://localhost/api/v2/manager/r/repositories/123"
+                },
+                {
+                    "rel": "self",
+                    "href": "http://localhost/api/v2/manager/r/packages/1",
+                    "type": "PATCH"
+                },
+                {
+                    "rel": "self",
+                    "href": "http://localhost/api/v2/manager/r/packages/1",
+                    "type": "DELETE"
+                }
         	]
 	    },
         "changes": "Some changes 123",

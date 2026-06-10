@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -67,7 +67,6 @@ public class PythonPackageDto extends PackageDto {
         this.providesExtra = packageBag.getProvidesExtra();
         this.requiresDist = packageBag.getRequiresDist();
         this.requiresPython = packageBag.getRequiresPython();
-        this.summary = packageBag.getSummary();
         this.summary = packageBag.getSummary();
         this.hash = packageBag.getHash();
         this.compatibilityTags = packageBag.getCompatibilityTags();

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -60,7 +60,7 @@ public class NewsfeedEventsRolesFiltration {
         return switch (user.getRole().getName()) {
             case "repositorymaintainer" -> getRepositoryMaintainersSpecification(user);
             case "packagemaintainer" -> getPackageMaintainersSpecification(user);
-            case "user" -> Specification.where(NewsfeedEventSpecs.byUser(user));
+            case "user" -> NewsfeedEventSpecs.byUser(user);
             default -> null;
         };
     }
@@ -80,10 +80,10 @@ public class NewsfeedEventsRolesFiltration {
         });
 
         if (!repositoryMaintainers.isEmpty()) {
-            return Specification.where(NewsfeedEventSpecs.isRepositoryMaintainer(
-                    user, repositoryMaintainers, packageMaintainers, repositories, packages, submissions));
+            return NewsfeedEventSpecs.isRepositoryMaintainer(
+                    user, repositoryMaintainers, packageMaintainers, repositories, packages, submissions);
         } else {
-            return Specification.where(NewsfeedEventSpecs.byUser(user));
+            return NewsfeedEventSpecs.byUser(user);
         }
     }
 
@@ -99,10 +99,9 @@ public class NewsfeedEventsRolesFiltration {
             submission.ifPresent(submissions::add);
         });
         if (!packageMaintainers.isEmpty()) {
-            return Specification.where(
-                    NewsfeedEventSpecs.isPackageMaintainer(user, packageMaintainers, packages, submissions));
+            return NewsfeedEventSpecs.isPackageMaintainer(user, packageMaintainers, packages, submissions);
         } else {
-            return Specification.where(NewsfeedEventSpecs.byUser(user));
+            return NewsfeedEventSpecs.byUser(user);
         }
     }
 }

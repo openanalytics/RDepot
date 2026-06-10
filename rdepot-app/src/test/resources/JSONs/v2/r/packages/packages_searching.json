@@ -72,6 +72,10 @@
                     {
                         "rel": "packageList",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/5"
                     }
                 ]
             },
@@ -133,6 +137,10 @@
                     {
                         "rel": "packageList",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/2"
                     }
                 ]
             }

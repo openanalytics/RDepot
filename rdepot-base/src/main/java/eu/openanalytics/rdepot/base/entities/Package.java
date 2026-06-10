@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -74,10 +74,10 @@ public abstract class Package extends EventableResource implements Comparable<Pa
     @Serial
     private static final long serialVersionUID = 2298415552029766827L;
 
-    @Column(name = "resource_technology", insertable = false, updatable = false)
+    @Column(name = "resource_technology", insertable = false, updatable = false, columnDefinition = "TEXT")
     protected String resourceTechnology;
 
-    @Column(name = "version", nullable = false)
+    @Column(name = "version", nullable = false, columnDefinition = "TEXT")
     private String version;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -92,22 +92,22 @@ public abstract class Package extends EventableResource implements Comparable<Pa
     @JoinColumn(name = "submission_id")
     private Submission submission;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, columnDefinition = "TEXT")
     private String name;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "author", nullable = false)
+    @Column(name = "author", nullable = false, columnDefinition = "TEXT")
     private String author;
 
-    @Column(name = "title")
+    @Column(name = "title", columnDefinition = "TEXT")
     private String title;
 
-    @Column(name = "url")
+    @Column(name = "url", columnDefinition = "TEXT")
     private String url = "";
 
-    @Column(name = "source", nullable = false)
+    @Column(name = "source", nullable = false, columnDefinition = "TEXT")
     private String source;
 
     @Column(name = "active", nullable = false)
@@ -116,7 +116,7 @@ public abstract class Package extends EventableResource implements Comparable<Pa
     @Column(name = "binary_package", nullable = false)
     private boolean binary;
 
-    @Column(name = "description_content_type", nullable = false)
+    @Column(name = "description_content_type", nullable = false, columnDefinition = "TEXT")
     private String descriptionContentType = "";
 
     @ManyToMany(mappedBy = "packages")

@@ -1,59 +1,68 @@
 {
-	"status": "SUCCESS",
-	"code": 200,
-	"message": "Your request has been processed successfully.",
-	"messageCode": "success.request.processed",
-	"data": {
-		"id": 1,
-		"submitter": {
-			"id": 123,
-			"name": "Test Admin",
-			"login": "testadmin",
-			"email": "admin@example.org"
-		},
-		"packageBag": {
-			"id": 1,
-			"version": "4.5.6",
-			"user":{"name":"Test Admin","id":123,"login":"testadmin","email":"admin@example.org"},
-			"repository": {
-				"name": "Test Python Repository",
-				"id": 123,
-				"publicationUri": "http://localhost/repo/testrepo"
-			},
-			"submission": {
-	             "id": 1,
-	             "state": "ACCEPTED"
-	           },
-			"name": "test_package1",
-			"description": "Simple test package1",
-			"author": "Albert Einstein1",
-			"title": "",
-			"url": "",
-			"source": "test_package1-4.5.6.tar.gz",
-			"active": true,
-			"deleted": false,
-			"links": [
-				{
-					"rel": "self",
-					"href": "http://localhost/api/v2/manager/python/packages/1"
-				},
-				{
-					"rel": "packageList",
-					"href": "http://localhost/api/v2/manager/packages"
-				}
-			]
-		},
-		"changes": "Some changes 123",
-		"state": "ACCEPTED",
-		"links": [
-			{
-				"rel": "self",
-				"href": "http://localhost/api/v2/manager/python/submissions/1"
-			},
-			{
-				"rel": "submissionList",
-				"href": "http://localhost/api/v2/manager/python/submissions"
-			}
-		]
-	}
+    "status": "SUCCESS",
+    "code": 200,
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "data": {
+        "id": 1,
+        "submitter": {
+            "id": 123,
+            "name": "Test Admin",
+            "login": "testadmin",
+            "email": "admin@example.org"
+        },
+        "packageBag": {
+            "id": 1,
+            "version": "4.5.6",
+            "user": {
+                "name": "Test Admin",
+                "id": 123,
+                "login": "testadmin",
+                "email": "admin@example.org"
+            },
+            "repository": {
+                "name": "Test Python Repository",
+                "id": 123,
+                "publicationUri": "http://localhost/repo/testrepo"
+            },
+            "submission": {
+                "id": 1,
+                "state": "ACCEPTED"
+            },
+            "name": "test_package1",
+            "description": "Simple test package1",
+            "author": "Albert Einstein1",
+            "title": "",
+            "url": "",
+            "source": "test_package1-4.5.6.tar.gz",
+            "active": true,
+            "deleted": false,
+            "links": [
+                {
+                    "rel": "self",
+                    "href": "http://localhost/api/v2/manager/python/packages/1"
+                },
+                {
+                    "rel": "packageList",
+                    "href": "http://localhost/api/v2/manager/packages"
+                },
+                {
+                    "rel": "repository",
+                    "href": "http://localhost/api/v2/manager/python/repositories/123"
+                }
+            ]
+        },
+        "changes": "Some changes 123",
+        "state": "ACCEPTED",
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost/api/v2/manager/python/submissions/1"
+            },
+            {
+                "rel": "submissionList",
+                "href": "http://localhost/api/v2/manager/python/submissions"
+            }
+        ]
+    }
 }

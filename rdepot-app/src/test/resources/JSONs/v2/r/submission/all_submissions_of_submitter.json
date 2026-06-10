@@ -70,6 +70,10 @@
                         {
                             "rel": "packageList",
                             "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        },
+                        {
+                            "rel": "repository",
+                            "href": "http://localhost:8017/api/v2/manager/r/repositories/2"
                         }
                     ],
                     "id": 16,

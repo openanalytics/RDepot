@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,21 +20,25 @@
  */
 package eu.openanalytics.rdepot.python.api.v2.dtos;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import eu.openanalytics.rdepot.base.api.v2.dtos.RepositoryDto;
 import eu.openanalytics.rdepot.base.entities.enums.HashMethod;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringExclude;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@NoArgsConstructor
 public class PythonRepositoryDto extends RepositoryDto {
 
     private HashMethod hashMethod;
+
+    @JsonCreator
+    public PythonRepositoryDto() {
+        super();
+    }
 
     @ToStringExclude
     @JsonIgnore

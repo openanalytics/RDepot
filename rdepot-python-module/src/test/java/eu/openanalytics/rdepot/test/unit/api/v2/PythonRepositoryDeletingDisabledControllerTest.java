@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,12 +20,17 @@
  */
 package eu.openanalytics.rdepot.test.unit.api.v2;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
@@ -45,11 +50,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.MessageSource;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -58,7 +61,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.validation.Errors;
-import org.springframework.web.context.WebApplicationContext;
 
 @ContextConfiguration(classes = {ApiTestConfig.class})
 @WebMvcTest(PythonRepositoryController.class)
@@ -84,21 +86,6 @@ public class PythonRepositoryDeletingDisabledControllerTest extends ApiV2Control
 
     @Autowired
     MockMvc mockMvc;
-
-    @Autowired
-    ObjectMapper objectMapper;
-
-    @Autowired
-    MappingJackson2HttpMessageConverter jsonConverter;
-
-    @Autowired
-    MessageSource messageSource;
-
-    @Autowired
-    PythonRepositoryController PythonRepositoryController;
-
-    @Autowired
-    WebApplicationContext webApplicationContext;
 
     private User user;
 
@@ -264,7 +251,7 @@ public class PythonRepositoryDeletingDisabledControllerTest extends ApiV2Control
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v2/manager/python/repositories")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(exampleJson))
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isUnprocessableContent())
                 .andExpect(content().json(Files.readString(Path.of(ERROR_VALIDATION_REPOSITORY_NAME_PATH))));
     }
 
@@ -408,7 +395,7 @@ public class PythonRepositoryDeletingDisabledControllerTest extends ApiV2Control
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/python/repositories/" + ID)
                         .contentType("application/json-patch+json")
                         .content(patchJson))
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isUnprocessableContent())
                 .andExpect(content().json(Files.readString(Path.of(ERROR_REPOSITORY_MALFORMED_PATCH))));
     }
 
@@ -436,7 +423,7 @@ public class PythonRepositoryDeletingDisabledControllerTest extends ApiV2Control
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/python/repositories/" + ID)
                         .contentType("application/json-patch+json")
                         .content(patchJson))
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isUnprocessableContent())
                 .andExpect(content().json(Files.readString(Path.of(ERROR_VALIDATION_REPOSITORY_NAME_PATH))));
     }
 

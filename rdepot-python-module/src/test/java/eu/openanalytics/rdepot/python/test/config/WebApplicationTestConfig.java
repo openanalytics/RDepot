@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -26,7 +26,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import org.apache.catalina.core.*;
+import org.apache.catalina.core.ApplicationContext;
+import org.apache.catalina.core.ApplicationContextFacade;
+import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.core.StandardEngine;
+import org.apache.catalina.core.StandardService;
 import org.junit.jupiter.api.io.TempDir;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -36,7 +40,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
@@ -99,8 +103,8 @@ public class WebApplicationTestConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public MappingJackson2HttpMessageConverter jsonConverter() {
-        return new MappingJackson2HttpMessageConverter();
+    public JacksonJsonHttpMessageConverter jsonConverter() {
+        return new JacksonJsonHttpMessageConverter();
     }
 
     @Bean

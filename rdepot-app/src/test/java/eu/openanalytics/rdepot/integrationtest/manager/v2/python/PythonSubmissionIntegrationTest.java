@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -58,6 +58,7 @@ public class PythonSubmissionIntegrationTest extends IntegrationTest {
                 .postEndpointNewEventsAmount(1)
                 .deleteEndpointNewEventsAmount(-1)
                 .changeEndpointNewEventsAmount(1)
+                .binary(true)
                 .build();
     }
 
@@ -207,6 +208,47 @@ public class PythonSubmissionIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    public void submitBinaryPackage_withLongFilename_installPackage() throws Exception {
+        final File packageBag = new File(
+                "src/test/resources/itestPackages/murmurhash-1.0.15-cp39-cp39-manylinux1_x86_64.manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_5_x86_64.whl");
+        final SubmissionMultipartBody body = new SubmissionMultipartBody(
+                "testrepo8",
+                true,
+                "",
+                new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+                        .fileName(packageBag.getName())
+                        .mimeType("application/octet-stream")
+                        .controlName("file")
+                        .build(),
+                true);
+
+        final TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST_MULTIPART)
+                .urlSuffix("/")
+                .statusCode(201)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getPostEndpointNewEventsAmount())
+                .submissionMultipartBody(body)
+                .expectedJsonPath("/v2/python/submissions/new_binary_submission_with_long_filename.json")
+                .build();
+        testEndpoint(requestBody);
+
+        final ExecutionResult result = bashScriptExecutor.executeBashScript(
+                "src/test/resources/scripts/checkIfPublishedPythonBinaryPackageWithLongFilenameCanBeInstalled.sh");
+        assertNotEquals(
+                DOWNLOADED_FROM_PYPI_EXIT_CODE,
+                result.exitCode(),
+                "The package was downloaded from PyPi instead of local repository.");
+        assertTrue(
+                result.output()
+                        .contains(
+                                "Downloading " + "http://oa-rdepot-proxy/repo/testrepo8/murmurhash/"
+                                        + "murmurhash-1.0.15-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl"),
+                "Package was not downloaded from RDepot.");
+        assertEquals(0, result.exitCode(), "Uploaded package was not published properly.");
+    }
+
+    @Test
     public void submitBinaryPackage_installPackage() throws Exception {
         final File packageBag = new File(
                 "src/test/resources/itestPackages/tetrapolyscope-0.0.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl");
@@ -244,6 +286,43 @@ public class PythonSubmissionIntegrationTest extends IntegrationTest {
                                 + "tetrapolyscope-0.0.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"),
                 "Package was not downloaded from RDepot.");
         assertEquals(0, result.exitCode(), "Uploaded package was not published properly.");
+    }
+
+    @Test
+    public void getBinarySubmissions() throws Exception {
+        final File packageBag = new File(
+                "src/test/resources/itestPackages/tetrapolyscope-0.0.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl");
+        final SubmissionMultipartBody body = new SubmissionMultipartBody(
+                "testrepo8",
+                true,
+                "",
+                new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+                        .fileName(packageBag.getName())
+                        .mimeType("application/octet-stream")
+                        .controlName("file")
+                        .build(),
+                true);
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST_MULTIPART)
+                .urlSuffix("/")
+                .statusCode(201)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getPostEndpointNewEventsAmount())
+                .submissionMultipartBody(body)
+                .expectedJsonPath("/v2/python/submissions/new_binary_submission.json")
+                .build();
+        testEndpoint(requestBody);
+
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET_RESOURCE_AFTER_SUBMISSION)
+                .urlSuffix("?binary=" + testData.isBinary() + "&sort=id,asc")
+                .statusCode(200)
+                .token(USER_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/python/submissions/binary_submissions.json")
+                .build();
+        testEndpoint(requestBody);
     }
 
     @Test
@@ -452,7 +531,7 @@ public class PythonSubmissionIntegrationTest extends IntegrationTest {
                 .statusCode(200)
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
-                .expectedJsonPath("/v2/python/submissions/one_submission.json")
+                .expectedJsonPath("/v2/python/submissions/one_submission_as_admin.json")
                 .build();
         testEndpoint(requestBody);
     }
@@ -465,7 +544,7 @@ public class PythonSubmissionIntegrationTest extends IntegrationTest {
                 .statusCode(200)
                 .token(REPOSITORYMAINTAINER_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
-                .expectedJsonPath("/v2/python/submissions/one_submission.json")
+                .expectedJsonPath("/v2/python/submissions/one_submission_as_admin.json")
                 .build();
         testEndpoint(requestBody);
     }

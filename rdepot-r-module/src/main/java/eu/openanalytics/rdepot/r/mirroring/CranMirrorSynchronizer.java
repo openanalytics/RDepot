@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -146,8 +146,12 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
 
         log.info("Synchronization started for repository: {}", repository.getId());
 
-        for (CranMirror mirror : mirrors) {
-            synchronizeMirror(repository, mirror);
+        if (mirrors.isEmpty()) {
+            registerRepositorySynchronizationStatus(repository, SynchronizationStatus.SUCCESS);
+        } else {
+            for (CranMirror mirror : mirrors) {
+                synchronizeMirror(repository, mirror);
+            }
         }
 
         log.info("Synchronization finished for repository: {}", repository.getId());
@@ -216,10 +220,14 @@ public class CranMirrorSynchronizer extends MirrorSynchronizer<MirroredRReposito
             registerRepositorySynchronizationStatus(repository, SynchronizationStatus.SUCCESS);
         } catch (DownloadPackagesFileException e) {
             log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
-            mirror.getPackages().forEach(p -> {
-                registerPackageSynchronizationStatus(
-                        repository, p.getName(), p.getVersion(), mirror, SynchronizationStatus.ERROR, e.getMessage());
-            });
+            mirror.getPackages()
+                    .forEach(p -> registerPackageSynchronizationStatus(
+                            repository,
+                            p.getName(),
+                            p.getVersion(),
+                            mirror,
+                            SynchronizationStatus.ERROR,
+                            e.getMessage()));
             registerRepositorySynchronizationStatus(repository, SynchronizationStatus.ERROR);
         }
     }

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,9 +20,9 @@
  */
 package eu.openanalytics.rdepot.test.config;
 
+// import eu.openanalytics.rdepot.config.HibernateAwareObjectMapper;
 import com.google.gson.Gson;
 import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
-// import eu.openanalytics.rdepot.config.HibernateAwareObjectMapper;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +42,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
@@ -109,8 +109,8 @@ public class WebApplicationTestConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    MappingJackson2HttpMessageConverter jsonConverter() {
-        return new MappingJackson2HttpMessageConverter();
+    public JacksonJsonHttpMessageConverter jsonConverter() {
+        return new JacksonJsonHttpMessageConverter();
     }
 
     @Bean

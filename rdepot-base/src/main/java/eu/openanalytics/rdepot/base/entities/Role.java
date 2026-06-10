@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -61,10 +61,10 @@ public class Role extends Resource implements Serializable {
     @Column(name = "value", unique = true, nullable = false)
     private int value;
 
-    @Column(name = "name", unique = true, nullable = false)
+    @Column(name = "name", unique = true, nullable = false, columnDefinition = "TEXT")
     private String name;
 
-    @Column(name = "description", unique = true, nullable = false)
+    @Column(name = "description", unique = true, nullable = false, columnDefinition = "TEXT")
     private String description;
 
     public Role() {

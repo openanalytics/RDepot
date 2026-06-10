@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -244,8 +244,7 @@ public class BackupTest {
         doNothing().when(storageService).restoreTrash(testTrash);
         doNothing().when(storageService).setRepositoryVersion(mockTransaction.getRepositoryName(), "23");
 
-        doNothing().when(storageService).generateArchiveRds(mockTransaction.getRepositoryName(), SOURCE_PATH);
-        doNothing().when(storageService).generateArchiveRds(mockTransaction.getRepositoryName(), BINARY_PATH);
+        doNothing().when(storageService).generateArchiveRds(mockTransaction.getRepositoryName());
 
         cranRepositoryBackupService.restoreForTransaction(mockTransaction);
 
@@ -256,8 +255,8 @@ public class BackupTest {
                         backup.getArchivePackages(), mockTransaction.getRepositoryName());
         verify(storageService).restoreTrash(testTrash);
         verify(storageService).setRepositoryVersion(mockTransaction.getRepositoryName(), "23");
-        verify(storageService).generateArchiveRds(mockTransaction.getRepositoryName(), SOURCE_PATH);
-        verify(storageService).generateArchiveRds(mockTransaction.getRepositoryName(), BINARY_PATH);
+        verify(storageService).generateArchiveRds(mockTransaction.getRepositoryName());
+        verify(storageService).generateArchiveRds(mockTransaction.getRepositoryName());
     }
 
     @Test

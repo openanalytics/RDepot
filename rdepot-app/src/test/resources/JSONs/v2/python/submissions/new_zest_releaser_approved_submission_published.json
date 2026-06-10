@@ -1,87 +1,91 @@
 {
-  "code": 201,
-  "data": {
-    "approver": {
-      "name": "Albert Einstein",
-      "id": 4,
-      "login": "einstein",
-      "email": "einstein@ldap.forumsys.com"
-    },
-    "submitter": {
-      "name": "Albert Einstein",
-      "id": 4,
-      "login": "einstein",
-      "email": "einstein@ldap.forumsys.com"
-    },
-    "changes": "",
-    "links": [
-      {
-        "rel": "self",
-        "href": "http://localhost:8017/api/v2/manager/python/submissions/48"
-      },
-      {
-        "rel": "submissionList",
-        "href": "http://localhost:8017/api/v2/manager/python/submissions"
-      }
-    ],
-    "id": 48,
-    "state": "ACCEPTED",
-    "technology": "Python",
-    "packageBag": {
-      "author": "Reinout van Rees <reinout@vanrees.org>, Maurits van Rees <maurits@vanrees.org>",
-      "active": true,
-      "description": null,
-      "technology": "Python",
-      "repository": {
-        "name": "testrepo8",
-        "lastPublicationSuccessful": true,
-        "id": 8,
-        "published": true,
-        "technology": "Python",
-        "requiresAuthentication": true,
-        "publicationUri": "http://localhost/repo/testrepo8"
-      },
-      "title": "Software releasing made easy and repeatable RDEPOT-VERSION",
-      "version": "9.6.2",
-      "url": "documentation, https://zestreleaser.readthedocs.io, repository, https://github.com/zestsoftware/zest.releaser/, changelog, https://github.com/zestsoftware/zest.releaser/blob/master/CHANGES.rst",
-      "deleted": false,
-      "descriptionContentType": "",
-      "binary": false,
-      "name": "zest.releaser",
-      "submission": {
+    "code": 201,
+    "data": {
+        "approver": {
+            "name": "Albert Einstein",
+            "id": 4,
+            "login": "einstein",
+            "email": "einstein@ldap.forumsys.com"
+        },
+        "submitter": {
+            "name": "Albert Einstein",
+            "id": 4,
+            "login": "einstein",
+            "email": "einstein@ldap.forumsys.com"
+        },
+        "changes": "",
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/python/submissions/48"
+            },
+            {
+                "rel": "submissionList",
+                "href": "http://localhost:8017/api/v2/manager/python/submissions"
+            }
+        ],
         "id": 48,
-        "state": "ACCEPTED"
-      },
-      "links": [
-        {
-          "rel": "self",
-          "href": "http://localhost:8017/api/v2/manager/python/packages/48"
-        },
-        {
-          "rel": "packageList",
-          "href": "http://localhost:8017/api/v2/manager/packages"
-        },
-        {
-          "rel": "self",
-          "href": "http://localhost:8017/api/v2/manager/python/packages/48",
-          "type": "PATCH"
-        },
-        {
-          "rel": "self",
-          "href": "http://localhost:8017/api/v2/manager/python/packages/48",
-          "type": "DELETE"
+        "state": "ACCEPTED",
+        "technology": "Python",
+        "packageBag": {
+            "author": "Reinout van Rees <reinout@vanrees.org>, Maurits van Rees <maurits@vanrees.org>",
+            "active": true,
+            "description": null,
+            "technology": "Python",
+            "repository": {
+                "name": "testrepo8",
+                "lastPublicationSuccessful": true,
+                "id": 8,
+                "published": true,
+                "technology": "Python",
+                "requiresAuthentication": true,
+                "publicationUri": "http://localhost/repo/testrepo8"
+            },
+            "title": "Software releasing made easy and repeatable RDEPOT-VERSION",
+            "version": "9.6.2",
+            "url": "documentation, https://zestreleaser.readthedocs.io, repository, https://github.com/zestsoftware/zest.releaser/, changelog, https://github.com/zestsoftware/zest.releaser/blob/master/CHANGES.rst",
+            "deleted": false,
+            "descriptionContentType": "",
+            "binary": false,
+            "name": "zest.releaser",
+            "submission": {
+                "id": 48,
+                "state": "ACCEPTED"
+            },
+            "links": [
+                {
+                    "rel": "self",
+                    "href": "http://localhost:8017/api/v2/manager/python/packages/48"
+                },
+                {
+                    "rel": "packageList",
+                    "href": "http://localhost:8017/api/v2/manager/packages"
+                },
+                {
+                    "rel": "repository",
+                    "href": "http://localhost:8017/api/v2/manager/python/repositories/8"
+                },
+                {
+                    "rel": "self",
+                    "href": "http://localhost:8017/api/v2/manager/python/packages/48",
+                    "type": "PATCH"
+                },
+                {
+                    "rel": "self",
+                    "href": "http://localhost:8017/api/v2/manager/python/packages/48",
+                    "type": "DELETE"
+                }
+            ],
+            "id": 48,
+            "user": {
+                "name": "Nikola Tesla",
+                "id": 5,
+                "login": "tesla",
+                "email": "tesla@ldap.forumsys.com"
+            }
         }
-      ],
-      "id": 48,
-      "user": {
-        "name": "Nikola Tesla",
-        "id": 5,
-        "login": "tesla",
-        "email": "tesla@ldap.forumsys.com"
-      }
-    }
-  },
-  "messageCode": "warning.file.name.has.been.updated",
-  "message": "Your package has been submitted successfully but the filename has been changed due to a mismatch with the package metadata.",
-  "status": "WARNING"
+    },
+    "messageCode": "warning.file.name.has.been.updated",
+    "message": "Your package has been submitted successfully but the filename has been changed due to a mismatch with the package metadata.",
+    "status": "WARNING"
 }

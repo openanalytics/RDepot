@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -48,13 +48,13 @@ public class EventChangedVariable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id = 0;
 
-    @Column(name = "changed_variable", nullable = false)
+    @Column(name = "changed_variable", nullable = false, columnDefinition = "TEXT")
     private String changedVariable;
 
-    @Column(name = "value_before", nullable = false)
+    @Column(name = "value_before", nullable = false, columnDefinition = "TEXT")
     private String valueBefore;
 
-    @Column(name = "value_after", nullable = false)
+    @Column(name = "value_after", nullable = false, columnDefinition = "TEXT")
     private String valueAfter;
 
     @ManyToOne

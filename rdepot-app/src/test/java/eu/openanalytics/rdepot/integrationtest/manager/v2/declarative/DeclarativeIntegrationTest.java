@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -28,7 +28,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.restassured.http.ContentType;
-import java.io.IOException;
 
 public abstract class DeclarativeIntegrationTest {
 
@@ -97,7 +96,7 @@ public abstract class DeclarativeIntegrationTest {
         }
     }
 
-    protected void assertPackages(JsonObject expectedJSON, boolean isSynchronized) throws IOException {
+    protected void assertPackages(JsonObject expectedJSON) {
         String data = given().header(AUTHORIZATION, BEARER + USER_TOKEN)
                 .accept(ContentType.JSON)
                 .when()
@@ -120,8 +119,6 @@ public abstract class DeclarativeIntegrationTest {
                 .getAsJsonObject()
                 .get("content")
                 .getAsJsonArray();
-
-        if (isSynchronized) updateMd5SumsAndVersion(expectedContent);
 
         for (JsonElement el : expectedContent) {
             el.getAsJsonObject().remove("source");
@@ -238,6 +235,4 @@ public abstract class DeclarativeIntegrationTest {
             e.printStackTrace();
         }
     }
-
-    protected abstract void updateMd5SumsAndVersion(JsonArray expectedContent) throws IOException;
 }

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -48,6 +48,7 @@ public class MirroredPythonPackage extends MirroredPackage {
     }
 
     public String toString() {
-        return this.getNormalizedName() + "-" + this.version;
+        if (this.version == null) return this.getNormalizedName() + "-latest";
+        else return this.getNormalizedName() + "-" + this.version;
     }
 }

@@ -1,49 +1,48 @@
 {
-    "status": "SUCCESS",
     "code": 200,
-    "message": "Your request has been processed successfully.",
-    "messageCode": "success.request.processed",
     "data": {
+        "packages": [
+            {
+                "error": null,
+                "mirror": {
+                    "name": "CD",
+                    "type": "tarball",
+                    "uri": "http://oa-rdepot-proxy/repo/CD"
+                },
+                "name": "plotly",
+                "status": "SUCCESS",
+                "version": null
+            },
+            {
+                "error": null,
+                "mirror": {
+                    "name": "Bioconductor-3.12",
+                    "type": "tarball",
+                    "uri": "http://archive.bioconductor.org.s3-website-us-east-1.amazonaws.com/packages/3.12/bioc"
+                },
+                "name": "annotate",
+                "status": "SUCCESS",
+                "version": "1.68.0"
+            }
+        ],
+        "page": {
+            "number": 1,
+            "size": 2,
+            "totalElements": 4,
+            "totalPages": 2
+        },
         "repository": {
             "id": 3,
+            "lastPublicationSuccessful": false,
             "name": "D",
             "publicationUri": "http://localhost/repo/D",
             "published": false,
             "requiresAuthentication": true,
-            "technology": "R",
-            "lastPublicationSuccessful": false
+            "technology": "R"
         },
-        "status": "SUCCESS",
-        "timestamp": 1754393532067,
-        "packages": [
-            {
-                "name": "plotly",
-                "version": null,
-                "status": "SUCCESS",
-                "error": null,
-                "mirror": {
-                    "name": "CRAN",
-                    "uri": "https://cran.r-project.org",
-                    "type": "tarball"
-                }
-            },
-            {
-                "name": "annotate",
-                "version": "1.68.0",
-                "status": "SUCCESS",
-                "error": null,
-                "mirror": {
-                    "name": "Bioconductor-3.12",
-                    "uri": "http://archive.bioconductor.org.s3-website-us-east-1.amazonaws.com/packages/3.12/bioc",
-                    "type": "tarball"
-                }
-            }
-        ],
-        "page": {
-            "size": 2,
-            "totalElements": 4,
-            "totalPages": 2,
-            "number": 1
-        }
-    }
+        "status": "SUCCESS"
+    },
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "status": "SUCCESS"
 }

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -22,8 +22,7 @@ package eu.openanalytics.rdepot.python.api.v2.converters;
 
 import eu.openanalytics.rdepot.base.api.v2.converters.DtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.converters.exceptions.EntityResolutionException;
-import eu.openanalytics.rdepot.base.entities.Package;
-import eu.openanalytics.rdepot.base.service.PackageService;
+import eu.openanalytics.rdepot.base.service.CommonPackageService;
 import eu.openanalytics.rdepot.base.time.DateProvider;
 import eu.openanalytics.rdepot.python.api.v2.dtos.PythonRepositoryDto;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
@@ -38,7 +37,7 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class PythonRepositoryDtoConverter implements DtoConverter<PythonRepository, PythonRepositoryDto> {
 
-    private final PackageService<Package> packageService;
+    private final CommonPackageService packageService;
 
     @Autowired
     private PythonRepositoryAllowedFiles repoAllowedFiles;

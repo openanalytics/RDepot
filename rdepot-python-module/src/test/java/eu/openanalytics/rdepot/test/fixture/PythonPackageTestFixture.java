@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -55,13 +55,13 @@ public class PythonPackageTestFixture {
                     i,
                     repository,
                     user,
-                    NAME + Integer.toString(i),
-                    DESCRIPTION + Integer.toString(i),
-                    AUTHOR + Integer.toString(i),
-                    LICENSE + Integer.toString(i),
-                    NAME + Integer.toString(i) + "-" + VERSION + TARGZ,
-                    TITLE + Integer.toString(i),
-                    HASH + Integer.toString(i),
+                    NAME + i,
+                    DESCRIPTION + i,
+                    AUTHOR + i,
+                    LICENSE + i,
+                    NAME + i + "-" + VERSION + TARGZ,
+                    TITLE + i,
+                    HASH + i,
                     ACTIVATED,
                     DELETED,
                     BINARY);
@@ -81,10 +81,7 @@ public class PythonPackageTestFixture {
         PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
         User user = UserTestFixture.GET_PACKAGE_MAINTAINER();
 
-        PythonPackage packageBag =
-                GET_FIXTURE_PACKAGES(repository, user, 3, 100).get(0);
-
-        return packageBag;
+        return GET_FIXTURE_PACKAGES(repository, user, 3, 100).get(0);
     }
 
     public static Page<PythonPackage> GET_EXAMPLE_PACKAGES_PAGED(PythonRepository repository, User user) {
@@ -110,25 +107,13 @@ public class PythonPackageTestFixture {
     }
 
     public static PackageDto GET_EXAMPLE_PACKAGE_DTO(Package packageBag) {
-        PackageDto packageDto = new PackageDto(packageBag);
-        return packageDto;
+        return new PackageDto(packageBag);
     }
 
     public static List<PackageDto> GET_EXAMPLE_PACKAGE_DTOS(List<Submission> submissions) {
-        List<PackageDto> packageDtos = new ArrayList<PackageDto>();
-        submissions.forEach(submission -> {
-            packageDtos.add(new PackageDto(submission.getPackageBag()));
-        });
+        List<PackageDto> packageDtos = new ArrayList<>();
+        submissions.forEach(submission -> packageDtos.add(new PackageDto(submission.getPackageBag())));
         return packageDtos;
-    }
-
-    public static PackageDto GET_EXAMPLE_PACKAGE_DTO() {
-        PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        User user = UserTestFixture.GET_PACKAGE_MAINTAINER();
-
-        Package packageBag = GET_FIXTURE_PACKAGES(repository, user, 3, 100).get(0);
-
-        return new PackageDto(packageBag);
     }
 
     /**
@@ -222,26 +207,25 @@ public class PythonPackageTestFixture {
      * @return
      */
     public static List<PythonPackage> GET_PACKAGES_FOR_MULTICHUNK_UPLOAD(
-            PythonRepository repository, String souceprefix, String... names) {
+            PythonRepository repository, String sourcePrefix, String... names) {
         List<PythonPackage> packages = new ArrayList<>();
 
         User user = UserTestFixture.GET_ADMIN();
 
-        for (int i = 0; i < names.length; i++) {
-            String name = names[i];
+        for (String name : names) {
             String[] tokens = name.split("_");
             String id = tokens[0];
             String packageName = tokens[1];
             String version = tokens[2];
 
             PythonPackage packageBag = GET_FIXTURE_PACKAGE(repository, user);
-            packageBag.setId(Integer.valueOf(id));
+            packageBag.setId(Integer.parseInt(id));
             packageBag.setName(packageName);
             packageBag.setAuthor("Author of the package: " + name);
             packageBag.setVersion(version);
             packageBag.setActive(true);
             packageBag.setDeleted(false);
-            packageBag.setSource(souceprefix + "/" + packageName + "_" + version + ".tar.gz");
+            packageBag.setSource(sourcePrefix + "/" + packageName + "_" + version + ".tar.gz");
             packages.add(packageBag);
         }
 

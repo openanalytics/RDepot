@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -26,7 +26,6 @@ import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.User;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
@@ -53,7 +52,7 @@ public class PackageMaintainerTestFixture {
     }
 
     public static Page<PackageMaintainer> GET_EXAMPLE_PACKAGE_MAINTAINERS_PAGED() {
-        return new PageImpl<PackageMaintainer>(GET_EXAMPLE_PACKAGE_MAINTAINERS());
+        return new PageImpl<>(GET_EXAMPLE_PACKAGE_MAINTAINERS());
     }
 
     public static PackageMaintainer GET_PACKAGE_MAINTAINER_FOR_REPOSITORY(int id, Repository repository) {
@@ -98,6 +97,6 @@ public class PackageMaintainerTestFixture {
         if (length > 0) {
             packageList.get(0).setName(packageName + "different_name");
         }
-        return packageList.stream().map(p -> (Package) p).collect(Collectors.toList());
+        return new ArrayList<>(packageList);
     }
 }

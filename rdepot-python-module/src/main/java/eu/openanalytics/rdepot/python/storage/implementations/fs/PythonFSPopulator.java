@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -220,7 +220,7 @@ public class PythonFSPopulator extends LocalFSPopulator<PythonRepository, Python
         final Map<String, String> checksums = new HashMap<>();
 
         final List<File> packagesToUpload = selectPackagesToUpload(
-                remotePackages, remoteChecksums, populatedRepositoryContent.packages(), checksums);
+                remotePackages, remoteChecksums, populatedRepositoryContent.packages(), checksums, false);
         final List<String> packagesToDelete =
                 selectPackagesToDelete(remotePackages, populatedRepositoryContent.packages(), packagesToUpload);
 
@@ -233,8 +233,7 @@ public class PythonFSPopulator extends LocalFSPopulator<PythonRepository, Python
                 checksums);
     }
 
-    private void addPackageFiles(
-            PythonPopulatedPackage packageBag, List<File> toUpload, Map<String, String> checksums) {
+    private void addPackageFiles(PythonPopulatedPackage packageBag, List<File> toUpload) {
         String packageFilePath =
                 this.current + separator + packageBag.getNormalizedName() + separator + packageBag.getFileName();
         String indexFilePath = this.current + separator + packageBag.getNormalizedName() + separator + INDEX_FILE;
@@ -243,15 +242,6 @@ public class PythonFSPopulator extends LocalFSPopulator<PythonRepository, Python
         toUpload.add(packageFile);
         if (!toUpload.contains(indexFile)) {
             toUpload.add(indexFile);
-            try {
-                checksums.put(
-                        indexFile.getName(),
-                        storage.calculateCheckSum(
-                                indexFile, packageBag.getRepository().getHashMethod()));
-            } catch (CheckSumCalculationException e) {
-                log.error(e.getMessage(), e);
-                throw new RuntimeException(e);
-            }
         }
     }
 
@@ -285,7 +275,8 @@ public class PythonFSPopulator extends LocalFSPopulator<PythonRepository, Python
             List<String> remotePackages,
             Checksums remoteChecksums,
             List<PythonPopulatedPackage> localPackages,
-            Map<String, String> checksums) {
+            Map<String, String> checksums,
+            boolean archive) {
 
         List<String> remotePackagesNames = remotePackages.stream()
                 .map(packageDetails -> packageDetails.substring(packageDetails.indexOf('/') + 1))
@@ -297,7 +288,7 @@ public class PythonFSPopulator extends LocalFSPopulator<PythonRepository, Python
                 if (!remotePackagesNames.contains(packageBag.getPackageFilename())
                         || !remoteChecksums.contains(
                                 storage.calculateCheckSum(packageBag), packageBag.getPackageFilename())) {
-                    addPackageFiles(packageBag, toUpload, checksums);
+                    addPackageFiles(packageBag, toUpload);
                 }
             } catch (CheckSumCalculationException e) {
                 log.error(e.getMessage(), e);

@@ -70,6 +70,10 @@
                         {
                             "rel": "packageList",
                             "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        },
+                        {
+                            "rel": "repository",
+                            "href": "http://localhost:8017/api/v2/manager/python/repositories/8"
                         }
                     ],
                     "id": 45,
@@ -137,6 +141,10 @@
                         {
                             "rel": "packageList",
                             "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        },
+                        {
+                            "rel": "repository",
+                            "href": "http://localhost:8017/api/v2/manager/python/repositories/8"
                         }
                     ],
                     "id": 46,

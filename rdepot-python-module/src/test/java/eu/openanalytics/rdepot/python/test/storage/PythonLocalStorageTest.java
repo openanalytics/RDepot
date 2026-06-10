@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -486,7 +486,7 @@ public class PythonLocalStorageTest extends UnitTest {
                 </head>
                 <body>
                   <h1>Links for tetrapolyscope</h1>
-                  <a href="/repo/testrepo/tetrapolyscope/tetrapolyscope-0.0.4-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl" data-requires-python="" data-version="0.0.4">tetrapolyscope-0.0.4-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl</a><br>
+                  <a href="/repo/testrepo/tetrapolyscope/tetrapolyscope-0.0.4-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl" data-hash-method="SHA256" data-checksum="f8fa209ca70c914b710bc705b99c6c4b51250a35593cecb319e9feb44f7a7849" data-requires-python="" data-version="0.0.4">tetrapolyscope-0.0.4-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl</a> <br>
                 </body>
                 </html>
                 """;
@@ -525,8 +525,8 @@ public class PythonLocalStorageTest extends UnitTest {
                 </head>
                 <body>
                   <h1>Links for pandas</h1>
-                  <a href="/repo/testrepo/pandas/pandas-2.0.1.tar.gz" data-requires-python=">=3.8" data-version="2.0.1">pandas-2.0.1.tar.gz</a><br>
-                  <a href="/repo/testrepo/pandas/pandas-2.0.3.tar.gz" data-requires-python=">=3.8" data-version="2.0.3">pandas-2.0.3.tar.gz</a><br>
+                  <a href="/repo/testrepo/pandas/pandas-2.0.1.tar.gz" data-hash-method="SHA256" data-checksum="7053d7ff8c563324b9a76110fabbd227c96c11d337521a57d94973bbb5f2a7ad" data-requires-python=">=3.8" data-version="2.0.1">pandas-2.0.1.tar.gz</a> <br>
+                  <a href="/repo/testrepo/pandas/pandas-2.0.3.tar.gz" data-hash-method="SHA256" data-checksum="c02f372a88e0d17f36d3093a644c73cfc1788e876a7c4bcb4020a77512e2043c" data-requires-python=">=3.8" data-version="2.0.3">pandas-2.0.3.tar.gz</a> <br>
                 </body>
                 </html>
                 """;
@@ -544,7 +544,7 @@ public class PythonLocalStorageTest extends UnitTest {
                 </head>
                 <body>
                   <h1>Links for cryptography</h1>
-                  <a href="/repo/testrepo/cryptography/cryptography-41.0.1.tar.gz" data-requires-python=">=3.7" data-version="41.0.1">cryptography-41.0.1.tar.gz</a><br>
+                  <a href="/repo/testrepo/cryptography/cryptography-41.0.1.tar.gz" data-hash-method="SHA256" data-checksum="4a0740db3e223fcd38a6ad062cdae927429a0894132e643d613d43b647bf488a" data-requires-python=">=3.7" data-version="41.0.1">cryptography-41.0.1.tar.gz</a> <br>
                 </body>
                 </html>
                 """;
@@ -562,7 +562,7 @@ public class PythonLocalStorageTest extends UnitTest {
                 </head>
                 <body>
                   <h1>Links for ArmyOfEvilRobots</h1>
-                  <a href="/repo/testrepo/armyofevilrobots/ArmyOfEvilRobots-0.4.1dev.tar.gz" data-requires-python="" data-version="0.4.1dev">ArmyOfEvilRobots-0.4.1dev.tar.gz</a><br>
+                  <a href="/repo/testrepo/armyofevilrobots/ArmyOfEvilRobots-0.4.1dev.tar.gz" data-hash-method="SHA256" data-checksum="ebb8949f7ad16c6d743b5c2da7d31bea06c81215532bb68b4179916157741549" data-requires-python="" data-version="0.4.1dev">ArmyOfEvilRobots-0.4.1dev.tar.gz</a> <br>
                 </body>
                 </html>
                 """;

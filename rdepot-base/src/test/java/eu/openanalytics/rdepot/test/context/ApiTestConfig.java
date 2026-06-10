@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -39,15 +39,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
@@ -55,6 +53,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -89,8 +88,8 @@ public class ApiTestConfig implements WebMvcConfigurer {
             Map.of(InternalTechnology.instance, ApiV2SubmissionController.class);
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
+    SecurityFilterChain filterChain(HttpSecurity http) {
+        http.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(requests -> requests.requestMatchers("/api/accessdenied")
                         .permitAll()
@@ -114,7 +113,7 @@ public class ApiTestConfig implements WebMvcConfigurer {
         return http.build();
     }
 
-    AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+    AuthenticationManager authenticationManager(HttpSecurity http) {
         AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
         builder.authenticationProvider(new TestAuthenticationProvider());
         return builder.build();
@@ -157,26 +156,6 @@ public class ApiTestConfig implements WebMvcConfigurer {
     }
 
     @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.add(jsonConverter());
-    }
-
-    @Override
-    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.add(jsonConverter());
-    }
-
-    @Bean
-    MappingJackson2HttpMessageConverter jsonConverter() {
-        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        List<MediaType> mediaTypes = new ArrayList<>(converter.getSupportedMediaTypes());
-        mediaTypes.add(MediaType.valueOf("application/json-patch+json"));
-        converter.setSupportedMediaTypes(mediaTypes);
-        converter.setObjectMapper(objectMapper());
-        return converter;
-    }
-
-    @Override
     public MessageCodesResolver getMessageCodesResolver() {
         return new DefaultMessageCodesResolver() {
 
@@ -184,6 +163,7 @@ public class ApiTestConfig implements WebMvcConfigurer {
             private static final long serialVersionUID = -6517730864672588910L;
 
             @Override
+            @NullMarked
             public String[] resolveMessageCodes(String errorCode, String objectName) {
                 return new String[] {errorCode};
             }
@@ -194,6 +174,7 @@ public class ApiTestConfig implements WebMvcConfigurer {
     ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
+
         return objectMapper;
     }
 

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,9 +20,12 @@
  */
 package eu.openanalytics.rdepot.base.api.v2.hateoas;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+
 import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2Controller;
 import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2PackageController;
 import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2ReadingController;
+import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2RepositoryController;
 import eu.openanalytics.rdepot.base.api.v2.converters.DtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.dtos.PackageDto;
 import eu.openanalytics.rdepot.base.entities.Package;
@@ -49,27 +52,34 @@ public class PackageModelAssembler extends AbstractRoleAwareModelAssembler<Packa
 
     private final SecurityMediator securityMediator;
     private final Map<Technology, Class<? extends ApiV2ReadingController<?, ?>>> packageControllerClassesByTechnology;
+    private final Map<Technology, Class<? extends ApiV2ReadingController<?, ?>>>
+            repositoryControllerClassesByTechnology;
 
     @Autowired
     public PackageModelAssembler(
             DtoConverter<Package, PackageDto> dtoConverter,
             SecurityMediator securityMediator,
             @Qualifier("packageControllerClassesByTechnology")
+                    Map<Technology, Class<? extends ApiV2ReadingController<?, ?>>> packageControllerClassesByTechnology,
+            @Qualifier("repositoryControllerClassesByTechnology")
                     Map<Technology, Class<? extends ApiV2ReadingController<?, ?>>>
-                            packageControllerClassesByTechnology) {
+                            repositoryControllerClassesByTechnology) {
         super(dtoConverter, ApiV2PackageController.class, "package", Optional.empty());
         this.securityMediator = securityMediator;
         this.packageControllerClassesByTechnology = packageControllerClassesByTechnology;
+        this.repositoryControllerClassesByTechnology = repositoryControllerClassesByTechnology;
     }
 
     private PackageModelAssembler(
             DtoConverter<Package, PackageDto> dtoConverter,
             SecurityMediator securityMediator,
             Map<Technology, Class<? extends ApiV2ReadingController<?, ?>>> packageControllerClassesByTechnology,
+            Map<Technology, Class<? extends ApiV2ReadingController<?, ?>>> repositoryControllerClassesByTechnology,
             User user) {
         super(dtoConverter, ApiV2PackageController.class, "package", Optional.of(user));
         this.securityMediator = securityMediator;
         this.packageControllerClassesByTechnology = packageControllerClassesByTechnology;
+        this.repositoryControllerClassesByTechnology = repositoryControllerClassesByTechnology;
     }
 
     public EntityModel<PackageDto> toModel(Package entity, Class<? extends ApiV2Controller<?, ?>> clazz) {
@@ -80,6 +90,20 @@ public class PackageModelAssembler extends AbstractRoleAwareModelAssembler<Packa
     public EntityModel<PackageDto> toModel(Package entity, User user) {
         PackageDto dto = dtoConverter.convertEntityToDto(entity);
         return EntityModel.of(dto, generateRoleBasedAvailableLinksForEntity(entity, user));
+    }
+
+    @Override
+    protected List<Link> generateAvailableLinksForEntity(Package entity, Class<?> extensionControllerClass) {
+        List<Link> links = new ArrayList<>(super.generateAvailableLinksForEntity(entity, extensionControllerClass));
+        links.add(generateRepositoryLinkForEntity(entity));
+        return links;
+    }
+
+    private Link generateRepositoryLinkForEntity(Package entity) {
+        Class<?> clazz = repositoryControllerClassesByTechnology.getOrDefault(
+                entity.getTechnology(), ApiV2RepositoryController.class);
+
+        return linkTo(clazz).slash(entity.getRepository().getId()).withRel("repository");
     }
 
     @Override
@@ -96,7 +120,12 @@ public class PackageModelAssembler extends AbstractRoleAwareModelAssembler<Packa
 
     @Override
     public RepresentationModelAssembler<Package, EntityModel<PackageDto>> assemblerWithUser(User user) {
-        return new PackageModelAssembler(dtoConverter, securityMediator, packageControllerClassesByTechnology, user);
+        return new PackageModelAssembler(
+                dtoConverter,
+                securityMediator,
+                packageControllerClassesByTechnology,
+                repositoryControllerClassesByTechnology,
+                user);
     }
 
     @Override

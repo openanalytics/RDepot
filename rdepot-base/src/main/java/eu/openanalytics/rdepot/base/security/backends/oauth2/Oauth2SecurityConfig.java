@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -83,14 +83,19 @@ public class Oauth2SecurityConfig {
     private final Locale locale = LocaleContextHolder.getLocale();
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http) {
         http.cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
+                .securityMatcher("/api/**")
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/docs/**")
                         .permitAll()
                         .requestMatchers("/v2/api-docs/**")
+                        .permitAll()
+                        .requestMatchers("/.well-known/**")
+                        .permitAll()
+                        .requestMatchers("/oauth2/**")
                         .permitAll()
                         .requestMatchers("/api/**")
                         .hasAuthority("user")
@@ -105,6 +110,7 @@ public class Oauth2SecurityConfig {
                     oauth2.authenticationEntryPoint(
                             new RestAuthenticationEntryPoint(messageSource, locale, objectMapper));
                 });
+
         return http.build();
     }
 
@@ -133,9 +139,8 @@ public class Oauth2SecurityConfig {
         }
 
         return NimbusJwtDecoder.withJwkSetUri(oauth2Properties.getJwkSetUri())
-                .jwtProcessorCustomizer(customizer -> {
-                    customizer.setJWSTypeVerifier(new DefaultJOSEObjectTypeVerifier<>(allowedTypes));
-                })
+                .jwtProcessorCustomizer(
+                        customizer -> customizer.setJWSTypeVerifier(new DefaultJOSEObjectTypeVerifier<>(allowedTypes)))
                 .build();
     }
 

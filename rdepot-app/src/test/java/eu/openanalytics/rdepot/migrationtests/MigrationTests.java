@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -42,7 +42,6 @@ public class MigrationTests {
             new DockerComposeContainer<>(new File("src/test/resources/docker-compose-migrations.yaml"));
 
     public static DockerComposeContainer<?> container = DOCKER_COMPOSE_CONTAINER
-            .withLocalCompose(true)
             .withOptions("--compatibility")
             .waitingFor(
                     "proxy",

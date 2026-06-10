@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -70,15 +70,11 @@ public class RepositoryMaintainerTestFixture {
         return maintainers;
     }
 
-    public static RepositoryMaintainer GET_FIXTURE_REPOSITORY_MAINTAINER(User user, Repository repository) {
-        return new RepositoryMaintainer(123, user, repository, DELETED);
-    }
-
     public static RepositoryMaintainer GET_FIXTURE_REPOSITORY_MAINTAINER() {
         return GET_EXAMPLE_REPOSITORY_MAINTAINERS().get(0);
     }
 
     public static Page<RepositoryMaintainer> GET_EXAMPLE_REPOSITORY_MAINTAINERS_PAGED() {
-        return new PageImpl<RepositoryMaintainer>(GET_EXAMPLE_REPOSITORY_MAINTAINERS());
+        return new PageImpl<>(GET_EXAMPLE_REPOSITORY_MAINTAINERS());
     }
 }

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,21 +20,19 @@
  */
 package eu.openanalytics.rdepot.test.fixture;
 
+import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 
 public class PackageMaintainerTestFixture {
 
     public static final String PACKAGE_NAME = PythonPackageTestFixture.NAME;
-    public static final Boolean DELETED = false;
 
-    public static List<PackageMaintainer> GET_EXAMPLE_PACKAGE_MAINTAINERS() {
-        PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY(123);
+    public static List<PackageMaintainer> GET_EXAMPLE_PACKAGE_MAINTAINERS(PythonRepository repository) {
         User user = UserTestFixture.GET_PACKAGE_MAINTAINER(111);
 
         List<PackageMaintainer> maintainers = new ArrayList<>();
@@ -47,11 +45,19 @@ public class PackageMaintainerTestFixture {
         return maintainers;
     }
 
-    public static Page<PackageMaintainer> GET_EXAMPLE_PACKAGE_MAINTAINERS_PAGED() {
-        return new PageImpl<PackageMaintainer>(GET_EXAMPLE_PACKAGE_MAINTAINERS());
-    }
+    public static List<PackageMaintainer> GET_PACKAGE_MAINTAINERS_FOR_PACKAGE(Package packageBag) {
+        PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY(123);
 
-    public static PackageMaintainer GET_FIXTURE_PACKAGE_MAINTAINER() {
-        return GET_EXAMPLE_PACKAGE_MAINTAINERS().get(0);
+        List<PackageMaintainer> maintainers = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            User user = UserTestFixture.GET_PACKAGE_MAINTAINER(11 + i);
+
+            PackageMaintainer maintainer = new PackageMaintainer(i, user, repository, packageBag.getName(), false);
+            maintainer.setPackages(new HashSet<>(List.of(packageBag)));
+            maintainers.add(maintainer);
+        }
+
+        maintainers.get(2).setDeleted(true);
+        return maintainers;
     }
 }

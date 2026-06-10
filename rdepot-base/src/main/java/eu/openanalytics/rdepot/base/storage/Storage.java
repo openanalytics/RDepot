@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -76,4 +76,6 @@ public interface Storage<P extends Package> {
     File createFolderStructure(String path) throws CreateFolderStructureException;
 
     void gzipFile(final String source) throws GzipFileException;
+
+    void removeEmptyLinesFromEnd(String path) throws IOException;
 }

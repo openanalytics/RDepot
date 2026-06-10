@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,7 +20,9 @@
  */
 package eu.openanalytics.rdepot.test.unit.api.v2;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -30,7 +32,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
@@ -47,15 +48,12 @@ import eu.openanalytics.rdepot.test.unit.api.v2.mockstrategies.SuccessfulStrateg
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.MessageSource;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -64,7 +62,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.validation.Errors;
-import org.springframework.web.context.WebApplicationContext;
 
 @ContextConfiguration(classes = {ApiTestConfig.class})
 @WebMvcTest(RRepositoryController.class)
@@ -87,30 +84,10 @@ public class RRepositoryControllerTest extends ApiV2ControllerUnitTest {
     public static final String ERROR_REPOSITORY_MALFORMED_PATCH = JSON_PATH + "/error_repository_malformed_patch.json";
     public static final String EDITING_DELETED_RESOURCE_PATH = JSON_PATH + "/editing_deleted_resource.json";
 
-    private User user;
+    private final User user = UserTestFixture.GET_ADMIN();
 
     @Autowired
     MockMvc mockMvc;
-
-    @Autowired
-    ObjectMapper objectMapper;
-
-    @Autowired
-    MappingJackson2HttpMessageConverter jsonConverter;
-
-    @Autowired
-    MessageSource messageSource;
-
-    @Autowired
-    RRepositoryController rRepositoryController;
-
-    @Autowired
-    WebApplicationContext webApplicationContext;
-
-    @BeforeEach
-    public void initEach() {
-        user = UserTestFixture.GET_ADMIN();
-    }
 
     @Test
     @WithMockUser(authorities = {"admin", "user"})
@@ -270,7 +247,7 @@ public class RRepositoryControllerTest extends ApiV2ControllerUnitTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v2/manager/r/repositories")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(exampleJson))
-                .andExpect(status().isUnprocessableEntity()); // TODO: #32880 Unify validation errors approach and
+                .andExpect(status().isUnprocessableContent()); // TODO: #32880 Unify validation errors approach and
         // uncomment
         //			.andExpect(
         //					content().json(Files.readString(Path.of(ERROR_VALIDATION_REPOSITORY_NAME_PATH))));
@@ -388,7 +365,7 @@ public class RRepositoryControllerTest extends ApiV2ControllerUnitTest {
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/r/repositories/" + ID)
                         .contentType("application/json-patch+json")
                         .content(patchJson))
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isUnprocessableContent())
                 .andExpect(content().json(Files.readString(Path.of(ERROR_REPOSITORY_MALFORMED_PATCH))));
     }
 
@@ -416,7 +393,7 @@ public class RRepositoryControllerTest extends ApiV2ControllerUnitTest {
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/r/repositories/" + ID)
                         .contentType("application/json-patch+json")
                         .content(patchJson))
-                .andExpect(status().isUnprocessableEntity()); // TODO: #32880 Unify validation errors approach and
+                .andExpect(status().isUnprocessableContent()); // TODO: #32880 Unify validation errors approach and
         // uncomment
         //		.andExpect(
         //				content().json(Files.readString(Path.of(ERROR_VALIDATION_REPOSITORY_NAME_PATH))));

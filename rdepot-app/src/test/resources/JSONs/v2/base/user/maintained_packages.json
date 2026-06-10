@@ -1,0 +1,139 @@
+{
+    "code": 200,
+    "data": {
+        "content": [
+            {
+                "name": "A3",
+                "repositoryId": 2,
+                "repositoryName": "testrepo1",
+                "links": [
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/repositories/2"
+                    },
+                    {
+                        "rel": "A3 versions",
+                        "href": "http://localhost:8017/api/v2/manager/packages?repository=testrepo1&search=A3"
+                    }
+                ]
+            },
+            {
+                "name": "AnaCoDa",
+                "repositoryId": 2,
+                "repositoryName": "testrepo1",
+                "links": [
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/repositories/2"
+                    },
+                    {
+                        "rel": "AnaCoDa versions",
+                        "href": "http://localhost:8017/api/v2/manager/packages?repository=testrepo1&search=AnaCoDa"
+                    }
+                ]
+            },
+            {
+                "name": "Benchmarking",
+                "repositoryId": 5,
+                "repositoryName": "testrepo4",
+                "links": [
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/repositories/5"
+                    },
+                    {
+                        "rel": "Benchmarking versions",
+                        "href": "http://localhost:8017/api/v2/manager/packages?repository=testrepo4&search=Benchmarking"
+                    }
+                ]
+            },
+            {
+                "name": "accrued",
+                "repositoryId": 3,
+                "repositoryName": "testrepo2",
+                "links": [
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/repositories/3"
+                    },
+                    {
+                        "rel": "accrued versions",
+                        "href": "http://localhost:8017/api/v2/manager/packages?repository=testrepo2&search=accrued"
+                    }
+                ]
+            },
+            {
+                "name": "numpy",
+                "repositoryId": 10,
+                "repositoryName": "testrepo10",
+                "links": [
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/repositories/10"
+                    },
+                    {
+                        "rel": "numpy versions",
+                        "href": "http://localhost:8017/api/v2/manager/packages?repository=testrepo10&search=numpy"
+                    }
+                ]
+            },
+            {
+                "name": "setuptools",
+                "repositoryId": 9,
+                "repositoryName": "testrepo9",
+                "links": [
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/repositories/9"
+                    },
+                    {
+                        "rel": "setuptools versions",
+                        "href": "http://localhost:8017/api/v2/manager/packages?repository=testrepo9&search=setuptools"
+                    }
+                ]
+            },
+            {
+                "name": "usl",
+                "repositoryId": 3,
+                "repositoryName": "testrepo2",
+                "links": [
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/repositories/3"
+                    },
+                    {
+                        "rel": "usl versions",
+                        "href": "http://localhost:8017/api/v2/manager/packages?repository=testrepo2&search=usl"
+                    }
+                ]
+            }
+        ],
+        "links": [
+            {
+                "rel": "first",
+                "href": "http://localhost:8017/api/v2/manager/users/me/maintained-packages?page=0&size=7&sort=name,asc"
+            },
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/users/me/maintained-packages?page=0&size=7&sort=name,asc"
+            },
+            {
+                "rel": "next",
+                "href": "http://localhost:8017/api/v2/manager/users/me/maintained-packages?page=1&size=7&sort=name,asc"
+            },
+            {
+                "rel": "last",
+                "href": "http://localhost:8017/api/v2/manager/users/me/maintained-packages?page=1&size=7&sort=name,asc"
+            }
+        ],
+        "page": {
+            "number": 0,
+            "size": 7,
+            "totalElements": 10,
+            "totalPages": 2
+        }
+    },
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "status": "SUCCESS"
+}

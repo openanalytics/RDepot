@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -107,7 +107,8 @@ public class ApiV2SubmissionController extends ApiV2ReadingController<Submission
             @RequestParam(name = "repository", required = false) List<String> repositories,
             @RequestParam(name = "fromDate", required = false) Optional<String> fromDate,
             @RequestParam(name = "toDate", required = false) Optional<String> toDate,
-            @RequestParam(name = "search", required = false) Optional<String> search)
+            @RequestParam(name = "search", required = false) Optional<String> search,
+            @RequestParam(name = "binary", required = false) Optional<Boolean> binary)
             throws ApiException {
 
         User requester = userService
@@ -123,7 +124,7 @@ public class ApiV2SubmissionController extends ApiV2ReadingController<Submission
         Specification<Submission> specification = null;
 
         if (Objects.nonNull(states)) {
-            specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.ofState(states));
+            specification = SpecificationUtils.andComponent(null, SubmissionSpecs.ofState(states));
         }
 
         if (Objects.nonNull(technologies)) {
@@ -141,6 +142,10 @@ public class ApiV2SubmissionController extends ApiV2ReadingController<Submission
 
         if (toDateInstant.isPresent()) {
             specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.toDate(toDateInstant.get()));
+        }
+
+        if (binary.isPresent()) {
+            specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.isBinary(binary.get()));
         }
 
         if (search.isPresent()) {

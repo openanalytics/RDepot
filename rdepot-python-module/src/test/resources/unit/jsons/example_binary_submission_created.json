@@ -41,7 +41,11 @@
 				{
 					"rel": "packageList",
 					"href": "http://localhost/api/v2/manager/packages"
-				}
+				},
+                {
+                    "rel": "repository",
+                    "href": "http://localhost/api/v2/manager/python/repositories/123"
+                }
 			]
 		},
 		"changes": "Some changes 123",

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -47,15 +47,17 @@ public class CranStorageTest {
     @TempDir
     public Path tempDir;
 
+    private static final String TEST_REPO = "testrepo123";
     private static final String TEST_PACKAGES_DIR = "src/test/resources/eu/openanalytics/rdepot/repo/testpackages/";
     private static final String TEST_BINARY_PACKAGES_RECENT_DIR_LOWER_VERSION = "binary_packages/recent_4_2";
     private static final String TEST_BINARY_PACKAGES_RECENT_DIR_HIGHER_VERSION = "binary_packages/recent_4_5";
     private static final String TEST_BINARY_PACKAGES_ARCHIVE_DIR = "binary_packages/archive_4_2";
     private static final String EXPECTED_PACKAGES_DIR =
             "src/test/resources/eu/openanalytics/rdepot/repo/testpackages/expected_packages";
-    private static final String SOURCE_PATH = "target/generation/folder/src/contrib";
-    private static final String BINARY_PATH = "target/generation/folder/bin/linux/centos7/x86_64/4.2";
-    private static final String BINARY_HIGHER_VERSION_PATH = "target/generation/folder/bin/linux/centos7/x86_64/4.5";
+    private static final String SOURCE_PATH = "src/contrib";
+    private static final String BINARY_PATH = "bin/linux/centos7/x86_64/4.2";
+    private static final String BINARY_HIGHER_VERSION_PATH =
+            "target/generation/folder/" + TEST_REPO + "bin/linux/centos7/x86_64/4.5";
 
     private CranFileSystemStorageService storageService;
 
@@ -63,7 +65,6 @@ public class CranStorageTest {
 
     private File expectedPackagesDir;
 
-    private static final String TEST_REPO = "testrepo123";
     private static final String NON_EXISTING_REPO = "testrepo234";
 
     private MultipartFile[] getTestPackages(boolean archive, boolean expected) throws IOException {
@@ -203,7 +204,7 @@ public class CranStorageTest {
 
     @Test
     public void storePackages() throws Exception {
-        String randomId = RandomStringUtils.randomAlphabetic(16);
+        String randomId = RandomStringUtils.secure().nextAlphabetic(16);
         final MultipartFile[] recent = getRecentTestPackages();
         final MultipartFile[] archive = getArchiveTestPackages();
 
@@ -308,7 +309,7 @@ public class CranStorageTest {
 
     @Test
     public void deletePackages() throws Exception {
-        final String randomId = RandomStringUtils.randomAlphabetic(16);
+        String randomId = RandomStringUtils.secure().nextAlphabetic(16);
         final Path trash = Files.createDirectory(tempDir.resolve("TRASH_" + randomId));
         Files.createFile(trash.resolve("TRASH_DATABASE.txt"));
 

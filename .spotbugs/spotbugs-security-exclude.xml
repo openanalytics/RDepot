@@ -1,5 +1,9 @@
 <FindBugsFilter>
     <Match>
+        <Class name="eu.openanalytics.rdepot.config.WebApplicationConfig" />
+        <Bug pattern="PATH_TRAVERSAL_IN" />
+    </Match>
+    <Match>
         <Class name="~eu\.openanalytics\.rdepot\.(base|python|r)\.storage\.implementations\.(Common|Python|R)LocalStorage" />
         <Bug pattern="PATH_TRAVERSAL_IN" />
     </Match>
@@ -101,7 +105,7 @@
         <Bug pattern="PATH_TRAVERSAL_IN" />
     </Match>
     <Match>
-        <Class name="eu.openanalytics.rdepot.repo.python.storage.PythonFileSystemStorageService" />
+        <Class name="eu.openanalytics.rdepot.repo.python.storage.implementations.PythonFileSystemStorageService" />
         <Bug pattern="PATH_TRAVERSAL_IN" />
     </Match>
     <Match>

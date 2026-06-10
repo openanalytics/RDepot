@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -38,8 +38,10 @@ import eu.openanalytics.rdepot.r.technology.RLanguage;
 import jakarta.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serial;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -52,9 +54,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.restclient.RestTemplateBuilder;
 import org.springframework.boot.ssl.SslBundles;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.boot.web.embedded.tomcat.TomcatConnectorCustomizer;
+import org.springframework.boot.tomcat.TomcatConnectorCustomizer;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -68,8 +70,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -77,6 +77,8 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.validation.DefaultMessageCodesResolver;
@@ -86,7 +88,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
@@ -182,7 +183,7 @@ public class WebApplicationConfig implements WebMvcConfigurer, ApplicationContex
                     env.getProperty("repository.api.simple.password"));
         }
         if (repoApiSslEnabled) {
-            builder = builder.setSslBundle(sslBundles.getBundle(repoApiSslBundle));
+            builder = builder.sslBundle(sslBundles.getBundle(repoApiSslBundle));
         }
         return builder.build();
     }
@@ -297,12 +298,6 @@ public class WebApplicationConfig implements WebMvcConfigurer, ApplicationContex
     }
 
     @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.add(jsonConverter());
-        converters.add(byteConverter());
-    }
-
-    @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(localeChangeInterceptor());
     }
@@ -318,19 +313,9 @@ public class WebApplicationConfig implements WebMvcConfigurer, ApplicationContex
     }
 
     @Bean
-    MappingJackson2HttpMessageConverter jsonConverter() {
-        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        List<MediaType> mediaTypes = new ArrayList<>(converter.getSupportedMediaTypes());
-        mediaTypes.add(MediaType.valueOf("application/json-patch+json"));
-        converter.setSupportedMediaTypes(mediaTypes);
-        converter.setObjectMapper(objectMapper());
-        return converter;
-    }
-
-    @Bean
     ByteArrayHttpMessageConverter byteConverter() {
         ByteArrayHttpMessageConverter converter = new ByteArrayHttpMessageConverter();
-        List<MediaType> mediaTypes = new ArrayList<MediaType>();
+        List<MediaType> mediaTypes = new ArrayList<>();
         mediaTypes.add(MediaType.valueOf("application/gzip"));
         mediaTypes.add(MediaType.valueOf("application/pdf"));
         converter.setSupportedMediaTypes(mediaTypes);
@@ -347,6 +332,7 @@ public class WebApplicationConfig implements WebMvcConfigurer, ApplicationContex
     @Override
     public MessageCodesResolver getMessageCodesResolver() {
         return new DefaultMessageCodesResolver() {
+            @Serial
             private static final long serialVersionUID = 4328458877485113449L;
 
             @Override
@@ -392,7 +378,7 @@ public class WebApplicationConfig implements WebMvcConfigurer, ApplicationContex
 
     @Bean
     ServletListenerRegistrationBean<HttpSessionEventPublisher> httpSessionEventPublisher() {
-        return new ServletListenerRegistrationBean<HttpSessionEventPublisher>(new HttpSessionEventPublisher());
+        return new ServletListenerRegistrationBean<>(new HttpSessionEventPublisher());
     }
 
     @Bean
@@ -424,13 +410,16 @@ public class WebApplicationConfig implements WebMvcConfigurer, ApplicationContex
 
     @Bean
     PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
-    }
 
-    @SuppressWarnings("deprecation")
-    @Override
-    public void configurePathMatch(PathMatchConfigurer configurer) {
-        configurer.setUseTrailingSlashMatch(true);
+        Map<String, PasswordEncoder> encoders = new HashMap<>();
+        encoders.put("bcrypt", new BCryptPasswordEncoder());
+        encoders.put("noop", NoOpPasswordEncoder.getInstance());
+
+        DelegatingPasswordEncoder delegatingPasswordEncoder = new DelegatingPasswordEncoder("bcrypt", encoders);
+
+        delegatingPasswordEncoder.setDefaultPasswordEncoderForMatches(new BCryptPasswordEncoder());
+
+        return delegatingPasswordEncoder;
     }
 
     @Override

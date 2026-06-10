@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -96,18 +96,18 @@ public class RPackageService extends PackageService<RPackage> {
 
         for (RPackage packageBag : packages) {
 
-            List<RPackage> latestVersions = latestVersionsMap.get(packageBag.getName());
+            List<RPackage> latestVersions = latestVersionsMap.get(packageBag.getPackageWithBinaryProperties());
             if (latestVersions == null) {
-                latestVersionsMap.add(packageBag.getName(), packageBag);
+                latestVersionsMap.add(packageBag.getPackageWithBinaryProperties(), packageBag);
                 continue;
             }
 
             new ArrayList<>(latestVersions).forEach(latestPackage -> {
-                int comparison = comparePackages(packageBag, latestPackage);
+                int comparison = packageBag.compareTo(latestPackage);
                 if (comparison == 1) {
                     latestVersions.remove(latestPackage);
                     latestVersions.add(packageBag);
-                } else if (comparison == 2) {
+                } else if (comparison == 0) {
                     latestVersions.add(packageBag);
                 }
             });
@@ -116,16 +116,5 @@ public class RPackageService extends PackageService<RPackage> {
         return latestVersionsMap.values().stream()
                 .flatMap(Collection::stream)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
-    }
-
-    private int comparePackages(RPackage currentPackage, RPackage toComparePackage) {
-
-        int comparisonResult = currentPackage.compareTo(toComparePackage);
-
-        if (currentPackage.isBinary() && toComparePackage.isBinary() && comparisonResult == 0) {
-            return 2;
-        }
-
-        return comparisonResult;
     }
 }

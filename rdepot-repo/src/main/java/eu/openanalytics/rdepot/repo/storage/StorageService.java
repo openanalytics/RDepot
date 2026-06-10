@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,7 +20,13 @@
  */
 package eu.openanalytics.rdepot.repo.storage;
 
-import eu.openanalytics.rdepot.repo.exception.*;
+import eu.openanalytics.rdepot.repo.exception.EmptyTrashException;
+import eu.openanalytics.rdepot.repo.exception.GetRepositoryVersionException;
+import eu.openanalytics.rdepot.repo.exception.InitTrashDirectoryException;
+import eu.openanalytics.rdepot.repo.exception.MoveToTrashException;
+import eu.openanalytics.rdepot.repo.exception.RestoreRepositoryException;
+import eu.openanalytics.rdepot.repo.exception.SetRepositoryVersionException;
+import eu.openanalytics.rdepot.repo.exception.StorageException;
 import eu.openanalytics.rdepot.repo.model.SynchronizeRepositoryRequestBody;
 import eu.openanalytics.rdepot.repo.model.Technology;
 import java.io.File;

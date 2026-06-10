@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -21,7 +21,6 @@
 package eu.openanalytics.rdepot.base.security.backends.oauth2;
 
 import java.io.IOException;
-import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serial;
@@ -52,13 +51,14 @@ public class RDepotAuthenticationToken extends AbstractAuthenticationToken {
         return principal;
     }
 
-    private void writeObject(ObjectOutputStream out)
-            throws IOException, ClassNotFoundException, NotSerializableException {
+    @Serial
+    private void writeObject(ObjectOutputStream out) throws IOException, ClassNotFoundException {
         out.defaultWriteObject();
         out.writeObject(getPrincipal());
     }
 
-    private void readObject(ObjectInputStream in) throws IOException, NotSerializableException, ClassNotFoundException {
+    @Serial
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         principal = in.readObject();
     }

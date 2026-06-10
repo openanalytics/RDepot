@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -27,10 +27,11 @@ public enum RequestType {
     GET_UNAUTHENTICATED("getUnauthenticated"),
     GET_UNAUTHORIZED("getUnauthorized"),
     GET_OTHER_RESOURCE("getOtherResource"),
+    GET_RESOURCE_AFTER_SUBMISSION("getResourceAfterSubmission"),
     GET_AFTER_NEW_SUBMISSION("getAfterNewSubmission"),
     PATCH("patch"),
-    PATCH_OTHER_RESOURCE("pathOtherResource"),
-    PATCH_UNAUTHENTICATED("patchUnautenticated"),
+    PATCH_OTHER_RESOURCE("patchOtherResource"),
+    PATCH_UNAUTHENTICATED("patchUnauthenticated"),
     PATCH_UNAUTHORIZED("patchUnauthorized"),
     POST("post"),
     POST_UNAUTHENTICATED("postUnauthenticated"),

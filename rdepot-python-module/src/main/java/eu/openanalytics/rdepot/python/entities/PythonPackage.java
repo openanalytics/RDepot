@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -40,71 +40,71 @@ public class PythonPackage extends Package {
     @Serial
     private static final long serialVersionUID = -3373259770906796151L;
 
-    @Column(name = "author_email", table = "pythonpackage")
+    @Column(name = "author_email", table = "pythonpackage", columnDefinition = "TEXT")
     private String authorEmail = "";
 
-    @Column(name = "classifier", table = "pythonpackage")
+    @Column(name = "classifier", table = "pythonpackage", columnDefinition = "TEXT")
     private String classifiers = "";
 
-    @Column(name = "home_page", table = "pythonpackage")
+    @Column(name = "home_page", table = "pythonpackage", columnDefinition = "TEXT")
     private String homePage = "";
 
-    @Column(name = "keywords", table = "pythonpackage")
+    @Column(name = "keywords", table = "pythonpackage", columnDefinition = "TEXT")
     private String keywords = "";
 
-    @Column(name = "license", table = "pythonpackage")
+    @Column(name = "license", table = "pythonpackage", columnDefinition = "TEXT")
     private String license = "";
 
-    @Column(name = "maintainer", table = "pythonpackage")
+    @Column(name = "maintainer", table = "pythonpackage", columnDefinition = "TEXT")
     private String maintainer = "";
 
-    @Column(name = "maintainer_email", table = "pythonpackage")
+    @Column(name = "maintainer_email", table = "pythonpackage", columnDefinition = "TEXT")
     private String maintainerEmail = "";
 
-    @Column(name = "platform", table = "pythonpackage")
+    @Column(name = "platform", table = "pythonpackage", columnDefinition = "TEXT")
     private String platform = "";
 
-    @Column(name = "project_url", table = "pythonpackage")
+    @Column(name = "project_url", table = "pythonpackage", columnDefinition = "TEXT")
     private String projectUrl = "";
 
-    @Column(name = "provides_extra", table = "pythonpackage")
+    @Column(name = "provides_extra", table = "pythonpackage", columnDefinition = "TEXT")
     private String providesExtra = "";
 
-    @Column(name = "requires_dist", table = "pythonpackage")
+    @Column(name = "requires_dist", table = "pythonpackage", columnDefinition = "TEXT")
     private String requiresDist = "";
 
-    @Column(name = "requires_external", table = "pythonpackage")
+    @Column(name = "requires_external", table = "pythonpackage", columnDefinition = "TEXT")
     private String requiresExternal = "";
 
-    @Column(name = "requires_python", table = "pythonpackage")
+    @Column(name = "requires_python", table = "pythonpackage", columnDefinition = "TEXT")
     private String requiresPython = "";
 
-    @Column(name = "summary", table = "pythonpackage")
+    @Column(name = "summary", table = "pythonpackage", columnDefinition = "TEXT")
     private String summary = "";
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "repository_id", nullable = false)
     private PythonRepository repository;
 
-    @Column(name = "hash", nullable = false, table = "pythonpackage")
+    @Column(name = "hash", nullable = false, table = "pythonpackage", columnDefinition = "TEXT")
     private String hash;
 
-    @Column(name = "normalized_name", nullable = false, table = "pythonpackage")
+    @Column(name = "normalized_name", nullable = false, table = "pythonpackage", columnDefinition = "TEXT")
     private String normalizedName;
 
-    @Column(name = "compatibility_tags", table = "pythonpackage")
+    @Column(name = "compatibility_tags", table = "pythonpackage", columnDefinition = "TEXT")
     private String compatibilityTags;
 
-    @Column(name = "build_tag", table = "pythonpackage")
+    @Column(name = "build_tag", table = "pythonpackage", columnDefinition = "TEXT")
     private String buildTag;
 
-    @Column(name = "python_tag", table = "pythonpackage")
+    @Column(name = "python_tag", table = "pythonpackage", columnDefinition = "TEXT")
     private String pythonTag;
 
-    @Column(name = "abi_tag", table = "pythonpackage")
+    @Column(name = "abi_tag", table = "pythonpackage", columnDefinition = "TEXT")
     private String abiTag;
 
-    @Column(name = "platform_tag", table = "pythonpackage")
+    @Column(name = "platform_tag", table = "pythonpackage", columnDefinition = "TEXT")
     private String platformTag;
 
     public PythonPackage(PythonPackage packageBag) {
@@ -208,5 +208,10 @@ public class PythonPackage extends Package {
                 : this.getBuildTag() + "-" + this.getPythonTag() + "-" + this.getAbiTag() + "-" + this.getPlatformTag();
 
         return this.getName() + "-" + this.getVersion() + "-" + tags + ".whl";
+    }
+
+    public String getNormalizedNameWithVersion() {
+        if (this.getVersion() == null) return this.getNormalizedName() + "-latest";
+        else return this.getNormalizedName() + "-" + this.getVersion();
     }
 }

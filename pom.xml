@@ -6,7 +6,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.openanalytics</groupId>
 	<artifactId>rdepot</artifactId>
-	<version>2.7.0</version>
+	<version>2.8.0</version>
 	<packaging>pom</packaging>
 	<name>RDepot</name>
 	<description>Enterprise Management of Package Repositories</description>
@@ -28,6 +28,12 @@
 		<maven.compiler.target>17</maven.compiler.target>
 		<dependency.version.lombok>1.18.32</dependency.version.lombok>
 	</properties>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>4.0.0</version>
+		<relativePath /> <!-- lookup parent from repository -->
+	</parent>
 	<distributionManagement>
 		<snapshotRepository>
 			<id>oa-nexus-snapshots</id>
@@ -47,39 +53,59 @@
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-actuator</artifactId>
-				<version>3.2.5</version>
+				<version>4.0.0</version>
 			</dependency>
+            <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-webmvc-test -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-webmvc-test</artifactId>
+                <version>4.0.0</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-tomcat -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-tomcat</artifactId>
+                <version>4.0.0</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security-test -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-security-test</artifactId>
+                <version>4.0.0</version>
+                <scope>test</scope>
+            </dependency>
 			<!--
 			https://mvnrepository.com/artifact/org.springframework.security/spring-security-oauth2-resource-server -->
 			<dependency>
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-oauth2-resource-server</artifactId>
-				<version>6.2.8</version>
+				<version>7.0.2</version>
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/com.auth0/java-jwt -->
 			<dependency>
 				<groupId>com.auth0</groupId>
 				<artifactId>java-jwt</artifactId>
-				<version>4.4.0</version>
+				<version>4.5.0</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-annotations</artifactId>
+				<version>2.20</version>
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter -->
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter</artifactId>
-				<version>3.2.5</version>
+				<version>4.0.0</version>
 			</dependency>
 			<!--
 			https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui -->
 			<dependency>
 				<groupId>org.springdoc</groupId>
 				<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-				<version>2.5.0</version>
-			</dependency>
-			<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
-			<dependency>
-				<groupId>com.fasterxml.jackson.core</groupId>
-				<artifactId>jackson-annotations</artifactId>
-				<version>2.17.0</version>
+				<version>3.0.0</version>
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/jakarta.annotation/jakarta.annotation-api -->
 			<dependency>
@@ -92,7 +118,7 @@
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-security</artifactId>
-				<version>3.2.5</version>
+				<version>4.0.0</version>
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
 			<dependency>
@@ -101,20 +127,39 @@
 				<version>${dependency.version.lombok}</version>
 				<scope>provided</scope>
 			</dependency>
+			<dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-bom</artifactId>
+                <version>7.0.2</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
 			<!--
 			https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa -->
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-data-jpa</artifactId>
-				<version>3.2.5</version>
+				<version>4.0.0</version>
 			</dependency>
 			<!--
 			https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-hateoas -->
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-hateoas</artifactId>
-				<version>3.2.5</version>
+				<version>4.0.0</version>
 			</dependency>
+            <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-json -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-json</artifactId>
+                <version>4.0.0</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.eclipse.parsson/jakarta.json -->
+            <dependency>
+                <groupId>org.eclipse.parsson</groupId>
+                <artifactId>jakarta.json</artifactId>
+                <version>1.1.7</version>
+            </dependency>
 			<!-- https://mvnrepository.com/artifact/jakarta.json/jakarta.json-api -->
 			<dependency>
 				<groupId>jakarta.json</groupId>
@@ -125,21 +170,40 @@
 			<dependency>
 				<groupId>org.eclipse.parsson</groupId>
 				<artifactId>parsson</artifactId>
-				<version>1.1.6</version>
+				<version>1.1.7</version>
 			</dependency>
 			<!--
 			https://mvnrepository.com/artifact/org.springframework.security/spring-security-oauth2-client -->
 			<dependency>
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-oauth2-client</artifactId>
-				<version>6.2.8</version>
+				<version>7.0.2</version>
 			</dependency>
 			<!--
 			https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail -->
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-mail</artifactId>
+				<version>4.0.0</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/commons-validator/commons-validator -->
+			<dependency>
+				<groupId>commons-validator</groupId>
+				<artifactId>commons-validator</artifactId>
+				<version>1.8.0</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>3.2.5</version>
+				<scope>test</scope>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/org.yaml/snakeyaml -->
+			<dependency>
+				<groupId>org.yaml</groupId>
+				<artifactId>snakeyaml</artifactId>
+				<version>2.5</version>
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-compress -->
 			<dependency>
@@ -171,26 +235,12 @@
 				<artifactId>commons-collections4</artifactId>
 				<version>4.4</version>
 			</dependency>
-			<!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
-			<dependency>
-				<groupId>org.junit.jupiter</groupId>
-				<artifactId>junit-jupiter-api</artifactId>
-				<version>5.10.2</version>
-				<scope>test</scope>
-			</dependency>
-			<!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
-			<dependency>
-				<groupId>org.mockito</groupId>
-				<artifactId>mockito-core</artifactId>
-				<version>5.11.0</version>
-				<scope>test</scope>
-			</dependency>
 			<!--
 			https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test -->
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-test</artifactId>
-				<version>3.2.5</version>
+				<version>4.0.0</version>
 				<scope>test</scope>
 				<exclusions>
 					<exclusion>
@@ -199,46 +249,46 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+			<!-- Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-restclient -->
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-restclient</artifactId>
+				<version>4.0.0</version>
+				<scope>compile</scope>
+			</dependency>
 			<!--
 			https://mvnrepository.com/artifact/org.springframework.security/spring-security-test -->
 			<dependency>
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-test</artifactId>
-				<version>6.2.8</version>
+				<version>7.0.2</version>
 				<scope>test</scope>
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web -->
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-web</artifactId>
-				<version>3.2.5</version>
+				<version>4.0.0</version>
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
 			<dependency>
 				<groupId>org.postgresql</groupId>
 				<artifactId>postgresql</artifactId>
-				<version>42.7.3</version>
+				<version>42.7.11</version>
 			</dependency>
 			<!--
 			https://mvnrepository.com/artifact/org.springframework.security/spring-security-oauth2-jose -->
 			<dependency>
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-oauth2-jose</artifactId>
-				<version>6.2.8</version>
+				<version>7.0.2</version>
 			</dependency>
-
-			<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-test -->
+			<!-- Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-liquibase -->
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-test</artifactId>
-				<version>3.2.5</version>
-				<scope>test</scope>
-			</dependency>
-			<!-- https://mvnrepository.com/artifact/org.liquibase/liquibase-core -->
-			<dependency>
-				<groupId>org.liquibase</groupId>
-				<artifactId>liquibase-core</artifactId>
-				<version>4.27.0</version>
+				<artifactId>spring-boot-starter-liquibase</artifactId>
+				<version>4.0.0</version>
+				<scope>compile</scope>
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api -->
 			<dependency>
@@ -256,7 +306,7 @@
 			<dependency>
 				<groupId>io.rest-assured</groupId>
 				<artifactId>rest-assured</artifactId>
-				<version>5.4.0</version>
+				<version>6.0.0</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
@@ -287,14 +337,27 @@
 			<dependency>
 				<groupId>com.sun.mail</groupId>
 				<artifactId>jakarta.mail</artifactId>
-				<version>2.0.1</version>
+				<version>2.0.2</version>
 				<scope>test</scope>
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/com.icegreen/greenmail-junit5 -->
 			<dependency>
 				<groupId>com.icegreen</groupId>
 				<artifactId>greenmail-junit5</artifactId>
-				<version>2.0.1</version>
+				<version>2.1.8</version>
+				<scope>test</scope>
+				<exclusions>
+					<exclusion>
+						<groupId>org.junit.jupiter</groupId>
+						<artifactId>junit-jupiter-api</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<!-- Source: https://mvnrepository.com/artifact/org.testcontainers/testcontainers-junit-jupiter -->
+			<dependency>
+				<groupId>org.testcontainers</groupId>
+				<artifactId>testcontainers-junit-jupiter</artifactId>
+				<version>2.0.3</version>
 				<scope>test</scope>
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
@@ -320,7 +383,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-configuration-processor</artifactId>
 				<optional>true</optional>
-				<version>3.2.5</version>
+				<version>4.0.0</version>
 			</dependency>
 			<!-- https://github.com/netplex/json-smart-v2/issues/240 -->
 			<dependency>
@@ -389,7 +452,7 @@
 							<licenseSet>
 								<header>LICENSE_HEADER</header>
 								<properties>
-									<year>2025</year>
+									<year>2026</year>
 								</properties>
 								<excludes>
 									<exclude>**/*.md</exclude>
@@ -407,11 +470,21 @@
 						</licenseSets>
 					</configuration>
 				</plugin>
-
 				<plugin>
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-maven-plugin</artifactId>
-					<version>3.2.0</version>
+					<version>4.0.0</version>
+					<configuration>
+						<mainClass>eu.openanalytics.rdepot.Application</mainClass>
+						<layout>WAR</layout>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>repackage</goal>
+							</goals>
+						</execution>
+					</executions>
 				</plugin>
 				<plugin>
 					<groupId>org.owasp</groupId>

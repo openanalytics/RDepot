@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -28,16 +28,15 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2ErrorController;
+import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2NewsfeedEventController;
 import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2PackageMaintainerController;
 import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
-import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.test.context.ApiTestConfig;
 import eu.openanalytics.rdepot.test.fixture.PackageMaintainerTestFixture;
@@ -54,21 +53,19 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.MessageSource;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.context.WebApplicationContext;
 
 @ContextConfiguration(classes = {ApiTestConfig.class})
 @WebMvcTest(ApiV2PackageMaintainerController.class)
@@ -98,26 +95,8 @@ public class PackageMaintainerControllerUnitTest extends ApiV2ControllerUnitTest
     @Autowired
     MockMvc mockMvc;
 
-    @Autowired
-    ObjectMapper objectMapper;
-
-    @Autowired
-    MappingJackson2HttpMessageConverter jsonConverter;
-
-    @Autowired
-    MessageSource messageSource;
-
-    @Autowired
-    ApiV2PackageMaintainerController packageMaintainerController;
-
-    @Autowired
-    WebApplicationContext webApplicationContext;
-
-    @Autowired
-    StaticMessageResolver staticMessageResolver;
-
-    @Autowired
-    ApiV2ErrorController errorController;
+    @MockitoBean
+    ApiV2NewsfeedEventController apiV2NewsfeedEventController;
 
     @BeforeEach
     public void initEach() {
@@ -265,7 +244,7 @@ public class PackageMaintainerControllerUnitTest extends ApiV2ControllerUnitTest
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v2/manager/package-maintainers")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(exampleJson))
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isUnprocessableContent())
                 .andExpect(content().json(Files.readString(Path.of(ERROR_VALIDATION_PACKAGEMAINTAINER_PATH))));
     }
 
@@ -461,7 +440,7 @@ public class PackageMaintainerControllerUnitTest extends ApiV2ControllerUnitTest
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/package-maintainers/" + id)
                         .contentType("application/json-patch+json")
                         .content(patchJson))
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isUnprocessableContent())
                 .andExpect(content().json(Files.readString(Path.of(ERROR_PACKAGEMAINTAINER_MALFORMED_PATCH))));
     }
 

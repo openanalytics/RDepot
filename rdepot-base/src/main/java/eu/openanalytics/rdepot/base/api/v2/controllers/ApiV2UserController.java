@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -24,24 +24,30 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.openanalytics.rdepot.base.api.v2.converters.UserDtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.converters.exceptions.EntityResolutionException;
+import eu.openanalytics.rdepot.base.api.v2.dtos.MaintainedPackageDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.ResponseDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.RoleDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.UserDto;
 import eu.openanalytics.rdepot.base.api.v2.exceptions.ApiException;
 import eu.openanalytics.rdepot.base.api.v2.exceptions.ApplyPatchException;
 import eu.openanalytics.rdepot.base.api.v2.exceptions.MalformedPatchException;
+import eu.openanalytics.rdepot.base.api.v2.exceptions.UnrecognizedQueryParameterException;
 import eu.openanalytics.rdepot.base.api.v2.exceptions.UserNotAuthorized;
 import eu.openanalytics.rdepot.base.api.v2.exceptions.UserNotFound;
+import eu.openanalytics.rdepot.base.api.v2.hateoas.MaintainedPackageAssembler;
 import eu.openanalytics.rdepot.base.api.v2.hateoas.RoleCollectionModelAssembler;
 import eu.openanalytics.rdepot.base.api.v2.hateoas.UserModelAssembler;
 import eu.openanalytics.rdepot.base.api.v2.resolvers.CommonPageableSortResolver;
 import eu.openanalytics.rdepot.base.api.v2.resolvers.DtoResolvedPageable;
+import eu.openanalytics.rdepot.base.api.v2.resolvers.PackagePageableSortResolver;
 import eu.openanalytics.rdepot.base.api.v2.validation.PageableValidator;
+import eu.openanalytics.rdepot.base.api.v2.validation.ViewPageableValidator;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.entities.UserSettings;
 import eu.openanalytics.rdepot.base.exception.NoAdminLeftException;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
+import eu.openanalytics.rdepot.base.service.MaintainedPackageService;
 import eu.openanalytics.rdepot.base.service.RoleService;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.UserSettingsService;
@@ -64,6 +70,7 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -101,6 +108,11 @@ public class ApiV2UserController extends ApiV2Controller<User, UserDto> {
     private final CommonPageableSortResolver pageableSortResolver;
     private final SecurityMediator securityMediator;
     private final StrategyExecutor strategyExecutor;
+    private final MaintainedPackageService maintainedPackageService;
+    private final PagedResourcesAssembler<MaintainedPackageDto> maintainedPackagesPagedModelAssembler;
+    private final MaintainedPackageAssembler maintainedPackageAssembler;
+    private final ViewPageableValidator viewPageableValidator;
+    private final PackagePageableSortResolver packagePageableSortResolver;
 
     public ApiV2UserController(
             MessageSource messageSource,
@@ -117,7 +129,12 @@ public class ApiV2UserController extends ApiV2Controller<User, UserDto> {
             PageableValidator pageableValidator,
             CommonPageableSortResolver pageableSortResolver,
             SecurityMediator securityMediator,
-            StrategyExecutor strategyExecutor) {
+            StrategyExecutor strategyExecutor,
+            MaintainedPackageService maintainedPackageService,
+            PagedResourcesAssembler<MaintainedPackageDto> maintainedPackagesPagedModelAssembler,
+            MaintainedPackageAssembler maintainedPackageAssembler,
+            ViewPageableValidator viewPageableValidator,
+            PackagePageableSortResolver packagePageableSortResolver) {
 
         super(
                 messageSource,
@@ -138,6 +155,11 @@ public class ApiV2UserController extends ApiV2Controller<User, UserDto> {
         this.pageableSortResolver = pageableSortResolver;
         this.securityMediator = securityMediator;
         this.strategyExecutor = strategyExecutor;
+        this.maintainedPackageService = maintainedPackageService;
+        this.maintainedPackagesPagedModelAssembler = maintainedPackagesPagedModelAssembler;
+        this.packagePageableSortResolver = packagePageableSortResolver;
+        this.maintainedPackageAssembler = maintainedPackageAssembler;
+        this.viewPageableValidator = viewPageableValidator;
     }
 
     /**
@@ -166,7 +188,7 @@ public class ApiV2UserController extends ApiV2Controller<User, UserDto> {
         Specification<User> specification = null;
 
         if (Objects.nonNull(roles)) {
-            specification = SpecificationUtils.andComponent(specification, UserSpecs.ofRole(roles));
+            specification = SpecificationUtils.andComponent(null, UserSpecs.ofRole(roles));
         }
 
         if (active.isPresent()) {
@@ -234,6 +256,44 @@ public class ApiV2UserController extends ApiV2Controller<User, UserDto> {
         UserSettings settings = userSettingsService.getUserSettings(requester);
         requester.setUserSettings(settings);
         return handleSuccessForSingleEntity(requester, requester);
+    }
+
+    /**
+     * Fetches data about packages maintained by the user themselves.
+     * @param principal used for authorization
+     * @throws UserNotAuthorized
+     * @throws UnrecognizedQueryParameterException
+     */
+    @GetMapping("/me/maintained-packages")
+    @PreAuthorize("hasAuthority('packagemaintainer')")
+    @Operation(operationId = "getMaintainedPackages")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody ResponseDto<PagedModel<EntityModel<MaintainedPackageDto>>> getMaintainedPackages(
+            @ParameterObject Pageable pageable,
+            Principal principal,
+            @RequestParam(name = "packageName", required = false) Optional<String> packageName,
+            @RequestParam(name = "repositoryId", required = false) Optional<Integer> repositoryId,
+            @RequestParam(name = "repositoryName", required = false) Optional<String> repositoryName)
+            throws UserNotAuthorized, UnrecognizedQueryParameterException {
+
+        User requester = userService
+                .findActiveByLogin(principal.getName())
+                .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
+
+        final DtoResolvedPageable resolvedPageable = packagePageableSortResolver.resolve(pageable);
+        viewPageableValidator.validate(MaintainedPackageDto.class, resolvedPageable);
+
+        Page<MaintainedPackageDto> page = maintainedPackageService.findMaintainedPackages(
+                requester.getId(),
+                packageName.orElse(null),
+                repositoryId.orElse(null),
+                repositoryName.orElse(null),
+                resolvedPageable);
+
+        PagedModel<EntityModel<MaintainedPackageDto>> pagedPackages =
+                maintainedPackagesPagedModelAssembler.toModel(page, maintainedPackageAssembler);
+
+        return ResponseDto.generateSuccessBody(messageSource, locale, pagedPackages);
     }
 
     /**

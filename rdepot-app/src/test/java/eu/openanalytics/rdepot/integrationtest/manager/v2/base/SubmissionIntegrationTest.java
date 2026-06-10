@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -40,6 +40,7 @@ public class SubmissionIntegrationTest extends IntegrationTest {
                 .fromDate("2020-03-27")
                 .toDate("2020-03-28")
                 .search("Nikola")
+                .binary(true)
                 .build();
     }
 
@@ -80,6 +81,19 @@ public class SubmissionIntegrationTest extends IntegrationTest {
                 .token(USER_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
                 .expectedJsonPath("/v2/base/submissions/submissions_by_technology.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getBinarySubmissions() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .urlSuffix("?binary=" + testData.isBinary() + "&sort=id,asc")
+                .statusCode(200)
+                .token(USER_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/base/submissions/binary_submissions.json")
                 .build();
         testEndpoint(requestBody);
     }

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -21,6 +21,7 @@
 package eu.openanalytics.rdepot.r.api.v2.dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import eu.openanalytics.rdepot.base.api.v2.dtos.PackageDto;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import lombok.Data;
@@ -75,5 +76,10 @@ public class RPackageDto extends PackageDto {
     @JsonIgnore
     public RPackage getEntity() {
         return (RPackage) entity;
+    }
+
+    @JsonProperty("rversion")
+    public String getRVersion() {
+        return rVersion;
     }
 }

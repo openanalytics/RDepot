@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -47,10 +47,10 @@ public class UserSettings extends Resource implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "language", nullable = false)
+    @Column(name = "language", nullable = false, columnDefinition = "TEXT")
     private String language;
 
-    @Column(name = "theme", nullable = false)
+    @Column(name = "theme", nullable = false, columnDefinition = "TEXT")
     private String theme;
 
     @Column(name = "page_size", nullable = false)

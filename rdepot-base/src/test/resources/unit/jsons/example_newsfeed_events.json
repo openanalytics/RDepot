@@ -1,0 +1,217 @@
+{
+    "code": 200,
+    "data": {
+        "content": [
+            {
+                "changedProperties": [],
+                "eventType": "create",
+                "id": 1,
+                "relatedResource": {
+                    "active": true,
+                    "binary": false,
+                    "deleted": false,
+                    "id": 100,
+                    "name": "TestPackage100",
+                    "repository": {
+                        "id": 123,
+                        "lastPublicationSuccessful": true,
+                        "name": "Test RDepot Repository",
+                        "publicationUri": "http://localhost/repo/testrepo123",
+                        "published": true,
+                        "requiresAuthentication": false,
+                        "technology": "RDepot"
+                    },
+                    "source": "100test_package.tar.gz",
+                    "submission": {
+                        "id": 100,
+                        "state": "ACCEPTED"
+                    },
+                    "technology": "RDepot",
+                    "user": {
+                        "email": "packagemaintainer@example.org",
+                        "id": 123,
+                        "login": "testpackagemaintainer",
+                        "name": "Test Package Maintainer"
+                    },
+                    "version": "4.5.6"
+                },
+                "resourceId": 100,
+                "resourceType": "PACKAGE",
+                "technology": "RDepot version: unknown",
+                "user": {
+                    "email": "testuser@example.org",
+                    "id": 123,
+                    "login": "testuser",
+                    "name": "Test User"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost/api/v2/manager/events/1"
+                    },
+                    {
+                        "rel": "eventList",
+                        "href": "http://localhost/api/v2/manager/events"
+                    }
+                ]
+            },
+            {
+                "changedProperties": [],
+                "eventType": "upload",
+                "id": 2,
+                "relatedResource": {
+                    "active": true,
+                    "binary": false,
+                    "deleted": false,
+                    "id": 100,
+                    "name": "TestPackage100",
+                    "repository": {
+                        "id": 123,
+                        "lastPublicationSuccessful": true,
+                        "name": "Test RDepot Repository",
+                        "publicationUri": "http://localhost/repo/testrepo123",
+                        "published": true,
+                        "requiresAuthentication": false,
+                        "technology": "RDepot"
+                    },
+                    "source": "100test_package.tar.gz",
+                    "submission": {
+                        "id": 100,
+                        "state": "ACCEPTED"
+                    },
+                    "technology": "RDepot",
+                    "user": {
+                        "email": "packagemaintainer@example.org",
+                        "id": 123,
+                        "login": "testpackagemaintainer",
+                        "name": "Test Package Maintainer"
+                    },
+                    "version": "4.5.6"
+                },
+                "resourceId": 100,
+                "resourceType": "PACKAGE",
+                "technology": "RDepot version: unknown",
+                "user": {
+                    "email": "testuser@example.org",
+                    "id": 123,
+                    "login": "testuser",
+                    "name": "Test User"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost/api/v2/manager/events/2"
+                    },
+                    {
+                        "rel": "eventList",
+                        "href": "http://localhost/api/v2/manager/events"
+                    }
+                ]
+            },
+            {
+                "changedProperties": [],
+                "eventType": "update",
+                "id": 3,
+                "relatedResource": {
+                    "active": true,
+                    "binary": false,
+                    "deleted": false,
+                    "id": 100,
+                    "name": "TestPackage100",
+                    "repository": {
+                        "id": 123,
+                        "lastPublicationSuccessful": true,
+                        "name": "Test RDepot Repository",
+                        "publicationUri": "http://localhost/repo/testrepo123",
+                        "published": true,
+                        "requiresAuthentication": false,
+                        "technology": "RDepot"
+                    },
+                    "source": "100test_package.tar.gz",
+                    "submission": {
+                        "id": 100,
+                        "state": "ACCEPTED"
+                    },
+                    "technology": "RDepot",
+                    "user": {
+                        "email": "packagemaintainer@example.org",
+                        "id": 123,
+                        "login": "testpackagemaintainer",
+                        "name": "Test Package Maintainer"
+                    },
+                    "version": "4.5.6"
+                },
+                "resourceId": 100,
+                "resourceType": "PACKAGE",
+                "technology": "RDepot version: unknown",
+                "user": {
+                    "email": "testuser@example.org",
+                    "id": 123,
+                    "login": "testuser",
+                    "name": "Test User"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost/api/v2/manager/events/3"
+                    },
+                    {
+                        "rel": "eventList",
+                        "href": "http://localhost/api/v2/manager/events"
+                    }
+                ]
+            },
+            {
+                "changedProperties": [],
+                "eventType": "republish",
+                "id": 4,
+                "relatedResource": {
+                    "deleted": false,
+                    "id": 123,
+                    "name": "Test RDepot Repository",
+                    "publicationUri": "http://localhost/repo/testrepo123",
+                    "published": true,
+                    "requiresAuthentication": false,
+                    "serverAddress": "http://192.168.1.100/testrepo123",
+                    "synchronizing": false,
+                    "technology": "RDepot",
+                    "version": 10
+                },
+                "resourceId": 123,
+                "resourceType": "REPOSITORY",
+                "technology": "RDepot version: unknown",
+                "user": {
+                    "email": "testuser@example.org",
+                    "id": 123,
+                    "login": "testuser",
+                    "name": "Test User"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost/api/v2/manager/events/4"
+                    },
+                    {
+                        "rel": "eventList",
+                        "href": "http://localhost/api/v2/manager/events"
+                    }
+                ]
+            }
+        ],
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost/api/v2/manager/events"
+            }
+        ],
+        "page": {
+            "number": 0,
+            "size": 4,
+            "totalElements": 4,
+            "totalPages": 1
+        }
+    },
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "status": "SUCCESS"
+}

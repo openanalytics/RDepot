@@ -18,6 +18,6 @@
                 "r": "^[A-Za-z0-9 \\-_.]+$"
             }
         },
-        "supportedLanguages": ["en-US", "de-DE", "nl-NL", "pl-PL"]
+        "supportedLanguages": ["en-US", "de-DE", "nl-NL", "pl-PL", "fr-FR"]
     }
 }

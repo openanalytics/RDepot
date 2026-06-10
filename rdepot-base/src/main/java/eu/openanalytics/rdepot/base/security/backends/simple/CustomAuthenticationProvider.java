@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -24,7 +24,6 @@ import eu.openanalytics.rdepot.base.security.authenticators.SimpleCustomBindAuth
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import lombok.Getter;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -72,7 +71,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         }
 
         List<GrantedAuthority> grantedAuthorities = (List<GrantedAuthority>) authenticator.authenticate(
-                login, userOptional.get().getEmail(), userOptional.get().getName());
+                login, userOptional.get().email(), userOptional.get().name());
         return new UsernamePasswordAuthenticationToken(login, password, grantedAuthorities);
     }
 
@@ -81,23 +80,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         return authentication.equals(UsernamePasswordAuthenticationToken.class);
     }
 
-    private static class User {
-        private final String login;
-        private final String password;
-
-        @Getter
-        private final String email;
-
-        @Getter
-        private final String name;
-
-        public User(String login, String password, String email, String name) {
-            this.login = login;
-            this.password = password;
-            this.email = email;
-            this.name = name;
-        }
-
+    private record User(String login, String password, String email, String name) {
         public boolean match(String login, String password) {
             return this.login.equals(login) && this.password.equals(password);
         }

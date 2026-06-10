@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -27,6 +27,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
 public class AccessTokenTestFixture {
     private static final Calendar cal = Calendar.getInstance();
@@ -57,8 +59,8 @@ public class AccessTokenTestFixture {
         for (int i = 0; i < count; i++) {
             AccessToken token = new AccessToken(
                     i,
-                    NAME + Integer.toString(i),
-                    VALUE + Integer.toString(i),
+                    NAME + i,
+                    VALUE + i,
                     CREATION_DATE.plus(i, ChronoUnit.DAYS),
                     EXPIRATION_DATE.plus(i, ChronoUnit.DAYS),
                     ACTIVE,
@@ -74,5 +76,21 @@ public class AccessTokenTestFixture {
 
     public static AccessToken GET_FIXTURE_ACCESS_TOKEN(User user) {
         return GET_FIXTURE_ACCESS_TOKENS(user, 1).get(0);
+    }
+
+    public static Page<AccessToken> GET_EXAMPLE_ACCESS_TOKENS_FOR_USER_PAGED(User user) {
+        return new PageImpl<>(GET_FIXTURE_ACCESS_TOKENS(user, 3));
+    }
+
+    public static Page<AccessToken> GET_EXAMPLE_ACCESS_TOKENS_PAGED() {
+        User user1 = UserTestFixture.GET_REGULAR_USER(111);
+        User user2 = UserTestFixture.GET_REGULAR_USER(222);
+        User user3 = UserTestFixture.GET_REGULAR_USER(333);
+
+        List<AccessToken> tokens = GET_FIXTURE_ACCESS_TOKENS(user1, 2);
+        tokens.addAll(GET_FIXTURE_ACCESS_TOKENS(user2, 2));
+        tokens.addAll(GET_FIXTURE_ACCESS_TOKENS(user3, 2));
+
+        return new PageImpl<>(tokens);
     }
 }

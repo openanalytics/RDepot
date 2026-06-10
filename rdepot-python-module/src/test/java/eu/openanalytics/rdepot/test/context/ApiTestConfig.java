@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,7 +20,6 @@
  */
 package eu.openanalytics.rdepot.test.context;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2ReadingController;
 import eu.openanalytics.rdepot.base.api.v2.resolvers.HateoasDtoSortArgumentResolver;
@@ -38,15 +37,13 @@ import java.io.Serial;
 import java.util.*;
 import lombok.NonNull;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.data.web.HateoasSortHandlerMethodArgumentResolver;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
@@ -61,6 +58,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.validation.DefaultMessageCodesResolver;
 import org.springframework.validation.MessageCodesResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.MapperFeature;
 
 /**
  * Simple security configuration for API unit tests.
@@ -91,7 +90,7 @@ public class ApiTestConfig implements WebMvcConfigurer {
             Map.of(PythonLanguage.instance, PythonSubmissionController.class);
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http) {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(requests -> requests.requestMatchers("/api/accessdenied")
@@ -116,7 +115,7 @@ public class ApiTestConfig implements WebMvcConfigurer {
         return http.build();
     }
 
-    AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+    AuthenticationManager authenticationManager(HttpSecurity http) {
         AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
         builder.authenticationProvider(new TestAuthenticationProvider());
         return builder.build();
@@ -159,26 +158,6 @@ public class ApiTestConfig implements WebMvcConfigurer {
     }
 
     @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.add(jsonConverter());
-    }
-
-    @Override
-    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.add(jsonConverter());
-    }
-
-    @Bean
-    MappingJackson2HttpMessageConverter jsonConverter() {
-        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        List<MediaType> mediaTypes = new ArrayList<>(converter.getSupportedMediaTypes());
-        mediaTypes.add(MediaType.valueOf("application/json-patch+json"));
-        converter.setSupportedMediaTypes(mediaTypes);
-        converter.setObjectMapper(objectMapper());
-        return converter;
-    }
-
-    @Override
     public MessageCodesResolver getMessageCodesResolver() {
         return new DefaultMessageCodesResolver() {
 
@@ -194,9 +173,14 @@ public class ApiTestConfig implements WebMvcConfigurer {
 
     @Bean
     ObjectMapper objectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
-        return objectMapper;
+        return new ObjectMapper();
+    }
+
+    @Bean
+    JsonMapperBuilderCustomizer jacksonCustomizer() {
+        return builder -> builder.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
+                .disable(MapperFeature.INFER_CREATOR_FROM_CONSTRUCTOR_PROPERTIES)
+                .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES);
     }
 
     @Bean

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -166,6 +166,32 @@ public class UserIntegrationTest extends IntegrationTest {
                 .token(USER_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
                 .expectedJsonPath("/v2/base/user/one_user_me.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getMaintainedPackagesByTheUser_pagedAndSorted() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .urlSuffix("/me/maintained-packages?size=7&sort=name,asc")
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/base/user/maintained_packages.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getMaintainedPackagesByTheUser_asNormalUser() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .urlSuffix("/me/maintained-packages")
+                .statusCode(403)
+                .token(USER_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/403.json")
                 .build();
         testEndpoint(requestBody);
     }

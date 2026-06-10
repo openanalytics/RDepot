@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -120,7 +120,8 @@ public class ApiV2PackageController extends ApiV2ReadingController<Package, Pack
             @RequestParam(name = "technology", required = false) List<String> technologies,
             @RequestParam(name = "search", required = false) Optional<String> search,
             @RequestParam(name = "maintainer", required = false) List<String> maintainers,
-            @RequestParam(name = "notMaintainedBy", required = false) List<String> notMaintainers)
+            @RequestParam(name = "notMaintainedBy", required = false) List<String> notMaintainers,
+            @RequestParam(name = "binary", required = false) Optional<Boolean> binary)
             throws ApiException {
         User requester = userService
                 .findActiveByLogin(principal.getName())
@@ -134,7 +135,7 @@ public class ApiV2PackageController extends ApiV2ReadingController<Package, Pack
         Specification<Package> specification = null;
 
         if (Objects.nonNull(repositories)) {
-            specification = SpecificationUtils.component(PackageSpecs.ofRepository(repositories));
+            specification = PackageSpecs.ofRepository(repositories);
         }
 
         if (deleted.isPresent()) {
@@ -143,6 +144,10 @@ public class ApiV2PackageController extends ApiV2ReadingController<Package, Pack
 
         if (search.isPresent()) {
             specification = SpecificationUtils.andComponent(specification, PackageSpecs.ofName(search.get()));
+        }
+
+        if (binary.isPresent()) {
+            specification = SpecificationUtils.andComponent(specification, PackageSpecs.isBinary(binary.get()));
         }
 
         if (Objects.nonNull(technologies)) {

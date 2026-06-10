@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -159,7 +159,8 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
             @RequestParam(name = "submissionState", required = false) List<SubmissionState> submissionStates,
             @RequestParam(name = "search", required = false) Optional<String> search,
             @RequestParam(name = "maintainer", required = false) List<String> maintainers,
-            @RequestParam(name = "notMaintainedBy", required = false) List<String> notMaintainers)
+            @RequestParam(name = "notMaintainedBy", required = false) List<String> notMaintainers,
+            @RequestParam(name = "binary", required = false) Optional<Boolean> binary)
             throws ApiException {
         final User requester = userService
                 .findActiveByLogin(principal.getName())
@@ -188,6 +189,10 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
             specification = SpecificationUtils.andComponent(specification, PackageSpecs.ofName(search.get()));
         }
 
+        if (binary.isPresent()) {
+            specification = SpecificationUtils.andComponent(specification, PackageSpecs.isBinary(binary.get()));
+        }
+
         if (Objects.nonNull(submissionStates)) {
             Specification<PythonPackage> component = PackageSpecs.ofSubmissionState(submissionStates);
             specification = SpecificationUtils.andComponent(specification, component);
@@ -203,10 +208,10 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
         }
 
         if (specification == null) {
-            return handleSuccessForPagedCollection(packageService.findAll(resolvedPageable));
+            return handleSuccessForPagedCollection(packageService.findAll(resolvedPageable), requester);
         } else {
             return handleSuccessForPagedCollection(
-                    packageService.findAllBySpecification(specification, resolvedPageable));
+                    packageService.findAllBySpecification(specification, resolvedPageable), requester);
         }
     }
 
@@ -214,7 +219,7 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
      * Find a package of given id.
      * If user is not an admin, package marked as deleted will not be found.
      * @param principal used for authorization
-     * @param id
+     * @param id package id
      * @return Package DTO
      * @throws PackageNotFound
      * @throws UserNotAuthorized
@@ -233,7 +238,7 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
         if ((!userService.isAdmin(requester) && packageBag.isDeleted()))
             throw new PackageNotFound(messageSource, locale);
 
-        return handleSuccessForSingleEntity(packageBag);
+        return handleSuccessForSingleEntity(packageBag, requester);
     }
 
     /**
@@ -290,14 +295,13 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
             throw new ApplyPatchException(messageSource, locale);
         }
 
-        return handleSuccessForSingleEntity(packageBag);
+        return handleSuccessForSingleEntity(packageBag, requester);
     }
 
     /**
      * Erases package from database and file system. Requires admin privileges.
      * @param principal used for authorization
-     * @param id
-     * @return
+     * @param id package id
      * @throws SynchronizeRepositoryException
      * @throws ApiException
      */

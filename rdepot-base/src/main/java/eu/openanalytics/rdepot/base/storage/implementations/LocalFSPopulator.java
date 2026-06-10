@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -58,7 +58,8 @@ public abstract class LocalFSPopulator<R extends Repository, P extends Package, 
             List<String> remotePackages,
             Checksums remoteChecksums,
             List<PP> localPackages,
-            Map<String, String> localChecksums);
+            Map<String, String> localChecksums,
+            boolean archive);
 
     protected File linkCurrentFolderToGeneratedFolder(Repository repository, String dateStamp)
             throws LinkFoldersException {

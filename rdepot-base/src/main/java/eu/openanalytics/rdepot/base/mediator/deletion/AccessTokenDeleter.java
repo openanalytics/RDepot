@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -21,8 +21,8 @@
 package eu.openanalytics.rdepot.base.mediator.deletion;
 
 import eu.openanalytics.rdepot.base.entities.AccessToken;
+import eu.openanalytics.rdepot.base.service.AccessTokenService;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
-import eu.openanalytics.rdepot.base.service.Service;
 import org.springframework.stereotype.Component;
 
 /**
@@ -31,7 +31,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AccessTokenDeleter extends ResourceDeleter<AccessToken> {
 
-    public AccessTokenDeleter(NewsfeedEventService newsfeedEventService, Service<AccessToken> resourceService) {
+    public AccessTokenDeleter(NewsfeedEventService newsfeedEventService, AccessTokenService resourceService) {
         super(newsfeedEventService, resourceService);
     }
 }

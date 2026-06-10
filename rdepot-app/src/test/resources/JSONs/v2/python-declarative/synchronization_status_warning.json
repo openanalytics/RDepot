@@ -1,0 +1,71 @@
+{
+    "status": "SUCCESS",
+    "code": 200,
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "data": {
+        "repository": {
+            "id": 15,
+            "name": "ZD",
+            "publicationUri": "http://localhost/repo/ZD",
+            "published": true,
+            "requiresAuthentication": true,
+            "technology": "Python",
+            "lastPublicationSuccessful": false
+        },
+        "status": "SUCCESS",
+        "timestamp": 1769158102853,
+        "packages": [
+            {
+                "name": "ArmyOfEvilRobots",
+                "version": null,
+                "status": "SUCCESS",
+                "error": null,
+                "mirror": {
+                    "name": "X",
+                    "uri": "http://oa-rdepot-proxy/repo/X/",
+                    "type": "tarball"
+                }
+            },
+            {
+                "name": "numpy",
+                "version": null,
+                "status": "SUCCESS",
+                "error": null,
+                "mirror": {
+                    "name": "X",
+                    "uri": "http://oa-rdepot-proxy/repo/X/",
+                    "type": "tarball"
+                }
+            },
+            {
+                "name": "ArmyOfEvilRobots",
+                "version": "0.4.1dev",
+                "status": "WARNING",
+                "error": "A package with the same name and version already exists in this repository.",
+                "mirror": {
+                    "name": "X",
+                    "uri": "http://oa-rdepot-proxy/repo/X/",
+                    "type": "tarball"
+                }
+            },
+            {
+                "name": "numpy",
+                "version": "1.24.2",
+                "status": "SUCCESS",
+                "error": null,
+                "mirror": {
+                    "name": "PyPi",
+                    "uri": "https://pypi.org/simple",
+                    "type": "tarball"
+                }
+            }
+        ],
+        "page": {
+            "size": 20,
+            "totalElements": 4,
+            "totalPages": 1,
+            "number": 0
+        }
+    }
+}

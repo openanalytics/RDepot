@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,6 +20,7 @@
  */
 package eu.openanalytics.rdepot.python.utils;
 
+import eu.openanalytics.rdepot.base.entities.enums.HashMethod;
 import eu.openanalytics.rdepot.python.config.PythonProperties;
 import eu.openanalytics.rdepot.python.mirroring.PypiMirror;
 import eu.openanalytics.rdepot.python.mirroring.pojos.IndexFileParseResult;
@@ -28,8 +29,11 @@ import eu.openanalytics.rdepot.python.mirroring.pojos.ParseResult;
 import eu.openanalytics.rdepot.python.utils.exceptions.ParseIndexFileException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -41,7 +45,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -58,55 +61,99 @@ public class IndexFileParser {
         return hashesPattern;
     }
 
-    private void readIndexFile(Map<String, ParseResult> packages, MirroredPythonPackage mirrorPackage, String mirrorUrl)
+    private void readIndexFile(
+            Map<String, ParseResult> packages,
+            MirroredPythonPackage mirrorPackage,
+            HashMethod repoHashMethod,
+            String mirrorUrl)
             throws ParseIndexFileException, MalformedURLException {
 
         URL subfolderUrl = new URL(mirrorUrl.concat(mirrorPackage.getNormalizedName()));
+        String latestRemoteVersion = null;
 
         try {
             Document indexFile = Jsoup.connect(subfolderUrl.toString()).get();
 
-            Elements packagesLinks = indexFile.select("a[href]");
+            List<Element> packagesLinks = indexFile.select("a[href]").stream()
+                    .filter(packageLink -> packageLink.text().endsWith(".tar.gz"))
+                    .toList();
+
+            ParseResult parseResult = new ParseResult();
 
             for (Element packageLink : packagesLinks) {
                 String fileName = packageLink.text();
                 String version = StringUtils.substringBetween(
                         fileName, StringUtils.substringBeforeLast(fileName, "-").concat("-"), ".tar.gz");
-                if (!fileName.endsWith(".tar.gz") || !Objects.equals(version, mirrorPackage.getVersion())) continue;
 
-                ParseResult parseResult = new ParseResult();
+                if (mirrorPackage.getVersion() != null && !Objects.equals(version, mirrorPackage.getVersion()))
+                    continue;
 
-                String downloadUrl = packageLink.attr("href");
-                parseResult.setDownloadUrl(Optional.of(downloadUrl));
-                parseResult.setParseResult(IndexFileParseResult.OK);
-
-                getHashesPattern();
-                Matcher matcher = hashesPattern.matcher(downloadUrl);
-
-                if (matcher.find()) {
-                    parseResult.setHash(Optional.of(StringUtils.substringAfter(downloadUrl, matcher.group() + "=")));
+                if (mirrorPackage.getVersion() == null) {
+                    latestRemoteVersion = version; // TODO: #36075 version comparison
                 }
 
-                packages.put(mirrorPackage.toString(), parseResult);
+                String downloadUrl = packageLink.attr("href");
+
+                URI uri = new URI(downloadUrl);
+                if (uri.getScheme() == null) {
+                    URI baseUrl = new URI(mirrorUrl);
+                    uri = baseUrl.resolve(uri);
+                }
+
+                uri = uri.normalize();
+
+                if (uri.getScheme() == null || uri.getHost() == null) {
+                    throw new IllegalArgumentException("Invalid download URL: " + uri);
+                }
+
+                parseResult.setDownloadUrl(Optional.of(uri.toString()));
+                parseResult.setParseResult(IndexFileParseResult.OK);
+
+                String hashMethod = packageLink.attr("data-hash-method");
+                String checksum = packageLink.attr("data-checksum");
+
+                if (checksum.isEmpty()) {
+
+                    Matcher matcher = getHashesPattern().matcher(uri.toString());
+
+                    if (matcher.find() && matcher.group().equals(repoHashMethod.getValue())) {
+                        parseResult.setHash(
+                                Optional.of(StringUtils.substringAfter(uri.toString(), matcher.group() + "=")));
+                    }
+                } else if (hashMethod.equals(repoHashMethod.getValue())) {
+                    parseResult.setHash(Optional.of(checksum));
+                }
             }
+
+            parseResult.setVersion(latestRemoteVersion);
+
+            packages.put(mirrorPackage.toString(), parseResult);
+
         } catch (IOException e) {
             log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new ParseIndexFileException(mirrorUrl.concat(mirrorPackage.getNormalizedName()));
+        } catch (URISyntaxException e) {
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
+            throw new IllegalArgumentException("Invalid download URL for: " + mirrorPackage.getName());
         }
     }
 
-    public Map<String, ParseResult> parseIndexFile(PypiMirror mirror) {
+    public Map<String, ParseResult> parseIndexFile(PypiMirror mirror, HashMethod hashMethod) {
         Map<String, ParseResult> packages = new HashMap<>();
         String url = mirror.getUriWithTrailingSlash();
 
         for (MirroredPythonPackage packageBag : mirror.getPackages()) {
             try {
-                readIndexFile(packages, packageBag, url);
+                readIndexFile(packages, packageBag, hashMethod, url);
             } catch (ParseIndexFileException e) {
-                packages.put(packageBag.toString(), new ParseResult(IndexFileParseResult.PARSE_EXCEPTION));
+                packages.put(
+                        packageBag.toString(),
+                        new ParseResult(IndexFileParseResult.PARSE_EXCEPTION, packageBag.getVersion()));
             } catch (MalformedURLException e) {
                 log.error("{} for {} in {} mirror", e.getMessage(), packageBag.getName(), mirror.getName());
-                packages.put(packageBag.toString(), new ParseResult(IndexFileParseResult.MALFORMED_URL));
+                packages.put(
+                        packageBag.toString(),
+                        new ParseResult(IndexFileParseResult.MALFORMED_URL, packageBag.getVersion()));
             }
         }
 

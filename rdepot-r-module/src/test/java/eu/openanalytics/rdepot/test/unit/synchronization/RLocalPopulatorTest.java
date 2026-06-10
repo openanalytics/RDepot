@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -463,8 +463,8 @@ public class RLocalPopulatorTest {
 
         final String expectedLocalPath = "/tmp/rdepot-unit-tests/generated/0/current/src/contrib/latest/PACKAGES";
         final String expectedGzLocalPath = expectedLocalPath + ".gz";
-        final String expectedMd5Sum = "46b11fe68466c613360279fbdb887782";
-        final String expectedGzMd5Sum = "67b888df733317410fe417777fddbda3";
+        final String expectedMd5Sum = "1a3e10c7eb2a7ff6a4e1c4ac0ada1412";
+        final String expectedGzMd5Sum = "e6dda8e78dcc799025d5ed1e51451d4a";
         final String expectedContent =
                 """
                 Package: plyr
@@ -477,9 +477,7 @@ public class RLocalPopulatorTest {
                 Version: 0.2.3
                 License: GPL-3
                 MD5Sum: 3204109d62ec7ff8e44bd15a989fc8b1
-                NeedsCompilation: no
-
-                """;
+                NeedsCompilation: no""";
 
         Assertions.assertEquals(expectedLocalPath, packagesFile.localPath(), "Invalid PACKAGES file local path.");
         Assertions.assertEquals(
@@ -545,8 +543,8 @@ public class RLocalPopulatorTest {
         final String expectedLocalPath =
                 "/tmp/rdepot-unit-tests/generated/0/12082025/bin/linux/centos8/x86_64/4.5/Archive/PACKAGES";
         final String expectedGzLocalPath = expectedLocalPath + ".gz";
-        final String expectedMd5Sum = "6e60a404356088a4868c338a8a71db05";
-        final String expectedGzMd5Sum = "745f12f610b98a9dc611622632595a2f";
+        final String expectedMd5Sum = "be060922801f44f583397516c2437381";
+        final String expectedGzMd5Sum = "a29903b803602bca45936f6bb7ab4443";
         final String expectedContent =
                 """
                 Package: plyr
@@ -561,9 +559,7 @@ public class RLocalPopulatorTest {
                 License: MIT + file LICENSE
                 MD5Sum: a8b2d2284d56ab1839728040d463a360
                 NeedsCompilation: no
-                Built: R 4.5.1; x86_64-pc-linux-gnu; 2025-08-11 09:59:00 UTC; unix
-
-                """;
+                Built: R 4.5.1; x86_64-pc-linux-gnu; 2025-08-11 09:59:00 UTC; unix""";
 
         Assertions.assertEquals(expectedLocalPath, packagesFile.localPath(), "Invalid PACKAGES file local path.");
         Assertions.assertEquals(
@@ -629,8 +625,8 @@ public class RLocalPopulatorTest {
         final String expectedLocalPath =
                 "/tmp/rdepot-unit-tests/generated/0/12082025/bin/linux/centos8/x86_64/4.5/latest/PACKAGES";
         final String expectedGzLocalPath = expectedLocalPath + ".gz";
-        final String expectedMd5Sum = "f6114790816cc67b302fc93ef1f9458c";
-        final String expectedGzMd5Sum = "111352577d23fd5291e4d1f2306b08df";
+        final String expectedMd5Sum = "d99fbddaec09da694623357cfeaf82e4";
+        final String expectedGzMd5Sum = "91825144b7e71ede6826cc9e50dfe2ab";
         final String expectedContent =
                 """
                 Package: plyr
@@ -638,9 +634,7 @@ public class RLocalPopulatorTest {
                 License: MIT + file LICENSE
                 MD5Sum: 08841cfd5edbd118a512198217cf5f2e
                 NeedsCompilation: no
-                Built: R 4.5.1; x86_64-pc-linux-gnu; 2025-08-11 09:59:00 UTC; unix
-
-                """;
+                Built: R 4.5.1; x86_64-pc-linux-gnu; 2025-08-11 09:59:00 UTC; unix""";
 
         Assertions.assertEquals(expectedLocalPath, packagesFile.localPath(), "Invalid PACKAGES file local path.");
         Assertions.assertEquals(
@@ -701,8 +695,8 @@ public class RLocalPopulatorTest {
 
         final String expectedLocalPath = "/tmp/rdepot-unit-tests/generated/0/current/src/contrib/Archive/PACKAGES";
         final String expectedGzLocalPath = expectedLocalPath + ".gz";
-        final String expectedMd5Sum = "c52287b7ce81342e423d7d0d5cef2f4b";
-        final String expectedGzMd5Sum = "bed11e678efc1b6be6f0b8a04372917c";
+        final String expectedMd5Sum = "84eea268ba0ed5a159ecae4e6668ffc8";
+        final String expectedGzMd5Sum = "638ae79808d790d14df41f87431af581";
         final String expectedContent =
                 """
                 Package: plyr
@@ -721,9 +715,7 @@ public class RLocalPopulatorTest {
                 Version: 0.2.2
                 License: GPL-3
                 MD5Sum: 76346f1a4ef62977b0acf794c6bb0aef
-                NeedsCompilation: no
-
-                """;
+                NeedsCompilation: no""";
 
         Assertions.assertEquals(expectedLocalPath, packagesFile.localPath(), "Invalid PACKAGES file local path.");
         Assertions.assertEquals(
@@ -834,12 +826,12 @@ public class RLocalPopulatorTest {
         final List<RPackage> sourcePackages = new ArrayList<>();
         final List<RPackage> sourceLatestPackages = new ArrayList<>();
         final List<RPackage> sourceArchivePackages = new ArrayList<>();
-        final List<RPackage> archiveBinaryPackages =
-                RPackageTestFixture.RPackagePopulationFixture.GET_ARCHIVE_BINARY_PACKAGES();
-        archiveBinaryPackages.remove(0);
+        final List<RPackage> archiveBinaryPackages = new ArrayList<>();
 
-        final List<RPackage> binaryPackages = new ArrayList<>(archiveBinaryPackages);
         final List<RPackage> latestBinaryPackages = new ArrayList<>();
+        latestBinaryPackages.add(RPackageTestFixture.RPackagePopulationFixture.GET_LATEST_BINARY_PACKAGES()
+                .get(0));
+        final List<RPackage> binaryPackages = new ArrayList<>(latestBinaryPackages);
         final RRepository repository = RPackageTestFixture.RPackagePopulationFixture.GET_EXAMPLE_R_REPOSITORY();
         repository.setRedirectToSource(false);
         final String dateStamp = "12082025";
@@ -863,25 +855,21 @@ public class RLocalPopulatorTest {
         final List<RPackage> sourcePackages = RPackageTestFixture.RPackagePopulationFixture.GET_SOURCE_PACKAGES();
         final List<RPackage> sourceLatestPackages =
                 RPackageTestFixture.RPackagePopulationFixture.GET_LATEST_SOURCE_PACKAGES();
-        sourceLatestPackages.forEach(rp -> {
-            remoteChecksums.addChecksum(new Checksum(rp.getPackageFolderPath(), rp.getMd5sum()));
-        });
+        sourceLatestPackages.forEach(
+                rp -> remoteChecksums.addChecksum(new Checksum(rp.getPackageFolderPath(false), rp.getMd5sum())));
         final List<RPackage> sourceArchivePackages =
                 RPackageTestFixture.RPackagePopulationFixture.GET_ARCHIVE_SOURCE_PACKAGES();
-        sourceArchivePackages.forEach(rp -> {
-            remoteChecksums.addChecksum(new Checksum(rp.getPackageFolderPath(), rp.getMd5sum()));
-        });
+        sourceArchivePackages.forEach(
+                rp -> remoteChecksums.addChecksum(new Checksum(rp.getPackageFolderPath(true), rp.getMd5sum())));
         final List<RPackage> binaryPackages = RPackageTestFixture.RPackagePopulationFixture.GET_BINARY_PACKAGES();
         final List<RPackage> archiveBinaryPackages =
                 RPackageTestFixture.RPackagePopulationFixture.GET_ARCHIVE_BINARY_PACKAGES();
-        archiveBinaryPackages.forEach(rp -> {
-            remoteChecksums.addChecksum(new Checksum(rp.getPackageFolderPath(), rp.getMd5sum()));
-        });
+        archiveBinaryPackages.forEach(
+                rp -> remoteChecksums.addChecksum(new Checksum(rp.getPackageFolderPath(true), rp.getMd5sum())));
         final List<RPackage> latestBinaryPackages =
                 RPackageTestFixture.RPackagePopulationFixture.GET_LATEST_BINARY_PACKAGES();
-        latestBinaryPackages.forEach(rp -> {
-            remoteChecksums.addChecksum(new Checksum(rp.getPackageFolderPath(), rp.getMd5sum()));
-        });
+        latestBinaryPackages.forEach(
+                rp -> remoteChecksums.addChecksum(new Checksum(rp.getPackageFolderPath(false), rp.getMd5sum())));
         final RRepository repository = RPackageTestFixture.RPackagePopulationFixture.GET_EXAMPLE_R_REPOSITORY();
         repository.setRedirectToSource(false);
         final String dateStamp = "12082025";
@@ -1059,12 +1047,12 @@ public class RLocalPopulatorTest {
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/12082025/" + "bin/linux/centos8/x86_64/4.5/"
                         + "latest/binlinuxcentos8x866445_PACKAGES",
-                "f6114790816cc67b302fc93ef1f9458c",
+                "d99fbddaec09da694623357cfeaf82e4",
                 filesInFirstChunk.get(0));
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/12082025/" + "bin/linux/centos8/x86_64/4.5/"
                         + "latest/binlinuxcentos8x866445_PACKAGES.gz",
-                "111352577d23fd5291e4d1f2306b08df",
+                "91825144b7e71ede6826cc9e50dfe2ab",
                 filesInFirstChunk.get(1));
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/12082025/" + "bin/linux/centos8/x86_64/4.5/"
@@ -1078,11 +1066,11 @@ public class RLocalPopulatorTest {
                 filesInFirstChunk.get(3));
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/current/" + "src/contrib/latest/srccontrib_PACKAGES",
-                "8b49503612d3edfe9c4411640b79b773",
+                "4ac413e8ddd776e642f67b33c12c785d",
                 filesInFirstChunk.get(4));
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/current/" + "src/contrib/latest/srccontrib_PACKAGES.gz",
-                "ff00aa637248550a363c921771701a2f",
+                "d660970dba2b3ad77c38b2234e80b984",
                 filesInFirstChunk.get(5));
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/current/" + "src/contrib/latest/srccontrib_index.html",
@@ -1224,7 +1212,7 @@ public class RLocalPopulatorTest {
 
         Assertions.assertEquals(23, checksums.size(), "Invalid number of checksums");
         Assertions.assertEquals(
-                "253b785839e310b80a7ea0ef9b972d6d",
+                "8bccb2329015d9fd8e038bddfb52e86e",
                 checksums.get("srccontribArchive_PACKAGES"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
@@ -1232,7 +1220,7 @@ public class RLocalPopulatorTest {
                 checksums.get("binlinuxcentos8x866445_plyr_1.8.1.tar.gz"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
-                "5205085cc167bf1ff77ed91ca1427616",
+                "962725266bce8dafa1571e427c583ce0",
                 checksums.get("srccontribArchive_PACKAGES.gz"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
@@ -1260,7 +1248,7 @@ public class RLocalPopulatorTest {
                 checksums.get("srccontrib_plyr_1.8.tar.gz"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
-                "8b49503612d3edfe9c4411640b79b773", checksums.get("srccontrib_PACKAGES"), "Invalid checksum for file");
+                "4ac413e8ddd776e642f67b33c12c785d", checksums.get("srccontrib_PACKAGES"), "Invalid checksum for file");
         Assertions.assertEquals(
                 "790550f8e5f46a74d23bdf9eff598570",
                 checksums.get("binlinuxcentos8x866445Archive_index_archived.html"),
@@ -1270,7 +1258,7 @@ public class RLocalPopulatorTest {
                 checksums.get("binlinuxcentos8x866445_plyr_1.8.6.tar.gz"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
-                "74a0143bf0e6ec522ea7e72590075c3a",
+                "8aa75a2b1a95bdd0c43cdf68abc19269",
                 checksums.get("binlinuxcentos8x866445Archive_PACKAGES"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
@@ -1286,11 +1274,11 @@ public class RLocalPopulatorTest {
                 checksums.get("binlinuxcentos8x866445_plyr_1.7.0.tar.gz"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
-                "ff00aa637248550a363c921771701a2f",
+                "d660970dba2b3ad77c38b2234e80b984",
                 checksums.get("srccontrib_PACKAGES.gz"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
-                "3ab74f0fe54414ecc73a63f58e37dcc6",
+                "cf552beef901e6d34ffc1a462df47aec",
                 checksums.get("binlinuxcentos8x866445Archive_PACKAGES.gz"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
@@ -1298,7 +1286,7 @@ public class RLocalPopulatorTest {
                 checksums.get("srccontrib_qsort_0.2.3.tar.gz"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
-                "111352577d23fd5291e4d1f2306b08df",
+                "91825144b7e71ede6826cc9e50dfe2ab",
                 checksums.get("binlinuxcentos8x866445_PACKAGES.gz"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
@@ -1310,7 +1298,7 @@ public class RLocalPopulatorTest {
                 checksums.get("srccontribArchiveplyr_plyrindex.html"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
-                "f6114790816cc67b302fc93ef1f9458c",
+                "d99fbddaec09da694623357cfeaf82e4",
                 checksums.get("binlinuxcentos8x866445_PACKAGES"),
                 "Invalid checksum for file");
     }
@@ -1355,12 +1343,12 @@ public class RLocalPopulatorTest {
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/12082025/" + "bin/linux/centos8/x86_64/4.5/Archive/"
                         + "binlinuxcentos8x866445Archive_PACKAGES",
-                "74a0143bf0e6ec522ea7e72590075c3a",
+                "8aa75a2b1a95bdd0c43cdf68abc19269",
                 filesInFirstChunk.get(0));
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/12082025/" + "bin/linux/centos8/x86_64/4.5/Archive/"
                         + "binlinuxcentos8x866445Archive_PACKAGES.gz",
-                "3ab74f0fe54414ecc73a63f58e37dcc6",
+                "cf552beef901e6d34ffc1a462df47aec",
                 filesInFirstChunk.get(1));
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/12082025/" + "bin/linux/centos8/x86_64/4.5/Archive/"
@@ -1389,12 +1377,12 @@ public class RLocalPopulatorTest {
                 filesInFirstChunk.get(6));
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/current/" + "src/contrib/Archive/" + "srccontribArchive_PACKAGES",
-                "253b785839e310b80a7ea0ef9b972d6d",
+                "8bccb2329015d9fd8e038bddfb52e86e",
                 filesInFirstChunk.get(7));
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/current/" + "src/contrib/Archive/"
                         + "srccontribArchive_PACKAGES.gz",
-                "5205085cc167bf1ff77ed91ca1427616",
+                "962725266bce8dafa1571e427c583ce0",
                 filesInFirstChunk.get(8));
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/current/" + "src/contrib/Archive/"
@@ -1554,6 +1542,15 @@ public class RLocalPopulatorTest {
 
     @Test
     public void buildSynchronizedRequestBody_forRepositoryWithAllPackages_ManyToDelete() throws Exception {
+        /**
+         * Remote bin:
+         * - bin/linux/centos8/x86_64/4.5 -> plyr_1.8.8.tar.gz
+         * - bin/linux/centos8/x86_64/4.5 -> plyr_1.8.6.tar.gz
+         * - bin/linux/centos8/x86_64/4.5 -> plyr_1.8.1.tar.gz
+         *
+         * Local bin:
+         *
+         */
         final PopulatedRepositoryContent populatedContent = getExamplePopulatedContent_almostEmpty();
 
         final MultiValueMap<String, String> remoteLatestBinaries = new LinkedMultiValueMap<>();
@@ -1564,7 +1561,7 @@ public class RLocalPopulatorTest {
 
         Checksums remoteChecksums = new Checksums();
         remoteChecksums.addChecksum(
-                new Checksum("bin/linux/centos8/x86_64/4.5/plyr_1.8.8.tar.gz", "notCheckedChecksumHere"));
+                new Checksum("bin/linux/centos8/x86_64/4.5/plyr_1.8.8.tar.gz", "08841cfd5edbd118a512198217cf5f2e"));
         remoteChecksums.addChecksum(
                 new Checksum("bin/linux/centos8/x86_64/4.5/plyr_1.8.6.tar.gz", "notCheckedChecksumHere"));
         remoteChecksums.addChecksum(
@@ -1583,7 +1580,7 @@ public class RLocalPopulatorTest {
                 remoteLatestBinaries,
                 remoteArchiveBinaries,
                 remoteChecksums,
-                populatedContent.binArchivePackagesPaths().getAllBinLocations().stream()
+                populatedContent.binLatestPackagesPaths().getAllBinLocations().stream()
                         .findFirst()
                         .orElseThrow(IllegalStateException::new)
                         .packages()
@@ -1613,12 +1610,17 @@ public class RLocalPopulatorTest {
         Assertions.assertEquals(
                 3, requestBody.getSourcePackagesToDeleteFromArchive().size(), "There should be 3 packages to delete.");
         Assertions.assertEquals(
-                1, requestBody.getBinaryPackagesToDelete().size(), "There should be one packages to delete.");
+                0, requestBody.getBinaryPackagesToDelete().size(), "There should be no packages to delete.");
         Assertions.assertEquals(
-                1, requestBody.getBinaryPackagesToDeleteFromArchive().size(), "There should be no packages to delete.");
+                2,
+                requestBody
+                        .getBinaryPackagesToDeleteFromArchive()
+                        .get("bin/linux/centos8/x86_64/4.5")
+                        .size(),
+                "There should be 2 packages to delete.");
         Assertions.assertEquals(2, requestBody.getIndexes().size(), "Invalid number of indexes in the request body.");
-        Assertions.assertEquals(3, requestBody.getIndexesForArchive().size(), "Invalid number of indexes for archive.");
-        Assertions.assertEquals(14, requestBody.getChecksums().toMap().size(), "Invalid number of checksums.");
+        Assertions.assertEquals(2, requestBody.getIndexesForArchive().size(), "Invalid number of indexes for archive.");
+        Assertions.assertEquals(13, requestBody.getChecksums().toMap().size(), "Invalid number of checksums.");
     }
 
     @Test
@@ -2145,9 +2147,7 @@ public class RLocalPopulatorTest {
                 Version: 1.8.9
                 License: MIT + file LICENSE
                 MD5Sum: 5a8b129534abace172059ecc5c0b5072
-                NeedsCompilation: no
-
-                """;
+                NeedsCompilation: no""";
         Assertions.assertEquals(
                 expectedLatestBinaryPACKAGESFile,
                 Files.readString(Path.of("/tmp/rdepot-unit-tests/generated/0/12082025/"
@@ -2157,9 +2157,9 @@ public class RLocalPopulatorTest {
                 .sorted(Comparator.comparing(PackagesFileDescriptor::localPath))
                 .toList();
         Assertions.assertEquals(
-                "01803dc04cde03459b88258569fb7505", packagesFiles.get(6).checksum(), "Invalid checksum.");
+                "7d0793497d173d7fa27c6057e09b295c", packagesFiles.get(0).checksum(), "Invalid checksum.");
         Assertions.assertEquals(
-                "9c83860ea71160b554995e5ae9ef12d5", packagesFiles.get(7).checksum(), "Invalid checksum.");
+                "757177caee2beb52929442ab885d65cb", packagesFiles.get(1).checksum(), "Invalid checksum.");
     }
 
     @Test
@@ -2214,9 +2214,7 @@ public class RLocalPopulatorTest {
                 License: MIT + file LICENSE
                 MD5Sum: 08841cfd5edbd118a512198217cf5f2e
                 NeedsCompilation: no
-                Built: R 4.5.1; x86_64-pc-linux-gnu; 2025-08-11 09:59:00 UTC; unix
-
-                """;
+                Built: R 4.5.1; x86_64-pc-linux-gnu; 2025-08-11 09:59:00 UTC; unix""";
         Assertions.assertEquals(
                 expectedArchiveBinaryPACKAGESFile,
                 Files.readString(Path.of("/tmp/rdepot-unit-tests/generated/0/12082025/"
@@ -2560,32 +2558,30 @@ public class RLocalPopulatorTest {
         final List<RPackage> sourcePackages = RPackageTestFixture.RPackagePopulationFixture.GET_SOURCE_PACKAGES();
         final List<RPackage> sourceLatestPackages =
                 RPackageTestFixture.RPackagePopulationFixture.GET_LATEST_SOURCE_PACKAGES();
-        sourceLatestPackages.forEach(rp -> {
-            remoteChecksums.addChecksum(new Checksum(rp.getPackageFolderPath(), rp.getMd5sum()));
-        });
+        sourceLatestPackages.forEach(
+                rp -> remoteChecksums.addChecksum(new Checksum(rp.getPackageFolderPath(false), rp.getMd5sum())));
 
         final List<RPackage> sourceArchivePackages =
                 RPackageTestFixture.RPackagePopulationFixture.GET_ARCHIVE_SOURCE_PACKAGES();
         remoteChecksums.addChecksum(new Checksum(
-                sourceArchivePackages.get(0).getPackageFolderPath(),
+                sourceArchivePackages.get(0).getPackageFolderPath(true),
                 sourceArchivePackages.get(0).getMd5sum()));
         remoteChecksums.addChecksum(new Checksum(
-                sourceArchivePackages.get(1).getPackageFolderPath(),
+                sourceArchivePackages.get(1).getPackageFolderPath(true),
                 sourceArchivePackages.get(1).getMd5sum()));
         remoteChecksums.addChecksum(
-                new Checksum(sourceArchivePackages.get(2).getPackageFolderPath(), "differentChecksum"));
+                new Checksum(sourceArchivePackages.get(2).getPackageFolderPath(true), "differentChecksum"));
 
         final List<RPackage> binaryPackages = RPackageTestFixture.RPackagePopulationFixture.GET_BINARY_PACKAGES();
         final List<RPackage> archiveBinaryPackages =
                 RPackageTestFixture.RPackagePopulationFixture.GET_ARCHIVE_BINARY_PACKAGES();
-        archiveBinaryPackages.forEach(rp -> {
-            remoteChecksums.addChecksum(new Checksum(rp.getPackageFolderPath(), rp.getMd5sum()));
-        });
+        archiveBinaryPackages.forEach(
+                rp -> remoteChecksums.addChecksum(new Checksum(rp.getPackageFolderPath(true), rp.getMd5sum())));
 
         final List<RPackage> latestBinaryPackages =
                 RPackageTestFixture.RPackagePopulationFixture.GET_LATEST_BINARY_PACKAGES();
         remoteChecksums.addChecksum(
-                new Checksum(latestBinaryPackages.get(0).getPackageFolderPath(), "whateverChecksum"));
+                new Checksum(latestBinaryPackages.get(0).getPackageFolderPath(false), "whateverChecksum"));
 
         final RRepository repository = RPackageTestFixture.RPackagePopulationFixture.GET_EXAMPLE_R_REPOSITORY();
         repository.setRedirectToSource(false);

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -44,10 +44,10 @@ public class RPackageServiceTest extends UnitTest {
     private static final String TEST_PACKAGES_FOR_SOURCES_PATH = "src/test/resources/unit/test_packages";
     private static final String TEST_PACKAGES_FOR_BINARIES_PATH =
             "src/test/resources/unit/test_packages/binary_package";
-    private static final String TEST_PACKAGES_FOR_BINARIES_CENTOS7_4_2_ARCHIVE_PATH =
-            TEST_PACKAGES_FOR_BINARIES_PATH + "/archive_4_2";
-    private static final String TEST_PACKAGES_FOR_BINARIES_CENTOS7_4_5_LATEST_PATH =
-            TEST_PACKAGES_FOR_BINARIES_PATH + "/latest_4_5";
+    private static final String TEST_PACKAGES_FOR_BINARIES_OPEN_SPECY_R_4_5_PATH =
+            TEST_PACKAGES_FOR_BINARIES_PATH + "/OpenSpecy_R_4_5";
+    private static final String TEST_PACKAGES_FOR_BINARIES_OPEN_SPECY_R_4_6_PATH =
+            TEST_PACKAGES_FOR_BINARIES_PATH + "/OpenSpecy_R_4_6";
 
     @Mock
     RPackageDao rPackageDao;
@@ -91,25 +91,24 @@ public class RPackageServiceTest extends UnitTest {
 
         final RPackage openSpecyArchivePackage = RPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user);
         openSpecyArchivePackage.setSource(
-                new File(TEST_PACKAGES_FOR_BINARIES_CENTOS7_4_2_ARCHIVE_PATH + "/OpenSpecy_1.0.99.tar.gz")
+                new File(TEST_PACKAGES_FOR_BINARIES_OPEN_SPECY_R_4_5_PATH + "/OpenSpecy_1.1.0.tar.gz")
                         .getAbsolutePath());
         openSpecyArchivePackage.setName("OpenSpecy");
-        openSpecyArchivePackage.setVersion("1.0.99");
+        openSpecyArchivePackage.setVersion("1.1.0");
         openSpecyArchivePackage.setActive(true);
-        openSpecyArchivePackage.setMd5sum("2333d8335e081ac4607495fe5e840dde");
-        openSpecyArchivePackage.setRVersion("4.2.1");
-        openSpecyArchivePackage.setBuilt("R 4.2.1; ; 2024-06-13 23:29:42 UTC; unix");
+        openSpecyArchivePackage.setMd5sum("13bda5374451f899771b8388983fe334");
+        openSpecyArchivePackage.setRVersion("4.6");
+        openSpecyArchivePackage.setBuilt("R 4.6.0; ; 2024-06-13 23:29:42 UTC; unix");
 
         final RPackage openSpecyLatest = RPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user);
-        openSpecyLatest.setSource(
-                new File(TEST_PACKAGES_FOR_BINARIES_CENTOS7_4_5_LATEST_PATH + "/OpenSpecy_1.1.0.tar.gz")
-                        .getAbsolutePath());
+        openSpecyLatest.setSource(new File(TEST_PACKAGES_FOR_BINARIES_OPEN_SPECY_R_4_6_PATH + "/OpenSpecy_1.7.1.tar.gz")
+                .getAbsolutePath());
         openSpecyLatest.setName("OpenSpecy");
-        openSpecyLatest.setVersion("1.1.0");
+        openSpecyLatest.setVersion("1.7.1");
         openSpecyLatest.setActive(true);
-        openSpecyLatest.setMd5sum("13bda5374451f899771b8388983fe334");
-        openSpecyLatest.setRVersion("4.5");
-        openSpecyLatest.setBuilt("R 4.5.0; ; 2024-06-13 23:29:42 UTC; unix");
+        openSpecyLatest.setMd5sum("71ba7ac339ae1ae652b81d29799bf4ea");
+        openSpecyLatest.setRVersion("4.6");
+        openSpecyLatest.setBuilt("R 4.6.0; ; 2026-05-22 07:03:54 UTC; unix\n");
 
         LinkedHashSet<RPackage> sourcePackages = new LinkedHashSet<>();
         sourcePackages.add(abcPackage);
@@ -145,46 +144,44 @@ public class RPackageServiceTest extends UnitTest {
 
         final RPackage openSpecyArchivePackage = RPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user);
         openSpecyArchivePackage.setSource(
-                new File(TEST_PACKAGES_FOR_BINARIES_CENTOS7_4_2_ARCHIVE_PATH + "/OpenSpecy_1.0.99.tar.gz")
+                new File(TEST_PACKAGES_FOR_BINARIES_OPEN_SPECY_R_4_5_PATH + "/OpenSpecy_1.1.0.tar.gz")
                         .getAbsolutePath());
         openSpecyArchivePackage.setName("OpenSpecy");
-        openSpecyArchivePackage.setVersion("1.0.99");
+        openSpecyArchivePackage.setVersion("1.1.0");
         openSpecyArchivePackage.setActive(true);
-        openSpecyArchivePackage.setMd5sum("2333d8335e081ac4607495fe5e840dde");
-        openSpecyArchivePackage.setRVersion("4.2.1");
-        openSpecyArchivePackage.setBuilt("R 4.2.1; ; 2024-06-13 23:29:42 UTC; unix");
+        openSpecyArchivePackage.setMd5sum("13bda5374451f899771b8388983fe334");
+        openSpecyArchivePackage.setRVersion("4.6");
+        openSpecyArchivePackage.setBuilt("R 4.6.0; ; 2024-06-13 23:29:42 UTC; unix");
 
         final RPackage openSpecyLatest = RPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user);
-        openSpecyLatest.setSource(
-                new File(TEST_PACKAGES_FOR_BINARIES_CENTOS7_4_5_LATEST_PATH + "/OpenSpecy_1.1.0.tar.gz")
-                        .getAbsolutePath());
+        openSpecyLatest.setSource(new File(TEST_PACKAGES_FOR_BINARIES_OPEN_SPECY_R_4_6_PATH + "/OpenSpecy_1.7.1.tar.gz")
+                .getAbsolutePath());
         openSpecyLatest.setName("OpenSpecy");
-        openSpecyLatest.setVersion("1.1.0");
+        openSpecyLatest.setVersion("1.7.1");
         openSpecyLatest.setActive(true);
-        openSpecyLatest.setMd5sum("13bda5374451f899771b8388983fe334");
-        openSpecyLatest.setRVersion("4.5");
-        openSpecyLatest.setBuilt("R 4.5.0; ; 2024-06-13 23:29:42 UTC; unix");
+        openSpecyLatest.setMd5sum("71ba7ac339ae1ae652b81d29799bf4ea");
+        openSpecyLatest.setRVersion("4.6");
+        openSpecyLatest.setBuilt("R 4.6.0; ; 2026-05-22 07:03:54 UTC; unix\n");
 
-        final RPackage openSpecyLatestCentos8 = RPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user);
-        openSpecyLatestCentos8.setSource(
-                new File(TEST_PACKAGES_FOR_BINARIES_CENTOS7_4_5_LATEST_PATH + "/OpenSpecy_1.1.0.tar.gz")
+        final RPackage openSpecyLatestR45 = RPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user);
+        openSpecyLatestR45.setSource(
+                new File(TEST_PACKAGES_FOR_BINARIES_OPEN_SPECY_R_4_5_PATH + "/OpenSpecy_1.1.0.tar.gz")
                         .getAbsolutePath());
-        openSpecyLatestCentos8.setName("OpenSpecy");
-        openSpecyLatestCentos8.setVersion("1.1.0");
-        openSpecyLatestCentos8.setActive(true);
-        openSpecyLatestCentos8.setMd5sum("13bda5374451f899771b8388983fe334");
-        openSpecyLatestCentos8.setRVersion("4.5");
-        openSpecyLatestCentos8.setDistribution("centos8");
-        openSpecyLatestCentos8.setBuilt("R 4.5.0; ; 2024-06-13 23:29:42 UTC; unix");
+        openSpecyLatestR45.setName("OpenSpecy");
+        openSpecyLatestR45.setVersion("1.1.0");
+        openSpecyLatestR45.setActive(true);
+        openSpecyLatestR45.setMd5sum("13bda5374451f899771b8388983fe334");
+        openSpecyLatestR45.setRVersion("4.5");
+        openSpecyLatestR45.setBuilt("R 4.5.0; ; 2024-06-13 23:29:42 UTC; unix");
 
         LinkedHashSet<RPackage> binaryPackages = new LinkedHashSet<>();
         binaryPackages.add(openSpecyLatest);
-        binaryPackages.add(openSpecyLatestCentos8);
+        binaryPackages.add(openSpecyLatestR45);
         binaryPackages.add(openSpecyArchivePackage);
 
         Set<RPackage> latestBinaryExpected = new HashSet<>();
         latestBinaryExpected.add(openSpecyLatest);
-        latestBinaryExpected.add(openSpecyLatestCentos8);
+        latestBinaryExpected.add(openSpecyLatestR45);
 
         Set<RPackage> latestBinaryPackageSet = packageService.filterLatest(binaryPackages);
 
@@ -201,40 +198,42 @@ public class RPackageServiceTest extends UnitTest {
         repository.setVersion(5);
 
         final RPackage openSpecyArchivePackage = RPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user);
+        openSpecyArchivePackage.setId(1);
         openSpecyArchivePackage.setSource(
-                new File(TEST_PACKAGES_FOR_BINARIES_CENTOS7_4_2_ARCHIVE_PATH + "/OpenSpecy_1.0.99.tar.gz")
+                new File(TEST_PACKAGES_FOR_BINARIES_OPEN_SPECY_R_4_5_PATH + "/OpenSpecy_1.1.0.tar.gz")
                         .getAbsolutePath());
         openSpecyArchivePackage.setName("OpenSpecy");
-        openSpecyArchivePackage.setVersion("1.0.99");
+        openSpecyArchivePackage.setVersion("1.1.0");
         openSpecyArchivePackage.setActive(true);
-        openSpecyArchivePackage.setMd5sum("2333d8335e081ac4607495fe5e840dde");
-        openSpecyArchivePackage.setRVersion("4.2.1");
-        openSpecyArchivePackage.setBuilt("R 4.2.1; ; 2024-06-13 23:29:42 UTC; unix");
+        openSpecyArchivePackage.setMd5sum("13bda5374451f899771b8388983fe334");
+        openSpecyArchivePackage.setRVersion("4.6");
+        openSpecyArchivePackage.setBuilt("R 4.6.0; ; 2024-06-13 23:29:42 UTC; unix");
 
         final RPackage openSpecyLatest = RPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user);
-        openSpecyLatest.setSource(
-                new File(TEST_PACKAGES_FOR_BINARIES_CENTOS7_4_5_LATEST_PATH + "/OpenSpecy_1.1.0.tar.gz")
-                        .getAbsolutePath());
+        openSpecyLatest.setId(2);
+        openSpecyLatest.setSource(new File(TEST_PACKAGES_FOR_BINARIES_OPEN_SPECY_R_4_6_PATH + "/OpenSpecy_1.7.1.tar.gz")
+                .getAbsolutePath());
         openSpecyLatest.setName("OpenSpecy");
-        openSpecyLatest.setVersion("1.1.0");
+        openSpecyLatest.setVersion("1.7.1");
         openSpecyLatest.setActive(true);
-        openSpecyLatest.setMd5sum("13bda5374451f899771b8388983fe334");
-        openSpecyLatest.setRVersion("4.5");
-        openSpecyLatest.setBuilt("R 4.5.0; ; 2024-06-13 23:29:42 UTC; unix");
+        openSpecyLatest.setMd5sum("71ba7ac339ae1ae652b81d29799bf4ea");
+        openSpecyLatest.setRVersion("4.6");
+        openSpecyLatest.setBuilt("R 4.6.0; ; 2026-05-22 07:03:54 UTC; unix\n");
 
-        final RPackage openSpecyLatestCentos8 = RPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user);
-        openSpecyLatestCentos8.setSource(
-                new File(TEST_PACKAGES_FOR_BINARIES_CENTOS7_4_5_LATEST_PATH + "/OpenSpecy_1.1.0.tar.gz")
+        final RPackage openSpecyLatestR45 = RPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user);
+        openSpecyLatestR45.setId(3);
+        openSpecyLatestR45.setSource(
+                new File(TEST_PACKAGES_FOR_BINARIES_OPEN_SPECY_R_4_5_PATH + "/OpenSpecy_1.1.0.tar.gz")
                         .getAbsolutePath());
-        openSpecyLatestCentos8.setName("OpenSpecy");
-        openSpecyLatestCentos8.setVersion("1.1.0");
-        openSpecyLatestCentos8.setActive(true);
-        openSpecyLatestCentos8.setMd5sum("13bda5374451f899771b8388983fe334");
-        openSpecyLatestCentos8.setRVersion("4.5");
-        openSpecyLatestCentos8.setDistribution("centos8");
-        openSpecyLatestCentos8.setBuilt("R 4.5.0; ; 2024-06-13 23:29:42 UTC; unix");
+        openSpecyLatestR45.setName("OpenSpecy");
+        openSpecyLatestR45.setVersion("1.1.0");
+        openSpecyLatestR45.setActive(true);
+        openSpecyLatestR45.setMd5sum("13bda5374451f899771b8388983fe334");
+        openSpecyLatestR45.setRVersion("4.5");
+        openSpecyLatestR45.setBuilt("R 4.5.0; ; 2024-06-13 23:29:42 UTC; unix");
 
         final RPackage arrowCentos7 = RPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user);
+        arrowCentos7.setId(4);
         arrowCentos7.setSource(new File(TEST_PACKAGES_FOR_BINARIES_PATH + "/arrow_8.0.0.tar.gz").getAbsolutePath());
         arrowCentos7.setName("arrow");
         arrowCentos7.setVersion("8.0.0");
@@ -244,6 +243,7 @@ public class RPackageServiceTest extends UnitTest {
         arrowCentos7.setBuilt("R 4.2.0; x86_64-pc-linux-gnu; 2022-06-07 00:49:30 UTC; unix");
 
         final RPackage arrowCentos8 = RPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user);
+        arrowCentos8.setId(5);
         arrowCentos8.setSource(new File(TEST_PACKAGES_FOR_BINARIES_PATH + "/arrow_8.0.0.tar.gz").getAbsolutePath());
         arrowCentos8.setName("arrow");
         arrowCentos8.setVersion("8.0.0");
@@ -254,27 +254,29 @@ public class RPackageServiceTest extends UnitTest {
         arrowCentos8.setBuilt("R 4.2.0; x86_64-pc-linux-gnu; 2022-06-07 00:49:30 UTC; unix");
 
         final RPackage arrowArchive1 = RPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user);
+        arrowArchive1.setId(6);
         arrowArchive1.setSource(new File(TEST_PACKAGES_FOR_BINARIES_PATH + "/arrow_8.0.0.tar.gz").getAbsolutePath());
         arrowArchive1.setName("arrow");
         arrowArchive1.setVersion("7.0.0");
         arrowArchive1.setActive(true);
         arrowArchive1.setMd5sum("b55eb6a2f5adeff68f1ef15fd35b03de");
-        arrowArchive1.setRVersion("4.0.5");
-        arrowArchive1.setBuilt("R 4.0.5; x86_64-pc-linux-gnu; 2022-06-07 00:49:30 UTC; unix");
+        arrowArchive1.setRVersion("4.2.0");
+        arrowArchive1.setBuilt("R 4.2.0; x86_64-pc-linux-gnu; 2022-06-07 00:49:30 UTC; unix");
 
         final RPackage arrowArchive2 = RPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user);
+        arrowArchive2.setId(7);
         arrowArchive2.setSource(new File(TEST_PACKAGES_FOR_BINARIES_PATH + "/arrow_8.0.0.tar.gz").getAbsolutePath());
         arrowArchive2.setName("arrow");
         arrowArchive2.setVersion("7.0.0");
         arrowArchive2.setActive(true);
         arrowArchive2.setMd5sum("b55eb6a2f5adeff68f1ef15fd35b03de");
-        arrowArchive2.setRVersion("4.1");
-        arrowArchive2.setArchitecture("x86");
-        arrowArchive2.setBuilt("R 4.1; x86_64-pc-linux-gnu; 2022-06-07 00:49:30 UTC; unix");
+        arrowArchive2.setRVersion("4.2");
+        arrowArchive2.setArchitecture("x86_64");
+        arrowArchive2.setBuilt("R 4.2; x86_64-pc-linux-gnu; 2022-06-07 00:49:30 UTC; unix");
 
         LinkedHashSet<RPackage> binaryPackages = new LinkedHashSet<>();
         binaryPackages.add(openSpecyLatest);
-        binaryPackages.add(openSpecyLatestCentos8);
+        binaryPackages.add(openSpecyLatestR45);
         binaryPackages.add(openSpecyArchivePackage);
         binaryPackages.add(arrowCentos7);
         binaryPackages.add(arrowCentos8);
@@ -283,7 +285,7 @@ public class RPackageServiceTest extends UnitTest {
 
         Set<RPackage> latestBinaryExpected = new HashSet<>();
         latestBinaryExpected.add(openSpecyLatest);
-        latestBinaryExpected.add(openSpecyLatestCentos8);
+        latestBinaryExpected.add(openSpecyLatestR45);
         latestBinaryExpected.add(arrowCentos7);
         latestBinaryExpected.add(arrowCentos8);
 

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -116,7 +116,7 @@ public class CreatePackageMaintainerStrategyTest extends StrategyTest {
     }
 
     @Test
-    public void createPackageMaintainer_shoulChooseBestMaintainerForPackagesAfterCreation() throws Exception {
+    public void createPackageMaintainer_shouldChooseBestMaintainerForPackagesAfterCreation() throws Exception {
         doAnswer(invocation -> invocation.getArgument(0)).when(eventService).create(any());
         when(bestMaintainerChooser.chooseBestPackageMaintainer(any())).thenReturn(user);
 

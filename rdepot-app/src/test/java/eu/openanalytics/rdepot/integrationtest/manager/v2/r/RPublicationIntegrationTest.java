@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -58,6 +58,17 @@ public class RPublicationIntegrationTest extends IntegrationTest {
                 static final File cards070 = new File(sourceLatestPackagesDirectory, "cards_0.7.0.tar.gz");
                 static final File openssl234 = new File(sourceLatestPackagesDirectory, "openssl_2.3.4.tar.gz");
                 static final File matchingR200 = new File(sourceLatestPackagesDirectory, "matchingR_2.0.0.tar.gz");
+                static final File fmtr173 = new File(sourceLatestPackagesDirectory, "fmtr_1.7.3.tar.gz");
+                static final File lama210 = new File(sourceLatestPackagesDirectory, "LaMa_2.1.0.tar.gz");
+                static final File robustPrioritizr103 =
+                        new File(sourceLatestPackagesDirectory, "robust.prioritizr_1.0.3.tar.gz");
+                static final File redeAgroRadar011 =
+                        new File(sourceLatestPackagesDirectory, "RedeAgroRadar_0.1.1.tar.gz");
+                static final File extr110 = new File(sourceLatestPackagesDirectory, "extr_1.1.0.tar.gz");
+                static final File warden202 = new File(sourceLatestPackagesDirectory, "WARDEN_2.0.2.tar.gz");
+                static final File rush100 = new File(sourceLatestPackagesDirectory, "rush_1.0.0.tar.gz");
+                static final File rlandfire202 = new File(sourceLatestPackagesDirectory, "rlandfire_2.0.2.tar.gz");
+                static final File metrica211 = new File(sourceLatestPackagesDirectory, "metrica_2.1.1.tar.gz");
             }
 
             static class Archive {
@@ -65,6 +76,13 @@ public class RPublicationIntegrationTest extends IntegrationTest {
                 static final File matchingR132 = new File(sourceArchivePackagesDirectory, "matchingR_1.3.2.tar.gz");
                 static final File openssl08 = new File(sourceArchivePackagesDirectory, "openssl_0.8.tar.gz");
                 static final File openssl144 = new File(sourceArchivePackagesDirectory, "openssl_1.4.4.tar.gz");
+                static final File lama100 = new File(sourceArchivePackagesDirectory, "LaMa_1.0.0.tar.gz");
+                static final File lama200 = new File(sourceArchivePackagesDirectory, "LaMa_2.0.0.tar.gz");
+                static final File lama201 = new File(sourceArchivePackagesDirectory, "LaMa_2.0.1.tar.gz");
+                static final File lama202 = new File(sourceArchivePackagesDirectory, "LaMa_2.0.2.tar.gz");
+                static final File metrica123 = new File(sourceArchivePackagesDirectory, "metrica_1.2.3.tar.gz");
+                static final File metrica200 = new File(sourceArchivePackagesDirectory, "metrica_2.0.0.tar.gz");
+                static final File metrica201 = new File(sourceArchivePackagesDirectory, "metrica_2.0.1.tar.gz");
             }
         }
 
@@ -77,6 +95,14 @@ public class RPublicationIntegrationTest extends IntegrationTest {
                         new File(binaryLatestPackagesDirectory, "car_3.1-3_R_x86_64-pc-linux-gnu.tar.gz");
                 static final File ggplot2400 =
                         new File(binaryLatestPackagesDirectory, "ggplot2_4.0.0_R_x86_64-pc-linux-gnu.tar.gz");
+                static final File lama100 =
+                        new File(binaryLatestPackagesDirectory, "LaMa_1.0.0_R_x86_64-pc-linux-gnu.tar.gz");
+                static final File metrica211 =
+                        new File(binaryLatestPackagesDirectory, "metrica_2.1.1_R_x86_64-pc-linux-gnu.tar.gz");
+                static final File warden202 =
+                        new File(binaryLatestPackagesDirectory, "WARDEN_2.0.2_R_x86_64-pc-linux-gnu.tar.gz");
+                static final File fmtr173 =
+                        new File(binaryLatestPackagesDirectory, "fmtr_1.7.3_R_x86_64-pc-linux-gnu.tar.gz");
             }
 
             static class Archive {
@@ -86,6 +112,12 @@ public class RPublicationIntegrationTest extends IntegrationTest {
                         new File(binaryArchivePackagesDirectory, "ggplot2_3.5.2_R_x86_64-pc-linux-gnu.tar.gz");
                 static final File ggplot2351 =
                         new File(binaryArchivePackagesDirectory, "ggplot2_3.5.1_R_x86_64-pc-linux-gnu.tar.gz");
+                static final File metrica123 =
+                        new File(binaryArchivePackagesDirectory, "metrica_1.2.3_R_x86_64-pc-linux-gnu.tar.gz");
+                static final File metrica200 =
+                        new File(binaryArchivePackagesDirectory, "metrica_2.0.0_R_x86_64-pc-linux-gnu.tar.gz");
+                static final File metrica201 =
+                        new File(binaryArchivePackagesDirectory, "metrica_2.0.1_R_x86_64-pc-linux-gnu.tar.gz");
             }
         }
     }
@@ -113,6 +145,85 @@ public class RPublicationIntegrationTest extends IntegrationTest {
                 .mimeType("application/gzip")
                 .controlName("file")
                 .build();
+    }
+
+    public void prepBigTest() throws Exception {
+        final List<MultiPartSpecification> sourcesToUpload = List.of(
+                fileToUpload(ExamplePackages.Source.Latest.cards070),
+                fileToUpload(ExamplePackages.Source.Latest.matchingR200),
+                fileToUpload(ExamplePackages.Source.Latest.openssl234),
+                fileToUpload(ExamplePackages.Source.Latest.fmtr173),
+                fileToUpload(ExamplePackages.Source.Latest.lama210),
+                fileToUpload(ExamplePackages.Source.Latest.robustPrioritizr103),
+                fileToUpload(ExamplePackages.Source.Latest.redeAgroRadar011),
+                fileToUpload(ExamplePackages.Source.Latest.extr110),
+                fileToUpload(ExamplePackages.Source.Latest.warden202),
+                fileToUpload(ExamplePackages.Source.Latest.rush100),
+                fileToUpload(ExamplePackages.Source.Latest.rlandfire202),
+                fileToUpload(ExamplePackages.Source.Latest.metrica211),
+                fileToUpload(ExamplePackages.Source.Archive.matchingR130),
+                fileToUpload(ExamplePackages.Source.Archive.matchingR132),
+                fileToUpload(ExamplePackages.Source.Archive.openssl08),
+                fileToUpload(ExamplePackages.Source.Archive.openssl144),
+                fileToUpload(ExamplePackages.Source.Archive.lama100),
+                fileToUpload(ExamplePackages.Source.Archive.lama200),
+                fileToUpload(ExamplePackages.Source.Archive.lama201),
+                fileToUpload(ExamplePackages.Source.Archive.lama202),
+                fileToUpload(ExamplePackages.Source.Archive.metrica123),
+                fileToUpload(ExamplePackages.Source.Archive.metrica200),
+                fileToUpload(ExamplePackages.Source.Archive.metrica201));
+        final List<MultiPartSpecification> binariesToUpload = List.of(
+                fileToUpload(ExamplePackages.Binary.Latest.car313),
+                fileToUpload(ExamplePackages.Binary.Latest.ggplot2400),
+                fileToUpload(ExamplePackages.Binary.Latest.lama100),
+                fileToUpload(ExamplePackages.Binary.Latest.fmtr173),
+                fileToUpload(ExamplePackages.Binary.Latest.warden202),
+                fileToUpload(ExamplePackages.Binary.Latest.metrica211),
+                fileToUpload(ExamplePackages.Binary.Archive.car215),
+                fileToUpload(ExamplePackages.Binary.Archive.ggplot2352),
+                fileToUpload(ExamplePackages.Binary.Archive.metrica123),
+                fileToUpload(ExamplePackages.Binary.Archive.metrica200),
+                fileToUpload(ExamplePackages.Binary.Archive.metrica201),
+                fileToUpload(ExamplePackages.Binary.Archive.ggplot2351));
+
+        createTestRepo();
+
+        for (MultiPartSpecification file : sourcesToUpload) {
+            given().header(AUTHORIZATION, BASIC + ADMIN_TOKEN)
+                    .accept(ContentType.JSON)
+                    .contentType("multipart/form-data")
+                    .multiPart(file)
+                    .multiPart("repository", TEST_REPO_NAME)
+                    .multiPart("generateManual", "false")
+                    .multiPart("replace", "false")
+                    .multiPart("changes", "")
+                    .multiPart("binary", "false")
+                    .when()
+                    .post(apiPath)
+                    .then()
+                    .statusCode(HttpStatus.SC_CREATED);
+        }
+
+        // Upload binaries
+        for (MultiPartSpecification file : binariesToUpload) {
+            given().header(AUTHORIZATION, BASIC + ADMIN_TOKEN)
+                    .accept(ContentType.JSON)
+                    .contentType("multipart/form-data")
+                    .multiPart(file)
+                    .multiPart("repository", TEST_REPO_NAME)
+                    .multiPart("generateManual", "false")
+                    .multiPart("replace", "false")
+                    .multiPart("changes", "")
+                    .multiPart("binary", "true")
+                    .multiPart("architecture", "x86_64")
+                    .multiPart("rVersion", "4.5")
+                    .multiPart("distribution", "centos7")
+                    .when()
+                    .post(apiPath)
+                    .then()
+                    .statusCode(HttpStatus.SC_CREATED);
+        }
+        publishRepo();
     }
 
     public void prepTest() throws Exception {
@@ -193,7 +304,7 @@ public class RPublicationIntegrationTest extends IntegrationTest {
 
     @Test
     public void installSourcePackageFromArchive() throws Exception {
-        prepTest();
+        prepBigTest();
         final String result = bashScriptExecutor
                 .executeBashScript(
                         "src/test/resources/scripts/" + "checkIfPublishedArchivedOpensslPackageCanBeInstalled.sh")
@@ -203,8 +314,23 @@ public class RPublicationIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    public void installBinaryPackageFromBigArchive() throws Exception {
+        prepBigTest();
+        final String result = bashScriptExecutor
+                .executeBashScript(
+                        "src/test/resources/scripts/" + "checkIfPublishedArchivedCarPackageCanBeInstalled.sh")
+                .output();
+        System.out.println("Result: " + result);
+        assertTrue(
+                result.contains("* installing *binary* package ‘car’ ..."),
+                "Source package was installed instead of binary package.");
+        assertTrue(result.contains("* DONE (car)"), "Package was not installed correctly.");
+        assertFalse(result.contains("Error"), "Package could not be loaded.");
+    }
+
+    @Test
     public void installBinaryPackageFromArchive() throws Exception {
-        prepTest();
+        prepBigTest();
         final String result = bashScriptExecutor
                 .executeBashScript(
                         "src/test/resources/scripts/" + "checkIfPublishedArchivedCarPackageCanBeInstalled.sh")
@@ -219,7 +345,7 @@ public class RPublicationIntegrationTest extends IntegrationTest {
 
     @Test
     public void installSourcePackage() throws Exception {
-        prepTest();
+        prepBigTest();
         final String result = bashScriptExecutor
                 .executeBashScript("src/test/resources/scripts/" + "checkIfPublishedOpensslPackageCanBeInstalled.sh")
                 .output();
@@ -229,7 +355,7 @@ public class RPublicationIntegrationTest extends IntegrationTest {
 
     @Test
     public void installBinaryPackage() throws Exception {
-        prepTest();
+        prepBigTest();
         final String result = bashScriptExecutor
                 .executeBashScript("src/test/resources/scripts/" + "checkIfPublishedCarPackageCanBeInstalled.sh")
                 .output();
@@ -243,23 +369,96 @@ public class RPublicationIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    public void listBigPopulatedRepository() throws Exception {
+        prepBigTest();
+
+        final String expectedSource =
+                """
+                        01bbc75fd8fa20dc04e24a92a5dc5d6d  /opt/rdepot/my-test-repo-123/src/contrib/Archive/LaMa/LaMa_2.0.2.tar.gz
+                        07f573114830f8a7668dfd6509b195c3  /opt/rdepot/my-test-repo-123/src/contrib/LaMa_2.1.0.tar.gz
+                        0f588d9575328e12c15981cbdc4e76ee  /opt/rdepot/my-test-repo-123/src/contrib/openssl_2.3.4.tar.gz
+                        13b9c4b5f1e9215fa6426ba8f4d8d014  /opt/rdepot/my-test-repo-123/src/contrib/robust.prioritizr_1.0.3.tar.gz
+                        18768bc4906d8b6b040c997372f10d0f  /opt/rdepot/my-test-repo-123/src/contrib/Archive/openssl/index.html
+                        1fde767f383722858484687b81d02d04  /opt/rdepot/my-test-repo-123/src/contrib/Archive/matchingR/matchingR_1.3.2.tar.gz
+                        2170aaa76b9691c201a3cff4a42634ee  /opt/rdepot/my-test-repo-123/src/contrib/Archive/LaMa/LaMa_2.0.0.tar.gz
+                        29798f5844f2cde1e12c4ca34dd2920d  /opt/rdepot/my-test-repo-123/src/contrib/Archive/metrica/metrica_1.2.3.tar.gz
+                        2a7d165f1f89db913711c66457f4435a  /opt/rdepot/my-test-repo-123/src/contrib/Archive/LaMa/LaMa_2.0.1.tar.gz
+                        2c8e0f331fdb3d89997d2c6ba442de38  /opt/rdepot/my-test-repo-123/src/contrib/rush_1.0.0.tar.gz
+                        2ccae817cb0d1c6fbf1e7b08fc3766f7  /opt/rdepot/my-test-repo-123/src/contrib/Archive/LaMa/LaMa_1.0.0.tar.gz
+                        3364c4f61981a493181be0fd7eb34753  /opt/rdepot/my-test-repo-123/src/contrib/cards_0.7.0.tar.gz
+                        3a0077ccde87e5f2d7210e88713ab756  /opt/rdepot/my-test-repo-123/src/contrib/index.html
+                        3d2a439923ae3e4e2a6d20701b4b7bee  /opt/rdepot/my-test-repo-123/src/contrib/Archive/metrica/metrica_2.0.0.tar.gz
+                        4aa19b8fdb61dc19110b4b7ab7f64646  /opt/rdepot/my-test-repo-123/src/contrib/rlandfire_2.0.2.tar.gz
+                        5b75c427ef3491b967056db2ed2b31d8  /opt/rdepot/my-test-repo-123/src/contrib/matchingR_2.0.0.tar.gz
+                        6154914d100cc961563131016caaffa4  /opt/rdepot/my-test-repo-123/src/contrib/extr_1.1.0.tar.gz
+                        6598cc3884979db7752ac6fed987d954  /opt/rdepot/my-test-repo-123/src/contrib/Archive/index.html
+                        694f17232bcfe5e19296a9aed8ab3de0  /opt/rdepot/my-test-repo-123/src/contrib/PACKAGES.gz
+                        6b2eeabb6cf274ca349271ef3a732028  /opt/rdepot/my-test-repo-123/src/contrib/Archive/PACKAGES
+                        776971741ada234042f43013d7132461  /opt/rdepot/my-test-repo-123/src/contrib/Archive/openssl/openssl_0.8.tar.gz
+                        781917c00240bc01625f59d430559876  /opt/rdepot/my-test-repo-123/src/contrib/PACKAGES
+                        90a59c5ea673f56fb682747c3d504b58  /opt/rdepot/my-test-repo-123/src/contrib/Archive/LaMa/index.html
+                        a00115e84f0d05576b4e685988b5d126  /opt/rdepot/my-test-repo-123/src/contrib/metrica_2.1.1.tar.gz
+                        a666bfe95a117063197e7008e8eb5e1c  /opt/rdepot/my-test-repo-123/src/contrib/Archive/PACKAGES.gz
+                        a8203cd0cc6d48aa9166626790f3bb8f  /opt/rdepot/my-test-repo-123/src/contrib/Archive/metrica/index.html
+                        beff812b6842cd02d019fd3df0733625  /opt/rdepot/my-test-repo-123/src/contrib/Archive/openssl/openssl_1.4.4.tar.gz
+                        c41077a594f21307cb7cc188295467c2  /opt/rdepot/my-test-repo-123/src/contrib/RedeAgroRadar_0.1.1.tar.gz
+                        d1d652b13edd512bb1e5d8518049d9e6  /opt/rdepot/my-test-repo-123/src/contrib/Archive/matchingR/matchingR_1.3.0.tar.gz
+                        d2a7533cfd9329b008df1b31a0f311de  /opt/rdepot/my-test-repo-123/src/contrib/WARDEN_2.0.2.tar.gz
+                        eaae55a609e2dc8eeec77b817c7d0846  /opt/rdepot/my-test-repo-123/src/contrib/fmtr_1.7.3.tar.gz
+                        f1b35a148fffc6f7035ccb07ae0e477f  /opt/rdepot/my-test-repo-123/src/contrib/Archive/matchingR/index.html
+                        f80620917e994e915de672affa0ae0f2  /opt/rdepot/my-test-repo-123/src/contrib/Archive/metrica/metrica_2.0.1.tar.gz""";
+        final String expectedBinary =
+                """
+                        0f1186a8055c7ae5192212afac72098f  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/ggplot2/ggplot2_3.5.2.tar.gz
+                        34e8a3546fe4b36ce466a73407122b96  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/ggplot2/ggplot2_3.5.1.tar.gz
+                        394d591ade1e0d4ddbb9405e515e8df8  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/metrica/metrica_2.0.0.tar.gz
+                        3f1daaf51eb9f09c6d13aff148448f53  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/index.html
+                        470b92b853fcd60ce6bc78c6adbde5dd  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/metrica/index.html
+                        50e66836bf231947715bd9db835d7aae  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/PACKAGES.gz
+                        5c348238049ce0ed38311d915aa57634  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/fmtr_1.7.3.tar.gz
+                        65d329a3e5a3595af9a2b3835a803f20  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/PACKAGES.gz
+                        6efe0ee1d8de8b676fb6ac8b94f0ee40  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/ggplot2_4.0.0.tar.gz
+                        775ac578824ff09c9cad8e15419cd309  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/car/car_2.1-5.tar.gz
+                        790fc873116ea6b21eb3a8848240e8bb  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/car_3.1-3.tar.gz
+                        7b2cc1cc0e73c9400bf894e4e9fec389  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/metrica/metrica_1.2.3.tar.gz
+                        7beff49009c5e8f544c533a7e4e50a6f  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/index.html
+                        8fa5b452489ff908acacfbcfef446688  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/car/index.html
+                        a5753d54a3de628d7357abe3d5375ad9  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/metrica/metrica_2.0.1.tar.gz
+                        ac54cd5a5a6c2133ad5b641d3708b338  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/LaMa_1.0.0.tar.gz
+                        b20915a861f2feac276018b0d9546294  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/PACKAGES
+                        ce1df2fd33e57959abbce3a1511a2384  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/PACKAGES
+                        e51b4cef2eec3984effe103535cd6feb  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/metrica_2.1.1.tar.gz
+                        e53accdb1a464919f6331a9a0e1cd7bb  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/WARDEN_2.0.2.tar.gz
+                        f69325d0f4257abecaddf63cc129021e  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/ggplot2/index.html""";
+
+        final String actualSource = bashScriptExecutor
+                .executeBashScript("src/test/resources/scripts/listSourcePackages.sh")
+                .output();
+        final String actualBinary = bashScriptExecutor
+                .executeBashScript("src/test/resources/scripts/listBinaryPackages.sh")
+                .output();
+        assertEquals(expectedSource, actualSource, "Incorrect packages in /src/contrib directory.");
+        assertEquals(expectedBinary, actualBinary, "Incorrect binary in /bin directory.");
+    }
+
+    @Test
     public void listPopulatedRepository() throws Exception {
         prepTest();
         final String expectedSource =
                 """
                         0f588d9575328e12c15981cbdc4e76ee  /opt/rdepot/my-test-repo-123/src/contrib/openssl_2.3.4.tar.gz
-                        121e3ec6e040505670b2f5bafa9b88a5  /opt/rdepot/my-test-repo-123/src/contrib/PACKAGES.gz
                         151632666bb538dbe241f77fe9cb044d  /opt/rdepot/my-test-repo-123/src/contrib/Archive/index.html
                         1fde767f383722858484687b81d02d04  /opt/rdepot/my-test-repo-123/src/contrib/Archive/matchingR/matchingR_1.3.2.tar.gz
                         3364c4f61981a493181be0fd7eb34753  /opt/rdepot/my-test-repo-123/src/contrib/cards_0.7.0.tar.gz
-                        38dbc0b354e36694ca01bb8c5e975bd6  /opt/rdepot/my-test-repo-123/src/contrib/Archive/PACKAGES
                         5b75c427ef3491b967056db2ed2b31d8  /opt/rdepot/my-test-repo-123/src/contrib/matchingR_2.0.0.tar.gz
                         5c7178042e319a8ebe654605775f1dcd  /opt/rdepot/my-test-repo-123/src/contrib/Archive/openssl/index.html
-                        65710388fdf2104f8b87ada255bb921d  /opt/rdepot/my-test-repo-123/src/contrib/Archive/PACKAGES.gz
+                        5d5e98eb3374158f7ee04732517b3db7  /opt/rdepot/my-test-repo-123/src/contrib/Archive/PACKAGES
                         776971741ada234042f43013d7132461  /opt/rdepot/my-test-repo-123/src/contrib/Archive/openssl/openssl_0.8.tar.gz
                         beff812b6842cd02d019fd3df0733625  /opt/rdepot/my-test-repo-123/src/contrib/Archive/openssl/openssl_1.4.4.tar.gz
+                        d04ad972d73865e7d854c9b76b24139d  /opt/rdepot/my-test-repo-123/src/contrib/PACKAGES.gz
                         d1d652b13edd512bb1e5d8518049d9e6  /opt/rdepot/my-test-repo-123/src/contrib/Archive/matchingR/matchingR_1.3.0.tar.gz
-                        dd6d2a7e49858711f99e650006764a7f  /opt/rdepot/my-test-repo-123/src/contrib/PACKAGES
+                        d1f20f7df0318a8ba3df01b1e5119b4c  /opt/rdepot/my-test-repo-123/src/contrib/Archive/PACKAGES.gz
+                        df1a3e8d5fe8b1d6b0fa54968a9de8b2  /opt/rdepot/my-test-repo-123/src/contrib/PACKAGES
                         ed0af3271393feac42aa4158c75fca3c  /opt/rdepot/my-test-repo-123/src/contrib/index.html
                         f884a54d426b00121594ec087e649950  /opt/rdepot/my-test-repo-123/src/contrib/Archive/matchingR/index.html""";
         final String expectedBinary =
@@ -267,16 +466,16 @@ public class RPublicationIntegrationTest extends IntegrationTest {
                         0f1186a8055c7ae5192212afac72098f  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/ggplot2/ggplot2_3.5.2.tar.gz
                         1e58863aed5b7aec948e446b8b6a1cc3  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/index.html
                         34e8a3546fe4b36ce466a73407122b96  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/ggplot2/ggplot2_3.5.1.tar.gz
+                        400d1cc8e0251e7d9bf2bf5f8de1eaff  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/PACKAGES.gz
                         43e5bd07a692b6db4504d19607d682ba  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/car/index.html
-                        58c09eca454b79e0332e3d2f6c47ba52  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/PACKAGES.gz
+                        59673d1144cb6f190bc200fd388c0d6c  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/PACKAGES.gz
+                        6bdcda31e51413d8d282a74a17272a73  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/PACKAGES
                         6efe0ee1d8de8b676fb6ac8b94f0ee40  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/ggplot2_4.0.0.tar.gz
+                        6fa1e8c3fe4394fbf7f084b513234015  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/PACKAGES
                         775ac578824ff09c9cad8e15419cd309  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/car/car_2.1-5.tar.gz
                         790fc873116ea6b21eb3a8848240e8bb  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/car_3.1-3.tar.gz
-                        7cf88acde7e41f219c8a79e97ae35409  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/PACKAGES
                         8462b610ef6b4561218db6f3da42dcd9  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/ggplot2/index.html
-                        a2be14b1d5cf8e66048b405f9188fac5  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/PACKAGES.gz
-                        b84a2fa64733e376e2d6aaa34a0c74a3  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/index.html
-                        fe48e1028314f7a6e5885d540b27e75b  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/PACKAGES""";
+                        b84a2fa64733e376e2d6aaa34a0c74a3  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/index.html""";
 
         final String actualSource = bashScriptExecutor
                 .executeBashScript("src/test/resources/scripts/listSourcePackages.sh")
@@ -355,32 +554,32 @@ public class RPublicationIntegrationTest extends IntegrationTest {
         final String expectedSource =
                 """
                         1fde767f383722858484687b81d02d04  /opt/rdepot/my-test-repo-123/src/contrib/Archive/matchingR/matchingR_1.3.2.tar.gz
+                        29410b6d040d2610b23c42a65cad215b  /opt/rdepot/my-test-repo-123/src/contrib/PACKAGES.gz
                         2ac1f50ba71a42f6ca5a6ba57db180a1  /opt/rdepot/my-test-repo-123/src/contrib/Archive/matchingR/index.html
+                        3288b6e7c4f518f3e3e388d9a5684902  /opt/rdepot/my-test-repo-123/src/contrib/Archive/PACKAGES.gz
                         3364c4f61981a493181be0fd7eb34753  /opt/rdepot/my-test-repo-123/src/contrib/cards_0.7.0.tar.gz
-                        4f9457af18e4d17d794da50c416d5005  /opt/rdepot/my-test-repo-123/src/contrib/Archive/PACKAGES.gz
+                        4f34061b4d5494f6f59afe64222c1bab  /opt/rdepot/my-test-repo-123/src/contrib/PACKAGES
+                        53c3906396159772d65c75b4e6bacaeb  /opt/rdepot/my-test-repo-123/src/contrib/Archive/PACKAGES
                         5b75c427ef3491b967056db2ed2b31d8  /opt/rdepot/my-test-repo-123/src/contrib/matchingR_2.0.0.tar.gz
                         6e722414615f388c8bc8b8c5fae74f0f  /opt/rdepot/my-test-repo-123/src/contrib/index.html
                         75894b99dbb21546421c835c55bcd50d  /opt/rdepot/my-test-repo-123/src/contrib/Archive/index.html
                         776971741ada234042f43013d7132461  /opt/rdepot/my-test-repo-123/src/contrib/Archive/openssl/openssl_0.8.tar.gz
                         a7a484e0e6894ebc5d3cf903d9e35900  /opt/rdepot/my-test-repo-123/src/contrib/Archive/openssl/index.html
-                        bc988cb79e865a65c57888025af6489d  /opt/rdepot/my-test-repo-123/src/contrib/PACKAGES.gz
                         beff812b6842cd02d019fd3df0733625  /opt/rdepot/my-test-repo-123/src/contrib/openssl_1.4.4.tar.gz
-                        cc3c418f26eb579be99e8e5b9fec8444  /opt/rdepot/my-test-repo-123/src/contrib/PACKAGES
-                        cdd194fb7e2765b64104ffc9daa50c40  /opt/rdepot/my-test-repo-123/src/contrib/Archive/PACKAGES
                         d1d652b13edd512bb1e5d8518049d9e6  /opt/rdepot/my-test-repo-123/src/contrib/Archive/matchingR/matchingR_1.3.0.tar.gz""";
         final String expectedBinary =
                 """
+                        00135d877ca3cf2be3d76995d2cc51a6  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/PACKAGES
                         0f1186a8055c7ae5192212afac72098f  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/ggplot2/ggplot2_3.5.2.tar.gz
                         34e8a3546fe4b36ce466a73407122b96  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/ggplot2/ggplot2_3.5.1.tar.gz
-                        3d1790e06f4f9bcbd615f9ff7e8f2fcf  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/PACKAGES
                         428dc93e2775c709d3a2deecaa504527  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/index.html
-                        6dda99d34e3dc04492c55591178017f9  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/PACKAGES.gz
                         6efe0ee1d8de8b676fb6ac8b94f0ee40  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/ggplot2_4.0.0.tar.gz
                         775ac578824ff09c9cad8e15419cd309  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/car_2.1-5.tar.gz
                         982de8ade2dbf2fa37948c7605d0c4f2  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/ggplot2/index.html
-                        aa573b8efa47cbec9f447787df3ecc5c  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/PACKAGES
-                        c762f89648370e790856a0c6e9ece0b4  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/index.html
-                        db6485cd49a4f9d2cf697b466ba596de  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/PACKAGES.gz""";
+                        a553cf6029aeb16e7bd3bcf488ed5f45  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/PACKAGES.gz
+                        a590452362f59b71040093cbc7ee65d6  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/PACKAGES.gz
+                        b3ec0cc540e4b43295cfee7b200c308b  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/PACKAGES
+                        c762f89648370e790856a0c6e9ece0b4  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/index.html""";
 
         final String actualSource = bashScriptExecutor
                 .executeBashScript("src/test/resources/scripts/listSourcePackages.sh")

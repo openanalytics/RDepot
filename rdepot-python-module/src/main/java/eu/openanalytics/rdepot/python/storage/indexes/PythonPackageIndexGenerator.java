@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -57,6 +57,10 @@ public class PythonPackageIndexGenerator extends PackageIndexGenerator<PythonPac
     protected String generatePackageAnchor(PythonPackage packageBag) {
         final String genericAnchor = super.generatePackageAnchor(packageBag);
         return genericAnchor
+                .replace(
+                        "$hash_method",
+                        packageBag.getRepository().getHashMethod().getValue())
+                .replace("$checksum", packageBag.getHash())
                 .replace(
                         "$package_requires_python",
                         Objects.requireNonNullElse(

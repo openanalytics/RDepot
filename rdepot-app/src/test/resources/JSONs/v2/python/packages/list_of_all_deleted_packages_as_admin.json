@@ -47,6 +47,20 @@
                     {
                         "rel": "packageList",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/python/repositories/10"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/python/packages/35",
+                        "type": "PATCH"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/python/packages/35",
+                        "type": "DELETE"
                     }
                 ],
                 "id": 35,
@@ -111,6 +125,20 @@
                     {
                         "rel": "packageList",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/python/repositories/10"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/python/packages/36",
+                        "type": "PATCH"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/python/packages/36",
+                        "type": "DELETE"
                     }
                 ],
                 "id": 36,
@@ -175,6 +203,20 @@
                     {
                         "rel": "packageList",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/python/repositories/8"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/python/packages/42",
+                        "type": "PATCH"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/python/packages/42",
+                        "type": "DELETE"
                     }
                 ],
                 "id": 42,

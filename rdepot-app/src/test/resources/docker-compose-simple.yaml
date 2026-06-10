@@ -7,7 +7,7 @@ services:
       eu.openanalytics.rdepot.container.name: "oa-rdepot-proxy"
     volumes:
       - ./docker/proxy/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./docker/proxy/sites-enabled/rdepot:/etc/nginx/sites-enabled/rdepot:ro
+      - ./docker/proxy/sites-enabled/simple:/etc/nginx/sites-enabled/rdepot:ro
       - repository:/opt/rdepot/repo/:ro
     ports:
       - 8017:80

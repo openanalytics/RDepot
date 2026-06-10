@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -32,6 +32,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 import lombok.Getter;
@@ -46,12 +47,13 @@ import lombok.Setter;
 @Table(name = "access_token", schema = "public")
 public class AccessToken extends EventableResource implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, columnDefinition = "TEXT")
     private String name;
 
-    @Column(name = "value", nullable = false)
+    @Column(name = "value", nullable = false, columnDefinition = "TEXT")
     private String value;
 
     @Column(name = "creation_date", nullable = false)
@@ -63,7 +65,7 @@ public class AccessToken extends EventableResource implements Serializable {
     @Column(name = "active", nullable = false)
     private boolean active;
 
-    @Column(name = "last_used", nullable = true)
+    @Column(name = "last_used")
     private Instant lastUsed;
 
     @ManyToOne(fetch = FetchType.EAGER)

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -28,13 +28,16 @@ import eu.openanalytics.rdepot.integrationtest.manager.v2.IntegrationTest;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.RequestType;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.TestRequestBody;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.testData.PackageTestData;
+import eu.openanalytics.rdepot.integrationtest.manager.v2.testData.SubmissionMultipartBody;
+import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.http.ContentType;
 import java.io.File;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.maven.surefire.shared.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 
 public class PythonPackageIntegrationTest extends IntegrationTest {
 
@@ -60,6 +63,7 @@ public class PythonPackageIntegrationTest extends IntegrationTest {
                 .search("numpy")
                 .repositories(List.of("testrepo8"))
                 .maintainer(Arrays.asList("Nikola%20Tesla", "Galileo%20Galilei"))
+                .binary(true)
                 .build();
     }
 
@@ -72,6 +76,44 @@ public class PythonPackageIntegrationTest extends IntegrationTest {
                 .urlSuffix("?search=" + testData.getSearch() + "&sort=id,desc")
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
                 .expectedJsonPath("/v2/python/packages/packages_searching.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getBinaryPackages() throws Exception {
+        final File packageBag = new File(
+                "src/test/resources/itestPackages/tetrapolyscope-0.0.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl");
+        final SubmissionMultipartBody body = new SubmissionMultipartBody(
+                "testrepo8",
+                true,
+                "",
+                new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+                        .fileName(packageBag.getName())
+                        .mimeType("application/octet-stream")
+                        .controlName("file")
+                        .build(),
+                true);
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST_MULTIPART)
+                .path("/api/v2/manager/python/submissions")
+                .statusCode(201)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getChangeEndpointNewEventsAmount())
+                .submissionMultipartBody(body)
+                .expectedJsonPath("/v2/python/submissions/new_binary_submission.json")
+                .build();
+        testEndpoint(requestBody);
+
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET_RESOURCE_AFTER_SUBMISSION)
+                .urlSuffix("?binary=" + testData.isBinary() + "&sort=id,asc")
+                .statusCode(200)
+                .token(USER_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/python/packages/binary_packages.json")
+                .ignoreSource(true)
                 .build();
         testEndpoint(requestBody);
     }

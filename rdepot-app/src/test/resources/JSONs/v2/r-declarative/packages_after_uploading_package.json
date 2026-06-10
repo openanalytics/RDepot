@@ -20,7 +20,7 @@
                     "email": "einstein@ldap.forumsys.com"
                 },
                 "repository": {
-                    "id": 15,
+                    "id": 16,
                     "name": "A",
                     "publicationUri": "http://localhost/repo/A",
                     "published": true,
@@ -68,6 +68,10 @@
                     {
                         "rel": "packageList",
                         "href": "http://localhost:8021/api/v2/manager/r/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8021/api/v2/manager/r/repositories/16"
                     }
                 ]
             }

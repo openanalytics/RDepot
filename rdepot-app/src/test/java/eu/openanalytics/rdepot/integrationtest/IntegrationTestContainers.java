@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -36,7 +36,6 @@ public class IntegrationTestContainers {
             new DockerComposeContainer<>(new File("src/test/resources/docker-compose.yaml"));
 
     private static final DockerComposeContainer<?> container = DOCKER_COMPOSE_CONTAINER
-            .withLocalCompose(true)
             .withOptions("--compatibility")
             .waitingFor(
                     "proxy",

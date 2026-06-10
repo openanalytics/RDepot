@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -22,8 +22,6 @@ package eu.openanalytics.rdepot.python.config.declarative;
 
 import eu.openanalytics.rdepot.base.config.declarative.DeclaredRepositoryDirectoriesProps;
 import eu.openanalytics.rdepot.base.config.declarative.YamlDeclarativeConfigurationSource;
-import eu.openanalytics.rdepot.base.config.declarative.exceptions.DeclaredRepositoryTechnologyMismatch;
-import eu.openanalytics.rdepot.base.config.declarative.exceptions.InvalidDeclaredRepositoryName;
 import eu.openanalytics.rdepot.base.config.declarative.exceptions.InvalidRepositoryDeclaration;
 import eu.openanalytics.rdepot.python.mirroring.PypiMirror;
 import eu.openanalytics.rdepot.python.mirroring.pojos.MirroredPythonPackage;
@@ -31,9 +29,13 @@ import eu.openanalytics.rdepot.python.mirroring.pojos.MirroredPythonRepository;
 import eu.openanalytics.rdepot.python.technology.PythonLanguage;
 import eu.openanalytics.rdepot.python.validation.repositories.PythonBasicNameValidator;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.yaml.snakeyaml.Yaml;
 
 @Slf4j
 @Component
@@ -46,31 +48,12 @@ public class PythonYamlDeclarativeConfigurationSource
         super(declaredRepositoryDirectoriesProps, MirroredPythonRepository.class, nameValidation);
     }
 
-    /**
-     * Parses provided YAML file into repository declaration.
-     * @throws InvalidRepositoryDeclaration when YAML could not be parsed into repository
-     * @throws InvalidDeclaredRepositoryName when repository name is not valid
-     * @throws DeclaredRepositoryTechnologyMismatch when technology is missing or it is not Python
-     */
     @Override
-    protected MirroredPythonRepository retrieveDeclaredRepositoryFromFile(File configFile)
-            throws InvalidRepositoryDeclaration, DeclaredRepositoryTechnologyMismatch, InvalidDeclaredRepositoryName {
-        try {
-            MirroredPythonRepository repository = mapper.readValue(configFile, repositoryClass);
-            if (repository.getTechnology() == null
-                    || !repository.getTechnology().equals(PythonLanguage.instance)) {
-                throw new DeclaredRepositoryTechnologyMismatch(repository.getName());
-            } else {
-                super.retrieveDeclaredRepositoryFromFile(configFile);
-            }
-
-            return repository;
-        } catch (DeclaredRepositoryTechnologyMismatch e) {
-            log.debug(e.getMessage(), e);
-            throw new DeclaredRepositoryTechnologyMismatch(configFile.getAbsolutePath());
-        } catch (InvalidDeclaredRepositoryName e) {
-            log.debug(e.getMessage(), e);
-            throw new InvalidDeclaredRepositoryName(configFile.getAbsolutePath());
+    protected boolean acceptFile(File configFile) throws InvalidRepositoryDeclaration {
+        try (InputStream input = new FileInputStream(configFile)) {
+            Map<String, Object> data = new Yaml().load(input);
+            Object technology = data.get("technology");
+            return technology != null && PythonLanguage.instance.getName().equalsIgnoreCase(technology.toString());
         } catch (IOException e) {
             log.error(e.getMessage(), e);
             throw new InvalidRepositoryDeclaration(configFile.getAbsolutePath());

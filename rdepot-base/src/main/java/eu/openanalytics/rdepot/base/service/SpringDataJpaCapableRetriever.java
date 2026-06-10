@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -99,7 +99,7 @@ public abstract class SpringDataJpaCapableRetriever<E extends Resource> implemen
         //
         pageable = fixPageable(pageable);
 
-        final Page<E> found = dao.findAll(specification, pageable);
+        final Page<E> found = specification == null ? dao.findAll(pageable) : dao.findAll(specification, pageable);
         return new PageWithAnotherSort<>(found, originalPageable);
     }
 

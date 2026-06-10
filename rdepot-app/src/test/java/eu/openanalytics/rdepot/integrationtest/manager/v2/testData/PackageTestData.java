@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -37,6 +37,7 @@ public class PackageTestData {
     private String search;
     private List<String> maintainer;
     private boolean deleted;
+    private boolean binary;
     private int getEndpointNewEventsAmount;
     private int deleteEndpointNewEventsAmount;
     private int changeEndpointNewEventsAmount;

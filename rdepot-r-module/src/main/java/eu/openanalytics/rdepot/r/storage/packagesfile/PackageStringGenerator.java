@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -106,6 +106,8 @@ public class PackageStringGenerator {
                     .append(lineSeparator);
         packageString.append(lineSeparator);
 
+        log.debug("PACKAGES string generated for package {}", packageBag);
+        log.trace("PACKAGES string for package is\n{}: ", packageString);
         return packageString.toString();
     }
 
@@ -114,8 +116,13 @@ public class PackageStringGenerator {
     }
 
     public void addPackageToPackagesFile(RPackage packageBag, String path) throws GeneratePackagesFileException {
+        log.debug("Adding package {} to PACKAGES file {}", packageBag, path);
+        createAndOrAppendTextToPackagesFile(generatePackageString(packageBag), path);
+    }
+
+    private void createAndOrAppendTextToPackagesFile(String content, String path) throws GeneratePackagesFileException {
         try {
-            storage.appendText(generatePackageString(packageBag), path);
+            storage.appendText(content, path);
             storage.gzipFile(path);
         } catch (IOException | GzipFileException e) {
             log.error("{}: {}", e.getClass(), e.getMessage());
@@ -123,18 +130,37 @@ public class PackageStringGenerator {
         }
     }
 
-    public void generatePackagesFiles(BinLocationSet packages) throws GeneratePackagesFileException {
+    private void recreateEmptyPackagesFile(String path) throws GeneratePackagesFileException {
+        log.debug("No packages in the repository. Generating empty PACKAGES file: {}", path);
+        createAndOrAppendTextToPackagesFile("", path);
+    }
 
+    public void generatePackagesFiles(BinLocationSet packages) throws GeneratePackagesFileException {
         for (BinLocation location : packages.getAllBinLocations()) {
+            log.debug("(Re)generating PACKAGES file for binary location {}", location);
             final String path = location.location() + separator + PACKAGES;
             try {
+                log.debug("Removing old PACKAGES file: {}", path);
                 storage.removeFileIfExists(path);
             } catch (DeleteFileException e) {
                 log.error(e.getMessage(), e);
                 throw new GeneratePackagesFileException();
             }
+            if (location.packages().isEmpty()) {
+                log.debug("No packages to populate for removed PACKAGES file: {}", path);
+                recreateEmptyPackagesFile(path);
+                continue;
+            }
             for (RPackage packageBag : location.packages()) {
                 addPackageToPackagesFile(packageBag, path);
+            }
+
+            try {
+                storage.removeEmptyLinesFromEnd(path);
+                storage.gzipFile(path);
+            } catch (IOException | GzipFileException e) {
+                log.error(e.getMessage(), e);
+                throw new GeneratePackagesFileException();
             }
         }
     }

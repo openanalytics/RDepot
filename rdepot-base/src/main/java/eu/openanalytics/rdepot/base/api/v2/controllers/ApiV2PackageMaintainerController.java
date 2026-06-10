@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -176,7 +176,7 @@ public class ApiV2PackageMaintainerController extends ApiV2Controller<PackageMai
         Specification<PackageMaintainer> specification = null;
 
         if (deleted.isPresent()) {
-            specification = SpecificationUtils.component(PackageMaintainerSpecs.isDeleted(deleted.get()));
+            specification = PackageMaintainerSpecs.isDeleted(deleted.get());
         }
 
         if (requester.getRole().getValue() == Role.VALUE.REPOSITORYMAINTAINER) {
@@ -184,8 +184,7 @@ public class ApiV2PackageMaintainerController extends ApiV2Controller<PackageMai
                     .map(m -> m.getRepository().getName())
                     .toList();
 
-            Specification<PackageMaintainer> allowedRepositories =
-                    SpecificationUtils.component(PackageMaintainerSpecs.ofRepository(repos));
+            Specification<PackageMaintainer> allowedRepositories = PackageMaintainerSpecs.ofRepository(repos);
             specification = SpecificationUtils.andComponent(specification, allowedRepositories);
         }
 
@@ -272,7 +271,7 @@ public class ApiV2PackageMaintainerController extends ApiV2Controller<PackageMai
             PackageMaintainer created = strategyExecutor.execute(strategy);
             return handleCreatedForSingleEntity(created, requester);
         } catch (StrategyFailure e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new CreateException(messageSource, locale);
         }
     }
@@ -317,7 +316,7 @@ public class ApiV2PackageMaintainerController extends ApiV2Controller<PackageMai
 
             updated = strategyExecutor.execute(strategy);
         } catch (StrategyFailure e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new ApplyPatchException(messageSource, locale);
         } catch (JsonException | JsonProcessingException e) {
             throw new MalformedPatchException(messageSource, locale, e);
@@ -348,7 +347,7 @@ public class ApiV2PackageMaintainerController extends ApiV2Controller<PackageMai
         try {
             deleter.delete(packageMaintainer);
         } catch (DeleteEntityException e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new DeleteException(messageSource, locale);
         }
     }

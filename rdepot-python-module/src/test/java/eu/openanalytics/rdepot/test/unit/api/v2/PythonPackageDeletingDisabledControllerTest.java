@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,8 +20,14 @@
  */
 package eu.openanalytics.rdepot.test.unit.api.v2;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -50,8 +56,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.MessageSource;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
@@ -83,12 +88,6 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
 
     @Autowired
     MockMvc mockMvc;
-
-    @Autowired
-    MessageSource messageSource;
-
-    @Autowired
-    PythonPackageController PythonPackageController;
 
     @BeforeEach
     public void initEach() {
@@ -368,7 +367,7 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/python/packages/" + packageBag.getId())
                         .contentType("application/json-patch+json")
                         .content(patchJson))
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isUnprocessableContent())
                 .andExpect(content().json(Files.readString(Path.of(ERROR_PACKAGE_MALFORMED_PATCH))));
     }
 
@@ -405,7 +404,7 @@ public class PythonPackageDeletingDisabledControllerTest extends ApiV2Controller
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/python/packages/" + packageBag.getId())
                         .content(patchJson)
                         .contentType("application/json-patch+json"))
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isUnprocessableContent())
                 .andExpect(content().json(Files.readString(Path.of(ERROR_PACKAGE_VALIDATION))));
 
         verify(pythonPackageValidator).validate(any(), eq(true), any());

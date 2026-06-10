@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -25,7 +25,6 @@ import static org.awaitility.Awaitility.await;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import eu.openanalytics.rdepot.integrationtest.IntegrationTestContainers;
@@ -61,7 +60,6 @@ public class PythonDeclarativeIntegrationTest extends DeclarativeIntegrationTest
     private static final String REPO_NAME_TO_CREATE = "New Test Repo";
 
     public static DockerComposeContainer<?> container = DOCKER_COMPOSE_CONTAINER
-            .withLocalCompose(true)
             .withOptions("--compatibility")
             .waitingFor(
                     "proxy",
@@ -135,7 +133,7 @@ public class PythonDeclarativeIntegrationTest extends DeclarativeIntegrationTest
         JsonObject expectedPackages = (JsonObject) JsonParser.parseReader(reader);
 
         assertRepositories(expectedRepositories);
-        assertPackages(expectedPackages, false);
+        assertPackages(expectedPackages);
     }
 
     @Test
@@ -163,11 +161,31 @@ public class PythonDeclarativeIntegrationTest extends DeclarativeIntegrationTest
         JsonObject expectedPackages = (JsonObject) JsonParser.parseReader(reader);
 
         assertRepositories(expectedRepositories);
-        assertPackages(expectedPackages, false);
+        assertPackages(expectedPackages);
     }
 
-    @Override
-    protected void updateMd5SumsAndVersion(JsonArray expectedContent) {}
+    @Test
+    public void synchronizeRRepositoryWithEmptyMirror() throws IOException {
+        final String repositoryId = "13";
+
+        given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .when()
+                .post(API_PATH + "/repositories/" + repositoryId + "/synchronize-mirrors")
+                .then()
+                .statusCode(204);
+
+        await().atMost(30, TimeUnit.SECONDS)
+                .with()
+                .pollInterval(5, TimeUnit.SECONDS)
+                .until(() -> assertSynchronizationFinished(repositoryId));
+
+        FileReader reader = new FileReader(JSON_PATH + "/synchronization_status_empty.json");
+        JsonObject expectedSynchronizationStatus = (JsonObject) JsonParser.parseReader(reader);
+
+        assertSynchronizationStatus(expectedSynchronizationStatus, repositoryId, null, null);
+    }
 
     @Test
     public void shouldSynchronizePythonRepositoryWithMirror() throws IOException {
@@ -195,7 +213,7 @@ public class PythonDeclarativeIntegrationTest extends DeclarativeIntegrationTest
 
         assertSynchronizationStatus(expectedSynchronizationStatus, repositoryId, "3", "1");
         assertRepositories(expectedRepositories);
-        assertPackages(expectedPackages, true);
+        assertPackages(expectedPackages);
     }
 
     @Test
@@ -224,7 +242,7 @@ public class PythonDeclarativeIntegrationTest extends DeclarativeIntegrationTest
 
         assertSynchronizationStatus(expectedSynchronizationStatus, repositoryId, null, null);
         assertRepositories(expectedRepositories);
-        assertPackages(expectedPackages, true);
+        assertPackages(expectedPackages);
     }
 
     @Test
@@ -277,5 +295,48 @@ public class PythonDeclarativeIntegrationTest extends DeclarativeIntegrationTest
                 .post(API_PATH + "/repositories")
                 .then()
                 .statusCode(405);
+    }
+
+    @Test
+    public void synchronizationStatus_withWarning() throws IOException {
+        final String repositoryIdToSynchronize = "15";
+        final String repositoryIdToSynchronizeFrom = "1";
+
+        given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .when()
+                .post(API_PATH + "/repositories/" + repositoryIdToSynchronizeFrom + "/synchronize-mirrors")
+                .then()
+                .statusCode(204);
+
+        await().atMost(180, TimeUnit.SECONDS)
+                .with()
+                .pollInterval(5, TimeUnit.SECONDS)
+                .until(() -> assertSynchronizationFinished(repositoryIdToSynchronizeFrom));
+
+        given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .when()
+                .post(API_PATH + "/repositories/" + repositoryIdToSynchronize + "/synchronize-mirrors")
+                .then()
+                .statusCode(204);
+
+        await().atMost(180, TimeUnit.SECONDS)
+                .with()
+                .pollInterval(5, TimeUnit.SECONDS)
+                .until(() -> assertSynchronizationFinished(repositoryIdToSynchronize));
+
+        FileReader reader = new FileReader(JSON_PATH + "/synchronization_status_warning.json");
+        JsonObject expectedSynchronizationStatus = (JsonObject) JsonParser.parseReader(reader);
+        reader = new FileReader(JSON_PATH + "/repositories_after_synchronization_with_warning.json");
+        JsonObject expectedRepositories = (JsonObject) JsonParser.parseReader(reader);
+        reader = new FileReader(JSON_PATH + "/packages_after_synchronization_with_warning.json");
+        JsonObject expectedPackages = (JsonObject) JsonParser.parseReader(reader);
+
+        assertSynchronizationStatus(expectedSynchronizationStatus, repositoryIdToSynchronize, null, null);
+        assertRepositories(expectedRepositories);
+        assertPackages(expectedPackages);
     }
 }

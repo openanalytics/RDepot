@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -44,11 +44,11 @@ public class MessageCodes {
     public static final String ERROR_REPOSITORYMAINTAINER_NOT_FOUND = "error.repositorymaintainer.notfound";
     public static final String ERROR_USER_NOT_FOUND = "user.notfound";
     public static final String ERROR_EVENT_NOT_FOUND = "event.notfound";
+    public static final String ERROR_ACCESS_TOKEN_NOT_FOUND = "access.token.notfound";
 
     // API - Auth errors
     public static final String ERROR_USER_NOT_AUTHORIZED = "user.not.authorized";
     public static final String ERROR_USER_NOT_AUTHENTICATED = "error.user.not.authenticated";
-    public static final String ERROR_ACCESS_TOKEN_NOT_FOUND = "error.access.token.not.found";
 
     // API - Miscellaneous errors
     public static final String ERROR_PACKAGE_GET_REFERENCE_MANUAL = "package.get.reference.manual";
@@ -63,7 +63,6 @@ public class MessageCodes {
     // API - Validation
     public static final String ERROR_VALIDATION = "error.validation";
     public static final String ERROR_MALFORMED_PATCH = "error.malformed.patch";
-    public static final String ERROR_INVALID_SUBMISSION = "error.invalid.submission";
     public static final String ERROR_INVALID_SERVERADDRESS = "error.invalid.serveraddress";
     public static final String ERROR_UNHEALTHY_SERVERADDRESS = "error.unhealthy.serveraddress";
     // Storage
@@ -200,6 +199,8 @@ public class MessageCodes {
     public static final String PACKAGE_CREATE_ERROR = "package.create.error";
     public static final String SUBMISSION_CREATE_ERROR = "submission.create.error";
     public static final String WARNING_PACKAGE_DUPLICATE = "warning.package.duplicate";
+    public static final String WARNING_PACKAGE_WITH_THE_SAME_NAME_AND_VERSION =
+            "warning.package.with.the.same.name.and.version";
     public static final String WARNING_REPLACING_PACKAGES_DISABLED = "warning.replacing.packages.disabled";
     public static final String WARNING_SYNCHRONIZATION_FAILURE = "warning.synchronization.failure";
     public static final String WARNING_UNKNOWN = "warning.unknown";

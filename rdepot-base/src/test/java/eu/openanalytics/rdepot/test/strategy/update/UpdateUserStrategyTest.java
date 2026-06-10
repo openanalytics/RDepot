@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -73,8 +73,6 @@ public class UpdateUserStrategyTest extends StrategyTest {
 
     private User resource;
     private User updatedResource;
-    private Role role;
-    private Role roleUpdated;
 
     private static User requester;
     private static List<Package> packagesList;
@@ -93,7 +91,7 @@ public class UpdateUserStrategyTest extends StrategyTest {
         newId = 124;
 
         packagesList = PackageMaintainerTestFixture.GET_LIST_OF_PACKAGE_MAINTAINERS_FOR_REPOSITORY(
-                3, tmpRepository, requester, "pakckage_name");
+                3, tmpRepository, requester, "package_name");
 
         packageMaintainerList = PackageMaintainerTestFixture.GET_PACKAGE_MAINTAINERS_FOR_REPOSITORY(3, tmpRepository);
 
@@ -106,9 +104,9 @@ public class UpdateUserStrategyTest extends StrategyTest {
         resource = UserTestFixture.GET_PACKAGE_MAINTAINER();
         updatedResource = UserTestFixture.GET_PACKAGE_MAINTAINER();
         userList = List.of(resource, updatedResource);
-        role = new Role();
+        Role role = new Role();
         role.setId(oldId);
-        roleUpdated = new Role();
+        Role roleUpdated = new Role();
         roleUpdated.setId(newId);
         resource.setRole(role);
         updatedResource.setRole(roleUpdated);
@@ -122,9 +120,8 @@ public class UpdateUserStrategyTest extends StrategyTest {
      * ADMIN = 3;
      * @param oldRole
      * @param newRole
-     * @throws Exception
      */
-    private void changeUserRole(int oldRole, int newRole) throws Exception {
+    private void changeUserRole(int oldRole, int newRole) {
         resource.getRole().setValue(oldRole);
         updatedResource.getRole().setValue(newRole);
 
@@ -165,7 +162,7 @@ public class UpdateUserStrategyTest extends StrategyTest {
     }
 
     @Test
-    public void updateUser_changeFromAdminWhenThereAreNoOtherAdmins() throws Exception {
+    public void updateUser_changeFromAdminWhenThereAreNoOtherAdmins() {
         when(service.findByRole(any())).thenReturn(List.of(resource));
 
         changeUserRole(3, 2);
@@ -297,7 +294,7 @@ public class UpdateUserStrategyTest extends StrategyTest {
     }
 
     @Test
-    public void updateUser_deactivateAdminIfThereIsNoOtherAdminUser() throws Exception {
+    public void updateUser_deactivateAdminIfThereIsNoOtherAdminUser() {
         when(bestMaintainerChooser.findAllAdmins()).thenReturn(List.of(resource));
 
         resource.getRole().setId(newId);

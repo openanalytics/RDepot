@@ -18,11 +18,15 @@ default-user-configuration:
     - de-DE
     - nl-NL
     - pl-PL
+    - fr-FR
   supported-themes:
     - light
     - dark
 
 declarative: false
+
+local-storage:
+  max-request-size: 4
 
 # Email related properties
 spring:
@@ -84,3 +88,17 @@ db:
 hibernate:
   dialect: org.hibernate.dialect.PostgreSQLDialect
   show_sql: false
+
+logging:
+  level:
+    eu:
+      openanalytics:
+        rdepot: DEBUG
+#    org:
+#      springframework:
+#        web: TRACE
+#      hibernate:
+#        SQL: TRACE
+#        orm:
+#          jdbc:
+#            bind: TRACE

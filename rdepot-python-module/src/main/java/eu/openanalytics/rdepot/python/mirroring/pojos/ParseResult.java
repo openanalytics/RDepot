@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -25,15 +25,32 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Represents the result of parsing remote packages based on a list of configured packages in YAML files*
+ */
 @Getter
 @Setter
 @NoArgsConstructor
 public class ParseResult {
+    /**
+     * Hash of the remote package
+     */
     private Optional<String> hash = Optional.empty();
+    /**
+     * Extracted URL from the remote repository for downloading the package
+     */
     private Optional<String> downloadUrl = Optional.empty();
+    /**
+     * Result of parsing a given package
+     */
     private IndexFileParseResult parseResult;
+    /**
+     * Version of the package, configured in the YAML file
+     */
+    private String version;
 
-    public ParseResult(IndexFileParseResult result) {
+    public ParseResult(IndexFileParseResult result, String version) {
         this.parseResult = result;
+        this.version = version;
     }
 }

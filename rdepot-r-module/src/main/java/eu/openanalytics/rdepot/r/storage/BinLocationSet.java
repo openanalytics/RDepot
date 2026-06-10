@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -110,5 +110,9 @@ public class BinLocationSet {
     public void addLocation(BinLocation binLocation) {
         binLocations.put(binLocation.location(), binLocation);
         binLocationsByRemoteLocation.put(binLocation.remoteLocation(), binLocation);
+    }
+
+    public void addLocations(Collection<BinLocation> locations) {
+        locations.forEach(this::addLocation);
     }
 }

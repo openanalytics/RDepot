@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -25,7 +25,15 @@ import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.r.api.v2.dtos.RPackageDto;
 import eu.openanalytics.rdepot.r.technology.RLanguage;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.SecondaryTable;
+import jakarta.persistence.Transient;
 import java.io.File;
 import java.io.Serial;
 import java.nio.file.FileSystems;
@@ -49,56 +57,56 @@ public class RPackage extends Package {
     /**
      *
      */
-    @Column(name = "depends", table = "rpackage")
+    @Column(name = "depends", table = "rpackage", columnDefinition = "TEXT")
     private String depends = "";
 
-    @Column(name = "imports", table = "rpackage")
+    @Column(name = "imports", table = "rpackage", columnDefinition = "TEXT")
     private String imports = "";
 
-    @Column(name = "suggests", table = "rpackage")
+    @Column(name = "suggests", table = "rpackage", columnDefinition = "TEXT")
     private String suggests = "";
 
-    @Column(name = "system_requirements", table = "rpackage")
+    @Column(name = "system_requirements", table = "rpackage", columnDefinition = "TEXT")
     private String systemRequirements = "";
 
-    @Column(name = "license", nullable = false, table = "rpackage")
+    @Column(name = "license", nullable = false, table = "rpackage", columnDefinition = "TEXT")
     private String license;
 
-    @Column(name = "md5sum", nullable = false, table = "rpackage")
+    @Column(name = "md5sum", nullable = false, table = "rpackage", columnDefinition = "TEXT")
     private String md5sum;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "repository_id", nullable = false)
     private RRepository repository;
 
-    @Column(name = "r_version", table = "rpackage")
+    @Column(name = "r_version", table = "rpackage", columnDefinition = "TEXT")
     private String rVersion;
 
-    @Column(name = "architecture", table = "rpackage")
+    @Column(name = "architecture", table = "rpackage", columnDefinition = "TEXT")
     private String architecture;
 
-    @Column(name = "distribution", table = "rpackage")
+    @Column(name = "distribution", table = "rpackage", columnDefinition = "TEXT")
     private String distribution;
 
-    @Column(name = "built", table = "rpackage")
+    @Column(name = "built", table = "rpackage", columnDefinition = "TEXT")
     private String built;
 
-    @Column(name = "enhances", table = "rpackage")
+    @Column(name = "enhances", table = "rpackage", columnDefinition = "TEXT")
     private String enhances;
 
-    @Column(name = "linking_to", table = "rpackage")
+    @Column(name = "linking_to", table = "rpackage", columnDefinition = "TEXT")
     private String linkingTo;
 
-    @Column(name = "priority", table = "rpackage")
+    @Column(name = "priority", table = "rpackage", columnDefinition = "TEXT")
     private String priority;
 
     @Column(name = "needs_compilation", table = "rpackage")
     private boolean needsCompilation = false;
 
-    @Column(name = "maintainer", table = "rpackage")
+    @Column(name = "maintainer", table = "rpackage", columnDefinition = "TEXT")
     private String maintainer;
 
-    @Column(name = "encoding", table = "rpackage")
+    @Column(name = "encoding", table = "rpackage", columnDefinition = "TEXT")
     private String encoding;
 
     @Column(name = "manual_available", table = "rpackage")
@@ -265,11 +273,30 @@ public class RPackage extends Package {
         return Paths.get(manualPath);
     }
 
-    public String getPackageFolderPath() {
-        if (!this.isBinary()) return "src/contrib/" + this.getPackageFilename();
+    private String getArchiveSubpath() {
+        return "Archive/" + this.getName() + "/";
+    }
+
+    public String getPackageFolderPath(boolean archive) {
+        if (!this.isBinary()) return "src/contrib/" + (archive ? getArchiveSubpath() : "") + this.getPackageFilename();
         else
             return "bin/linux/" + this.distribution
                     + "/" + this.architecture + "/" + this.rVersion
-                    + "/" + this.getPackageFilename();
+                    + "/" + (archive ? getArchiveSubpath() : "") + this.getPackageFilename();
+    }
+
+    public String getPackageWithBinaryProperties() {
+        if (this.isBinary()) {
+            String rVersion = this.getRVersion().replaceFirst("^(\\d+\\.\\d+)\\..*$", "$1");
+            return this.getName()
+                    .concat("_")
+                    .concat(this.getDistribution())
+                    .concat("_")
+                    .concat(this.getArchitecture())
+                    .concat("_")
+                    .concat(rVersion);
+        } else {
+            return this.getName().concat("_").concat("src");
+        }
     }
 }

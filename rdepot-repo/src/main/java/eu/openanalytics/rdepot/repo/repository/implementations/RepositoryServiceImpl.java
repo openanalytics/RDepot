@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -72,6 +72,7 @@ public class RepositoryServiceImpl implements RepositoryService {
                 repositories.put(name, repoToIndex);
                 return Optional.of(repoToIndex);
             } else if (!repositories.get(name).getTechnology().equals(technology)) {
+                log.error("Technology not supported: {}", technology);
                 return Optional.empty();
             }
         }

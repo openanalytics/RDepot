@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -28,8 +28,6 @@ import eu.openanalytics.rdepot.repo.storage.InitializableStorageService;
 import eu.openanalytics.rdepot.repo.transaction.Transaction;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.embedded.tomcat.TomcatConnectorCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -39,22 +37,10 @@ import org.springframework.context.annotation.Profile;
 @Profile({"production"})
 public class BeanConfig {
 
-    @Value("${multipart-upload.max-part-count}")
-    private int maxPartCount;
-
-    @Value("${multipart-upload.max-part-header-size}")
-    private int maxPartHeaderSize;
-
     @Bean
     @Primary
     InitializableStorageService initializableStorageService(CranFileSystemStorageService cranFileSystemStorageService) {
-        return new InitializableStorageService() {
-
-            @Override
-            public void init() {
-                cranFileSystemStorageService.init();
-            }
-        };
+        return cranFileSystemStorageService;
     }
 
     @Bean
@@ -75,13 +61,5 @@ public class BeanConfig {
     @Bean
     ConcurrentMap<Transaction, CranRepositoryBackup> cranBackups() {
         return new ConcurrentHashMap<>();
-    }
-
-    @Bean
-    TomcatConnectorCustomizer connectorCustomizer() {
-        return (connector) -> {
-            connector.setMaxPartCount(maxPartCount);
-            connector.setMaxPartHeaderSize(maxPartHeaderSize);
-        };
     }
 }

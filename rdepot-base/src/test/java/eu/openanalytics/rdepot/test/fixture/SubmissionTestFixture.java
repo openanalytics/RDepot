@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,8 +20,6 @@
  */
 package eu.openanalytics.rdepot.test.fixture;
 
-import eu.openanalytics.rdepot.base.api.v2.dtos.PackageDto;
-import eu.openanalytics.rdepot.base.api.v2.dtos.SubmissionDto;
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.User;
@@ -48,19 +46,5 @@ public class SubmissionTestFixture {
 
     public static Submission GET_FIXTURE_SUBMISSION(User user, Package packageBag) {
         return GET_FIXTURE_SUBMISSIONS(user, packageBag, 1).get(0);
-    }
-
-    public static SubmissionDto GET_FIXTURE_SUBMISSION_DTO(Submission submission, Package packageBag) {
-        PackageDto packageDto = new PackageDto(packageBag);
-        return new SubmissionDto(submission, packageDto);
-    }
-
-    public static List<SubmissionDto> GET_FIXTURE_SUBMISSION_DTOS(List<Submission> submissions) {
-        List<SubmissionDto> submissionDtos = new ArrayList<SubmissionDto>();
-        submissions.forEach(submission -> {
-            PackageDto packageDto = new PackageDto(submission.getPackageBag());
-            submissionDtos.add(new SubmissionDto(submission, packageDto));
-        });
-        return submissionDtos;
     }
 }

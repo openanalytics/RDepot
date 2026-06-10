@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -31,7 +31,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
@@ -47,15 +46,12 @@ import eu.openanalytics.rdepot.test.unit.api.v2.mockstrategies.SuccessfulStrateg
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.MessageSource;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -64,7 +60,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.validation.Errors;
-import org.springframework.web.context.WebApplicationContext;
 
 @ContextConfiguration(classes = {ApiTestConfig.class})
 @WebMvcTest(RRepositoryController.class)
@@ -86,39 +81,19 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
     private static final String ERROR_REPOSITORY_DELETING_DISABLED =
             JSON_PATH + "/error_repository_deletion_disabled.json";
 
-    private Optional<User> user;
+    private final User user = UserTestFixture.GET_ADMIN();
 
     @Autowired
     MockMvc mockMvc;
-
-    @Autowired
-    ObjectMapper objectMapper;
-
-    @Autowired
-    MappingJackson2HttpMessageConverter jsonConverter;
-
-    @Autowired
-    MessageSource messageSource;
-
-    @Autowired
-    RRepositoryController rRepositoryController;
-
-    @Autowired
-    WebApplicationContext webApplicationContext;
-
-    @BeforeEach
-    public void initEach() {
-        user = Optional.of(UserTestFixture.GET_ADMIN());
-    }
 
     @Test
     @WithMockUser(authorities = {"admin", "user"})
     public void getAllRepositories() throws Exception {
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
 
-        when(userService.isAdmin(user.get())).thenReturn(true);
-        when(securityMediator.isAuthorizedToEdit(any(RRepository.class), eq(user.get())))
+        when(userService.isAdmin(user)).thenReturn(true);
+        when(securityMediator.isAuthorizedToEdit(any(RRepository.class), eq(user)))
                 .thenReturn(true);
         when(rRepositoryService.findAllBySpecification(any(), any()))
                 .thenReturn(RRepositoryTestFixture.GET_EXAMPLE_REPOSITORIES_PAGED());
@@ -141,10 +116,10 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
     @WithMockUser(authorities = "user")
     public void getRepository() throws Exception {
         final RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        final Integer ID = repository.getId();
+        final int ID = repository.getId();
 
         when(rRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/r/repositories/" + ID)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -156,12 +131,12 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
     @WithMockUser(authorities = {"user", "admin"})
     public void getRepository_asAdmin() throws Exception {
         final RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        final Integer ID = repository.getId();
+        final int ID = repository.getId();
 
         when(rRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(securityMediator.isAuthorizedToEdit(repository, user.get())).thenReturn(true);
-        when(userService.isAdmin(user.get())).thenReturn(true);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
+        when(securityMediator.isAuthorizedToEdit(repository, user)).thenReturn(true);
+        when(userService.isAdmin(user)).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/r/repositories/" + ID)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -181,8 +156,8 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
     @WithMockUser(authorities = "user")
     public void getRepository_returns404_whenRepositoryIsNotFound() throws Exception {
 
-        when(rRepositoryService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(null));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(rRepositoryService.findById(any(Integer.class))).thenReturn(Optional.empty());
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/r/repositories/" + 123)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -198,17 +173,17 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
         final String exampleJson = Files.readString(path);
 
         final RRepository createdRepository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY(100);
-        Strategy<RRepository> strategy = Mockito.spy(new SuccessfulStrategy<RRepository>(
-                createdRepository, newsfeedEventService, rRepositoryService, user.get()));
+        Strategy<RRepository> strategy = Mockito.spy(
+                new SuccessfulStrategy<>(createdRepository, newsfeedEventService, rRepositoryService, user));
 
-        when(rStrategyFactory.createRepositoryStrategy(any(), eq(user.get()))).thenReturn(strategy);
-        when(userService.findById(anyInt())).thenReturn(user);
-        when(userService.isAdmin(user.get())).thenReturn(true);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(rStrategyFactory.createRepositoryStrategy(any(), eq(user))).thenReturn(strategy);
+        when(userService.findById(anyInt())).thenReturn(Optional.of(user));
+        when(userService.isAdmin(user)).thenReturn(true);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         when(rRepositoryValidator.supports(RRepository.class)).thenReturn(true);
         doNothing().when(rRepositoryValidator).validate(any(), any());
         when(rRepositoryValidator.supports(Repository.class)).thenReturn(true);
-        when(securityMediator.isAuthorizedToEdit(any(RRepository.class), eq(user.get())))
+        when(securityMediator.isAuthorizedToEdit(any(RRepository.class), eq(user)))
                 .thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v2/manager/r/repositories")
@@ -238,7 +213,7 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
         final Path path = Path.of(EXAMPLE_NEW_REPOSITORY_PATH);
         final String exampleJson = Files.readString(path);
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v2/manager/r/repositories")
                         .contentType("application/json")
@@ -254,10 +229,10 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
         final Path path = Path.of(EXAMPLE_NEW_REPOSITORY_PATH);
         final String exampleJson = Files.readString(path);
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(userService.isAdmin(user.get())).thenReturn(true);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
+        when(userService.isAdmin(user)).thenReturn(true);
         doAnswer(invocation -> {
-                    Errors errors = (Errors) invocation.getArgument(1);
+                    Errors errors = invocation.getArgument(1);
 
                     errors.rejectValue("name", MessageCodes.ERROR_DUPLICATE_NAME);
                     return null;
@@ -269,7 +244,7 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v2/manager/r/repositories")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(exampleJson))
-                .andExpect(status().isUnprocessableEntity()); // TODO: #32880 Unify validation errors approach and
+                .andExpect(status().isUnprocessableContent()); // TODO: #32880 Unify validation errors approach and
         // uncomment
         //			.andExpect(
         //					content().json(Files.readString(Path.of(ERROR_VALIDATION_REPOSITORY_NAME_PATH))));
@@ -283,12 +258,12 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
         final String exampleJson = Files.readString(path);
 
         final RRepository newRepository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY(0);
-        Strategy<RRepository> strategy = Mockito.spy(
-                new FailureStrategy<RRepository>(newRepository, newsfeedEventService, rRepositoryService, user.get()));
+        Strategy<RRepository> strategy =
+                Mockito.spy(new FailureStrategy<>(newRepository, newsfeedEventService, rRepositoryService, user));
 
-        when(userService.isAdmin(user.get())).thenReturn(true);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(rStrategyFactory.createRepositoryStrategy(any(), eq(user.get()))).thenReturn(strategy);
+        when(userService.isAdmin(user)).thenReturn(true);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
+        when(rStrategyFactory.createRepositoryStrategy(any(), eq(user))).thenReturn(strategy);
         doNothing().when(rRepositoryValidator).validate(any(), any());
         when(rRepositoryValidator.supports(RRepository.class)).thenReturn(true);
 
@@ -305,17 +280,16 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
     @WithMockUser(authorities = {"user", "repositorymaintainer"})
     public void patchRepository() throws Exception {
         final RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        final Integer ID = repository.getId();
-        Strategy<RRepository> strategy = Mockito.spy(
-                new SuccessfulStrategy<RRepository>(repository, newsfeedEventService, rRepositoryService, user.get()));
+        final int ID = repository.getId();
+        Strategy<RRepository> strategy =
+                Mockito.spy(new SuccessfulStrategy<>(repository, newsfeedEventService, rRepositoryService, user));
 
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/serverAddress\",\"value\":\"127.0.0.1\"}]";
         when(rRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(securityMediator.isAuthorizedToEdit(any(RRepository.class), eq(user.get())))
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
+        when(securityMediator.isAuthorizedToEdit(any(RRepository.class), eq(user)))
                 .thenReturn(true);
-        when(rStrategyFactory.updateRepositoryStrategy(any(), eq(user.get()), any()))
-                .thenReturn(strategy);
+        when(rStrategyFactory.updateRepositoryStrategy(any(), eq(user), any())).thenReturn(strategy);
         doNothing().when(rRepositoryValidator).validate(any(), any());
         when(rRepositoryValidator.supports(RRepository.class)).thenReturn(true);
 
@@ -332,17 +306,16 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
     @WithMockUser(authorities = {"user", "repositorymaintainer"})
     public void patchRepository_returns405_whenRepositoryDeleting() throws Exception {
         final RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        final Integer ID = repository.getId();
-        Strategy<RRepository> strategy = Mockito.spy(
-                new SuccessfulStrategy<RRepository>(repository, newsfeedEventService, rRepositoryService, user.get()));
+        final int ID = repository.getId();
+        Strategy<RRepository> strategy =
+                Mockito.spy(new SuccessfulStrategy<>(repository, newsfeedEventService, rRepositoryService, user));
 
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/deleted\",\"value\":true}]";
         when(rRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(securityMediator.isAuthorizedToEdit(any(RRepository.class), eq(user.get())))
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
+        when(securityMediator.isAuthorizedToEdit(any(RRepository.class), eq(user)))
                 .thenReturn(true);
-        when(rStrategyFactory.updateRepositoryStrategy(any(), eq(user.get()), any()))
-                .thenReturn(strategy);
+        when(rStrategyFactory.updateRepositoryStrategy(any(), eq(user), any())).thenReturn(strategy);
         doNothing().when(rRepositoryValidator).validate(any(), any());
         when(rRepositoryValidator.supports(RRepository.class)).thenReturn(true);
 
@@ -370,8 +343,8 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
     @WithMockUser(authorities = "user")
     public void patchRepository_returns403_whenUserIsNotAuthorized() throws Exception {
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(securityMediator.isAuthorizedToEdit(any(Repository.class), eq(user.get())))
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
+        when(securityMediator.isAuthorizedToEdit(any(Repository.class), eq(user)))
                 .thenReturn(false);
 
         String patchJson = "[{\"op\": \"replace\",\"path\":\"/serverAddress\",\"value\":\"127.0.0.1\"}]";
@@ -387,8 +360,8 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
     @WithMockUser(authorities = {"user", "repositorymaintainer"})
     public void patchRepository_returns404_whenRepositoryIsNotFound() throws Exception {
 
-        when(rRepositoryService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(null));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(rRepositoryService.findById(any(Integer.class))).thenReturn(Optional.empty());
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
 
         String patchJson = "[{\"op\": \"replace\",\"path\":\"/serverAddress\",\"value\":\"127.0.0.1\"}]";
 
@@ -403,19 +376,19 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
     @WithMockUser(authorities = {"user", "repositorymaintainer"})
     public void patchRepository_returns422_whenPatchIsIncorrect() throws Exception {
         final RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        final Integer ID = repository.getId();
+        final int ID = repository.getId();
 
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/nameeeeee\",\"value\":\"Test Repo 123\"}]";
 
         when(rRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(securityMediator.isAuthorizedToEdit(any(Repository.class), eq(user.get())))
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
+        when(securityMediator.isAuthorizedToEdit(any(Repository.class), eq(user)))
                 .thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/r/repositories/" + ID)
                         .contentType("application/json-patch+json")
                         .content(patchJson))
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isUnprocessableContent())
                 .andExpect(content().json(Files.readString(Path.of(ERROR_REPOSITORY_MALFORMED_PATCH))));
     }
 
@@ -423,15 +396,15 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
     @WithMockUser(authorities = {"user", "repositorymaintainer"})
     public void patchRepository_returns422_whenRepositoryValidationFails() throws Exception {
         final RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        final Integer ID = repository.getId();
+        final int ID = repository.getId();
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/name\",\"value\":\"Test Repo 123\"}]";
 
         when(rRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(securityMediator.isAuthorizedToEdit(repository, user.get())).thenReturn(true);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
+        when(securityMediator.isAuthorizedToEdit(repository, user)).thenReturn(true);
         when(rRepositoryValidator.supports(RRepository.class)).thenReturn(true);
         doAnswer(invocation -> {
-                    Errors errors = (Errors) invocation.getArgument(1);
+                    Errors errors = invocation.getArgument(1);
 
                     errors.rejectValue("name", MessageCodes.ERROR_DUPLICATE_NAME);
                     return null;
@@ -443,7 +416,7 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/r/repositories/" + ID)
                         .contentType("application/json-patch+json")
                         .content(patchJson))
-                .andExpect(status().isUnprocessableEntity()); // TODO: #32880 Unify validation errors approach and
+                .andExpect(status().isUnprocessableContent()); // TODO: #32880 Unify validation errors approach and
         // uncomment
         //		.andExpect(
         //				content().json(Files.readString(Path.of(ERROR_VALIDATION_REPOSITORY_NAME_PATH))));
@@ -453,14 +426,14 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
     @WithMockUser(authorities = {"user", "admin"})
     public void deleteRepository_returns405_whenRepositoryDeletingIsDisabled() throws Exception {
         final RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
-        final Integer ID = repository.getId();
+        final int ID = repository.getId();
 
         repository.setDeleted(true);
 
         when(rRepositoryService.findById(ID)).thenReturn(Optional.of(repository));
         doNothing().when(rRepositoryDeleter).delete(repository);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(userService.isAdmin(user.get())).thenReturn(true);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
+        when(userService.isAdmin(user)).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v2/manager/r/repositories/" + ID))
                 .andExpect(status().isMethodNotAllowed())
@@ -487,9 +460,9 @@ public class RRepositoryDeletingDisabledControllerTest extends ApiV2ControllerUn
     @WithMockUser(authorities = {"user", "admin"})
     public void deleteRepository_returns404_whenRepositoryIsNotFound() throws Exception {
 
-        when(rRepositoryService.findById(any(Integer.class))).thenReturn(Optional.ofNullable(null));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(userService.isAdmin(user.get())).thenReturn(true);
+        when(rRepositoryService.findById(any(Integer.class))).thenReturn(Optional.empty());
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
+        when(userService.isAdmin(user)).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v2/manager/r/repositories/" + 123))
                 .andExpect(status().isNotFound())

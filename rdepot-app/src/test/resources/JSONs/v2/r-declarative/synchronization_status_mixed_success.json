@@ -5,7 +5,7 @@
     "messageCode": "success.request.processed",
     "data": {
         "repository": {
-            "id": 16,
+            "id": 18,
             "name": "F",
             "publicationUri": "http://localhost/repo/F",
             "published": true,

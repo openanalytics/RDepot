@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -48,6 +48,7 @@ public class PackageIntegrationTest extends IntegrationTest {
                 .search("acc")
                 .maintainer(Arrays.asList("Nikola%20Tesla", "Galileo%20Galilei"))
                 .deleted(true)
+                .binary(true)
                 .build();
     }
 
@@ -110,6 +111,19 @@ public class PackageIntegrationTest extends IntegrationTest {
                         + testData.getRepositories().get(1) + "&sort=id,asc")
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
                 .expectedJsonPath("/v2/base/packages/packages_by_repositories.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getBinaryPackages() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .token(USER_TOKEN)
+                .statusCode(200)
+                .urlSuffix("?binary=" + testData.isBinary() + "&sort=id,asc")
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/base/packages/binary_packages.json")
                 .build();
         testEndpoint(requestBody);
     }

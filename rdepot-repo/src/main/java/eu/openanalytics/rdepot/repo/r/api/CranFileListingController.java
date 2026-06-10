@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,40 +20,102 @@
  */
 package eu.openanalytics.rdepot.repo.r.api;
 
-import eu.openanalytics.rdepot.repo.api.FileListingController;
+import eu.openanalytics.rdepot.repo.exception.GetRepositoryVersionException;
 import eu.openanalytics.rdepot.repo.hash.HashCalculator;
+import eu.openanalytics.rdepot.repo.hash.model.HashMethod;
+import eu.openanalytics.rdepot.repo.r.storage.CranRepositoryStorageExplorer;
 import eu.openanalytics.rdepot.repo.r.storage.CranStorageService;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
+@AllArgsConstructor
 @RequestMapping(value = "/r")
-public class CranFileListingController extends FileListingController {
+public class CranFileListingController {
     private final CranStorageService cranStorageService;
-
-    public CranFileListingController(CranStorageService storageService, HashCalculator hashCalculator) {
-        super(storageService, hashCalculator);
-        this.cranStorageService = storageService;
-    }
+    private final CranRepositoryStorageExplorer cranRepositoryStorageExplorer;
+    private final HashCalculator hashCalculator;
 
     @GetMapping("/{repository}/")
     public ResponseEntity<List<String>> recentUploads(@PathVariable("repository") String repository) {
-        return super.recentUploads(repository);
+        ArrayList<String> uploads = new ArrayList<>();
+        try {
+            uploads.add(cranStorageService.getRepositoryVersion(repository));
+        } catch (GetRepositoryVersionException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+        try {
+            List<Path> files = cranStorageService.getRecentPackagesFromRepository(repository);
+            Map<String, List<Path>> binaryFiles = cranStorageService.getRecentBinaryPackagesFromRepository(repository);
+
+            for (Path file : files) {
+                uploads.add(fileAndHash(file, repository));
+            }
+
+            for (String path : binaryFiles.keySet()) {
+                for (Path file : binaryFiles.get(path)) {
+                    uploads.add(fileAndHash(file, repository));
+                }
+            }
+
+        } catch (IOException | NoSuchElementException e) {
+            log.error(e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+        return ResponseEntity.ok(uploads);
+    }
+
+    private String fileAndHash(Path file, String repository) throws IOException {
+        return StringUtils.substringAfter(file.toString(), repository + "/")
+                + "="
+                + hashCalculator
+                        .calculate(Files.newInputStream(file), HashMethod.MD5)
+                        .orElseThrow();
     }
 
     @GetMapping("/{repository}/archive/")
     public ResponseEntity<List<String>> archiveUploads(@PathVariable("repository") String repository) {
-        return super.archiveUploads(repository);
+        try {
+            List<String> uploads = new ArrayList<>();
+            Map<String, List<Path>> paths = cranStorageService.getArchiveFromRepository(repository);
+            for (List<Path> files : paths.values()) {
+                for (Path file : files) {
+                    uploads.add(fileAndHash(file, repository));
+                }
+            }
+            return ResponseEntity.ok(uploads);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @GetMapping("/{repository}/platforms")
     public ResponseEntity<List<String>> platformUploads(@PathVariable("repository") String repository) {
-        return ResponseEntity.ok(cranStorageService.getBinaryPlatformDirectories(repository));
+        return ResponseEntity.ok(cranRepositoryStorageExplorer.getBinaryPlatformDirectories(repository));
     }
 
     @GetMapping("/{repository}/{source}/{packagesFile}")
@@ -62,6 +124,25 @@ public class CranFileListingController extends FileListingController {
             @PathVariable("packagesFile") String packagesFile,
             @PathVariable("source") String source,
             HttpServletResponse response) {
-        super.downloadPackagesFile(repository, packagesFile, source, response);
+
+        final boolean archive = Objects.equals(source, "archive");
+        final Map<String, File> packagesFiles = cranStorageService.getPackagesFiles(repository, archive);
+
+        final File returnedFile = packagesFiles.get(packagesFile);
+        if (returnedFile != null) {
+            try {
+                final InputStream is = new FileInputStream(returnedFile);
+                IOUtils.copy(is, response.getOutputStream());
+                response.flushBuffer();
+            } catch (IOException e) {
+                log.error("Could not write file to output stream! Filename: {}", returnedFile.getName(), e);
+            }
+        } else {
+            try {
+                response.sendError(404);
+            } catch (IOException e) {
+                log.error("Could not send error response!", e);
+            }
+        }
     }
 }

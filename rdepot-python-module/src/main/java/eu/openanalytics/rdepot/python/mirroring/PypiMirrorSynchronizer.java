@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -24,10 +24,12 @@ import eu.openanalytics.rdepot.base.api.v2.dtos.PackageUploadRequest;
 import eu.openanalytics.rdepot.base.entities.PackageSynchronizationStatus;
 import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.User;
+import eu.openanalytics.rdepot.base.entities.enums.HashMethod;
 import eu.openanalytics.rdepot.base.exception.AdminNotFound;
 import eu.openanalytics.rdepot.base.mediator.BestMaintainerChooser;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.mirroring.MirrorSynchronizer;
+import eu.openanalytics.rdepot.base.mirroring.exceptions.DuplicatePackageException;
 import eu.openanalytics.rdepot.base.mirroring.exceptions.UpdatePackageException;
 import eu.openanalytics.rdepot.base.mirroring.pojos.SynchronizationStatus;
 import eu.openanalytics.rdepot.base.storage.exceptions.CreateTemporaryFolderException;
@@ -37,6 +39,7 @@ import eu.openanalytics.rdepot.base.storage.implementations.CommonLocalStorage;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
+import eu.openanalytics.rdepot.base.validation.exceptions.PackageDuplicateWithReplaceOff;
 import eu.openanalytics.rdepot.python.config.PythonProperties;
 import eu.openanalytics.rdepot.python.config.declarative.PythonYamlDeclarativeConfigurationSource;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
@@ -150,8 +153,12 @@ public class PypiMirrorSynchronizer
 
         log.info("Synchronization started for repository: {}", repository.getId());
 
-        for (PypiMirror mirror : mirrors) {
-            synchronizeMirror(repository, mirror);
+        if (mirrors.isEmpty()) {
+            registerRepositorySynchronizationStatus(repository, SynchronizationStatus.SUCCESS);
+        } else {
+            for (PypiMirror mirror : mirrors) {
+                synchronizeMirror(repository, mirror);
+            }
         }
 
         log.info("Synchronization finished for repository: {}", repository.getId());
@@ -159,13 +166,14 @@ public class PypiMirrorSynchronizer
     }
 
     private void synchronizeMirror(PythonRepository repository, PypiMirror mirror) {
-        Map<String, ParseResult> remotePackages = getPackageListFromRemoteRepository(mirror);
+        Map<String, ParseResult> remotePackages =
+                getPackageListFromRemoteRepository(mirror, repository.getHashMethod());
 
         List<PythonPackage> packages = resolveMirroredPackagesToPackageEntities(mirror.getPackages());
 
         for (PythonPackage packageBag : packages) {
             Optional<PythonPackage> localPackage;
-            String key = packageBag.getNormalizedName() + "-" + packageBag.getVersion();
+            String key = packageBag.getNormalizedNameWithVersion();
 
             if (packageBag.getVersion() == null) {
                 localPackage = packageService.findNonDeletedNewestByNormalizedNameAndRepository(
@@ -193,6 +201,15 @@ public class PypiMirrorSynchronizer
                         SynchronizationStatus.SUCCESS,
                         null);
                 registerRepositorySynchronizationStatus(repository, SynchronizationStatus.SUCCESS);
+            } catch (DuplicatePackageException e) {
+                registerPackageSynchronizationStatus(
+                        repository,
+                        packageBag.getName(),
+                        packageBag.getVersion(),
+                        mirror,
+                        SynchronizationStatus.WARNING,
+                        e.getMessage());
+                registerRepositorySynchronizationStatus(repository, SynchronizationStatus.SUCCESS);
             } catch (NoSuchPackageException
                     | UpdatePackageException
                     | EmptyHashException
@@ -211,12 +228,12 @@ public class PypiMirrorSynchronizer
         }
     }
 
-    private Map<String, ParseResult> getPackageListFromRemoteRepository(PypiMirror mirror) {
-        return new IndexFileParser(pythonProperties).parseIndexFile(mirror);
+    private Map<String, ParseResult> getPackageListFromRemoteRepository(PypiMirror mirror, HashMethod hashMethod) {
+        return new IndexFileParser(pythonProperties).parseIndexFile(mirror, hashMethod);
     }
 
     private void uploadPackage(String normalizedName, String version, String downloadURL, PythonRepository repository)
-            throws UpdatePackageException {
+            throws UpdatePackageException, DuplicatePackageException {
 
         File remotePackageDir = null;
         try {
@@ -234,7 +251,11 @@ public class PypiMirrorSynchronizer
             Strategy<Submission> strategy = strategyFactory.uploadPackageStrategy(request, uploader);
             strategyExecutor.execute(strategy);
 
-        } catch (CreateTemporaryFolderException | AdminNotFound | DownloadFileException | StrategyFailure e) {
+        } catch (CreateTemporaryFolderException | AdminNotFound | DownloadFileException e) {
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
+            throw new UpdatePackageException(e.getMessage());
+        } catch (StrategyFailure e) {
+            if (e.getReason() instanceof PackageDuplicateWithReplaceOff) throw new DuplicatePackageException();
             log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new UpdatePackageException(e.getMessage());
         } finally {

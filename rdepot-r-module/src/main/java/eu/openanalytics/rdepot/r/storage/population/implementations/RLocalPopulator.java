@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -160,6 +160,10 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
     }
 
     protected void populatePackageBinLocation(BinLocation binLocation) throws PackageFolderPopulationException {
+        log.debug(
+                "Populating bin location {} for {} packages...",
+                binLocation.location(),
+                binLocation.packages().size());
         for (RPackage rPackage : binLocation.packagesToPopulate()) {
             if (rPackage.isActive()) {
                 final String populatedPath = populatePackage(rPackage, binLocation.location());
@@ -210,7 +214,8 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
                 remoteLatestSourcePackages,
                 remoteChecksums,
                 populatedRepositoryContent.latestPackages(),
-                localChecksums.toMap());
+                localChecksums.toMap(),
+                false);
         final List<String> latestSourceToDelete =
                 selectPackagesToDelete(remoteLatestSourcePackages, populatedRepositoryContent.latestPackages());
 
@@ -218,7 +223,8 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
                 remoteArchiveSourcePackages,
                 remoteChecksums,
                 populatedRepositoryContent.archivePackages(),
-                localChecksums.toMap());
+                localChecksums.toMap(),
+                true);
         final List<String> archiveSourceToDelete =
                 selectPackagesToDelete(remoteArchiveSourcePackages, populatedRepositoryContent.archivePackages());
 
@@ -319,6 +325,7 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
      */
     protected List<PopulatedRPackage> populatePackageFolder(List<RPackage> packages, String folderPath)
             throws PackageFolderPopulationException {
+        log.debug("Populating package folder: {} for {} packages...", folderPath, packages.size());
         final List<PopulatedRPackage> populated = new LinkedList<>();
         for (RPackage packageBag : packages) {
             if (packageBag.isActive()) {
@@ -383,7 +390,8 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
                         Objects.requireNonNull(reducedRemoteBinaryPackagesPaths.get(path)),
                         remoteChecksums,
                         binaryPackagesPaths.getPackagesForRemoteLocation(archive ? path + "/" + ARCHIVE_FOLDER : path),
-                        localChecksums.toMap());
+                        localChecksums.toMap(),
+                        archive);
                 packagesToUpload.forEach(packageBag -> binaryPackagesToUpload.add(path, packageBag));
 
                 List<String> packagesToDelete = selectPackagesToDelete(
@@ -405,9 +413,10 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
      * Creates two subdirectories in the repository's generated directory:
      * - Archive/ - for packages to be archived
      * - latest/ - for the latest packages (to make it easier to iterate over them)
-     * @param path repository generated dir (e.g. {generationDir}/{repositoryId}/{datestamp}/src/contrib/}
+     * @param path repository generated dir (e.g. {generationDir}/{repositoryId}/{datestamp}/src/contrib/)
      */
     private void createTemporaryFoldersForLatestAndArchive(String path) throws CreateFolderStructureException {
+        log.debug("Creating temporary directories for latest and Archive: {}", path);
         final File latest = storage.createFolderStructure(path + separator + LATEST_FOLDER);
         final File archive = storage.createFolderStructure(path + separator + ARCHIVE_FOLDER);
 
@@ -418,7 +427,9 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
                     Files.createFile(archive.toPath().resolve(PACKAGES)).toFile();
 
             storage.gzipFile(packagesLatest.getAbsolutePath());
+            log.debug("PACKAGES file for latest packages created and gzipped: {}", packagesLatest.getAbsolutePath());
             storage.gzipFile(packagesArchive.getAbsolutePath());
+            log.debug("PACKAGES file for Archive packages created and gzipped: {}", packagesArchive.getAbsolutePath());
         } catch (IOException | GzipFileException e) {
             log.error("Could not create PACKAGES file", e);
             throw new CreateFolderStructureException();
@@ -460,6 +471,7 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
                     + separator
                     + dateStamp);
 
+            log.debug("Datestamp folder created for repository {}: {}", repository, dateStampFolder.getAbsolutePath());
             final BinLocationSet packagesLocations = new BinLocationSet();
             final String binPathPrefix = BIN_FOLDER + separator + LINUX_FOLDER;
 
@@ -468,11 +480,13 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
                 final String actualPath =
                         resolveLocationForLinuxBinaryGeneratedPath(dateStampFolder, separator, binFolderStructure);
                 storage.createFolderStructure(actualPath);
+                log.debug("Binary folder created for platform {}: {}", platform, actualPath);
                 packagesLocations.addEmptyLocationToPopulateIfNotExists(
                         actualPath, binPathPrefix + separator + binFolderStructure);
             }
 
             for (RPackage packageBag : packages) {
+                log.debug("Populating package {}...", packageBag);
                 final String binFolderStructure = packageBag.getDistribution()
                         + separator
                         + packageBag.getArchitecture()
@@ -481,6 +495,7 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
                 final String actualPath =
                         resolveLocationForLinuxBinaryGeneratedPath(dateStampFolder, separator, binFolderStructure);
                 storage.createFolderStructure(actualPath);
+                log.debug("Binary folder created for package {}: {}", packageBag, actualPath);
                 packagesLocations.addPackageToLocationToPopulate(
                         actualPath, binPathPrefix + separator + binFolderStructure, packageBag);
             }
@@ -510,6 +525,7 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
             List<String> binaryPlatforms,
             RRepository repository)
             throws OrganizePackagesException {
+        log.debug("Packages population started for R repository {}...", repository);
         try {
             final BinLocationSet binFoldersPaths =
                     createBinaryFolderStructureForGeneration(allBinaryPackages, binaryPlatforms, repository, dateStamp);
@@ -569,7 +585,7 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
                         binArchiveLocations,
                         packagesFiles);
             }
-
+            log.debug("Packages population completed for R repository {}.", repository);
             return new PopulatedRepositoryContent(
                     populatedLatestSourcePackages,
                     populatedArchiveSourcePackages,
@@ -675,11 +691,12 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
             BinLocationSet binArchiveLocations,
             Set<PackagesFileDescriptor> packagesFiles)
             throws GeneratePackagesFileException, Md5SumCalculationException {
+        log.debug("\"Redirect to source\" option enabled for repository.");
         final Set<RetiredBinary> retiredBinaries =
                 selectBinariesToRetire(populatedLatestSourcePackages, binLatestLocations);
         final BinLocationSet binLatestLocationsForAlteredPackagesFile = new BinLocationSet(binLatestLocations);
-        final Set<PackagesFileDescriptor> packagesFilesToRecalculate = new HashSet<>();
         for (RetiredBinary binary : retiredBinaries) {
+            log.debug("Retiring binary {}", binary);
             binLatestLocations.removePackageFromLocation(
                     binary.binLocationOfOutdatedPackage().location(), binary.outdatedBin());
             final String archiveLocation = moveToArchive(
@@ -692,10 +709,6 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
                     binary.binLocationOfOutdatedPackage().location(), binary.outdatedBin());
             binLatestLocationsForAlteredPackagesFile.addPackageToLocationIfExists(
                     binary.binLocationOfOutdatedPackage().location(), binary.latestSource());
-
-            selectPackagesFilesForLocation(
-                            packagesFiles, binary.binLocationOfOutdatedPackage().remoteLocation())
-                    .forEach(packagesFilesToRecalculate::add);
         }
 
         final BinLocationSet binArchiveLocationsForAlteredPackagesFile = new BinLocationSet(binArchiveLocations);
@@ -707,10 +720,18 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
                 if (!versionPackageMap.containsKey(sourcePackage.getName() + sourcePackage.getVersion())) {
                     binArchiveLocationsForAlteredPackagesFile.addPackageToLocationToPopulate(
                             binLocation.location(), binLocation.remoteLocation(), sourcePackage);
-                    selectPackagesFilesForLocation(packagesFiles, binLocation.remoteLocation())
-                            .forEach(packagesFilesToRecalculate::add);
                 }
             }
+        }
+        final Set<PackagesFileDescriptor> packagesFilesToRecalculate = new HashSet<>();
+        final BinLocationSet allBinLocationsForAlteredPackageFiles =
+                new BinLocationSet(binLatestLocationsForAlteredPackagesFile);
+        allBinLocationsForAlteredPackageFiles.addLocations(
+                binArchiveLocationsForAlteredPackagesFile.getAllBinLocations());
+
+        for (BinLocation location : allBinLocationsForAlteredPackageFiles.getAllBinLocations()) {
+            selectPackagesFilesForLocation(packagesFiles, location.remoteLocation())
+                    .forEach(packagesFilesToRecalculate::add);
         }
 
         packageStringGenerator.generatePackagesFiles(binLatestLocationsForAlteredPackagesFile);
@@ -733,7 +754,7 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
         for (PackagesFileDescriptor descriptor : toRecalculate) {
             final String newChecksum = storage.calculateMd5Sum(descriptor.localPath());
             recalculated.add(
-                    new PackagesFileDescriptor(descriptor.localPath(), descriptor.remoteFolder(), newChecksum));
+                    new PackagesFileDescriptor(descriptor.remoteFolder(), descriptor.localPath(), newChecksum));
         }
         return recalculated;
     }
@@ -769,11 +790,20 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
      * @param remoteFolder e.g. <code>src/contrib</code>
      * @param localPath e.g. <code>{rdepotGeneratedDir}/{repositoryId}/{datestamp}/bin/{os}/{distro}/{architecture}/{rVersion}/latest</code>
      * @return descriptors for both <code>PACKAGES</code> and <code>PACKAGES.gz</code> files
+     * @throws GeneratePackagesFileException when preparing the PACKAGES(.gz) file fails
+     * @throws Md5SumCalculationException when calculating the MD5 sum of the PACKAGE(.gz) file fails
      */
     private Set<PackagesFileDescriptor> createDescriptors(String remoteFolder, String localPath)
-            throws Md5SumCalculationException {
+            throws Md5SumCalculationException, GeneratePackagesFileException {
         final String packagesPath = localPath + separator + PACKAGES;
         final String packagesGzPath = localPath + separator + PACKAGES_GZ;
+        try {
+            storage.removeEmptyLinesFromEnd(packagesPath);
+            storage.gzipFile(packagesPath);
+        } catch (IOException | GzipFileException e) {
+            log.error("{}: {}", e.getClass(), e.getMessage());
+            throw new GeneratePackagesFileException();
+        }
         return Set.of(
                 new PackagesFileDescriptor(remoteFolder, packagesPath, storage.calculateMd5Sum(packagesPath)),
                 new PackagesFileDescriptor(remoteFolder, packagesGzPath, storage.calculateMd5Sum(packagesGzPath)));
@@ -814,10 +844,10 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
 
         try {
             return storage.readFile(manualFile);
+        } catch (FileNotFoundException e) {
+            throw new GetReferenceManualException(e);
         } catch (IOException e) {
-            if (!(e instanceof FileNotFoundException)) {
-                log.error(e.getMessage(), e);
-            }
+            log.error(e.getMessage(), e);
             throw new GetReferenceManualException(e);
         }
     }
@@ -913,6 +943,7 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
      */
     @Override
     public String populatePackage(RPackage packageBag, String folderPath) throws PackageFolderPopulationException {
+        log.debug("Populating package {} in directory {}...", packageBag, folderPath);
         final String originalFilePath = packageBag.getSource();
         final String[] packageFilenameTokens = originalFilePath.split(separator);
         if (packageFilenameTokens.length < 1) {
@@ -924,10 +955,17 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
             final File populatedFile = new File(destinationFilePath);
             Files.copy(new File(originalFilePath).toPath(), populatedFile.toPath());
             final String calculatedSum = storage.calculateMd5Sum(destinationFilePath);
+            log.debug("Calculated checksum for package {}: {}", packageBag, calculatedSum);
             if (!packageBag.getMd5sum().equals(calculatedSum)) {
                 throw new Md5MismatchException();
             }
 
+            /*
+            If package is a source package then we simply add it to the PACKAGES file.
+            If package is a binary package then if the "redirect to source" feature is enabled,
+            we do not want to add it, as the PACKAGES file will be regenerated
+            while resolving redirection later.
+            */
             if (!packageBag.isBinary() || !packageBag.getRepository().isRedirectToSource()) {
                 final String packagesFilePath = folderPath + separator + "PACKAGES";
                 packageStringGenerator.addPackageToPackagesFile(packageBag, packagesFilePath);
@@ -944,12 +982,13 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
             List<String> remotePackages,
             Checksums remoteChecksums,
             List<PopulatedRPackage> localPackages,
-            Map<String, String> localChecksums) {
+            Map<String, String> localChecksums,
+            boolean archive) {
 
         return localPackages.stream()
                 .filter(p -> !remotePackages.contains(p.getPackageFilename())
                         || !remoteChecksums.contains(
-                                localChecksums.get(p.getPopulatedPath()), p.getPackageFolderPath()))
+                                localChecksums.get(p.getPopulatedPath()), p.getPackageFolderPath(archive)))
                 .map(p -> new File(p.getPopulatedPath()))
                 .toList();
     }

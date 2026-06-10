@@ -1,0 +1,23 @@
+name: ZD
+publicationUri: http://localhost/repo/ZD
+serverAddress: http://oa-rdepot-repo:8080/ZD
+technology: PYTHON
+requiresAuthentication: true
+published: true
+mirrors:
+ - name: PyPi
+   uri: https://pypi.org/simple
+   syncInterval: ""
+   type: tarball
+   packages:
+    - name: numpy
+      version: 1.24.2
+ - name: X
+   uri: http://oa-rdepot-proxy/repo/X/
+   syncInterval: ""
+   type: tarball
+   packages:
+    - name: ArmyOfEvilRobots
+    - name: numpy  # only mirror the latest version
+    - name: ArmyOfEvilRobots
+      version: 0.4.1dev

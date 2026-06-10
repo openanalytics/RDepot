@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -34,10 +34,10 @@ import io.restassured.http.ContentType;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.maven.surefire.shared.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 
 public class RPackageIntegrationTest extends IntegrationTest {
 
@@ -63,6 +63,7 @@ public class RPackageIntegrationTest extends IntegrationTest {
                 .search("bench")
                 .repositories(List.of("testrepo4"))
                 .maintainer(Arrays.asList("Nikola%20Tesla", "Galileo%20Galilei"))
+                .binary(true)
                 .build();
     }
 
@@ -117,6 +118,19 @@ public class RPackageIntegrationTest extends IntegrationTest {
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
                 .expectedJsonPath(PACKAGES_PATH + "list_of_packages.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getBinaryPackages() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .token(USER_TOKEN)
+                .statusCode(200)
+                .urlSuffix("?binary=" + testData.isBinary() + "&sort=id,asc")
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/r/packages/binary_packages.json")
                 .build();
         testEndpoint(requestBody);
     }

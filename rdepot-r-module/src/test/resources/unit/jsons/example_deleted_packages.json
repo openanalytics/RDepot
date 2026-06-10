@@ -3,20 +3,32 @@
     "code": 200,
     "message": "Your request has been processed successfully.",
     "messageCode": "success.request.processed",
-	"data": {
-		"links": [
-			{
-				"rel": "self",
-				"href": "http://localhost/api/v2/manager/r/packages"
-			}
-		],
-		"content": [
-			{
+    "data": {
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost/api/v2/manager/r/packages"
+            }
+        ],
+        "content": [
+            {
                 "id": 100,
                 "version": "4.5.6",
-                "user":{"name":"Test Package Maintainer","id":123,"login":"testpackagemaintainer","email":"packagemaintainer@example.org"},
-                "repository":{"name":"Test R Repository","id":123,"publicationUri":"http://localhost/repo/testrepo123"},
-                "submission": {"id": 100, "state":  "ACCEPTED"},
+                "user": {
+                    "name": "Test Package Maintainer",
+                    "id": 123,
+                    "login": "testpackagemaintainer",
+                    "email": "packagemaintainer@example.org"
+                },
+                "repository": {
+                    "name": "Test R Repository",
+                    "id": 123,
+                    "publicationUri": "http://localhost/repo/testrepo123"
+                },
+                "submission": {
+                    "id": 100,
+                    "state": "ACCEPTED"
+                },
                 "name": "TestPackage100",
                 "description": "Simple test package100",
                 "author": "Albert Einstein100",
@@ -39,15 +51,31 @@
                     {
                         "rel": "packageList",
                         "href": "http://localhost/api/v2/manager/r/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost/api/v2/manager/r/repositories/123"
                     }
                 ]
             },
-			{
+            {
                 "id": 101,
                 "version": "4.5.6",
-                "user":{"name":"Test Package Maintainer","id":123,"login":"testpackagemaintainer","email":"packagemaintainer@example.org"},
-                "repository":{"name":"Test R Repository","id":123,"publicationUri":"http://localhost/repo/testrepo123"},
-                "submission": {"id": 101, "state":  "ACCEPTED"},
+                "user": {
+                    "name": "Test Package Maintainer",
+                    "id": 123,
+                    "login": "testpackagemaintainer",
+                    "email": "packagemaintainer@example.org"
+                },
+                "repository": {
+                    "name": "Test R Repository",
+                    "id": 123,
+                    "publicationUri": "http://localhost/repo/testrepo123"
+                },
+                "submission": {
+                    "id": 101,
+                    "state": "ACCEPTED"
+                },
                 "name": "TestPackage101",
                 "description": "Simple test package101",
                 "author": "Albert Einstein101",
@@ -70,15 +98,31 @@
                     {
                         "rel": "packageList",
                         "href": "http://localhost/api/v2/manager/r/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost/api/v2/manager/r/repositories/123"
                     }
                 ]
-			},
-			{
+            },
+            {
                 "id": 102,
                 "version": "4.5.6",
-                "user":{"name":"Test Package Maintainer","id":123,"login":"testpackagemaintainer","email":"packagemaintainer@example.org"},
-                "repository":{"name":"Test R Repository","id":123,"publicationUri":"http://localhost/repo/testrepo123"},
-                "submission": {"id": 102, "state":  "ACCEPTED"},
+                "user": {
+                    "name": "Test Package Maintainer",
+                    "id": 123,
+                    "login": "testpackagemaintainer",
+                    "email": "packagemaintainer@example.org"
+                },
+                "repository": {
+                    "name": "Test R Repository",
+                    "id": 123,
+                    "publicationUri": "http://localhost/repo/testrepo123"
+                },
+                "submission": {
+                    "id": 102,
+                    "state": "ACCEPTED"
+                },
                 "name": "TestPackage102",
                 "description": "Simple test package102",
                 "author": "Albert Einstein102",
@@ -101,9 +145,13 @@
                     {
                         "rel": "packageList",
                         "href": "http://localhost/api/v2/manager/r/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost/api/v2/manager/r/repositories/123"
                     }
                 ]
-			}
-		]
+            }
+        ]
     }
 }

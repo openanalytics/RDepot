@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -23,12 +23,13 @@ package eu.openanalytics.rdepot.repo.python.api;
 import eu.openanalytics.rdepot.repo.exception.GetRepositoryVersionException;
 import eu.openanalytics.rdepot.repo.hash.HashCalculator;
 import eu.openanalytics.rdepot.repo.hash.model.HashMethod;
-import eu.openanalytics.rdepot.repo.python.storage.PythonFileSystemStorageService;
+import eu.openanalytics.rdepot.repo.python.storage.implementations.PythonFileSystemStorageService;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -67,9 +68,9 @@ public class PythonFileListingController {
                         + "="
                         + hashCalculator
                                 .calculate(Files.newInputStream(file), hashMethod)
-                                .get());
+                                .orElseThrow());
             }
-        } catch (IOException e) {
+        } catch (NoSuchElementException | IOException e) {
             log.error(e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

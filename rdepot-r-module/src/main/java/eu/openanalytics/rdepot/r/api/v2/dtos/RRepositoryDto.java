@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,22 +20,26 @@
  */
 package eu.openanalytics.rdepot.r.api.v2.dtos;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import eu.openanalytics.rdepot.base.api.v2.dtos.RepositoryDto;
 import eu.openanalytics.rdepot.base.entities.Resource;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringExclude;
 
 @Getter
 @Setter
-@NoArgsConstructor
 public class RRepositoryDto extends RepositoryDto {
     @ToStringExclude
     private RRepository entity;
 
     private boolean redirectToSource;
+
+    @JsonCreator
+    public RRepositoryDto() {
+        super();
+    }
 
     public RRepositoryDto(
             RRepository repository,

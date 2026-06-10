@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -30,7 +30,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 import org.springframework.context.MessageSource;
@@ -54,13 +53,7 @@ public abstract class UnitTest {
         listener.contextInitialized(event);
         Mockito.lenient()
                 .when(messageSource.getMessage(any(), any(), any(), any()))
-                .thenAnswer(new Answer<String>() {
-                    @Override
-                    public String answer(InvocationOnMock invocation) throws Throwable {
-                        String messageCode = invocation.getArgument(0);
-                        return messageCode;
-                    }
-                });
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0));
         new StaticMessageResolver(messageSource);
     }
 }

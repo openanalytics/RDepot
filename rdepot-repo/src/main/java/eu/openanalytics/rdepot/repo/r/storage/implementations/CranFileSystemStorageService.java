@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -27,6 +27,8 @@ import eu.openanalytics.rdepot.repo.exception.StorageException;
 import eu.openanalytics.rdepot.repo.r.archive.ArchiveIndex;
 import eu.openanalytics.rdepot.repo.r.archive.ArchiveInfo;
 import eu.openanalytics.rdepot.repo.r.model.SynchronizeCranRepositoryRequestBody;
+import eu.openanalytics.rdepot.repo.r.storage.CranArchiveRdsGenerator;
+import eu.openanalytics.rdepot.repo.r.storage.CranRepositoryStorageExplorer;
 import eu.openanalytics.rdepot.repo.r.storage.CranStorageService;
 import eu.openanalytics.rdepot.repo.storage.StorageProperties;
 import eu.openanalytics.rdepot.repo.storage.implementations.FileSystemStorageService;
@@ -58,7 +60,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @Service
 public class CranFileSystemStorageService extends FileSystemStorageService<SynchronizeCranRepositoryRequestBody>
-        implements CranStorageService {
+        implements CranStorageService, CranRepositoryStorageExplorer, CranArchiveRdsGenerator {
 
     Logger logger = LoggerFactory.getLogger(CranFileSystemStorageService.class);
 
@@ -123,18 +125,30 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
                 null);
     }
 
-    public void generateArchiveRds(String repository, String path) throws IOException {
+    @Override
+    public void generateArchiveRds(String repository) throws IOException {
+        for (final String headPath : getExistingHeadRepositoryDirectories(repository)) {
+            generateArchiveRds(repository, headPath + "/Archive");
+        }
+    }
+
+    /**
+     * Generates archive.rds file to allow install_version() capability.
+     * @param repository repository name
+     * @param archivePath path to repository's archive, e.g. bin/linux/centos7/x86_64/4.5/Archive
+     */
+    private void generateArchiveRds(String repository, String archivePath) throws IOException {
         Path repoLocation = ((repository != null) && (!repository.trim().isEmpty()))
                 ? this.rootLocation.resolve(repository)
                 : this.rootLocation;
 
-        final Path latestLocation = Paths.get(repoLocation.toString(), path);
-        final Path archiveLocation = latestLocation.resolve(ARCHIVE_FOLDER);
+        final Path archiveLocation = Paths.get(repoLocation.toString(), archivePath);
+        final Path latestLocation = archiveLocation.getParent();
 
         if (Files.notExists(archiveLocation) || !Files.isDirectory(archiveLocation)) {
             Path archiveRds = latestLocation.resolve(META_FOLDER).resolve(ARCHIVE_RDS);
             Files.deleteIfExists(archiveRds);
-            return;
+            return; // We do not need archive.rds if there is no archive
         }
 
         List<Path> directories = new ArrayList<>();
@@ -186,26 +200,31 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
         Map<String, String> pathsToDelete = request.getPathsToDelete();
         Map<String, String> pathsToDeleteFromArchive = request.getPathsToDeleteFromArchive();
 
-        if (filesToUpload != null) store(filesToUpload, repository, pathsToUpload, request.getId());
-        if (filesToUploadToArchive != null)
-            storeInArchive(filesToUploadToArchive, repository, pathsToUploadToArchive, request.getId());
         if (filesToDelete != null) delete(filesToDelete, repository, pathsToDelete, request.getId());
         if (filesToDeleteFromArchive != null)
             deleteFromArchive(filesToDeleteFromArchive, repository, pathsToDeleteFromArchive, request.getId());
+        if (filesToUpload != null) store(filesToUpload, repository, pathsToUpload, request.getId());
+        if (filesToUploadToArchive != null)
+            storeInArchive(filesToUploadToArchive, repository, pathsToUploadToArchive, request.getId());
+    }
+
+    @Override
+    public Set<String> getExistingHeadRepositoryDirectories(String repository) {
+        final Set<String> dirs = new HashSet<>();
+        dirs.add(SRC_FOLDER + "/" + CONTRIB_FOLDER);
+        dirs.addAll(getBinaryPlatformDirectories(repository));
+        return dirs;
     }
 
     @Override
     public void handleLastChunk(SynchronizeCranRepositoryRequestBody request, String repository)
             throws StorageException {
         try {
-            Set<String> archivePaths = new HashSet<>(request.getPathsToUpload().values());
-            for (String archivePath : archivePaths) {
-                generateArchiveRds(repository, archivePath);
-            }
-            final Set<String> paths =
-                    new HashSet<>(request.getPathsToDeleteFromArchive().values());
+            final Set<String> paths = new HashSet<>(getBinaryPlatformDirectories(repository));
             paths.add(SRC_FOLDER + "/" + CONTRIB_FOLDER);
             removeEmptyArchives(repository, paths);
+
+            generateArchiveRds(repository);
         } catch (IOException | RemoveEmptyArchiveException e) {
             throw new StorageException(e.getMessage(), e);
         }
@@ -409,9 +428,14 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
         }
     }
 
-    public void removeEmptyArchives(String repository, Set<String> archivePaths) throws RemoveEmptyArchiveException {
+    /**
+     * Removes empty /Archive directories in case there are no archive package versions.
+     * @param repository repository name
+     * @param paths paths to repository main directories for given type of packages, e.g. "src/contrib"
+     */
+    public void removeEmptyArchives(String repository, Set<String> paths) throws RemoveEmptyArchiveException {
         Path repoPath = this.rootLocation.resolve(repository);
-        for (String archivePath : archivePaths) {
+        for (String archivePath : paths) {
             try {
                 final Path resolvedArchivePath = Paths.get(repoPath.toString(), archivePath);
                 final Path archive = Paths.get(resolvedArchivePath.toString(), ARCHIVE_FOLDER);

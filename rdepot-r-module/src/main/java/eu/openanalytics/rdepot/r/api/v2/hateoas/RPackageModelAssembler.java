@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -20,11 +20,15 @@
  */
 package eu.openanalytics.rdepot.r.api.v2.hateoas;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+
 import eu.openanalytics.rdepot.base.api.v2.converters.DtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.hateoas.AbstractRoleAwareModelAssembler;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.r.api.v2.controllers.RPackageController;
+import eu.openanalytics.rdepot.r.api.v2.controllers.RRepositoryController;
+import eu.openanalytics.rdepot.r.api.v2.converters.RPackageDtoConverter;
 import eu.openanalytics.rdepot.r.api.v2.dtos.RPackageDto;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import java.util.ArrayList;
@@ -39,18 +43,27 @@ import org.springframework.stereotype.Component;
 @Component
 public class RPackageModelAssembler extends AbstractRoleAwareModelAssembler<RPackage, RPackageDto> {
 
+    private final RPackageDtoConverter rPackageConverter;
     private final SecurityMediator securityMediator;
 
     @Autowired
-    public RPackageModelAssembler(DtoConverter<RPackage, RPackageDto> dtoConverter, SecurityMediator securityMediator) {
+    public RPackageModelAssembler(
+            DtoConverter<RPackage, RPackageDto> dtoConverter,
+            SecurityMediator securityMediator,
+            RPackageDtoConverter rPackageConverter) {
         super(dtoConverter, RPackageController.class, "package", Optional.empty());
         this.securityMediator = securityMediator;
+        this.rPackageConverter = rPackageConverter;
     }
 
     private RPackageModelAssembler(
-            DtoConverter<RPackage, RPackageDto> dtoConverter, SecurityMediator securityMediator, User user) {
+            DtoConverter<RPackage, RPackageDto> dtoConverter,
+            SecurityMediator securityMediator,
+            User user,
+            RPackageDtoConverter rPackageConverter) {
         super(dtoConverter, RPackageController.class, "package", Optional.of(user));
         this.securityMediator = securityMediator;
+        this.rPackageConverter = rPackageConverter;
     }
 
     @Override
@@ -67,11 +80,20 @@ public class RPackageModelAssembler extends AbstractRoleAwareModelAssembler<RPac
 
     @Override
     public RepresentationModelAssembler<RPackage, EntityModel<RPackageDto>> assemblerWithUser(User user) {
-        return new RPackageModelAssembler(dtoConverter, securityMediator, user);
+        return new RPackageModelAssembler(dtoConverter, securityMediator, user, rPackageConverter);
     }
 
     @Override
     protected Class<?> getExtensionControllerClass(RPackage entity) {
         return RPackageController.class;
+    }
+
+    @Override
+    protected List<Link> generateAvailableLinksForEntity(RPackage entity, Class<?> extensionControllerClass) {
+        List<Link> links = new ArrayList<>(super.generateAvailableLinksForEntity(entity, extensionControllerClass));
+        links.add(linkTo(RRepositoryController.class)
+                .slash(entity.getRepository().getId())
+                .withRel("repository"));
+        return links;
     }
 }

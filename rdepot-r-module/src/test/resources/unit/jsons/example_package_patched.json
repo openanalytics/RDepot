@@ -3,12 +3,24 @@
     "code": 200,
     "message": "Your request has been processed successfully.",
     "messageCode": "success.request.processed",
-	"data": {
+    "data": {
         "id": 100,
         "version": "4.5.6",
-        "user":{"name":"Test Package Maintainer","id":123,"login":"testpackagemaintainer","email":"packagemaintainer@example.org"},
-        "repository":{"name":"Test R Repository","id":123,"publicationUri":"http://localhost/repo/testrepo123"},
-        "submission": {"id":  100, "state":  "ACCEPTED"},
+        "user": {
+            "name": "Test Package Maintainer",
+            "id": 123,
+            "login": "testpackagemaintainer",
+            "email": "packagemaintainer@example.org"
+        },
+        "repository": {
+            "name": "Test R Repository",
+            "id": 123,
+            "publicationUri": "http://localhost/repo/testrepo123"
+        },
+        "submission": {
+            "id": 100,
+            "state": "ACCEPTED"
+        },
         "name": "TestPackage100",
         "description": "Simple test package100",
         "author": "Albert Einstein100",
@@ -31,6 +43,10 @@
             {
                 "rel": "packageList",
                 "href": "http://localhost/api/v2/manager/r/packages"
+            },
+            {
+                "rel": "repository",
+                "href": "http://localhost/api/v2/manager/r/repositories/123"
             },
             {
                 "rel": "self",

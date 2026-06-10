@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -529,5 +529,13 @@ public abstract class CommonLocalStorage<P extends Package> implements Storage<P
     @Override
     public boolean exists(String path) {
         return Paths.get(path).toFile().exists();
+    }
+
+    @Override
+    public void removeEmptyLinesFromEnd(String path) throws IOException {
+        Path file = Path.of(path);
+        String content = Files.readString(file, StandardCharsets.UTF_8);
+        content = content.replaceFirst("(\\R)+\\z", "");
+        Files.writeString(file, content, StandardCharsets.UTF_8);
     }
 }

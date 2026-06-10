@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -27,13 +27,13 @@ import eu.openanalytics.rdepot.base.api.v2.hateoas.AbstractRoleAwareModelAssembl
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.python.api.v2.controllers.PythonPackageController;
+import eu.openanalytics.rdepot.python.api.v2.controllers.PythonRepositoryController;
 import eu.openanalytics.rdepot.python.api.v2.converters.PythonPackageDtoConverter;
 import eu.openanalytics.rdepot.python.api.v2.dtos.PythonPackageDto;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.hateoas.EntityModel;
@@ -71,16 +71,6 @@ public class PythonPackageModelAssembler extends AbstractRoleAwareModelAssembler
     }
 
     @Override
-    public @NonNull EntityModel<PythonPackageDto> toModel(@NonNull PythonPackage packageBag) {
-        PythonPackageDto dto = pythonPackageConverter.convertEntityToDto(packageBag);
-        return EntityModel.of(
-                dto,
-                linkTo(PythonPackageController.class).slash(packageBag.getId()).withSelfRel(),
-                linkTo(PythonPackageController.class)
-                        .withRel("packageList")); // TODO: #32975 Add link to the repository
-    }
-
-    @Override
     public RepresentationModelAssembler<PythonPackage, EntityModel<PythonPackageDto>> assemblerWithUser(User user) {
         return new PythonPackageModelAssembler(dtoConverter, securityMediator, user, pythonPackageConverter);
     }
@@ -89,7 +79,7 @@ public class PythonPackageModelAssembler extends AbstractRoleAwareModelAssembler
     protected List<Link> getLinksToMethodsWithLimitedAccess(PythonPackage entity, User user, Link baseLink) {
         List<Link> links = new ArrayList<>();
 
-        if (securityMediator.isAuthorizedToEdit(entity, user) && !Boolean.valueOf(declarative)) {
+        if (securityMediator.isAuthorizedToEdit(entity, user) && !Boolean.parseBoolean(declarative)) {
             links.add(baseLink.withType(HTTP_METHODS.PATCH.getValue()));
             links.add(baseLink.withType(HTTP_METHODS.DELETE.getValue()));
         }
@@ -100,5 +90,14 @@ public class PythonPackageModelAssembler extends AbstractRoleAwareModelAssembler
     @Override
     protected Class<?> getExtensionControllerClass(PythonPackage entity) {
         return PythonPackageController.class;
+    }
+
+    @Override
+    protected List<Link> generateAvailableLinksForEntity(PythonPackage entity, Class<?> extensionControllerClass) {
+        List<Link> links = new ArrayList<>(super.generateAvailableLinksForEntity(entity, extensionControllerClass));
+        links.add(linkTo(PythonRepositoryController.class)
+                .slash(entity.getRepository().getId())
+                .withRel("repository"));
+        return links;
     }
 }

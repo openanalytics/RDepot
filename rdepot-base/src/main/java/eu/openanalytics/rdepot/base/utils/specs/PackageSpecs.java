@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -41,6 +41,10 @@ public class PackageSpecs {
 
     public static <P extends Package> Specification<P> isDeleted(boolean deleted) {
         return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("deleted"), deleted);
+    }
+
+    public static <P extends Package> Specification<P> isBinary(boolean binary) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("binary"), binary);
     }
 
     public static <P extends Package> Specification<P> ofSubmissionState(List<SubmissionState> states) {

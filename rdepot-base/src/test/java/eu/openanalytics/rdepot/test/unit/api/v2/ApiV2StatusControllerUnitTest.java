@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -24,6 +24,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2NewsfeedEventController;
 import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2StatusController;
 import eu.openanalytics.rdepot.test.context.ApiTestConfig;
 import java.net.URL;
@@ -32,13 +33,13 @@ import java.nio.file.Path;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.MessageSource;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -53,17 +54,13 @@ public class ApiV2StatusControllerUnitTest extends ApiV2ControllerUnitTest {
     @Autowired
     MockMvc mockMvc;
 
-    @Autowired
-    MessageSource messageSource;
-
-    @Autowired
-    ApiV2StatusController apiV2StatusController;
+    @MockitoBean
+    ApiV2NewsfeedEventController apiV2NewsfeedEventController;
 
     private static final String TEST_REPO_URL = "http://localhost:8017/testrepo1";
     private static final String JSON_PATH = "src/test/resources/unit/jsons";
     private static final String MALFORMED_POST = JSON_PATH + "/error_malformed_address.json";
     private static final String UNHEALTHY_SERVERADDRESS = JSON_PATH + "/error_unhealthy_serveraddress.json";
-    private static final String USED_ADDRESS = JSON_PATH + "/error_used_address.json";
 
     @Test
     @WithMockUser(authorities = {"user", "admin"})
@@ -85,7 +82,7 @@ public class ApiV2StatusControllerUnitTest extends ApiV2ControllerUnitTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v2/manager/check-server-address")
                         .content("{\"serverAddress\": \"testtestestjfldks\"}")
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isUnprocessableContent())
                 .andExpect(content().json(Files.readString(Path.of(MALFORMED_POST))));
     }
 
@@ -97,7 +94,7 @@ public class ApiV2StatusControllerUnitTest extends ApiV2ControllerUnitTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v2/manager/check-server-address")
                         .content("{\"serverAddress\": \"" + TEST_REPO_URL + "\"}")
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isUnprocessableContent())
                 .andExpect(content().json(Files.readString(Path.of(UNHEALTHY_SERVERADDRESS))));
     }
 

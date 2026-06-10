@@ -1,6 +1,7 @@
 version: '3'
 services:
   proxy:
+    hostname: oa-rdepot-proxy
     image: registry.openanalytics.eu/proxy/library/nginx:alpine
     restart: always
     volumes:
@@ -22,7 +23,7 @@ services:
     hostname: oa-rdepot-crane
     volumes:
       - repository:/srv/crane
-      - ./docker/crane/application.yml:/opt/crane/application.yml
+      - ./docker/crane/application_declarative.yml:/opt/crane/application.yml
     networks:
       oa-rdepot:
         aliases:
@@ -107,7 +108,6 @@ services:
       - ./docker/repo/rdepot-repo.jar:/opt/repo/rdepot-repo.jar:ro
       - ./docker/repo/test_configs/application.yml:/opt/repo/application.yml:ro
       - repository:/opt/rdepot/
-      - ./itestServer:/opt/testServer
     networks:
       - oa-rdepot
     healthcheck:

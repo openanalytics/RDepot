@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -159,23 +159,25 @@ public class PythonRequestBodyPartitioner {
                 continue;
             }
             if (!filesToArchive.isEmpty()) {
-                final FileSystemResource fsResource = archiver.tarPackages(filesToArchive, archiveDir);
-                fileArchives.add(fsResource);
-                HashCalculator hashCalculator = new HashCalculator(
-                        hashMethod, Objects.requireNonNull(fsResource).getFile());
-                checksums.put(fsResource.getFilename(), hashCalculator.calculateHash());
+                fileArchives.add(packArchiveAndCalculateChecksum(filesToArchive, archiveDir, hashMethod, checksums));
             }
             filesToArchive = new ArrayList<>();
             filesToArchive.add(file);
             packageName = file.getParent();
         }
         if (!filesToArchive.isEmpty()) {
-            final FileSystemResource fsResource = archiver.tarPackages(filesToArchive, archiveDir);
-            fileArchives.add(fsResource);
-            HashCalculator hashCalculator = new HashCalculator(
-                    hashMethod, Objects.requireNonNull(fsResource).getFile());
-            checksums.put(fsResource.getFilename(), hashCalculator.calculateHash());
+            fileArchives.add(packArchiveAndCalculateChecksum(filesToArchive, archiveDir, hashMethod, checksums));
         }
         return fileArchives;
+    }
+
+    private FileSystemResource packArchiveAndCalculateChecksum(
+            List<File> filesToArchive, Path archiveDir, HashMethod hashMethod, Map<String, String> checksums)
+            throws IOException, CheckSumCalculationException {
+        final FileSystemResource fsResource = archiver.tarPackages(filesToArchive, archiveDir);
+        HashCalculator hashCalculator = new HashCalculator(
+                hashMethod, Objects.requireNonNull(fsResource).getFile());
+        checksums.put(fsResource.getFilename(), hashCalculator.calculateHash());
+        return fsResource;
     }
 }

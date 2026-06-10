@@ -1,0 +1,60 @@
+app:
+  openid-groups-claim: "groups"
+  openid-issuer-uri: "http://192.168.49.17:8080/realms/RDepot"
+  storage-location: "/srv/crane/"
+  repositories:
+    A:
+      rewrites:
+        - matcher: "#{parse('.*R \\((\\d+\\.\\d+)[^ ]* ([^ ]+) ([^ ]+) ([^ ]+)\\)', request.getHeader('User-Agent')) && parse('/linux/([^/]+)/src/contrib/(.+)', path.toString())}"
+          destination: "/A/bin/linux/#{parsed[1].group(1)}/#{parsed[0].group(3)}/#{parsed[0].group(1)}/#{parsed[1].group(2)}"
+      read-access:
+        public: true
+    D:
+      rewrites:
+        - matcher: "#{parse('.*R \\((\\d+\\.\\d+)[^ ]* ([^ ]+) ([^ ]+) ([^ ]+)\\)', request.getHeader('User-Agent')) && parse('/linux/([^/]+)/src/contrib/(.+)', path.toString())}"
+          destination: "/D/bin/linux/#{parsed[1].group(1)}/#{parsed[0].group(3)}/#{parsed[0].group(1)}/#{parsed[1].group(2)}"
+      read-access:
+        public: true
+    F:
+      rewrites:
+        - matcher: "#{parse('.*R \\((\\d+\\.\\d+)[^ ]* ([^ ]+) ([^ ]+) ([^ ]+)\\)', request.getHeader('User-Agent')) && parse('/linux/([^/]+)/src/contrib/(.+)', path.toString())}"
+          destination: "/F/bin/linux/#{parsed[1].group(1)}/#{parsed[0].group(3)}/#{parsed[0].group(1)}/#{parsed[1].group(2)}"
+      read-access:
+        public: true
+    X:
+      on-error-expression: "#{(response.status == 404 ? true : false) && (response.status == 404 ? response.sendRedirect('https://pypi.org/simple/' + request.getRequestURI().split('/', 5)[4]) == null : false)}"
+      read-access:
+        public: true
+    Y:
+      on-error-expression: "#{(response.status == 404 ? true : false) && (response.status == 404 ? response.sendRedirect('https://pypi.org/simple/' + request.getRequestURI().split('/', 5)[4]) == null : false)}"
+      read-access:
+        public: true
+    Z:
+      on-error-expression: "#{(response.status == 404 ? true : false) && (response.status == 404 ? response.sendRedirect('https://pypi.org/simple/' + request.getRequestURI().split('/', 5)[4]) == null : false)}"
+      read-access:
+        public: true
+    ZD:
+      on-error-expression: "#{(response.status == 404 ? true : false) && (response.status == 404 ? response.sendRedirect('https://pypi.org/simple/' + request.getRequestURI().split('/', 5)[4]) == null : false)}"
+      read-access:
+        public: true
+    CD:
+      rewrites:
+        - matcher: "#{parse('.*R \\((\\d+\\.\\d+)[^ ]* ([^ ]+) ([^ ]+) ([^ ]+)\\)', request.getHeader('User-Agent')) && parse('/linux/([^/]+)/src/contrib/(.+)', path.toString())}"
+          destination: "/D/bin/linux/#{parsed[1].group(1)}/#{parsed[0].group(3)}/#{parsed[0].group(1)}/#{parsed[1].group(2)}"
+      read-access:
+        public: true
+server:
+  servlet:
+    context-path: /repo
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          crane:
+            client-secret: "EIsPIgHE0y0HPciSMs4bghJDTjT1FVzz"
+            client-id: crane
+            scope: openid
+        provider:
+          crane:
+            issuer-uri: "http://192.168.49.17:8080/realms/RDepot"

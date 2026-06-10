@@ -62,6 +62,10 @@
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
                     },
                     {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/3"
+                    },
+                    {
                         "rel": "self",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/4",
                         "type": "PATCH"
@@ -114,6 +118,10 @@
                     {
                         "rel": "packageList",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/3"
                     },
                     {
                         "rel": "self",
@@ -170,6 +178,10 @@
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
                     },
                     {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/3"
+                    },
+                    {
                         "rel": "self",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/6",
                         "type": "PATCH"
@@ -222,6 +234,10 @@
                     {
                         "rel": "packageList",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/3"
                     },
                     {
                         "rel": "self",
@@ -278,6 +294,10 @@
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
                     },
                     {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/3"
+                    },
+                    {
                         "rel": "self",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/8",
                         "type": "PATCH"
@@ -330,6 +350,10 @@
                     {
                         "rel": "packageList",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/4"
                     },
                     {
                         "rel": "self",
@@ -386,6 +410,10 @@
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
                     },
                     {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/4"
+                    },
+                    {
                         "rel": "self",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/10",
                         "type": "PATCH"
@@ -438,6 +466,10 @@
                     {
                         "rel": "packageList",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/4"
                     },
                     {
                         "rel": "self",
@@ -494,6 +526,10 @@
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
                     },
                     {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/4"
+                    },
+                    {
                         "rel": "self",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/12",
                         "type": "PATCH"
@@ -546,6 +582,10 @@
                     {
                         "rel": "packageList",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/2"
                     },
                     {
                         "rel": "self",
@@ -602,6 +642,10 @@
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
                     },
                     {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/2"
+                    },
+                    {
                         "rel": "self",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/14",
                         "type": "PATCH"
@@ -654,6 +698,10 @@
                     {
                         "rel": "packageList",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/2"
                     },
                     {
                         "rel": "self",
@@ -710,6 +758,10 @@
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
                     },
                     {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/2"
+                    },
+                    {
                         "rel": "self",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/16",
                         "type": "PATCH"
@@ -762,6 +814,10 @@
                     {
                         "rel": "packageList",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/2"
                     },
                     {
                         "rel": "self",
@@ -818,6 +874,10 @@
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
                     },
                     {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/2"
+                    },
+                    {
                         "rel": "self",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/18",
                         "type": "PATCH"
@@ -870,6 +930,10 @@
                     {
                         "rel": "packageList",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/3"
                     },
                     {
                         "rel": "self",
@@ -926,6 +990,10 @@
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
                     },
                     {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/5"
+                    },
+                    {
                         "rel": "self",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/20",
                         "type": "PATCH"
@@ -978,6 +1046,10 @@
                     {
                         "rel": "packageList",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/2"
                     },
                     {
                         "rel": "self",
@@ -1034,6 +1106,10 @@
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
                     },
                     {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/2"
+                    },
+                    {
                         "rel": "self",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/22",
                         "type": "PATCH"
@@ -1086,6 +1162,10 @@
                     {
                         "rel": "packageList",
                         "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/2"
                     },
                     {
                         "rel": "self",

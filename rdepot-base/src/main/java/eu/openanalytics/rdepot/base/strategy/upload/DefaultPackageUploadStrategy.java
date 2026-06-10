@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -280,26 +280,23 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
                             replaceOffWarning.get().data());
             }
 
-            assignPackageToMaintainer(packageBag);
             packageBag = packageService.create(packageBag);
-            log.debug("Package {} created.", packageBag.toString());
+            assignPackageToMaintainer(packageBag);
+            log.debug("Package {} created.", packageBag);
 
             return packageBag;
         } catch (PackageProcessingException
                 | CreateEntityException
-                | PackageValidationException
                 | ParsePackagePropertiesException
                 | NoSuitableMaintainerFound e) {
             log.debug("Exception was thrown - removing package sources...");
-
-            if (e instanceof PackageValidationException) {
-                log.debug("Internal (after-upload) package validation failed.");
-                throw (PackageValidationException) e;
-            } else {
-                log.error("Critical error occurred while processing package.");
-                log.error(e.getMessage(), e);
-                throw new CreatePackageException();
-            }
+            log.error("Critical error occurred while processing package.");
+            log.error(e.getMessage(), e);
+            throw new CreatePackageException();
+        } catch (PackageValidationException e) {
+            log.debug("Exception was thrown - removing package sources...");
+            log.debug("Internal (after-upload) package validation failed.");
+            throw e;
         }
     }
 

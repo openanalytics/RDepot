@@ -31,6 +31,7 @@ oauth2:
   login-field: preferred_username
   email-field: email
   full-name-field: name
+  groups-field: groups
   jwt-types:
     - application/okta-internal-at+jwt
     - JOSE
@@ -45,6 +46,7 @@ default-user-configuration:
     - de-DE
     - nl-NL
     - pl-PL
+    - fr-FR
   supported-themes:
     - light
     - dark
@@ -84,6 +86,7 @@ spring:
 #        orm:
 #          jdbc:
 #            bind: TRACE
+
 # Authentication related properties
 app:
   authentication: simple

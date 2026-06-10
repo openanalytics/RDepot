@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -55,6 +55,7 @@ import eu.openanalytics.rdepot.base.utils.specs.SpecificationUtils;
 import eu.openanalytics.rdepot.base.validation.AccessTokenPatchValidator;
 import eu.openanalytics.rdepot.base.validation.exceptions.PatchValidationException;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.json.JsonException;
 import jakarta.json.JsonPatch;
 import jakarta.validation.Valid;
 import java.security.Principal;
@@ -172,10 +173,10 @@ public class ApiV2AccessTokenController extends ApiV2Controller<AccessToken, Acc
 
         if (userService.isAdmin(requester)) {
             if (Objects.nonNull(userLogins)) {
-                specification = SpecificationUtils.andComponent(specification, AccessTokenSpecs.ofLogin(userLogins));
+                specification = SpecificationUtils.andComponent(null, AccessTokenSpecs.ofLogin(userLogins));
             }
         } else {
-            specification = SpecificationUtils.andComponent(specification, AccessTokenSpecs.ofUser(requester));
+            specification = SpecificationUtils.andComponent(null, AccessTokenSpecs.ofUser(requester));
         }
 
         if (search.isPresent()) {
@@ -243,9 +244,9 @@ public class ApiV2AccessTokenController extends ApiV2Controller<AccessToken, Acc
         Strategy<AccessToken> strategy = factory.createAccessTokenStrategy(accessToken, requester);
 
         try {
-            return handleSuccessForSingleEntity(strategyExecutor.execute(strategy), requester);
+            return handleCreatedForSingleEntity(strategyExecutor.execute(strategy), requester);
         } catch (StrategyFailure e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new CreateException(messageSource, locale);
         }
     }
@@ -271,7 +272,7 @@ public class ApiV2AccessTokenController extends ApiV2Controller<AccessToken, Acc
         if (requester.isEmpty() || (requester.get().getId() != user.getId()) && !userService.isAdmin(requester.get()))
             throw new UserNotAuthorized(messageSource, locale);
 
-        AccessToken updated = null;
+        AccessToken updated;
         try {
             AccessTokenDto accessTokenDto = applyPatchToEntity(jsonPatch, accessToken);
             updated = dtoConverter.resolveDtoToEntity(accessTokenDto);
@@ -287,7 +288,7 @@ public class ApiV2AccessTokenController extends ApiV2Controller<AccessToken, Acc
             updated = strategyExecutor.execute(strategy);
         } catch (StrategyFailure e) {
             throw new ApplyPatchException(messageSource, locale);
-        } catch (JsonProcessingException | EntityResolutionException | PatchValidationException e) {
+        } catch (JsonException | JsonProcessingException | EntityResolutionException | PatchValidationException e) {
             throw new MalformedPatchException(messageSource, locale, e);
         }
 
@@ -314,7 +315,7 @@ public class ApiV2AccessTokenController extends ApiV2Controller<AccessToken, Acc
         try {
             accessTokenDeleter.delete(token);
         } catch (DeleteEntityException e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new DeleteException(messageSource, locale);
         }
     }

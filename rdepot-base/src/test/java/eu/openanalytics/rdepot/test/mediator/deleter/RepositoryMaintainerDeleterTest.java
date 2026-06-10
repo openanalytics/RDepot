@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -56,7 +56,7 @@ public class RepositoryMaintainerDeleterTest extends UnitTest {
     RepositoryMaintainer maintainer;
 
     @BeforeEach
-    public void setUpResources() throws Exception {
+    public void setUpResources() {
         user = UserTestFixture.GET_PACKAGE_MAINTAINER();
         repository = RepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
         maintainer = RepositoryMaintainerTestFixture.GET_REPOSITORY_MAINTAINER_FOR_REPOSITORY(repository);

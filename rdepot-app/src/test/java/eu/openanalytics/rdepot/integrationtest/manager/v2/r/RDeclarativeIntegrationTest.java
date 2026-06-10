@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -25,8 +25,6 @@ import static org.awaitility.Awaitility.await;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import eu.openanalytics.rdepot.integrationtest.IntegrationTestContainers;
@@ -38,7 +36,6 @@ import io.restassured.http.ContentType;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.time.Duration;
 import java.util.*;
@@ -46,7 +43,6 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.*;
 import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 
 public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
     private static final DockerComposeContainer<?> DOCKER_COMPOSE_CONTAINER =
@@ -54,14 +50,11 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
     private static final String REPO_NAME_TO_EDIT = "newName";
     private static final String REPO_NAME_TO_CREATE = "testrepo7";
     private static final String API_PATH = "/api/v2/manager/r";
-    private static final String LINKS_PATH = "src/test/resources/declarative_packages_urls.csv";
 
     public static final String JSON_PATH = "src/test/resources/JSONs/v2/r-declarative";
 
     public static final TestEnvironmentConfigurator testEnv = TestEnvironmentConfigurator.getDefaultInstance();
-
     public static DockerComposeContainer<?> container = DOCKER_COMPOSE_CONTAINER
-            .withLocalCompose(true)
             .withOptions("--compatibility")
             .waitingFor(
                     "proxy",
@@ -130,8 +123,45 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
     }
 
     @Test
+    public void synchronizeRRepositoryWithEmptyMirror() throws IOException {
+        final String repositoryId = "16";
+
+        given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .when()
+                .post(API_PATH + "/repositories/" + repositoryId + "/synchronize-mirrors")
+                .then()
+                .statusCode(204);
+
+        await().atMost(30, TimeUnit.SECONDS)
+                .with()
+                .pollInterval(5, TimeUnit.SECONDS)
+                .until(() -> assertSynchronizationFinished(repositoryId));
+
+        FileReader reader = new FileReader(JSON_PATH + "/synchronization_status_empty.json");
+        JsonObject expectedSynchronizationStatus = (JsonObject) JsonParser.parseReader(reader);
+
+        assertSynchronizationStatus(expectedSynchronizationStatus, repositoryId, null, null);
+    }
+
+    @Test
     public void shouldSynchronizeRRepositoryWithMirror() throws IOException {
+        final String sourceRepositoryId = "17";
         final String repositoryId = "3";
+
+        given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .when()
+                .post(API_PATH + "/repositories/" + sourceRepositoryId + "/synchronize-mirrors")
+                .then()
+                .statusCode(204);
+
+        await().atMost(180, TimeUnit.SECONDS)
+                .with()
+                .pollInterval(5, TimeUnit.SECONDS)
+                .until(() -> assertSynchronizationFinished(sourceRepositoryId));
 
         given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
                 .contentType(ContentType.JSON)
@@ -155,12 +185,12 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
 
         assertSynchronizationStatus(expectedSynchronizationStatus, repositoryId, "2", "1");
         assertRepositories(expectedRepositories);
-        assertPackages(expectedPackages, true);
+        assertPackages(expectedPackages);
     }
 
     @Test
     public void synchronizationStatus_withMixedSuccess() throws IOException {
-        final String repositoryId = "16";
+        final String repositoryId = "18";
 
         given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
                 .contentType(ContentType.JSON)
@@ -184,7 +214,7 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
 
         assertSynchronizationStatus(expectedSynchronizationStatus, repositoryId, null, null);
         assertRepositories(expectedRepositories);
-        assertPackages(expectedPackages, true);
+        assertPackages(expectedPackages);
     }
 
     @Test
@@ -211,7 +241,7 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
         JsonObject expectedPackages = (JsonObject) JsonParser.parseReader(reader);
 
         assertRepositories(expectedRepositories);
-        assertPackages(expectedPackages, false);
+        assertPackages(expectedPackages);
     }
 
     @Test
@@ -239,7 +269,7 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
         JsonObject expectedPackages = (JsonObject) JsonParser.parseReader(reader);
 
         assertRepositories(expectedRepositories);
-        assertPackages(expectedPackages, false);
+        assertPackages(expectedPackages);
     }
 
     @Test
@@ -307,62 +337,5 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
                 .patch(API_PATH + "/repositories/" + repositoryId + "/synchronize-mirrors")
                 .then()
                 .statusCode(405);
-    }
-
-    @Override
-    protected void updateMd5SumsAndVersion(JsonArray expectedPackages) throws IOException {
-        // 1. parse file with links and names to map
-        // 2. download PACKAGES file
-        // 3. parse PACKAGES file
-        // 4. extract name and md5sum
-        // 5. replace md5sum
-        Map<String, String> links = new HashMap<>();
-        Set<String> withVersion = new HashSet<>();
-        File file = new File(LINKS_PATH);
-        Scanner reader = new Scanner(file);
-        while (reader.hasNextLine()) {
-            String data = reader.nextLine();
-            String[] tokens = data.split(",");
-            if (tokens[2].equals("latest")) links.put(tokens[0], tokens[1]);
-            else withVersion.add(tokens[0]);
-        }
-        reader.close();
-
-        for (JsonElement el : expectedPackages) {
-            JsonObject package_ = el.getAsJsonObject();
-            String packageName = package_.get("name").getAsString();
-            if (!withVersion.contains(packageName)) {
-                String url = links.get(packageName);
-
-                File tempFile = File.createTempFile("name", "PACKAGES");
-                tempFile.deleteOnExit();
-                FileUtils.copyURLToFile(new URL(url), tempFile);
-
-                reader = new Scanner(tempFile);
-                boolean found = false;
-                while (reader.hasNextLine()) {
-                    String line = reader.nextLine();
-                    if (!found && line.equals("Package: " + packageName)) {
-                        found = true;
-                    } else if (found) {
-                        if (line.startsWith("MD5sum: ")) {
-                            String md5 = line.split(": ")[1];
-                            package_.remove("md5sum");
-                            package_.addProperty("md5sum", md5);
-                        } else if (line.startsWith("Version: ")) {
-                            String version = line.split(": ")[1];
-                            String oldSource = package_.get("source").getAsString();
-                            String newSource = oldSource.split("_")[0] + "_" + version + ".tar.gz";
-                            // TODO: #32887 Properly parse version as well as we do it in PackageIntegrationTest
-                            package_.remove("source");
-                            package_.addProperty("source", newSource);
-                        }
-
-                        if (line.startsWith("Package: ")) break;
-                    }
-                }
-                reader.close();
-            }
-        }
     }
 }

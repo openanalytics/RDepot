@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -53,13 +53,13 @@ public class User extends EventableResource implements Serializable {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, columnDefinition = "TEXT")
     private String name;
 
-    @Column(name = "email", unique = true, nullable = false)
+    @Column(name = "email", unique = true, nullable = false, columnDefinition = "TEXT")
     private String email;
 
-    @Column(name = "login", unique = true, nullable = false)
+    @Column(name = "login", unique = true, nullable = false, columnDefinition = "TEXT")
     private String login;
 
     @Column(name = "active", nullable = false)

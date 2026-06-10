@@ -14,11 +14,33 @@
             "lastPublicationSuccessful": true
         },
         "status": "SUCCESS",
-        "timestamp": 1754480921391,
+        "timestamp": 1765872258280,
         "packages": [
+            {
+                "name": "numpy",
+                "version": "1.26.4",
+                "status": "SUCCESS",
+                "error": null,
+                "mirror": {
+                    "name": "PyPi",
+                    "uri": "https://pypi.org/simple",
+                    "type": "tarball"
+                }
+            },
             {
                 "name": "ArmyOfEvilRobots",
                 "version": "0.4.1dev",
+                "status": "SUCCESS",
+                "error": null,
+                "mirror": {
+                    "name": "PyPi",
+                    "uri": "https://pypi.org/simple",
+                    "type": "tarball"
+                }
+            },
+            {
+                "name": "numpy",
+                "version": "2.4.0",
                 "status": "SUCCESS",
                 "error": null,
                 "mirror": {
@@ -30,7 +52,7 @@
         ],
         "page": {
             "size": 3,
-            "totalElements": 4,
+            "totalElements": 6,
             "totalPages": 2,
             "number": 1
         }

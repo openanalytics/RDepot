@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -25,15 +25,7 @@ import eu.openanalytics.rdepot.base.api.v2.dtos.PackageMaintainerDto;
 import eu.openanalytics.rdepot.base.entities.enums.ResourceType;
 import eu.openanalytics.rdepot.base.event.EventableResource;
 import eu.openanalytics.rdepot.base.technology.InternalTechnology;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
@@ -58,7 +50,7 @@ public class PackageMaintainer extends EventableResource {
     @JoinColumn(name = "repository_id", nullable = false)
     private Repository repository;
 
-    @Column(name = "package", nullable = false)
+    @Column(name = "package", nullable = false, columnDefinition = "TEXT")
     private String packageName;
 
     @ManyToMany(fetch = FetchType.LAZY)

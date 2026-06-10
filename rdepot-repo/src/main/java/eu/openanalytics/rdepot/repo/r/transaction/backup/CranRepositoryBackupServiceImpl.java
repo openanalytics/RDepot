@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -23,6 +23,7 @@ package eu.openanalytics.rdepot.repo.r.transaction.backup;
 import eu.openanalytics.rdepot.repo.exception.GetRepositoryVersionException;
 import eu.openanalytics.rdepot.repo.exception.InitTrashDirectoryException;
 import eu.openanalytics.rdepot.repo.exception.RestoreRepositoryException;
+import eu.openanalytics.rdepot.repo.r.storage.CranArchiveRdsGenerator;
 import eu.openanalytics.rdepot.repo.r.storage.CranStorageService;
 import eu.openanalytics.rdepot.repo.repository.RepositoryService;
 import eu.openanalytics.rdepot.repo.transaction.Transaction;
@@ -45,16 +46,19 @@ public class CranRepositoryBackupServiceImpl extends AbstractRepositoryBackupSer
     final CranStorageService storageService;
     final UploadTransactionManager transactionManager;
     final RepositoryService repositoryService;
+    final CranArchiveRdsGenerator cranArchiveRdsGenerator;
 
     public CranRepositoryBackupServiceImpl(
             CranStorageService storageService,
             UploadTransactionManager transactionManager,
             RepositoryService repositoryService,
-            ConcurrentMap<Transaction, CranRepositoryBackup> cranBackups) {
+            ConcurrentMap<Transaction, CranRepositoryBackup> cranBackups,
+            CranArchiveRdsGenerator cranArchiveRdsGenerator) {
         super(storageService, cranBackups);
         this.storageService = storageService;
         this.transactionManager = transactionManager;
         this.repositoryService = repositoryService;
+        this.cranArchiveRdsGenerator = cranArchiveRdsGenerator;
     }
 
     @Override
@@ -109,9 +113,7 @@ public class CranRepositoryBackupServiceImpl extends AbstractRepositoryBackupSer
         storageService.restoreTrash(backup.getTrashDirectory());
         storageService.setRepositoryVersion(transaction.getRepositoryName(), backup.getVersion());
         try {
-            for (String archivePath : backup.getArchivePackages().keySet()) {
-                storageService.generateArchiveRds(transaction.getRepositoryName(), archivePath);
-            }
+            cranArchiveRdsGenerator.generateArchiveRds(transaction.getRepositoryName());
         } catch (IOException e) {
             log.error(e.getMessage(), e);
             throw new RestoreRepositoryException(transaction.getRepositoryName());

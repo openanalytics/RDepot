@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -74,7 +74,7 @@ public class CreateRepositoryMaintainerStrategyTest extends StrategyTest {
 
         user = UserTestFixture.GET_PACKAGE_MAINTAINER();
         packagesList = PackageMaintainerTestFixture.GET_LIST_OF_PACKAGE_MAINTAINERS_FOR_REPOSITORY(
-                3, tmpRepository, user, "pakckage_name");
+                3, tmpRepository, user, "package_name");
     }
 
     @BeforeEach
@@ -87,7 +87,7 @@ public class CreateRepositoryMaintainerStrategyTest extends StrategyTest {
      * function that prepare all conditions to run tests for creating a new package
      * maintainer
      */
-    private void createRepostioryMaintainer() throws Exception {
+    private void createRepositoryMaintainer() throws Exception {
         when(packageService.findAllByRepository(repository)).thenReturn(packagesList);
 
         when(service.create(any())).thenReturn(resource);
@@ -101,7 +101,7 @@ public class CreateRepositoryMaintainerStrategyTest extends StrategyTest {
         doAnswer(invocation -> invocation.getArgument(0)).when(eventService).create(any());
         when(bestMaintainerChooser.chooseBestPackageMaintainer(any())).thenReturn(user);
 
-        createRepostioryMaintainer();
+        createRepositoryMaintainer();
         strategy.perform();
 
         verify(service, times(1)).create(resource);
@@ -112,18 +112,18 @@ public class CreateRepositoryMaintainerStrategyTest extends StrategyTest {
         doAnswer(invocation -> invocation.getArgument(0)).when(eventService).create(any());
         when(bestMaintainerChooser.chooseBestPackageMaintainer(any())).thenReturn(user);
 
-        createRepostioryMaintainer();
+        createRepositoryMaintainer();
         strategy.perform();
 
         verify(eventService, times(1)).create(any());
     }
 
     @Test
-    public void createRepositoryMaintainer_shoulChooseBestMaintainerForPackagesAfterCreation() throws Exception {
+    public void createRepositoryMaintainer_shouldChooseBestMaintainerForPackagesAfterCreation() throws Exception {
         doAnswer(invocation -> invocation.getArgument(0)).when(eventService).create(any());
         when(bestMaintainerChooser.chooseBestPackageMaintainer(any())).thenReturn(user);
 
-        createRepostioryMaintainer();
+        createRepositoryMaintainer();
         strategy.perform();
 
         verify(bestMaintainerChooser, times(3)).chooseBestPackageMaintainer(any());
@@ -133,7 +133,7 @@ public class CreateRepositoryMaintainerStrategyTest extends StrategyTest {
     public void createRepositoryMaintainerWhenCannotChooseBestMaintainerAfterCreation() throws Exception {
         when(bestMaintainerChooser.chooseBestPackageMaintainer(any())).thenThrow(NoSuitableMaintainerFound.class);
 
-        createRepostioryMaintainer();
+        createRepositoryMaintainer();
 
         assertThrows(StrategyFailure.class, () -> strategy.perform());
     }

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -57,6 +57,7 @@ public class RRequestBodyPartitioner {
 
     public ChunkedRequestBody partition(
             final SynchronizeRepositoryRequestBody requestBody, final int elementsPerChunk) {
+        log.debug("Splitting the synchronization request into {} chunks", elementsPerChunk);
         final RequestBodyFirstChunk firstChunk = prepareFirstChunk(requestBody);
 
         final Map<String, String> checksums = requestBody.getChecksums().toMap();

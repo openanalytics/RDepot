@@ -1,0 +1,59 @@
+{
+    "code": 200,
+    "data": {
+        "changedProperties": [],
+        "eventType": "create",
+        "id": 1,
+        "relatedResource": {
+            "active": true,
+            "binary": false,
+            "deleted": false,
+            "id": 100,
+            "name": "TestPackage100",
+            "repository": {
+                "id": 123,
+                "lastPublicationSuccessful": true,
+                "name": "Test RDepot Repository",
+                "publicationUri": "http://localhost/repo/testrepo123",
+                "published": true,
+                "requiresAuthentication": false,
+                "technology": "RDepot"
+            },
+            "source": "100test_package.tar.gz",
+            "submission": {
+                "id": 100,
+                "state": "ACCEPTED"
+            },
+            "technology": "RDepot",
+            "user": {
+                "email": "packagemaintainer@example.org",
+                "id": 123,
+                "login": "testpackagemaintainer",
+                "name": "Test Package Maintainer"
+            },
+            "version": "4.5.6"
+        },
+        "resourceId": 100,
+        "resourceType": "PACKAGE",
+        "technology": "RDepot version: unknown",
+        "user": {
+            "email": "testuser@example.org",
+            "id": 123,
+            "login": "testuser",
+            "name": "Test User"
+        },
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost/api/v2/manager/events/1"
+            },
+            {
+                "rel": "eventList",
+                "href": "http://localhost/api/v2/manager/events"
+            }
+        ]
+    },
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "status": "SUCCESS"
+}

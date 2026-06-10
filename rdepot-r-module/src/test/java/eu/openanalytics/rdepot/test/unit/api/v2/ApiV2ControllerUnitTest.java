@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -68,9 +68,9 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 public abstract class ApiV2ControllerUnitTest {
 
@@ -83,139 +83,142 @@ public abstract class ApiV2ControllerUnitTest {
         System.setProperty("jakarta.json.provider", JsonProviderImpl.class.getCanonicalName());
     }
 
-    @MockBean
+    @MockitoBean
     AccessTokenService accessTokenService;
 
-    @MockBean
+    @MockitoBean
     AccessTokenPatchValidator accessTokenPatchValidator;
 
-    @MockBean
+    @MockitoBean
     AccessTokenDeleter accessTokenDeleter;
 
-    @MockBean
+    @MockitoBean
     NewsfeedEventService newsfeedEventService;
 
-    @MockBean
+    @MockitoBean
     ApiV2NewsfeedEventController apiV2NewsfeedEventController;
 
-    @MockBean
+    @MockitoBean
     UserService userService;
 
-    @MockBean
+    @MockitoBean
+    MaintainedPackageService maintainedPackageService;
+
+    @MockitoBean
     SecurityMediator securityMediator;
 
-    @MockBean(name = "packageMaintainerValidator")
+    @MockitoBean(name = "packageMaintainerValidator")
     PackageMaintainerValidator packageMaintainerValidator;
 
-    @MockBean
+    @MockitoBean
     PackageMaintainerService packageMaintainerService;
 
-    @MockBean
+    @MockitoBean
     StrategyFactory strategyFactory;
 
-    @MockBean
+    @MockitoBean
     PackageMaintainerDeleter packageMaintainerDeleter;
 
-    @MockBean
+    @MockitoBean
     RepositoryService<Repository> repositoryService;
 
-    @MockBean
+    @MockitoBean
     CommonPackageService commonPackageService;
 
-    @MockBean
+    @MockitoBean
     RepositoryMaintainerService repositoryMaintainerService;
 
-    @MockBean(name = "repositoryMaintainerValidator")
+    @MockitoBean(name = "repositoryMaintainerValidator")
     RepositoryMaintainerValidator repositoryMaintainerValidator;
 
-    @MockBean
+    @MockitoBean
     RepositoryMaintainerDeleter repositoryMaintainerDeleter;
 
-    @MockBean
+    @MockitoBean
     RRepositoryService rRepositoryService;
 
-    @MockBean
+    @MockitoBean
     RoleService roleService;
 
-    @MockBean
+    @MockitoBean
     UserSettingsService userSettingsService;
 
-    @MockBean
+    @MockitoBean
     UserValidator userValidator;
 
-    @MockBean
+    @MockitoBean
     SubmissionService submissionService;
 
-    @MockBean
+    @MockitoBean
     RStrategyFactory rStrategyFactory;
 
-    @MockBean
+    @MockitoBean
     SubmissionDeleter submissionDeleter;
 
-    @MockBean
+    @MockitoBean
     RSubmissionDeleter rSubmissionDeleter;
 
-    @MockBean
+    @MockitoBean
     RPackageService rPackageService;
 
-    @MockBean
+    @MockitoBean
     RPackageDeleter rPackageDeleter;
 
-    @MockBean
+    @MockitoBean
     RPopulator rPopulator;
 
-    @MockBean
+    @MockitoBean
     RLocalStorage rLocalStorage;
 
-    @MockBean
+    @MockitoBean
     RRepositoryValidator rRepositoryValidator;
 
-    @MockBean
+    @MockitoBean
     RPackageValidator rPackageValidator;
 
-    @MockBean
+    @MockitoBean
     CranMirrorSynchronizer cranMirrorSynchronizer;
 
-    @MockBean
+    @MockitoBean
     RRepositoryDeleter rRepositoryDeleter;
 
-    @MockBean
+    @MockitoBean
     SubmissionDtoConverter submissionDtoConverter;
 
-    @MockBean
+    @MockitoBean
     PackageDtoConverter commonPackageDtoConverter;
 
-    @MockBean
+    @MockitoBean
     UserSettingsDtoConverter userSettingsDtoConverter;
 
-    @MockBean
+    @MockitoBean
     UserSettingsValidator userSettingsValidator;
 
-    @MockBean
+    @MockitoBean
     PageableValidator pageableValidator;
 
-    @MockBean
+    @MockitoBean
     StrategyExecutor strategyExecutor;
 
-    @MockBean
+    @MockitoBean
     RBinaryProperties rBinaryProperties;
 
-    @MockBean
+    @MockitoBean
     ServerAddressHealthcheckService serverAddressHealthcheckService;
 
-    @MockBean
+    @MockitoBean
     RepositoryNameValidationProperties repositoryNameValidationProperties;
 
-    @MockBean
+    @MockitoBean
     RRepositoryAllowedFiles repositoryAllowedFiles;
 
     @Mock
     protected BestMaintainerChooser bestMaintainerChooser;
 
-    @MockBean
+    @MockitoBean
     DefaultUserConfigurationProperties defaultUserConfigurationProperties;
 
-    @MockBean
+    @MockitoBean
     PackageSynchronizationStatusDtoConverter packageSynchronizationStatusDtoConverter;
 
     @BeforeEach

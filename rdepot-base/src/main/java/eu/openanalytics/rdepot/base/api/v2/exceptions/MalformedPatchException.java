@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -39,7 +39,7 @@ public class MalformedPatchException extends ApiException {
                 messageSource,
                 locale,
                 MessageCodes.ERROR_MALFORMED_PATCH,
-                HttpStatus.UNPROCESSABLE_ENTITY,
+                HttpStatus.UNPROCESSABLE_CONTENT,
                 e.getMessage());
     }
 }

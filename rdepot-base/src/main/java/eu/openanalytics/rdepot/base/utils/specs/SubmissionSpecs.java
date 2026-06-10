@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -95,5 +95,10 @@ public class SubmissionSpecs {
         return (root, query, criteriaBuilder) -> criteriaBuilder
                 .in(root.get(PACKAGE).get("repositoryGeneric").get("name"))
                 .value(repositories);
+    }
+
+    public static Specification<Submission> isBinary(boolean binary) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get(PACKAGE).get("binary"), binary);
     }
 }

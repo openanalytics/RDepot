@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -70,19 +70,19 @@ public abstract class Repository extends EventableResource implements Serializab
         super(InternalTechnology.instance, ResourceType.REPOSITORY);
     }
 
-    @Column(name = "resource_technology", insertable = false, updatable = false)
+    @Column(name = "resource_technology", insertable = false, updatable = false, columnDefinition = "TEXT")
     protected String resourceTechnology;
 
     @Column(name = "version", nullable = false)
     private Integer version = 0;
 
-    @Column(name = "publication_uri", unique = true, nullable = false)
+    @Column(name = "publication_uri", unique = true, nullable = false, columnDefinition = "TEXT")
     private String publicationUri;
 
-    @Column(name = "name", unique = true, nullable = false)
+    @Column(name = "name", unique = true, nullable = false, columnDefinition = "TEXT")
     private String name;
 
-    @Column(name = "server_address", nullable = false)
+    @Column(name = "server_address", nullable = false, columnDefinition = "TEXT")
     private String serverAddress;
 
     @Column(name = "published", nullable = false)

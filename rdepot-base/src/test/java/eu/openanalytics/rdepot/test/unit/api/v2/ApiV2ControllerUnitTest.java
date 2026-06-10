@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -23,7 +23,6 @@ package eu.openanalytics.rdepot.test.unit.api.v2;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2NewsfeedEventController;
 import eu.openanalytics.rdepot.base.api.v2.converters.PackageDtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.converters.SubmissionDtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.converters.UserSettingsDtoConverter;
@@ -34,15 +33,36 @@ import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.mediator.BestMaintainerChooser;
-import eu.openanalytics.rdepot.base.mediator.deletion.*;
+import eu.openanalytics.rdepot.base.mediator.deletion.AccessTokenDeleter;
+import eu.openanalytics.rdepot.base.mediator.deletion.PackageDeleter;
+import eu.openanalytics.rdepot.base.mediator.deletion.PackageMaintainerDeleter;
+import eu.openanalytics.rdepot.base.mediator.deletion.RepositoryDeleter;
+import eu.openanalytics.rdepot.base.mediator.deletion.RepositoryMaintainerDeleter;
+import eu.openanalytics.rdepot.base.mediator.deletion.SubmissionDeleter;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
-import eu.openanalytics.rdepot.base.service.*;
+import eu.openanalytics.rdepot.base.service.AccessTokenService;
+import eu.openanalytics.rdepot.base.service.CommonPackageService;
+import eu.openanalytics.rdepot.base.service.MaintainedPackageService;
+import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
+import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
+import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
+import eu.openanalytics.rdepot.base.service.RepositoryService;
+import eu.openanalytics.rdepot.base.service.RoleService;
+import eu.openanalytics.rdepot.base.service.SubmissionService;
+import eu.openanalytics.rdepot.base.service.UserService;
+import eu.openanalytics.rdepot.base.service.UserSettingsService;
 import eu.openanalytics.rdepot.base.storage.Storage;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.factory.StrategyFactory;
 import eu.openanalytics.rdepot.base.synchronization.healthcheck.ServerAddressHealthcheckService;
-import eu.openanalytics.rdepot.base.validation.*;
+import eu.openanalytics.rdepot.base.validation.AccessTokenPatchValidator;
+import eu.openanalytics.rdepot.base.validation.PackageMaintainerValidator;
+import eu.openanalytics.rdepot.base.validation.PackageValidator;
+import eu.openanalytics.rdepot.base.validation.RepositoryMaintainerValidator;
+import eu.openanalytics.rdepot.base.validation.RepositoryValidator;
+import eu.openanalytics.rdepot.base.validation.UserSettingsValidator;
+import eu.openanalytics.rdepot.base.validation.UserValidator;
 import eu.openanalytics.rdepot.test.fixture.UserTestFixture;
 import java.security.Principal;
 import java.util.Objects;
@@ -53,124 +73,119 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 public class ApiV2ControllerUnitTest {
 
-    /**
-     * JsonProvider issue fix; For some reason,
-     * Glassfish's JsonProvider implementation is not resolved properly in the test environment.
-     * Setting this property forces Spring to use this particular class as implementation.
-     */
     static {
         System.setProperty("jakarta.json.provider", JsonProviderImpl.class.getCanonicalName());
     }
 
-    @MockBean
+    @MockitoBean
     AccessTokenService accessTokenService;
 
-    @MockBean
+    @MockitoBean
     AccessTokenPatchValidator accessTokenPatchValidator;
 
-    @MockBean
+    @MockitoBean
     AccessTokenDeleter accessTokenDeleter;
 
-    @MockBean
+    @MockitoBean
     NewsfeedEventService newsfeedEventService;
 
-    @MockBean
-    ApiV2NewsfeedEventController apiV2NewsfeedEventController;
-
-    @MockBean
+    @MockitoBean
     UserService userService;
 
-    @MockBean
+    @MockitoBean
+    MaintainedPackageService maintainedPackageService;
+
+    @MockitoBean
     SecurityMediator securityMediator;
 
-    @MockBean(name = "packageMaintainerValidator")
+    @MockitoBean(name = "packageMaintainerValidator")
     PackageMaintainerValidator packageMaintainerValidator;
 
-    @MockBean
+    @MockitoBean
     PackageMaintainerService packageMaintainerService;
 
-    @MockBean
+    @MockitoBean
     StrategyFactory strategyFactory;
 
-    @MockBean
+    @MockitoBean
     PackageMaintainerDeleter packageMaintainerDeleter;
 
-    @MockBean
+    @MockitoBean
     RepositoryService<Repository> repositoryService;
 
-    @MockBean
+    @MockitoBean
     CommonPackageService commonPackageService;
 
-    @MockBean
+    @MockitoBean
     RepositoryMaintainerService repositoryMaintainerService;
 
-    @MockBean(name = "repositoryMaintainerValidator")
+    @MockitoBean(name = "repositoryMaintainerValidator")
     RepositoryMaintainerValidator repositoryMaintainerValidator;
 
-    @MockBean
+    @MockitoBean
     RepositoryMaintainerDeleter repositoryMaintainerDeleter;
 
-    @MockBean
+    @MockitoBean
     RoleService roleService;
 
-    @MockBean
+    @MockitoBean
     UserSettingsService userSettingsService;
 
-    @MockBean
+    @MockitoBean
     UserValidator userValidator;
 
-    @MockBean
+    @MockitoBean
     SubmissionService submissionService;
 
-    @MockBean
+    @MockitoBean
     SubmissionDeleter submissionDeleter;
 
-    @MockBean
+    @MockitoBean
     PackageDeleter<Package, Repository> packageDeleter;
 
-    @MockBean
+    @MockitoBean
     Storage<Package> storage;
 
-    @MockBean
+    @MockitoBean
     RepositoryValidator<Repository> repositoryValidator;
 
-    @MockBean
+    @MockitoBean
     PackageValidator<Package> packageValidator;
 
-    @MockBean
+    @MockitoBean
     RepositoryDeleter<Repository, Package> repositoryDeleter;
 
-    @MockBean
+    @MockitoBean
     SubmissionDtoConverter submissionDtoConverter;
 
-    @MockBean
+    @MockitoBean
     PackageDtoConverter commonPackageDtoConverter;
 
-    @MockBean
+    @MockitoBean
     UserSettingsDtoConverter userSettingsDtoConverter;
 
-    @MockBean
+    @MockitoBean
     UserSettingsValidator userSettingsValidator;
 
-    @MockBean
+    @MockitoBean
     PageableValidator pageableValidator;
 
-    @MockBean
+    @MockitoBean
     StrategyExecutor strategyExecutor;
 
-    @MockBean
+    @MockitoBean
     ServerAddressHealthcheckService serverAddressHealthcheckService;
 
-    @MockBean
+    @MockitoBean
     RepositoryNameValidationProperties repositoryNameValidationProperties;
 
-    @MockBean
+    @MockitoBean
     DefaultUserConfigurationProperties defaultUserConfigurationProperties;
 
     @Mock

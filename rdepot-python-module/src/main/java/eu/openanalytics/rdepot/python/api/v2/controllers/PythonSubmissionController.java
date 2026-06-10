@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -224,6 +224,10 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
             String packageFilenameAfterCreation = submission.getPackageBag().getFileName();
 
             if (!Objects.equals(originalFilename, packageFilenameAfterCreation)) {
+                log.debug(
+                        "Package file name has been updated. Previous: {}, New: {}",
+                        originalFilename,
+                        packageFilenameAfterCreation);
                 return handleWarningForSingleEntity(
                         submission, MessageCodes.WARNING_FILE_NAME_HAS_BEEN_UPDATED, uploader, true);
             }
@@ -370,7 +374,8 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
             @RequestParam(name = "repository", required = false) List<String> repositories,
             @RequestParam(name = "fromDate", required = false) Optional<String> fromDate,
             @RequestParam(name = "toDate", required = false) Optional<String> toDate,
-            @RequestParam(name = "search", required = false) Optional<String> search)
+            @RequestParam(name = "search", required = false) Optional<String> search,
+            @RequestParam(name = "binary", required = false) Optional<Boolean> binary)
             throws ApiException {
         if (userService.findActiveByLogin(principal.getName()).isEmpty()) {
             throw new UserNotAuthorized(messageSource, locale);
@@ -382,7 +387,7 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
         final Optional<Instant> fromDateInstant = fromDate.flatMap(DateParser::parseTimestampStart);
         final Optional<Instant> toDateInstant = toDate.flatMap(DateParser::parseTimestampEnd);
 
-        Specification<Submission> specification = Specification.where(SubmissionSpecs.ofTechnology(List.of("Python")));
+        Specification<Submission> specification = SubmissionSpecs.ofTechnology(List.of("Python"));
 
         if (Objects.nonNull(states)) {
             specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.ofState(states));
@@ -407,6 +412,10 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
                     .or(SubmissionSpecs.ofApprover(search.get()));
         }
 
+        if (binary.isPresent()) {
+            specification = SpecificationUtils.andComponent(specification, SubmissionSpecs.isBinary(binary.get()));
+        }
+
         return handleSuccessForPagedCollection(
                 submissionService.findAllBySpecification(specification, resolvedPageable));
     }
@@ -426,13 +435,13 @@ public class PythonSubmissionController extends ApiV2Controller<Submission, Subm
     @Operation(operationId = "getPythonSubmissionById")
     public @ResponseBody ResponseEntity<ResponseDto<EntityModel<SubmissionDto>>> getSubmissionById(
             Principal principal, @PathVariable("id") Integer id) throws SubmissionNotFound, UserNotAuthorized {
-        if (userService.findActiveByLogin(principal.getName()).isEmpty()) {
-            throw new UserNotAuthorized(messageSource, locale);
-        }
+        final User requester = userService
+                .findActiveByLogin(principal.getName())
+                .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
         Submission submission =
                 submissionService.findById(id).orElseThrow(() -> new SubmissionNotFound(messageSource, locale));
         if (submission.getPackage().getTechnology().getName().equals("Python")) {
-            return handleSuccessForSingleEntity(submission);
+            return handleSuccessForSingleEntity(submission, requester);
         } else {
             throw new SubmissionNotFound(messageSource, locale);
         }

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -39,6 +39,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.StandardEnvironment;
@@ -212,6 +213,11 @@ public class TestWebApplicationContext implements ConfigurableWebApplicationCont
     }
 
     @Override
+    public <T> ObjectProvider<T> getBeanProvider(ParameterizedTypeReference<T> requiredType) {
+        return null;
+    }
+
+    @Override
     public boolean containsBean(String name) {
         return false;
     }
@@ -335,10 +341,21 @@ public class TestWebApplicationContext implements ConfigurableWebApplicationCont
     public void refresh() throws BeansException, IllegalStateException {}
 
     @Override
+    public void restart() {}
+
+    @Override
+    public void pause() {}
+
+    @Override
     public void registerShutdownHook() {}
 
     @Override
     public void close() {}
+
+    @Override
+    public boolean isClosed() {
+        return false;
+    }
 
     @Override
     public boolean isActive() {

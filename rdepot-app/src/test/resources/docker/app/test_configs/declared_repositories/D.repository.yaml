@@ -12,8 +12,6 @@ mirrors:
     packages:
       - name: ggplot2
         version: 3.3.2
-      - name: plotly
-        generateManuals: false
   - name: Bioconductor-3.12
     uri: http://archive.bioconductor.org.s3-website-us-east-1.amazonaws.com/packages/3.12/bioc
     syncInterval: ""
@@ -22,9 +20,11 @@ mirrors:
     packages:
       - name: annotate
         version: 1.68.0
-  - name: Bioconductor-release
-    uri: https://bioconductor.org/packages/release/bioc
+  - name: CD
+    uri: http://oa-rdepot-proxy/repo/CD
     syncInterval: ""
     type: tarball
     packages:
-      - name: genefilter
+      - name: Banksy
+      - name: plotly
+        generateManuals: false

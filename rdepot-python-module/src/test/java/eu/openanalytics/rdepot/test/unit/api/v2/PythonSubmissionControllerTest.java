@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -23,12 +23,21 @@ package eu.openanalytics.rdepot.test.unit.api.v2;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.openanalytics.rdepot.base.api.v2.dtos.*;
+import eu.openanalytics.rdepot.base.api.v2.dtos.PackageDto;
+import eu.openanalytics.rdepot.base.api.v2.dtos.PackageUploadRequest;
+import eu.openanalytics.rdepot.base.api.v2.dtos.SubmissionDto;
+import eu.openanalytics.rdepot.base.api.v2.dtos.SubmissionProjection;
+import eu.openanalytics.rdepot.base.api.v2.dtos.UserProjection;
 import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.Submission;
@@ -41,7 +50,6 @@ import eu.openanalytics.rdepot.base.validation.ValidationResult;
 import eu.openanalytics.rdepot.base.validation.exceptions.PatchValidationException;
 import eu.openanalytics.rdepot.python.api.v2.controllers.PythonSubmissionController;
 import eu.openanalytics.rdepot.python.api.v2.dtos.PythonPackageDto;
-import eu.openanalytics.rdepot.python.api.v2.hateoas.PythonSubmissionModelAssembler;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.test.context.ApiTestConfig;
@@ -58,7 +66,6 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.http.entity.ContentType;
@@ -68,8 +75,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.MessageSource;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -83,7 +89,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.MultipartFile;
 
 @ContextConfiguration(classes = {ApiTestConfig.class})
@@ -112,20 +117,6 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
 
     @Autowired
     MockMvc mockMvc;
-
-    @Autowired
-    ObjectMapper objectMapper;
-
-    @Autowired
-    MessageSource messageSource;
-
-    @Autowired
-    PythonSubmissionModelAssembler pythonSubmissionModelAssembler;
-
-    Locale locale = Locale.ENGLISH;
-
-    @Autowired
-    WebApplicationContext webApplicationContext;
 
     private User user;
 
@@ -313,7 +304,7 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
                         .file(multipartFile)
                         .param("repository", REPOSITORY_NAME)
                         .param("replace", Boolean.toString(replace)))
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isUnprocessableContent())
                 .andExpect(content().json(Files.readString(Path.of(ERROR_SUBMISSION_DUPLICATE_PATH))));
     }
 
@@ -496,7 +487,7 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
     }
 
     @Test
-    @WithMockUser(authorities = {"user", "admin"})
+    @WithMockUser(authorities = {"user", "packagemaintainer"})
     public void getAllSubmissions_asMaintainer() throws Exception {
         PythonRepository repository = PythonRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
 
@@ -624,7 +615,7 @@ public class PythonSubmissionControllerTest extends ApiV2ControllerUnitTest {
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/python/submissions/" + submission.getId())
                         .content(patchJson)
                         .contentType("application/json-patch+json"))
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isUnprocessableContent())
                 .andExpect(content().json(Files.readString(Path.of(ERROR_UPDATE_NOT_ALLOWED_SUBMISSION_PATH))));
     }
 

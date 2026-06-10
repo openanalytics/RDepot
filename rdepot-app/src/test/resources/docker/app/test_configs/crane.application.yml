@@ -1,0 +1,31 @@
+app:
+   storage-location: /srv/crane/
+   openid-issuer-uri: http://192.168.49.21:8080
+   openid-groups-claim: groups
+   repositories:
+     public:
+       read-access:
+         public: true
+       write-access:
+         public: true
+     testrepo4:
+       read-access:
+         users:
+           - tesla
+         groups:
+           - admins
+spring:
+   security:
+      oauth2:
+         client:
+            registration:
+               crane:
+                  provider: rdepot-as
+                  client-id: crane
+                  client-secret: secret
+                  scope: openid
+                  authorization-grant-type: authorization_code
+                  client-authentication-method: client_secret_basic
+            provider:
+               rdepot-as:
+                  issuer-uri: http://192.168.49.21:8080

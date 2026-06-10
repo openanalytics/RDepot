@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -67,6 +67,7 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
                 .deleteEndpointNewEventsAmount(-5)
                 .changeEndpointNewEventsAmount(1)
                 .submissionIdAccepted("5")
+                .binary(true)
                 .build();
     }
 
@@ -257,6 +258,66 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
         final ExecutionResult result = bashScriptExecutor.executeBashScript(
                 "src/test/resources/scripts/checkIfPublishedPackageCanBeInstalled.sh");
         assertEquals(0, result.exitCode(), "Uploaded package was not published properly.");
+    }
+
+    @Test
+    public void submitBinaryPackage_redirectToBinary() throws Exception {
+        File packageBag = new File("src/test/resources/itestPackages/arrow_18.1.0.tar.gz");
+
+        // Patch the repo to publish and redirect to source
+        final String patchRepository =
+                """
+                [
+                  {
+                    "op": "replace",
+                    "path": "/published",
+                    "value": true
+                  },
+                  {
+                    "op": "replace",
+                    "path": "/redirectToSource",
+                    "value": true
+                  }
+                ]""";
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.PATCH_OTHER_RESOURCE)
+                .path("/api/v2/manager/r/repositories")
+                .urlSuffix("/2")
+                .statusCode(200)
+                .token(REPOSITORYMAINTAINER_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getChangeEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/r/repositories/published_repository_with_redirect_to_source.json")
+                .body(patchRepository)
+                .build();
+        testEndpoint(requestBody);
+        // Upload the package
+        SubmissionMultipartBody body = new SubmissionMultipartBody(
+                "testrepo1",
+                false,
+                false,
+                "",
+                new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+                        .fileName(packageBag.getName())
+                        .mimeType("application/gzip")
+                        .controlName("file")
+                        .build(),
+                true,
+                "4.4",
+                "x86_64",
+                "rhel10");
+
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST_MULTIPART)
+                .urlSuffix("/")
+                .statusCode(201)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getPostEndpointNewEventsAmount())
+                .expectedEventsJson(EVENTS_PATH + "new_binary_submission_events_redirect_to_source.json")
+                .expectedJsonPath("/v2/r/submission/new_binary_submission_redirect_to_source.json")
+                .submissionMultipartBody(body)
+                .build();
+        testEndpoint(requestBody);
     }
 
     @Test
@@ -697,6 +758,19 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
                 .requestType(RequestType.GET_UNAUTHENTICATED)
                 .urlSuffix("/" + testData.getSubmissionId())
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getBinarySubmissions() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .urlSuffix("?binary=" + testData.isBinary() + "&sort=id,asc")
+                .statusCode(200)
+                .token(USER_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/r/submission/binary_submissions.json")
                 .build();
         testEndpoint(requestBody);
     }

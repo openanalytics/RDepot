@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -22,12 +22,22 @@ package eu.openanalytics.rdepot.r.config.declarative;
 
 import eu.openanalytics.rdepot.base.config.declarative.DeclaredRepositoryDirectoriesProps;
 import eu.openanalytics.rdepot.base.config.declarative.YamlDeclarativeConfigurationSource;
+import eu.openanalytics.rdepot.base.config.declarative.exceptions.InvalidRepositoryDeclaration;
 import eu.openanalytics.rdepot.r.mirroring.CranMirror;
 import eu.openanalytics.rdepot.r.mirroring.pojos.MirroredRPackage;
 import eu.openanalytics.rdepot.r.mirroring.pojos.MirroredRRepository;
+import eu.openanalytics.rdepot.r.technology.RLanguage;
 import eu.openanalytics.rdepot.r.validation.repositories.RBasicNameValidator;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.yaml.snakeyaml.Yaml;
 
+@Slf4j
 @Component
 public class RYamlDeclarativeConfigurationSource
         extends YamlDeclarativeConfigurationSource<MirroredRRepository, MirroredRPackage, CranMirror> {
@@ -35,5 +45,17 @@ public class RYamlDeclarativeConfigurationSource
     public RYamlDeclarativeConfigurationSource(
             DeclaredRepositoryDirectoriesProps declaredRepositoryDirectoriesProps, RBasicNameValidator nameValidator) {
         super(declaredRepositoryDirectoriesProps, MirroredRRepository.class, nameValidator);
+    }
+
+    @Override
+    protected boolean acceptFile(File configFile) throws InvalidRepositoryDeclaration {
+        try (InputStream input = new FileInputStream(configFile)) {
+            Map<String, Object> data = new Yaml().load(input);
+            Object technology = data.get("technology");
+            return technology == null || RLanguage.instance.getName().equalsIgnoreCase(technology.toString());
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            throw new InvalidRepositoryDeclaration(configFile.getAbsolutePath());
+        }
     }
 }

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -22,7 +22,7 @@ package eu.openanalytics.rdepot.repo.python.upload.chunks.processing;
 
 import eu.openanalytics.rdepot.repo.chunks.processing.implementations.UploadRequestChunkProcessorImpl;
 import eu.openanalytics.rdepot.repo.python.model.SynchronizePythonRepositoryRequestBody;
-import eu.openanalytics.rdepot.repo.python.storage.PythonFileSystemStorageService;
+import eu.openanalytics.rdepot.repo.python.storage.implementations.PythonFileSystemStorageService;
 import org.springframework.stereotype.Component;
 
 @Component

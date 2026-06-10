@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -67,10 +67,10 @@ public class BestMaintainerChooserTest extends UnitTest {
     @InjectMocks
     BestMaintainerChooser bestMaintainerChooser;
 
-    private static Role adminRole = RoleTestFixture.ROLE.ADMIN;
+    private static final Role adminRole = RoleTestFixture.ROLE.ADMIN;
 
     @Test
-    public void chooseBestMaintainer_throwsException_withNoSuitableUsers() throws Exception {
+    public void chooseBestMaintainer_throwsException_withNoSuitableUsers() {
         final Repository repository = RepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
         final User user = UserTestFixture.GET_REGULAR_USER();
         final Package packageBag = PackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
@@ -127,7 +127,7 @@ public class BestMaintainerChooserTest extends UnitTest {
     }
 
     @Test
-    public void chooseBestMaintainer_whenThereIsNoRepositoryMaintaienrAndNoPackageMaintaienerInAGivenRepo()
+    public void chooseBestMaintainer_whenThereIsNoRepositoryMaintainerAndNoPackageMaintainerInAGivenRepo()
             throws Exception {
         final Repository repository = RepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
         final User user = UserTestFixture.GET_REGULAR_USER();

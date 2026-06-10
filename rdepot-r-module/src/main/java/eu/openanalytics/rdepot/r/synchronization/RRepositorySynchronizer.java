@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -55,6 +55,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.http.entity.ContentType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -186,7 +187,7 @@ public class RRepositorySynchronizer extends RepositorySynchronizer<RRepository>
 
         final List<String> remoteSourcePackages = new ArrayList<>();
         remotePackages.stream()
-                .filter(file -> StringUtils.contains(file, "src/contrib/"))
+                .filter(file -> Strings.CS.contains(file, "src/contrib/"))
                 .forEach(file -> {
                     String filePath = file.substring(0, file.indexOf("="));
                     remoteSourcePackages.add(StringUtils.substringAfterLast(filePath, "/"));
@@ -196,7 +197,7 @@ public class RRepositorySynchronizer extends RepositorySynchronizer<RRepository>
         // <path = "bin/... , filename>
         final MultiValueMap<String, String> remoteBinaryPackages = new LinkedMultiValueMap<>();
         remotePackages.stream()
-                .filter(file -> StringUtils.startsWith(file, "bin/"))
+                .filter(file -> Strings.CS.startsWith(file, "bin/"))
                 .forEach(file -> {
                     String filePath = file.substring(0, file.indexOf("="));
                     remoteBinaryPackages.add(
@@ -260,6 +261,7 @@ public class RRepositorySynchronizer extends RepositorySynchronizer<RRepository>
 
     private String postChunk(MultiValueMap<String, Object> chunk, String serverAddress, String repositoryDirectory)
             throws SendSynchronizeRequestException {
+        log.debug("Chunk: {}", chunk);
         final HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, ContentType.MULTIPART_FORM_DATA.getMimeType());
         final HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(chunk, headers);
@@ -282,7 +284,6 @@ public class RRepositorySynchronizer extends RepositorySynchronizer<RRepository>
             throws SendSynchronizeRequestException {
         final ChunkedRequestBody chunks = rRequestBodyPartitioner.partition(request, maxRequestSize);
         log.debug("Sending chunk to repo...");
-
         try {
             final String id = postChunk(chunks.firstChunkToMap(), serverAddress, repositoryDirectory);
             for (MultiValueMap<String, Object> chunk : chunks.otherChunksToMaps(id)) {

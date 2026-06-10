@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -29,7 +29,8 @@ public enum SynchronizationStatus {
     SUCCESS("SUCCESS"),
     PENDING("PENDING"),
     ERROR("ERROR"),
-    MIXED("MIXED SUCCESS");
+    MIXED("MIXED SUCCESS"),
+    WARNING("WARNING");
 
     private final String status;
 }

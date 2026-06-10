@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -21,12 +21,14 @@
 package eu.openanalytics.rdepot.base.api.v2.exceptions;
 
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
+import java.io.Serial;
 import java.util.Locale;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 
 public class PackageDeletionException extends ApiException {
 
+    @Serial
     private static final long serialVersionUID = -4077400787517364301L;
 
     public PackageDeletionException(MessageSource messageSource, Locale locale) {

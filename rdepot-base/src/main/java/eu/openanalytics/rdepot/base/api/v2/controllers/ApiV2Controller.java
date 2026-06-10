@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -132,11 +132,11 @@ public abstract class ApiV2Controller<E extends Resource, D extends IDto> extend
      * Processes and returns validation error.
      */
     protected @ResponseBody ResponseEntity<ResponseDto<String>> handleValidationError(String messageCode) {
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT)
                 .body(ResponseDto.generateErrorBody(
                         messageSource,
                         locale,
-                        HttpStatus.UNPROCESSABLE_ENTITY,
+                        HttpStatus.UNPROCESSABLE_CONTENT,
                         MessageCodes.ERROR_VALIDATION,
                         messageSource.getMessage(messageCode, null, messageCode, locale)));
     }
@@ -153,11 +153,11 @@ public abstract class ApiV2Controller<E extends Resource, D extends IDto> extend
                         messageSource.getMessage(Objects.requireNonNull(err.getCode()), null, err.getCode(), locale))
                 .toList();
 
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT)
                 .body(ResponseDto.generateErrorBody(
                         messageSource,
                         locale,
-                        HttpStatus.UNPROCESSABLE_ENTITY,
+                        HttpStatus.UNPROCESSABLE_CONTENT,
                         MessageCodes.ERROR_VALIDATION,
                         errorMessages));
     }
@@ -174,11 +174,11 @@ public abstract class ApiV2Controller<E extends Resource, D extends IDto> extend
                         Objects.requireNonNull(err.messageCode()), null, err.messageCode(), locale))
                 .toList();
 
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT)
                 .body(ResponseDto.generateErrorBody(
                         messageSource,
                         locale,
-                        HttpStatus.UNPROCESSABLE_ENTITY,
+                        HttpStatus.UNPROCESSABLE_CONTENT,
                         MessageCodes.ERROR_VALIDATION,
                         errorMessages));
     }
@@ -191,17 +191,15 @@ public abstract class ApiV2Controller<E extends Resource, D extends IDto> extend
     protected @ResponseBody ResponseEntity<ResponseDto<List<String>>> handleValidationErrorWithDefaultMessage(
             BindingResult bindingResult) {
         final List<String> errorMessages = bindingResult.getAllErrors().stream()
-                .map(err -> {
-                    return messageSource.getMessage(
-                            Objects.requireNonNull(err.getCode()), null, err.getDefaultMessage(), locale);
-                })
+                .map(err -> messageSource.getMessage(
+                        Objects.requireNonNull(err.getCode()), null, err.getDefaultMessage(), locale))
                 .toList();
 
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT)
                 .body(ResponseDto.generateErrorBody(
                         messageSource,
                         locale,
-                        HttpStatus.UNPROCESSABLE_ENTITY,
+                        HttpStatus.UNPROCESSABLE_CONTENT,
                         MessageCodes.ERROR_VALIDATION,
                         errorMessages));
     }
@@ -215,11 +213,11 @@ public abstract class ApiV2Controller<E extends Resource, D extends IDto> extend
         final List<String> errorMessage = new ArrayList<>();
         errorMessage.add(e.getMessage());
 
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT)
                 .body(ResponseDto.generateErrorBody(
                         messageSource,
                         locale,
-                        HttpStatus.UNPROCESSABLE_ENTITY,
+                        HttpStatus.UNPROCESSABLE_CONTENT,
                         MessageCodes.ERROR_VALIDATION,
                         errorMessage));
     }

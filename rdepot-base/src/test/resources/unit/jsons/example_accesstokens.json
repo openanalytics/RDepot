@@ -1,0 +1,160 @@
+{
+    "status": "SUCCESS",
+    "code": 200,
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "data": {
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost/api/v2/manager/access-tokens"
+            }
+        ],
+        "content": [
+            {
+                "id": 0,
+                "name": "test token0",
+                "value": null,
+                "active": true,
+                "deleted": false,
+                "user": {
+                    "id": 111,
+                    "name": "Test User",
+                    "login": "testuser",
+                    "email": "testuser@example.org"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost/api/v2/manager/access-tokens/0"
+                    },
+                    {
+                        "rel": "accessTokenList",
+                        "href": "http://localhost/api/v2/manager/access-tokens"
+                    }
+                ]
+            },
+            {
+                "id": 1,
+                "name": "test token1",
+                "value": null,
+                "active": true,
+                "deleted": false,
+                "user": {
+                    "id": 111,
+                    "name": "Test User",
+                    "login": "testuser",
+                    "email": "testuser@example.org"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost/api/v2/manager/access-tokens/1"
+                    },
+                    {
+                        "rel": "accessTokenList",
+                        "href": "http://localhost/api/v2/manager/access-tokens"
+                    }
+                ]
+            },
+            {
+                "id": 0,
+                "name": "test token0",
+                "value": null,
+                "active": true,
+                "deleted": false,
+                "user": {
+                    "id": 222,
+                    "name": "Test User",
+                    "login": "testuser",
+                    "email": "testuser@example.org"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost/api/v2/manager/access-tokens/0"
+                    },
+                    {
+                        "rel": "accessTokenList",
+                        "href": "http://localhost/api/v2/manager/access-tokens"
+                    }
+                ]
+            },
+            {
+                "id": 1,
+                "name": "test token1",
+                "value": null,
+                "active": true,
+                "deleted": false,
+                "user": {
+                    "id": 222,
+                    "name": "Test User",
+                    "login": "testuser",
+                    "email": "testuser@example.org"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost/api/v2/manager/access-tokens/1"
+                    },
+                    {
+                        "rel": "accessTokenList",
+                        "href": "http://localhost/api/v2/manager/access-tokens"
+                    }
+                ]
+            },
+            {
+                "id": 0,
+                "name": "test token0",
+                "value": null,
+                "active": true,
+                "deleted": false,
+                "user": {
+                    "id": 333,
+                    "name": "Test User",
+                    "login": "testuser",
+                    "email": "testuser@example.org"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost/api/v2/manager/access-tokens/0"
+                    },
+                    {
+                        "rel": "accessTokenList",
+                        "href": "http://localhost/api/v2/manager/access-tokens"
+                    }
+                ]
+            },
+            {
+                "id": 1,
+                "name": "test token1",
+                "value": null,
+                "active": true,
+                "deleted": false,
+                "user": {
+                    "id": 333,
+                    "name": "Test User",
+                    "login": "testuser",
+                    "email": "testuser@example.org"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost/api/v2/manager/access-tokens/1"
+                    },
+                    {
+                        "rel": "accessTokenList",
+                        "href": "http://localhost/api/v2/manager/access-tokens"
+                    }
+                ]
+            }
+        ],
+        "page": {
+            "size": 6,
+            "totalElements": 6,
+            "totalPages": 1,
+            "number": 0
+        }
+    }
+}

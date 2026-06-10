@@ -31,6 +31,7 @@ default-user-configuration:
     - de-DE
     - nl-NL
     - pl-PL
+    - fr-FR
   supported-themes:
     - light
     - dark
@@ -57,6 +58,7 @@ oauth2:
   login-field: preferred_username
   email-field: email
   full-name-field: name
+  groups-field: groups
   jwt-types:
     - JWT
     - JOSE

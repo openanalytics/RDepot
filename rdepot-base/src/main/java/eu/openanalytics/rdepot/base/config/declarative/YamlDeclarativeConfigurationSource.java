@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -65,6 +65,8 @@ public abstract class YamlDeclarativeConfigurationSource<
         mapper.findAndRegisterModules();
     }
 
+    protected abstract boolean acceptFile(File configFile) throws InvalidRepositoryDeclaration;
+
     @Override
     public List<R> retrieveDeclaredRepositories() {
         final List<R> declaredRepositories = new ArrayList<>();
@@ -88,19 +90,23 @@ public abstract class YamlDeclarativeConfigurationSource<
             return declaredRepositories;
         }
 
-        List<File> filesInDir = Arrays.asList(dir.listFiles());
+        File[] fileList = dir.listFiles();
+        if (fileList == null) return declaredRepositories;
+
+        List<File> filesInDir = Arrays.asList(fileList);
         Collections.sort(filesInDir);
-        if (filesInDir == null) return declaredRepositories;
 
         for (File configFile : filesInDir) {
             if (configFile.getName().endsWith("repository.yaml")
                     || configFile.getName().endsWith("repository.yml")) {
                 try {
-                    declaredRepositories.add(retrieveDeclaredRepositoryFromFile(configFile));
-                } catch (DeclaredRepositoryTechnologyMismatch e) {
+                    if (acceptFile(configFile)) {
+                        declaredRepositories.add(retrieveDeclaredRepositoryFromFile(configFile));
+                    }
+                } catch (DeclaredRepositoryTechnologyMismatch
+                        | InvalidRepositoryDeclaration
+                        | InvalidDeclaredRepositoryName e) {
                     log.debug(e.getMessage(), e);
-                } catch (InvalidRepositoryDeclaration | InvalidDeclaredRepositoryName e) {
-                    log.error(e.getMessage(), e);
                 }
             }
         }

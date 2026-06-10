@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -43,17 +43,8 @@ public interface CranStorageService extends StorageService<SynchronizeCranReposi
     void removeNonExistingArchivePackagesFromRepo(Map<String, List<String>> packages, String repository)
             throws RestoreRepositoryException;
 
-    void generateArchiveRds(String repository, String path) throws IOException;
-
     @Override
     default Technology getTechnology() {
         return Technology.R;
     }
-
-    /**
-     * Returns all platform directories for binary packages
-     * (even if currently there are no packages inside).
-     * @param repository repository name
-     */
-    List<String> getBinaryPlatformDirectories(String repository);
 }

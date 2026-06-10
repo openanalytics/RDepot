@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -32,7 +32,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.openanalytics.rdepot.base.api.v2.dtos.PackageDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.PackageUploadRequest;
 import eu.openanalytics.rdepot.base.api.v2.dtos.SubmissionDto;
@@ -51,7 +50,6 @@ import eu.openanalytics.rdepot.base.validation.ValidationResult;
 import eu.openanalytics.rdepot.r.api.v2.controllers.RSubmissionController;
 import eu.openanalytics.rdepot.r.api.v2.dtos.RPackageDto;
 import eu.openanalytics.rdepot.r.api.v2.dtos.RPackageUploadRequest;
-import eu.openanalytics.rdepot.r.api.v2.hateoas.RSubmissionModelAssembler;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.test.context.ApiTestConfig;
@@ -78,8 +76,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.MessageSource;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -93,7 +90,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.MultipartFile;
 
 @ContextConfiguration(classes = {ApiTestConfig.class})
@@ -106,19 +102,7 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
     @Autowired
     MockMvc mockMvc;
 
-    @Autowired
-    ObjectMapper objectMapper;
-
-    @Autowired
-    MessageSource messageSource;
-
-    @Autowired
-    RSubmissionModelAssembler rSubmissionModelAssembler;
-
-    @Autowired
-    WebApplicationContext webApplicationContext;
-
-    private Optional<User> user;
+    private final User user = UserTestFixture.GET_ADMIN();
 
     private static final String JSON_PATH = "src/test/resources/unit/jsons";
     private static final String TEST_PACKAGE_PATH = "src/test/resources/unit/test_packages/abc_1.3.tar.gz";
@@ -143,7 +127,6 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
 
     @BeforeEach
     public void initEach() {
-        user = Optional.of(UserTestFixture.GET_ADMIN());
         DateProvider.setTestDate(LocalDateTime.of(2024, 3, 19, 0, 0)
                 .atZone(ZoneId.systemDefault())
                 .toInstant());
@@ -160,7 +143,7 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
         final boolean replace = true;
         final boolean binary = false;
 
-        final RPackage packageBag = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get());
+        final RPackage packageBag = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
         packageBag.setName("abc");
         packageBag.setVersion("1.3");
         packageBag.setSource("abc_1.3.tar.gz");
@@ -168,12 +151,12 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
         submission.setState(SubmissionState.WAITING);
 
         Strategy<Submission> strategy =
-                Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user.get()));
+                Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user));
         final PackageDto packageDto = RPackageTestFixture.GET_EXAMPLE_PACKAGE_DTO(submission.getPackageBag());
         final SubmissionDto submissionDto =
                 RSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, submission.getPackageBag());
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         when(rRepositoryService.findByNameAndDeleted(any(String.class), eq(false)))
                 .thenReturn(Optional.of(repository));
         doNothing().when(rPackageValidator).validate(any(), any(ValidationResult.class));
@@ -208,7 +191,7 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
         final boolean replace = true;
         final boolean binary = true;
 
-        final RPackage packageBag = RPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user.get());
+        final RPackage packageBag = RPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user);
         packageBag.setName("arrow");
         packageBag.setVersion("8.0.0");
         packageBag.setSource("arrow_8.0.0.tar.gz");
@@ -216,12 +199,12 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
         submission.setState(SubmissionState.WAITING);
 
         Strategy<Submission> strategy =
-                Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user.get()));
+                Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user));
         final PackageDto packageDto = RPackageTestFixture.GET_EXAMPLE_PACKAGE_DTO(submission.getPackageBag());
         final SubmissionDto submissionDto =
                 RSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, submission.getPackageBag());
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         when(rRepositoryService.findByNameAndDeleted(any(String.class), eq(false)))
                 .thenReturn(Optional.of(repository));
         doNothing().when(rPackageValidator).validate(any(), any(ValidationResult.class));
@@ -259,7 +242,7 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
         final boolean replace = true;
         final boolean binary = true;
 
-        final RPackage packageBag = RPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user.get());
+        final RPackage packageBag = RPackageTestFixture.GET_FIXTURE_BINARY_PACKAGE(repository, user);
         packageBag.setName("arrow");
         packageBag.setVersion("8.0.0");
         packageBag.setSource("arrow_8.0.0.tar.gz");
@@ -267,12 +250,12 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
         submission.setState(SubmissionState.WAITING);
 
         Strategy<Submission> strategy =
-                Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user.get()));
+                Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user));
         final PackageDto packageDto = RPackageTestFixture.GET_EXAMPLE_PACKAGE_DTO(submission.getPackageBag());
         final SubmissionDto submissionDto =
                 RSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, submission.getPackageBag());
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         when(rRepositoryService.findByNameAndDeleted(any(String.class), eq(false)))
                 .thenReturn(Optional.of(repository));
         doNothing().when(rPackageValidator).validate(any(), any(ValidationResult.class));
@@ -311,18 +294,18 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
         final boolean replace = false;
         final boolean binary = false;
 
-        final RPackage packageBag = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get());
+        final RPackage packageBag = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
         final Submission submission = packageBag.getSubmission();
         submission.setState(SubmissionState.WAITING);
-        Strategy<Submission> strategy = Mockito.spy(
-                new DuplicatePackageStrategy(submission, submissionService, user.get(), newsfeedEventService));
+        Strategy<Submission> strategy =
+                Mockito.spy(new DuplicatePackageStrategy(submission, submissionService, user, newsfeedEventService));
         final SubmissionDto submissionDto =
                 RSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, submission.getPackageBag());
         final RPackageDto packageDto = new RPackageDto(packageBag);
 
         doReturn(packageDto).when(commonPackageDtoConverter).convertEntityToDto(packageBag);
         doReturn(submissionDto).when(submissionDtoConverter).convertEntityToDto(submission);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
 
         doAnswer((i) -> {
                     final PackageUploadRequest<?> request = i.getArgument(0);
@@ -372,12 +355,12 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
         final boolean generateManuals = true;
         final boolean replace = false;
         final Submission submission =
-                RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get()).getSubmission();
+                RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user).getSubmission();
         Strategy<Submission> strategy =
-                Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user.get()));
+                Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user));
 
         when(rRepositoryService.findByNameAndDeleted(REPOSITORY_NAME, false)).thenReturn(Optional.of(repository));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         doAnswer((Answer<Object>) invocation -> {
                     ValidationResult validationResult = invocation.getArgument(1, ValidationResult.class);
                     validationResult.error("MULTIPART-FILE", MessageCodes.INVALID_FILENAME);
@@ -385,14 +368,14 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
                 })
                 .when(rPackageValidator)
                 .validate(any(), any());
-        when(rStrategyFactory.uploadPackageStrategy(any(), eq(user.get()))).thenReturn(strategy);
+        when(rStrategyFactory.uploadPackageStrategy(any(), eq(user))).thenReturn(strategy);
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v2/manager/r/submissions")
                         .file(multipartFile)
                         .param("repository", REPOSITORY_NAME)
                         .param("generateManual", Boolean.toString(generateManuals))
                         .param("replace", Boolean.toString(replace)))
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isUnprocessableContent())
                 .andExpect(content().json(Files.readString(Path.of(ERROR_SUBMISSION_INVALID_PATH))));
     }
 
@@ -411,7 +394,7 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
 
         when(rRepositoryService.findByNameAndDeleted(repository.getName(), false))
                 .thenReturn(Optional.of(repository));
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         doNothing().when(rPackageValidator).validate(any(), any(ValidationResult.class));
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v2/manager/r/submissions")
@@ -422,7 +405,7 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
                         .param("binary", Boolean.toString(binary))
                         .param("architecture", architecture)
                         .param("distribution", distribution))
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isUnprocessableContent())
                 .andExpect(content().json(Files.readString(Path.of(ERROR_MISSING_BINARY_PARAMETERS_PATH))));
     }
 
@@ -437,12 +420,12 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
         final boolean replace = false;
         final boolean binary = false;
         final Submission submission =
-                RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get()).getSubmission();
+                RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user).getSubmission();
         Strategy<Submission> strategy =
-                Mockito.spy(new FailureStrategy<>(submission, newsfeedEventService, submissionService, user.get()));
+                Mockito.spy(new FailureStrategy<>(submission, newsfeedEventService, submissionService, user));
 
-        when(rStrategyFactory.uploadPackageStrategy(any(), eq(user.get()))).thenReturn(strategy);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(rStrategyFactory.uploadPackageStrategy(any(), eq(user))).thenReturn(strategy);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         when(rRepositoryService.findByNameAndDeleted(any(String.class), eq(false)))
                 .thenReturn(Optional.of(repository));
 
@@ -502,7 +485,7 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
     @WithMockUser(authorities = {"user", "admin"})
     public void deleteSubmission_returns404_whenSubmissionIsNotFound() throws Exception {
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         when(submissionService.findById(any(Integer.class))).thenReturn(Optional.empty());
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v2/manager/r/submissions/" + 123))
@@ -514,7 +497,7 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
     @WithMockUser(authorities = {"user", "admin"})
     public void getSubmission_returns404_whenSubmissionIsNotFound() throws Exception {
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         when(submissionService.findById(any(Integer.class))).thenReturn(Optional.empty());
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/r/submissions/" + 123))
@@ -527,7 +510,7 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
     public void patchSubmission_returns404_whenSubmissionIsNotFound() throws Exception {
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/state\",\"value\":\"ACCEPTED\"}]";
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         when(submissionService.findById(any(Integer.class))).thenReturn(Optional.empty());
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/r/submissions/" + 123)
@@ -543,10 +526,10 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/state\",\"value\":\"ACCEPTED\"}]";
         final RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
         final Submission submission =
-                RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get()).getSubmission();
+                RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user).getSubmission();
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(securityMediator.isAuthorizedToEdit(eq(submission), any(), eq(user.get())))
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
+        when(securityMediator.isAuthorizedToEdit(eq(submission), any(), eq(user)))
                 .thenReturn(false);
         when(submissionService.findById(submission.getId())).thenReturn(Optional.of(submission));
 
@@ -562,9 +545,9 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
     public void deleteSubmission() throws Exception {
         final RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
         final Submission submission =
-                RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get()).getSubmission();
+                RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user).getSubmission();
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         when(submissionService.findById(submission.getId())).thenReturn(Optional.of(submission));
         doNothing().when(submissionDeleter).delete(submission);
 
@@ -573,11 +556,11 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
     }
 
     @Test
-    @WithMockUser(authorities = {"user", "admin"})
+    @WithMockUser(authorities = {"user", "packagemaintainer"})
     public void getAllSubmissions_asMaintainer() throws Exception {
         RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
 
-        List<Submission> submissions = RPackageTestFixture.GET_FIXTURE_PACKAGES(repository, user.get(), 3, 100).stream()
+        List<Submission> submissions = RPackageTestFixture.GET_FIXTURE_PACKAGES(repository, user, 3, 100).stream()
                 .map(Package::getSubmission)
                 .collect(Collectors.toList());
         submissions.get(0).setState(SubmissionState.WAITING);
@@ -589,9 +572,9 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
 
         when(submissionService.findAllBySpecification(ArgumentMatchers.any(), any(Pageable.class)))
                 .thenReturn(paged);
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(userService.findById(any(Integer.class))).thenReturn(user);
-        when(userService.findById(user.get().getId())).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
+        when(userService.findById(any(Integer.class))).thenReturn(Optional.of(user));
+        when(userService.findById(user.getId())).thenReturn(Optional.of(user));
         when(commonPackageDtoConverter.convertEntityToDto(submissions.get(0).getPackageBag()))
                 .thenReturn(packageDtos.get(0));
         when(commonPackageDtoConverter.convertEntityToDto(submissions.get(1).getPackageBag()))
@@ -605,32 +588,34 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/r/submissions")
                         .param("deleted", "false")
                         .param("state", "WAITING")
-                        .param("submitterId", Integer.toString(user.get().getId()))
+                        .param("submitterId", Integer.toString(user.getId()))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(Files.readString(Path.of(EXAMPLE_SUBMISSIONS_PATH))));
     }
 
     @Test
-    @WithMockUser(authorities = "user")
+    @WithMockUser(authorities = {"user", "admin"})
     public void patchSubmission() throws Exception {
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/state\",\"value\":\"ACCEPTED\"}]";
         final RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
         final Submission submission =
-                RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get()).getSubmission();
+                RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user).getSubmission();
         submission.setState(SubmissionState.WAITING);
         final RPackage rPackage = (RPackage) submission.getPackage();
         final SubmissionDto submissionDto = RSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, rPackage);
         submissionDto.setState(SubmissionState.ACCEPTED);
-        submissionDto.setApprover(new UserProjection(user.get()));
+        submissionDto.setApprover(new UserProjection(user));
         final PackageDto packageDto = RPackageTestFixture.GET_EXAMPLE_PACKAGE_DTO(rPackage);
         submissionDto.getEntity().setState(SubmissionState.ACCEPTED);
         packageDto.setSubmission(new SubmissionProjection(submissionDto.getEntity()));
         submissionDto.getEntity().setState(SubmissionState.WAITING);
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(userService.findById(any(Integer.class))).thenReturn(user);
-        when(securityMediator.isAuthorizedToEdit(eq(submission), any(), eq(user.get())))
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
+        when(userService.findById(any(Integer.class))).thenReturn(Optional.of(user));
+        when(securityMediator.isAuthorizedToEdit(eq(submission), any(), eq(user)))
+                .thenReturn(true);
+        when(securityMediator.isAuthorizedToEdit(eq(submission.getPackageBag()), eq(user)))
                 .thenReturn(true);
         when(submissionService.findById(submission.getId())).thenReturn(Optional.of(submission));
         when(submissionService.findById(any(Integer.class))).thenReturn(Optional.of(submission));
@@ -639,7 +624,7 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
         when(rPackageService.findById(0)).thenReturn(Optional.of(rPackage));
         when(rRepositoryService.findById(any(Integer.class))).thenReturn(Optional.of(repository));
         when(commonPackageDtoConverter.convertEntityToDto(any())).thenReturn(packageDto);
-        when(rStrategyFactory.updateSubmissionStrategy(eq(submission), any(), eq(repository), eq(user.get())))
+        when(rStrategyFactory.updateSubmissionStrategy(eq(submission), any(), eq(repository), eq(user)))
                 .thenAnswer((Answer<Strategy<Submission>>) invocation -> {
                     Submission entity = invocation.getArgument(0);
                     return new Strategy<>(entity, submissionService, null, newsfeedEventService) {
@@ -677,24 +662,24 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
         final String patchJson = "[{\"op\": \"replace\",\"path\":\"/state\",\"value\":\"ACCEPTED\"}]";
         final RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
         final Submission submission =
-                RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get()).getSubmission();
-        final RPackage packageBag = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get());
+                RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user).getSubmission();
+        final RPackage packageBag = RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user);
         final SubmissionDto submissionDto = RSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, packageBag);
 
         submission.setState(SubmissionState.CANCELLED);
         Strategy<Submission> strategy =
-                Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user.get()));
+                Mockito.spy(new SuccessfulStrategy<>(submission, newsfeedEventService, submissionService, user));
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
-        when(userService.findById(any(Integer.class))).thenReturn(user);
-        when(securityMediator.isAuthorizedToEdit(eq(submission), any(), eq(user.get())))
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
+        when(userService.findById(any(Integer.class))).thenReturn(Optional.of(user));
+        when(securityMediator.isAuthorizedToEdit(eq(submission), any(), eq(user)))
                 .thenReturn(true);
         when(submissionService.findById(any(Integer.class))).thenReturn(Optional.of(submission));
         when(submissionDtoConverter.convertEntityToDto(any())).thenReturn(submissionDto);
         when(submissionDtoConverter.resolveDtoToEntity(any())).thenReturn(submission);
         when(rRepositoryService.findById(any(Integer.class))).thenReturn(Optional.of(repository));
         when(rStrategyFactory.updateSubmissionStrategy(
-                        any(Submission.class), any(Submission.class), eq(repository), eq(user.get())))
+                        any(Submission.class), any(Submission.class), eq(repository), eq(user)))
                 .thenReturn(strategy);
         when(rPackageService.findById(any(Integer.class))).thenReturn(Optional.of(packageBag));
 
@@ -705,7 +690,7 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/v2/manager/r/submissions/" + submission.getId())
                         .content(patchJson)
                         .contentType("application/json-patch+json"))
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isUnprocessableContent())
                 .andExpect(content().json(Files.readString(Path.of(ERROR_UPDATE_NOT_ALLOWED_SUBMISSION_PATH))));
     }
 
@@ -714,9 +699,9 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
     public void getSubmission_returns403_whenUserIsNotAuthorized() throws Exception {
         final RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
         final Submission submission =
-                RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get()).getSubmission();
+                RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user).getSubmission();
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         when(submissionService.findById(submission.getId())).thenReturn(Optional.of(submission));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/r/submissions/" + submission.getId())
@@ -730,17 +715,18 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
     public void getSubmission() throws Exception {
         final RRepository repository = RRepositoryTestFixture.GET_EXAMPLE_REPOSITORY();
         final Submission submission =
-                RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user.get()).getSubmission();
+                RPackageTestFixture.GET_FIXTURE_PACKAGE(repository, user).getSubmission();
         submission.setState(SubmissionState.WAITING);
         final SubmissionDto submissionDto =
                 RSubmissionTestFixture.GET_FIXTURE_SUBMISSION_DTO(submission, submission.getPackageBag());
         final PackageDto packageDto = RPackageTestFixture.GET_EXAMPLE_PACKAGE_DTO(submission.getPackageBag());
 
-        when(userService.findActiveByLogin("user")).thenReturn(user);
+        when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
         when(submissionService.findById(submission.getId())).thenReturn(Optional.of(submission));
         when(submissionDtoConverter.convertEntityToDto(submission)).thenReturn(submissionDto);
         when(commonPackageDtoConverter.convertEntityToDto(any())).thenReturn(packageDto);
         when(securityMediator.isAuthorizedToAccept(any(), any())).thenReturn(true);
+        when(securityMediator.isAuthorizedToEdit(any(Package.class), eq(user))).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/r/submissions/" + submission.getId())
                         .contentType("application/json-patch+json"))

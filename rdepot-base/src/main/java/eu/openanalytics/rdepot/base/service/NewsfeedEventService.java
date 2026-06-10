@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -34,6 +34,7 @@ import eu.openanalytics.rdepot.base.service.exceptions.UnknownResourceType;
 import eu.openanalytics.rdepot.base.utils.specs.NewsfeedEventSpecs;
 import java.time.Instant;
 import java.util.*;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.data.domain.Sort.Direction;
@@ -93,16 +94,16 @@ public class NewsfeedEventService extends eu.openanalytics.rdepot.base.service.S
     }
 
     private Specification<NewsfeedEvent> addComponent(
-            Specification<NewsfeedEvent> specification, Specification<NewsfeedEvent> specificationComponent) {
-        if (specification == null) specification = Specification.where(specificationComponent);
+            Specification<NewsfeedEvent> specification, @NonNull Specification<NewsfeedEvent> specificationComponent) {
+        if (specification == null) specification = specificationComponent;
         else specification = specification.and(specificationComponent);
 
         return specification;
     }
 
     private Specification<NewsfeedEvent> orComponent(
-            Specification<NewsfeedEvent> specification, Specification<NewsfeedEvent> specificationComponent) {
-        if (specification == null) specification = Specification.where(specificationComponent);
+            Specification<NewsfeedEvent> specification, @NonNull Specification<NewsfeedEvent> specificationComponent) {
+        if (specification == null) specification = specificationComponent;
         else specification = specification.or(specificationComponent);
 
         return specification;

@@ -1,7 +1,7 @@
 /*
  * RDepot
  *
- * Copyright (C) 2012-2025 Open Analytics NV
+ * Copyright (C) 2012-2026 Open Analytics NV
  *
  * ===========================================================================
  *
@@ -39,7 +39,7 @@ public class UserTestFixture {
         cal.set(1970, Calendar.JANUARY, 1);
         final Instant createdOn = cal.toInstant();
 
-        User user = new User(
+        return new User(
                 123,
                 RoleTestFixture.ROLE.USER,
                 NAME + "User",
@@ -49,15 +49,6 @@ public class UserTestFixture {
                 DELETED,
                 lastLoggedInOn,
                 createdOn);
-
-        return user;
-    }
-
-    public static User GET_REGULAR_USER(int id) {
-        User user = GET_REGULAR_USER();
-        user.setId(id);
-
-        return user;
     }
 
     public static User GET_PACKAGE_MAINTAINER() {
@@ -66,7 +57,7 @@ public class UserTestFixture {
         cal.set(1970, Calendar.JANUARY, 1);
         final Instant createdOn = cal.toInstant();
 
-        User maintainer = new User(
+        return new User(
                 123,
                 RoleTestFixture.ROLE.PACKAGE_MAINTAINER,
                 NAME + "Package Maintainer",
@@ -76,8 +67,6 @@ public class UserTestFixture {
                 DELETED,
                 lastLoggedInOn,
                 createdOn);
-
-        return maintainer;
     }
 
     public static User GET_PACKAGE_MAINTAINER(int id) {
@@ -93,7 +82,7 @@ public class UserTestFixture {
         cal.set(1970, Calendar.JANUARY, 1);
         final Instant createdOn = cal.toInstant();
 
-        User maintainer = new User(
+        return new User(
                 123,
                 RoleTestFixture.ROLE.REPOSITORY_MAINTAINER,
                 NAME + "Repo Maintainer",
@@ -103,15 +92,6 @@ public class UserTestFixture {
                 DELETED,
                 lastLoggedInOn,
                 createdOn);
-
-        return maintainer;
-    }
-
-    public static User GET_REPOSITORY_MAINTAINER(int id) {
-        User maintainer = GET_REPOSITORY_MAINTAINER();
-        maintainer.setId(id);
-
-        return maintainer;
     }
 
     public static User GET_ADMIN() {
@@ -120,7 +100,7 @@ public class UserTestFixture {
         cal.set(1970, Calendar.JANUARY, 1);
         final Instant createdOn = cal.toInstant();
 
-        User admin = new User(
+        return new User(
                 123,
                 RoleTestFixture.ROLE.ADMIN,
                 NAME + "Admin",
@@ -130,8 +110,6 @@ public class UserTestFixture {
                 DELETED,
                 lastLoggedInOn,
                 createdOn);
-
-        return admin;
     }
 
     public static User GET_ADMIN(int id) {
