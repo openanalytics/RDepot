@@ -311,7 +311,7 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-oauth2-jose</artifactId>
-                <version>7.0.2</version>
+                <version>7.0.5</version>
             </dependency>
             <!-- Source:
             https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-liquibase -->
