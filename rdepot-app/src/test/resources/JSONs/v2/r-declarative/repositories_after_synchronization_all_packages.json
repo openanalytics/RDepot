@@ -1,0 +1,274 @@
+{
+    "code": 200,
+    "data": {
+        "content": [
+            {
+                "allowedFiles": [
+                    {
+                        "extension": ".tar.gz",
+                        "mimetype": "application/gzip"
+                    },
+                    {
+                        "extension": ".tar.gz",
+                        "mimetype": "application/x-gzip"
+                    }
+                ],
+                "deleted": false,
+                "id": 3,
+                "lastPublicationSuccessful": false,
+                "links": [
+                    {
+                        "href": "http://localhost:8021/api/v2/manager/r/repositories/3",
+                        "rel": "self"
+                    },
+                    {
+                        "href": "http://localhost:8021/api/v2/manager/r/repositories",
+                        "rel": "repositoryList"
+                    }
+                ],
+                "name": "D",
+                "numberOfPackages": 0,
+                "permissions": [],
+                "publicationUri": "http://localhost/repo/D",
+                "published": false,
+                "redirectToSource": false,
+                "requiresAuthentication": true,
+                "serverAddress": "http://oa-rdepot-repo:8080/D",
+                "synchronizing": false,
+                "technology": "R",
+                "version": 1
+            },
+            {
+                "allowedFiles": [
+                    {
+                        "extension": ".tar.gz",
+                        "mimetype": "application/gzip"
+                    },
+                    {
+                        "extension": ".tar.gz",
+                        "mimetype": "application/x-gzip"
+                    }
+                ],
+                "deleted": false,
+                "id": 18,
+                "lastPublicationSuccessful": false,
+                "links": [
+                    {
+                        "href": "http://localhost:8021/api/v2/manager/r/repositories/18",
+                        "rel": "self"
+                    },
+                    {
+                        "href": "http://localhost:8021/api/v2/manager/r/repositories",
+                        "rel": "repositoryList"
+                    }
+                ],
+                "name": "A",
+                "numberOfPackages": 0,
+                "permissions": [],
+                "publicationUri": "http://localhost/repo/A",
+                "published": true,
+                "redirectToSource": false,
+                "requiresAuthentication": false,
+                "serverAddress": "http://oa-rdepot-repo:8080/A",
+                "synchronizing": false,
+                "technology": "R",
+                "version": 0
+            },
+            {
+                "allowedFiles": [
+                    {
+                        "extension": ".tar.gz",
+                        "mimetype": "application/gzip"
+                    },
+                    {
+                        "extension": ".tar.gz",
+                        "mimetype": "application/x-gzip"
+                    }
+                ],
+                "deleted": false,
+                "id": 19,
+                "lastPublicationSuccessful": true,
+                "links": [
+                    {
+                        "href": "http://localhost:8021/api/v2/manager/r/repositories/19",
+                        "rel": "self"
+                    },
+                    {
+                        "href": "http://localhost:8021/api/v2/manager/r/repositories",
+                        "rel": "repositoryList"
+                    }
+                ],
+                "name": "CD",
+                "numberOfPackages": 4,
+                "permissions": [],
+                "publicationUri": "http://localhost/repo/CD",
+                "published": true,
+                "redirectToSource": false,
+                "requiresAuthentication": true,
+                "serverAddress": "http://oa-rdepot-repo:8080/CD",
+                "synchronizing": false,
+                "technology": "R",
+                "version": 4
+            },
+            {
+                "allowedFiles": [
+                    {
+                        "extension": ".tar.gz",
+                        "mimetype": "application/gzip"
+                    },
+                    {
+                        "extension": ".tar.gz",
+                        "mimetype": "application/x-gzip"
+                    }
+                ],
+                "deleted": false,
+                "id": 20,
+                "lastPublicationSuccessful": false,
+                "links": [
+                    {
+                        "href": "http://localhost:8021/api/v2/manager/r/repositories/20",
+                        "rel": "self"
+                    },
+                    {
+                        "href": "http://localhost:8021/api/v2/manager/r/repositories",
+                        "rel": "repositoryList"
+                    }
+                ],
+                "name": "F",
+                "numberOfPackages": 0,
+                "permissions": [],
+                "publicationUri": "http://localhost/repo/F",
+                "published": true,
+                "redirectToSource": false,
+                "requiresAuthentication": true,
+                "serverAddress": "http://oa-rdepot-repo:8080/F",
+                "synchronizing": false,
+                "technology": "R",
+                "version": 0
+            },
+            {
+                "allowedFiles": [
+                    {
+                        "extension": ".tar.gz",
+                        "mimetype": "application/gzip"
+                    },
+                    {
+                        "extension": ".tar.gz",
+                        "mimetype": "application/x-gzip"
+                    }
+                ],
+                "deleted": false,
+                "id": 21,
+                "lastPublicationSuccessful": true,
+                "links": [
+                    {
+                        "href": "http://localhost:8021/api/v2/manager/r/repositories/21",
+                        "rel": "self"
+                    },
+                    {
+                        "href": "http://localhost:8021/api/v2/manager/r/repositories",
+                        "rel": "repositoryList"
+                    }
+                ],
+                "name": "I",
+                "numberOfPackages": 4,
+                "permissions": [],
+                "publicationUri": "http://localhost/repo/I",
+                "published": true,
+                "redirectToSource": false,
+                "requiresAuthentication": true,
+                "serverAddress": "http://oa-rdepot-repo:8080/r/I",
+                "synchronizing": false,
+                "technology": "R",
+                "version": 4
+            },
+            {
+                "allowedFiles": [
+                    {
+                        "extension": ".tar.gz",
+                        "mimetype": "application/gzip"
+                    },
+                    {
+                        "extension": ".tar.gz",
+                        "mimetype": "application/x-gzip"
+                    }
+                ],
+                "deleted": false,
+                "id": 22,
+                "lastPublicationSuccessful": false,
+                "links": [
+                    {
+                        "href": "http://localhost:8021/api/v2/manager/r/repositories/22",
+                        "rel": "self"
+                    },
+                    {
+                        "href": "http://localhost:8021/api/v2/manager/r/repositories",
+                        "rel": "repositoryList"
+                    }
+                ],
+                "name": "ZG-Partially-Broken",
+                "numberOfPackages": 0,
+                "publicationUri": "http://localhost/repo/ZG-Partially-Broken",
+                "published": true,
+                "permissions": [],
+                "redirectToSource": false,
+                "requiresAuthentication": true,
+                "serverAddress": "http://oa-rdepot-repo:8080/ZG-Partially-Broken",
+                "synchronizing": false,
+                "technology": "R",
+                "version": 0
+            },
+            {
+                "allowedFiles": [
+                    {
+                        "extension": ".tar.gz",
+                        "mimetype": "application/gzip"
+                    },
+                    {
+                        "extension": ".tar.gz",
+                        "mimetype": "application/x-gzip"
+                    }
+                ],
+                "deleted": false,
+                "id": 23,
+                "lastPublicationSuccessful": false,
+                "links": [
+                    {
+                        "href": "http://localhost:8021/api/v2/manager/r/repositories/23",
+                        "rel": "self"
+                    },
+                    {
+                        "href": "http://localhost:8021/api/v2/manager/r/repositories",
+                        "rel": "repositoryList"
+                    }
+                ],
+                "name": "ZH-Fully-Broken",
+                "permissions": [],
+                "numberOfPackages": 0,
+                "publicationUri": "http://localhost/repo/ZH-Fully-Broken",
+                "published": true,
+                "redirectToSource": false,
+                "requiresAuthentication": true,
+                "serverAddress": "http://oa-rdepot-repo:8080/ZH-Fully-Broken",
+                "synchronizing": false,
+                "technology": "R",
+                "version": 0
+            }
+        ],
+        "links": [
+            {
+                "href": "http://localhost:8021/api/v2/manager/r/repositories?page=0&size=20&sort=id,asc",
+                "rel": "self"
+            }
+        ],
+        "page": {
+            "number": 0,
+            "size": 20,
+            "totalElements": 7,
+            "totalPages": 1
+        }
+    },
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "status": "SUCCESS"
+}

@@ -87,8 +87,6 @@ public abstract class CustomBindAuthenticator {
             Optional<User> tmp;
             if ((tmp = userService.findActiveByLogin(username)).isPresent()) {
                 user = tmp.get();
-            } else if ((tmp = userService.findByEmail(useremail)).isPresent()) {
-                user = tmp.get();
             } else {
                 user = createNewUser(username, fullname, useremail, defaultAdmins.contains(username));
             }

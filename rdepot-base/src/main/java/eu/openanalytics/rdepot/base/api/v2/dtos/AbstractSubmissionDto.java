@@ -24,6 +24,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.enums.SubmissionState;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -58,6 +60,8 @@ public abstract class AbstractSubmissionDto<T extends PackageSimpleDto> implemen
     protected Submission entity;
 
     protected String technology;
+
+    protected List<String> permissions = new ArrayList<>();
 
     protected AbstractSubmissionDto(Submission submission, T packageDto) {
         this.entity = submission;

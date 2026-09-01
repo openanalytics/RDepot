@@ -1,43 +1,63 @@
 {
-    "status": "SUCCESS",
     "code": 201,
-    "message": "Your resource has been created successfully.",
-    "messageCode": "success.resource.created",
     "data": {
+        "approver": {
+            "name": "Albert Einstein",
+            "id": 4,
+            "login": "einstein",
+            "email": "einstein@ldap.forumsys.com"
+        },
+        "submitter": {
+            "name": "Albert Einstein",
+            "id": 4,
+            "login": "einstein",
+            "email": "einstein@ldap.forumsys.com"
+        },
+        "permissions": [],
+        "changes": "",
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/r/submissions/48"
+            },
+            {
+                "rel": "submissionList",
+                "href": "http://localhost:8017/api/v2/manager/r/submissions"
+            }
+        ],
         "id": 48,
+        "state": "ACCEPTED",
+        "technology": "R",
         "packageBag": {
-            "id": 48,
-            "user": {
-                "id": 4,
-                "name": "Albert Einstein",
-                "login": "einstein",
-                "email": "einstein@ldap.forumsys.com"
-            },
+            "author": "Neal Richardson [aut, cre],\\n Ian Cook [aut],\\n Nic Crane [aut],\\n Dewey Dunnington [aut] (<https://orcid.org/0000-0002-9415-4582>),\\n Romain François [aut] (<https://orcid.org/0000-0002-2444-4226>),\\n Jonathan Keane [aut],\\n Dragoș Moldovan-Grünfeld [aut],\\n Jeroen Ooms [aut],\\n Javier Luraschi [ctb],\\n Karl Dunkle Werner [ctb] (<https://orcid.org/0000-0003-0523-7309>),\\n Jeffrey Wong [ctb],\\n Apache Arrow [aut, cph]",
+            "active": true,
+            "description": "'Apache' 'Arrow' <https://arrow.apache.org/> is a cross-language\\n development platform for in-memory data. It specifies a standardized\\n language-independent columnar memory format for flat and hierarchical data,\\n organized for efficient analytic operations on modern hardware. This\\n package provides an interface to the 'Arrow C++' library.",
+            "technology": "R",
             "repository": {
-                "id": 3,
+                "lastPublicationSuccessful": true,
                 "name": "testrepo2",
-                "publicationUri": "http://localhost/repo/testrepo2",
+                "id": 3,
                 "published": true,
-                "requiresAuthentication": true,
                 "technology": "R",
-                "lastPublicationSuccessful": true
+                "requiresAuthentication": true,
+                "publicationUri": "http://localhost/repo/testrepo2"
             },
+            "title": "Integration to 'Apache' 'Arrow'",
+            "version": "8.0.0",
+            "url": "https://github.com/apache/arrow/, https://arrow.apache.org/docs/r/",
+            "deleted": false,
+            "descriptionContentType": "txt",
+            "permissions": [
+                "package.deactivate",
+                "package.delete.soft",
+                "package.edit"
+            ],
+            "binary": true,
+            "name": "arrow",
             "submission": {
                 "id": 48,
                 "state": "ACCEPTED"
             },
-            "name": "arrow",
-            "version": "8.0.0",
-            "source": "/opt/rdepot/repositories/3/38007914/arrow_8.0.0.tar.gz",
-            "active": true,
-            "deleted": false,
-            "technology": "R",
-            "binary": true,
-            "description": "'Apache' 'Arrow' <https://arrow.apache.org/> is a cross-language\\n development platform for in-memory data. It specifies a standardized\\n language-independent columnar memory format for flat and hierarchical data,\\n organized for efficient analytic operations on modern hardware. This\\n package provides an interface to the 'Arrow C++' library.",
-            "author": "Neal Richardson [aut, cre],\\n Ian Cook [aut],\\n Nic Crane [aut],\\n Dewey Dunnington [aut] (<https://orcid.org/0000-0002-9415-4582>),\\n Romain François [aut] (<https://orcid.org/0000-0002-2444-4226>),\\n Jonathan Keane [aut],\\n Dragoș Moldovan-Grünfeld [aut],\\n Jeroen Ooms [aut],\\n Javier Luraschi [ctb],\\n Karl Dunkle Werner [ctb] (<https://orcid.org/0000-0003-0523-7309>),\\n Jeffrey Wong [ctb],\\n Apache Arrow [aut, cph]",
-            "title": "Integration to 'Apache' 'Arrow'",
-            "url": "https://github.com/apache/arrow/, https://arrow.apache.org/docs/r/",
-            "descriptionContentType": "txt",
             "links": [
                 {
                     "rel": "self",
@@ -61,33 +81,17 @@
                     "href": "http://localhost:8017/api/v2/manager/r/packages/48",
                     "type": "DELETE"
                 }
-            ]
-        },
-        "submitter": {
-            "id": 4,
-            "name": "Albert Einstein",
-            "login": "einstein",
-            "email": "einstein@ldap.forumsys.com"
-        },
-        "approver": {
-            "id": 4,
-            "name": "Albert Einstein",
-            "login": "einstein",
-            "email": "einstein@ldap.forumsys.com"
-        },
-        "changes": "",
-        "state": "ACCEPTED",
-        "created": "2025-06-18T09:47:17.370192063Z",
-        "technology": "R",
-        "links": [
-            {
-                "rel": "self",
-                "href": "http://localhost:8017/api/v2/manager/r/submissions/48"
-            },
-            {
-                "rel": "submissionList",
-                "href": "http://localhost:8017/api/v2/manager/r/submissions"
+            ],
+            "id": 48,
+            "user": {
+                "name": "Albert Einstein",
+                "id": 4,
+                "login": "einstein",
+                "email": "einstein@ldap.forumsys.com"
             }
-        ]
-    }
+        }
+    },
+    "messageCode": "success.resource.created",
+    "message": "Your resource has been created successfully.",
+    "status": "SUCCESS"
 }

@@ -31,7 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class RLanguage extends JsonDeserializer<Technology> implements Technology {
 
-    public static RLanguage instance;
+    public static final RLanguage instance;
 
     static {
         instance = new RLanguage();

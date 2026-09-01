@@ -20,11 +20,11 @@
  */
 package eu.openanalytics.rdepot.python.storage.indexes;
 
-import eu.openanalytics.rdepot.base.entities.Hashable;
+import eu.openanalytics.rdepot.base.entities.HavingHashMethod;
 import eu.openanalytics.rdepot.base.storage.exceptions.CheckSumCalculationException;
 import eu.openanalytics.rdepot.base.storage.indexes.PackageIndexGenerator;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
-import eu.openanalytics.rdepot.python.storage.implementations.fs.PythonLocalStorage;
+import eu.openanalytics.rdepot.python.storage.implementations.fs.PythonFSLocalStorage;
 import eu.openanalytics.rdepot.python.storage.indexes.resolvers.PythonPackagePublicationURIResolver;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -38,12 +38,12 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class PythonPackageIndexGenerator extends PackageIndexGenerator<PythonPackage> {
 
-    private final PythonLocalStorage storage;
+    private final PythonFSLocalStorage storage;
 
     public PythonPackageIndexGenerator(
             @Value("classpath:templates/python/package_template.html") Resource packageTemplate,
             @Value("classpath:templates/python/package_anchor_template.html") Resource packageAnchorTemplate,
-            PythonLocalStorage storage)
+            PythonFSLocalStorage storage)
             throws IOException {
         super(
                 packageTemplate.getContentAsString(Charset.defaultCharset()),
@@ -56,6 +56,9 @@ public class PythonPackageIndexGenerator extends PackageIndexGenerator<PythonPac
     @Override
     protected String generatePackageAnchor(PythonPackage packageBag) {
         final String genericAnchor = super.generatePackageAnchor(packageBag);
+        String packageUri = packagePublicationURIResolver.resolvePackageUri(packageBag);
+
+        String archiveUri = packageUri.substring(0, packageUri.lastIndexOf('/')) + packageBag.getName();
         return genericAnchor
                 .replace(
                         "$hash_method",
@@ -66,21 +69,13 @@ public class PythonPackageIndexGenerator extends PackageIndexGenerator<PythonPac
                         Objects.requireNonNullElse(
                                 packageBag.getRequiresPython(),
                                 "unknown")) // Currently the database allows null in here
-                .replace("$package_filename", packageBag.getPackageFilename());
+                .replace("$package_filename", packageBag.getPackageFilename())
+                .replace("$package_maintainer", Objects.toString(packageBag.getMaintainer(), "N/A"))
+                .replace("$package_archive_uri", archiveUri);
     }
 
     @Override
-    protected String getPackageListEnding() {
-        return "\n</body>\n</html>\n";
-    }
-
-    @Override
-    protected String calculateChecksum(Hashable item, String path) throws IOException {
-        try {
-            return storage.calculateChecksum(item.getHashMethod(), path);
-        } catch (CheckSumCalculationException e) {
-            log.error(e.getMessage(), e);
-            throw new IOException(e);
-        }
+    protected String calculateChecksum(HavingHashMethod item, String path) throws CheckSumCalculationException {
+        return storage.calculateChecksum(item.getHashMethod(), path);
     }
 }

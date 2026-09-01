@@ -38,7 +38,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @param <E> Entity class related to the resource.
  */
 public abstract class SpringDataJpaCapableRetriever<E extends Resource> implements Retriever<E> {
-    protected Dao<E> dao;
+    protected final Dao<E> dao;
 
     /**
      * @param dao Data Access Object to interact with external data source.
@@ -101,11 +101,6 @@ public abstract class SpringDataJpaCapableRetriever<E extends Resource> implemen
 
         final Page<E> found = specification == null ? dao.findAll(pageable) : dao.findAll(specification, pageable);
         return new PageWithAnotherSort<>(found, originalPageable);
-    }
-
-    @Override
-    public List<E> findAllBySpecification(Specification<E> specification) {
-        return dao.findAll(specification);
     }
 
     @Override

@@ -57,17 +57,17 @@ public class UserService extends Service<User> {
     }
 
     /**
-     * @return unique user by the given e-mail address
-     */
-    public Optional<User> findByEmail(String email) {
-        return userDao.findByEmail(email);
-    }
-
-    /**
      * @return true if given user has admin rights
      */
     public boolean isAdmin(User user) {
         return user.getRole().getValue() == Role.VALUE.ADMIN;
+    }
+
+    /**
+     * @return true if given user has repository maintainer rights
+     */
+    public boolean isRepositoryMaintainer(User user) {
+        return user.getRole().getValue() == Role.VALUE.REPOSITORYMAINTAINER;
     }
 
     /**

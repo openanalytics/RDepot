@@ -30,6 +30,7 @@ import eu.openanalytics.rdepot.base.mediator.deletion.exceptions.NoSuitableMaint
 import eu.openanalytics.rdepot.base.service.CommonPackageService;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
+import eu.openanalytics.rdepot.base.strategy.exceptions.FatalStrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import java.util.HashSet;
 import java.util.List;
@@ -82,7 +83,7 @@ public class CreatePackageMaintainerStrategy extends CreateStrategy<PackageMaint
                 }
             }
         } catch (NoSuitableMaintainerFound e) {
-            throw new StrategyFailure(e);
+            throw new FatalStrategyFailure(e);
         }
         return maintainer;
     }

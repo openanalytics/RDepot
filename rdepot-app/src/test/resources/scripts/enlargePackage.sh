@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 PACKAGES_DIR=$1
 PACKAGE_FILE=$2
 cd $PACKAGES_DIR

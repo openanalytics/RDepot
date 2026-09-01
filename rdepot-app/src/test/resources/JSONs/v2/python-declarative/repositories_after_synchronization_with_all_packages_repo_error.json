@@ -1,0 +1,274 @@
+{
+    "code": 200,
+    "data": {
+        "content": [
+            {
+                "allowedFiles": [
+                    {
+                        "mimetype": "application/gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/x-gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/octet-stream",
+                        "extension": ".whl"
+                    }
+                ],
+                "deleted": false,
+                "hashMethod": "SHA256",
+                "id": 1,
+                "lastModifiedTimestamp": "2026-05-06T00:00:00Z",
+                "lastPublicationSuccessful": true,
+                "lastPublicationTimestamp": "2026-05-06T00:00:00Z",
+                "name": "X",
+                "numberOfPackages": 0,
+                "permissions": [],
+                "publicationUri": "http://localhost/repo/X",
+                "published": true,
+                "requiresAuthentication": true,
+                "serverAddress": "http://oa-rdepot-repo:8080/X",
+                "synchronizing": false,
+                "technology": "Python",
+                "version": 1,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8021/api/v2/manager/python/repositories/1"
+                    },
+                    {
+                        "rel": "repositoryList",
+                        "href": "http://localhost:8021/api/v2/manager/python/repositories"
+                    }
+                ]
+            },
+            {
+                "allowedFiles": [
+                    {
+                        "mimetype": "application/gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/x-gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/octet-stream",
+                        "extension": ".whl"
+                    }
+                ],
+                "deleted": false,
+                "hashMethod": "SHA256",
+                "id": 13,
+                "lastModifiedTimestamp": "2026-05-06T00:00:00Z",
+                "lastPublicationSuccessful": false,
+                "lastPublicationTimestamp": "",
+                "name": "Y",
+                "numberOfPackages": 0,
+                "permissions": [],
+                "publicationUri": "http://localhost/repo/Y",
+                "published": false,
+                "requiresAuthentication": true,
+                "serverAddress": "http://oa-rdepot-repo:8080/Y",
+                "synchronizing": false,
+                "technology": "Python",
+                "version": 0,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8021/api/v2/manager/python/repositories/13"
+                    },
+                    {
+                        "rel": "repositoryList",
+                        "href": "http://localhost:8021/api/v2/manager/python/repositories"
+                    }
+                ]
+            },
+            {
+                "allowedFiles": [
+                    {
+                        "mimetype": "application/gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/x-gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/octet-stream",
+                        "extension": ".whl"
+                    }
+                ],
+                "deleted": false,
+                "hashMethod": "SHA256",
+                "id": 14,
+                "lastModifiedTimestamp": "2026-05-06T00:00:00Z",
+                "lastPublicationSuccessful": false,
+                "lastPublicationTimestamp": "",
+                "name": "Z",
+                "numberOfPackages": 0,
+                "permissions": [],
+                "publicationUri": "http://localhost/repo/Z",
+                "published": true,
+                "requiresAuthentication": true,
+                "serverAddress": "http://oa-rdepot-repo:8080/Z",
+                "synchronizing": false,
+                "technology": "Python",
+                "version": 0,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8021/api/v2/manager/python/repositories/14"
+                    },
+                    {
+                        "rel": "repositoryList",
+                        "href": "http://localhost:8021/api/v2/manager/python/repositories"
+                    }
+                ]
+            },
+            {
+                "allowedFiles": [
+                    {
+                        "mimetype": "application/gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/x-gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/octet-stream",
+                        "extension": ".whl"
+                    }
+                ],
+                "deleted": false,
+                "hashMethod": "SHA256",
+                "id": 15,
+                "lastModifiedTimestamp": "2026-05-06T00:00:00Z",
+                "lastPublicationSuccessful": false,
+                "lastPublicationTimestamp": "",
+                "name": "ZD",
+                "numberOfPackages": 0,
+                "permissions": [],
+                "publicationUri": "http://localhost/repo/ZD",
+                "published": true,
+                "requiresAuthentication": true,
+                "serverAddress": "http://oa-rdepot-repo:8080/ZD",
+                "synchronizing": false,
+                "technology": "Python",
+                "version": 0,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8021/api/v2/manager/python/repositories/15"
+                    },
+                    {
+                        "rel": "repositoryList",
+                        "href": "http://localhost:8021/api/v2/manager/python/repositories"
+                    }
+                ]
+            },
+            {
+                "allowedFiles": [
+                    {
+                        "mimetype": "application/gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/x-gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/octet-stream",
+                        "extension": ".whl"
+                    }
+                ],
+                "deleted": false,
+                "hashMethod": "SHA256",
+                "id": 16,
+                "lastModifiedTimestamp": "2026-05-06T00:00:00Z",
+                "lastPublicationSuccessful": false,
+                "lastPublicationTimestamp": "",
+                "name": "ZE",
+                "numberOfPackages": 0,
+                "permissions": [],
+                "publicationUri": "http://localhost/repo/ZE",
+                "published": true,
+                "requiresAuthentication": true,
+                "serverAddress": "http://oa-rdepot-repo:8080/python/ZE",
+                "synchronizing": false,
+                "technology": "Python",
+                "version": 0,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8021/api/v2/manager/python/repositories/16"
+                    },
+                    {
+                        "rel": "repositoryList",
+                        "href": "http://localhost:8021/api/v2/manager/python/repositories"
+                    }
+                ]
+            },
+            {
+                "allowedFiles": [
+                    {
+                        "mimetype": "application/gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/x-gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/octet-stream",
+                        "extension": ".whl"
+                    }
+                ],
+                "deleted": false,
+                "hashMethod": "SHA256",
+                "id": 17,
+                "lastModifiedTimestamp": "2026-05-06T00:00:00Z",
+                "lastPublicationSuccessful": false,
+                "lastPublicationTimestamp": "",
+                "name": "ZF",
+                "numberOfPackages": 0,
+                "permissions": [],
+                "publicationUri": "http://localhost/repo/ZF",
+                "published": true,
+                "requiresAuthentication": true,
+                "serverAddress": "http://oa-rdepot-repo:8080/python/ZF",
+                "synchronizing": false,
+                "technology": "Python",
+                "version": 0,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8021/api/v2/manager/python/repositories/17"
+                    },
+                    {
+                        "rel": "repositoryList",
+                        "href": "http://localhost:8021/api/v2/manager/python/repositories"
+                    }
+                ]
+            }
+        ],
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8021/api/v2/manager/python/repositories?page=0&size=20&sort=id,asc"
+            }
+        ],
+        "page": {
+            "number": 0,
+            "size": 20,
+            "totalElements": 6,
+            "totalPages": 1
+        }
+    },
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "status": "SUCCESS"
+}

@@ -1,17 +1,6 @@
 {
     "code": 200,
     "data": {
-        "requiresAuthentication": true,
-        "serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo9",
-        "lastPublicationSuccessful": true,
-        "published": true,
-        "technology": "Python",
-        "version": 5,
-        "numberOfPackages": 3,
-        "hashMethod": "SHA256",
-        "deleted": false,
-        "synchronizing": false,
-        "name": "testrepo9",
         "allowedFiles": [
             {
                 "mimetype": "application/gzip",
@@ -26,30 +15,50 @@
                 "extension": ".whl"
             }
         ],
+        "deleted": false,
+        "hashMethod": "SHA256",
+        "id": 9,
+        "lastModifiedTimestamp": "2026-06-28T18:53:11.922268Z",
+        "lastPublicationSuccessful": true,
+        "lastPublicationTimestamp": "2026-06-28T18:53:11.934854223Z",
+        "name": "testrepo9",
+        "numberOfPackages": 3,
+        "permissions": [
+            "repository.delete.soft",
+            "repository.edit",
+            "repository.republish",
+            "repository.submit.autoApprove",
+            "repository.unpublish"
+        ],
+        "publicationUri": "http://localhost/repo/testrepo9",
+        "published": true,
+        "requiresAuthentication": true,
+        "serverAddress": "http://oa-rdepot-repo:8080/testrepo9",
+        "synchronizing": false,
+        "technology": "Python",
+        "version": 5,
         "links": [
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/9"
+                "href": "http://localhost:8017/api/v2/manager/python/repositories/9"
             },
             {
                 "rel": "repositoryList",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories"
+                "href": "http://localhost:8017/api/v2/manager/python/repositories"
             },
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/9",
+                "href": "http://localhost:8017/api/v2/manager/python/repositories/9",
                 "type": "PATCH"
             },
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/9",
+                "href": "http://localhost:8017/api/v2/manager/python/repositories/9",
                 "type": "DELETE"
             }
-        ],
-        "id": 9,
-        "publicationUri": "http:\/\/localhost\/repo\/testrepo9"
+        ]
     },
-    "messageCode": "success.request.processed",
     "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
     "status": "SUCCESS"
 }

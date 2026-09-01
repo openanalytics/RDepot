@@ -1,206 +1,226 @@
 {
     "code": 200,
     "data": {
+        "content": [
+            {
+                "allowedFiles": [
+                    {
+                        "mimetype": "application/gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/x-gzip",
+                        "extension": ".tar.gz"
+                    }
+                ],
+                "deleted": true,
+                "id": 6,
+                "lastModifiedTimestamp": "2024-06-27T12:30:25Z",
+                "lastPublicationSuccessful": false,
+                "lastPublicationTimestamp": "",
+                "name": "testrepo5",
+                "numberOfPackages": 0,
+                "permissions": [
+                    "repository.delete.hard"
+                ],
+                "publicationUri": "http://localhost/repo/testrepo5",
+                "published": false,
+                "requiresAuthentication": true,
+                "serverAddress": "http://oa-rdepot-repo:8080/testrepo5",
+                "synchronizing": false,
+                "technology": "R",
+                "version": 9,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/6"
+                    },
+                    {
+                        "rel": "repositoryList",
+                        "href": "http://localhost:8017/api/v2/manager/repositories"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/6",
+                        "type": "PATCH"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/6",
+                        "type": "DELETE"
+                    }
+                ]
+            },
+            {
+                "allowedFiles": [
+                    {
+                        "mimetype": "application/gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/x-gzip",
+                        "extension": ".tar.gz"
+                    }
+                ],
+                "deleted": true,
+                "id": 7,
+                "lastModifiedTimestamp": "2024-04-27T12:30:25Z",
+                "lastPublicationSuccessful": false,
+                "lastPublicationTimestamp": "",
+                "name": "testrepo6",
+                "numberOfPackages": 0,
+                "permissions": [
+                    "repository.delete.hard"
+                ],
+                "publicationUri": "http://localhost/repo/testrepo6",
+                "published": false,
+                "requiresAuthentication": false,
+                "serverAddress": "http://oa-rdepot-repo:8080/testrepo6",
+                "synchronizing": false,
+                "technology": "R",
+                "version": 6,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/7"
+                    },
+                    {
+                        "rel": "repositoryList",
+                        "href": "http://localhost:8017/api/v2/manager/repositories"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/7",
+                        "type": "PATCH"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/7",
+                        "type": "DELETE"
+                    }
+                ]
+            },
+            {
+                "allowedFiles": [
+                    {
+                        "mimetype": "application/gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/x-gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/octet-stream",
+                        "extension": ".whl"
+                    }
+                ],
+                "deleted": true,
+                "id": 11,
+                "lastModifiedTimestamp": "2020-03-28T12:30:25Z",
+                "lastPublicationSuccessful": true,
+                "lastPublicationTimestamp": "2020-03-28T12:30:25Z",
+                "name": "testrepo11",
+                "numberOfPackages": 0,
+                "permissions": [
+                    "repository.delete.hard"
+                ],
+                "publicationUri": "http://localhost/repo/testrepo11",
+                "published": true,
+                "requiresAuthentication": true,
+                "serverAddress": "http://oa-rdepot-repo:8080/testrepo11",
+                "synchronizing": false,
+                "technology": "Python",
+                "version": 1,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/python/repositories/11"
+                    },
+                    {
+                        "rel": "repositoryList",
+                        "href": "http://localhost:8017/api/v2/manager/repositories"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/python/repositories/11",
+                        "type": "PATCH"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/python/repositories/11",
+                        "type": "DELETE"
+                    }
+                ]
+            },
+            {
+                "allowedFiles": [
+                    {
+                        "mimetype": "application/gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/x-gzip",
+                        "extension": ".tar.gz"
+                    },
+                    {
+                        "mimetype": "application/octet-stream",
+                        "extension": ".whl"
+                    }
+                ],
+                "deleted": true,
+                "id": 12,
+                "lastModifiedTimestamp": "2024-03-23T12:30:25Z",
+                "lastPublicationSuccessful": false,
+                "lastPublicationTimestamp": "",
+                "name": "testrepo12",
+                "numberOfPackages": 0,
+                "permissions": [
+                    "repository.delete.hard"
+                ],
+                "publicationUri": "http://localhost/repo/testrepo12",
+                "published": false,
+                "requiresAuthentication": false,
+                "serverAddress": "http://oa-rdepot-repo:8080/testrepo12",
+                "synchronizing": false,
+                "technology": "Python",
+                "version": 1,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/python/repositories/12"
+                    },
+                    {
+                        "rel": "repositoryList",
+                        "href": "http://localhost:8017/api/v2/manager/repositories"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/python/repositories/12",
+                        "type": "PATCH"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/python/repositories/12",
+                        "type": "DELETE"
+                    }
+                ]
+            }
+        ],
         "links": [
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/repositories?deleted=true&page=0&size=20&sort=id,asc"
+                "href": "http://localhost:8017/api/v2/manager/repositories?deleted=true&page=0&size=20&sort=id,asc"
             }
         ],
         "page": {
             "number": 0,
             "size": 20,
-            "totalPages": 1,
-            "totalElements": 4
-        },
-        "content": [
-            {
-                "requiresAuthentication": true,
-                "serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo5",
-                "lastPublicationSuccessful": false,
-                "published": false,
-                "technology": "R",
-                "version": 9,
-                "numberOfPackages": 0,
-                "deleted": true,
-                "synchronizing": false,
-                "name": "testrepo5",
-                "allowedFiles": [
-                    {
-                        "mimetype": "application/gzip",
-                        "extension": ".tar.gz"
-                    },
-                    {
-                        "mimetype": "application/x-gzip",
-                        "extension": ".tar.gz"
-                    }
-                ],
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories\/6"
-                    },
-                    {
-                        "rel": "repositoryList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/repositories"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories\/6",
-                        "type": "PATCH"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories\/6",
-                        "type": "DELETE"
-                    }
-                ],
-                "id": 6,
-                "publicationUri": "http:\/\/localhost\/repo\/testrepo5"
-            },
-            {
-                "requiresAuthentication": false,
-                "serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo6",
-                "lastPublicationSuccessful": false,
-                "published": false,
-                "technology": "R",
-                "version": 6,
-                "numberOfPackages": 0,
-                "deleted": true,
-                "synchronizing": false,
-                "name": "testrepo6",
-                "allowedFiles": [
-                    {
-                        "mimetype": "application/gzip",
-                        "extension": ".tar.gz"
-                    },
-                    {
-                        "mimetype": "application/x-gzip",
-                        "extension": ".tar.gz"
-                    }
-                ],
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories\/7"
-                    },
-                    {
-                        "rel": "repositoryList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/repositories"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories\/7",
-                        "type": "PATCH"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories\/7",
-                        "type": "DELETE"
-                    }
-                ],
-                "id": 7,
-                "publicationUri": "http:\/\/localhost\/repo\/testrepo6"
-            },
-            {
-                "requiresAuthentication": true,
-                "serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo11",
-                "lastPublicationSuccessful": true,
-                "published": true,
-                "technology": "Python",
-                "version": 1,
-                "numberOfPackages": 0,
-                "deleted": true,
-                "synchronizing": false,
-                "name": "testrepo11",
-                "allowedFiles": [
-                    {
-                        "mimetype": "application/gzip",
-                        "extension": ".tar.gz"
-                    },
-                    {
-                        "mimetype": "application/x-gzip",
-                        "extension": ".tar.gz"
-                    },
-                    {
-                        "mimetype": "application/octet-stream",
-                        "extension": ".whl"
-                    }
-                ],
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/11"
-                    },
-                    {
-                        "rel": "repositoryList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/repositories"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/11",
-                        "type": "PATCH"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/11",
-                        "type": "DELETE"
-                    }
-                ],
-                "id": 11,
-                "publicationUri": "http:\/\/localhost\/repo\/testrepo11"
-            },
-            {
-                "requiresAuthentication": false,
-                "serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo12",
-                "lastPublicationSuccessful": false,
-                "published": false,
-                "technology": "Python",
-                "version": 1,
-                "numberOfPackages": 0,
-                "deleted": true,
-                "synchronizing": false,
-                "name": "testrepo12",
-                "allowedFiles": [
-                    {
-                        "mimetype": "application/gzip",
-                        "extension": ".tar.gz"
-                    },
-                    {
-                        "mimetype": "application/x-gzip",
-                        "extension": ".tar.gz"
-                    },
-                    {
-                        "mimetype": "application/octet-stream",
-                        "extension": ".whl"
-                    }
-                ],
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/12"
-                    },
-                    {
-                        "rel": "repositoryList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/repositories"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/12",
-                        "type": "PATCH"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/12",
-                        "type": "DELETE"
-                    }
-                ],
-                "id": 12,
-                "publicationUri": "http:\/\/localhost\/repo\/testrepo12"
-            }
-        ]
+            "totalElements": 4,
+            "totalPages": 1
+        }
     },
-    "messageCode": "success.request.processed",
     "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
     "status": "SUCCESS"
 }

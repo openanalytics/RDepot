@@ -1,41 +1,43 @@
 {
-    "status": "SUCCESS",
-    "code": 201,
-    "message": "Your resource has been created successfully.",
-    "messageCode": "success.resource.created",
-    "data": {
-        "id": 9,
-        "name": "test",
-        "value": "j0aBDcye9eLleVWir2C8IqAJ9sGL96B3",
-        "creationDate": "2023-12-13",
-        "expirationDate": "2023-12-27",
-        "active": true,
-        "deleted": false,
-        "user": {
-            "id": 7,
-            "name": "Isaac Newton",
-            "login": "newton",
-            "email": "newton@ldap.forumsys.com"
-        },
-        "links": [
-            {
-                "rel": "self",
-                "href": "http://localhost:8017/api/v2/manager/access-tokens/9"
-            },
-            {
-                "rel": "accessTokenList",
-                "href": "http://localhost:8017/api/v2/manager/access-tokens"
-            },
-            {
-                "rel": "self",
-                "href": "http://localhost:8017/api/v2/manager/access-tokens/9",
-                "type": "PATCH"
-            },
-            {
-                "rel": "self",
-                "href": "http://localhost:8017/api/v2/manager/access-tokens/9",
-                "type": "DELETE"
-            }
-        ]
+  "code": 201,
+  "data": {
+    "deleted": false,
+    "permissions": [
+      "accessToken.deactivate",
+      "accessToken.delete.hard",
+      "accessToken.edit"
+    ],
+    "name": "test",
+    "active": true,
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/access-tokens/10"
+      },
+      {
+        "rel": "accessTokenList",
+        "href": "http://localhost:8017/api/v2/manager/access-tokens"
+      },
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/access-tokens/10",
+        "type": "PATCH"
+      },
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/access-tokens/10",
+        "type": "DELETE"
+      }
+    ],
+    "id": 10,
+    "user": {
+      "name": "Isaac Newton",
+      "id": 7,
+      "login": "newton",
+      "email": "newton@ldap.forumsys.com"
     }
+  },
+  "messageCode": "success.resource.created",
+  "message": "Your resource has been created successfully.",
+  "status": "SUCCESS"
 }

@@ -98,10 +98,10 @@ public class SynchronizeRepositoryRequestBody {
 
     // <folder_path, <file, checksum>>
     //    Map<String, Map<String, String>> checksums;
-    // <full file path in storage, checksum>
+    // <full file path in localStorage, checksum>
 
     /**
-     * <Full path in storage, checksum>
+     * <Full path in localStorage, checksum>
      */
     Checksums checksums;
     // <folder_path, index.html>

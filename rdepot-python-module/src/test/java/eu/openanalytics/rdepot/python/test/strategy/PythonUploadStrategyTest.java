@@ -34,7 +34,7 @@ import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
-import eu.openanalytics.rdepot.base.storage.Storage;
+import eu.openanalytics.rdepot.base.storage.LocalStorage;
 import eu.openanalytics.rdepot.base.storage.exceptions.ExtractFileException;
 import eu.openanalytics.rdepot.base.storage.exceptions.ReadPackageDescriptionException;
 import eu.openanalytics.rdepot.base.storage.exceptions.WriteToWaitingRoomException;
@@ -47,7 +47,8 @@ import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.mediator.deletion.PythonPackageDeleter;
 import eu.openanalytics.rdepot.python.messaging.PythonMessageCodes;
 import eu.openanalytics.rdepot.python.services.PythonRepositoryService;
-import eu.openanalytics.rdepot.python.storage.PythonPopulator;
+import eu.openanalytics.rdepot.python.storage.PythonPersistentStorage;
+import eu.openanalytics.rdepot.python.storage.population.PythonPopulator;
 import eu.openanalytics.rdepot.python.strategy.upload.PythonPackageUploadStrategy;
 import eu.openanalytics.rdepot.python.technology.PythonLanguage;
 import eu.openanalytics.rdepot.test.fixture.PythonRepositoryTestFixture;
@@ -55,6 +56,7 @@ import eu.openanalytics.rdepot.test.fixture.UserTestFixture;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.support.ReflectionSupport;
@@ -71,7 +73,7 @@ public class PythonUploadStrategyTest extends StrategyTest {
     private PackageValidator<PythonPackage> packageValidator;
 
     @Mock
-    private Storage<PythonPackage> storage;
+    private LocalStorage<PythonPackage> localStorage;
 
     @Mock
     private PythonPopulator pythonPopulator;
@@ -94,6 +96,9 @@ public class PythonUploadStrategyTest extends StrategyTest {
     @Mock
     private PythonPackageDeleter packageDeleter;
 
+    @Mock
+    private PythonPersistentStorage pythonPersistentStorage;
+
     private static final String RESOURCES = "src/test/resources/unit";
     private final String TEST_PACKAGE_PATH = RESOURCES + "/test_packages/strategy_tests/coconutpy-2.2.1.tar.gz";
     private final String TEST_PACKAGE_EXTRACTED = RESOURCES + "/test_packages/strategy_tests/coconutpy/";
@@ -113,7 +118,7 @@ public class PythonUploadStrategyTest extends StrategyTest {
                 submissionService,
                 packageValidator,
                 repositoryService,
-                storage,
+                localStorage,
                 packageService,
                 emailService,
                 bestMaintainerChooser,
@@ -121,7 +126,8 @@ public class PythonUploadStrategyTest extends StrategyTest {
                 securityMediator,
                 packageDeleter,
                 pythonPopulator,
-                maintainerService);
+                maintainerService,
+                pythonPersistentStorage);
         String result = (String) ReflectionSupport.invokeMethod(
                 PythonPackageUploadStrategy.class.getDeclaredMethod("getLicense", Properties.class),
                 strategy,
@@ -150,9 +156,16 @@ public class PythonUploadStrategyTest extends StrategyTest {
         PackageUploadRequest<PythonRepository> request =
                 new PackageUploadRequest<>(multipartFile, repository, replace, "", binary);
 
-        when(pythonPopulator.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
-        when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath())).thenReturn(extracted.getAbsolutePath());
-        when(pythonPopulator.getPropertiesFromExtractedFile(extracted.getAbsolutePath()))
+        when(pythonPopulator.writeToTemporaryLocalWaitingRoom(multipartFile, repository))
+                .thenReturn(uploadedFile);
+        when(pythonPersistentStorage.storeNewPackage(
+                        uploadedFile.getAbsoluteFile(),
+                        List.of(extracted.toPath().toAbsolutePath().toFile()),
+                        repository))
+                .thenReturn(uploadedFile.toPath());
+        when(localStorage.extractTarGzPackageFile(uploadedFile.getAbsoluteFile()))
+                .thenReturn(extracted.getAbsolutePath());
+        when(pythonPopulator.getPropertiesFromExtractedFile(List.of(extracted.getAbsoluteFile())))
                 .thenReturn(new PropertiesParser(new File(TEST_PACKAGE_EXTRACTED + "/PKG-INFO")));
         doAnswer((Answer<Submission>) invocation -> {
                     Submission submission = invocation.getArgument(0);
@@ -161,7 +174,7 @@ public class PythonUploadStrategyTest extends StrategyTest {
                 })
                 .when(submissionService)
                 .create(any());
-        when(pythonPopulator.moveToMainDirectory(any())).thenReturn(uploadedFile.getAbsolutePath());
+        when(pythonPersistentStorage.movePackageToAccepted(any())).thenReturn(uploadedFile.toPath());
         when(bestMaintainerChooser.chooseBestPackageMaintainer(any())).thenReturn(requester);
         when(securityMediator.canUpload("coconutpy", repository, requester)).thenReturn(true);
         doAnswer((Answer<PythonPackage>) invocation -> {
@@ -252,9 +265,16 @@ public class PythonUploadStrategyTest extends StrategyTest {
         PackageUploadRequest<PythonRepository> request =
                 new PackageUploadRequest<>(multipartFile, repository, replace, "", binary);
 
-        when(pythonPopulator.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
-        when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath())).thenReturn(extracted.getAbsolutePath());
-        when(pythonPopulator.getPropertiesFromExtractedFile(extracted.getAbsolutePath()))
+        when(pythonPersistentStorage.storeNewPackage(
+                        uploadedFile.getAbsoluteFile(),
+                        List.of(extracted.toPath().toAbsolutePath().toFile()),
+                        repository))
+                .thenReturn(uploadedFile.toPath());
+        when(pythonPopulator.writeToTemporaryLocalWaitingRoom(multipartFile, repository))
+                .thenReturn(uploadedFile);
+        when(localStorage.extractTarGzPackageFile(uploadedFile.getAbsoluteFile()))
+                .thenReturn(extracted.getAbsolutePath());
+        when(pythonPopulator.getPropertiesFromExtractedFile(List.of(extracted.getAbsoluteFile())))
                 .thenReturn(new PropertiesParser(new File(TEST_PACKAGE_EXTRACTED + "/PKG-INFO")));
         doAnswer((Answer<Submission>) invocation -> {
                     Submission submission = invocation.getArgument(0);
@@ -292,7 +312,7 @@ public class PythonUploadStrategyTest extends StrategyTest {
                 submissionService,
                 packageValidator,
                 repositoryService,
-                storage,
+                localStorage,
                 packageService,
                 emailService,
                 bestMaintainerChooser,
@@ -300,7 +320,8 @@ public class PythonUploadStrategyTest extends StrategyTest {
                 securityMediator,
                 deleter,
                 pythonPopulator,
-                maintainerService);
+                maintainerService,
+                pythonPersistentStorage);
         return strategy.perform();
     }
 
@@ -321,7 +342,9 @@ public class PythonUploadStrategyTest extends StrategyTest {
         PackageUploadRequest<PythonRepository> request =
                 new PackageUploadRequest<>(multipartFile, repository, replace, "", binary);
 
-        doThrow(new WriteToWaitingRoomException()).when(pythonPopulator).writeToWaitingRoom(multipartFile, repository);
+        doThrow(new WriteToWaitingRoomException())
+                .when(pythonPopulator)
+                .writeToTemporaryLocalWaitingRoom(multipartFile, repository);
 
         Strategy<Submission> strategy = new PythonPackageUploadStrategy(
                 request,
@@ -330,7 +353,7 @@ public class PythonUploadStrategyTest extends StrategyTest {
                 submissionService,
                 packageValidator,
                 repositoryService,
-                storage,
+                localStorage,
                 packageService,
                 emailService,
                 bestMaintainerChooser,
@@ -338,12 +361,13 @@ public class PythonUploadStrategyTest extends StrategyTest {
                 securityMediator,
                 deleter,
                 pythonPopulator,
-                maintainerService);
+                maintainerService,
+                pythonPersistentStorage);
 
         assertThrows(
                 StrategyFailure.class,
                 strategy::perform,
-                "Exception should be thrown when storage fails to " + "write package to the waiting room.");
+                "Exception should be thrown when localStorage fails to " + "write package to the waiting room.");
     }
 
     @Test
@@ -364,9 +388,10 @@ public class PythonUploadStrategyTest extends StrategyTest {
         PackageUploadRequest<PythonRepository> request =
                 new PackageUploadRequest<>(multipartFile, repository, replace, "", binary);
 
-        when(pythonPopulator.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
-        doThrow(new ExtractFileException()).when(storage).extractTarGzPackageFile(uploadedFile.getAbsolutePath());
-        doNothing().when(storage).removeFileIfExists(uploadedFile.getAbsolutePath());
+        when(pythonPopulator.writeToTemporaryLocalWaitingRoom(multipartFile, repository))
+                .thenReturn(uploadedFile);
+        doThrow(new ExtractFileException()).when(localStorage).extractTarGzPackageFile(uploadedFile.getAbsoluteFile());
+        doNothing().when(pythonPopulator).removeTemporaryLocalWaitingRoomOfFile(uploadedFile.getAbsoluteFile());
 
         Strategy<Submission> strategy = new PythonPackageUploadStrategy(
                 request,
@@ -375,7 +400,7 @@ public class PythonUploadStrategyTest extends StrategyTest {
                 submissionService,
                 packageValidator,
                 repositoryService,
-                storage,
+                localStorage,
                 packageService,
                 emailService,
                 bestMaintainerChooser,
@@ -383,11 +408,14 @@ public class PythonUploadStrategyTest extends StrategyTest {
                 securityMediator,
                 deleter,
                 pythonPopulator,
-                maintainerService);
+                maintainerService,
+                pythonPersistentStorage);
 
         assertThrows(
                 StrategyFailure.class, strategy::perform, "Exception should be thrown when package extraction fails.");
-        verify(storage, times(1)).removeFileIfExists(uploadedFile.getAbsolutePath());
+        verify(pythonPopulator, times(1)).removeTemporaryLocalWaitingRoomOfFile(uploadedFile.getAbsoluteFile());
+        verify(pythonPersistentStorage, times(0))
+                .deleteFromStorageIfExists(uploadedFile.toPath().getParent());
     }
 
     @Test
@@ -409,13 +437,22 @@ public class PythonUploadStrategyTest extends StrategyTest {
         PackageUploadRequest<PythonRepository> request =
                 new PackageUploadRequest<>(multipartFile, repository, replace, "", binary);
 
-        when(pythonPopulator.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
-        when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath())).thenReturn(extracted.getAbsolutePath());
+        when(pythonPersistentStorage.storeNewPackage(
+                        uploadedFile.getAbsoluteFile(),
+                        List.of(extracted.toPath().toAbsolutePath().toFile()),
+                        repository))
+                .thenReturn(uploadedFile.toPath());
+        when(pythonPopulator.writeToTemporaryLocalWaitingRoom(multipartFile, repository))
+                .thenReturn(uploadedFile);
+        when(localStorage.extractTarGzPackageFile(uploadedFile.getAbsoluteFile()))
+                .thenReturn(extracted.getAbsolutePath());
         doThrow(new ReadPackageDescriptionException(PythonMessageCodes.READ_PYTHON_PROPERTIES_FILE_EXCEPTION))
                 .when(pythonPopulator)
-                .getPropertiesFromExtractedFile(extracted.getAbsolutePath());
-        doNothing().when(storage).removeFileIfExists(uploadedFile.getAbsolutePath());
-        doNothing().when(storage).removeFileIfExists(extracted.getAbsolutePath());
+                .getPropertiesFromExtractedFile(List.of(extracted.getAbsoluteFile()));
+        doNothing().when(pythonPopulator).removeTemporaryLocalWaitingRoomOfFile(uploadedFile.getAbsoluteFile());
+        doNothing()
+                .when(pythonPersistentStorage)
+                .deleteFromStorageIfExists(uploadedFile.toPath().getParent());
 
         Strategy<Submission> strategy = new PythonPackageUploadStrategy(
                 request,
@@ -424,7 +461,7 @@ public class PythonUploadStrategyTest extends StrategyTest {
                 submissionService,
                 packageValidator,
                 repositoryService,
-                storage,
+                localStorage,
                 packageService,
                 emailService,
                 bestMaintainerChooser,
@@ -432,14 +469,16 @@ public class PythonUploadStrategyTest extends StrategyTest {
                 securityMediator,
                 deleter,
                 pythonPopulator,
-                maintainerService);
+                maintainerService,
+                pythonPersistentStorage);
 
         assertThrows(
                 StrategyFailure.class,
                 strategy::perform,
                 "Exception should be thrown when reading package description fails.");
-        verify(storage, times(1)).removeFileIfExists(uploadedFile.getAbsolutePath());
-        verify(storage, times(1)).removeFileIfExists(extracted.getAbsolutePath());
+        verify(pythonPopulator, times(1)).removeTemporaryLocalWaitingRoomOfFile(uploadedFile.getAbsoluteFile());
+        verify(pythonPersistentStorage, times(1))
+                .deleteFromStorageIfExists(uploadedFile.toPath().getParent());
     }
 
     @SuppressWarnings("unchecked")
@@ -462,9 +501,16 @@ public class PythonUploadStrategyTest extends StrategyTest {
         PackageUploadRequest<PythonRepository> request =
                 new PackageUploadRequest<>(multipartFile, repository, replace, "", binary);
 
-        when(pythonPopulator.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
-        when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath())).thenReturn(extracted.getAbsolutePath());
-        when(pythonPopulator.getPropertiesFromExtractedFile(extracted.getAbsolutePath()))
+        when(pythonPersistentStorage.storeNewPackage(
+                        uploadedFile.getAbsoluteFile(),
+                        List.of(extracted.toPath().toAbsolutePath().toFile()),
+                        repository))
+                .thenReturn(uploadedFile.toPath());
+        when(pythonPopulator.writeToTemporaryLocalWaitingRoom(multipartFile, repository))
+                .thenReturn(uploadedFile.getAbsoluteFile());
+        when(localStorage.extractTarGzPackageFile(uploadedFile.getAbsoluteFile()))
+                .thenReturn(extracted.getAbsolutePath());
+        when(pythonPopulator.getPropertiesFromExtractedFile(List.of(extracted.getAbsoluteFile())))
                 .thenReturn(new PropertiesParser(new File(TEST_PACKAGE_EXTRACTED + "/PKG-INFO")));
         when(bestMaintainerChooser.chooseBestPackageMaintainer(any())).thenReturn(requester);
         doAnswer(invocation -> {
@@ -476,8 +522,10 @@ public class PythonUploadStrategyTest extends StrategyTest {
                 .when(packageValidator)
                 .validateUploadPackage(any(), eq(replace), any(DataSpecificValidationResult.class));
 
-        doNothing().when(storage).removeFileIfExists(uploadedFile.getAbsolutePath());
-        doNothing().when(storage).removeFileIfExists(extracted.getAbsolutePath());
+        doNothing().when(pythonPopulator).removeTemporaryLocalWaitingRoomOfFile(uploadedFile.getAbsoluteFile());
+        doNothing()
+                .when(pythonPersistentStorage)
+                .deleteFromStorageIfExists(uploadedFile.toPath().getParent());
 
         Strategy<Submission> strategy = new PythonPackageUploadStrategy(
                 request,
@@ -486,7 +534,7 @@ public class PythonUploadStrategyTest extends StrategyTest {
                 submissionService,
                 packageValidator,
                 repositoryService,
-                storage,
+                localStorage,
                 packageService,
                 emailService,
                 bestMaintainerChooser,
@@ -494,11 +542,13 @@ public class PythonUploadStrategyTest extends StrategyTest {
                 securityMediator,
                 deleter,
                 pythonPopulator,
-                maintainerService);
+                maintainerService,
+                pythonPersistentStorage);
 
         assertThrows(
                 StrategyFailure.class, strategy::perform, "Exception should be thrown when package validation fails.");
-        verify(storage, times(1)).removeFileIfExists(uploadedFile.getAbsolutePath());
-        verify(storage, times(1)).removeFileIfExists(extracted.getAbsolutePath());
+        verify(pythonPopulator, times(1)).removeTemporaryLocalWaitingRoomOfFile(uploadedFile.getAbsoluteFile());
+        verify(pythonPersistentStorage, times(1))
+                .deleteFromStorageIfExists(uploadedFile.toPath().getParent());
     }
 }

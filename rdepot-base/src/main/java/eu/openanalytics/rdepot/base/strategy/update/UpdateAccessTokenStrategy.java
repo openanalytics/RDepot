@@ -27,6 +27,7 @@ import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.event.NewsfeedEventType;
 import eu.openanalytics.rdepot.base.service.AccessTokenService;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
+import eu.openanalytics.rdepot.base.strategy.exceptions.FatalStrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import javax.naming.OperationNotSupportedException;
 
@@ -54,7 +55,7 @@ public class UpdateAccessTokenStrategy extends UpdateStrategy<AccessToken> {
     @Override
     protected AccessToken actualStrategy() throws StrategyFailure {
         if (updatedResource.isActive() && !resource.isActive()) {
-            throw new StrategyFailure(new OperationNotSupportedException());
+            throw new FatalStrategyFailure(new OperationNotSupportedException());
         } else if (!updatedResource.isActive()) {
             resource.setActive(false);
             changedValues.add(new EventChangedVariable("active", "true", "false"));

@@ -21,6 +21,7 @@
                     "descriptionContentType": "txt",
                     "id": 47,
                     "name": "arrow",
+                    "permissions": [],
                     "repository": {
                         "id": 5,
                         "lastPublicationSuccessful": false,
@@ -60,6 +61,7 @@
                         }
                     ]
                 },
+                "permissions": [],
                 "state": "ACCEPTED",
                 "submitter": {
                     "email": "einstein@ldap.forumsys.com",

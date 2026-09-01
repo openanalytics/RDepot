@@ -31,7 +31,7 @@ import eu.openanalytics.rdepot.python.config.declarative.PythonYamlDeclarativeCo
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.mediator.deletion.PythonRepositoryDeleter;
 import eu.openanalytics.rdepot.python.mirroring.PypiMirror;
-import eu.openanalytics.rdepot.python.mirroring.PypiMirrorSynchronizer;
+import eu.openanalytics.rdepot.python.mirroring.PythonMirrorSynchronizationCoordinator;
 import eu.openanalytics.rdepot.python.mirroring.pojos.MirroredPythonPackage;
 import eu.openanalytics.rdepot.python.mirroring.pojos.MirroredPythonRepository;
 import eu.openanalytics.rdepot.python.services.PythonRepositoryService;
@@ -57,17 +57,17 @@ public class PythonRepositoryDataInitializer
             PythonRepositoryValidator repositoryValidator,
             PythonRepositoryDeleter repositoryDeleter,
             ThreadPoolTaskScheduler taskScheduler,
-            PypiMirrorSynchronizer pypiMirrorSynchronizer,
             PythonStrategyFactory factory,
             UserService userService,
             PythonYamlDeclarativeConfigurationSource pythonYamlDeclarativeConfigurationSource,
-            StrategyExecutor strategyExecutor) {
+            StrategyExecutor strategyExecutor,
+            PythonMirrorSynchronizationCoordinator pythonMirrorSynchronizationCoordinator) {
         super(
                 repositoryService,
                 repositoryValidator,
                 repositoryDeleter,
                 taskScheduler,
-                pypiMirrorSynchronizer,
+                pythonMirrorSynchronizationCoordinator,
                 pythonYamlDeclarativeConfigurationSource,
                 PythonLanguage.instance);
         this.factory = factory;

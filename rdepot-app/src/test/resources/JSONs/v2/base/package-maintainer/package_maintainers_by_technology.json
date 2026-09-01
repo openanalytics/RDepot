@@ -1,222 +1,738 @@
 {
     "code": 200,
     "data": {
+        "content": [
+            {
+                "deleted": false,
+                "id": 1,
+                "packageName": "accrued",
+                "permissions": [
+                    "packageMaintainer.delete.soft",
+                    "packageMaintainer.edit"
+                ],
+                "repository": {
+                    "id": 2,
+                    "lastPublicationSuccessful": true,
+                    "name": "testrepo1",
+                    "publicationUri": "http://localhost/repo/testrepo1",
+                    "published": true,
+                    "requiresAuthentication": false,
+                    "technology": "R"
+                },
+                "user": {
+                    "email": "galieleo@ldap.forumsys.com",
+                    "id": 6,
+                    "login": "galieleo",
+                    "name": "Galileo Galilei"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/1"
+                    },
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/6"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/1",
+                        "type": "PATCH"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/1",
+                        "type": "DELETE"
+                    }
+                ]
+            },
+            {
+                "deleted": true,
+                "id": 4,
+                "packageName": "bea.R",
+                "permissions": [
+                    "packageMaintainer.delete.hard"
+                ],
+                "repository": {
+                    "id": 2,
+                    "lastPublicationSuccessful": true,
+                    "name": "testrepo1",
+                    "publicationUri": "http://localhost/repo/testrepo1",
+                    "published": true,
+                    "requiresAuthentication": false,
+                    "technology": "R"
+                },
+                "user": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/4"
+                    },
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/5"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/4",
+                        "type": "PATCH"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/4",
+                        "type": "DELETE"
+                    }
+                ]
+            },
+            {
+                "deleted": null,
+                "id": null,
+                "packageName": "A3",
+                "permissions": [],
+                "repository": {
+                    "id": 2,
+                    "lastPublicationSuccessful": true,
+                    "name": "testrepo1",
+                    "publicationUri": "http://localhost/repo/testrepo1",
+                    "published": true,
+                    "requiresAuthentication": false,
+                    "technology": "R"
+                },
+                "user": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "links": [
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/4"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    }
+                ]
+            },
+            {
+                "deleted": null,
+                "id": null,
+                "packageName": "AnaCoDa",
+                "permissions": [],
+                "repository": {
+                    "id": 2,
+                    "lastPublicationSuccessful": true,
+                    "name": "testrepo1",
+                    "publicationUri": "http://localhost/repo/testrepo1",
+                    "published": true,
+                    "requiresAuthentication": false,
+                    "technology": "R"
+                },
+                "user": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "links": [
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/4"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    }
+                ]
+            },
+            {
+                "deleted": null,
+                "id": null,
+                "packageName": "visdat",
+                "permissions": [],
+                "repository": {
+                    "id": 2,
+                    "lastPublicationSuccessful": true,
+                    "name": "testrepo1",
+                    "publicationUri": "http://localhost/repo/testrepo1",
+                    "published": true,
+                    "requiresAuthentication": false,
+                    "technology": "R"
+                },
+                "user": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "links": [
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/4"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    }
+                ]
+            },
+            {
+                "deleted": null,
+                "id": null,
+                "packageName": "A3",
+                "permissions": [],
+                "repository": {
+                    "id": 2,
+                    "lastPublicationSuccessful": true,
+                    "name": "testrepo1",
+                    "publicationUri": "http://localhost/repo/testrepo1",
+                    "published": true,
+                    "requiresAuthentication": false,
+                    "technology": "R"
+                },
+                "user": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "links": [
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/5"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    }
+                ]
+            },
+            {
+                "deleted": null,
+                "id": null,
+                "packageName": "Benchmarking",
+                "permissions": [],
+                "repository": {
+                    "id": 2,
+                    "lastPublicationSuccessful": true,
+                    "name": "testrepo1",
+                    "publicationUri": "http://localhost/repo/testrepo1",
+                    "published": true,
+                    "requiresAuthentication": false,
+                    "technology": "R"
+                },
+                "user": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "links": [
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/5"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    }
+                ]
+            },
+            {
+                "deleted": null,
+                "id": null,
+                "packageName": "abc",
+                "permissions": [],
+                "repository": {
+                    "id": 2,
+                    "lastPublicationSuccessful": true,
+                    "name": "testrepo1",
+                    "publicationUri": "http://localhost/repo/testrepo1",
+                    "published": true,
+                    "requiresAuthentication": false,
+                    "technology": "R"
+                },
+                "user": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "links": [
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/5"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    }
+                ]
+            },
+            {
+                "deleted": null,
+                "id": null,
+                "packageName": "npordtests",
+                "permissions": [],
+                "repository": {
+                    "id": 2,
+                    "lastPublicationSuccessful": true,
+                    "name": "testrepo1",
+                    "publicationUri": "http://localhost/repo/testrepo1",
+                    "published": true,
+                    "requiresAuthentication": false,
+                    "technology": "R"
+                },
+                "user": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "links": [
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/5"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    }
+                ]
+            },
+            {
+                "deleted": null,
+                "id": null,
+                "packageName": "usl",
+                "permissions": [],
+                "repository": {
+                    "id": 2,
+                    "lastPublicationSuccessful": true,
+                    "name": "testrepo1",
+                    "publicationUri": "http://localhost/repo/testrepo1",
+                    "published": true,
+                    "requiresAuthentication": false,
+                    "technology": "R"
+                },
+                "user": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "links": [
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/5"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    }
+                ]
+            },
+            {
+                "deleted": null,
+                "id": null,
+                "packageName": "accrued",
+                "permissions": [],
+                "repository": {
+                    "id": 3,
+                    "lastPublicationSuccessful": true,
+                    "name": "testrepo2",
+                    "publicationUri": "http://localhost/repo/testrepo2",
+                    "published": true,
+                    "requiresAuthentication": true,
+                    "technology": "R"
+                },
+                "user": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "links": [
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/4"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    }
+                ]
+            },
+            {
+                "deleted": null,
+                "id": null,
+                "packageName": "usl",
+                "permissions": [],
+                "repository": {
+                    "id": 3,
+                    "lastPublicationSuccessful": true,
+                    "name": "testrepo2",
+                    "publicationUri": "http://localhost/repo/testrepo2",
+                    "published": true,
+                    "requiresAuthentication": true,
+                    "technology": "R"
+                },
+                "user": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "links": [
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/4"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    }
+                ]
+            },
+            {
+                "deleted": null,
+                "id": null,
+                "packageName": "visdat",
+                "permissions": [],
+                "repository": {
+                    "id": 3,
+                    "lastPublicationSuccessful": true,
+                    "name": "testrepo2",
+                    "publicationUri": "http://localhost/repo/testrepo2",
+                    "published": true,
+                    "requiresAuthentication": true,
+                    "technology": "R"
+                },
+                "user": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "links": [
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/4"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    }
+                ]
+            },
+            {
+                "deleted": false,
+                "id": 2,
+                "packageName": "abc",
+                "permissions": [
+                    "packageMaintainer.delete.soft",
+                    "packageMaintainer.edit"
+                ],
+                "repository": {
+                    "id": 4,
+                    "lastPublicationSuccessful": false,
+                    "name": "testrepo3",
+                    "publicationUri": "http://localhost/repo/testrepo3",
+                    "published": false,
+                    "requiresAuthentication": true,
+                    "technology": "R"
+                },
+                "user": {
+                    "email": "galieleo@ldap.forumsys.com",
+                    "id": 6,
+                    "login": "galieleo",
+                    "name": "Galileo Galilei"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/2"
+                    },
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/6"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/2",
+                        "type": "PATCH"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/2",
+                        "type": "DELETE"
+                    }
+                ]
+            },
+            {
+                "deleted": false,
+                "id": 3,
+                "packageName": "A3",
+                "permissions": [
+                    "packageMaintainer.delete.soft",
+                    "packageMaintainer.edit"
+                ],
+                "repository": {
+                    "id": 4,
+                    "lastPublicationSuccessful": false,
+                    "name": "testrepo3",
+                    "publicationUri": "http://localhost/repo/testrepo3",
+                    "published": false,
+                    "requiresAuthentication": true,
+                    "technology": "R"
+                },
+                "user": {
+                    "email": "galieleo@ldap.forumsys.com",
+                    "id": 6,
+                    "login": "galieleo",
+                    "name": "Galileo Galilei"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/3"
+                    },
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/6"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/3",
+                        "type": "PATCH"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/3",
+                        "type": "DELETE"
+                    }
+                ]
+            },
+            {
+                "deleted": false,
+                "id": 5,
+                "packageName": "AnaCoDa",
+                "permissions": [
+                    "packageMaintainer.delete.soft",
+                    "packageMaintainer.edit"
+                ],
+                "repository": {
+                    "id": 5,
+                    "lastPublicationSuccessful": false,
+                    "name": "testrepo4",
+                    "publicationUri": "http://localhost/repo/testrepo4",
+                    "published": false,
+                    "requiresAuthentication": true,
+                    "technology": "R"
+                },
+                "user": {
+                    "email": "galieleo@ldap.forumsys.com",
+                    "id": 6,
+                    "login": "galieleo",
+                    "name": "Galileo Galilei"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/5"
+                    },
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/6"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/5",
+                        "type": "PATCH"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/5",
+                        "type": "DELETE"
+                    }
+                ]
+            },
+            {
+                "deleted": null,
+                "id": null,
+                "packageName": "Benchmarking",
+                "permissions": [],
+                "repository": {
+                    "id": 5,
+                    "lastPublicationSuccessful": false,
+                    "name": "testrepo4",
+                    "publicationUri": "http://localhost/repo/testrepo4",
+                    "published": false,
+                    "requiresAuthentication": true,
+                    "technology": "R"
+                },
+                "user": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "links": [
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/4"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    }
+                ]
+            },
+            {
+                "deleted": null,
+                "id": null,
+                "packageName": "arrow",
+                "permissions": [],
+                "repository": {
+                    "id": 5,
+                    "lastPublicationSuccessful": false,
+                    "name": "testrepo4",
+                    "publicationUri": "http://localhost/repo/testrepo4",
+                    "published": false,
+                    "requiresAuthentication": true,
+                    "technology": "R"
+                },
+                "user": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "links": [
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/5"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    }
+                ]
+            },
+            {
+                "deleted": null,
+                "id": null,
+                "packageName": "A3",
+                "permissions": [],
+                "repository": {
+                    "id": 5,
+                    "lastPublicationSuccessful": false,
+                    "name": "testrepo4",
+                    "publicationUri": "http://localhost/repo/testrepo4",
+                    "published": false,
+                    "requiresAuthentication": true,
+                    "technology": "R"
+                },
+                "user": {
+                    "email": "admin@localhost",
+                    "id": 8,
+                    "login": "admin",
+                    "name": "Local Admin User"
+                },
+                "links": [
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/8"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    }
+                ]
+            },
+            {
+                "deleted": null,
+                "id": null,
+                "packageName": "abc",
+                "permissions": [],
+                "repository": {
+                    "id": 5,
+                    "lastPublicationSuccessful": false,
+                    "name": "testrepo4",
+                    "publicationUri": "http://localhost/repo/testrepo4",
+                    "published": false,
+                    "requiresAuthentication": true,
+                    "technology": "R"
+                },
+                "user": {
+                    "email": "admin@localhost",
+                    "id": 8,
+                    "login": "admin",
+                    "name": "Local Admin User"
+                },
+                "links": [
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/8"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    }
+                ]
+            }
+        ],
         "links": [
             {
+                "rel": "first",
+                "href": "http://localhost:8017/api/v2/manager/package-maintainers?technology=R&page=0&size=20&sort=repository.id,asc"
+            },
+            {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers?technology=R&page=0&size=20&sort=repository.id,asc"
+                "href": "http://localhost:8017/api/v2/manager/package-maintainers?technology=R&page=0&size=20&sort=repository.id,asc"
+            },
+            {
+                "rel": "next",
+                "href": "http://localhost:8017/api/v2/manager/package-maintainers?technology=R&page=1&size=20&sort=repository.id,asc"
+            },
+            {
+                "rel": "last",
+                "href": "http://localhost:8017/api/v2/manager/package-maintainers?technology=R&page=1&size=20&sort=repository.id,asc"
             }
         ],
         "page": {
             "number": 0,
             "size": 20,
-            "totalPages": 1,
-            "totalElements": 5
-        },
-        "content": [
-            {
-                "deleted": false,
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/1"
-                    },
-                    {
-                        "rel": "packageMaintainerList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/1",
-                        "type": "PATCH"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/1",
-                        "type": "DELETE"
-                    }
-                ],
-                "id": 1,
-                "packageName": "accrued",
-                "repository": {
-                    "name": "testrepo1",
-                    "lastPublicationSuccessful": true,
-                    "id": 2,
-                    "published": true,
-                    "technology": "R",
-                    "requiresAuthentication": false,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
-                },
-                "user": {
-                    "name": "Galileo Galilei",
-                    "id": 6,
-                    "login": "galieleo",
-                    "email": "galieleo@ldap.forumsys.com"
-                }
-            },
-            {
-                "deleted": true,
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/4"
-                    },
-                    {
-                        "rel": "packageMaintainerList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/4",
-                        "type": "PATCH"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/4",
-                        "type": "DELETE"
-                    }
-                ],
-                "id": 4,
-                "packageName": "bea.R",
-                "repository": {
-                    "name": "testrepo1",
-                    "lastPublicationSuccessful": true,
-                    "id": 2,
-                    "published": true,
-                    "technology": "R",
-                    "requiresAuthentication": false,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
-                },
-                "user": {
-                    "name": "Galileo Galilei",
-                    "id": 6,
-                    "login": "galieleo",
-                    "email": "galieleo@ldap.forumsys.com"
-                }
-            },
-            {
-                "deleted": false,
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/2"
-                    },
-                    {
-                        "rel": "packageMaintainerList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/2",
-                        "type": "PATCH"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/2",
-                        "type": "DELETE"
-                    }
-                ],
-                "id": 2,
-                "packageName": "abc",
-                "repository": {
-                    "name": "testrepo3",
-                    "lastPublicationSuccessful": false,
-                    "id": 4,
-                    "published": false,
-                    "technology": "R",
-                    "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo3"
-                },
-                "user": {
-                    "name": "Galileo Galilei",
-                    "id": 6,
-                    "login": "galieleo",
-                    "email": "galieleo@ldap.forumsys.com"
-                }
-            },
-            {
-                "deleted": false,
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/3"
-                    },
-                    {
-                        "rel": "packageMaintainerList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/3",
-                        "type": "PATCH"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/3",
-                        "type": "DELETE"
-                    }
-                ],
-                "id": 3,
-                "packageName": "A3",
-                "repository": {
-                    "name": "testrepo3",
-                    "lastPublicationSuccessful": false,
-                    "id": 4,
-                    "published": false,
-                    "technology": "R",
-                    "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo3"
-                },
-                "user": {
-                    "name": "Galileo Galilei",
-                    "id": 6,
-                    "login": "galieleo",
-                    "email": "galieleo@ldap.forumsys.com"
-                }
-            },
-            {
-                "deleted": false,
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/5"
-                    },
-                    {
-                        "rel": "packageMaintainerList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/5",
-                        "type": "PATCH"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/5",
-                        "type": "DELETE"
-                    }
-                ],
-                "id": 5,
-                "packageName": "AnaCoDa",
-                "repository": {
-                    "name": "testrepo4",
-                    "lastPublicationSuccessful": false,
-                    "id": 5,
-                    "published": false,
-                    "technology": "R",
-                    "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo4"
-                },
-                "user": {
-                    "name": "Galileo Galilei",
-                    "id": 6,
-                    "login": "galieleo",
-                    "email": "galieleo@ldap.forumsys.com"
-                }
-            }
-        ]
+            "totalElements": 23,
+            "totalPages": 2
+        }
     },
-    "messageCode": "success.request.processed",
     "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
     "status": "SUCCESS"
 }

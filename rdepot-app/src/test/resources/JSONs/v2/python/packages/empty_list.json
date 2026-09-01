@@ -4,7 +4,7 @@
         "links": [
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages?repositoryName=testrepo11&deleted=true&page=0&size=20"
+                "href": "http://localhost:8017/api/v2/manager/python/packages?repositoryName=testrepo11&deleted=true&page=0&size=20"
             }
         ],
         "page": {

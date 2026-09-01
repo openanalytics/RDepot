@@ -3,7 +3,7 @@ api-token:
   issuer: RDepot
   audience:
     - RDepot
-  lifetime: 5
+  lifetime: 60
 
 allowed-origin: http://localhost
 

@@ -171,6 +171,45 @@ public class UserIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    public void getOneUserAsThisUserViaMeEndpoint_withDuplicateEmailAddress() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .urlSuffix("/me")
+                .statusCode(200)
+                .token(DUPLICATE_EMAIL_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/base/user/one_user_duplicate_email.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getOneUserAsThisUserViaMeEndpoint_withRepositoryMaintainerRole() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .urlSuffix("/me")
+                .statusCode(200)
+                .token(REPOSITORYMAINTAINER_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/base/user/one_user_me_repository_maintainer.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getOneUserAsThisUserViaMeEndpoint_withAdminRole() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .urlSuffix("/me")
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/base/user/one_user_me_admin.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
     public void getMaintainedPackagesByTheUser_pagedAndSorted() throws Exception {
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.GET)
@@ -556,6 +595,43 @@ public class UserIntegrationTest extends IntegrationTest {
                 .expectedJsonPath("/v2/base/user/admin_changes_another_admin_role.json")
                 .expectedEventsJson("/v2/base/events/users/admin_changes_another_admin_role_event.json")
                 .body(patch)
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void patchUser_moreAdmins() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .urlSuffix("?role=admin&sort=id,asc")
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/base/user/admin.json")
+                .build();
+        testEndpoint(requestBody);
+
+        final String patch =
+                "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/active\"," + "\"value\":true" + "}" + "]";
+
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.PATCH)
+                .urlSuffix("/8")
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getChangeEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/base/user/activate_admin.json")
+                .body(patch)
+                .build();
+        testEndpoint(requestBody);
+
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .urlSuffix("?role=admin&sort=id,asc")
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/base/user/admins.json")
                 .build();
         testEndpoint(requestBody);
     }

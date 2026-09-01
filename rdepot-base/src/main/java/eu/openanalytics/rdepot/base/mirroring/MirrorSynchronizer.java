@@ -21,145 +21,284 @@
 package eu.openanalytics.rdepot.base.mirroring;
 
 import eu.openanalytics.rdepot.base.config.declarative.DeclarativeConfigurationSource;
-import eu.openanalytics.rdepot.base.entities.PackageSynchronizationStatus;
+import eu.openanalytics.rdepot.base.entities.Hashable;
+import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.Repository;
-import eu.openanalytics.rdepot.base.entities.RepositorySynchronizationStatus;
+import eu.openanalytics.rdepot.base.entities.User;
+import eu.openanalytics.rdepot.base.mediator.BestMaintainerChooser;
+import eu.openanalytics.rdepot.base.messaging.MessageCodes;
+import eu.openanalytics.rdepot.base.mirroring.exceptions.MirrorIndexDownloadException;
+import eu.openanalytics.rdepot.base.mirroring.exceptions.MirrorPackageErrorException;
+import eu.openanalytics.rdepot.base.mirroring.exceptions.MirrorPackageWarningException;
 import eu.openanalytics.rdepot.base.mirroring.pojos.MirroredPackage;
 import eu.openanalytics.rdepot.base.mirroring.pojos.MirroredRepository;
-import eu.openanalytics.rdepot.base.mirroring.pojos.SynchronizationStatus;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import lombok.Getter;
-import org.springframework.scheduling.annotation.Async;
+import eu.openanalytics.rdepot.base.mirroring.pojos.RemotePackage;
+import eu.openanalytics.rdepot.base.service.PackageService;
+import eu.openanalytics.rdepot.base.service.RepositoryService;
+import eu.openanalytics.rdepot.base.storage.LocalStorage;
+import eu.openanalytics.rdepot.base.storage.exceptions.CreateTemporaryFolderException;
+import eu.openanalytics.rdepot.base.storage.exceptions.DeleteFileException;
+import eu.openanalytics.rdepot.base.storage.exceptions.DownloadFileException;
+import eu.openanalytics.rdepot.base.storage.implementations.CommonFSLocalStorage;
+import jakarta.transaction.Transactional;
+import java.io.File;
+import java.nio.file.Path;
+import java.util.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
- * It provides mirroring of external repositories.
- * Packages specified as mirrored will be regularly updated
- * as defined in the configuration file.
+ * Performs mirroring for given repository.
+ * It also retrieves mirrors for given repository
+ * based on declared configuration.
  */
+@Slf4j
 public abstract class MirrorSynchronizer<
-        R extends MirroredRepository<P, M>, P extends MirroredPackage, M extends Mirror<P>> {
+        MP extends MirroredPackage, M extends Mirror<MP>, RP extends RemotePackage, R extends Repository> {
 
-    private final DeclarativeConfigurationSource<R, P, M> declarativeConfigurationSource;
+    protected final MirrorSynchronizationStatusCoordinator mirrorSynchronizationStatusCoordinator;
+    private final PackageService<?> packageService;
+    private final RemotePackageMapper<MP, RP, M> remotePackageMapper;
+    private final DeclarativeConfigurationSource<?, MP, M> declarativeConfigurationSource;
+    private final LocalStorage<?> storage;
+    protected final MessageSource messageSource;
+    protected static final Locale locale = LocaleContextHolder.getLocale();
+    private final BestMaintainerChooser bestMaintainerChooser;
+    private final RepositoryService<R> repositoryService;
 
-    @Getter
-    private final Map<Integer, RepositorySynchronizationStatus> synchronizationStatuses;
-
-    protected MirrorSynchronizer(DeclarativeConfigurationSource<R, P, M> declarativeConfigurationSource) {
-        this.synchronizationStatuses = new HashMap<>();
+    protected MirrorSynchronizer(
+            MirrorSynchronizationStatusCoordinator mirrorSynchronizationStatusCoordinator,
+            PackageService<?> packageService,
+            RemotePackageMapper<MP, RP, M> remotePackageMapper,
+            DeclarativeConfigurationSource<?, MP, M> declarativeConfigurationSource,
+            CommonFSLocalStorage<?> storage,
+            MessageSource messageSource,
+            BestMaintainerChooser bestMaintainerChooser,
+            RepositoryService<R> repositoryService) {
+        this.mirrorSynchronizationStatusCoordinator = mirrorSynchronizationStatusCoordinator;
+        this.packageService = packageService;
+        this.remotePackageMapper = remotePackageMapper;
         this.declarativeConfigurationSource = declarativeConfigurationSource;
-    }
-
-    public RepositorySynchronizationStatus getSynchronizationStatus(int id) {
-        return synchronizationStatuses.get(id);
+        this.storage = storage;
+        this.messageSource = messageSource;
+        this.bestMaintainerChooser = bestMaintainerChooser;
+        this.repositoryService = repositoryService;
     }
 
     /**
-     * Synchronizes a given repository with its external counterpart.
-     * The method is asynchronous, status of synchronization can be obtained
-     * with {@link #getSynchronizationStatusList()} method.
-     * @param repository repository to synchronize
+     * Synchronizes repository with all given mirrors.
+     * This method must *only* be used in an asynchronous context,
+     * that is from a class derived from {@link MirrorSynchronizationCoordinator}.
      */
-    @Async
-    public abstract void synchronizeAsync(R repository, M mirror);
-
-    /**
-     * Fetches mirrors from configuration file for a given repository
-     */
-    public Set<M> findByRepository(Repository repository) {
-        List<R> declaredRepositories = declarativeConfigurationSource.retrieveDeclaredRepositories();
-        Set<M> mirrors = null;
-        for (R declaredRepository : declaredRepositories) {
-            if (declaredRepository.getName().equals(repository.getName())
-                    && declaredRepository.getTechnology().equals(repository.getTechnology())) {
-                mirrors = declaredRepository.getMirrors();
-                break;
+    @Transactional
+    public void synchronizeWithMirrors(R repository, List<M> mirrors) {
+        // This is required to reopen the hibernate session
+        // as this entity's session might have been closed in another thread
+        final R repositoryEntity = repositoryService
+                .findById(repository.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Non-existing repository supplied"));
+        //
+        mirrorSynchronizationStatusCoordinator.createNewStatus(repositoryEntity, mirrors);
+        log.debug("Mirroring started for repository: {}", repositoryEntity.getName());
+        if (mirrors.isEmpty()) {
+            mirrorSynchronizationStatusCoordinator.registerEmptyRepoMirroringFinished(repositoryEntity.getId());
+            log.debug("Mirroring finished for repository: {}", repositoryEntity.getName());
+            return;
+        }
+        for (M mirror : mirrors) {
+            try {
+                synchronizeWithMirror(repositoryEntity, mirror);
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                mirrorSynchronizationStatusCoordinator.registerMirrorMirroringFinishedWithError(mirror, e.getMessage());
             }
         }
-
-        return mirrors != null ? mirrors : new HashSet<>();
+        log.debug("Mirroring finished for repository: {}", repositoryEntity.getName());
     }
 
     /**
-     * Checks if synchronization for a given repository is currently ongoing.
-     * If it is not the previous status will be removed and a new ongoing one will be added.
+     * Fetches all {@link Mirror mirrors} for given repository.
      */
-    protected Boolean isPendingAddNewStatusIfFinished(
-            Repository repository, List<PackageSynchronizationStatus> packages) {
-        synchronized (synchronizationStatuses) {
-            Optional<RepositorySynchronizationStatus> status =
-                    Optional.ofNullable(synchronizationStatuses.get(repository.getId()));
+    public List<M> findByRepository(R repository) {
+        Optional<? extends MirroredRepository<MP, M>> declaredRepositoryOpt =
+                declarativeConfigurationSource.retrieveDeclaredRepositories().stream()
+                        .filter(dr -> dr.getName().equals(repository.getName())
+                                && dr.getTechnology().equals(repository.getTechnology()))
+                        .findFirst();
+        if (declaredRepositoryOpt.isEmpty()) return List.of();
 
-            if (status.isPresent()) {
-                if (status.get().isPending()) {
-                    return true;
-                }
+        final MirroredRepository<MP, M> declaredRepository = declaredRepositoryOpt.get();
+        return declaredRepository.getMirrors().stream().toList();
+    }
 
-                synchronizationStatuses.remove(status.get().getRepository().getId());
+    protected void synchronizeWithMirror(R repository, M mirror) {
+        log.debug("Mirroring started for mirror {} of repository {}", mirror.getUri(), repository.getName());
+        final List<RP> remotePackages;
+        final User uploader;
+        try {
+            uploader = bestMaintainerChooser.findFirstAdmin();
+            remotePackages = getPackageListFromRemoteRepository(mirror, repository);
+            if (mirror.getAllPackages()) {
+                log.debug("Mirroring all packages from mirror: {}\nIndex will be retrieved first.", mirror.getUri());
+                mirror.getPackages()
+                        .addAll(remotePackages.stream()
+                                .map(mp -> remotePackageMapper.convertRemoteToExpected(mp, mirror))
+                                .toList());
+                mirrorSynchronizationStatusCoordinator.recreateStatus(repository, List.of(mirror));
+            }
+        } catch (Exception e) {
+            mirrorSynchronizationStatusCoordinator.registerMirrorMirroringFinishedWithError(mirror, e.getMessage());
+            log.error(e.getMessage(), e);
+            return;
+        }
+
+        List<MP> expectedPackages = mirror.getPackages();
+        final Map<MP, RP> mirroredPackagesToRemoteMapping =
+                remotePackageMapper.mapExpectedToRemoteAndRegisterUnmapped(expectedPackages, remotePackages);
+        expectedPackages = new ArrayList<>(mirroredPackagesToRemoteMapping.keySet()); // to exclude unmapped
+
+        if (expectedPackages.isEmpty()) {
+            mirrorSynchronizationStatusCoordinator.registerEmptyMirrorMirroringFinished(mirror);
+            return;
+        }
+        for (MP expectedPackage : expectedPackages) {
+            log.debug(
+                    "Mirroring package: {} (version: {}, mirror: {})",
+                    expectedPackage.getName(),
+                    expectedPackage.getVersion(),
+                    mirror.getUri());
+            final Optional<? extends Package> localPackage;
+
+            if (expectedPackage.getVersion() == null) {
+                localPackage = findNonDeletedNewestByNameAndRepository(expectedPackage.getName(), repository);
+            } else {
+                localPackage = findNonDeletedByNameAndVersionAndRepository(
+                        expectedPackage.getName(), expectedPackage.getVersion(), repository);
             }
 
-            RepositorySynchronizationStatus newStatus = new RepositorySynchronizationStatus();
-            newStatus.setRepository(repository);
-            newStatus.setTimestamp(new Date());
-            newStatus.setPending(true);
-            newStatus.setTechnology(repository.getTechnology());
-            newStatus.setPackages(packages);
+            try {
+                final RP remotePackage = mirroredPackagesToRemoteMapping.get(expectedPackage);
+                if (localPackage.isEmpty()) {
+                    downloadAndUploadPackage(remotePackage, expectedPackage, mirror, repository, false, uploader);
+                } else if (!areChecksumsEqual(localPackage.get(), remotePackage)) {
+                    downloadAndUploadPackage(remotePackage, expectedPackage, mirror, repository, true, uploader);
+                }
+                log.debug(
+                        "Package mirrored successfully: {} (version: {}, mirror: {})",
+                        expectedPackage.getName(),
+                        expectedPackage.getVersion(),
+                        mirror.getUri());
+                mirrorSynchronizationStatusCoordinator.registerPackageMirroringFinishedWithSuccess(expectedPackage);
+            } catch (MirrorPackageWarningException w) {
+                log.warn(w.getMessage(), w);
 
-            synchronizationStatuses.put(repository.getId(), newStatus);
+                mirrorSynchronizationStatusCoordinator.registerPackageMirroringFinishedWithWarning(
+                        expectedPackage, w.getMessage());
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                mirrorSynchronizationStatusCoordinator.registerPackageMirroringFinishedWithError(
+                        expectedPackage, e.getMessage());
+            }
+        }
+    }
 
+    protected Optional<? extends Package> findNonDeletedNewestByNameAndRepository(String name, R repository) {
+        return packageService.findNonDeletedNewestByNameAndRepository(name, repository);
+    }
+
+    protected Optional<? extends Package> findNonDeletedByNameAndVersionAndRepository(
+            String name, String version, R repository) {
+        return packageService.findNonDeletedByNameAndVersionAndRepository(name, version, repository);
+    }
+
+    /**
+     * Returns all packages present in the index of remote repository.
+     * It does not necessarily have to return all available packages,
+     * as for example for CRAN, the archived packages are usually
+     * not present in the PACKAGES file.
+     */
+    protected abstract List<RP> getPackageListFromRemoteRepository(M mirror, R repository)
+            throws MirrorIndexDownloadException;
+
+    /**
+     * Compares checksum of remote and local package.
+     * Used to determine if it is even needed to mirror a package.
+     */
+    protected boolean areChecksumsEqual(Hashable localPackage, Hashable remotePackage) {
+        if (!localPackage.getHashMethod().equals(remotePackage.getHashMethod())) {
+            log.warn(
+                    "Could not compare hashes since different hash methods "
+                            + "were used for local package {} than for remote package {}. "
+                            + "Package will be reuploaded.",
+                    localPackage,
+                    remotePackage);
             return false;
         }
+
+        return localPackage.getHash().equals(remotePackage.getHash());
     }
 
     /**
-     * Register synchronization error for a given package in a given repository.
+     * Downloads a remote package, stores it in temporary directory and attempts to upload
+     * using the {@link #uploadPackage(MultipartFile, Mirror, MirroredPackage, Repository, boolean, User)}
+     * method.
+     * After that it removes the temporary directory.
      */
-    protected void registerPackageSynchronizationStatus(
-            Repository repository,
-            String packageName,
-            String packageVersion,
-            M mirror,
-            SynchronizationStatus status,
-            String error) {
-        synchronized (synchronizationStatuses) {
-            synchronizationStatuses.get(repository.getId()).getPackages().stream()
-                    .filter(p -> p.equals(packageName, packageVersion, mirror))
-                    .findFirst()
-                    .ifPresent(ps -> {
-                        ps.setStatus(status);
-                        ps.setError(error);
-                    });
-        }
-    }
+    protected void downloadAndUploadPackage(
+            RP remotePackage, MP mirroredPackage, M mirror, R repository, boolean isReplaced, User uploader)
+            throws MirrorPackageErrorException, MirrorPackageWarningException {
+        final String name = remotePackage.getName();
+        final String version = remotePackage.getVersion();
 
-    /**
-     * Register synchronization status for a given repository.
-     */
-    protected void registerRepositorySynchronizationStatus(Repository repository, SynchronizationStatus status) {
-        synchronized (synchronizationStatuses) {
-            RepositorySynchronizationStatus repoStatus = synchronizationStatuses.get(repository.getId());
+        File remotePackageDir = null;
+        try {
+            remotePackageDir = storage.createTemporaryFolder(name + "_" + version);
+            final File downloadDestination =
+                    new File(remotePackageDir.toPath() + "/" + getFilenameForRemotePackage(remotePackage));
+            final String downloadUrl = getUrlForRemotePackage(mirror, remotePackage);
+            log.debug("Downloading package from: {}", downloadUrl);
+            MultipartFile downloadedFile = storage.downloadFile(downloadUrl, downloadDestination);
 
-            if (repoStatus.getStatus() == SynchronizationStatus.PENDING) {
-                repoStatus.setStatus(status);
-            } else if (!repoStatus.getStatus().equals(status)) {
-                repoStatus.setStatus(SynchronizationStatus.MIXED);
+            log.debug(
+                    "Uploading package {} to repository {}",
+                    downloadedFile.getOriginalFilename(),
+                    repository.getName());
+            uploadPackage(downloadedFile, mirror, mirroredPackage, repository, isReplaced, uploader);
+        } catch (CreateTemporaryFolderException | DownloadFileException e) {
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
+            throw new MirrorPackageErrorException(remotePackage.getName(), remotePackage.getVersion());
+        } finally {
+            try {
+                if (remotePackageDir != null) storage.removeFileIfExists(remotePackageDir.getAbsolutePath());
+            } catch (DeleteFileException e) {
+                logTempDirDeleteError(remotePackageDir.toPath().toAbsolutePath());
             }
         }
     }
 
+    protected abstract void uploadPackage(
+            MultipartFile multipartFile, M mirror, MP mirroredPackage, R repository, boolean isReplaced, User uploader)
+            throws MirrorPackageErrorException, MirrorPackageWarningException;
+
     /**
-     * Registers the fact that synchronization is finished.
-     * This method has to be triggered after finished synchronization.
+     * Provides the URL where the package to mirror can be found
+     * in the remote repository.
+     * It should be a string with full URL (including the top-level domain, etc.).
      */
-    protected void registerFinishedSynchronization(Repository repository) {
-        synchronized (synchronizationStatuses) {
-            if (synchronizationStatuses.get(repository.getId()) != null)
-                synchronizationStatuses.get(repository.getId()).setPending(false);
-        }
+    protected abstract String getUrlForRemotePackage(M mirror, RP remotePackage);
+
+    /**
+     * Remote packages usually have certain naming conventions.
+     * This returns the proper filename for such a package.
+     */
+    protected abstract String getFilenameForRemotePackage(RP remotePackage);
+
+    protected void logTempDirDeleteError(Path path) {
+        log.error(
+                "{}\nLocation: {}",
+                messageSource.getMessage(MessageCodes.ERROR_CLEAN_FS, null, MessageCodes.ERROR_CLEAN_FS, locale),
+                path);
     }
 }

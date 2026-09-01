@@ -28,12 +28,7 @@ import eu.openanalytics.rdepot.base.api.v2.dtos.MaintainedPackageDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.ResponseDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.RoleDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.UserDto;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.ApiException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.ApplyPatchException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.MalformedPatchException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.UnrecognizedQueryParameterException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.UserNotAuthorized;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.UserNotFound;
+import eu.openanalytics.rdepot.base.api.v2.exceptions.*;
 import eu.openanalytics.rdepot.base.api.v2.hateoas.MaintainedPackageAssembler;
 import eu.openanalytics.rdepot.base.api.v2.hateoas.RoleCollectionModelAssembler;
 import eu.openanalytics.rdepot.base.api.v2.hateoas.UserModelAssembler;
@@ -81,15 +76,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * REST Controller implementation for user management.
@@ -113,6 +100,7 @@ public class ApiV2UserController extends ApiV2Controller<User, UserDto> {
     private final MaintainedPackageAssembler maintainedPackageAssembler;
     private final ViewPageableValidator viewPageableValidator;
     private final PackagePageableSortResolver packagePageableSortResolver;
+    private final UserModelAssembler userModelAssembler;
 
     public ApiV2UserController(
             MessageSource messageSource,
@@ -134,7 +122,8 @@ public class ApiV2UserController extends ApiV2Controller<User, UserDto> {
             PagedResourcesAssembler<MaintainedPackageDto> maintainedPackagesPagedModelAssembler,
             MaintainedPackageAssembler maintainedPackageAssembler,
             ViewPageableValidator viewPageableValidator,
-            PackagePageableSortResolver packagePageableSortResolver) {
+            PackagePageableSortResolver packagePageableSortResolver,
+            UserModelAssembler userModelAssembler) {
 
         super(
                 messageSource,
@@ -160,6 +149,7 @@ public class ApiV2UserController extends ApiV2Controller<User, UserDto> {
         this.packagePageableSortResolver = packagePageableSortResolver;
         this.maintainedPackageAssembler = maintainedPackageAssembler;
         this.viewPageableValidator = viewPageableValidator;
+        this.userModelAssembler = userModelAssembler;
     }
 
     /**
@@ -249,13 +239,19 @@ public class ApiV2UserController extends ApiV2Controller<User, UserDto> {
     @Operation(operationId = "getUserInfo")
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody ResponseEntity<ResponseDto<EntityModel<UserDto>>> getUser(Principal principal)
-            throws UserNotFound, UserNotAuthorized {
+            throws UserNotAuthorized {
         User requester = userService
                 .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
         UserSettings settings = userSettingsService.getUserSettings(requester);
         requester.setUserSettings(settings);
-        return handleSuccessForSingleEntity(requester, requester);
+        return handleSuccessForMeEntity(requester);
+    }
+
+    private @ResponseBody ResponseEntity<ResponseDto<EntityModel<UserDto>>> handleSuccessForMeEntity(User user) {
+        final EntityModel<UserDto> model = userModelAssembler.toModelForMeEndpoint(user);
+
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseDto.generateSuccessBody(messageSource, locale, model));
     }
 
     /**
@@ -344,7 +340,8 @@ public class ApiV2UserController extends ApiV2Controller<User, UserDto> {
         } catch (JsonException | JsonProcessingException | EntityResolutionException e) {
             throw new MalformedPatchException(messageSource, locale, e);
         } catch (StrategyFailure e) {
-            if (e.getReason() instanceof NoAdminLeftException) return handleValidationError(e.getReason());
+            if (e.getReason() instanceof NoAdminLeftException || e.getReason() instanceof UserDeletionException)
+                return handleValidationError(e.getReason());
             throw new ApplyPatchException(messageSource, locale);
         }
 

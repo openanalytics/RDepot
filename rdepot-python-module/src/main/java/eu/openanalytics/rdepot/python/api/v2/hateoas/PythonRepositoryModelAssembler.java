@@ -79,4 +79,12 @@ public class PythonRepositoryModelAssembler
     protected Class<?> getExtensionControllerClass(PythonRepository entity) {
         return PythonRepositoryController.class;
     }
+
+    @Override
+    public EntityModel<PythonRepositoryDto> toModel(PythonRepository entity, User user) {
+        PythonRepositoryDto dto = dtoConverter.convertEntityToDto(entity);
+        dto.setPermissions(securityMediator.getPermissions(entity, user));
+
+        return EntityModel.of(dto, generateRoleBasedAvailableLinksForEntity(entity, user));
+    }
 }

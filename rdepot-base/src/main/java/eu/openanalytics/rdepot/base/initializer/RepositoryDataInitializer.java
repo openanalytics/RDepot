@@ -25,7 +25,7 @@ import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.mediator.deletion.RepositoryDeleter;
 import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
 import eu.openanalytics.rdepot.base.mirroring.Mirror;
-import eu.openanalytics.rdepot.base.mirroring.MirrorSynchronizer;
+import eu.openanalytics.rdepot.base.mirroring.MirrorSynchronizationCoordinator;
 import eu.openanalytics.rdepot.base.mirroring.pojos.MirroredPackage;
 import eu.openanalytics.rdepot.base.mirroring.pojos.MirroredRepository;
 import eu.openanalytics.rdepot.base.runnable.SynchronizeMirrorTask;
@@ -56,7 +56,7 @@ public abstract class RepositoryDataInitializer<
     private final RepositoryValidator<E> repositoryValidator;
     private final RepositoryDeleter<E, ?> repositoryDeleter;
     private final ThreadPoolTaskScheduler taskScheduler;
-    private final MirrorSynchronizer<R, P, M> mirrorService;
+    private final MirrorSynchronizationCoordinator<P, M, E> mirrorSynchronizationCoordinator;
     private final DeclarativeConfigurationSource<R, P, M> declarativeConfigurationSource;
     private final Technology technology;
 
@@ -123,14 +123,14 @@ public abstract class RepositoryDataInitializer<
                 if (newRepository.getPublished() == null) {
                     newRepository.setPublished(true);
                 }
-                validateNewRepository(newRepository);
+                validateAndCreateNewRepository(newRepository);
             }
         }
         // return the remaining (i.e. undeclared) repositories
         return remainingRepositories;
     }
 
-    private void validateNewRepository(E newRepository) {
+    private void validateAndCreateNewRepository(E newRepository) {
         BindException bindException = new BindException(newRepository, newRepository.getName());
         repositoryValidator.validate(newRepository, bindException);
 
@@ -155,6 +155,14 @@ public abstract class RepositoryDataInitializer<
     protected void scheduleMirroring(List<R> repositories) {
         log.info("Scheduling mirroring for declared repositories...");
         for (R declaredRepository : repositories) {
+            final Optional<E> repositoryOpt = repositoryService.findByName(declaredRepository.getName());
+
+            if (repositoryOpt.isEmpty()) {
+                log.error("Could not find repository \"{}\" to schedule for mirroring.", declaredRepository.getName());
+                continue;
+            }
+            final E repositoryEntity = repositoryOpt.get();
+
             for (M mirror : declaredRepository.getMirrors()) {
                 if (mirror.getSyncInterval().isEmpty()) continue;
                 log.info(
@@ -164,7 +172,8 @@ public abstract class RepositoryDataInitializer<
 
                 CronTrigger cronTrigger = new CronTrigger(mirror.getSyncInterval());
                 taskScheduler.schedule(
-                        new SynchronizeMirrorTask<>(mirrorService, declaredRepository, mirror), cronTrigger);
+                        new SynchronizeMirrorTask<>(mirrorSynchronizationCoordinator, repositoryEntity, mirror),
+                        cronTrigger);
             }
         }
         log.info("Mirroring scheduled for all repositories.");

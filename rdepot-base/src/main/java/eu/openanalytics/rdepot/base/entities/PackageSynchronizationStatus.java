@@ -25,28 +25,36 @@ import eu.openanalytics.rdepot.base.mirroring.Mirror;
 import eu.openanalytics.rdepot.base.mirroring.pojos.MirroredPackage;
 import eu.openanalytics.rdepot.base.mirroring.pojos.SynchronizationStatus;
 import java.util.Objects;
+import java.util.Set;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
-public class PackageSynchronizationStatus {
+public class PackageSynchronizationStatus extends SynchronizationStatus {
 
-    private String name;
-    private String version;
-    private SynchronizationStatus status = SynchronizationStatus.PENDING;
-    private String error;
-    private Mirror<?> mirror;
+    private final MirroredPackage mirroredPackage;
+
+    private final Mirror<?> mirror;
+
+    private final MirrorSynchronizationStatus mirrorSynchronizationStatus;
 
     @JsonGetter("status")
     public String getStatusForJson() {
         return this.status.getStatus();
     }
 
-    public PackageSynchronizationStatus(MirroredPackage packageBag, Mirror<?> mirror) {
-        this.name = packageBag.getName();
-        this.version = packageBag.getVersion();
-        this.mirror = mirror;
+    public String getName() {
+        return mirroredPackage.getName();
+    }
+
+    public String getVersion() {
+        return mirroredPackage.getVersion();
+    }
+
+    public PackageSynchronizationStatus(
+            MirroredPackage packageBag, MirrorSynchronizationStatus mirrorSynchronizationStatus) {
+        this.mirroredPackage = packageBag;
+        this.mirror = mirrorSynchronizationStatus.getMirror();
+        this.mirrorSynchronizationStatus = mirrorSynchronizationStatus;
     }
 
     public boolean equals(String packageName, String packageVersion, Mirror<?> mirror) {
@@ -55,5 +63,10 @@ public class PackageSynchronizationStatus {
                 && this.getMirror().getName().equals(mirror.getName())
                 && this.getMirror().getType().equals(mirror.getType())
                 && this.getMirror().getUri().equals(mirror.getUri());
+    }
+
+    @Override
+    public Set<SynchronizationStatus> getChildren() {
+        return Set.of();
     }
 }

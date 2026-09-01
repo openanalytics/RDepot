@@ -20,15 +20,22 @@
  */
 package eu.openanalytics.rdepot.python.mirroring;
 
+import eu.openanalytics.rdepot.base.entities.enums.HashMethod;
 import eu.openanalytics.rdepot.base.mirroring.Mirror;
 import eu.openanalytics.rdepot.python.mirroring.pojos.MirroredPythonPackage;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
+@Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class PypiMirror extends Mirror<MirroredPythonPackage> {
+
+    private HashMethod hashMethod;
 
     @Override
     public void setPackages(List<MirroredPythonPackage> packages) {

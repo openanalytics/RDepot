@@ -25,6 +25,6 @@ import java.util.Objects;
 
 public class RPackageAnchorPropertiesAdder {
     public static String addPackageAnchorProperties(String sourceAnchor, RPackage packageBag) {
-        return sourceAnchor.replace("$package_maintainer", Objects.toString(packageBag.getMaintainer()));
+        return sourceAnchor.replace("$package_maintainer", Objects.toString(packageBag.getMaintainer(), "N/A"));
     }
 }

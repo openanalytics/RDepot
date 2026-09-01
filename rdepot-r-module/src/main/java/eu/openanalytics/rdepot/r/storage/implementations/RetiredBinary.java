@@ -20,7 +20,7 @@
  */
 package eu.openanalytics.rdepot.r.storage.implementations;
 
-import eu.openanalytics.rdepot.r.storage.BinLocation;
+import eu.openanalytics.rdepot.r.storage.binaries.BinLocation;
 import eu.openanalytics.rdepot.r.storage.population.PopulatedRPackage;
 
 public record RetiredBinary(

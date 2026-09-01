@@ -21,6 +21,7 @@
 package eu.openanalytics.rdepot.base.strategy;
 
 import eu.openanalytics.rdepot.base.entities.Resource;
+import eu.openanalytics.rdepot.base.strategy.exceptions.NonFatalStrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,12 +34,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class TransactionalStrategyExecutor {
 
-    @Transactional(rollbackFor = StrategyFailure.class)
+    @Transactional(noRollbackFor = NonFatalStrategyFailure.class)
     public <T extends Resource> T perform(Strategy<T> strategy) throws StrategyFailure {
         return strategy.perform();
     }
 
-    @Transactional(rollbackFor = StrategyFailure.class)
+    @Transactional(noRollbackFor = NonFatalStrategyFailure.class)
     public <T extends Resource> void postStrategy(Strategy<T> strategy) throws StrategyFailure {
         strategy.postStrategy();
     }

@@ -33,6 +33,7 @@ import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
+import eu.openanalytics.rdepot.base.storage.LocalStorage;
 import eu.openanalytics.rdepot.base.storage.exceptions.ExtractFileException;
 import eu.openanalytics.rdepot.base.storage.exceptions.WriteToWaitingRoomException;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
@@ -42,9 +43,12 @@ import eu.openanalytics.rdepot.base.validation.PackageValidator;
 import eu.openanalytics.rdepot.r.api.v2.dtos.RPackageUploadRequest;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
+import eu.openanalytics.rdepot.r.manuals.ManualGenerator;
 import eu.openanalytics.rdepot.r.services.RRepositoryService;
 import eu.openanalytics.rdepot.r.storage.exceptions.ReadRPackageDescriptionException;
-import eu.openanalytics.rdepot.r.storage.implementations.RLocalStorage;
+import eu.openanalytics.rdepot.r.storage.implementations.RLocalFSPersistentStorage;
+import eu.openanalytics.rdepot.r.storage.population.implementations.LocalVignetteReader;
+import eu.openanalytics.rdepot.r.storage.population.implementations.LocalVignetteUploader;
 import eu.openanalytics.rdepot.r.storage.population.implementations.RLocalPopulator;
 import eu.openanalytics.rdepot.r.strategy.upload.RPackageUploadStrategy;
 import eu.openanalytics.rdepot.r.technology.RLanguage;
@@ -53,6 +57,7 @@ import eu.openanalytics.rdepot.test.fixture.UserTestFixture;
 import eu.openanalytics.rdepot.test.strategy.StrategyTest;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.stubbing.Answer;
@@ -67,7 +72,7 @@ public class RUploadStrategyTest extends StrategyTest {
     private PackageValidator<RPackage> packageValidator;
 
     @Mock
-    private RLocalStorage storage;
+    private LocalStorage<RPackage> localStorage;
 
     @Mock
     private NewsfeedEventService eventService;
@@ -86,6 +91,18 @@ public class RUploadStrategyTest extends StrategyTest {
 
     @Mock
     private RLocalPopulator rLocalPopulator;
+
+    @Mock
+    private ManualGenerator manualGenerator;
+
+    @Mock
+    private RLocalFSPersistentStorage persistentRStorage;
+
+    @Mock
+    private LocalVignetteReader localVignetteReader;
+
+    @Mock
+    private LocalVignetteUploader localVignetteUploader;
 
     private final String TEST_PACKAGE_PATH = "src/test/resources/unit/test_packages/abc_1.3.tar.gz";
     private final String TEST_PACKAGE_EXTRACTED = "src/test/resources/unit/test_packages/extracted/abc/";
@@ -106,16 +123,22 @@ public class RUploadStrategyTest extends StrategyTest {
         MockMultipartFile multipartFile = new MockMultipartFile(
                 TEST_PACKAGE_FILENAME, TEST_PACKAGE_FILENAME, TEST_PACKAGE_CONTENTTYPE, packageBytes);
         File uploadedFile = new File(TEST_PACKAGE_PATH);
-        File extracted = new File(TEST_PACKAGE_EXTRACTED);
+        File extracted =
+                new File(TEST_PACKAGE_EXTRACTED).toPath().toAbsolutePath().toFile();
         boolean generateManual = true;
         boolean replace = false;
 
         RPackageUploadRequest request = new RPackageUploadRequest(
                 multipartFile, repository, generateManual, replace, false, null, null, null, "");
 
-        when(rLocalPopulator.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
-        when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath())).thenReturn(extracted.getAbsolutePath());
-        when(rLocalPopulator.getPropertiesFromExtractedFile(extracted.getAbsolutePath()))
+        when(rLocalPopulator.writeToTemporaryLocalWaitingRoom(multipartFile, repository))
+                .thenReturn(uploadedFile);
+        when(persistentRStorage.storeNewPackage(
+                        uploadedFile.getAbsoluteFile(), List.of(extracted.getAbsoluteFile()), repository))
+                .thenReturn(uploadedFile.toPath());
+        when(localStorage.extractTarGzPackageFile(uploadedFile.getAbsoluteFile()))
+                .thenReturn(extracted.getAbsolutePath());
+        when(rLocalPopulator.getPropertiesFromExtractedFile(List.of(extracted.getAbsoluteFile())))
                 .thenReturn(new PropertiesParser(new File(TEST_PACKAGE_EXTRACTED + "/DESCRIPTION")));
         doAnswer((Answer<Submission>) invocation -> {
                     Submission submission = invocation.getArgument(0);
@@ -124,8 +147,8 @@ public class RUploadStrategyTest extends StrategyTest {
                 })
                 .when(submissionService)
                 .create(any());
-        when(rLocalPopulator.moveToMainDirectory(any())).thenReturn(uploadedFile.getAbsolutePath());
         when(bestMaintainerChooser.chooseBestPackageMaintainer(any())).thenReturn(requester);
+        when(persistentRStorage.movePackageToAccepted(any())).thenReturn(uploadedFile.toPath());
         when(securityMediator.canUpload("abc", repository, requester)).thenReturn(true);
         doAnswer((Answer<RPackage>) invocation -> {
                     RPackage packageBag = invocation.getArgument(0);
@@ -188,16 +211,22 @@ public class RUploadStrategyTest extends StrategyTest {
         MockMultipartFile multipartFile = new MockMultipartFile(
                 TEST_PACKAGE_FILENAME, TEST_PACKAGE_FILENAME, TEST_PACKAGE_CONTENTTYPE, packageBytes);
         File uploadedFile = new File(TEST_PACKAGE_PATH);
-        File extracted = new File(TEST_PACKAGE_EXTRACTED);
+        File extracted =
+                new File(TEST_PACKAGE_EXTRACTED).toPath().toAbsolutePath().toFile();
         boolean generateManual = true;
         boolean replace = false;
 
         RPackageUploadRequest request = new RPackageUploadRequest(
                 multipartFile, repository, generateManual, replace, false, null, null, null, "");
 
-        when(rLocalPopulator.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
-        when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath())).thenReturn(extracted.getAbsolutePath());
-        when(rLocalPopulator.getPropertiesFromExtractedFile(extracted.getAbsolutePath()))
+        when(rLocalPopulator.writeToTemporaryLocalWaitingRoom(multipartFile, repository))
+                .thenReturn(uploadedFile);
+        when(localStorage.extractTarGzPackageFile(uploadedFile.getAbsoluteFile()))
+                .thenReturn(extracted.getAbsolutePath());
+        when(persistentRStorage.storeNewPackage(
+                        uploadedFile.getAbsoluteFile(), List.of(extracted.getAbsoluteFile()), repository))
+                .thenReturn(uploadedFile.toPath());
+        when(rLocalPopulator.getPropertiesFromExtractedFile(List.of(extracted.getAbsoluteFile())))
                 .thenReturn(new PropertiesParser(new File(TEST_PACKAGE_EXTRACTED + "/DESCRIPTION")));
         when(bestMaintainerChooser.chooseBestPackageMaintainer(any())).thenReturn(requester);
         doThrow(IllegalStateException.class).when(packageService).create(any());
@@ -213,7 +242,7 @@ public class RUploadStrategyTest extends StrategyTest {
                 submissionService,
                 packageValidator,
                 repositoryService,
-                storage,
+                localStorage,
                 packageService,
                 emailService,
                 bestMaintainerChooser,
@@ -222,15 +251,19 @@ public class RUploadStrategyTest extends StrategyTest {
                 rLocalPopulator,
                 rPackageDeleter,
                 request,
-                maintainerService);
+                maintainerService,
+                manualGenerator,
+                persistentRStorage,
+                localVignetteUploader,
+                localVignetteReader);
 
         assertThrows(
                 IllegalStateException.class,
                 strategy::perform,
                 "Unchecked exceptions should be rethrown by strategies.");
 
-        verify(storage).removeFileIfExists(extracted.getAbsolutePath());
-        verify(storage).removeFileIfExists(uploadedFile.getAbsolutePath());
+        verify(persistentRStorage, times(1))
+                .deleteFromStorageIfExists(uploadedFile.toPath().getParent());
     }
 
     @SuppressWarnings("unchecked")
@@ -246,16 +279,22 @@ public class RUploadStrategyTest extends StrategyTest {
         MockMultipartFile multipartFile = new MockMultipartFile(
                 TEST_PACKAGE_FILENAME, TEST_PACKAGE_FILENAME, TEST_PACKAGE_CONTENTTYPE, packageBytes);
         File uploadedFile = new File(TEST_PACKAGE_PATH);
-        File extracted = new File(TEST_PACKAGE_EXTRACTED);
+        File extracted =
+                new File(TEST_PACKAGE_EXTRACTED).toPath().toAbsolutePath().toFile();
         boolean generateManual = true;
         boolean replace = false;
 
         RPackageUploadRequest request = new RPackageUploadRequest(
                 multipartFile, repository, generateManual, replace, false, null, null, null, "");
 
-        when(rLocalPopulator.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
-        when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath())).thenReturn(extracted.getAbsolutePath());
-        when(rLocalPopulator.getPropertiesFromExtractedFile(extracted.getAbsolutePath()))
+        when(rLocalPopulator.writeToTemporaryLocalWaitingRoom(multipartFile, repository))
+                .thenReturn(uploadedFile);
+        when(localStorage.extractTarGzPackageFile(uploadedFile.getAbsoluteFile()))
+                .thenReturn(extracted.getAbsolutePath());
+        when(persistentRStorage.storeNewPackage(
+                        uploadedFile.getAbsoluteFile(), List.of(extracted.getAbsoluteFile()), repository))
+                .thenReturn(uploadedFile.toPath());
+        when(rLocalPopulator.getPropertiesFromExtractedFile(List.of(extracted.getAbsoluteFile())))
                 .thenReturn(new PropertiesParser(new File(TEST_PACKAGE_EXTRACTED + "/DESCRIPTION")));
         doAnswer((Answer<Submission>) invocation -> {
                     Submission submission = invocation.getArgument(0);
@@ -292,7 +331,7 @@ public class RUploadStrategyTest extends StrategyTest {
                 submissionService,
                 packageValidator,
                 repositoryService,
-                storage,
+                localStorage,
                 packageService,
                 emailService,
                 bestMaintainerChooser,
@@ -301,7 +340,11 @@ public class RUploadStrategyTest extends StrategyTest {
                 rLocalPopulator,
                 rPackageDeleter,
                 request,
-                maintainerService);
+                maintainerService,
+                manualGenerator,
+                persistentRStorage,
+                localVignetteUploader,
+                localVignetteReader);
         return strategy.perform();
     }
 
@@ -322,7 +365,9 @@ public class RUploadStrategyTest extends StrategyTest {
         RPackageUploadRequest request = new RPackageUploadRequest(
                 multipartFile, repository, generateManual, replace, false, null, null, null, "");
 
-        doThrow(new WriteToWaitingRoomException()).when(rLocalPopulator).writeToWaitingRoom(multipartFile, repository);
+        doThrow(new WriteToWaitingRoomException())
+                .when(rLocalPopulator)
+                .writeToTemporaryLocalWaitingRoom(multipartFile, repository);
 
         Strategy<Submission> strategy = new RPackageUploadStrategy(
                 request,
@@ -331,7 +376,7 @@ public class RUploadStrategyTest extends StrategyTest {
                 submissionService,
                 packageValidator,
                 repositoryService,
-                storage,
+                localStorage,
                 packageService,
                 emailService,
                 bestMaintainerChooser,
@@ -340,12 +385,16 @@ public class RUploadStrategyTest extends StrategyTest {
                 rLocalPopulator,
                 rPackageDeleter,
                 request,
-                maintainerService);
+                maintainerService,
+                manualGenerator,
+                persistentRStorage,
+                localVignetteUploader,
+                localVignetteReader);
 
         assertThrows(
                 StrategyFailure.class,
                 strategy::perform,
-                "Exception should be thrown when storage fails to " + "write package to the waiting room.");
+                "Exception should be thrown when localStorage fails to " + "write package to the waiting room.");
     }
 
     @Test
@@ -366,9 +415,10 @@ public class RUploadStrategyTest extends StrategyTest {
         RPackageUploadRequest request = new RPackageUploadRequest(
                 multipartFile, repository, generateManual, replace, false, null, null, null, "");
 
-        when(rLocalPopulator.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
-        doThrow(new ExtractFileException()).when(storage).extractTarGzPackageFile(uploadedFile.getAbsolutePath());
-        doNothing().when(storage).removeFileIfExists(uploadedFile.getAbsolutePath());
+        when(rLocalPopulator.writeToTemporaryLocalWaitingRoom(multipartFile, repository))
+                .thenReturn(uploadedFile.getAbsoluteFile());
+        doThrow(new ExtractFileException()).when(localStorage).extractTarGzPackageFile(uploadedFile.getAbsoluteFile());
+        doNothing().when(rLocalPopulator).removeTemporaryLocalWaitingRoomOfFile(uploadedFile.getAbsoluteFile());
 
         Strategy<Submission> strategy = new RPackageUploadStrategy(
                 request,
@@ -377,7 +427,7 @@ public class RUploadStrategyTest extends StrategyTest {
                 submissionService,
                 packageValidator,
                 repositoryService,
-                storage,
+                localStorage,
                 packageService,
                 emailService,
                 bestMaintainerChooser,
@@ -386,11 +436,18 @@ public class RUploadStrategyTest extends StrategyTest {
                 rLocalPopulator,
                 rPackageDeleter,
                 request,
-                maintainerService);
+                maintainerService,
+                manualGenerator,
+                persistentRStorage,
+                localVignetteUploader,
+                localVignetteReader);
 
         assertThrows(
                 StrategyFailure.class, strategy::perform, "Exception should be thrown when package extraction fails.");
-        verify(storage, times(1)).removeFileIfExists(uploadedFile.getAbsolutePath());
+        verify(rLocalPopulator, times(1)).removeTemporaryLocalWaitingRoomOfFile(uploadedFile.getAbsoluteFile());
+        verify(persistentRStorage, times(0))
+                .deleteFromStorageIfExists(
+                        uploadedFile.getAbsoluteFile().toPath().getParent());
     }
 
     @Test
@@ -405,20 +462,29 @@ public class RUploadStrategyTest extends StrategyTest {
         MockMultipartFile multipartFile = new MockMultipartFile(
                 TEST_PACKAGE_FILENAME, TEST_PACKAGE_FILENAME, TEST_PACKAGE_CONTENTTYPE, packageBytes);
         File uploadedFile = new File(TEST_PACKAGE_PATH);
-        File extracted = new File(TEST_PACKAGE_EXTRACTED);
+        File extracted =
+                new File(TEST_PACKAGE_EXTRACTED).toPath().toAbsolutePath().toFile();
         boolean generateManual = true;
         boolean replace = false;
 
         RPackageUploadRequest request = new RPackageUploadRequest(
                 multipartFile, repository, generateManual, replace, false, null, null, null, "");
 
-        when(rLocalPopulator.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
-        when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath())).thenReturn(extracted.getAbsolutePath());
+        when(persistentRStorage.storeNewPackage(
+                        uploadedFile.getAbsoluteFile(), List.of(extracted.getAbsoluteFile()), repository))
+                .thenReturn(uploadedFile.getAbsoluteFile().toPath());
+        when(rLocalPopulator.writeToTemporaryLocalWaitingRoom(multipartFile, repository))
+                .thenReturn(uploadedFile.getAbsoluteFile());
+        when(localStorage.extractTarGzPackageFile(uploadedFile.getAbsoluteFile()))
+                .thenReturn(extracted.getAbsoluteFile().getAbsolutePath());
         doThrow(new ReadRPackageDescriptionException())
                 .when(rLocalPopulator)
-                .getPropertiesFromExtractedFile(extracted.getAbsolutePath());
-        doNothing().when(storage).removeFileIfExists(uploadedFile.getAbsolutePath());
-        doNothing().when(storage).removeFileIfExists(extracted.getAbsolutePath());
+                .getPropertiesFromExtractedFile(List.of(extracted.getAbsoluteFile()));
+        doNothing().when(rLocalPopulator).removeTemporaryLocalWaitingRoomOfFile(uploadedFile.getAbsoluteFile());
+        doNothing()
+                .when(persistentRStorage)
+                .deleteFromStorageIfExists(
+                        uploadedFile.getAbsoluteFile().toPath().getParent());
 
         Strategy<Submission> strategy = new RPackageUploadStrategy(
                 request,
@@ -427,7 +493,7 @@ public class RUploadStrategyTest extends StrategyTest {
                 submissionService,
                 packageValidator,
                 repositoryService,
-                storage,
+                localStorage,
                 packageService,
                 emailService,
                 bestMaintainerChooser,
@@ -436,14 +502,20 @@ public class RUploadStrategyTest extends StrategyTest {
                 rLocalPopulator,
                 rPackageDeleter,
                 request,
-                maintainerService);
+                maintainerService,
+                manualGenerator,
+                persistentRStorage,
+                localVignetteUploader,
+                localVignetteReader);
 
         assertThrows(
                 StrategyFailure.class,
                 strategy::perform,
                 "Exception should be thrown when reading package description fails.");
-        verify(storage, times(1)).removeFileIfExists(uploadedFile.getAbsolutePath());
-        verify(storage, times(1)).removeFileIfExists(extracted.getAbsolutePath());
+        verify(rLocalPopulator, times(1)).removeTemporaryLocalWaitingRoomOfFile(uploadedFile.getAbsoluteFile());
+        verify(persistentRStorage, times(1))
+                .deleteFromStorageIfExists(
+                        uploadedFile.getAbsoluteFile().toPath().getParent());
     }
 
     @SuppressWarnings("unchecked")
@@ -459,16 +531,22 @@ public class RUploadStrategyTest extends StrategyTest {
         MockMultipartFile multipartFile = new MockMultipartFile(
                 TEST_PACKAGE_FILENAME, TEST_PACKAGE_FILENAME, TEST_PACKAGE_CONTENTTYPE, packageBytes);
         File uploadedFile = new File(TEST_PACKAGE_PATH);
-        File extracted = new File(TEST_PACKAGE_EXTRACTED);
+        File extracted =
+                new File(TEST_PACKAGE_EXTRACTED).toPath().toAbsolutePath().toFile();
         boolean generateManual = true;
         boolean replace = false;
 
         RPackageUploadRequest request = new RPackageUploadRequest(
                 multipartFile, repository, generateManual, replace, false, null, null, null, "");
 
-        when(rLocalPopulator.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
-        when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath())).thenReturn(extracted.getAbsolutePath());
-        when(rLocalPopulator.getPropertiesFromExtractedFile(extracted.getAbsolutePath()))
+        when(persistentRStorage.storeNewPackage(
+                        uploadedFile.getAbsoluteFile(), List.of(extracted.getAbsoluteFile()), repository))
+                .thenReturn(uploadedFile.toPath());
+        when(rLocalPopulator.writeToTemporaryLocalWaitingRoom(multipartFile, repository))
+                .thenReturn(uploadedFile);
+        when(localStorage.extractTarGzPackageFile(uploadedFile.getAbsoluteFile()))
+                .thenReturn(extracted.getAbsolutePath());
+        when(rLocalPopulator.getPropertiesFromExtractedFile(List.of(extracted.getAbsoluteFile())))
                 .thenReturn(new PropertiesParser(new File(TEST_PACKAGE_EXTRACTED + "/DESCRIPTION")));
         when(bestMaintainerChooser.chooseBestPackageMaintainer(any())).thenReturn(requester);
         doAnswer((Answer<Object>) invocation -> {
@@ -480,8 +558,10 @@ public class RUploadStrategyTest extends StrategyTest {
                 .when(packageValidator)
                 .validateUploadPackage(any(), eq(replace), any(DataSpecificValidationResult.class));
 
-        doNothing().when(storage).removeFileIfExists(uploadedFile.getAbsolutePath());
-        doNothing().when(storage).removeFileIfExists(extracted.getAbsolutePath());
+        doNothing().when(rLocalPopulator).removeTemporaryLocalWaitingRoomOfFile(uploadedFile.getAbsoluteFile());
+        doNothing()
+                .when(persistentRStorage)
+                .deleteFromStorageIfExists(uploadedFile.toPath().getParent());
 
         Strategy<Submission> strategy = new RPackageUploadStrategy(
                 request,
@@ -490,7 +570,7 @@ public class RUploadStrategyTest extends StrategyTest {
                 submissionService,
                 packageValidator,
                 repositoryService,
-                storage,
+                localStorage,
                 packageService,
                 emailService,
                 bestMaintainerChooser,
@@ -499,12 +579,17 @@ public class RUploadStrategyTest extends StrategyTest {
                 rLocalPopulator,
                 rPackageDeleter,
                 request,
-                maintainerService);
+                maintainerService,
+                manualGenerator,
+                persistentRStorage,
+                localVignetteUploader,
+                localVignetteReader);
 
         assertThrows(
                 StrategyFailure.class, strategy::perform, "Exception should be thrown when package validation fails.");
-        verify(storage, times(1)).removeFileIfExists(uploadedFile.getAbsolutePath());
-        verify(storage, times(1)).removeFileIfExists(extracted.getAbsolutePath());
+        verify(rLocalPopulator, times(1)).removeTemporaryLocalWaitingRoomOfFile(uploadedFile.getAbsoluteFile());
+        verify(persistentRStorage, times(1))
+                .deleteFromStorageIfExists(uploadedFile.toPath().getParent());
     }
 
     @SuppressWarnings("unchecked")
@@ -520,16 +605,22 @@ public class RUploadStrategyTest extends StrategyTest {
         MockMultipartFile multipartFile = new MockMultipartFile(
                 TEST_PACKAGE_FILENAME, TEST_PACKAGE_FILENAME, TEST_PACKAGE_CONTENTTYPE, packageBytes);
         File uploadedFile = new File(TEST_PACKAGE_PATH);
-        File extracted = new File(TEST_PACKAGE_EXTRACTED);
+        File extracted =
+                new File(TEST_PACKAGE_EXTRACTED).toPath().toAbsolutePath().toFile();
         boolean generateManual = true;
         boolean replace = false;
 
         RPackageUploadRequest request = new RPackageUploadRequest(
                 multipartFile, repository, generateManual, replace, false, null, null, null, "");
 
-        when(rLocalPopulator.writeToWaitingRoom(multipartFile, repository)).thenReturn(uploadedFile.getAbsolutePath());
-        when(storage.extractTarGzPackageFile(uploadedFile.getAbsolutePath())).thenReturn(extracted.getAbsolutePath());
-        when(rLocalPopulator.getPropertiesFromExtractedFile(extracted.getAbsolutePath()))
+        when(persistentRStorage.storeNewPackage(
+                        uploadedFile.getAbsoluteFile(), List.of(extracted.getAbsoluteFile()), repository))
+                .thenReturn(uploadedFile.getAbsoluteFile().toPath());
+        when(rLocalPopulator.writeToTemporaryLocalWaitingRoom(multipartFile, repository))
+                .thenReturn(uploadedFile.getAbsoluteFile());
+        when(localStorage.extractTarGzPackageFile(uploadedFile.getAbsoluteFile()))
+                .thenReturn(extracted.getAbsolutePath());
+        when(rLocalPopulator.getPropertiesFromExtractedFile(List.of(extracted.getAbsoluteFile())))
                 .thenReturn(new PropertiesParser(new File(TEST_PACKAGE_EXTRACTED + "/DESCRIPTION")));
         doAnswer((Answer<Submission>) invocation -> {
                     Submission submission = invocation.getArgument(0);
@@ -538,7 +629,7 @@ public class RUploadStrategyTest extends StrategyTest {
                 })
                 .when(submissionService)
                 .create(any());
-        when(rLocalPopulator.moveToMainDirectory(any())).thenReturn(uploadedFile.getAbsolutePath());
+        when(persistentRStorage.movePackageToAccepted(any())).thenReturn(uploadedFile.toPath());
         when(bestMaintainerChooser.chooseBestPackageMaintainer(any())).thenReturn(requester);
         when(securityMediator.canUpload("abc", repository, requester)).thenReturn(true);
         doAnswer((Answer<RPackage>) invocation -> {
@@ -551,8 +642,9 @@ public class RUploadStrategyTest extends StrategyTest {
         doNothing()
                 .when(packageValidator)
                 .validateUploadPackage(any(), eq(replace), any(DataSpecificValidationResult.class));
+
         RPackage packageBag = getRPackage(request, requester);
 
-        verify(rLocalPopulator, times(1)).generateManual(packageBag);
+        verify(manualGenerator, times(1)).generateManual(packageBag);
     }
 }

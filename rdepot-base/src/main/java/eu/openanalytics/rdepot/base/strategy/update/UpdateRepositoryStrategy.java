@@ -20,19 +20,11 @@
  */
 package eu.openanalytics.rdepot.base.strategy.update;
 
-import eu.openanalytics.rdepot.base.entities.EventChangedVariable;
-import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
+import eu.openanalytics.rdepot.base.entities.*;
 import eu.openanalytics.rdepot.base.entities.Package;
-import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
-import eu.openanalytics.rdepot.base.entities.Repository;
-import eu.openanalytics.rdepot.base.entities.RepositoryMaintainer;
-import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.event.NewsfeedEventType;
-import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
-import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
-import eu.openanalytics.rdepot.base.service.PackageService;
-import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
-import eu.openanalytics.rdepot.base.service.RepositoryService;
+import eu.openanalytics.rdepot.base.service.*;
+import eu.openanalytics.rdepot.base.strategy.exceptions.FatalStrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.synchronization.RepositorySynchronizer;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
@@ -146,7 +138,7 @@ public abstract class UpdateRepositoryStrategy<T extends Repository> extends Upd
             try {
                 repositorySynchronizer.storeRepositoryOnRemoteServer(resource);
             } catch (SynchronizeRepositoryException e) {
-                throw new StrategyFailure(e); // TODO: #32973 What about file-system issue in local container?
+                throw new FatalStrategyFailure(e); // TODO: #32973 What about file-system issue in local container?
             }
         }
     }

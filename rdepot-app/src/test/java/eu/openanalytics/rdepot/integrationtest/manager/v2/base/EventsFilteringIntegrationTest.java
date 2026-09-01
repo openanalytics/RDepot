@@ -65,7 +65,7 @@ public class EventsFilteringIntegrationTest extends IntegrationTest {
                 .statusCode(200)
                 .token(REPOSITORYMAINTAINER_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
-                .expectedJsonPath("/v2/base/events/filtering/allEventsByRepositoryMaintainer.json")
+                .expectedJsonPath("/v2/base/events/filtering/allEventsAsRepositoryMaintainer.json")
                 .build();
         testEndpoint(requestBody);
     }
@@ -78,7 +78,7 @@ public class EventsFilteringIntegrationTest extends IntegrationTest {
                 .statusCode(200)
                 .token(PACKAGEMAINTAINER_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
-                .expectedJsonPath("/v2/base/events/filtering/allEventsByPackageMaintainer.json")
+                .expectedJsonPath("/v2/base/events/filtering/allEventsAsPackageMaintainer.json")
                 .build();
         testEndpoint(requestBody);
     }
@@ -91,7 +91,7 @@ public class EventsFilteringIntegrationTest extends IntegrationTest {
                 .statusCode(200)
                 .token(USER_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
-                .expectedJsonPath("/v2/base/events/filtering/allEventsByUser.json")
+                .expectedJsonPath("/v2/base/events/filtering/allEventsAsUser.json")
                 .build();
         testEndpoint(requestBody);
     }

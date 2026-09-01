@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 CONTAINER_PY_TEST=$(docker ps | tr -s ' ' | cut -d' ' -f1,2 | grep "python" | cut -d' ' -f1)
 
 docker exec $CONTAINER_PY_TEST /bin/bash -c "curl --no-progress-meter --location 'http://oa-rdepot-repo:8080/python/testrepo12/' \

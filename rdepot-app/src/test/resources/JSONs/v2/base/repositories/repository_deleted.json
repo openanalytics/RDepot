@@ -1,16 +1,6 @@
 {
     "code": 200,
     "data": {
-        "requiresAuthentication": true,
-        "serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo5",
-        "lastPublicationSuccessful": false,
-        "published": false,
-        "technology": "R",
-        "version": 9,
-        "numberOfPackages": 0,
-        "deleted": true,
-        "synchronizing": false,
-        "name": "testrepo5",
         "allowedFiles": [
             {
                 "mimetype": "application/gzip",
@@ -21,30 +11,45 @@
                 "extension": ".tar.gz"
             }
         ],
+        "deleted": true,
+        "id": 6,
+        "lastModifiedTimestamp": "2024-06-27T12:30:25Z",
+        "lastPublicationSuccessful": false,
+        "lastPublicationTimestamp": "",
+        "name": "testrepo5",
+        "numberOfPackages": 0,
+        "permissions": [
+            "repository.delete.hard"
+        ],
+        "publicationUri": "http://localhost/repo/testrepo5",
+        "published": false,
+        "requiresAuthentication": true,
+        "serverAddress": "http://oa-rdepot-repo:8080/testrepo5",
+        "synchronizing": false,
+        "technology": "R",
+        "version": 9,
         "links": [
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories\/6"
+                "href": "http://localhost:8017/api/v2/manager/r/repositories/6"
             },
             {
                 "rel": "repositoryList",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/repositories"
+                "href": "http://localhost:8017/api/v2/manager/repositories"
             },
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories\/6",
+                "href": "http://localhost:8017/api/v2/manager/r/repositories/6",
                 "type": "PATCH"
             },
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories\/6",
+                "href": "http://localhost:8017/api/v2/manager/r/repositories/6",
                 "type": "DELETE"
             }
-        ],
-        "id": 6,
-        "publicationUri": "http:\/\/localhost\/repo\/testrepo5"
+        ]
     },
-    "messageCode": "success.request.processed",
     "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
     "status": "SUCCESS"
 }

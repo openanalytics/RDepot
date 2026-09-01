@@ -1,0 +1,12 @@
+name: ZE
+publicationUri: http://localhost/repo/ZE
+serverAddress: http://oa-rdepot-repo:8080/python/ZE
+published: true
+technology: "PYTHON"
+requiresAuthentication: true
+mirrors:
+  - name: X
+    uri: http://oa-rdepot-proxy/repo/X
+    syncInterval: ""
+    type: tarball
+    allPackages: true

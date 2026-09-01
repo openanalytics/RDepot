@@ -32,7 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 @EqualsAndHashCode(callSuper = true)
 public class PythonLanguage extends JsonDeserializer<Technology> implements Technology {
 
-    public static PythonLanguage instance;
+    public static final PythonLanguage instance;
 
     static {
         instance = new PythonLanguage();

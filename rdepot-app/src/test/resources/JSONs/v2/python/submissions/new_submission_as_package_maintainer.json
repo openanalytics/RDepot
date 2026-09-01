@@ -2,56 +2,52 @@
     "code": 201,
     "data": {
         "approver": {
-            "name": "Galileo Galilei",
+            "email": "galieleo@ldap.forumsys.com",
             "id": 6,
             "login": "galieleo",
-            "email": "galieleo@ldap.forumsys.com"
-        },
-        "submitter": {
-            "name": "Galileo Galilei",
-            "id": 6,
-            "login": "galieleo",
-            "email": "galieleo@ldap.forumsys.com"
+            "name": "Galileo Galilei"
         },
         "changes": "",
-        "links": [
-            {
-                "rel": "self",
-                "href": "http://localhost:8017/api/v2/manager/python/submissions/48"
-            },
-            {
-                "rel": "submissionList",
-                "href": "http://localhost:8017/api/v2/manager/python/submissions"
-            }
-        ],
+        "created": "2026-06-29T07:51:56.610944279Z",
         "id": 48,
-        "state": "ACCEPTED",
-        "technology": "Python",
         "packageBag": {
-            "author": "Daniel Holth <dholth@fastmail.fm>",
             "active": true,
-            "description": "wheel\\n=====\\n\\nThis library is the reference implementation of the Python wheel packaging\\nstandard, as defined in `PEP 427`_.\\n\\nIt has two different roles:\\n\\n#. A setuptools_ extension for building wheels that provides the\\n   ``bdist_wheel`` setuptools command\\n#. A command line tool for working with wheel files\\n\\nIt should be noted that wheel is **not** intended to be used as a library, and\\nas such there is no stable, public API.\\n\\n.. _PEP 427: https://www.python.org/dev/peps/pep-0427/\\n.. _setuptools: https://pypi.org/project/setuptools/\\n\\nDocumentation\\n-------------\\n\\nThe documentation_ can be found on Read The Docs.\\n\\n.. _documentation: https://wheel.readthedocs.io/\\n\\nCode of Conduct\\n---------------\\n\\nEveryone interacting in the wheel project's codebases, issue trackers, chat\\nrooms, and mailing lists is expected to follow the `PSF Code of Conduct`_.\\n\\n.. _PSF Code of Conduct: https://github.com/pypa/.github/blob/main/CODE_OF_CONDUCT.md\\n",
-            "technology": "Python",
-            "repository": {
-                "name": "testrepo9",
-                "lastPublicationSuccessful": false,
-                "id": 9,
-                "published": false,
-                "technology": "Python",
-                "requiresAuthentication": true,
-                "publicationUri": "http://localhost/repo/testrepo9"
-            },
-            "title": "A built-package format for Python",
-            "version": "0.42.0",
-            "url": "Changelog, https://wheel.readthedocs.io/en/stable/news.html, Documentation, https://wheel.readthedocs.io/, Issue Tracker, https://github.com/pypa/wheel/issues, Source, https://github.com/pypa/wheel",
-            "deleted": false,
-            "descriptionContentType": "text/x-rst",
+            "author": "Daniel Holth <dholth@fastmail.fm>",
             "binary": false,
+            "deleted": false,
+            "description": "wheel\\n=====\\n\\nThis library is the reference implementation of the Python wheel packaging\\nstandard, as defined in `PEP 427`_.\\n\\nIt has two different roles:\\n\\n#. A setuptools_ extension for building wheels that provides the\\n   ``bdist_wheel`` setuptools command\\n#. A command line tool for working with wheel files\\n\\nIt should be noted that wheel is **not** intended to be used as a library, and\\nas such there is no stable, public API.\\n\\n.. _PEP 427: https://www.python.org/dev/peps/pep-0427/\\n.. _setuptools: https://pypi.org/project/setuptools/\\n\\nDocumentation\\n-------------\\n\\nThe documentation_ can be found on Read The Docs.\\n\\n.. _documentation: https://wheel.readthedocs.io/\\n\\nCode of Conduct\\n---------------\\n\\nEveryone interacting in the wheel project's codebases, issue trackers, chat\\nrooms, and mailing lists is expected to follow the `PSF Code of Conduct`_.\\n\\n.. _PSF Code of Conduct: https://github.com/pypa/.github/blob/main/CODE_OF_CONDUCT.md\\n",
+            "descriptionContentType": "text/x-rst",
+            "id": 48,
             "name": "wheel",
+            "permissions": [
+                "package.deactivate",
+                "package.delete.soft",
+                "package.edit"
+            ],
+            "repository": {
+                "id": 9,
+                "lastPublicationSuccessful": false,
+                "name": "testrepo9",
+                "publicationUri": "http://localhost/repo/testrepo9",
+                "published": false,
+                "requiresAuthentication": true,
+                "technology": "Python"
+            },
+            "source": "/opt/rdepot/repositories/9/78270721/wheel-0.42.0.tar.gz",
             "submission": {
                 "id": 48,
                 "state": "ACCEPTED"
             },
+            "technology": "Python",
+            "title": "A built-package format for Python",
+            "url": "Changelog, https://wheel.readthedocs.io/en/stable/news.html, Documentation, https://wheel.readthedocs.io/, Issue Tracker, https://github.com/pypa/wheel/issues, Source, https://github.com/pypa/wheel",
+            "user": {
+                "email": "galieleo@ldap.forumsys.com",
+                "id": 6,
+                "login": "galieleo",
+                "name": "Galileo Galilei"
+            },
+            "version": "0.42.0",
             "links": [
                 {
                     "rel": "self",
@@ -75,17 +71,29 @@
                     "href": "http://localhost:8017/api/v2/manager/python/packages/48",
                     "type": "DELETE"
                 }
-            ],
-            "id": 48,
-            "user": {
-                "name": "Galileo Galilei",
-                "id": 6,
-                "login": "galieleo",
-                "email": "galieleo@ldap.forumsys.com"
+            ]
+        },
+        "permissions": [],
+        "state": "ACCEPTED",
+        "submitter": {
+            "email": "galieleo@ldap.forumsys.com",
+            "id": 6,
+            "login": "galieleo",
+            "name": "Galileo Galilei"
+        },
+        "technology": "Python",
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/python/submissions/48"
+            },
+            {
+                "rel": "submissionList",
+                "href": "http://localhost:8017/api/v2/manager/python/submissions"
             }
-        }
+        ]
     },
-    "messageCode": "success.resource.created",
     "message": "Your resource has been created successfully.",
+    "messageCode": "success.resource.created",
     "status": "SUCCESS"
 }

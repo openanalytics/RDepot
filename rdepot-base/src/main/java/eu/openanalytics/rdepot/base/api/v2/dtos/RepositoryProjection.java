@@ -34,7 +34,7 @@ import lombok.ToString;
 @NoArgsConstructor
 public class RepositoryProjection {
 
-    private Integer id;
+    private int id;
     private String name;
     private String publicationUri;
     private boolean published;
@@ -50,5 +50,22 @@ public class RepositoryProjection {
         this.published = repository.getPublished();
         this.requiresAuthentication = repository.getRequiresAuthentication();
         this.lastPublicationSuccessful = repository.isLastPublicationSuccessful();
+    }
+
+    public RepositoryProjection(
+            int id,
+            String name,
+            String publicationUri,
+            boolean published,
+            boolean requiresAuthentication,
+            String technology,
+            boolean lastPublicationSuccessful) {
+        this.id = id;
+        this.name = name;
+        this.publicationUri = publicationUri;
+        this.published = published;
+        this.requiresAuthentication = requiresAuthentication;
+        this.technology = technology;
+        this.lastPublicationSuccessful = lastPublicationSuccessful;
     }
 }

@@ -20,7 +20,8 @@
  */
 package eu.openanalytics.rdepot.r.storage.indexes;
 
-import eu.openanalytics.rdepot.base.storage.Storage;
+import eu.openanalytics.rdepot.base.storage.LocalStorage;
+import eu.openanalytics.rdepot.base.storage.exceptions.ContentEditException;
 import eu.openanalytics.rdepot.base.storage.indexes.RepositoryIndexGenerator;
 import eu.openanalytics.rdepot.base.utils.PackageFilteringUtils;
 import eu.openanalytics.rdepot.r.entities.RPackage;
@@ -39,12 +40,12 @@ public class ArchiveIndexGenerator extends RepositoryIndexGenerator<RRepository,
     public ArchiveIndexGenerator(
             @Value("classpath:templates/r/archive_template.html") Resource archiveTemplate,
             @Value("classpath:templates/r/archive_anchor_template.html") Resource archiveAnchorTemplate,
-            Storage<RPackage> storage)
+            LocalStorage<RPackage> localStorage)
             throws IOException {
         super(
                 archiveTemplate.getContentAsString(Charset.defaultCharset()),
                 archiveAnchorTemplate.getContentAsString(Charset.defaultCharset()),
-                storage,
+                localStorage,
                 new ArchivePackagePublicationURIResolver());
     }
 
@@ -57,7 +58,8 @@ public class ArchiveIndexGenerator extends RepositoryIndexGenerator<RRepository,
     }
 
     @Override
-    public String generateIndex(RRepository repository, List<RPackage> packages, String path) throws IOException {
+    public String generateIndex(RRepository repository, List<RPackage> packages, String path)
+            throws ContentEditException {
         return super.generateIndex(
                 repository,
                 packages.stream()

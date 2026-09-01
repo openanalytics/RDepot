@@ -96,6 +96,32 @@ public class RepositoryIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    public void getAllRepositoriesAsRepositoryMaintainer() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .token(REPOSITORYMAINTAINER_TOKEN)
+                .statusCode(200)
+                .urlSuffix("?sort=id,asc")
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/base/repositories/all_repositories_as_repositorymantainer.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getAllRepositoriesAsAdmin() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .token(ADMIN_TOKEN)
+                .statusCode(200)
+                .urlSuffix("?sort=id,asc")
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/base/repositories/all_repositories_as_admin.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
     public void getAllRepositories_returns401_whenUserIsNotAuthenticated() throws Exception {
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.GET_UNAUTHENTICATED)
@@ -132,7 +158,7 @@ public class RepositoryIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    public void getRepositoriesByTechnologyAndMaintainerAndPublished() throws Exception {
+    public void getRepositoriesByTechnologyAndMaintainer() throws Exception {
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.GET)
                 .token(USER_TOKEN)

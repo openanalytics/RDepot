@@ -24,7 +24,6 @@ import eu.openanalytics.rdepot.base.daos.EventChangedVariableDao;
 import eu.openanalytics.rdepot.base.daos.NewsfeedEventDao;
 import eu.openanalytics.rdepot.base.entities.EventChangedVariable;
 import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
-import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.Resource;
 import eu.openanalytics.rdepot.base.entities.enums.ResourceType;
 import eu.openanalytics.rdepot.base.event.NewsfeedEventType;
@@ -235,10 +234,6 @@ public class NewsfeedEventService extends eu.openanalytics.rdepot.base.service.S
             v.setRelatedNewsfeedEvent(entity);
             eventChangedVariableDao.save(v);
         });
-    }
-
-    public List<NewsfeedEvent> findByRepository(Repository repository) {
-        return newsfeedEventDao.findAll(NewsfeedEventSpecs.relatedResourceHasRelatedRepository(repository));
     }
 
     public void deleteRelatedEvents(Resource resource) throws DeleteEntityException {

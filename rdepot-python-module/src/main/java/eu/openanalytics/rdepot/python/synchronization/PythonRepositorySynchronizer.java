@@ -33,8 +33,8 @@ import eu.openanalytics.rdepot.base.synchronization.exceptions.SendSynchronizeRe
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.services.PythonPackageService;
-import eu.openanalytics.rdepot.python.storage.PythonPopulator;
-import eu.openanalytics.rdepot.python.storage.models.PopulatedRepositoryContent;
+import eu.openanalytics.rdepot.python.storage.population.PopulatedRepositoryContent;
+import eu.openanalytics.rdepot.python.storage.population.PythonPopulator;
 import eu.openanalytics.rdepot.python.technology.PythonLanguage;
 import java.io.File;
 import java.io.IOException;
@@ -78,7 +78,7 @@ public class PythonRepositorySynchronizer extends RepositorySynchronizer<PythonR
      * Triggers a series of actions to generate necessary files and synchronize the remote repository
      * with the current state of the local repository.
      * <p>
-     * This process involves organizing the provided packages into the correct storage structure,
+     * This process involves organizing the provided packages into the correct localStorage structure,
      * generating required files, and sending them to the repo application for synchronization.
      * The {@code dateStamp} parameter acts as a unique identifier to differentiate synchronizations that
      * occur at the same time.
@@ -110,7 +110,7 @@ public class PythonRepositorySynchronizer extends RepositorySynchronizer<PythonR
      * The request will include the packages that need to be uploaded or removed. If a package has
      * been modified, it should be marked for upload as well. Once the request is successfully sent,
      * the {@code cleanUpAfterSynchronization} method will be invoked to remove all temporary files
-     * generated during the synchronization process from the storage.
+     * generated during the synchronization process from the localStorage.
      * </p>
      *
      * @param populatedRepositoryContent the current content of the repository that has been populated

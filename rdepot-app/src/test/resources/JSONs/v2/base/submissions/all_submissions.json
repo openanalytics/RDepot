@@ -1,1557 +1,1619 @@
 {
     "code": 200,
     "data": {
-        "links": [
-            {
-                "rel": "first",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions?page=0&size=20&sort=id,asc"
-            },
-            {
-                "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions?page=0&size=20&sort=id,asc"
-            },
-            {
-                "rel": "next",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions?page=1&size=20&sort=id,asc"
-            },
-            {
-                "rel": "last",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions?page=2&size=20&sort=id,asc"
-            }
-        ],
-        "page": {
-            "number": 0,
-            "size": 20,
-            "totalPages": 3,
-            "totalElements": 42
-        },
         "content": [
             {
                 "approver": {
-                    "name": "Albert Einstein",
+                    "email": "einstein@ldap.forumsys.com",
                     "id": 4,
                     "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
+                    "name": "Albert Einstein"
                 },
-                "submitter": {
-                    "name": "Albert Einstein",
-                    "id": 4,
-                    "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
-                },
-                "created": "2020-03-28T20:03:44Z",
                 "changes": null,
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/4"
-                    },
-                    {
-                        "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
-                    }
-                ],
+                "created": "2020-03-28T20:03:44Z",
                 "id": 4,
-                "state": "ACCEPTED",
-                "technology": "R",
                 "packageBag": {
-                    "author": "Julie Eaton and Ian Painter",
                     "active": false,
-                    "description": "Package for visualizing data quality of partially accruing time series.",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo2",
-                        "lastPublicationSuccessful": true,
-                        "id": 3,
-                        "published": true,
-                        "technology": "R",
-                        "requiresAuthentication": true,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
-                    },
-                    "title": "Visualization tools for partially accruing data",
-                    "version": "1.1",
-                    "url": null,
-                    "deleted": true,
+                    "author": "Julie Eaton and Ian Painter",
                     "binary": false,
+                    "deleted": true,
+                    "description": "Package for visualizing data quality of partially accruing time series.",
+                    "descriptionContentType": "txt",
+                    "id": 6,
                     "name": "accrued",
+                    "permissions": [],
+                    "repository": {
+                        "id": 3,
+                        "lastPublicationSuccessful": true,
+                        "name": "testrepo2",
+                        "publicationUri": "http://localhost/repo/testrepo2",
+                        "published": true,
+                        "requiresAuthentication": true,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/repositories/3/46950998/accrued_1.1.tar.gz",
                     "submission": {
                         "id": 4,
                         "state": "ACCEPTED"
                     },
+                    "technology": "R",
+                    "title": "Visualization tools for partially accruing data",
+                    "url": null,
+                    "user": {
+                        "email": "einstein@ldap.forumsys.com",
+                        "id": 4,
+                        "login": "einstein",
+                        "name": "Albert Einstein"
+                    },
+                    "version": "1.1",
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/6"
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/6"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",
                             "href": "http://localhost:8017/api/v2/manager/r/repositories/3"
                         }
-                    ],
-                    "id": 6,
-                    "user": {
-                        "name": "Albert Einstein",
-                        "id": 4,
-                        "login": "einstein",
-                        "email": "einstein@ldap.forumsys.com"
-                    }
-                }
-            },
-            {
-                "approver": {
-                    "name": "Albert Einstein",
-                    "id": 4,
-                    "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
+                    ]
                 },
+                "permissions": [],
+                "state": "ACCEPTED",
                 "submitter": {
-                    "name": "Albert Einstein",
+                    "email": "einstein@ldap.forumsys.com",
                     "id": 4,
                     "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
+                    "name": "Albert Einstein"
                 },
-                "created": "2020-03-28T20:03:44Z",
-                "changes": null,
+                "technology": "R",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/5"
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/4"
                     },
                     {
                         "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
+                        "href": "http://localhost:8017/api/v2/manager/submissions"
                     }
-                ],
+                ]
+            },
+            {
+                "approver": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "changes": null,
+                "created": "2020-03-28T20:03:44Z",
                 "id": 5,
-                "state": "ACCEPTED",
-                "technology": "R",
                 "packageBag": {
-                    "author": "Julie Eaton and Ian Painter",
                     "active": true,
-                    "description": "Package for visualizing data quality of partially accruing data.",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo2",
-                        "lastPublicationSuccessful": true,
-                        "id": 3,
-                        "published": true,
-                        "technology": "R",
-                        "requiresAuthentication": true,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
-                    },
-                    "title": "Data Quality Visualization Tools for Partially Accruing Data",
-                    "version": "1.3.5",
-                    "url": null,
-                    "deleted": false,
+                    "author": "Julie Eaton and Ian Painter",
                     "binary": false,
+                    "deleted": false,
+                    "description": "Package for visualizing data quality of partially accruing data.",
+                    "descriptionContentType": "txt",
+                    "id": 4,
                     "name": "accrued",
+                    "permissions": [],
+                    "repository": {
+                        "id": 3,
+                        "lastPublicationSuccessful": true,
+                        "name": "testrepo2",
+                        "publicationUri": "http://localhost/repo/testrepo2",
+                        "published": true,
+                        "requiresAuthentication": true,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/repositories/3/99077116/accrued_1.3.5.tar.gz",
                     "submission": {
                         "id": 5,
                         "state": "ACCEPTED"
                     },
+                    "technology": "R",
+                    "title": "Data Quality Visualization Tools for Partially Accruing Data",
+                    "url": null,
+                    "user": {
+                        "email": "einstein@ldap.forumsys.com",
+                        "id": 4,
+                        "login": "einstein",
+                        "name": "Albert Einstein"
+                    },
+                    "version": "1.3.5",
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/4"
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/4"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",
                             "href": "http://localhost:8017/api/v2/manager/r/repositories/3"
                         }
-                    ],
-                    "id": 4,
-                    "user": {
-                        "name": "Albert Einstein",
-                        "id": 4,
-                        "login": "einstein",
-                        "email": "einstein@ldap.forumsys.com"
-                    }
-                }
-            },
-            {
-                "approver": {
-                    "name": "Albert Einstein",
-                    "id": 4,
-                    "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
+                    ]
                 },
+                "permissions": [],
+                "state": "ACCEPTED",
                 "submitter": {
-                    "name": "Albert Einstein",
+                    "email": "einstein@ldap.forumsys.com",
                     "id": 4,
                     "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
+                    "name": "Albert Einstein"
                 },
-                "created": "2020-03-28T20:03:44Z",
-                "changes": null,
+                "technology": "R",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/6"
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/5"
                     },
                     {
                         "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
+                        "href": "http://localhost:8017/api/v2/manager/submissions"
                     }
-                ],
+                ]
+            },
+            {
+                "approver": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "changes": null,
+                "created": "2020-03-28T20:03:44Z",
                 "id": 6,
-                "state": "ACCEPTED",
-                "technology": "R",
                 "packageBag": {
-                    "author": "Julie Eaton and Ian Painter",
                     "active": true,
-                    "description": "Package for visualizing data quality of partially accruing time series.",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo2",
-                        "lastPublicationSuccessful": true,
-                        "id": 3,
-                        "published": true,
-                        "technology": "R",
-                        "requiresAuthentication": true,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
-                    },
-                    "title": "Visualization tools for partially accruing data",
-                    "version": "1.2",
-                    "url": null,
-                    "deleted": false,
+                    "author": "Julie Eaton and Ian Painter",
                     "binary": false,
+                    "deleted": false,
+                    "description": "Package for visualizing data quality of partially accruing time series.",
+                    "descriptionContentType": "txt",
+                    "id": 8,
                     "name": "accrued",
+                    "permissions": [],
+                    "repository": {
+                        "id": 3,
+                        "lastPublicationSuccessful": true,
+                        "name": "testrepo2",
+                        "publicationUri": "http://localhost/repo/testrepo2",
+                        "published": true,
+                        "requiresAuthentication": true,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/repositories/3/83118397/accrued_1.2.tar.gz",
                     "submission": {
                         "id": 6,
                         "state": "ACCEPTED"
                     },
+                    "technology": "R",
+                    "title": "Visualization tools for partially accruing data",
+                    "url": null,
+                    "user": {
+                        "email": "einstein@ldap.forumsys.com",
+                        "id": 4,
+                        "login": "einstein",
+                        "name": "Albert Einstein"
+                    },
+                    "version": "1.2",
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/8"
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/8"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",
                             "href": "http://localhost:8017/api/v2/manager/r/repositories/3"
                         }
-                    ],
-                    "id": 8,
-                    "user": {
-                        "name": "Albert Einstein",
-                        "id": 4,
-                        "login": "einstein",
-                        "email": "einstein@ldap.forumsys.com"
-                    }
-                }
-            },
-            {
-                "approver": {
-                    "name": "Albert Einstein",
-                    "id": 4,
-                    "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
+                    ]
                 },
+                "permissions": [],
+                "state": "ACCEPTED",
                 "submitter": {
-                    "name": "Albert Einstein",
+                    "email": "einstein@ldap.forumsys.com",
                     "id": 4,
                     "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
+                    "name": "Albert Einstein"
                 },
-                "created": "2020-03-28T20:03:45Z",
-                "changes": null,
+                "technology": "R",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/7"
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/6"
                     },
                     {
                         "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
+                        "href": "http://localhost:8017/api/v2/manager/submissions"
                     }
-                ],
+                ]
+            },
+            {
+                "approver": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "changes": null,
+                "created": "2020-03-28T20:03:45Z",
                 "id": 7,
-                "state": "ACCEPTED",
-                "technology": "R",
                 "packageBag": {
-                    "author": "Julie Eaton and Ian Painter",
                     "active": true,
-                    "description": "Package for visualizing data quality of partially accruing data.",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo2",
-                        "lastPublicationSuccessful": true,
-                        "id": 3,
-                        "published": true,
-                        "technology": "R",
-                        "requiresAuthentication": true,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
-                    },
-                    "title": "Data Quality Visualization Tools for Partially Accruing Data",
-                    "version": "1.3",
-                    "url": null,
-                    "deleted": false,
+                    "author": "Julie Eaton and Ian Painter",
                     "binary": false,
+                    "deleted": false,
+                    "description": "Package for visualizing data quality of partially accruing data.",
+                    "descriptionContentType": "txt",
+                    "id": 5,
                     "name": "accrued",
+                    "permissions": [],
+                    "repository": {
+                        "id": 3,
+                        "lastPublicationSuccessful": true,
+                        "name": "testrepo2",
+                        "publicationUri": "http://localhost/repo/testrepo2",
+                        "published": true,
+                        "requiresAuthentication": true,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/repositories/3/82197810/accrued_1.3.tar.gz",
                     "submission": {
                         "id": 7,
                         "state": "ACCEPTED"
                     },
+                    "technology": "R",
+                    "title": "Data Quality Visualization Tools for Partially Accruing Data",
+                    "url": null,
+                    "user": {
+                        "email": "einstein@ldap.forumsys.com",
+                        "id": 4,
+                        "login": "einstein",
+                        "name": "Albert Einstein"
+                    },
+                    "version": "1.3",
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/5"
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/5"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",
                             "href": "http://localhost:8017/api/v2/manager/r/repositories/3"
                         }
-                    ],
-                    "id": 5,
-                    "user": {
-                        "name": "Albert Einstein",
-                        "id": 4,
-                        "login": "einstein",
-                        "email": "einstein@ldap.forumsys.com"
-                    }
-                }
-            },
-            {
-                "approver": {
-                    "name": "Albert Einstein",
-                    "id": 4,
-                    "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
+                    ]
                 },
+                "permissions": [],
+                "state": "ACCEPTED",
                 "submitter": {
-                    "name": "Albert Einstein",
+                    "email": "einstein@ldap.forumsys.com",
                     "id": 4,
                     "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
+                    "name": "Albert Einstein"
                 },
-                "created": "2020-03-28T20:03:45Z",
-                "changes": null,
+                "technology": "R",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/8"
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/7"
                     },
                     {
                         "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
+                        "href": "http://localhost:8017/api/v2/manager/submissions"
                     }
-                ],
+                ]
+            },
+            {
+                "approver": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "changes": null,
+                "created": "2020-03-28T20:03:45Z",
                 "id": 8,
-                "state": "ACCEPTED",
-                "technology": "R",
                 "packageBag": {
-                    "author": "Julie Eaton and Ian Painter",
                     "active": false,
-                    "description": "Package for visualizing data quality of partially accruing data.",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo2",
-                        "lastPublicationSuccessful": true,
-                        "id": 3,
-                        "published": true,
-                        "technology": "R",
-                        "requiresAuthentication": true,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
-                    },
-                    "title": "Data Quality Visualization Tools for Partially Accruing Data",
-                    "version": "1.4",
-                    "url": null,
-                    "deleted": false,
+                    "author": "Julie Eaton and Ian Painter",
                     "binary": false,
+                    "deleted": false,
+                    "description": "Package for visualizing data quality of partially accruing data.",
+                    "descriptionContentType": "txt",
+                    "id": 7,
                     "name": "accrued",
+                    "permissions": [],
+                    "repository": {
+                        "id": 3,
+                        "lastPublicationSuccessful": true,
+                        "name": "testrepo2",
+                        "publicationUri": "http://localhost/repo/testrepo2",
+                        "published": true,
+                        "requiresAuthentication": true,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/repositories/3/28075835/accrued_1.4.tar.gz",
                     "submission": {
                         "id": 8,
                         "state": "ACCEPTED"
                     },
+                    "technology": "R",
+                    "title": "Data Quality Visualization Tools for Partially Accruing Data",
+                    "url": null,
+                    "user": {
+                        "email": "einstein@ldap.forumsys.com",
+                        "id": 4,
+                        "login": "einstein",
+                        "name": "Albert Einstein"
+                    },
+                    "version": "1.4",
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/7"
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/7"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",
                             "href": "http://localhost:8017/api/v2/manager/r/repositories/3"
                         }
-                    ],
-                    "id": 7,
-                    "user": {
-                        "name": "Albert Einstein",
-                        "id": 4,
-                        "login": "einstein",
-                        "email": "einstein@ldap.forumsys.com"
-                    }
-                }
-            },
-            {
-                "approver": {
-                    "name": "Albert Einstein",
-                    "id": 4,
-                    "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
+                    ]
                 },
+                "permissions": [],
+                "state": "ACCEPTED",
                 "submitter": {
-                    "name": "Albert Einstein",
+                    "email": "einstein@ldap.forumsys.com",
                     "id": 4,
                     "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
+                    "name": "Albert Einstein"
                 },
-                "created": "2020-03-28T20:03:58Z",
-                "changes": null,
+                "technology": "R",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/9"
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/8"
                     },
                     {
                         "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
+                        "href": "http://localhost:8017/api/v2/manager/submissions"
                     }
-                ],
+                ]
+            },
+            {
+                "approver": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "changes": null,
+                "created": "2020-03-28T20:03:58Z",
                 "id": 9,
-                "state": "ACCEPTED",
-                "technology": "R",
                 "packageBag": {
-                    "author": "Scott Fortmann-Roe",
                     "active": true,
-                    "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo3",
-                        "lastPublicationSuccessful": false,
-                        "id": 4,
-                        "published": false,
-                        "technology": "R",
-                        "requiresAuthentication": true,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo3"
-                    },
-                    "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
-                    "version": "0.9.1",
-                    "url": null,
-                    "deleted": false,
+                    "author": "Scott Fortmann-Roe",
                     "binary": false,
+                    "deleted": false,
+                    "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
+                    "descriptionContentType": "txt",
+                    "id": 9,
                     "name": "A3",
+                    "permissions": [],
+                    "repository": {
+                        "id": 4,
+                        "lastPublicationSuccessful": false,
+                        "name": "testrepo3",
+                        "publicationUri": "http://localhost/repo/testrepo3",
+                        "published": false,
+                        "requiresAuthentication": true,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/repositories/4/47098069/A3_0.9.1.tar.gz",
                     "submission": {
                         "id": 9,
                         "state": "ACCEPTED"
                     },
+                    "technology": "R",
+                    "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
+                    "url": null,
+                    "user": {
+                        "email": "galieleo@ldap.forumsys.com",
+                        "id": 6,
+                        "login": "galieleo",
+                        "name": "Galileo Galilei"
+                    },
+                    "version": "0.9.1",
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/9"
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/9"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",
                             "href": "http://localhost:8017/api/v2/manager/r/repositories/4"
                         }
-                    ],
-                    "id": 9,
-                    "user": {
-                        "name": "Galileo Galilei",
-                        "id": 6,
-                        "login": "galieleo",
-                        "email": "galieleo@ldap.forumsys.com"
-                    }
-                }
-            },
-            {
-                "approver": {
-                    "name": "Albert Einstein",
-                    "id": 4,
-                    "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
+                    ]
                 },
+                "permissions": [],
+                "state": "ACCEPTED",
                 "submitter": {
-                    "name": "Albert Einstein",
+                    "email": "einstein@ldap.forumsys.com",
                     "id": 4,
                     "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
+                    "name": "Albert Einstein"
                 },
-                "created": "2020-03-28T20:03:58Z",
-                "changes": null,
+                "technology": "R",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/10"
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/9"
                     },
                     {
                         "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
+                        "href": "http://localhost:8017/api/v2/manager/submissions"
                     }
-                ],
+                ]
+            },
+            {
+                "approver": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "changes": null,
+                "created": "2020-03-28T20:03:58Z",
                 "id": 10,
-                "state": "ACCEPTED",
-                "technology": "R",
                 "packageBag": {
-                    "author": "Scott Fortmann-Roe",
                     "active": true,
-                    "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo3",
-                        "lastPublicationSuccessful": false,
-                        "id": 4,
-                        "published": false,
-                        "technology": "R",
-                        "requiresAuthentication": true,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo3"
-                    },
-                    "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
-                    "version": "0.9.2",
-                    "url": null,
-                    "deleted": false,
+                    "author": "Scott Fortmann-Roe",
                     "binary": false,
+                    "deleted": false,
+                    "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
+                    "descriptionContentType": "txt",
+                    "id": 10,
                     "name": "A3",
+                    "permissions": [],
+                    "repository": {
+                        "id": 4,
+                        "lastPublicationSuccessful": false,
+                        "name": "testrepo3",
+                        "publicationUri": "http://localhost/repo/testrepo3",
+                        "published": false,
+                        "requiresAuthentication": true,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/repositories/4/54491936/A3_0.9.2.tar.gz",
                     "submission": {
                         "id": 10,
                         "state": "ACCEPTED"
                     },
+                    "technology": "R",
+                    "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
+                    "url": null,
+                    "user": {
+                        "email": "galieleo@ldap.forumsys.com",
+                        "id": 6,
+                        "login": "galieleo",
+                        "name": "Galileo Galilei"
+                    },
+                    "version": "0.9.2",
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/10"
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/10"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",
                             "href": "http://localhost:8017/api/v2/manager/r/repositories/4"
                         }
-                    ],
-                    "id": 10,
-                    "user": {
-                        "name": "Galileo Galilei",
-                        "id": 6,
-                        "login": "galieleo",
-                        "email": "galieleo@ldap.forumsys.com"
-                    }
-                }
-            },
-            {
-                "approver": {
-                    "name": "Albert Einstein",
-                    "id": 4,
-                    "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
+                    ]
                 },
+                "permissions": [],
+                "state": "ACCEPTED",
                 "submitter": {
-                    "name": "Albert Einstein",
+                    "email": "einstein@ldap.forumsys.com",
                     "id": 4,
                     "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
+                    "name": "Albert Einstein"
                 },
-                "created": "2020-03-28T20:03:59Z",
-                "changes": null,
+                "technology": "R",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/11"
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/10"
                     },
                     {
                         "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
+                        "href": "http://localhost:8017/api/v2/manager/submissions"
                     }
-                ],
+                ]
+            },
+            {
+                "approver": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "changes": null,
+                "created": "2020-03-28T20:03:59Z",
                 "id": 11,
-                "state": "ACCEPTED",
-                "technology": "R",
                 "packageBag": {
-                    "author": "Katalin Csillery, Michael Blum and Olivier Francois",
                     "active": false,
-                    "description": "The package implements several ABC algorithms for performing parameter estimation and model selection. Cross-validation tools are also available for measuring the accuracy of ABC estimates, and to calculate the misclassification probabilities of different models.",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo3",
-                        "lastPublicationSuccessful": false,
-                        "id": 4,
-                        "published": false,
-                        "technology": "R",
-                        "requiresAuthentication": true,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo3"
-                    },
-                    "title": "Tools for Approximate Bayesian Computation (ABC)",
-                    "version": "1.3",
-                    "url": null,
-                    "deleted": false,
+                    "author": "Katalin Csillery, Michael Blum and Olivier Francois",
                     "binary": false,
+                    "deleted": false,
+                    "description": "The package implements several ABC algorithms for performing parameter estimation and model selection. Cross-validation tools are also available for measuring the accuracy of ABC estimates, and to calculate the misclassification probabilities of different models.",
+                    "descriptionContentType": "txt",
+                    "id": 11,
                     "name": "abc",
+                    "permissions": [],
+                    "repository": {
+                        "id": 4,
+                        "lastPublicationSuccessful": false,
+                        "name": "testrepo3",
+                        "publicationUri": "http://localhost/repo/testrepo3",
+                        "published": false,
+                        "requiresAuthentication": true,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/repositories/4/95296712/abc_1.3.tar.gz",
                     "submission": {
                         "id": 11,
                         "state": "ACCEPTED"
                     },
+                    "technology": "R",
+                    "title": "Tools for Approximate Bayesian Computation (ABC)",
+                    "url": null,
+                    "user": {
+                        "email": "galieleo@ldap.forumsys.com",
+                        "id": 6,
+                        "login": "galieleo",
+                        "name": "Galileo Galilei"
+                    },
+                    "version": "1.3",
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/11"
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/11"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",
                             "href": "http://localhost:8017/api/v2/manager/r/repositories/4"
                         }
-                    ],
-                    "id": 11,
-                    "user": {
-                        "name": "Galileo Galilei",
-                        "id": 6,
-                        "login": "galieleo",
-                        "email": "galieleo@ldap.forumsys.com"
-                    }
-                }
-            },
-            {
-                "approver": {
-                    "name": "Albert Einstein",
-                    "id": 4,
-                    "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
+                    ]
                 },
+                "permissions": [],
+                "state": "ACCEPTED",
                 "submitter": {
-                    "name": "Albert Einstein",
+                    "email": "einstein@ldap.forumsys.com",
                     "id": 4,
                     "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
+                    "name": "Albert Einstein"
                 },
-                "created": "2020-03-28T20:03:59Z",
-                "changes": null,
+                "technology": "R",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/12"
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/11"
                     },
                     {
                         "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
+                        "href": "http://localhost:8017/api/v2/manager/submissions"
                     }
-                ],
+                ]
+            },
+            {
+                "approver": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "changes": null,
+                "created": "2020-03-28T20:03:59Z",
                 "id": 12,
-                "state": "ACCEPTED",
-                "technology": "R",
                 "packageBag": {
-                    "author": "Katalin Csillery, with contributions from Michael Blum and Olivier Francois",
                     "active": true,
-                    "description": "The 'abc' package provides various functions for parameter estimation and model selection in an ABC framework. Three main",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo3",
-                        "lastPublicationSuccessful": false,
-                        "id": 4,
-                        "published": false,
-                        "technology": "R",
-                        "requiresAuthentication": true,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo3"
-                    },
-                    "title": "Functions to perform Approximate Bayesian Computation (ABC) using simulated data",
-                    "version": "1.0",
-                    "url": null,
-                    "deleted": false,
+                    "author": "Katalin Csillery, with contributions from Michael Blum and Olivier Francois",
                     "binary": false,
+                    "deleted": false,
+                    "description": "The 'abc' package provides various functions for parameter estimation and model selection in an ABC framework. Three main",
+                    "descriptionContentType": "txt",
+                    "id": 12,
                     "name": "abc",
+                    "permissions": [],
+                    "repository": {
+                        "id": 4,
+                        "lastPublicationSuccessful": false,
+                        "name": "testrepo3",
+                        "publicationUri": "http://localhost/repo/testrepo3",
+                        "published": false,
+                        "requiresAuthentication": true,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/repositories/4/49426769/abc_1.0.tar.gz",
                     "submission": {
                         "id": 12,
                         "state": "ACCEPTED"
                     },
+                    "technology": "R",
+                    "title": "Functions to perform Approximate Bayesian Computation (ABC) using simulated data",
+                    "url": null,
+                    "user": {
+                        "email": "galieleo@ldap.forumsys.com",
+                        "id": 6,
+                        "login": "galieleo",
+                        "name": "Galileo Galilei"
+                    },
+                    "version": "1.0",
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/12"
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/12"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",
                             "href": "http://localhost:8017/api/v2/manager/r/repositories/4"
                         }
-                    ],
-                    "id": 12,
-                    "user": {
-                        "name": "Galileo Galilei",
-                        "id": 6,
-                        "login": "galieleo",
-                        "email": "galieleo@ldap.forumsys.com"
-                    }
-                }
-            },
-            {
-                "approver": {
-                    "name": "Albert Einstein",
-                    "id": 4,
-                    "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
+                    ]
                 },
+                "permissions": [],
+                "state": "ACCEPTED",
                 "submitter": {
-                    "name": "Albert Einstein",
+                    "email": "einstein@ldap.forumsys.com",
                     "id": 4,
                     "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
+                    "name": "Albert Einstein"
                 },
-                "created": "2020-03-28T20:04:17Z",
-                "changes": null,
+                "technology": "R",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/13"
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/12"
                     },
                     {
                         "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
+                        "href": "http://localhost:8017/api/v2/manager/submissions"
                     }
-                ],
+                ]
+            },
+            {
+                "approver": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "changes": null,
+                "created": "2020-03-28T20:04:17Z",
                 "id": 13,
-                "state": "ACCEPTED",
-                "technology": "R",
                 "packageBag": {
-                    "author": "Andrea Batch [aut, cre], Jeff Chen [ctb], Walt Kampas [ctb]",
                     "active": true,
-                    "description": "Provides an R interface for the Bureau of Economic Analysis (BEA)",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo1",
-                        "lastPublicationSuccessful": true,
-                        "id": 2,
-                        "published": true,
-                        "technology": "R",
-                        "requiresAuthentication": false,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
-                    },
-                    "title": "Bureau of Economic Analysis API",
-                    "version": "1.0.5",
-                    "url": "https:\/\/github.com\/us-bea\/beaR",
-                    "deleted": false,
+                    "author": "Andrea Batch [aut, cre], Jeff Chen [ctb], Walt Kampas [ctb]",
                     "binary": false,
+                    "deleted": false,
+                    "description": "Provides an R interface for the Bureau of Economic Analysis (BEA)",
+                    "descriptionContentType": "txt",
+                    "id": 15,
                     "name": "bea.R",
+                    "permissions": [],
+                    "repository": {
+                        "id": 2,
+                        "lastPublicationSuccessful": true,
+                        "name": "testrepo1",
+                        "publicationUri": "http://localhost/repo/testrepo1",
+                        "published": true,
+                        "requiresAuthentication": false,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/repositories/2/89565416/bea.R_1.0.5.tar.gz",
                     "submission": {
                         "id": 13,
                         "state": "ACCEPTED"
                     },
+                    "technology": "R",
+                    "title": "Bureau of Economic Analysis API",
+                    "url": "https://github.com/us-bea/beaR",
+                    "user": {
+                        "email": "tesla@ldap.forumsys.com",
+                        "id": 5,
+                        "login": "tesla",
+                        "name": "Nikola Tesla"
+                    },
+                    "version": "1.0.5",
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/15"
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/15"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",
                             "href": "http://localhost:8017/api/v2/manager/r/repositories/2"
                         }
-                    ],
-                    "id": 15,
-                    "user": {
-                        "name": "Nikola Tesla",
-                        "id": 5,
-                        "login": "tesla",
-                        "email": "tesla@ldap.forumsys.com"
-                    }
-                }
-            },
-            {
-                "approver": {
-                    "name": "Albert Einstein",
-                    "id": 4,
-                    "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
+                    ]
                 },
+                "permissions": [],
+                "state": "ACCEPTED",
                 "submitter": {
-                    "name": "Albert Einstein",
+                    "email": "einstein@ldap.forumsys.com",
                     "id": 4,
                     "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
+                    "name": "Albert Einstein"
                 },
-                "created": "2020-03-28T20:04:17Z",
-                "changes": null,
+                "technology": "R",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/14"
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/13"
                     },
                     {
                         "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
+                        "href": "http://localhost:8017/api/v2/manager/submissions"
                     }
-                ],
+                ]
+            },
+            {
+                "approver": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "changes": null,
+                "created": "2020-03-28T20:04:17Z",
                 "id": 14,
-                "state": "ACCEPTED",
-                "technology": "R",
                 "packageBag": {
-                    "author": "Julie Eaton and Ian Painter",
                     "active": false,
-                    "description": "Package for visualizing data quality of partially accruing time series.",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo1",
-                        "lastPublicationSuccessful": true,
-                        "id": 2,
-                        "published": true,
-                        "technology": "R",
-                        "requiresAuthentication": false,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
-                    },
-                    "title": "Visualization tools for partially accruing data",
-                    "version": "1.0",
-                    "url": null,
-                    "deleted": false,
+                    "author": "Julie Eaton and Ian Painter",
                     "binary": false,
+                    "deleted": false,
+                    "description": "Package for visualizing data quality of partially accruing time series.",
+                    "descriptionContentType": "txt",
+                    "id": 13,
                     "name": "accrued",
+                    "permissions": [],
+                    "repository": {
+                        "id": 2,
+                        "lastPublicationSuccessful": true,
+                        "name": "testrepo1",
+                        "publicationUri": "http://localhost/repo/testrepo1",
+                        "published": true,
+                        "requiresAuthentication": false,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/repositories/2/40553654/accrued_1.0.tar.gz",
                     "submission": {
                         "id": 14,
                         "state": "ACCEPTED"
                     },
+                    "technology": "R",
+                    "title": "Visualization tools for partially accruing data",
+                    "url": null,
+                    "user": {
+                        "email": "galieleo@ldap.forumsys.com",
+                        "id": 6,
+                        "login": "galieleo",
+                        "name": "Galileo Galilei"
+                    },
+                    "version": "1.0",
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/13"
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/13"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",
                             "href": "http://localhost:8017/api/v2/manager/r/repositories/2"
                         }
-                    ],
-                    "id": 13,
-                    "user": {
-                        "name": "Galileo Galilei",
-                        "id": 6,
-                        "login": "galieleo",
-                        "email": "galieleo@ldap.forumsys.com"
-                    }
-                }
-            },
-            {
-                "approver": {
-                    "name": "Albert Einstein",
-                    "id": 4,
-                    "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
+                    ]
                 },
+                "permissions": [],
+                "state": "ACCEPTED",
                 "submitter": {
-                    "name": "Albert Einstein",
+                    "email": "einstein@ldap.forumsys.com",
                     "id": 4,
                     "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
+                    "name": "Albert Einstein"
                 },
-                "created": "2020-03-28T20:04:17Z",
-                "changes": null,
+                "technology": "R",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/15"
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/14"
                     },
                     {
                         "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
+                        "href": "http://localhost:8017/api/v2/manager/submissions"
                     }
-                ],
+                ]
+            },
+            {
+                "approver": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "changes": null,
+                "created": "2020-03-28T20:04:17Z",
                 "id": 15,
-                "state": "ACCEPTED",
-                "technology": "R",
                 "packageBag": {
-                    "author": "Bulent Altunkaynak [aut, cre], Hamza Gamgam [aut]",
                     "active": false,
-                    "description": "Performs nonparametric tests for equality of location against ordered alternatives.",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo1",
-                        "lastPublicationSuccessful": true,
-                        "id": 2,
-                        "published": true,
-                        "technology": "R",
-                        "requiresAuthentication": false,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
-                    },
-                    "title": "Nonparametric Tests for Equality of Location Against Ordered Alternatives",
-                    "version": "1.1",
-                    "url": null,
-                    "deleted": true,
+                    "author": "Bulent Altunkaynak [aut, cre], Hamza Gamgam [aut]",
                     "binary": false,
+                    "deleted": true,
+                    "description": "Performs nonparametric tests for equality of location against ordered alternatives.",
+                    "descriptionContentType": "txt",
+                    "id": 14,
                     "name": "npordtests",
+                    "permissions": [],
+                    "repository": {
+                        "id": 2,
+                        "lastPublicationSuccessful": true,
+                        "name": "testrepo1",
+                        "publicationUri": "http://localhost/repo/testrepo1",
+                        "published": true,
+                        "requiresAuthentication": false,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/repositories/2/8436419/npordtests_1.1.tar.gz",
                     "submission": {
                         "id": 15,
                         "state": "ACCEPTED"
                     },
+                    "technology": "R",
+                    "title": "Nonparametric Tests for Equality of Location Against Ordered Alternatives",
+                    "url": null,
+                    "user": {
+                        "email": "tesla@ldap.forumsys.com",
+                        "id": 5,
+                        "login": "tesla",
+                        "name": "Nikola Tesla"
+                    },
+                    "version": "1.1",
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/14"
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/14"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",
                             "href": "http://localhost:8017/api/v2/manager/r/repositories/2"
                         }
-                    ],
-                    "id": 14,
-                    "user": {
-                        "name": "Nikola Tesla",
-                        "id": 5,
-                        "login": "tesla",
-                        "email": "tesla@ldap.forumsys.com"
-                    }
-                }
-            },
-            {
-                "approver": {
-                    "name": "Nikola Tesla",
-                    "id": 5,
-                    "login": "tesla",
-                    "email": "tesla@ldap.forumsys.com"
+                    ]
                 },
+                "permissions": [],
+                "state": "ACCEPTED",
                 "submitter": {
-                    "name": "Isaac Newton",
-                    "id": 7,
-                    "login": "newton",
-                    "email": "newton@ldap.forumsys.com"
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
                 },
-                "created": "2020-03-28T20:05:58Z",
-                "changes": null,
+                "technology": "R",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/16"
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/15"
                     },
                     {
                         "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
+                        "href": "http://localhost:8017/api/v2/manager/submissions"
                     }
-                ],
+                ]
+            },
+            {
+                "approver": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "changes": null,
+                "created": "2020-03-28T20:05:58Z",
                 "id": 16,
-                "state": "REJECTED",
-                "technology": "R",
                 "packageBag": {
-                    "author": "Scott Fortmann-Roe",
                     "active": false,
-                    "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo1",
-                        "lastPublicationSuccessful": true,
-                        "id": 2,
-                        "published": true,
-                        "technology": "R",
-                        "requiresAuthentication": false,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
-                    },
-                    "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
-                    "version": "0.9.1",
-                    "url": null,
-                    "deleted": false,
+                    "author": "Scott Fortmann-Roe",
                     "binary": false,
+                    "deleted": false,
+                    "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
+                    "descriptionContentType": "txt",
+                    "id": 16,
                     "name": "A3",
+                    "permissions": [],
+                    "repository": {
+                        "id": 2,
+                        "lastPublicationSuccessful": true,
+                        "name": "testrepo1",
+                        "publicationUri": "http://localhost/repo/testrepo1",
+                        "published": true,
+                        "requiresAuthentication": false,
+                        "technology": "R"
+                    },
+                    "source": "",
                     "submission": {
                         "id": 16,
                         "state": "REJECTED"
                     },
+                    "technology": "R",
+                    "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
+                    "url": null,
+                    "user": {
+                        "email": "einstein@ldap.forumsys.com",
+                        "id": 4,
+                        "login": "einstein",
+                        "name": "Albert Einstein"
+                    },
+                    "version": "0.9.1",
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/16"
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/16"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",
                             "href": "http://localhost:8017/api/v2/manager/r/repositories/2"
                         }
-                    ],
-                    "id": 16,
-                    "user": {
-                        "name": "Albert Einstein",
-                        "id": 4,
-                        "login": "einstein",
-                        "email": "einstein@ldap.forumsys.com"
-                    }
-                }
-            },
-            {
-                "approver": {
-                    "name": "Nikola Tesla",
-                    "id": 5,
-                    "login": "tesla",
-                    "email": "tesla@ldap.forumsys.com"
+                    ]
                 },
+                "permissions": [],
+                "state": "REJECTED",
                 "submitter": {
-                    "name": "Isaac Newton",
+                    "email": "newton@ldap.forumsys.com",
                     "id": 7,
                     "login": "newton",
-                    "email": "newton@ldap.forumsys.com"
+                    "name": "Isaac Newton"
                 },
-                "created": "2020-03-28T20:05:58Z",
-                "changes": null,
+                "technology": "R",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/17"
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/16"
                     },
                     {
                         "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
+                        "href": "http://localhost:8017/api/v2/manager/submissions"
                     }
-                ],
+                ]
+            },
+            {
+                "approver": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "changes": null,
+                "created": "2020-03-28T20:05:58Z",
                 "id": 17,
-                "state": "ACCEPTED",
-                "technology": "R",
                 "packageBag": {
-                    "author": "Scott Fortmann-Roe",
                     "active": true,
-                    "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo1",
-                        "lastPublicationSuccessful": true,
-                        "id": 2,
-                        "published": true,
-                        "technology": "R",
-                        "requiresAuthentication": false,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
-                    },
-                    "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
-                    "version": "0.9.2",
-                    "url": null,
-                    "deleted": false,
+                    "author": "Scott Fortmann-Roe",
                     "binary": false,
+                    "deleted": false,
+                    "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
+                    "descriptionContentType": "txt",
+                    "id": 17,
                     "name": "A3",
+                    "permissions": [],
+                    "repository": {
+                        "id": 2,
+                        "lastPublicationSuccessful": true,
+                        "name": "testrepo1",
+                        "publicationUri": "http://localhost/repo/testrepo1",
+                        "published": true,
+                        "requiresAuthentication": false,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/repositories/2/9907084/A3_0.9.2.tar.gz",
                     "submission": {
                         "id": 17,
                         "state": "ACCEPTED"
                     },
+                    "technology": "R",
+                    "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
+                    "url": null,
+                    "user": {
+                        "email": "tesla@ldap.forumsys.com",
+                        "id": 5,
+                        "login": "tesla",
+                        "name": "Nikola Tesla"
+                    },
+                    "version": "0.9.2",
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/17"
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/17"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",
                             "href": "http://localhost:8017/api/v2/manager/r/repositories/2"
                         }
-                    ],
-                    "id": 17,
-                    "user": {
-                        "name": "Nikola Tesla",
-                        "id": 5,
-                        "login": "tesla",
-                        "email": "tesla@ldap.forumsys.com"
-                    }
-                }
-            },
-            {
-                "approver": {
-                    "name": "Nikola Tesla",
-                    "id": 5,
-                    "login": "tesla",
-                    "email": "tesla@ldap.forumsys.com"
+                    ]
                 },
+                "permissions": [],
+                "state": "ACCEPTED",
                 "submitter": {
-                    "name": "Isaac Newton",
+                    "email": "newton@ldap.forumsys.com",
                     "id": 7,
                     "login": "newton",
-                    "email": "newton@ldap.forumsys.com"
+                    "name": "Isaac Newton"
                 },
-                "created": "2020-03-28T20:05:58Z",
-                "changes": null,
+                "technology": "R",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/18"
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/17"
                     },
                     {
                         "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
+                        "href": "http://localhost:8017/api/v2/manager/submissions"
                     }
-                ],
+                ]
+            },
+            {
+                "approver": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "changes": null,
+                "created": "2020-03-28T20:05:58Z",
                 "id": 18,
-                "state": "ACCEPTED",
-                "technology": "R",
                 "packageBag": {
-                    "author": "Katalin Csillery, Michael Blum and Olivier Francois",
                     "active": true,
-                    "description": "The package implements several ABC algorithms for performing parameter estimation and model selection. Cross-validation tools are also available for measuring the accuracy of ABC estimates, and to calculate the misclassification probabilities of different models.",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo1",
-                        "lastPublicationSuccessful": true,
-                        "id": 2,
-                        "published": true,
-                        "technology": "R",
-                        "requiresAuthentication": false,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
-                    },
-                    "title": "Tools for Approximate Bayesian Computation (ABC)",
-                    "version": "1.3",
-                    "url": null,
-                    "deleted": false,
+                    "author": "Katalin Csillery, Michael Blum and Olivier Francois",
                     "binary": false,
+                    "deleted": false,
+                    "description": "The package implements several ABC algorithms for performing parameter estimation and model selection. Cross-validation tools are also available for measuring the accuracy of ABC estimates, and to calculate the misclassification probabilities of different models.",
+                    "descriptionContentType": "txt",
+                    "id": 18,
                     "name": "abc",
+                    "permissions": [],
+                    "repository": {
+                        "id": 2,
+                        "lastPublicationSuccessful": true,
+                        "name": "testrepo1",
+                        "publicationUri": "http://localhost/repo/testrepo1",
+                        "published": true,
+                        "requiresAuthentication": false,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/repositories/2/88170013/abc_1.3.tar.gz",
                     "submission": {
                         "id": 18,
                         "state": "ACCEPTED"
                     },
+                    "technology": "R",
+                    "title": "Tools for Approximate Bayesian Computation (ABC)",
+                    "url": null,
+                    "user": {
+                        "email": "tesla@ldap.forumsys.com",
+                        "id": 5,
+                        "login": "tesla",
+                        "name": "Nikola Tesla"
+                    },
+                    "version": "1.3",
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/18"
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/18"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",
                             "href": "http://localhost:8017/api/v2/manager/r/repositories/2"
                         }
-                    ],
-                    "id": 18,
-                    "user": {
-                        "name": "Nikola Tesla",
-                        "id": 5,
-                        "login": "tesla",
-                        "email": "tesla@ldap.forumsys.com"
-                    }
-                }
-            },
-            {
-                "approver": null,
+                    ]
+                },
+                "permissions": [],
+                "state": "ACCEPTED",
                 "submitter": {
-                    "name": "Isaac Newton",
+                    "email": "newton@ldap.forumsys.com",
                     "id": 7,
                     "login": "newton",
-                    "email": "newton@ldap.forumsys.com"
+                    "name": "Isaac Newton"
                 },
-                "created": "2020-03-28T20:06:13Z",
-                "changes": null,
+                "technology": "R",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/19"
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/18"
                     },
                     {
                         "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/19",
-                        "type": "PATCH",
-                        "modifiableProperties": [
-                            "state"
-                        ]
+                        "href": "http://localhost:8017/api/v2/manager/submissions"
                     }
-                ],
+                ]
+            },
+            {
+                "approver": null,
+                "changes": null,
+                "created": "2020-03-28T20:06:13Z",
                 "id": 19,
-                "state": "WAITING",
-                "technology": "R",
                 "packageBag": {
-                    "author": "Nicholas Tierney [aut, cre]",
                     "active": false,
-                    "description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo2",
-                        "lastPublicationSuccessful": true,
-                        "id": 3,
-                        "published": true,
-                        "technology": "R",
-                        "requiresAuthentication": true,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
-                    },
-                    "title": "Preliminary Data Visualisation",
-                    "version": "0.1.0",
-                    "url": "https:\/\/github.com\/njtierney\/visdat\/",
-                    "deleted": false,
+                    "author": "Nicholas Tierney [aut, cre]",
                     "binary": false,
+                    "deleted": false,
+                    "description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
+                    "descriptionContentType": "txt",
+                    "id": 19,
                     "name": "visdat",
+                    "permissions": [],
+                    "repository": {
+                        "id": 3,
+                        "lastPublicationSuccessful": true,
+                        "name": "testrepo2",
+                        "publicationUri": "http://localhost/repo/testrepo2",
+                        "published": true,
+                        "requiresAuthentication": true,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/new/70032548/visdat_0.1.0.tar.gz",
                     "submission": {
                         "id": 19,
                         "state": "WAITING"
                     },
+                    "technology": "R",
+                    "title": "Preliminary Data Visualisation",
+                    "url": "https://github.com/njtierney/visdat/",
+                    "user": {
+                        "email": "einstein@ldap.forumsys.com",
+                        "id": 4,
+                        "login": "einstein",
+                        "name": "Albert Einstein"
+                    },
+                    "version": "0.1.0",
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/19"
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/19"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",
                             "href": "http://localhost:8017/api/v2/manager/r/repositories/3"
                         }
-                    ],
-                    "id": 19,
-                    "user": {
-                        "name": "Albert Einstein",
-                        "id": 4,
-                        "login": "einstein",
-                        "email": "einstein@ldap.forumsys.com"
-                    }
-                }
-            },
-            {
-                "approver": {
-                    "name": "Nikola Tesla",
-                    "id": 5,
-                    "login": "tesla",
-                    "email": "tesla@ldap.forumsys.com"
+                    ]
                 },
+                "permissions": [
+                    "submission.cancel"
+                ],
+                "state": "WAITING",
                 "submitter": {
-                    "name": "Isaac Newton",
+                    "email": "newton@ldap.forumsys.com",
                     "id": 7,
                     "login": "newton",
-                    "email": "newton@ldap.forumsys.com"
+                    "name": "Isaac Newton"
                 },
-                "created": "2020-03-28T20:06:23Z",
-                "changes": null,
+                "technology": "R",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/20"
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/19"
                     },
                     {
                         "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
-                    }
-                ],
-                "id": 20,
-                "state": "ACCEPTED",
-                "technology": "R",
-                "packageBag": {
-                    "author": "Cedric Landerer [aut, cre], Gabriel Hanas [ctb], Jeremy Rogers [ctb], Alex Cope [ctb], Denizhan Pak [ctb]",
-                    "active": true,
-                    "description": "Is a collection of models to analyze genome scale codon data using a Bayesian framework. Provides visualization routines and checkpointing for model fittings. Currently published models to analyze gene data for selection on codon",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo4",
-                        "lastPublicationSuccessful": false,
-                        "id": 5,
-                        "published": false,
-                        "technology": "R",
-                        "requiresAuthentication": true,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo4"
+                        "href": "http://localhost:8017/api/v2/manager/submissions"
                     },
-                    "title": "Analysis of Codon Data under Stationarity using a Bayesian Framework",
-                    "version": "0.1.2.3",
-                    "url": "https:\/\/github.com\/clandere\/AnaCoDa",
-                    "deleted": false,
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/19",
+                        "modifiableProperties": [
+                            "state"
+                        ],
+                        "type": "PATCH"
+                    }
+                ]
+            },
+            {
+                "approver": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "changes": null,
+                "created": "2020-03-28T20:06:23Z",
+                "id": 20,
+                "packageBag": {
+                    "active": true,
+                    "author": "Cedric Landerer [aut, cre], Gabriel Hanas [ctb], Jeremy Rogers [ctb], Alex Cope [ctb], Denizhan Pak [ctb]",
                     "binary": false,
+                    "deleted": false,
+                    "description": "Is a collection of models to analyze genome scale codon data using a Bayesian framework. Provides visualization routines and checkpointing for model fittings. Currently published models to analyze gene data for selection on codon",
+                    "descriptionContentType": "txt",
+                    "id": 20,
                     "name": "AnaCoDa",
+                    "permissions": [],
+                    "repository": {
+                        "id": 5,
+                        "lastPublicationSuccessful": false,
+                        "name": "testrepo4",
+                        "publicationUri": "http://localhost/repo/testrepo4",
+                        "published": false,
+                        "requiresAuthentication": true,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/repositories/5/39437028/AnaCoDa_0.1.2.3.tar.gz",
                     "submission": {
                         "id": 20,
                         "state": "ACCEPTED"
                     },
+                    "technology": "R",
+                    "title": "Analysis of Codon Data under Stationarity using a Bayesian Framework",
+                    "url": "https://github.com/clandere/AnaCoDa",
+                    "user": {
+                        "email": "galieleo@ldap.forumsys.com",
+                        "id": 6,
+                        "login": "galieleo",
+                        "name": "Galileo Galilei"
+                    },
+                    "version": "0.1.2.3",
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/20"
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/20"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",
                             "href": "http://localhost:8017/api/v2/manager/r/repositories/5"
                         }
-                    ],
-                    "id": 20,
-                    "user": {
-                        "name": "Galileo Galilei",
-                        "id": 6,
-                        "login": "galieleo",
-                        "email": "galieleo@ldap.forumsys.com"
-                    }
-                }
-            },
-            {
-                "approver": {
-                    "name": "Nikola Tesla",
-                    "id": 5,
-                    "login": "tesla",
-                    "email": "tesla@ldap.forumsys.com"
+                    ]
                 },
+                "permissions": [],
+                "state": "ACCEPTED",
                 "submitter": {
-                    "name": "Galileo Galilei",
-                    "id": 6,
-                    "login": "galieleo",
-                    "email": "galieleo@ldap.forumsys.com"
+                    "email": "newton@ldap.forumsys.com",
+                    "id": 7,
+                    "login": "newton",
+                    "name": "Isaac Newton"
                 },
-                "created": "2020-03-28T20:06:48Z",
-                "changes": null,
+                "technology": "R",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/21"
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/20"
                     },
                     {
                         "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
+                        "href": "http://localhost:8017/api/v2/manager/submissions"
                     }
-                ],
+                ]
+            },
+            {
+                "approver": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "changes": null,
+                "created": "2020-03-28T20:06:48Z",
                 "id": 21,
-                "state": "ACCEPTED",
-                "technology": "R",
                 "packageBag": {
-                    "author": "Peter Bogetoft and Lars Otto",
                     "active": true,
-                    "description": "Estimates and graphs deterministic (DEA) frontier models with different technology assumptions (fdh, vrs, drs, crs, irs, add). Also handles possible slacks, peers and their weights (lambdas), optimal cost, revenue and profit allocation, super--efficiency, and mergers. A comparative method for estimating SFA efficiencies is included.",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo1",
-                        "lastPublicationSuccessful": true,
-                        "id": 2,
-                        "published": true,
-                        "technology": "R",
-                        "requiresAuthentication": false,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
-                    },
-                    "title": "Benchmark and frontier analysis using DEA and SFA",
-                    "version": "0.10",
-                    "url": null,
-                    "deleted": false,
+                    "author": "Peter Bogetoft and Lars Otto",
                     "binary": false,
+                    "deleted": false,
+                    "description": "Estimates and graphs deterministic (DEA) frontier models with different technology assumptions (fdh, vrs, drs, crs, irs, add). Also handles possible slacks, peers and their weights (lambdas), optimal cost, revenue and profit allocation, super--efficiency, and mergers. A comparative method for estimating SFA efficiencies is included.",
+                    "descriptionContentType": "txt",
+                    "id": 21,
                     "name": "Benchmarking",
+                    "permissions": [],
+                    "repository": {
+                        "id": 2,
+                        "lastPublicationSuccessful": true,
+                        "name": "testrepo1",
+                        "publicationUri": "http://localhost/repo/testrepo1",
+                        "published": true,
+                        "requiresAuthentication": false,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/repositories/2/71228208/Benchmarking_0.10.tar.gz",
                     "submission": {
                         "id": 21,
                         "state": "ACCEPTED"
                     },
+                    "technology": "R",
+                    "title": "Benchmark and frontier analysis using DEA and SFA",
+                    "url": null,
+                    "user": {
+                        "email": "tesla@ldap.forumsys.com",
+                        "id": 5,
+                        "login": "tesla",
+                        "name": "Nikola Tesla"
+                    },
+                    "version": "0.10",
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/21"
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/21"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",
                             "href": "http://localhost:8017/api/v2/manager/r/repositories/2"
                         }
-                    ],
-                    "id": 21,
-                    "user": {
-                        "name": "Nikola Tesla",
-                        "id": 5,
-                        "login": "tesla",
-                        "email": "tesla@ldap.forumsys.com"
-                    }
-                }
-            },
-            {
-                "approver": {
-                    "name": "Nikola Tesla",
-                    "id": 5,
-                    "login": "tesla",
-                    "email": "tesla@ldap.forumsys.com"
+                    ]
                 },
+                "permissions": [],
+                "state": "ACCEPTED",
                 "submitter": {
-                    "name": "Galileo Galilei",
+                    "email": "galieleo@ldap.forumsys.com",
                     "id": 6,
                     "login": "galieleo",
-                    "email": "galieleo@ldap.forumsys.com"
+                    "name": "Galileo Galilei"
                 },
-                "created": "2020-03-28T20:06:49Z",
-                "changes": null,
+                "technology": "R",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/22"
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/21"
                     },
                     {
                         "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
+                        "href": "http://localhost:8017/api/v2/manager/submissions"
                     }
-                ],
+                ]
+            },
+            {
+                "approver": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "changes": null,
+                "created": "2020-03-28T20:06:49Z",
                 "id": 22,
-                "state": "REJECTED",
-                "technology": "R",
                 "packageBag": {
-                    "author": "Nicholas Tierney [aut, cre]",
                     "active": false,
-                    "description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo1",
-                        "lastPublicationSuccessful": true,
-                        "id": 2,
-                        "published": true,
-                        "technology": "R",
-                        "requiresAuthentication": false,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
-                    },
-                    "title": "Preliminary Data Visualisation",
-                    "version": "0.1.0",
-                    "url": "https:\/\/github.com\/njtierney\/visdat\/",
-                    "deleted": false,
+                    "author": "Nicholas Tierney [aut, cre]",
                     "binary": false,
+                    "deleted": false,
+                    "description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
+                    "descriptionContentType": "txt",
+                    "id": 23,
                     "name": "visdat",
+                    "permissions": [],
+                    "repository": {
+                        "id": 2,
+                        "lastPublicationSuccessful": true,
+                        "name": "testrepo1",
+                        "publicationUri": "http://localhost/repo/testrepo1",
+                        "published": true,
+                        "requiresAuthentication": false,
+                        "technology": "R"
+                    },
+                    "source": "",
                     "submission": {
                         "id": 22,
                         "state": "REJECTED"
                     },
+                    "technology": "R",
+                    "title": "Preliminary Data Visualisation",
+                    "url": "https://github.com/njtierney/visdat/",
+                    "user": {
+                        "email": "einstein@ldap.forumsys.com",
+                        "id": 4,
+                        "login": "einstein",
+                        "name": "Albert Einstein"
+                    },
+                    "version": "0.1.0",
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/23"
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/23"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",
                             "href": "http://localhost:8017/api/v2/manager/r/repositories/2"
                         }
-                    ],
-                    "id": 23,
-                    "user": {
-                        "name": "Albert Einstein",
-                        "id": 4,
-                        "login": "einstein",
-                        "email": "einstein@ldap.forumsys.com"
-                    }
-                }
-            },
-            {
-                "approver": {
-                    "name": "Galileo Galilei",
-                    "id": 6,
-                    "login": "galieleo",
-                    "email": "galieleo@ldap.forumsys.com"
+                    ]
                 },
+                "permissions": [],
+                "state": "REJECTED",
                 "submitter": {
-                    "name": "Galileo Galilei",
+                    "email": "galieleo@ldap.forumsys.com",
                     "id": 6,
                     "login": "galieleo",
-                    "email": "galieleo@ldap.forumsys.com"
+                    "name": "Galileo Galilei"
                 },
-                "created": "2020-03-28T20:06:49Z",
-                "changes": null,
+                "technology": "R",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/23"
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/22"
                     },
                     {
                         "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
+                        "href": "http://localhost:8017/api/v2/manager/submissions"
                     }
-                ],
+                ]
+            },
+            {
+                "approver": {
+                    "email": "galieleo@ldap.forumsys.com",
+                    "id": 6,
+                    "login": "galieleo",
+                    "name": "Galileo Galilei"
+                },
+                "changes": null,
+                "created": "2020-03-28T20:06:49Z",
                 "id": 23,
-                "state": "CANCELLED",
-                "technology": "R",
                 "packageBag": {
-                    "author": "Cedric Landerer [aut, cre], Gabriel Hanas [ctb], Jeremy Rogers [ctb], Alex Cope [ctb], Denizhan Pak [ctb]",
                     "active": false,
-                    "description": "Is a collection of models to analyze genome scale codon data using a Bayesian framework. Provides visualization routines and checkpointing for model fittings. Currently published models to analyze gene data for selection on codon",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo1",
-                        "lastPublicationSuccessful": true,
-                        "id": 2,
-                        "published": true,
-                        "technology": "R",
-                        "requiresAuthentication": false,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
-                    },
-                    "title": "Analysis of Codon Data under Stationarity using a Bayesian Framework",
-                    "version": "0.1.2.3",
-                    "url": "https:\/\/github.com\/clandere\/AnaCoDa",
-                    "deleted": false,
+                    "author": "Cedric Landerer [aut, cre], Gabriel Hanas [ctb], Jeremy Rogers [ctb], Alex Cope [ctb], Denizhan Pak [ctb]",
                     "binary": false,
+                    "deleted": false,
+                    "description": "Is a collection of models to analyze genome scale codon data using a Bayesian framework. Provides visualization routines and checkpointing for model fittings. Currently published models to analyze gene data for selection on codon",
+                    "descriptionContentType": "txt",
+                    "id": 22,
                     "name": "AnaCoDa",
+                    "permissions": [],
+                    "repository": {
+                        "id": 2,
+                        "lastPublicationSuccessful": true,
+                        "name": "testrepo1",
+                        "publicationUri": "http://localhost/repo/testrepo1",
+                        "published": true,
+                        "requiresAuthentication": false,
+                        "technology": "R"
+                    },
+                    "source": "",
                     "submission": {
                         "id": 23,
                         "state": "CANCELLED"
                     },
+                    "technology": "R",
+                    "title": "Analysis of Codon Data under Stationarity using a Bayesian Framework",
+                    "url": "https://github.com/clandere/AnaCoDa",
+                    "user": {
+                        "email": "einstein@ldap.forumsys.com",
+                        "id": 4,
+                        "login": "einstein",
+                        "name": "Albert Einstein"
+                    },
+                    "version": "0.1.2.3",
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/22"
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/22"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",
                             "href": "http://localhost:8017/api/v2/manager/r/repositories/2"
                         }
-                    ],
-                    "id": 22,
-                    "user": {
-                        "name": "Albert Einstein",
-                        "id": 4,
-                        "login": "einstein",
-                        "email": "einstein@ldap.forumsys.com"
+                    ]
+                },
+                "permissions": [],
+                "state": "CANCELLED",
+                "submitter": {
+                    "email": "galieleo@ldap.forumsys.com",
+                    "id": 6,
+                    "login": "galieleo",
+                    "name": "Galileo Galilei"
+                },
+                "technology": "R",
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/23"
+                    },
+                    {
+                        "rel": "submissionList",
+                        "href": "http://localhost:8017/api/v2/manager/submissions"
                     }
-                }
+                ]
             }
-        ]
+        ],
+        "links": [
+            {
+                "rel": "first",
+                "href": "http://localhost:8017/api/v2/manager/submissions?page=0&size=20&sort=id,asc"
+            },
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/submissions?page=0&size=20&sort=id,asc"
+            },
+            {
+                "rel": "next",
+                "href": "http://localhost:8017/api/v2/manager/submissions?page=1&size=20&sort=id,asc"
+            },
+            {
+                "rel": "last",
+                "href": "http://localhost:8017/api/v2/manager/submissions?page=2&size=20&sort=id,asc"
+            }
+        ],
+        "page": {
+            "number": 0,
+            "size": 20,
+            "totalElements": 42,
+            "totalPages": 3
+        }
     },
-    "messageCode": "success.request.processed",
     "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
     "status": "SUCCESS"
 }

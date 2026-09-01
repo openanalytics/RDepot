@@ -20,7 +20,10 @@
  */
 package eu.openanalytics.rdepot.r.synchronization.partitioning.structs;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import org.springframework.core.io.FileSystemResource;
 
 public class RequestBodyChunk {

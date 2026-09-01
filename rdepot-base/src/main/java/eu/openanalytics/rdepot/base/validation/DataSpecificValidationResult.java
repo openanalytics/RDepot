@@ -30,11 +30,7 @@ import lombok.NonNull;
  */
 public interface DataSpecificValidationResult<T> extends ValidationResult {
 
-    void error(@NonNull String property, @NonNull String errorCode, T data);
-
     void warning(@NonNull String property, @NonNull String warningCode, T data);
-
-    List<ValidationResultItem<T>> getDataSpecificErrors();
 
     List<ValidationResultItem<T>> getDataSpecificWarnings();
 }

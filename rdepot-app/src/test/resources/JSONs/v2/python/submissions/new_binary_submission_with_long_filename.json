@@ -13,6 +13,7 @@
             "login": "einstein",
             "email": "einstein@ldap.forumsys.com"
         },
+        "permissions": [],
         "changes": "",
         "links": [
             {
@@ -46,9 +47,17 @@
             "url": "https://github.com/explosion/murmurhash",
             "deleted": false,
             "descriptionContentType": "text/markdown",
+            "permissions": [
+                "package.deactivate",
+                "package.delete.soft",
+                "package.edit"
+            ],
             "binary": true,
             "name": "murmurhash",
-            "submission": { "id": 48, "state": "ACCEPTED" },
+            "submission": {
+                "id": 48,
+                "state": "ACCEPTED"
+            },
             "links": [
                 {
                     "rel": "self",

@@ -39,6 +39,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -64,6 +66,8 @@ public abstract class IntegrationTest {
 
     public static final String NEW_USER_TOKEN =
             "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJuZXdiaWUiLCJuYW1lIjoiTmV3IFVzZXIiLCJlbWFpbCI6Im5ld2JpZUBsb2NhbGhvc3QiLCJhdWQiOiJSRGVwb3QiLCJyb2xlcyI6WyJ1c2VyIl0sImlzcyI6IlJEZXBvdCIsImV4cCI6MjAwNzAyNzI0OCwiaWF0IjoxNjkxNjY3MjQ4fQ.E0mhFtUxpTvCGdySjizgcVskmMRtyKyQq1BZAC9T6HjE1jxvNsMhysObIhsvjm4bn5Ypf-DcX5rsliw9FRaQoA";
+    public static final String DUPLICATE_EMAIL_TOKEN =
+            "dGVzbGFzYXNzaXN0YW50OjBNbDNCOXhnMTZuNG9tNVlMSzc4S0Q2M3Y5R0huTHZk";
 
     public static final String AUTHORIZATION = "Authorization";
     public static final String BEARER = "Bearer ";
@@ -873,5 +877,14 @@ public abstract class IntegrationTest {
             }
         } catch (ClassCastException ignored) {
         }
+    }
+
+    protected void changeConfigAndTest(Path currentConfig, Path newConfig, Runnable test) throws Exception {
+        byte[] originalConfig = Files.readAllBytes(currentConfig);
+        Files.copy(newConfig, currentConfig, StandardCopyOption.REPLACE_EXISTING);
+        IntegrationTestContainers.restartAppContainer();
+        test.run();
+        Files.write(currentConfig, originalConfig);
+        IntegrationTestContainers.restartAppContainer();
     }
 }

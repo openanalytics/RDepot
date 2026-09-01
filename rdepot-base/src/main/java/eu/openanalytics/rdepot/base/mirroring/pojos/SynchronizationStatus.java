@@ -20,17 +20,16 @@
  */
 package eu.openanalytics.rdepot.base.mirroring.pojos;
 
-import lombok.AllArgsConstructor;
+import java.util.Set;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
-@AllArgsConstructor
-public enum SynchronizationStatus {
-    SUCCESS("SUCCESS"),
-    PENDING("PENDING"),
-    ERROR("ERROR"),
-    MIXED("MIXED SUCCESS"),
-    WARNING("WARNING");
+@Setter
+public abstract class SynchronizationStatus {
+    protected SynchronizationStatusEnum status = SynchronizationStatusEnum.PENDING;
 
-    private final String status;
+    public abstract Set<SynchronizationStatus> getChildren();
+
+    private String error;
 }

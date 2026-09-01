@@ -2,64 +2,60 @@
     "code": 201,
     "data": {
         "approver": {
-            "name": "Albert Einstein",
+            "email": "einstein@ldap.forumsys.com",
             "id": 4,
             "login": "einstein",
-            "email": "einstein@ldap.forumsys.com"
-        },
-        "submitter": {
-            "name": "Albert Einstein",
-            "id": 4,
-            "login": "einstein",
-            "email": "einstein@ldap.forumsys.com"
+            "name": "Albert Einstein"
         },
         "changes": "",
-        "links": [
-            {
-                "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/48"
-            },
-            {
-                "rel": "submissionList",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions"
-            }
-        ],
+        "created": "2026-06-29T16:26:00.492497411Z",
         "id": 48,
-        "state": "ACCEPTED",
-        "technology": "R",
         "packageBag": {
-            "author": "Scott Fortmann-Roe",
             "active": true,
-            "description": "This ąęćśöäüß package supplies tools for tabulating and analyzing\\n the results of predictive models. The methods employed are\\n applicable to virtually any predictive model and make\\n comparisons between different methodologies straightforward.",
-            "technology": "R",
-            "repository": {
-                "name": "testrepo4",
-                "lastPublicationSuccessful": true,
-                "id": 5,
-                "published": true,
-                "technology": "R",
-                "requiresAuthentication": true,
-                "publicationUri": "http:\/\/localhost\/repo\/testrepo4"
-            },
-            "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for\\n Predictive Models - test exotic letters ąęćśöäüß",
-            "version": "0.9.3",
-            "url": null,
-            "deleted": false,
-            "descriptionContentType": "txt",
+            "author": "Scott Fortmann-Roe",
             "binary": false,
+            "deleted": false,
+            "description": "This ąęćśöäüß package supplies tools for tabulating and analyzing\\n the results of predictive models. The methods employed are\\n applicable to virtually any predictive model and make\\n comparisons between different methodologies straightforward.",
+            "descriptionContentType": "txt",
+            "id": 48,
             "name": "A3",
+            "permissions": [
+                "package.deactivate",
+                "package.delete.soft",
+                "package.edit"
+            ],
+            "repository": {
+                "id": 5,
+                "lastPublicationSuccessful": true,
+                "name": "testrepo4",
+                "publicationUri": "http://localhost/repo/testrepo4",
+                "published": true,
+                "requiresAuthentication": true,
+                "technology": "R"
+            },
+            "source": "/opt/rdepot/repositories/5/261640/A3_0.9.3.tar.gz",
             "submission": {
                 "id": 48,
                 "state": "ACCEPTED"
             },
+            "technology": "R",
+            "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for\\n Predictive Models - test exotic letters ąęćśöäüß",
+            "url": null,
+            "user": {
+                "email": "tesla@ldap.forumsys.com",
+                "id": 5,
+                "login": "tesla",
+                "name": "Nikola Tesla"
+            },
+            "version": "0.9.3",
             "links": [
                 {
                     "rel": "self",
-                    "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/48"
+                    "href": "http://localhost:8017/api/v2/manager/r/packages/48"
                 },
                 {
                     "rel": "packageList",
-                    "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    "href": "http://localhost:8017/api/v2/manager/packages"
                 },
                 {
                     "rel": "repository",
@@ -67,25 +63,37 @@
                 },
                 {
                     "rel": "self",
-                    "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/48",
+                    "href": "http://localhost:8017/api/v2/manager/r/packages/48",
                     "type": "PATCH"
                 },
                 {
                     "rel": "self",
-                    "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/48",
+                    "href": "http://localhost:8017/api/v2/manager/r/packages/48",
                     "type": "DELETE"
                 }
-            ],
-            "id": 48,
-            "user": {
-                "name": "Nikola Tesla",
-                "id": 5,
-                "login": "tesla",
-                "email": "tesla@ldap.forumsys.com"
+            ]
+        },
+        "permissions": [],
+        "state": "ACCEPTED",
+        "submitter": {
+            "email": "einstein@ldap.forumsys.com",
+            "id": 4,
+            "login": "einstein",
+            "name": "Albert Einstein"
+        },
+        "technology": "R",
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/r/submissions/48"
+            },
+            {
+                "rel": "submissionList",
+                "href": "http://localhost:8017/api/v2/manager/r/submissions"
             }
-        }
+        ]
     },
-    "messageCode": "warning.file.name.has.been.updated",
     "message": "Your package has been submitted successfully but the filename has been changed due to a mismatch with the package metadata.",
+    "messageCode": "warning.file.name.has.been.updated",
     "status": "WARNING"
 }

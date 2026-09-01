@@ -4,7 +4,7 @@
         "links": [
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/submissions?binary=true&page=0&size=20&sort=id,asc"
+                "href": "http://localhost:8017/api/v2/manager/python/submissions?binary=true&page=0&size=20&sort=id,asc"
             }
         ],
         "page": {
@@ -27,16 +27,16 @@
                     "login": "einstein",
                     "email": "einstein@ldap.forumsys.com"
                 },
-                "created": "2026-04-26T17:06:02.018763Z",
+                "permissions": [],
                 "changes": "",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/submissions\/48"
+                        "href": "http://localhost:8017/api/v2/manager/python/submissions/48"
                     },
                     {
                         "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/submissions"
+                        "href": "http://localhost:8017/api/v2/manager/python/submissions"
                     }
                 ],
                 "id": 48,
@@ -54,13 +54,14 @@
                         "published": true,
                         "technology": "Python",
                         "requiresAuthentication": true,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo8"
+                        "publicationUri": "http://localhost/repo/testrepo8"
                     },
                     "title": "Polyscope: A viewer and user interface for 3D data.",
                     "version": "0.0.1",
-                    "url": "https:\/\/polyscope.run",
+                    "url": "https://polyscope.run",
                     "deleted": false,
-                    "descriptionContentType": "text\/markdown",
+                    "descriptionContentType": "text/markdown",
+                    "permissions": [],
                     "binary": true,
                     "name": "tetrapolyscope",
                     "submission": {
@@ -70,15 +71,15 @@
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/48"
+                            "href": "http://localhost:8017/api/v2/manager/python/packages/48"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/8"
+                            "href": "http://localhost:8017/api/v2/manager/python/repositories/8"
                         }
                     ],
                     "id": 48,

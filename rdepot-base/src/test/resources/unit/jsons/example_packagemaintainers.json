@@ -7,64 +7,111 @@
         "links": [
             {
                 "rel": "self",
-                "href": "http://localhost/api/v2/manager/package-maintainers"
+                "href": "http://localhost/api/v2/manager/package-maintainers?page=0&size=20"
             }
         ],
         "content": [
             {
-                "id": 100,
-				"user":{"name":"Test Package Maintainer","id":111,"login":"testpackagemaintainer","email":"packagemaintainer@example.org"},
-                "packageName": "TestPackage100",
-                "repository":{"name":"Test RDepot Repository","id":123,"publicationUri":"http://localhost/repo/testrepo123"},
                 "deleted": false,
+                "id": 100,
+                "packageName": "TestPackage100",
+                "repository": {
+                    "id": 123,
+                    "lastPublicationSuccessful": true,
+                    "name": "Test RDepot Repository",
+                    "publicationUri": "http://localhost/repo/testrepo123",
+                    "published": false,
+                    "requiresAuthentication": false,
+                    "technology": "R"
+                },
+                "user": {
+                    "name": "Test Package Maintainer",
+                    "id": 111,
+                    "login": "testpackagemaintainer",
+                    "email": "packagemaintainer@example.org"
+                },
                 "links": [
                     {
                         "rel": "self",
                         "href": "http://localhost/api/v2/manager/package-maintainers/100"
                     },
                     {
-                        "rel": "packageMaintainerList",
+                        "rel": "user",
+                        "href": "http://localhost/api/v2/manager/users/111"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
                         "href": "http://localhost/api/v2/manager/package-maintainers"
                     }
                 ]
             },
             {
-                "id": 101,
-				"user":{"name":"Test Package Maintainer","id":111,"login":"testpackagemaintainer","email":"packagemaintainer@example.org"},
-                "packageName": "TestPackage101",
-                "repository":{"name":"Test RDepot Repository","id":123,"publicationUri":"http://localhost/repo/testrepo123"},
                 "deleted": false,
+                "id": 101,
+                "packageName": "TestPackage101",
+                "repository": {
+                    "id": 123,
+                    "lastPublicationSuccessful": true,
+                    "name": "Test RDepot Repository",
+                    "publicationUri": "http://localhost/repo/testrepo123",
+                    "published": false,
+                    "requiresAuthentication": false,
+                    "technology": "R"
+                },
+                "user": {
+                    "name": "Test Package Maintainer",
+                    "id": 111,
+                    "login": "testpackagemaintainer",
+                    "email": "packagemaintainer@example.org"
+                },
                 "links": [
                     {
                         "rel": "self",
                         "href": "http://localhost/api/v2/manager/package-maintainers/101"
                     },
                     {
-                        "rel": "packageMaintainerList",
+                        "rel": "user",
+                        "href": "http://localhost/api/v2/manager/users/111"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
                         "href": "http://localhost/api/v2/manager/package-maintainers"
                     }
                 ]
             },
             {
-                "id": 102,
-				"user":{"name":"Test Package Maintainer","id":111,"login":"testpackagemaintainer","email":"packagemaintainer@example.org"},
+                "deleted": null,
+                "id": null,
                 "packageName": "TestPackage102",
-                "repository":{"name":"Test RDepot Repository","id":123,"publicationUri":"http://localhost/repo/testrepo123"},
-                "deleted": true,
+                "repository": {
+                    "id": 123,
+                    "lastPublicationSuccessful": true,
+                    "name": "Test RDepot Repository",
+                    "publicationUri": "http://localhost/repo/testrepo123",
+                    "published": false,
+                    "requiresAuthentication": false,
+                    "technology": "R"
+                },
+                "user": {
+                    "name": "Test Package Maintainer",
+                    "id": 111,
+                    "login": "testpackagemaintainer",
+                    "email": "packagemaintainer@example.org"
+                },
                 "links": [
                     {
-                        "rel": "self",
-                        "href": "http://localhost/api/v2/manager/package-maintainers/102"
+                        "rel": "user",
+                        "href": "http://localhost/api/v2/manager/users/111"
                     },
                     {
-                        "rel": "packageMaintainerList",
+                        "rel": "packageMaintainersList",
                         "href": "http://localhost/api/v2/manager/package-maintainers"
                     }
                 ]
             }
         ],
         "page": {
-            "size": 3,
+            "size": 20,
             "totalElements": 3,
             "totalPages": 1,
             "number": 0

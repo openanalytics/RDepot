@@ -24,6 +24,7 @@ import eu.openanalytics.rdepot.base.entities.HavingSimpleDtoRepresentation;
 import eu.openanalytics.rdepot.base.entities.Resource;
 import eu.openanalytics.rdepot.base.entities.enums.ResourceType;
 import eu.openanalytics.rdepot.base.technology.Technology;
+import jakarta.persistence.MappedSuperclass;
 import lombok.EqualsAndHashCode;
 
 /**
@@ -31,6 +32,7 @@ import lombok.EqualsAndHashCode;
  * {@link eu.openanalytics.rdepot.base.entities.NewsfeedEvent Newsfeed Events}
  * can be created for (when it is edited or created).
  */
+@MappedSuperclass
 @EqualsAndHashCode(callSuper = true)
 public abstract class EventableResource extends Resource implements HavingSimpleDtoRepresentation {
 

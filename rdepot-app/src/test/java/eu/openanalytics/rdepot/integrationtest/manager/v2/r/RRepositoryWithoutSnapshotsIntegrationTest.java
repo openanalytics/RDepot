@@ -131,7 +131,7 @@ public class RRepositoryWithoutSnapshotsIntegrationTest {
 
     private int runCommand(String... args) throws IOException, InterruptedException {
         int exitValue;
-        String[] cmd = ArrayUtils.addAll(new String[] {"/bin/bash"}, args);
+        String[] cmd = ArrayUtils.addAll(new String[] {"/usr/bin/env", "bash"}, args);
         Process process = Runtime.getRuntime().exec(cmd);
         exitValue = process.waitFor();
         process.destroy();

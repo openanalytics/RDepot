@@ -27,7 +27,10 @@ import eu.openanalytics.rdepot.r.synchronization.partitioning.structs.RequestBod
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.StandardCopyOption;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.io.FileUtils;
@@ -261,7 +264,7 @@ public class RRequestBodyPartitioner {
                 .toFile();
 
         try {
-            // TODO: Should this happen here or in storage?
+            // TODO: Should this happen here or in localStorage?
             //  This is a temporary file so it seems to be the right place
             //  Should be thought of in #22383
             FileUtils.moveFile(originalFile, withPrefixFile, StandardCopyOption.REPLACE_EXISTING);

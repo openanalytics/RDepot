@@ -1,34 +1,66 @@
 {
     "code": 200,
     "data": {
-        "enhances": null,
+        "active": false,
+        "architecture": null,
+        "author": "Bulent Altunkaynak [aut, cre], Hamza Gamgam [aut]",
+        "binary": false,
+        "built": null,
+        "deleted": true,
+        "depends": "R (>= 2.15.0)",
         "description": "Performs nonparametric tests for equality of location against ordered alternatives.",
-        "source": "\/opt\/rdepot\/repositories\/2\/8436419\/npordtests_1.1.tar.gz",
-        "repository": {
-            "name": "testrepo1",
-            "lastPublicationSuccessful": true,
-            "id": 2,
-            "published": true,
-            "technology": "R",
-            "requiresAuthentication": false,
-            "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
-        },
-        "title": "Nonparametric Tests for Equality of Location Against Ordered Alternatives",
+        "descriptionContentType": "txt",
         "distribution": null,
+        "encoding": null,
+        "enhances": null,
+        "id": 14,
+        "imports": null,
+        "license": "GPL (>= 2)",
+        "linkingTo": null,
         "maintainer": null,
+        "manualAvailable": null,
+        "md5sum": "da8be1247d3145b757bd62e01fc6eb8b",
+        "name": "npordtests",
+        "needsCompilation": "no",
+        "permissions": [
+            "package.delete.hard"
+        ],
+        "priority": null,
+        "repository": {
+            "id": 2,
+            "lastPublicationSuccessful": true,
+            "name": "testrepo1",
+            "publicationUri": "http://localhost/repo/testrepo1",
+            "published": true,
+            "requiresAuthentication": false,
+            "technology": "R"
+        },
+        "rversion": null,
+        "source": "/opt/rdepot/repositories/2/8436419/npordtests_1.1.tar.gz",
+        "submission": {
+            "id": 15,
+            "state": "ACCEPTED"
+        },
         "suggests": null,
         "systemRequirements": null,
-        "descriptionContentType": "txt",
-        "md5sum": "da8be1247d3145b757bd62e01fc6eb8b",
-        "manualAvailable": null,
+        "technology": "R",
+        "title": "Nonparametric Tests for Equality of Location Against Ordered Alternatives",
+        "url": null,
+        "user": {
+            "email": "tesla@ldap.forumsys.com",
+            "id": 5,
+            "login": "tesla",
+            "name": "Nikola Tesla"
+        },
+        "version": "1.1",
         "links": [
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/14"
+                "href": "http://localhost:8017/api/v2/manager/r/packages/14"
             },
             {
                 "rel": "packageList",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+                "href": "http://localhost:8017/api/v2/manager/r/packages"
             },
             {
                 "rel": "repository",
@@ -36,46 +68,17 @@
             },
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/14",
+                "href": "http://localhost:8017/api/v2/manager/r/packages/14",
                 "type": "PATCH"
             },
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/14",
+                "href": "http://localhost:8017/api/v2/manager/r/packages/14",
                 "type": "DELETE"
             }
-        ],
-        "id": 14,
-        "rversion": null,
-        "architecture": null,
-        "imports": null,
-        "depends": "R (>= 2.15.0)",
-        "built": null,
-        "author": "Bulent Altunkaynak [aut, cre], Hamza Gamgam [aut]",
-        "active": false,
-        "technology": "R",
-        "priority": null,
-        "encoding": null,
-        "version": "1.1",
-        "url": null,
-        "license": "GPL (>= 2)",
-        "deleted": true,
-        "binary": false,
-        "name": "npordtests",
-        "submission": {
-            "id": 15,
-            "state": "ACCEPTED"
-        },
-        "linkingTo": null,
-        "user": {
-            "name": "Nikola Tesla",
-            "id": 5,
-            "login": "tesla",
-            "email": "tesla@ldap.forumsys.com"
-        },
-        "needsCompilation": "no"
+        ]
     },
-    "messageCode": "success.request.processed",
     "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
     "status": "SUCCESS"
 }

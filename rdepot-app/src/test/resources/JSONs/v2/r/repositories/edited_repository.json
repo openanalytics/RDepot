@@ -1,16 +1,6 @@
 {
     "code": 200,
     "data": {
-        "redirectToSource": false,
-        "serverAddress": "http:\/\/oa-rdepot-repo:8080\/newName",
-        "lastPublicationSuccessful": true,
-        "published": true,
-        "technology": "R",
-        "version": 32,
-        "numberOfPackages": 9,
-        "deleted": false,
-        "synchronizing": false,
-        "name": "newName",
         "allowedFiles": [
             {
                 "mimetype": "application/gzip",
@@ -21,31 +11,50 @@
                 "extension": ".tar.gz"
             }
         ],
+        "deleted": false,
+        "id": 2,
+        "lastModifiedTimestamp": "2026-06-29T15:27:17.527964Z",
+        "lastPublicationSuccessful": true,
+        "lastPublicationTimestamp": "2026-06-29T15:27:17.549312726Z",
+        "name": "newName",
+        "numberOfPackages": 9,
+        "permissions": [
+            "repository.delete.soft",
+            "repository.edit",
+            "repository.republish",
+            "repository.submit.autoApprove",
+            "repository.unpublish"
+        ],
+        "publicationUri": "http://localhost/repo/testrepo1",
+        "published": true,
+        "redirectToSource": false,
+        "requiresAuthentication": false,
+        "serverAddress": "http://oa-rdepot-repo:8080/newName",
+        "synchronizing": false,
+        "technology": "R",
+        "version": 32,
         "links": [
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories\/2"
+                "href": "http://localhost:8017/api/v2/manager/r/repositories/2"
             },
             {
                 "rel": "repositoryList",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories"
+                "href": "http://localhost:8017/api/v2/manager/r/repositories"
             },
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories\/2",
+                "href": "http://localhost:8017/api/v2/manager/r/repositories/2",
                 "type": "PATCH"
             },
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/repositories\/2",
+                "href": "http://localhost:8017/api/v2/manager/r/repositories/2",
                 "type": "DELETE"
             }
-        ],
-        "id": 2,
-        "requiresAuthentication": false,
-        "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+        ]
     },
-    "messageCode": "success.request.processed",
     "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
     "status": "SUCCESS"
 }

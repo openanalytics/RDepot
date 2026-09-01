@@ -20,7 +20,7 @@
  */
 package eu.openanalytics.rdepot.r.storage.indexes;
 
-import eu.openanalytics.rdepot.base.storage.Storage;
+import eu.openanalytics.rdepot.base.storage.LocalStorage;
 import eu.openanalytics.rdepot.base.storage.indexes.PackageIndexGenerator;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.storage.indexes.resolvers.RPackagePublicationURIResolver;
@@ -37,12 +37,12 @@ public class RPackageIndexGenerator extends PackageIndexGenerator<RPackage> {
     public RPackageIndexGenerator(
             @Value("classpath:templates/r/package_template.html") Resource packageTemplate,
             @Value("classpath:templates/r/package_anchor_template.html") Resource packageAnchorTemplate,
-            Storage<RPackage> storage)
+            LocalStorage<RPackage> localStorage)
             throws IOException {
         super(
                 packageTemplate.getContentAsString(Charset.defaultCharset()),
                 packageAnchorTemplate.getContentAsString(Charset.defaultCharset()),
-                storage,
+                localStorage,
                 new RPackagePublicationURIResolver());
     }
 

@@ -23,6 +23,8 @@ package eu.openanalytics.rdepot.base.api.v2.dtos;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.Resource;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -46,6 +48,7 @@ public class RepositorySimpleDto implements IDto {
     private Boolean synchronizing = false;
     private String technology;
     private Boolean requiresAuthentication;
+    protected List<String> permissions = new ArrayList<>();
 
     @ToStringExclude
     private Repository entity;
@@ -74,10 +77,6 @@ public class RepositorySimpleDto implements IDto {
 
     public Boolean isSynchronizing() {
         return synchronizing;
-    }
-
-    public Boolean isRequiresAuthentication() {
-        return requiresAuthentication;
     }
 
     @Override

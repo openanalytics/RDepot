@@ -74,18 +74,8 @@ public class ValidationResultImpl<T> implements DataSpecificValidationResult<T> 
     }
 
     @Override
-    public void error(@NonNull String property, @NonNull String errorCode, T data) {
-        errors.add(new ValidationResultItem<>(property, errorCode, data));
-    }
-
-    @Override
     public void warning(@NonNull String property, @NonNull String warningCode, T data) {
         warnings.add(new ValidationResultItem<>(property, warningCode, data));
-    }
-
-    @Override
-    public List<ValidationResultItem<T>> getDataSpecificErrors() {
-        return errors;
     }
 
     @Override

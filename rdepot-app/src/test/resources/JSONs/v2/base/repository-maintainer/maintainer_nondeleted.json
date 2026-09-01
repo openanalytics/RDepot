@@ -2,44 +2,48 @@
     "code": 200,
     "data": {
         "deleted": false,
+        "id": 3,
+        "permissions": [
+            "repositoryMaintainer.delete.soft",
+            "repositoryMaintainer.edit"
+        ],
+        "repository": {
+            "id": 5,
+            "lastPublicationSuccessful": false,
+            "name": "testrepo4",
+            "publicationUri": "http://localhost/repo/testrepo4",
+            "published": false,
+            "requiresAuthentication": true,
+            "technology": "R"
+        },
+        "user": {
+            "email": "tesla@ldap.forumsys.com",
+            "id": 5,
+            "login": "tesla",
+            "name": "Nikola Tesla"
+        },
         "links": [
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/repository-maintainers\/3"
+                "href": "http://localhost:8017/api/v2/manager/repository-maintainers/3"
             },
             {
                 "rel": "repositoryMaintainerList",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/repository-maintainers"
+                "href": "http://localhost:8017/api/v2/manager/repository-maintainers"
             },
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/repository-maintainers\/3",
+                "href": "http://localhost:8017/api/v2/manager/repository-maintainers/3",
                 "type": "PATCH"
             },
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/repository-maintainers\/3",
+                "href": "http://localhost:8017/api/v2/manager/repository-maintainers/3",
                 "type": "DELETE"
             }
-        ],
-        "id": 3,
-        "repository": {
-            "name": "testrepo4",
-            "lastPublicationSuccessful": false,
-            "id": 5,
-            "published": false,
-            "technology": "R",
-            "requiresAuthentication": true,
-            "publicationUri": "http:\/\/localhost\/repo\/testrepo4"
-        },
-        "user": {
-            "name": "Nikola Tesla",
-            "id": 5,
-            "login": "tesla",
-            "email": "tesla@ldap.forumsys.com"
-        }
+        ]
     },
-    "messageCode": "success.request.processed",
     "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
     "status": "SUCCESS"
 }

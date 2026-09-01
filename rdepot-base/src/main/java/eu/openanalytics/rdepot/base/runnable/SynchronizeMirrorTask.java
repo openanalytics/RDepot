@@ -20,10 +20,12 @@
  */
 package eu.openanalytics.rdepot.base.runnable;
 
+import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.mirroring.Mirror;
-import eu.openanalytics.rdepot.base.mirroring.MirrorSynchronizer;
+import eu.openanalytics.rdepot.base.mirroring.MirrorSynchronizationCoordinator;
+import eu.openanalytics.rdepot.base.mirroring.MirrorSynchronizationTask;
 import eu.openanalytics.rdepot.base.mirroring.pojos.MirroredPackage;
-import eu.openanalytics.rdepot.base.mirroring.pojos.MirroredRepository;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,16 +44,18 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @AllArgsConstructor
-public class SynchronizeMirrorTask<R extends MirroredRepository<P, M>, P extends MirroredPackage, M extends Mirror<P>>
+public class SynchronizeMirrorTask<R extends Repository, P extends MirroredPackage, M extends Mirror<P>>
         implements Runnable {
 
-    MirrorSynchronizer<R, P, M> mirrorService;
+    MirrorSynchronizationCoordinator<P, M, R> mirrorSynchronizationCoordinator;
+
     R repository;
     M mirror;
 
     @Override
     public void run() {
-        log.info("Synchronizing repository " + repository.getName() + " with mirror " + mirror.getUri());
-        mirrorService.synchronizeAsync(repository, mirror);
+        log.info("Synchronizing repository {} with mirror {}", repository.getName(), mirror.getUri());
+        mirrorSynchronizationCoordinator.submitMirroringTask(
+                new MirrorSynchronizationTask<>(List.of(mirror), repository));
     }
 }

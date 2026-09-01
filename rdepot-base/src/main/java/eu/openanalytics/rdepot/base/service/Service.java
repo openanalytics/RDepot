@@ -71,18 +71,4 @@ public abstract class Service<E extends Resource> extends SpringDataJpaCapableRe
             throw new DeleteEntityException();
         }
     }
-
-    /**
-     * Deletes entity of given id.
-     * If entity cannot be found, nothing happens.
-     */
-    public void delete(int id) {
-        findById(id).ifPresent(r -> {
-            try {
-                delete(r);
-            } catch (DeleteEntityException e) {
-                log.error(e.getMessage(), e);
-            }
-        });
-    }
 }

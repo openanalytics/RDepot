@@ -28,16 +28,14 @@ import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.manuals.ManualGenerator;
 import eu.openanalytics.rdepot.r.manuals.implementations.fs.LocalFSManualGenerator;
-import eu.openanalytics.rdepot.r.storage.BinLocation;
-import eu.openanalytics.rdepot.r.storage.BinLocationSet;
-import eu.openanalytics.rdepot.r.storage.implementations.RLocalStorage;
-import eu.openanalytics.rdepot.r.storage.indexes.ArchiveIndexGenerator;
-import eu.openanalytics.rdepot.r.storage.indexes.RIndexDescriptor;
-import eu.openanalytics.rdepot.r.storage.indexes.RIndexGenerator;
-import eu.openanalytics.rdepot.r.storage.indexes.RPackageIndexGenerator;
-import eu.openanalytics.rdepot.r.storage.indexes.RRepositoryIndexGenerator;
+import eu.openanalytics.rdepot.r.storage.binaries.BinLocation;
+import eu.openanalytics.rdepot.r.storage.binaries.BinLocationSet;
+import eu.openanalytics.rdepot.r.storage.implementations.RFSLocalStorage;
+import eu.openanalytics.rdepot.r.storage.implementations.RLocalFSPersistentStorage;
+import eu.openanalytics.rdepot.r.storage.indexes.*;
 import eu.openanalytics.rdepot.r.storage.packagesfile.PackageStringGenerator;
 import eu.openanalytics.rdepot.r.storage.packagesfile.PackagesFileDescriptor;
+import eu.openanalytics.rdepot.r.storage.packagesfile.PackagesFileDescriptorCreator;
 import eu.openanalytics.rdepot.r.storage.population.PopulatedRPackage;
 import eu.openanalytics.rdepot.r.storage.population.PopulatedRepositoryContent;
 import eu.openanalytics.rdepot.r.storage.population.implementations.RLocalPopulator;
@@ -52,13 +50,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -80,88 +72,38 @@ import org.springframework.util.MultiValueMapAdapter;
 @ExtendWith(MockitoExtension.class)
 public class RLocalPopulatorTest {
 
-    private static final String EXPECTED_LATEST_SOURCE_INDEX_REDIRECT_TO_SOURCE =
-            """
-                    <!DOCTYPE html>
-                    <html lang="en">
-                    <head>
-                        <meta charset="UTF-8">
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <meta name="arr:repository-version" content="0">
-                        <title>arr</title>
-                    </head>
-                    <body>
-                    \t<h1>arr</h1>
-                        <a href="/Archive/index.html">Archive</a>
-                    <div class="package" id="package-41">
-                        <a href="/repo/arr/src/contrib/plyr_1.8.9.tar.gz">plyr</a>
-                        <div class="package-version">1.8.9</div>
-                        <div class="package-title">Tools for Splitting, Applying and Combining Data</div>
-                        <div class="package-description">A set of tools that solves a common set of problems: you need\\n to break a big problem down into manageable pieces, operate on each\\n piece and then put all the pieces back together. For example, you\\n might want to fit a model to each spatial location or time point in\\n your study, summarise data by panels or collapse high-dimensional\\n arrays to simpler summary statistics. The development of 'plyr' has\\n been generously supported by 'Becton Dickinson'.</div>
-                        <div class="package-maintainer">null</div>
-                    </div>
-                    <div class="package" id="package-40">
-                        <a href="/repo/arr/src/contrib/qsort_0.2.3.tar.gz">qsort</a>
-                        <div class="package-version">0.2.3</div>
-                        <div class="package-title">Scoring Q-Sort Data</div>
-                        <div class="package-description">Computes scores from Q-sort data, using criteria sorts and\\n derived scales from subsets of items.\\n The 'qsort' package includes descriptions and scoring procedures\\n for four different Q-sets commonly used in developmental psychology research:\\n Attachment Q-set (version 3.0) (Waters, 1995, <doi:10.1111/j.1540-5834.1995.tb00214.x>);\\n California Child Q-set (Block and Block, 1969, <doi:10.1037/0012-1649.21.3.508>);\\n Maternal Behaviour Q-set (version 3.1)\\n (Pederson et al., 1999, <https://ir.lib.uwo.ca/cgi/viewcontent.cgi?article=1000&context=psychologypub>);\\n Preschool Q-set (Baumrind, 1968 revised by Wanda Bronson, <doi:10.1111/j.1540-5834.1995.tb00214.x>).</div>
-                        <div class="package-maintainer">null</div>
-                    </div>
-                    </body>
-                    </html>
-                    """;
-    private static final String EXPECTED_LATEST_BINARY_INDEX_REDIRECT_TO_SOURCE =
-            """
-                    <!DOCTYPE html>
-                    <html lang="en">
-                    <head>
-                        <meta charset="UTF-8">
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <meta name="arr:repository-version" content="0">
-                        <title>arr</title>
-                    </head>
-                    <body>
-                    \t<h1>arr</h1>
-                        <a href="/Archive/index.html">Archive</a>
-                    </body>
-                    </html>
-                    """;
-    private static final String EXPECTED_ARCHIVE_BINARY_INDEX_REDIRECT_TO_SOURCE =
-            """
-                    <!DOCTYPE html>
-                    <html lang="en">
-                    <head>
-                        <meta charset="UTF-8">
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <meta name="arr:repository-version" content="0">
-                        <title>Links for plyr</title>
-                    </head>
-                    <body>
-                    \t<h1>Links for plyr</h1>
-                    <div class="package" id="package-31">
-                        <a href="/repo/arr/bin/linux/centos8/x86_64/4.5/Archive/plyr/plyr_1.8.6.tar.gz">plyr</a>
-                        <div class="package-version">1.8.6</div>
-                        <div class="package-title">Tools for Splitting, Applying and Combining Data</div>
-                        <div class="package-description">A set of tools that solves a common set of\\n problems: you need to break a big problem down into manageable pieces,\\n operate on each piece and then put all the pieces back together. For\\n example, you might want to fit a model to each spatial location or\\n time point in your study, summarise data by panels or collapse\\n high-dimensional arrays to simpler summary statistics. The development\\n of 'plyr' has been generously supported by 'Becton Dickinson'.</div>
-                        <div class="package-maintainer">null</div>
-                    </div>
-                    <div class="package" id="package-33">
-                        <a href="/repo/arr/bin/linux/centos8/x86_64/4.5/Archive/plyr/plyr_1.8.1.tar.gz">plyr</a>
-                        <div class="package-version">1.8.1</div>
-                        <div class="package-title">Tools for splitting, applying and combining data</div>
-                        <div class="package-description">plyr is a set of tools that solves a common\\n set of problems: you need to break a big problem down\\n into manageable pieces, operate on each pieces and then\\n put all the pieces back together. For example, you\\n might want to fit a model to each spatial location or\\n time point in your study, summarise data by panels or\\n collapse high-dimensional arrays to simpler summary\\n statistics. The development of plyr has been generously\\n supported by BD (Becton Dickinson).</div>
-                        <div class="package-maintainer">null</div>
-                    </div>
-                    <div class="package" id="package-36">
-                        <a href="/repo/arr/bin/linux/centos8/x86_64/4.5/Archive/plyr/plyr_1.8.8.tar.gz">plyr</a>
-                        <div class="package-version">1.8.8</div>
-                        <div class="package-title">Tools for Splitting, Applying and Combining Data</div>
-                        <div class="package-description">A set of tools that solves a common set of problems: you need\\n to break a big problem down into manageable pieces, operate on each\\n piece and then put all the pieces back together. For example, you\\n might want to fit a model to each spatial location or time point in\\n your study, summarise data by panels or collapse high-dimensional\\n arrays to simpler summary statistics. The development of 'plyr' has\\n been generously supported by 'Becton Dickinson'.</div>
-                        <div class="package-maintainer">null</div>
-                    </div>
-                    </body>
-                    </html>
-                    """;
+    private static final String EXPECTED_LATEST_SOURCE_INDEX_REDIRECT_TO_SOURCE;
+
+    static {
+        try {
+            EXPECTED_LATEST_SOURCE_INDEX_REDIRECT_TO_SOURCE =
+                    Files.readString(Paths.get("src/test/resources/templates/SOURCE_INDEX_REDIRECT_TO_SOURCE.html"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static final String EXPECTED_LATEST_BINARY_INDEX_REDIRECT_TO_SOURCE;
+
+    static {
+        try {
+            EXPECTED_LATEST_BINARY_INDEX_REDIRECT_TO_SOURCE =
+                    Files.readString(Paths.get("src/test/resources/templates/BINARY_INDEX_REDIRECT_TO_SOURCE.html"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static final String EXPECTED_ARCHIVE_BINARY_INDEX_REDIRECT_TO_SOURCE;
+
+    static {
+        try {
+            EXPECTED_ARCHIVE_BINARY_INDEX_REDIRECT_TO_SOURCE = Files.readString(
+                    Paths.get("src/test/resources/templates/ARCHIVE_BINARY_INDEX_REDIRECT_TO_SOURCE.html"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @InjectMocks
     private RLocalPopulator rLocalPopulator;
@@ -170,7 +112,11 @@ public class RLocalPopulatorTest {
     private StaticMessageResolver staticMessageResolver;
 
     @Spy
-    private final RLocalStorage storage = new RLocalStorage();
+    private final RFSLocalStorage storage = new RFSLocalStorage();
+
+    @Spy
+    private final RLocalFSPersistentStorage persistentStorage =
+            new RLocalFSPersistentStorage(new File("src/test/resources/unit/storage_tests/rdepot"));
 
     private final RRequestBodyPartitioner partitioner = new RRequestBodyPartitioner();
 
@@ -201,6 +147,9 @@ public class RLocalPopulatorTest {
     @Spy
     private ManualGenerator manualGenerator = new LocalFSManualGenerator();
 
+    @Spy
+    private PackagesFileDescriptorCreator packagesFileDescriptorCreator = new PackagesFileDescriptorCreator(storage);
+
     public RLocalPopulatorTest() throws IOException {}
 
     @BeforeEach
@@ -227,161 +176,71 @@ public class RLocalPopulatorTest {
         }
     }
 
-    private static final String EXPECTED_LATEST_SOURCE_INDEX =
-            """
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <meta name="arr:repository-version" content="0">
-                <title>arr</title>
-            </head>
-            <body>
-            \t<h1>arr</h1>
-                <a href="/Archive/index.html">Archive</a>
-            <div class="package" id="package-36">
-                <a href="/repo/arr/src/contrib/plyr_1.8.8.tar.gz">plyr</a>
-                <div class="package-version">1.8.8</div>
-                <div class="package-title">Tools for Splitting, Applying and Combining Data</div>
-                <div class="package-description">A set of tools that solves a common set of problems: you need\\n to break a big problem down into manageable pieces, operate on each\\n piece and then put all the pieces back together. For example, you\\n might want to fit a model to each spatial location or time point in\\n your study, summarise data by panels or collapse high-dimensional\\n arrays to simpler summary statistics. The development of 'plyr' has\\n been generously supported by 'Becton Dickinson'.</div>
-                <div class="package-maintainer">null</div>
-            </div>
-            <div class="package" id="package-40">
-                <a href="/repo/arr/src/contrib/qsort_0.2.3.tar.gz">qsort</a>
-                <div class="package-version">0.2.3</div>
-                <div class="package-title">Scoring Q-Sort Data</div>
-                <div class="package-description">Computes scores from Q-sort data, using criteria sorts and\\n derived scales from subsets of items.\\n The 'qsort' package includes descriptions and scoring procedures\\n for four different Q-sets commonly used in developmental psychology research:\\n Attachment Q-set (version 3.0) (Waters, 1995, <doi:10.1111/j.1540-5834.1995.tb00214.x>);\\n California Child Q-set (Block and Block, 1969, <doi:10.1037/0012-1649.21.3.508>);\\n Maternal Behaviour Q-set (version 3.1)\\n (Pederson et al., 1999, <https://ir.lib.uwo.ca/cgi/viewcontent.cgi?article=1000&context=psychologypub>);\\n Preschool Q-set (Baumrind, 1968 revised by Wanda Bronson, <doi:10.1111/j.1540-5834.1995.tb00214.x>).</div>
-                <div class="package-maintainer">null</div>
-            </div>
-            </body>
-            </html>
-            """;
+    private static final String EXPECTED_LATEST_SOURCE_INDEX;
 
-    private static final String EXPECTED_ARCHIVE_SOURCE_INDEX =
-            """
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <meta name="arr:repository-version" content="0">
-                <title>arr</title>
-            </head>
-            <body>
-            \t<h1>arr</h1>
-            <div class="package" id="package-plyr">
-                <a href="/repo/arr/src/contrib/Archive/plyr">plyr</a>
-            </div>
-            <div class="package" id="package-qsort">
-                <a href="/repo/arr/src/contrib/Archive/qsort">qsort</a>
-            </div>
-            </body>
-            </html>
-            """;
+    static {
+        try {
+            EXPECTED_LATEST_SOURCE_INDEX =
+                    Files.readString(Paths.get("src/test/resources/templates/EXPECTED_LATEST_SOURCE_INDEX.html"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-    private static final String EXPECTED_QSORT_ARCHIVE_SOURCE_INDEX =
-            """
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <meta name="arr:repository-version" content="0">
-                <title>Links for qsort</title>
-            </head>
-            <body>
-            \t<h1>Links for qsort</h1>
-            <div class="package" id="package-35">
-                <a href="/repo/arr/src/contrib/Archive/qsort/qsort_0.2.1.tar.gz">qsort</a>
-                <div class="package-version">0.2.1</div>
-                <div class="package-title">Scoring Q-Sort Data</div>
-                <div class="package-description">Computes scores from Q-sort data, using criteria sorts and\\n derived scales from subsets of items.\\n The 'qsort' package includes descriptions and scoring procedures\\n for four different Q-sets:\\n Attachment Q-set (version 3.0) (Waters, 1995, <doi:10.1111/j.1540-5834.1995.tb00214.x>);\\n California Child Q-set (Block and Block, 1969, <doi:10.1037/0012-1649.21.3.508>);\\n Maternal Behaviour Q-set (version 3.1)\\n (Pederson et al., 1999, <https://ir.lib.uwo.ca/cgi/viewcontent.cgi?article=1000&context=psychologypub>);\\n Preschool Q-set (Baumrind, 1968 revised by Wanda Bronson, <doi:10.1111/j.1540-5834.1995.tb00214.x>).</div>
-                <div class="package-maintainer">null</div>
-            </div>
-            <div class="package" id="package-39">
-                <a href="/repo/arr/src/contrib/Archive/qsort/qsort_0.2.2.tar.gz">qsort</a>
-                <div class="package-version">0.2.2</div>
-                <div class="package-title">Scoring Q-Sort Data</div>
-                <div class="package-description">Computes scores from Q-sort data, using criteria sorts and\\n derived scales from subsets of items.\\n The 'qsort' package includes descriptions and scoring procedures\\n for four different Q-sets:\\n Attachment Q-set (version 3.0) (Waters, 1995, <doi:10.1111/j.1540-5834.1995.tb00214.x>);\\n California Child Q-set (Block and Block, 1969, <doi:10.1037/0012-1649.21.3.508>);\\n Maternal Behaviour Q-set (version 3.1)\\n (Pederson et al., 1999, <https://ir.lib.uwo.ca/cgi/viewcontent.cgi?article=1000&context=psychologypub>);\\n Preschool Q-set (Baumrind, 1968 revised by Wanda Bronson, <doi:10.1111/j.1540-5834.1995.tb00214.x>).</div>
-                <div class="package-maintainer">null</div>
-            </div>
-            </body>
-            </html>
-            """;
+    private static final String EXPECTED_ARCHIVE_SOURCE_INDEX;
 
-    private static final String EXPECTED_LATEST_BINARY_INDEX =
-            """
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <meta name="arr:repository-version" content="0">
-                <title>arr</title>
-            </head>
-            <body>
-            \t<h1>arr</h1>
-                <a href="/Archive/index.html">Archive</a>
-            <div class="package" id="package-36">
-                <a href="/repo/arr/bin/linux/centos8/x86_64/4.5/plyr_1.8.8.tar.gz">plyr</a>
-                <div class="package-version">1.8.8</div>
-                <div class="package-title">Tools for Splitting, Applying and Combining Data</div>
-                <div class="package-description">A set of tools that solves a common set of problems: you need\\n to break a big problem down into manageable pieces, operate on each\\n piece and then put all the pieces back together. For example, you\\n might want to fit a model to each spatial location or time point in\\n your study, summarise data by panels or collapse high-dimensional\\n arrays to simpler summary statistics. The development of 'plyr' has\\n been generously supported by 'Becton Dickinson'.</div>
-                <div class="package-maintainer">null</div>
-            </div>
-            </body>
-            </html>
-            """;
+    static {
+        try {
+            EXPECTED_ARCHIVE_SOURCE_INDEX =
+                    Files.readString(Paths.get("src/test/resources/templates/EXPECTED_ARCHIVE_SOURCE_INDEX.html"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-    private static final String EXPECTED_ARCHIVE_BINARY_INDEX =
-            """
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <meta name="arr:repository-version" content="0">
-                <title>arr</title>
-            </head>
-            <body>
-            \t<h1>arr</h1>
-            <div class="package" id="package-plyr">
-                <a href="/repo/arr/bin/linux/centos8/x86_64/4.5/Archive/plyr">plyr</a>
-            </div>
-            </body>
-            </html>
-            """;
+    private static final String EXPECTED_QSORT_ARCHIVE_SOURCE_INDEX;
 
-    private static final String EXPECTED_ARCHIVE_PLYR_BINARY_INDEX =
-            """
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <meta name="arr:repository-version" content="0">
-                <title>Links for plyr</title>
-            </head>
-            <body>
-            \t<h1>Links for plyr</h1>
-            <div class="package" id="package-31">
-                <a href="/repo/arr/bin/linux/centos8/x86_64/4.5/Archive/plyr/plyr_1.8.6.tar.gz">plyr</a>
-                <div class="package-version">1.8.6</div>
-                <div class="package-title">Tools for Splitting, Applying and Combining Data</div>
-                <div class="package-description">A set of tools that solves a common set of\\n problems: you need to break a big problem down into manageable pieces,\\n operate on each piece and then put all the pieces back together. For\\n example, you might want to fit a model to each spatial location or\\n time point in your study, summarise data by panels or collapse\\n high-dimensional arrays to simpler summary statistics. The development\\n of 'plyr' has been generously supported by 'Becton Dickinson'.</div>
-                <div class="package-maintainer">null</div>
-            </div>
-            <div class="package" id="package-33">
-                <a href="/repo/arr/bin/linux/centos8/x86_64/4.5/Archive/plyr/plyr_1.8.1.tar.gz">plyr</a>
-                <div class="package-version">1.8.1</div>
-                <div class="package-title">Tools for splitting, applying and combining data</div>
-                <div class="package-description">plyr is a set of tools that solves a common\\n set of problems: you need to break a big problem down\\n into manageable pieces, operate on each pieces and then\\n put all the pieces back together. For example, you\\n might want to fit a model to each spatial location or\\n time point in your study, summarise data by panels or\\n collapse high-dimensional arrays to simpler summary\\n statistics. The development of plyr has been generously\\n supported by BD (Becton Dickinson).</div>
-                <div class="package-maintainer">null</div>
-            </div>
-            </body>
-            </html>
-            """;
+    static {
+        try {
+            EXPECTED_QSORT_ARCHIVE_SOURCE_INDEX = Files.readString(
+                    Paths.get("src/test/resources/templates/EXPECTED_QSORT_ARCHIVE_SOURCE_INDEX.html"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static final String EXPECTED_LATEST_BINARY_INDEX;
+
+    static {
+        try {
+            EXPECTED_LATEST_BINARY_INDEX =
+                    Files.readString(Paths.get("src/test/resources/templates/EXPECTED_LATEST_BINARY_INDEX.html"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static final String EXPECTED_ARCHIVE_BINARY_INDEX;
+
+    static {
+        try {
+            EXPECTED_ARCHIVE_BINARY_INDEX =
+                    Files.readString(Paths.get("src/test/resources/templates/EXPECTED_ARCHIVE_BINARY_INDEX.html"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static final String EXPECTED_ARCHIVE_PLYR_BINARY_INDEX;
+
+    static {
+        try {
+            EXPECTED_ARCHIVE_PLYR_BINARY_INDEX =
+                    Files.readString(Paths.get("src/test/resources/templates/EXPECTED_ARCHIVE_PLYR_BINARY_INDEX.html"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private static final List<String> PLATFORMS = List.of("bin/linux/centos8/x86_64/4.5");
 
@@ -463,20 +322,20 @@ public class RLocalPopulatorTest {
 
         final String expectedLocalPath = "/tmp/rdepot-unit-tests/generated/0/current/src/contrib/latest/PACKAGES";
         final String expectedGzLocalPath = expectedLocalPath + ".gz";
-        final String expectedMd5Sum = "1a3e10c7eb2a7ff6a4e1c4ac0ada1412";
-        final String expectedGzMd5Sum = "e6dda8e78dcc799025d5ed1e51451d4a";
+        final String expectedMd5Sum = "38bbc3386ce60554842d4e41da5cbc7a";
+        final String expectedGzMd5Sum = "3d58176236841e1969581b65e8cfcad5";
         final String expectedContent =
                 """
                 Package: plyr
                 Version: 1.8.8
                 License: MIT + file LICENSE
-                MD5Sum: 0a22da16605ee765e7d4f1efc9f7a61f
+                MD5sum: 0a22da16605ee765e7d4f1efc9f7a61f
                 NeedsCompilation: no
 
                 Package: qsort
                 Version: 0.2.3
                 License: GPL-3
-                MD5Sum: 3204109d62ec7ff8e44bd15a989fc8b1
+                MD5sum: 3204109d62ec7ff8e44bd15a989fc8b1
                 NeedsCompilation: no""";
 
         Assertions.assertEquals(expectedLocalPath, packagesFile.localPath(), "Invalid PACKAGES file local path.");
@@ -543,21 +402,21 @@ public class RLocalPopulatorTest {
         final String expectedLocalPath =
                 "/tmp/rdepot-unit-tests/generated/0/12082025/bin/linux/centos8/x86_64/4.5/Archive/PACKAGES";
         final String expectedGzLocalPath = expectedLocalPath + ".gz";
-        final String expectedMd5Sum = "be060922801f44f583397516c2437381";
-        final String expectedGzMd5Sum = "a29903b803602bca45936f6bb7ab4443";
+        final String expectedMd5Sum = "6ed1e715af055e781d0d94c97936e1d3";
+        final String expectedGzMd5Sum = "b79124e5659bba3c9c4282afd3dc27c5";
         final String expectedContent =
                 """
                 Package: plyr
                 Version: 1.8.6
                 License: MIT + file LICENSE
-                MD5Sum: 6a9c2acfd924f2fb626d54168120fa08
+                MD5sum: 6a9c2acfd924f2fb626d54168120fa08
                 NeedsCompilation: no
                 Built: R 4.5.1; x86_64-pc-linux-gnu; 2025-08-11 09:59:00 UTC; unix
 
                 Package: plyr
                 Version: 1.8.1
                 License: MIT + file LICENSE
-                MD5Sum: a8b2d2284d56ab1839728040d463a360
+                MD5sum: a8b2d2284d56ab1839728040d463a360
                 NeedsCompilation: no
                 Built: R 4.5.1; x86_64-pc-linux-gnu; 2025-08-11 09:59:00 UTC; unix""";
 
@@ -625,14 +484,14 @@ public class RLocalPopulatorTest {
         final String expectedLocalPath =
                 "/tmp/rdepot-unit-tests/generated/0/12082025/bin/linux/centos8/x86_64/4.5/latest/PACKAGES";
         final String expectedGzLocalPath = expectedLocalPath + ".gz";
-        final String expectedMd5Sum = "d99fbddaec09da694623357cfeaf82e4";
-        final String expectedGzMd5Sum = "91825144b7e71ede6826cc9e50dfe2ab";
+        final String expectedMd5Sum = "5433198f8276ea3183607c16ac998856";
+        final String expectedGzMd5Sum = "1e395a880cd0e99080d545c4d26011b0";
         final String expectedContent =
                 """
                 Package: plyr
                 Version: 1.8.8
                 License: MIT + file LICENSE
-                MD5Sum: 08841cfd5edbd118a512198217cf5f2e
+                MD5sum: 08841cfd5edbd118a512198217cf5f2e
                 NeedsCompilation: no
                 Built: R 4.5.1; x86_64-pc-linux-gnu; 2025-08-11 09:59:00 UTC; unix""";
 
@@ -695,26 +554,26 @@ public class RLocalPopulatorTest {
 
         final String expectedLocalPath = "/tmp/rdepot-unit-tests/generated/0/current/src/contrib/Archive/PACKAGES";
         final String expectedGzLocalPath = expectedLocalPath + ".gz";
-        final String expectedMd5Sum = "84eea268ba0ed5a159ecae4e6668ffc8";
-        final String expectedGzMd5Sum = "638ae79808d790d14df41f87431af581";
+        final String expectedMd5Sum = "1ea01b28d998cacdfa2810b8357e6a1c";
+        final String expectedGzMd5Sum = "cb09a6295e29175dc8d3c82bea5d0875";
         final String expectedContent =
                 """
                 Package: plyr
                 Version: 1.8
                 License: MIT
-                MD5Sum: e1c1d2f0c47fd16b2cef6ec9c2e5883c
+                MD5sum: e1c1d2f0c47fd16b2cef6ec9c2e5883c
                 NeedsCompilation: no
 
                 Package: qsort
                 Version: 0.2.1
                 License: GPL-3
-                MD5Sum: 5dd316a3591a86ff3d6cda0526c67ba5
+                MD5sum: 5dd316a3591a86ff3d6cda0526c67ba5
                 NeedsCompilation: no
 
                 Package: qsort
                 Version: 0.2.2
                 License: GPL-3
-                MD5Sum: 76346f1a4ef62977b0acf794c6bb0aef
+                MD5sum: 76346f1a4ef62977b0acf794c6bb0aef
                 NeedsCompilation: no""";
 
         Assertions.assertEquals(expectedLocalPath, packagesFile.localPath(), "Invalid PACKAGES file local path.");
@@ -1047,17 +906,17 @@ public class RLocalPopulatorTest {
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/12082025/" + "bin/linux/centos8/x86_64/4.5/"
                         + "latest/binlinuxcentos8x866445_PACKAGES",
-                "d99fbddaec09da694623357cfeaf82e4",
+                "5433198f8276ea3183607c16ac998856",
                 filesInFirstChunk.get(0));
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/12082025/" + "bin/linux/centos8/x86_64/4.5/"
                         + "latest/binlinuxcentos8x866445_PACKAGES.gz",
-                "91825144b7e71ede6826cc9e50dfe2ab",
+                "1e395a880cd0e99080d545c4d26011b0",
                 filesInFirstChunk.get(1));
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/12082025/" + "bin/linux/centos8/x86_64/4.5/"
                         + "latest/binlinuxcentos8x866445_index.html",
-                "a85cf61c99ce885782d85444f0da9cce",
+                "39e8995151ab231b9e75d6c02ddeb2a8",
                 filesInFirstChunk.get(2));
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/12082025/" + "bin/linux/centos8/x86_64/4.5/"
@@ -1066,15 +925,15 @@ public class RLocalPopulatorTest {
                 filesInFirstChunk.get(3));
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/current/" + "src/contrib/latest/srccontrib_PACKAGES",
-                "4ac413e8ddd776e642f67b33c12c785d",
+                "5e4eb9b59cf19c55f963fd4781cc866f",
                 filesInFirstChunk.get(4));
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/current/" + "src/contrib/latest/srccontrib_PACKAGES.gz",
-                "d660970dba2b3ad77c38b2234e80b984",
+                "9d323a2194c95b9cdaeb412829a867bf",
                 filesInFirstChunk.get(5));
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/current/" + "src/contrib/latest/srccontrib_index.html",
-                "977665966f27c8d1e9c99694c7eabf60",
+                "f0ab4674239afd3a46950bd9ec3dfa73",
                 filesInFirstChunk.get(6));
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/current/" + "src/contrib/latest/srccontrib_plyr_1.8.8.tar.gz",
@@ -1184,7 +1043,7 @@ public class RLocalPopulatorTest {
                 checksums.get("srccontrib_qsooort_1.8.tar.gz"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
-                "e5d155941dc63ef3cf66b489feaca96d",
+                "9c1b6f3d392fb9511a49cca6e9523a31",
                 checksums.get("srccontribArchive_index_archived.html"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
@@ -1192,7 +1051,7 @@ public class RLocalPopulatorTest {
                 checksums.get("binlinuxcentos8x866445_plyr_1.7.1.tar.gz"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
-                "6a260ddacd02e52df84ddf5541448e3a",
+                "62daee935d0e25a9cd1804d3a5f4bcdf",
                 checksums.get("srccontribArchiveqsort_qsortindex.html"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
@@ -1212,7 +1071,7 @@ public class RLocalPopulatorTest {
 
         Assertions.assertEquals(23, checksums.size(), "Invalid number of checksums");
         Assertions.assertEquals(
-                "8bccb2329015d9fd8e038bddfb52e86e",
+                "f8bc27c44d636319e28e093c205f3a8f",
                 checksums.get("srccontribArchive_PACKAGES"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
@@ -1220,7 +1079,7 @@ public class RLocalPopulatorTest {
                 checksums.get("binlinuxcentos8x866445_plyr_1.8.1.tar.gz"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
-                "962725266bce8dafa1571e427c583ce0",
+                "485b6320b1eff885ff92d61c269dccae",
                 checksums.get("srccontribArchive_PACKAGES.gz"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
@@ -1228,11 +1087,11 @@ public class RLocalPopulatorTest {
                 checksums.get("binlinuxcentos8x866445_plyr_1.8.8.tar.gz"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
-                "a85cf61c99ce885782d85444f0da9cce",
+                "39e8995151ab231b9e75d6c02ddeb2a8",
                 checksums.get("binlinuxcentos8x866445_index.html"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
-                "b39ae52a3791ab332170481f7e86f5c1",
+                "fa8d932aa12dca1e9ded1e6c6efef88b",
                 checksums.get("binlinuxcentos8x866445Archiveplyr_plyrindex.html"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
@@ -1248,9 +1107,9 @@ public class RLocalPopulatorTest {
                 checksums.get("srccontrib_plyr_1.8.tar.gz"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
-                "4ac413e8ddd776e642f67b33c12c785d", checksums.get("srccontrib_PACKAGES"), "Invalid checksum for file");
+                "5e4eb9b59cf19c55f963fd4781cc866f", checksums.get("srccontrib_PACKAGES"), "Invalid checksum for file");
         Assertions.assertEquals(
-                "790550f8e5f46a74d23bdf9eff598570",
+                "e778d1c81f9b4649c8bed5788be89b7f",
                 checksums.get("binlinuxcentos8x866445Archive_index_archived.html"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
@@ -1258,7 +1117,7 @@ public class RLocalPopulatorTest {
                 checksums.get("binlinuxcentos8x866445_plyr_1.8.6.tar.gz"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
-                "8aa75a2b1a95bdd0c43cdf68abc19269",
+                "c723e267a38052dcf948814da8e1cd48",
                 checksums.get("binlinuxcentos8x866445Archive_PACKAGES"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
@@ -1266,7 +1125,7 @@ public class RLocalPopulatorTest {
                 checksums.get("srccontrib_qsort_0.2.2.tar.gz"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
-                "977665966f27c8d1e9c99694c7eabf60",
+                "f0ab4674239afd3a46950bd9ec3dfa73",
                 checksums.get("srccontrib_index.html"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
@@ -1274,11 +1133,11 @@ public class RLocalPopulatorTest {
                 checksums.get("binlinuxcentos8x866445_plyr_1.7.0.tar.gz"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
-                "d660970dba2b3ad77c38b2234e80b984",
+                "9d323a2194c95b9cdaeb412829a867bf",
                 checksums.get("srccontrib_PACKAGES.gz"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
-                "cf552beef901e6d34ffc1a462df47aec",
+                "0970b682baea08316366051a01bbcbac",
                 checksums.get("binlinuxcentos8x866445Archive_PACKAGES.gz"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
@@ -1286,7 +1145,7 @@ public class RLocalPopulatorTest {
                 checksums.get("srccontrib_qsort_0.2.3.tar.gz"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
-                "91825144b7e71ede6826cc9e50dfe2ab",
+                "1e395a880cd0e99080d545c4d26011b0",
                 checksums.get("binlinuxcentos8x866445_PACKAGES.gz"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
@@ -1294,11 +1153,11 @@ public class RLocalPopulatorTest {
                 checksums.get("srccontrib_qsort_0.2.1.tar.gz"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
-                "42e03df64c4a1a520806ead747571484",
+                "270315e7e1e90f13fba4f8976a661c6b",
                 checksums.get("srccontribArchiveplyr_plyrindex.html"),
                 "Invalid checksum for file");
         Assertions.assertEquals(
-                "d99fbddaec09da694623357cfeaf82e4",
+                "5433198f8276ea3183607c16ac998856",
                 checksums.get("binlinuxcentos8x866445_PACKAGES"),
                 "Invalid checksum for file");
     }
@@ -1343,22 +1202,22 @@ public class RLocalPopulatorTest {
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/12082025/" + "bin/linux/centos8/x86_64/4.5/Archive/"
                         + "binlinuxcentos8x866445Archive_PACKAGES",
-                "8aa75a2b1a95bdd0c43cdf68abc19269",
+                "c723e267a38052dcf948814da8e1cd48",
                 filesInFirstChunk.get(0));
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/12082025/" + "bin/linux/centos8/x86_64/4.5/Archive/"
                         + "binlinuxcentos8x866445Archive_PACKAGES.gz",
-                "cf552beef901e6d34ffc1a462df47aec",
+                "970b682baea08316366051a01bbcbac",
                 filesInFirstChunk.get(1));
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/12082025/" + "bin/linux/centos8/x86_64/4.5/Archive/"
                         + "binlinuxcentos8x866445Archive_index_archived.html",
-                "790550f8e5f46a74d23bdf9eff598570",
+                "e778d1c81f9b4649c8bed5788be89b7f",
                 filesInFirstChunk.get(2));
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/12082025/" + "bin/linux/centos8/x86_64/4.5/Archive/"
                         + "binlinuxcentos8x866445Archiveplyr_plyrindex.html",
-                "b39ae52a3791ab332170481f7e86f5c1",
+                "fa8d932aa12dca1e9ded1e6c6efef88b",
                 filesInFirstChunk.get(3));
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/12082025/" + "bin/linux/centos8/x86_64/4.5/Archive/"
@@ -1377,17 +1236,17 @@ public class RLocalPopulatorTest {
                 filesInFirstChunk.get(6));
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/current/" + "src/contrib/Archive/" + "srccontribArchive_PACKAGES",
-                "8bccb2329015d9fd8e038bddfb52e86e",
+                "f8bc27c44d636319e28e093c205f3a8f",
                 filesInFirstChunk.get(7));
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/current/" + "src/contrib/Archive/"
                         + "srccontribArchive_PACKAGES.gz",
-                "962725266bce8dafa1571e427c583ce0",
+                "485b6320b1eff885ff92d61c269dccae",
                 filesInFirstChunk.get(8));
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/current/" + "src/contrib/Archive/"
                         + "srccontribArchiveplyr_plyrindex.html",
-                "42e03df64c4a1a520806ead747571484",
+                "270315e7e1e90f13fba4f8976a661c6b",
                 filesInFirstChunk.get(9));
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/current/" + "src/contrib/Archive/" + "srccontrib_plyr_1.8.tar.gz",
@@ -1460,12 +1319,12 @@ public class RLocalPopulatorTest {
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/current/" + "src/contrib/Archive/"
                         + "srccontribArchive_index_archived.html",
-                "e5d155941dc63ef3cf66b489feaca96d",
+                "9c1b6f3d392fb9511a49cca6e9523a31",
                 filesInChunk.get(3));
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/current/" + "src/contrib/Archive/"
                         + "srccontribArchiveqsort_qsortindex.html",
-                "6a260ddacd02e52df84ddf5541448e3a",
+                "62daee935d0e25a9cd1804d3a5f4bcdf",
                 filesInChunk.get(4));
         assertFile(
                 "/tmp/rdepot-unit-tests/generated/0/current/" + "src/contrib/Archive/" + "srccontrib_plyr_1.7.0.tar.gz",
@@ -1945,7 +1804,7 @@ public class RLocalPopulatorTest {
         final RIndexDescriptor latestIndex = indexes.get(6);
 
         Assertions.assertEquals(
-                "d8adff68b55ed4898a6584efc236c1e7", latestIndex.checksum(), "Invalid checksum for index.");
+                "8d97779a2e466479cefefb3309ec239d", latestIndex.checksum(), "Invalid checksum for index.");
         Assertions.assertEquals("src/contrib", latestIndex.indexOnRemoteRepoPath(), "Invalid remote path for index.");
         Assertions.assertEquals(
                 "/tmp/rdepot-unit-tests/generated/0/current/src/contrib/latest/index.html",
@@ -1999,7 +1858,7 @@ public class RLocalPopulatorTest {
         indexes.sort(Comparator.comparing(RIndexDescriptor::indexLocalPath));
         final RIndexDescriptor latestIndex = indexes.get(2);
         Assertions.assertEquals(
-                "79c8a3f83414e52561b245dd63366c67", latestIndex.checksum(), "Invalid checksum for index.");
+                "f6feed00af8defc9903a1b708ddb14dc", latestIndex.checksum(), "Invalid checksum for index.");
         Assertions.assertEquals(
                 "bin/linux/centos8/x86_64/4.5", latestIndex.indexOnRemoteRepoPath(), "Invalid remote path for index.");
         Assertions.assertEquals(
@@ -2047,7 +1906,7 @@ public class RLocalPopulatorTest {
         indexes.sort(Comparator.comparing(RIndexDescriptor::indexLocalPath));
         final RIndexDescriptor archiveIndex = indexes.get(1);
         Assertions.assertEquals(
-                "0436cb6c22c0c327f62c8b80d0951c4c", archiveIndex.checksum(), "Invalid checksum for index.");
+                "fab7cf15fb3138d7fc899fa98ada0d9a", archiveIndex.checksum(), "Invalid checksum for index.");
         Assertions.assertEquals(
                 "bin/linux/centos8/x86_64/4.5/Archive/plyr",
                 archiveIndex.indexOnRemoteRepoPath(),
@@ -2146,7 +2005,7 @@ public class RLocalPopulatorTest {
                 Package: plyr
                 Version: 1.8.9
                 License: MIT + file LICENSE
-                MD5Sum: 5a8b129534abace172059ecc5c0b5072
+                MD5sum: 5a8b129534abace172059ecc5c0b5072
                 NeedsCompilation: no""";
         Assertions.assertEquals(
                 expectedLatestBinaryPACKAGESFile,
@@ -2157,9 +2016,9 @@ public class RLocalPopulatorTest {
                 .sorted(Comparator.comparing(PackagesFileDescriptor::localPath))
                 .toList();
         Assertions.assertEquals(
-                "7d0793497d173d7fa27c6057e09b295c", packagesFiles.get(0).checksum(), "Invalid checksum.");
+                "dc0218effa94f77a68d78df8e8c13c6b", packagesFiles.get(0).checksum(), "Invalid checksum.");
         Assertions.assertEquals(
-                "757177caee2beb52929442ab885d65cb", packagesFiles.get(1).checksum(), "Invalid checksum.");
+                "b576213ecbe0f0abda2d26d94b5e4b4d", packagesFiles.get(1).checksum(), "Invalid checksum.");
     }
 
     @Test
@@ -2198,21 +2057,21 @@ public class RLocalPopulatorTest {
                 Package: plyr
                 Version: 1.8.6
                 License: MIT + file LICENSE
-                MD5Sum: 6a9c2acfd924f2fb626d54168120fa08
+                MD5sum: 6a9c2acfd924f2fb626d54168120fa08
                 NeedsCompilation: no
                 Built: R 4.5.1; x86_64-pc-linux-gnu; 2025-08-11 09:59:00 UTC; unix
 
                 Package: plyr
                 Version: 1.8.1
                 License: MIT + file LICENSE
-                MD5Sum: a8b2d2284d56ab1839728040d463a360
+                MD5sum: a8b2d2284d56ab1839728040d463a360
                 NeedsCompilation: no
                 Built: R 4.5.1; x86_64-pc-linux-gnu; 2025-08-11 09:59:00 UTC; unix
 
                 Package: plyr
                 Version: 1.8.8
                 License: MIT + file LICENSE
-                MD5Sum: 08841cfd5edbd118a512198217cf5f2e
+                MD5sum: 08841cfd5edbd118a512198217cf5f2e
                 NeedsCompilation: no
                 Built: R 4.5.1; x86_64-pc-linux-gnu; 2025-08-11 09:59:00 UTC; unix""";
         Assertions.assertEquals(
@@ -2255,7 +2114,7 @@ public class RLocalPopulatorTest {
         final RIndexDescriptor latestIndex = indexes.get(6);
 
         Assertions.assertEquals(
-                "d0327cffbc919015b0a5679633562ef2", latestIndex.checksum(), "Invalid checksum for index.");
+                "5e375cc4155f54cc4ecbda200114713a", latestIndex.checksum(), "Invalid checksum for index.");
         Assertions.assertEquals("src/contrib", latestIndex.indexOnRemoteRepoPath(), "Invalid remote path for index.");
         Assertions.assertEquals(
                 "/tmp/rdepot-unit-tests/generated/0/current/src/contrib/latest/index.html",
@@ -2300,7 +2159,7 @@ public class RLocalPopulatorTest {
         indexes.sort(Comparator.comparing(RIndexDescriptor::indexLocalPath));
         final RIndexDescriptor index = indexes.get(3);
 
-        Assertions.assertEquals("e5d155941dc63ef3cf66b489feaca96d", index.checksum(), "Invalid checksum for index.");
+        Assertions.assertEquals("9c1b6f3d392fb9511a49cca6e9523a31", index.checksum(), "Invalid checksum for index.");
         Assertions.assertEquals("src/contrib/Archive", index.indexOnRemoteRepoPath(), "Invalid remote path for index.");
         Assertions.assertEquals(
                 "/tmp/rdepot-unit-tests/generated/0/current/src/contrib/Archive/index_archived.html",
@@ -2343,7 +2202,7 @@ public class RLocalPopulatorTest {
         indexes.sort(Comparator.comparing(RIndexDescriptor::indexLocalPath));
         final RIndexDescriptor index = indexes.get(5);
 
-        Assertions.assertEquals("7cdd8e8f2cbd8bce57b3b85bb9bf8445", index.checksum(), "Invalid checksum for index.");
+        Assertions.assertEquals("2b0062db047e0f2f0c34e20dcb776b5d", index.checksum(), "Invalid checksum for index.");
         Assertions.assertEquals(
                 "src/contrib/Archive/qsort", index.indexOnRemoteRepoPath(), "Invalid remote path for index.");
         Assertions.assertEquals(
@@ -2389,7 +2248,7 @@ public class RLocalPopulatorTest {
         indexes.sort(Comparator.comparing(RIndexDescriptor::indexLocalPath));
         final RIndexDescriptor index = indexes.get(2);
 
-        Assertions.assertEquals("a85cf61c99ce885782d85444f0da9cce", index.checksum(), "Invalid checksum for index.");
+        Assertions.assertEquals("39e8995151ab231b9e75d6c02ddeb2a8", index.checksum(), "Invalid checksum for index.");
         Assertions.assertEquals(
                 "bin/linux/centos8/x86_64/4.5", index.indexOnRemoteRepoPath(), "Invalid remote path for index.");
         Assertions.assertEquals(
@@ -2433,7 +2292,7 @@ public class RLocalPopulatorTest {
         indexes.sort(Comparator.comparing(RIndexDescriptor::indexLocalPath));
         final RIndexDescriptor index = indexes.get(0);
 
-        Assertions.assertEquals("790550f8e5f46a74d23bdf9eff598570", index.checksum(), "Invalid checksum for index.");
+        Assertions.assertEquals("e778d1c81f9b4649c8bed5788be89b7f", index.checksum(), "Invalid checksum for index.");
         Assertions.assertEquals(
                 "bin/linux/centos8/x86_64/4.5/Archive",
                 index.indexOnRemoteRepoPath(),
@@ -2479,7 +2338,7 @@ public class RLocalPopulatorTest {
         indexes.sort(Comparator.comparing(RIndexDescriptor::indexLocalPath));
         final RIndexDescriptor index = indexes.get(1);
 
-        Assertions.assertEquals("0710c59603e05fbd4b26e83c48f6110f", index.checksum(), "Invalid checksum for index.");
+        Assertions.assertEquals("6b3a1eee255f90dcf6d58894390bd0db", index.checksum(), "Invalid checksum for index.");
         Assertions.assertEquals(
                 "bin/linux/centos8/x86_64/4.5/Archive/plyr",
                 index.indexOnRemoteRepoPath(),

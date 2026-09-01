@@ -27,6 +27,7 @@ import eu.openanalytics.rdepot.base.event.NewsfeedEventType;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
+import eu.openanalytics.rdepot.base.strategy.exceptions.FatalStrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.synchronization.RepositorySynchronizer;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
@@ -50,7 +51,7 @@ public abstract class RepublishRepositoryStrategy<T extends Repository> extends 
         try {
             repositorySynchronizer.storeRepositoryOnRemoteServer(resource);
         } catch (SynchronizeRepositoryException e) {
-            throw new StrategyFailure(e);
+            throw new FatalStrategyFailure(e);
         }
 
         return resource;

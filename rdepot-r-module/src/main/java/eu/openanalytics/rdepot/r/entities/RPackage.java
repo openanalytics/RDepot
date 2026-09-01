@@ -25,15 +25,7 @@ import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.r.api.v2.dtos.RPackageDto;
 import eu.openanalytics.rdepot.r.technology.RLanguage;
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-import jakarta.persistence.SecondaryTable;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 import java.io.File;
 import java.io.Serial;
 import java.nio.file.FileSystems;
@@ -298,5 +290,10 @@ public class RPackage extends Package {
         } else {
             return this.getName().concat("_").concat("src");
         }
+    }
+
+    @Override
+    public String getHash() {
+        return this.md5sum;
     }
 }

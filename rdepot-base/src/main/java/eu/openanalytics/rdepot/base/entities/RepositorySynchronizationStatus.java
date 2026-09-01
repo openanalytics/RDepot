@@ -26,24 +26,42 @@ import eu.openanalytics.rdepot.base.technology.Technology;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
  * Represents status of synchronization (publication) for given repository.
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-public class RepositorySynchronizationStatus {
+public class RepositorySynchronizationStatus extends SynchronizationStatus {
 
     private RepositoryProjection repository;
-    private SynchronizationStatus status = SynchronizationStatus.PENDING;
     private Date timestamp;
-    private List<PackageSynchronizationStatus> packages = new ArrayList<>();
+    private final List<MirrorSynchronizationStatus> mirrors = new ArrayList<>();
     private boolean pending;
     private Technology technology;
 
     public void setRepository(Repository repository) {
         this.repository = new RepositoryProjection(repository);
+    }
+
+    @Override
+    public Set<SynchronizationStatus> getChildren() {
+        return mirrors.stream().map(s -> (SynchronizationStatus) s).collect(Collectors.toSet());
+    }
+
+    public List<PackageSynchronizationStatus> getPackages() {
+        final List<PackageSynchronizationStatus> statuses = new ArrayList<>();
+
+        for (MirrorSynchronizationStatus mirror : mirrors) {
+            statuses.addAll(mirror.getPackageSynchronizationStatuses());
+        }
+
+        return statuses;
     }
 }

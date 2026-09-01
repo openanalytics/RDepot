@@ -62,7 +62,7 @@ public class RRepositoryModelAssembler extends AbstractRoleAwareModelAssembler<R
     protected List<Link> getLinksToMethodsWithLimitedAccess(RRepository entity, User user, Link baseLink) {
         List<Link> links = new ArrayList<>();
 
-        if (securityMediator.isAuthorizedToEdit(entity, user) && !Boolean.valueOf(declarative)) {
+        if (securityMediator.isAuthorizedToEdit(entity, user) && !Boolean.parseBoolean(declarative)) {
             links.add(baseLink.withType(HTTP_METHODS.PATCH.getValue()));
             links.add(baseLink.withType(HTTP_METHODS.DELETE.getValue()));
         }
@@ -78,5 +78,13 @@ public class RRepositoryModelAssembler extends AbstractRoleAwareModelAssembler<R
     @Override
     protected Class<?> getExtensionControllerClass(RRepository entity) {
         return RRepositoryController.class;
+    }
+
+    @Override
+    public EntityModel<RRepositoryDto> toModel(RRepository entity, User user) {
+        RRepositoryDto dto = dtoConverter.convertEntityToDto(entity);
+        dto.setPermissions(securityMediator.getPermissions(entity, user));
+
+        return EntityModel.of(dto, generateRoleBasedAvailableLinksForEntity(entity, user));
     }
 }

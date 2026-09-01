@@ -22,8 +22,8 @@ package eu.openanalytics.rdepot.base.mirroring.pojos;
 
 import eu.openanalytics.rdepot.base.mirroring.Mirror;
 import eu.openanalytics.rdepot.base.technology.Technology;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -43,7 +43,7 @@ public abstract class MirroredRepository<P extends MirroredPackage, M extends Mi
     protected Boolean deleted = false;
     protected Boolean published = true;
     protected Boolean requiresAuthentication;
-    protected Set<M> mirrors = new HashSet<>();
+    protected List<M> mirrors = new ArrayList<>();
 
     public abstract Technology getTechnology();
 }

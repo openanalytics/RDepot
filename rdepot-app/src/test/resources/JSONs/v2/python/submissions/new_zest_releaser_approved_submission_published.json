@@ -13,6 +13,7 @@
             "login": "einstein",
             "email": "einstein@ldap.forumsys.com"
         },
+        "permissions": [],
         "changes": "",
         "links": [
             {
@@ -33,8 +34,8 @@
             "description": null,
             "technology": "Python",
             "repository": {
-                "name": "testrepo8",
                 "lastPublicationSuccessful": true,
+                "name": "testrepo8",
                 "id": 8,
                 "published": true,
                 "technology": "Python",
@@ -46,6 +47,11 @@
             "url": "documentation, https://zestreleaser.readthedocs.io, repository, https://github.com/zestsoftware/zest.releaser/, changelog, https://github.com/zestsoftware/zest.releaser/blob/master/CHANGES.rst",
             "deleted": false,
             "descriptionContentType": "",
+            "permissions": [
+                "package.deactivate",
+                "package.delete.soft",
+                "package.edit"
+            ],
             "binary": false,
             "name": "zest.releaser",
             "submission": {

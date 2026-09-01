@@ -26,8 +26,6 @@ import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.Service;
 import eu.openanalytics.rdepot.base.strategy.create.CreateStrategy;
-import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
-import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure;
 
 public class SuccessfulStrategy<T extends Resource> extends CreateStrategy<T> {
     public SuccessfulStrategy(T resource, NewsfeedEventService eventService, Service<T> service, User requester) {
@@ -35,15 +33,12 @@ public class SuccessfulStrategy<T extends Resource> extends CreateStrategy<T> {
     }
 
     @Override
-    protected T actualStrategy() throws StrategyFailure {
+    protected T actualStrategy() {
         return resource;
     }
 
     @Override
-    public void postStrategy() throws StrategyFailure {}
-
-    @Override
-    public void revertChanges() throws StrategyReversionFailure {}
+    public void revertChanges() {}
 
     @Override
     protected NewsfeedEvent generateEvent(T resource) {

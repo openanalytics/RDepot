@@ -27,7 +27,7 @@ import java.util.Objects;
  */
 public class InternalTechnology implements Technology {
 
-    public static InternalTechnology instance;
+    public static final InternalTechnology instance;
 
     static {
         instance = new InternalTechnology();

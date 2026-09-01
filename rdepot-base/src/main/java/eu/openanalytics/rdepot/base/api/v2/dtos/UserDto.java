@@ -23,6 +23,8 @@ package eu.openanalytics.rdepot.base.api.v2.dtos;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.time.DateProvider;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringExclude;
@@ -50,6 +52,7 @@ public class UserDto implements IDto {
     private User entity;
 
     private UserSettingsProjection userSettings;
+    private List<String> permissions = new ArrayList<>();
 
     public UserDto(User user) {
         this.entity = user;

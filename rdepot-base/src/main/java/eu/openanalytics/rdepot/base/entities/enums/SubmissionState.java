@@ -37,7 +37,7 @@ public enum SubmissionState {
      * or was accepted afterward.
      * Its corresponding package must have the accepted flag set to true.
      * The deleted flag does not matter here.
-     * In this state, package files are already put in the repository storage directories
+     * In this state, package files are already put in the repository localStorage directories
      * (moved from the "waiting room").
      */
     ACCEPTED("accepted"), // deleted = false; accepted = true; OR deleted = true; accepted = true;

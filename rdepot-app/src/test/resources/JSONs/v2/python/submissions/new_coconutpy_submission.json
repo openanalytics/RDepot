@@ -2,59 +2,43 @@
     "code": 201,
     "data": {
         "approver": null,
-        "submitter": {
-            "name": "Galileo Galilei",
-            "id": 6,
-            "login": "galieleo",
-            "email": "galieleo@ldap.forumsys.com"
-        },
         "changes": "",
-        "links": [
-            {
-                "rel": "self",
-                "href": "http://localhost:8017/api/v2/manager/python/submissions/48"
-            },
-            {
-                "rel": "submissionList",
-                "href": "http://localhost:8017/api/v2/manager/python/submissions"
-            },
-            {
-                "rel": "self",
-                "href": "http://localhost:8017/api/v2/manager/python/submissions/48",
-                "type": "PATCH",
-                "modifiableProperties": [
-                    "state"
-                ]
-            }
-        ],
+        "created": "2026-06-29T07:58:15.960326770Z",
         "id": 48,
-        "state": "WAITING",
-        "technology": "Python",
         "packageBag": {
-            "author": "Bruno Celeste",
             "active": false,
-            "description": "Client Library for encoding Videos with Coconut \\n  \\\\n \\ Coconut is a Video Encoding Web Service built for developers.\\n\\\\n\\  For more information:\\n\\\\n\\  * Coconut: http:\/\/coconut.co\\n\\  * API Documentation: http:\/\/coconut.co\/docs\\n\\  * Twitter: @openCoconut\\n\\\\n\\  Changelogs\\n\\\\n\\  2.2.0\\n\\  Added a new method #config to generate a full configuration based on the given parameters. It's especially useful to handle dynamic settings like source or variables that can be set directly in code.\\n\\\\n\\  2.0.0\\n\\  New version of the client library which uses the HeyWatch API v2. This library is not compatible with 1.x\\n \\\\n\\  1.0.0\\n\\  First version\\n \\",
-            "technology": "Python",
-            "repository": {
-                "name": "testrepo9",
-                "lastPublicationSuccessful": false,
-                "id": 9,
-                "published": false,
-                "technology": "Python",
-                "requiresAuthentication": true,
-                "publicationUri": "http://localhost/repo/testrepo9"
-            },
-            "title": "A python wrapper around the Coconut API RDEPOT-VERSION",
-            "version": "2.2.1",
-            "url": "http://coconut.co",
-            "deleted": false,
-            "descriptionContentType": "",
+            "author": "Bruno Celeste",
             "binary": false,
+            "deleted": false,
+            "description": "Client Library for encoding Videos with Coconut \\n  \\\\n \\ Coconut is a Video Encoding Web Service built for developers.\\n\\\\n\\  For more information:\\n\\\\n\\  * Coconut: http://coconut.co\\n\\  * API Documentation: http://coconut.co/docs\\n\\  * Twitter: @openCoconut\\n\\\\n\\  Changelogs\\n\\\\n\\  2.2.0\\n\\  Added a new method #config to generate a full configuration based on the given parameters. It's especially useful to handle dynamic settings like source or variables that can be set directly in code.\\n\\\\n\\  2.0.0\\n\\  New version of the client library which uses the HeyWatch API v2. This library is not compatible with 1.x\\n \\\\n\\  1.0.0\\n\\  First version\\n \\",
+            "descriptionContentType": "",
+            "id": 48,
             "name": "coconutpy",
+            "permissions": [],
+            "repository": {
+                "id": 9,
+                "lastPublicationSuccessful": false,
+                "name": "testrepo9",
+                "publicationUri": "http://localhost/repo/testrepo9",
+                "published": false,
+                "requiresAuthentication": true,
+                "technology": "Python"
+            },
+            "source": "/opt/rdepot/new/92461432/coconutpy-2.2.1.tar.gz",
             "submission": {
                 "id": 48,
                 "state": "WAITING"
             },
+            "technology": "Python",
+            "title": "A python wrapper around the Coconut API RDEPOT-VERSION",
+            "url": "http://coconut.co",
+            "user": {
+                "email": "tesla@ldap.forumsys.com",
+                "id": 5,
+                "login": "tesla",
+                "name": "Nikola Tesla"
+            },
+            "version": "2.2.1",
             "links": [
                 {
                     "rel": "self",
@@ -68,17 +52,39 @@
                     "rel": "repository",
                     "href": "http://localhost:8017/api/v2/manager/python/repositories/9"
                 }
-            ],
-            "id": 48,
-            "user": {
-                "name": "Nikola Tesla",
-                "id": 5,
-                "login": "tesla",
-                "email": "tesla@ldap.forumsys.com"
+            ]
+        },
+        "permissions": [
+            "submission.cancel"
+        ],
+        "state": "WAITING",
+        "submitter": {
+            "email": "galieleo@ldap.forumsys.com",
+            "id": 6,
+            "login": "galieleo",
+            "name": "Galileo Galilei"
+        },
+        "technology": "Python",
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/python/submissions/48"
+            },
+            {
+                "rel": "submissionList",
+                "href": "http://localhost:8017/api/v2/manager/python/submissions"
+            },
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/python/submissions/48",
+                "modifiableProperties": [
+                    "state"
+                ],
+                "type": "PATCH"
             }
-        }
+        ]
     },
-    "messageCode": "success.resource.created",
     "message": "Your resource has been created successfully.",
+    "messageCode": "success.resource.created",
     "status": "SUCCESS"
 }

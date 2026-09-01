@@ -27,12 +27,11 @@ import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.mediator.BestMaintainerChooser;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
-import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
-import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
-import eu.openanalytics.rdepot.base.service.PackageService;
-import eu.openanalytics.rdepot.base.service.RepositoryService;
-import eu.openanalytics.rdepot.base.service.SubmissionService;
-import eu.openanalytics.rdepot.base.storage.Storage;
+import eu.openanalytics.rdepot.base.service.*;
+import eu.openanalytics.rdepot.base.storage.LocalStorage;
+import eu.openanalytics.rdepot.base.storage.exceptions.StoreFileException;
+import eu.openanalytics.rdepot.base.strategy.exceptions.FatalStrategyFailure;
+import eu.openanalytics.rdepot.base.strategy.exceptions.ProcessExtractedFilesException;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.upload.DefaultPackageUploadStrategy;
 import eu.openanalytics.rdepot.base.validation.DataSpecificValidationResult;
@@ -41,9 +40,14 @@ import eu.openanalytics.rdepot.base.validation.ValidationResultItem;
 import eu.openanalytics.rdepot.r.api.v2.dtos.RPackageUploadRequest;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
+import eu.openanalytics.rdepot.r.manuals.ManualGenerator;
 import eu.openanalytics.rdepot.r.mediator.deletion.RPackageDeleter;
+import eu.openanalytics.rdepot.r.storage.PersistentRStorage;
 import eu.openanalytics.rdepot.r.storage.exceptions.GenerateManualException;
+import eu.openanalytics.rdepot.r.storage.exceptions.ReadPackageVignetteException;
 import eu.openanalytics.rdepot.r.storage.population.RPopulator;
+import eu.openanalytics.rdepot.r.storage.population.VignetteReader;
+import eu.openanalytics.rdepot.r.storage.population.VignetteUploader;
 import eu.openanalytics.rdepot.r.synchronization.RRepositorySynchronizer;
 import java.io.File;
 import java.io.IOException;
@@ -60,8 +64,10 @@ import org.apache.commons.io.FilenameUtils;
 @Slf4j
 public class RPackageUploadStrategy extends DefaultPackageUploadStrategy<RRepository, RPackage> {
 
-    private final RPopulator rStorage;
     private final RPackageUploadRequest rPackageRequest;
+    private final ManualGenerator manualGenerator;
+    private final VignetteUploader vignetteUploader;
+    private final VignetteReader vignetteReader;
 
     public RPackageUploadStrategy(
             PackageUploadRequest<RRepository> request,
@@ -70,7 +76,7 @@ public class RPackageUploadStrategy extends DefaultPackageUploadStrategy<RReposi
             SubmissionService service,
             PackageValidator<RPackage> packageValidator,
             RepositoryService<RRepository> repositoryService,
-            Storage<RPackage> storage,
+            LocalStorage<RPackage> localStorage,
             PackageService<RPackage> packageService,
             EmailService emailService,
             BestMaintainerChooser bestMaintainerChooser,
@@ -79,14 +85,18 @@ public class RPackageUploadStrategy extends DefaultPackageUploadStrategy<RReposi
             RPopulator rPopulator,
             RPackageDeleter packageDeleter,
             RPackageUploadRequest rPackageRequest,
-            PackageMaintainerService maintainerService) {
+            PackageMaintainerService maintainerService,
+            ManualGenerator manualGenerator,
+            PersistentRStorage persistentStorage,
+            VignetteUploader vignetteUploader,
+            VignetteReader vignetteReader) {
         super(
                 request,
                 requester,
                 eventService,
                 packageValidator,
                 repositoryService,
-                storage,
+                localStorage,
                 packageService,
                 service,
                 emailService,
@@ -95,9 +105,12 @@ public class RPackageUploadStrategy extends DefaultPackageUploadStrategy<RReposi
                 securityMediator,
                 packageDeleter,
                 rPopulator,
-                maintainerService);
-        this.rStorage = rPopulator;
+                maintainerService,
+                persistentStorage);
         this.rPackageRequest = rPackageRequest;
+        this.manualGenerator = manualGenerator;
+        this.vignetteUploader = vignetteUploader;
+        this.vignetteReader = vignetteReader;
     }
 
     @Override
@@ -144,14 +157,32 @@ public class RPackageUploadStrategy extends DefaultPackageUploadStrategy<RReposi
         Submission submission = super.actualStrategy();
         try {
             if (rPackageRequest.isGenerateManual() && !rPackageRequest.isBinaryPackage()) {
-                rStorage.generateManual(packageBag);
+                manualGenerator.generateManual(packageBag);
             }
+
         } catch (GenerateManualException e) {
             logger.error(e.getMessage(), e);
             super.revertChanges();
-            throw new StrategyFailure(e);
+            throw new FatalStrategyFailure(e);
         }
         return submission;
+    }
+
+    @Override
+    protected void processExtractedFiles(List<File> extractedFilesDirs, RPackage packageBag)
+            throws ProcessExtractedFilesException {
+        if (extractedFilesDirs.size() != 1) {
+            log.error("There should be only one extracted directory for an R package.");
+            throw new ProcessExtractedFilesException(packageBag);
+        }
+        final File extractedFilesDir = extractedFilesDirs.get(0);
+
+        try {
+            vignetteUploader.storeVignettes(vignetteReader.findVignettesInDir(extractedFilesDir), packageBag);
+        } catch (StoreFileException | ReadPackageVignetteException e) {
+            log.error(e.getMessage(), e);
+            throw new ProcessExtractedFilesException(extractedFilesDir);
+        }
     }
 
     @Override

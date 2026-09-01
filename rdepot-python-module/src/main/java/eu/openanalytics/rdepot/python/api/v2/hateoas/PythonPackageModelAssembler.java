@@ -100,4 +100,12 @@ public class PythonPackageModelAssembler extends AbstractRoleAwareModelAssembler
                 .withRel("repository"));
         return links;
     }
+
+    @Override
+    public EntityModel<PythonPackageDto> toModel(PythonPackage entity, User user) {
+        PythonPackageDto dto = dtoConverter.convertEntityToDto(entity);
+        dto.setPermissions(securityMediator.getPermissions(entity, user));
+
+        return EntityModel.of(dto, generateRoleBasedAvailableLinksForEntity(entity, user));
+    }
 }

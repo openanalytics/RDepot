@@ -23,21 +23,13 @@ package eu.openanalytics.rdepot.base.entities;
 import eu.openanalytics.rdepot.base.api.v2.dtos.IDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.RepositoryDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.RepositorySimpleDto;
+import eu.openanalytics.rdepot.base.entities.enums.HashMethod;
 import eu.openanalytics.rdepot.base.entities.enums.ResourceType;
 import eu.openanalytics.rdepot.base.event.EventableResource;
 import eu.openanalytics.rdepot.base.technology.InternalTechnology;
 import eu.openanalytics.rdepot.base.technology.Technology;
 import eu.openanalytics.rdepot.base.time.DateProvider;
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorColumn;
-import jakarta.persistence.DiscriminatorType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
@@ -61,10 +53,12 @@ import lombok.Setter;
         name = "resource_technology",
         discriminatorType = DiscriminatorType.STRING,
         columnDefinition = "varchar default 'Repository'")
-public abstract class Repository extends EventableResource implements Serializable, Hashable {
+public abstract class Repository extends EventableResource implements Serializable, HavingHashMethod {
 
     @Serial
     private static final long serialVersionUID = 1L;
+
+    public abstract HashMethod getHashMethod();
 
     protected Repository() {
         super(InternalTechnology.instance, ResourceType.REPOSITORY);

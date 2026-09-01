@@ -30,13 +30,13 @@ import org.apache.commons.lang3.ArrayUtils;
 @Slf4j
 public class BashScriptExecutor {
     public ExecutionResult executeBashScript(String... args) {
-        String[] cmd = ArrayUtils.addAll(new String[] {"/bin/bash"}, args);
+        String[] cmd = ArrayUtils.addAll(new String[] {"/usr/bin/env", "bash"}, args);
         return execute(cmd);
     }
 
     public ExecutionResult executeBashCommand(@NonNull final String bashCmd) {
         System.out.println(bashCmd);
-        String[] cmd = ArrayUtils.addAll(new String[] {"/bin/bash", "-c", bashCmd});
+        String[] cmd = ArrayUtils.addAll(new String[] {"/usr/bin/env", "bash", "-c", bashCmd});
         return execute(cmd);
     }
 

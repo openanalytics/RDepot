@@ -24,19 +24,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import eu.openanalytics.rdepot.base.api.v2.dtos.PackageDto;
-import eu.openanalytics.rdepot.base.api.v2.dtos.PackageUploadRequest;
-import eu.openanalytics.rdepot.base.api.v2.dtos.SubmissionDto;
-import eu.openanalytics.rdepot.base.api.v2.dtos.SubmissionProjection;
-import eu.openanalytics.rdepot.base.api.v2.dtos.UserProjection;
+import eu.openanalytics.rdepot.base.api.v2.dtos.*;
 import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.Submission;
@@ -44,7 +36,7 @@ import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.entities.enums.SubmissionState;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
-import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
+import eu.openanalytics.rdepot.base.strategy.exceptions.FatalStrategyFailure;
 import eu.openanalytics.rdepot.base.time.DateProvider;
 import eu.openanalytics.rdepot.base.validation.ValidationResult;
 import eu.openanalytics.rdepot.r.api.v2.controllers.RSubmissionController;
@@ -111,7 +103,7 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
     private static final String EXAMPLE_SUBMISSION_CREATED_PATH = JSON_PATH + "/example_submission_created.json";
     private static final String EXAMPLE_BINARY_SUBMISSION_CREATED_PATH =
             JSON_PATH + "/example_binary_submission_created.json";
-    private static final String EXAMPLE_BINARY_SUBMISSION_WTIH_GENERATE_MANUAL_TRUE_PATH =
+    private static final String EXAMPLE_BINARY_SUBMISSION_WITH_GENERATE_MANUAL_TRUE_PATH =
             JSON_PATH + "/example_binary_submission_with_generate_manual_true.json";
     private static final String ERROR_SUBMISSION_NOT_FOUND_PATH = JSON_PATH + "/error_submission_notfound.json";
     private static final String EXAMPLE_SUBMISSIONS_PATH = JSON_PATH + "/example_submissions.json";
@@ -280,7 +272,7 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
                         .param("distribution", "centos7"))
                 .andExpect(status().isCreated())
                 .andExpect(content()
-                        .json(Files.readString(Path.of(EXAMPLE_BINARY_SUBMISSION_WTIH_GENERATE_MANUAL_TRUE_PATH))));
+                        .json(Files.readString(Path.of(EXAMPLE_BINARY_SUBMISSION_WITH_GENERATE_MANUAL_TRUE_PATH))));
     }
 
     @Test
@@ -683,7 +675,7 @@ public class RSubmissionControllerTest extends ApiV2ControllerUnitTest {
                 .thenReturn(strategy);
         when(rPackageService.findById(any(Integer.class))).thenReturn(Optional.of(packageBag));
 
-        doThrow(new StrategyFailure(new OperationNotSupportedException()))
+        doThrow(new FatalStrategyFailure(new OperationNotSupportedException()))
                 .when(strategy)
                 .perform();
 

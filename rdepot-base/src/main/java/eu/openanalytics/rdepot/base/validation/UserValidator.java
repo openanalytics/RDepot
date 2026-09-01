@@ -85,11 +85,6 @@ public class UserValidator implements Validator {
         } else {
             if (!emailPattern.matcher(user.getEmail()).matches()) {
                 errors.rejectValue(EMAIL, MessageCodes.ERROR_INVALID_EMAIL);
-            } else {
-                Optional<User> duplicateEmail = userService.findByEmail(user.getEmail());
-                if (duplicateEmail.isPresent() && duplicateEmail.get().getId() != user.getId()) {
-                    errors.rejectValue(EMAIL, MessageCodes.ERROR_DUPLICATE_EMAIL);
-                }
             }
         }
     }

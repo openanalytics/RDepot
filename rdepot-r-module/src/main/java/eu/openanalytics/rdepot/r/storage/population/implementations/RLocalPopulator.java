@@ -22,29 +22,26 @@ package eu.openanalytics.rdepot.r.storage.population.implementations;
 
 import eu.openanalytics.rdepot.base.PropertiesParser;
 import eu.openanalytics.rdepot.base.storage.exceptions.*;
-import eu.openanalytics.rdepot.base.storage.implementations.CommonLocalStorage;
-import eu.openanalytics.rdepot.base.storage.implementations.LocalFSPopulator;
+import eu.openanalytics.rdepot.base.storage.implementations.CommonFSLocalStorage;
+import eu.openanalytics.rdepot.base.storage.population.implementations.LocalFSPopulator;
 import eu.openanalytics.rdepot.base.synchronization.checksums.Checksums;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
-import eu.openanalytics.rdepot.r.entities.Vignette;
-import eu.openanalytics.rdepot.r.manuals.ManualGenerator;
-import eu.openanalytics.rdepot.r.manuals.implementations.fs.LocalFSManualGenerator;
-import eu.openanalytics.rdepot.r.storage.BinLocation;
-import eu.openanalytics.rdepot.r.storage.BinLocationSet;
+import eu.openanalytics.rdepot.r.storage.PersistentRStorage;
+import eu.openanalytics.rdepot.r.storage.binaries.BinLocation;
+import eu.openanalytics.rdepot.r.storage.binaries.BinLocationSet;
 import eu.openanalytics.rdepot.r.storage.exceptions.*;
 import eu.openanalytics.rdepot.r.storage.implementations.RetiredBinary;
 import eu.openanalytics.rdepot.r.storage.indexes.RIndexDescriptor;
 import eu.openanalytics.rdepot.r.storage.indexes.RIndexGenerator;
 import eu.openanalytics.rdepot.r.storage.packagesfile.PackageStringGenerator;
 import eu.openanalytics.rdepot.r.storage.packagesfile.PackagesFileDescriptor;
-import eu.openanalytics.rdepot.r.storage.population.PopulatedRPackage;
-import eu.openanalytics.rdepot.r.storage.population.PopulatedRepositoryContent;
-import eu.openanalytics.rdepot.r.storage.population.RPopulator;
+import eu.openanalytics.rdepot.r.storage.packagesfile.PackagesFileDescriptorCreator;
+import eu.openanalytics.rdepot.r.storage.population.*;
+import eu.openanalytics.rdepot.r.storage.population.utils.VersionComparator;
 import eu.openanalytics.rdepot.r.synchronization.SynchronizeRepositoryRequestBody;
 import eu.openanalytics.rdepot.r.synchronization.checksums.RChecksumResolver;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -54,23 +51,18 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-@Slf4j
 @Component
+@Slf4j
 public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, PopulatedRPackage> implements RPopulator {
 
     private static final String PACKAGES = "PACKAGES";
-    private static final String PACKAGES_GZ = "PACKAGES.gz";
     private static final String ARCHIVE_FOLDER = "Archive";
     private static final String LATEST_FOLDER = "latest";
     private static final String CONTRIB_FOLDER = "contrib";
@@ -78,30 +70,32 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
     private static final String CURRENT_FOLDER = "current";
     private static final String BIN_FOLDER = "bin";
     private static final String LINUX_FOLDER = "linux";
-    private final CommonLocalStorage<RPackage> storage;
+    private final CommonFSLocalStorage<RPackage> storage;
     private final File repositoryGenerationDirectory;
     private final RIndexGenerator rIndexGenerator;
     private final String snapshot;
     private final PackageStringGenerator packageStringGenerator;
-    private final ManualGenerator manualGenerator;
-
+    private final PackagesFileDescriptorCreator packagesFileDescriptorCreator;
     private final RChecksumResolver checksumResolver = new RChecksumResolver();
+    private final PersistentRStorage persistentStorage;
 
     public RLocalPopulator(
-            CommonLocalStorage<RPackage> storage,
+            CommonFSLocalStorage<RPackage> storage,
             @Qualifier("packageUploadDirectory") File packageUploadDirectory,
             @Qualifier("repositoryGenerationDirectory") File repositoryGenerationDirectory,
             RIndexGenerator rIndexGenerator,
             @Value("${repository-snapshots}") String snapshot,
             PackageStringGenerator packageStringGenerator,
-            LocalFSManualGenerator localFSManualGenerator) {
+            PackagesFileDescriptorCreator packagesFileDescriptorCreator,
+            PersistentRStorage persistentStorage) {
         super(packageUploadDirectory, repositoryGenerationDirectory, storage);
         this.storage = storage;
         this.repositoryGenerationDirectory = repositoryGenerationDirectory;
         this.rIndexGenerator = rIndexGenerator;
         this.snapshot = snapshot;
         this.packageStringGenerator = packageStringGenerator;
-        this.manualGenerator = localFSManualGenerator;
+        this.packagesFileDescriptorCreator = packagesFileDescriptorCreator;
+        this.persistentStorage = persistentStorage;
     }
 
     public String resolveLocationForLinuxBinaryGeneratedPath(File dateStampFolder, String separator, String binPath) {
@@ -125,26 +119,6 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
             throw new IllegalStateException("Could not properly move file to Archive!");
         }
         return archivePath;
-    }
-
-    private int compareVersions(String sourceVersion, String binaryVersion) {
-
-        String[] sourceVersionSplit = StringUtils.splitByWholeSeparator(sourceVersion, ".");
-        String[] binaryVersionSplit = StringUtils.splitByWholeSeparator(binaryVersion, ".");
-
-        int maxLength = Math.min(sourceVersionSplit.length, binaryVersionSplit.length);
-
-        for (int i = 0; i < maxLength; i++) {
-            if (Integer.valueOf(sourceVersionSplit[i]).compareTo(Integer.valueOf(binaryVersionSplit[i])) != 0) {
-                return Integer.valueOf(sourceVersionSplit[i]).compareTo(Integer.valueOf(binaryVersionSplit[i]));
-            }
-        }
-
-        if (sourceVersionSplit.length > binaryVersionSplit.length) {
-            return 1;
-        }
-
-        return 0;
     }
 
     private BinLocation pickBinaries(
@@ -321,7 +295,8 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
 
     /**
      * Populates every package in a generated directory.
-     * @return PACKAGES file path in local storage
+     *
+     * @return PACKAGES file path in local localStorage
      */
     protected List<PopulatedRPackage> populatePackageFolder(List<RPackage> packages, String folderPath)
             throws PackageFolderPopulationException {
@@ -349,18 +324,15 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
         final MultiValueMap<String, File> binaryPackagesToUpload = new LinkedMultiValueMap<>();
         final MultiValueMap<String, String> binaryPackagesToDelete = new LinkedMultiValueMap<>();
         /*
-        The code below reduces package paths so that
-        the repository generation dir and Archive/latest part are cut off.
-        In this way, packages on the remote and local end are represented
-        by the same paths.
-
-        If, for example, local path was:
-        /opt/rdepot/repositories/5/generated/current/bin/linux/ubuntu/x86_64/v1.0.0/Archive
-        and the remote path was:
-        bin/linux/ubuntu/x86_64/v1.0.0/Archive
-
-        then both become:
-        bin/linux/ubuntu/x86_64/v1.0.0
+         * The code below reduces package paths so that the repository generation dir
+         * and Archive/latest part are cut off. In this way, packages on the remote and
+         * local end are represented by the same paths.
+         *
+         * If, for example, local path was:
+         * /opt/rdepot/repositories/5/generated/current/bin/linux/ubuntu/x86_64/v1.0.0/
+         * Archive and the remote path was: bin/linux/ubuntu/x86_64/v1.0.0/Archive
+         *
+         * then both become: bin/linux/ubuntu/x86_64/v1.0.0
          */
         final MultiValueMap<String, String> reducedRemoteBinaryPackagesPaths = new LinkedMultiValueMap<>();
         remoteBinaryPackages.forEach((key, value) -> reducedRemoteBinaryPackagesPaths.addAll(
@@ -417,8 +389,8 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
      */
     private void createTemporaryFoldersForLatestAndArchive(String path) throws CreateFolderStructureException {
         log.debug("Creating temporary directories for latest and Archive: {}", path);
-        final File latest = storage.createFolderStructure(path + separator + LATEST_FOLDER);
-        final File archive = storage.createFolderStructure(path + separator + ARCHIVE_FOLDER);
+        final File latest = new File(storage.createFolderStructure(path + separator + LATEST_FOLDER));
+        final File archive = new File(storage.createFolderStructure(path + separator + ARCHIVE_FOLDER));
 
         try {
             final File packagesLatest =
@@ -437,39 +409,45 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
     }
 
     /**
-     * Creates a directory structure for binary packages.
-     * The structure will follow the following pattern:
+     * Creates a directory structure for binary packages. The structure will follow
+     * the following pattern:
      * {rdepotGeneratedDir}/{repositoryId}/{datestamp}/bin/{os}/{distro}/{architecture}/{rVersion}
-     * Inside there will also be an "Archive" directory with all archival versions of packages.
-     * Those will be stored in a <b>flat</b> structure, meaning that for example for "accrued" package
-     * it will not be stored in its dedicated directory like it is in the repo app:<br/><br/>
+     * Inside there will also be an "Archive" directory with all archival versions
+     * of packages. Those will be stored in a <b>flat</b> structure, meaning that
+     * for example for "accrued" package it will not be stored in its dedicated
+     * directory like it is in the repo app:<br/>
+     * <br/>
      * Archive/<br/>
      * &emsp;PACKAGES<br/>
      * &emsp;PACKAGES.gz<br/>
      * &emsp;accrued/<br/>
      * &emsp;&emsp;accrued_1.2.tar.gz<br/>
-     * &emsp;&emsp;accrued_1.3.tar.gz<br/><br/>
-     * <i>but instead:</i><br/><br/>
+     * &emsp;&emsp;accrued_1.3.tar.gz<br/>
+     * <br/>
+     * <i>but instead:</i><br/>
+     * <br/>
      * Archive/<br/>
      * &emsp;PACKAGES<br/>
      * &emsp;PACKAGES.gz<br/>
      * &emsp;accrued_1.2.tar.gz<br/>
      * &emsp;accrued_1.3.tar.gz<br/>
-     * @param packages all binary packages to populate
-     * @param platforms all binary platforms (including those for which there are currently no packages)
+     *
+     * @param packages   all binary packages to populate
+     * @param platforms  all binary platforms (including those for which there are
+     *                   currently no packages)
      * @param repository repository to create the structure for
-     * @param dateStamp current datestamp for generation
+     * @param dateStamp  current datestamp for generation
      */
     protected BinLocationSet createBinaryFolderStructureForGeneration(
             List<RPackage> packages, List<String> platforms, RRepository repository, String dateStamp)
             throws CreateFolderStructureException {
         File dateStampFolder = null;
         try {
-            dateStampFolder = storage.createFolderStructure(repositoryGenerationDirectory.getAbsolutePath()
+            dateStampFolder = new File(storage.createFolderStructure(repositoryGenerationDirectory.getAbsolutePath()
                     + separator
                     + repository.getId()
                     + separator
-                    + dateStamp);
+                    + dateStamp));
 
             log.debug("Datestamp folder created for repository {}: {}", repository, dateStampFolder.getAbsolutePath());
             final BinLocationSet packagesLocations = new BinLocationSet();
@@ -504,7 +482,7 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
         } catch (CreateFolderStructureException e) {
             if (dateStampFolder != null) {
                 try {
-                    storage.deleteFile(dateStampFolder);
+                    storage.deleteFile(dateStampFolder.getAbsolutePath());
                 } catch (DeleteFileException dfe) {
                     log.error(dfe.getMessage(), dfe);
                 }
@@ -543,12 +521,13 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
 
             final List<PopulatedRPackage> populatedLatestSourcePackages =
                     populatePackageFolder(latestSourcePackages, latestSourceFolderPath);
-            Set<PackagesFileDescriptor> packagesFiles =
-                    new HashSet<>(createDescriptors(remoteFolderLatest, latestSourceFolderPath));
+            Set<PackagesFileDescriptor> packagesFiles = new HashSet<>(
+                    packagesFileDescriptorCreator.createDescriptors(remoteFolderLatest, latestSourceFolderPath));
 
             final List<PopulatedRPackage> populatedArchiveSourcePackages =
                     populatePackageFolder(archiveSourcePackages, archiveSourceFolderPath);
-            packagesFiles.addAll(createDescriptors(remoteFolderArchive, archiveSourceFolderPath));
+            packagesFiles.addAll(
+                    packagesFileDescriptorCreator.createDescriptors(remoteFolderArchive, archiveSourceFolderPath));
 
             final BinLocationSet binLatestLocations = new BinLocationSet();
             final BinLocationSet binArchiveLocations = new BinLocationSet();
@@ -562,19 +541,22 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
                 final String archiveFolderPath = folderPath + separator + ARCHIVE_FOLDER;
                 final String remoteFolderPathLatest = location.remoteLocation();
                 final String remoteFolderPathArchive = location.remoteLocation() + "/" + ARCHIVE_FOLDER;
-                // Before doing this all binaries are together in one collection (both latest and archive).
+                // Before doing this all binaries are together in one collection (both latest
+                // and archive).
                 // this splits them apart
                 final BinLocation binariesToPopulateLatest =
                         pickBinaries(location, latestBinaryPackages, latestFolderPath, remoteFolderPathLatest);
                 populatePackageBinLocation(binariesToPopulateLatest);
                 binLatestLocations.addLocation(binariesToPopulateLatest);
-                packagesFiles.addAll(createDescriptors(remoteFolderPathLatest, latestFolderPath));
+                packagesFiles.addAll(
+                        packagesFileDescriptorCreator.createDescriptors(remoteFolderPathLatest, latestFolderPath));
 
                 final BinLocation binariesToPopulateArchive =
                         pickBinaries(location, archiveBinaryPackages, archiveFolderPath, remoteFolderPathArchive);
                 populatePackageBinLocation(binariesToPopulateArchive);
                 binArchiveLocations.addLocation(binariesToPopulateArchive);
-                packagesFiles.addAll(createDescriptors(remoteFolderPathArchive, archiveFolderPath));
+                packagesFiles.addAll(
+                        packagesFileDescriptorCreator.createDescriptors(remoteFolderPathArchive, archiveFolderPath));
             }
 
             if (repository.isRedirectToSource()) {
@@ -585,6 +567,7 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
                         binArchiveLocations,
                         packagesFiles);
             }
+
             log.debug("Packages population completed for R repository {}.", repository);
             return new PopulatedRepositoryContent(
                     populatedLatestSourcePackages,
@@ -606,7 +589,7 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
                 | PackageFolderPopulationException
                 | LinkFoldersException
                 | GeneratePackagesFileException
-                | IOException
+                | ContentEditException
                 | Md5SumCalculationException e) {
             log.error(e.getMessage(), e);
             throw new OrganizePackagesException();
@@ -614,74 +597,76 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
     }
 
     /**
-     * "Redirect to source" means that in case there is a newer,
-     * corresponding source version of a binary package,
-     * the source version will be the preferred choice.
-     * The "older" latest binary package will be moved from latest to archive.
-     * The latest binary PACKAGES will contain the latest source package.
-     * Also, archived source packages that do not have a corresponding binary of the same version,
-     * will be added to the binary archive PACKAGES file.
+     * "Redirect to source" means that in case there is a newer, corresponding
+     * source version of a binary package, the source version will be the preferred
+     * choice. The "older" latest binary package will be moved from latest to
+     * archive. The latest binary PACKAGES will contain the latest source package.
+     * Also, archived source packages that do not have a corresponding binary of the
+     * same version, will be added to the binary archive PACKAGES file.
      *
-     * <h3>Example</h3>
-     * With the following <i>source</i> packages in the repository:<br/>
+     * <h3>Example</h3> With the following <i>source</i> packages in the
+     * repository:<br/>
      * <ul>
-     *     <li>foo.0.9.tar.gz</li>
-     *     <li>foo.1.0.tar.gz</li>
-     *     <li>foo.1.2.tar.gz</li>
+     * <li>foo.0.9.tar.gz</li>
+     * <li>foo.1.0.tar.gz</li>
+     * <li>foo.1.2.tar.gz</li>
      * </ul>
      * and the following <i>binary</i> packages in the repository:<br/>
      * <ul>
-     *     <li>foo.0.8.tar.gz</li>
-     *     <li>foo.1.0.tar.gz</li>
-     *     <li>foo.1.1.tar.gz</li>
-     * </ul><br/>
-     * The resulting structure will look as follows:<br/><br/>
+     * <li>foo.0.8.tar.gz</li>
+     * <li>foo.1.0.tar.gz</li>
+     * <li>foo.1.1.tar.gz</li>
+     * </ul>
+     * <br/>
+     * The resulting structure will look as follows:<br/>
+     * <br/>
      * <h4>Source Packages</h4>
-     * <h5>Latest</h5>
-     * <b>Packages in folder:</b><br/>
+     * <h5>Latest</h5> <b>Packages in folder:</b><br/>
      * <ul>
-     *     <li>foo.1.2.tar.gz</li>
+     * <li>foo.1.2.tar.gz</li>
      * </ul>
      * <b>Packages in PACKAGES file:</b><br/>
      * <ul>
-     *     <li>foo.1.2.tar.gz</li>
+     * <li>foo.1.2.tar.gz</li>
      * </ul>
-     * <h5>Archive Packages</h5>
-     * <b>Packages in folder:</b><br/>
+     * <h5>Archive Packages</h5> <b>Packages in folder:</b><br/>
      * <ul>
-     *     <li>foo.1.0.tar.gz</li>
-     *     <li>foo.0.9.tar.gz</li>
+     * <li>foo.1.0.tar.gz</li>
+     * <li>foo.0.9.tar.gz</li>
      * </ul>
      * <b>Packages in PACKAGES file:</b><br/>
      * <ul>
-     *     <li>foo.1.0.tar.gz</li>
-     *     <li>foo.0.9.tar.gz</li>
+     * <li>foo.1.0.tar.gz</li>
+     * <li>foo.0.9.tar.gz</li>
      * </ul>
-     * <br/><br/>
+     * <br/>
+     * <br/>
      * <h4>Binary Packages</h4>
-     * <h5>Latest</h5>
-     * <b>Packages in folder:</b><br/>
-     * <br/><i>NONE</i><br/><br/>
+     * <h5>Latest</h5> <b>Packages in folder:</b><br/>
+     * <br/>
+     * <i>NONE</i><br/>
+     * <br/>
      * <b>Packages in PACKAGES file:</b><br/>
      * <ul>
-     *     <li>foo.1.2.tar.gz</li>
+     * <li>foo.1.2.tar.gz</li>
      * </ul>
-     * <h5>Archive</h5>
-     * <b>Packages in folder:</b><br/>
+     * <h5>Archive</h5> <b>Packages in folder:</b><br/>
      * <ul>
-     *     <li>foo.0.8.tar.gz <i>(bin)</i></li>
-     *     <li>foo.1.0.tar.gz <i>(bin)</i> <- we have both source and binary version but in binary folder,
-     *     the binary package is preferred for older versions</li>
-     *     <li>foo.1.1.tar.gz <i>(bin)</i></li>
+     * <li>foo.0.8.tar.gz <i>(bin)</i></li>
+     * <li>foo.1.0.tar.gz <i>(bin)</i> <- we have both source and binary version but
+     * in binary folder, the binary package is preferred for older versions</li>
+     * <li>foo.1.1.tar.gz <i>(bin)</i></li>
      * </ul>
      * <b>Packages in PACKAGES file:</b><br/>
      * <ul>
-     *     <li>foo.0.8.tar.gz <i>(bin)</i></li>
-     *     <li>foo.0.9.tar.gz <i>(src)<i/></li>
-     *     <li>foo.1.0.tar.gz <i>(bin)</i> <- we have both source and binary version but in binary folder,
-     *      *     the binary package is preferred for older versions</li>
-     *     <li>foo.1.1.tar.gz <i>(bin)</i></li>
-     * </ul><br/>
+     * <li>foo.0.8.tar.gz <i>(bin)</i></li>
+     * <li>foo.0.9.tar.gz <i>(src)<i/></li>
+     * <li>foo.1.0.tar.gz <i>(bin)</i> <- we have both source and binary version but
+     * in binary folder, * the binary package is preferred for older versions</li>
+     * <li>foo.1.1.tar.gz <i>(bin)</i></li>
+     * </ul>
+     * <br/>
+     *
      * @return updated PACKAGES files
      */
     private Set<PackagesFileDescriptor> redirectToSource(
@@ -759,25 +744,14 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
         return recalculated;
     }
 
-    /**
-     * Iterates over the provided package list and finds the one
-     * whose version is higher than provided version.
-     */
-    private Optional<PopulatedRPackage> findNewerPackage(
-            List<PopulatedRPackage> packages, String name, String version) {
-        return packages.stream()
-                .filter(p -> p.getName().equals(name))
-                .filter(p -> compareVersions(p.getVersion(), version) > 0)
-                .findFirst();
-    }
-
     private Set<RetiredBinary> selectBinariesToRetire(
             List<PopulatedRPackage> latestSourcePackages, BinLocationSet binLatestLocations) {
         final Set<RetiredBinary> retiredBinaries = new HashSet<>();
 
         for (BinLocation binLocation : binLatestLocations.getAllBinLocations()) {
             for (PopulatedRPackage latestBinaryPackage : binLocation.packages()) {
-                findNewerPackage(latestSourcePackages, latestBinaryPackage.getName(), latestBinaryPackage.getVersion())
+                VersionComparator.findNewerPackage(
+                                latestSourcePackages, latestBinaryPackage.getName(), latestBinaryPackage.getVersion())
                         .map(p -> new RetiredBinary(p, latestBinaryPackage, binLocation))
                         .ifPresent(retiredBinaries::add);
             }
@@ -785,36 +759,12 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
         return retiredBinaries;
     }
 
-    /**
-     * Creates {@link PackagesFileDescriptor Descriptors} for PACKAGES files.
-     * @param remoteFolder e.g. <code>src/contrib</code>
-     * @param localPath e.g. <code>{rdepotGeneratedDir}/{repositoryId}/{datestamp}/bin/{os}/{distro}/{architecture}/{rVersion}/latest</code>
-     * @return descriptors for both <code>PACKAGES</code> and <code>PACKAGES.gz</code> files
-     * @throws GeneratePackagesFileException when preparing the PACKAGES(.gz) file fails
-     * @throws Md5SumCalculationException when calculating the MD5 sum of the PACKAGE(.gz) file fails
-     */
-    private Set<PackagesFileDescriptor> createDescriptors(String remoteFolder, String localPath)
-            throws Md5SumCalculationException, GeneratePackagesFileException {
-        final String packagesPath = localPath + separator + PACKAGES;
-        final String packagesGzPath = localPath + separator + PACKAGES_GZ;
-        try {
-            storage.removeEmptyLinesFromEnd(packagesPath);
-            storage.gzipFile(packagesPath);
-        } catch (IOException | GzipFileException e) {
-            log.error("{}: {}", e.getClass(), e.getMessage());
-            throw new GeneratePackagesFileException();
-        }
-        return Set.of(
-                new PackagesFileDescriptor(remoteFolder, packagesPath, storage.calculateMd5Sum(packagesPath)),
-                new PackagesFileDescriptor(remoteFolder, packagesGzPath, storage.calculateMd5Sum(packagesGzPath)));
-    }
-
     @Override
     public void cleanUpAfterSynchronization(PopulatedRepositoryContent populatedRepositoryContent)
             throws CleanUpAfterSynchronizationException {
         try {
-            storage.deleteFile(new File(populatedRepositoryContent.latestDirectoryPath()));
-            storage.deleteFile(new File(populatedRepositoryContent.archiveDirectoryPath()));
+            storage.deleteFile(populatedRepositoryContent.latestDirectoryPath());
+            storage.deleteFile(populatedRepositoryContent.archiveDirectoryPath());
 
             Set<String> binaryDirPaths = new HashSet<>();
             binaryDirPaths.addAll(
@@ -823,11 +773,11 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
                     populatedRepositoryContent.binArchivePackagesPaths().getAllBinLocationPaths());
 
             for (String path : binaryDirPaths) {
-                storage.deleteFile(new File(path));
+                storage.deleteFile(path);
             }
 
             if (!Boolean.parseBoolean(snapshot)) {
-                storage.cleanDirectory(repositoryGenerationDirectory);
+                storage.cleanDirectory(repositoryGenerationDirectory.getAbsolutePath());
             }
         } catch (DeleteFileException e) {
             log.error(e.getMessage(), e);
@@ -836,96 +786,18 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
     }
 
     @Override
-    public byte[] getReferenceManual(RPackage packageBag) throws GetReferenceManualException {
-        final String manualPath = new File(packageBag.getSource()).getParent()
-                + separator + packageBag.getName()
-                + separator + packageBag.getName() + ".pdf";
-        final File manualFile = new File(manualPath);
-
-        try {
-            return storage.readFile(manualFile);
-        } catch (FileNotFoundException e) {
-            throw new GetReferenceManualException(e);
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-            throw new GetReferenceManualException(e);
-        }
-    }
-
-    @Override
-    public List<Vignette> getAvailableVignettes(RPackage packageBag) {
-        if (packageBag == null) {
-            return List.of();
-        }
-        final List<Vignette> vignettes = new ArrayList<>();
-
-        File vignettesFolder = new File(
-                new File(packageBag.getSource()).getParent(),
-                packageBag.getName() + separator + "inst" + separator + "doc" + separator);
-
-        File[] vignetteFiles = new File[0];
-        if (vignettesFolder.exists() && vignettesFolder.isDirectory()) {
-            vignetteFiles = vignettesFolder.listFiles((File dir, String name) -> (name != null
-                    && (name.toLowerCase().endsWith(".html")
-                            || name.toLowerCase().endsWith(".pdf"))));
-        }
-
-        for (File vignetteFile : ArrayUtils.nullToEmpty(vignetteFiles, File[].class)) {
-            if (FilenameUtils.getExtension(vignetteFile.getName()).equals("html")) {
-                try {
-                    Document htmlDoc = Jsoup.parse(vignetteFile, "UTF-8");
-
-                    vignettes.add(new Vignette(htmlDoc.title(), vignetteFile.getName()));
-                } catch (IOException e) {
-                    log.error(e.getMessage(), e);
-                }
-            } else {
-                vignettes.add(new Vignette(FilenameUtils.getBaseName(vignetteFile.getName()), vignetteFile.getName()));
-            }
-        }
-        return vignettes;
-    }
-
-    @Override
-    public byte[] readVignette(RPackage packageBag, String filename) throws ReadPackageVignetteException {
-        final String vignetteFilename = new File(packageBag.getSource()).getParent()
-                + separator + packageBag.getName()
-                + separator + "inst" + separator + "doc"
-                + separator + filename;
-        final File file = new File(vignetteFilename);
-
-        try {
-            return storage.readFile(file);
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-            throw new ReadPackageVignetteException(e);
-        }
-    }
-
-    @Override
-    public void generateManual(RPackage packageBag) throws GenerateManualException {
-        manualGenerator.generateManual(packageBag);
-    }
-
-    @Override
-    public Boolean checkIfManualExists(Path path) {
-        return Files.exists(path) && Files.isRegularFile(path);
-    }
-
-    @Override
-    public PopulatedRepositoryContent addMetadataForEmptyPlatforms(
-            PopulatedRepositoryContent populatedRepositoryContent, List<String> platforms) {
-        return null;
-    }
-
-    @Override
-    public Properties getPropertiesFromExtractedFile(final String extractedFile)
+    public Properties getPropertiesFromExtractedFile(final List<File> extractedFiles)
             throws ReadPackageDescriptionException {
+        if (extractedFiles.size() != 1) {
+            log.error("There should be only one main extracted directory for an R package.");
+            throw new ReadRPackageDescriptionException();
+        }
+        final File extractedFile = extractedFiles.get(0);
         try {
-            return new PropertiesParser(new File(extractedFile + separator + "DESCRIPTION"));
+            return new PropertiesParser(new File(extractedFile.getAbsolutePath() + separator + "DESCRIPTION"));
         } catch (IOException e) {
             try {
-                storage.deleteFile(new File(extractedFile).getParentFile());
+                storage.deleteFile(extractedFile.getParentFile().getAbsolutePath());
             } catch (DeleteFileException dfe) {
                 log.error(dfe.getMessage(), dfe);
             }
@@ -935,8 +807,9 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
     }
 
     /**
-     * Copies a package from its upload directory to generated directory.
-     * If the package is a source package, it also adds it to the PACKAGES file.
+     * Copies a package from its upload directory to generated directory. If the
+     * package is a source package, it also adds it to the PACKAGES file.
+     *
      * @param packageBag package to populate
      * @param folderPath population directory path (e.g. "archive" or "latest")
      * @return path to populated package
@@ -953,7 +826,9 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
 
         try {
             final File populatedFile = new File(destinationFilePath);
-            Files.copy(new File(originalFilePath).toPath(), populatedFile.toPath());
+            final File downloaded = persistentStorage.downloadFile(Path.of(originalFilePath));
+            Files.copy(downloaded.toPath(), populatedFile.toPath());
+            persistentStorage.recycleDownloadedFile(downloaded);
             final String calculatedSum = storage.calculateMd5Sum(destinationFilePath);
             log.debug("Calculated checksum for package {}: {}", packageBag, calculatedSum);
             if (!packageBag.getMd5sum().equals(calculatedSum)) {
@@ -961,17 +836,22 @@ public class RLocalPopulator extends LocalFSPopulator<RRepository, RPackage, Pop
             }
 
             /*
-            If package is a source package then we simply add it to the PACKAGES file.
-            If package is a binary package then if the "redirect to source" feature is enabled,
-            we do not want to add it, as the PACKAGES file will be regenerated
-            while resolving redirection later.
-            */
+             * If package is a source package then we simply add it to the PACKAGES file. If
+             * package is a binary package then if the "redirect to source" feature is
+             * enabled, we do not want to add it, as the PACKAGES file will be regenerated
+             * while resolving redirection later.
+             */
             if (!packageBag.isBinary() || !packageBag.getRepository().isRedirectToSource()) {
                 final String packagesFilePath = folderPath + separator + "PACKAGES";
                 packageStringGenerator.addPackageToPackagesFile(packageBag, packagesFilePath);
             }
             return populatedFile.getAbsolutePath();
-        } catch (IOException | Md5MismatchException | Md5SumCalculationException | GeneratePackagesFileException e) {
+        } catch (IOException
+                | Md5MismatchException
+                | Md5SumCalculationException
+                | GeneratePackagesFileException
+                | DownloadFileException
+                | DeleteFileException e) {
             log.error("{}: {}", e.getClass(), e.getMessage());
             throw new PackageFolderPopulationException();
         }

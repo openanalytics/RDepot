@@ -30,9 +30,10 @@ import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.PackageService;
 import eu.openanalytics.rdepot.base.service.RepositoryService;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
-import eu.openanalytics.rdepot.base.storage.Populator;
-import eu.openanalytics.rdepot.base.storage.exceptions.InvalidSourceException;
-import eu.openanalytics.rdepot.base.storage.exceptions.MovePackageSourceException;
+import eu.openanalytics.rdepot.base.storage.PersistentStorage;
+import eu.openanalytics.rdepot.base.storage.exceptions.StoreFileException;
+import eu.openanalytics.rdepot.base.strategy.exceptions.FatalStrategyFailure;
+import eu.openanalytics.rdepot.base.strategy.exceptions.NonFatalStrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.WrongServiceException;
 import eu.openanalytics.rdepot.base.synchronization.RepositorySynchronizer;
@@ -45,7 +46,6 @@ import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryExcepti
  */
 public class UpdateSubmissionStrategy<P extends Package, R extends Repository> extends UpdateStrategy<Submission> {
 
-    private final Populator<R, P> populator;
     private final PackageService<P> packageService;
     private final RepositoryService<R> repositoryService;
     private final EmailService emailService;
@@ -53,6 +53,7 @@ public class UpdateSubmissionStrategy<P extends Package, R extends Repository> e
     private final RepositorySynchronizer<R> repositorySynchronizer;
     private boolean requiresRepublishing = false;
     private final R repository;
+    private final PersistentStorage<P, R> persistentStorage;
 
     private static final String STATE = "state";
     private static final String APPROVER_ID = "approver_id";
@@ -64,12 +65,12 @@ public class UpdateSubmissionStrategy<P extends Package, R extends Repository> e
             User requester,
             Submission updateSubmission,
             PackageService<P> packageService,
-            Populator<R, P> populator,
             EmailService emailService,
             SecurityMediator securityMediator,
             RepositorySynchronizer<R> repositorySynchronizer,
             R repository,
-            RepositoryService<R> repositoryService) {
+            RepositoryService<R> repositoryService,
+            PersistentStorage<P, R> persistentStorage) {
         super(resource, service, eventService, requester, updateSubmission, new Submission(resource));
         this.packageService = packageService;
         this.emailService = emailService;
@@ -77,7 +78,7 @@ public class UpdateSubmissionStrategy<P extends Package, R extends Repository> e
         this.repositorySynchronizer = repositorySynchronizer;
         this.repository = repository;
         this.repositoryService = repositoryService;
-        this.populator = populator;
+        this.persistentStorage = persistentStorage;
     }
 
     @Override
@@ -132,11 +133,14 @@ public class UpdateSubmissionStrategy<P extends Package, R extends Repository> e
         try {
             P packageBag =
                     packageService.findById(submission.getPackage().getId()).orElseThrow(WrongServiceException::new);
-            packageBag.setSource(populator.moveToTrashDirectory(packageBag));
+            packageBag.setSource(persistentStorage
+                    .movePackageToTrash(packageBag)
+                    .toAbsolutePath()
+                    .toString());
             packageBag.setActive(false);
             packageBag.setDeleted(true);
-        } catch (WrongServiceException | MovePackageSourceException e) {
-            throw new StrategyFailure(e);
+        } catch (WrongServiceException | StoreFileException e) {
+            throw new FatalStrategyFailure(e);
         }
     }
 
@@ -150,12 +154,15 @@ public class UpdateSubmissionStrategy<P extends Package, R extends Repository> e
                     // TODO: #32886 We can cast it in the service method
                     // so that not to fetch it twice
                     .orElseThrow(WrongServiceException::new);
-            packageBag.setSource(populator.moveToMainDirectory(packageBag));
+            packageBag.setSource(persistentStorage
+                    .movePackageToAccepted(packageBag)
+                    .toAbsolutePath()
+                    .toString());
             packageBag.setActive(true);
             requiresRepublishing = packageBag.getRepository().getPublished();
             repositoryService.incrementVersion(repository);
-        } catch (InvalidSourceException | MovePackageSourceException | WrongServiceException e) {
-            throw new StrategyFailure(e);
+        } catch (StoreFileException | WrongServiceException e) {
+            throw new FatalStrategyFailure(e);
         }
 
         submission.setState(SubmissionState.ACCEPTED);
@@ -170,7 +177,7 @@ public class UpdateSubmissionStrategy<P extends Package, R extends Repository> e
         try {
             if (requiresRepublishing) repositorySynchronizer.storeRepositoryOnRemoteServer(repository);
         } catch (SynchronizeRepositoryException e) {
-            throw new StrategyFailure(e, false);
+            throw new NonFatalStrategyFailure(e);
         }
     }
 

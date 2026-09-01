@@ -20,23 +20,12 @@
  */
 package eu.openanalytics.rdepot.base.utils.specs;
 
-import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
+import eu.openanalytics.rdepot.base.entities.*;
 import eu.openanalytics.rdepot.base.entities.Package;
-import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
-import eu.openanalytics.rdepot.base.entities.Repository;
-import eu.openanalytics.rdepot.base.entities.RepositoryMaintainer;
-import eu.openanalytics.rdepot.base.entities.Resource;
-import eu.openanalytics.rdepot.base.entities.Submission;
-import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.entities.enums.ResourceType;
 import eu.openanalytics.rdepot.base.event.NewsfeedEventType;
 import eu.openanalytics.rdepot.base.utils.TechnologyResolver;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -107,10 +96,6 @@ public class NewsfeedEventSpecs {
             in.defaultReadObject();
             value = in.readObject();
         }
-    }
-
-    private static Specification<NewsfeedEvent> notNullSpecification() {
-        return (root, query, criteriaBuilder) -> root.isNotNull();
     }
 
     public static Specification<NewsfeedEvent> byUser(User user) {
@@ -391,23 +376,6 @@ public class NewsfeedEventSpecs {
         return predicates;
     }
 
-    public static Specification<NewsfeedEvent> hasResourceWithResourcePropertyAndOneOfTypes(
-            String property, Resource resource, String... types) {
-        Specification<NewsfeedEvent> spec;
-
-        if (types.length == 0) {
-            spec = notNullSpecification();
-        } else {
-            spec = new RelatedResourceNestedIdSpecification(types[0], property, resource.getId());
-
-            for (int i = 1; i < types.length; i++) {
-                spec = spec.or(new RelatedResourceNestedIdSpecification(types[i], property, resource.getId()));
-            }
-        }
-
-        return spec;
-    }
-
     public static Specification<NewsfeedEvent> ofResourceTypes(List<ResourceType> resourceTypes) {
 
         Specification<NewsfeedEvent> spec = null;
@@ -420,34 +388,5 @@ public class NewsfeedEventSpecs {
 
     public static Specification<NewsfeedEvent> hasResourceOfType(ResourceType resourceType) {
         return (root, query, criteriaBuilder) -> criteriaBuilder.isNotNull(root.get(RESOURCE_TYPES.get(resourceType)));
-    }
-
-    public static Specification<NewsfeedEvent> relatedResourceHasRelatedRepository(Repository repository) {
-        return hasResourceWithResourcePropertyAndOneOfTypes(
-                        RESOURCE_TYPES.get(ResourceType.REPOSITORY),
-                        repository,
-                        RESOURCE_TYPES.get(ResourceType.PACKAGE_MAINTAINER),
-                        RESOURCE_TYPES.get(ResourceType.REPOSITORY_MAINTAINER),
-                        RESOURCE_TYPES.get(ResourceType.PACKAGE))
-                .or(hasResourceOfType(ResourceType.REPOSITORY).and(hasRelatedResource(repository)));
-    }
-
-    private static class RelatedResourceNestedIdSpecification extends RelatedResourceSpecification {
-
-        @Serial
-        private static final long serialVersionUID = -8475467216624159313L;
-
-        public RelatedResourceNestedIdSpecification(String resourceName, String property, Integer id) {
-            super(resourceName, property, id);
-        }
-
-        @Override
-        public Predicate toPredicate(Root<NewsfeedEvent> root, @NonNull CriteriaQuery<?> query, CriteriaBuilder cb) {
-            return cb.equal(
-                    root.join(resourceName, JoinType.LEFT)
-                            .join(property, JoinType.LEFT)
-                            .get("id"),
-                    value);
-        }
     }
 }

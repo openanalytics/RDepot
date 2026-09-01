@@ -27,7 +27,6 @@ import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.User;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.transaction.annotation.Transactional;
 
 @org.springframework.stereotype.Service
 public class PackageMaintainerService extends Service<PackageMaintainer> {
@@ -59,22 +58,10 @@ public class PackageMaintainerService extends Service<PackageMaintainer> {
         packageMaintainerDao.save(maintainer);
     }
 
-    @Transactional
-    public Optional<PackageMaintainer> findByPackageAndRepositoryAndNonDeleted(
-            String packageName, Repository repository) {
-        return packageMaintainerDao.findByPackageNameAndRepositoryIdAndDeleted(packageName, repository.getId(), false);
-    }
-
     public List<PackageMaintainer> findAllByPackageAndRepositoryAndNonDeleted(
             String packageName, Repository repository) {
         return packageMaintainerDao.findAllByPackageNameAndRepositoryIdAndDeleted(
                 packageName, repository.getId(), false);
-    }
-
-    public Optional<PackageMaintainer> findByUserAndPackageNameAndRepositoryAndNonDeleted(
-            User user, String packageName, Repository repository) {
-        return packageMaintainerDao.findByUserIdAndPackageNameAndRepositoryIdAndDeleted(
-                user.getId(), packageName, repository.getId(), false);
     }
 
     public boolean existsByUserAndPackageNameAndRepositoryAndNonDeleted(

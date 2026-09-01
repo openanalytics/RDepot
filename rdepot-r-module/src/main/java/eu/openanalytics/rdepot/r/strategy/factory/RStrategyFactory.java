@@ -29,16 +29,20 @@ import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
-import eu.openanalytics.rdepot.base.storage.Storage;
+import eu.openanalytics.rdepot.base.storage.LocalStorage;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.update.UpdateSubmissionStrategy;
 import eu.openanalytics.rdepot.base.validation.PackageValidator;
 import eu.openanalytics.rdepot.r.api.v2.dtos.RPackageUploadRequest;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
+import eu.openanalytics.rdepot.r.manuals.ManualGenerator;
 import eu.openanalytics.rdepot.r.mediator.deletion.RPackageDeleter;
 import eu.openanalytics.rdepot.r.services.RPackageService;
 import eu.openanalytics.rdepot.r.services.RRepositoryService;
+import eu.openanalytics.rdepot.r.storage.PersistentRStorage;
+import eu.openanalytics.rdepot.r.storage.population.VignetteReader;
+import eu.openanalytics.rdepot.r.storage.population.VignetteUploader;
 import eu.openanalytics.rdepot.r.storage.population.implementations.RLocalPopulator;
 import eu.openanalytics.rdepot.r.strategy.create.RRepositoryCreateStrategy;
 import eu.openanalytics.rdepot.r.strategy.republish.RRepositoryRepublishStrategy;
@@ -56,7 +60,7 @@ public class RStrategyFactory {
     private final SubmissionService submissionService;
     private final PackageValidator<RPackage> packageValidator;
     private final RRepositoryService repositoryService;
-    private final Storage<RPackage> storage;
+    private final LocalStorage<RPackage> localStorage;
     private final RPackageService packageService;
     private final EmailService emailService;
     private final BestMaintainerChooser bestMaintainerChooser;
@@ -67,6 +71,10 @@ public class RStrategyFactory {
     private final RepositoryMaintainerService repositoryMaintainerService;
     private final RLocalPopulator rPopulator;
     private final RPackageDeleter rPackageDeleter;
+    private final ManualGenerator manualGenerator;
+    private final PersistentRStorage persistentRStorage;
+    private final VignetteReader vignetteReader;
+    private final VignetteUploader vignetteUploader;
 
     public Strategy<Submission> uploadPackageStrategy(RPackageUploadRequest request, User requester) {
         return new RPackageUploadStrategy(
@@ -76,7 +84,7 @@ public class RStrategyFactory {
                 submissionService,
                 packageValidator,
                 repositoryService,
-                storage,
+                localStorage,
                 packageService,
                 emailService,
                 bestMaintainerChooser,
@@ -85,7 +93,11 @@ public class RStrategyFactory {
                 rPopulator,
                 rPackageDeleter,
                 request,
-                packageMaintainerService);
+                packageMaintainerService,
+                manualGenerator,
+                persistentRStorage,
+                vignetteUploader,
+                vignetteReader);
     }
 
     public Strategy<RPackage> updatePackageStrategy(RPackage resource, User requester, RPackage updatedPackage) {
@@ -95,7 +107,7 @@ public class RStrategyFactory {
                 packageService,
                 requester,
                 updatedPackage,
-                storage,
+                localStorage,
                 bestMaintainerChooser,
                 repositorySynchronizer);
     }
@@ -128,12 +140,12 @@ public class RStrategyFactory {
                 requester,
                 updatedResource,
                 packageService,
-                rPopulator,
                 emailService,
                 securityMediator,
                 repositorySynchronizer,
                 repository,
-                repositoryService);
+                repositoryService,
+                persistentRStorage);
     }
 
     public Strategy<RRepository> republishRepositoryStrategy(RRepository resource, User requUser) {

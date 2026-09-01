@@ -33,12 +33,9 @@ import lombok.Setter;
 @EqualsAndHashCode(callSuper = true)
 public class MirroredPythonPackage extends MirroredPackage {
 
-    public PythonPackage toPackageEntity() {
-        PythonPackage entity = new PythonPackage();
-        entity.setName(name);
-        entity.setVersion(version);
-        entity.setNormalizedName(name);
-        return entity;
+    public MirroredPythonPackage(String name, String version) {
+        this.name = name;
+        this.version = version;
     }
 
     public String getNormalizedName() {

@@ -4,19 +4,19 @@
         <Bug pattern="PATH_TRAVERSAL_IN" />
     </Match>
     <Match>
-        <Class name="~eu\.openanalytics\.rdepot\.(base|python|r)\.storage\.implementations\.(Common|Python|R)LocalStorage" />
+        <Class name="~eu\.openanalytics\.rdepot\.(base|python|r)\.storage\.implementations\.fs\.(Common|PythonFS|RFS)LocalStorage" />
         <Bug pattern="PATH_TRAVERSAL_IN" />
     </Match>
     <Match>
-        <Class name="~eu\.openanalytics\.rdepot\.(base|python|r)\.storage\.implementations\.(LocalFS|PythonFS|RLocal)Populator" />
-        <Bug pattern="PATH_TRAVERSAL_IN" />
-    </Match>
-    <Match>
-        <Class name="~eu\.openanalytics\.rdepot\.(base|python|r)\.storage\.implementations\.fs\.Python(LocalStorage|FSPopulator)" />
+        <Class name="~eu\.openanalytics\.rdepot\.(base|python|r)\.storage\.population\.implementations\.(LocalFS|PythonFS|RLocal)Populator" />
         <Bug pattern="PATH_TRAVERSAL_IN" />
     </Match>
     <Match>
         <Class name="eu.openanalytics.rdepot.python.storage.indexes.PythonPackageIndexGenerator" />
+        <Bug pattern="PATH_TRAVERSAL_IN" />
+    </Match>
+    <Match>
+        <Class name="eu.openanalytics.rdepot.python.storage.population.WhlExtractor" />
         <Bug pattern="PATH_TRAVERSAL_IN" />
     </Match>
     <Match>
@@ -32,20 +32,48 @@
         <Bug pattern="PATH_TRAVERSAL_IN" />
     </Match>
     <Match>
-        <Class name="eu.openanalytics.rdepot.base.storage.implementations.CommonLocalStorage" />
+        <Class name="eu.openanalytics.rdepot.r.storage.population.implementations.LocalVignetteReader" />
+        <Bug pattern="PATH_TRAVERSAL_IN" />
+    </Match>
+    <Match>
+        <Class name="eu.openanalytics.rdepot.base.mirroring.MirrorSynchronizer" />
+        <Bug pattern="PATH_TRAVERSAL_IN" />
+    </Match>
+    <Match>
+        <Class name="eu.openanalytics.rdepot.base.storage.implementations.CommonLocalTemporaryStoragealStorage" />
         <Bug pattern="PREDICTABLE_RANDOM" />
     </Match>
     <Match>
-        <Class name="eu.openanalytics.rdepot.base.storage.implementations.LocalFSPopulator" />
+        <Class name="eu.openanalytics.rdepot.base.storage.population.implementations.LocalFSPopulator" />
         <Bug pattern="PREDICTABLE_RANDOM" />
     </Match>
     <Match>
-        <Class name="eu.openanalytics.rdepot.base.storage.implementations.CommonLocalStorage" />
+        <Class name="eu.openanalytics.rdepot.base.storage.implementations.CommonFSPersistentStorage" />
+        <Bug pattern="PREDICTABLE_RANDOM" />
+    </Match>
+    <Match>
+        <Class name="eu.openanalytics.rdepot.base.storage.implementations.CommonLocalTemporaryStoragealStorage" />
         <Method name="downloadFileToDestination" />
         <Bug pattern="HTTP_PARAMETER_POLLUTION" />
     </Match>
     <Match>
         <Class name="eu.openanalytics.rdepot.base.strategy.upload.DefaultPackageUploadStrategy" />
+        <Bug pattern="PATH_TRAVERSAL_IN" />
+    </Match>
+    <Match>
+        <Class name="eu.openanalytics.rdepot.base.storage.implementations.CommonFSPersistentStorage" />
+        <Bug pattern="PATH_TRAVERSAL_IN" />
+    </Match>
+    <Match>
+        <Class name="eu.openanalytics.rdepot.python.storage.implementations.fs.PythonLocalPersistentStorage" />
+        <Bug pattern="PATH_TRAVERSAL_IN" />
+    </Match>
+    <Match>
+        <Class name="eu.openanalytics.rdepot.base.storage.implementations.CommonFSLocalStorage" />
+        <Bug pattern="PATH_TRAVERSAL_IN" />
+    </Match>
+    <Match>
+        <Class name="eu.openanalytics.rdepot.base.storage.population.implementations.LocalFSPopulator" />
         <Bug pattern="PATH_TRAVERSAL_IN" />
     </Match>
     <Match>
@@ -65,8 +93,8 @@
         <Bug pattern="WEAK_MESSAGE_DIGEST_MD5,WEAK_MESSAGE_DIGEST_SHA1,PATH_TRAVERSAL_IN" />
     </Match>
     <Match>
-        <Class name="eu.openanalytics.rdepot.python.storage.indexes.IndexesGenerator" />
-        <Bug pattern="PATH_TRAVERSAL_IN" />
+        <Class name="eu.openanalytics.rdepot.r.storage.implementations.RFSLocalStorage" />
+        <Bug pattern="WEAK_MESSAGE_DIGEST_MD5,WEAK_MESSAGE_DIGEST_SHA1,PATH_TRAVERSAL_IN" />
     </Match>
     <Match>
         <Class name="~eu\.openanalytics\.rdepot\.python\.synchronization\.(FilesHierarchy|PythonRepositorySynchronizer|SynchronizeRepositoryRequestBody)" />
@@ -77,11 +105,15 @@
         <Bug pattern="PATH_TRAVERSAL_IN" />
     </Match>
     <Match>
+        <Class name="eu.openanalytics.rdepot.r.manuals.implementations.fs.LocalFSManualReader" />
+        <Bug pattern="PATH_TRAVERSAL_IN" />
+    </Match>
+    <Match>
         <Class name="eu.openanalytics.rdepot.r.synchronization.RRepositorySynchronizer"/>
         <Bug pattern="PATH_TRAVERSAL_IN" />
     </Match>
     <Match>
-        <Class name="eu.openanalytics.rdepot.r.storage.implementations.RLocalStorage" />
+        <Class name="eu.openanalytics.rdepot.r.storage.implementations.RLocalTemporaryStoragealStorage" />
         <Bug pattern="WEAK_MESSAGE_DIGEST_MD5" />
     </Match>
     <Match>
@@ -113,10 +145,6 @@
         <Bug pattern="PATH_TRAVERSAL_IN" />
     </Match>
     <Match>
-        <Class name="eu.openanalytics.rdepot.python.mirroring.PypiMirrorSynchronizer" />
-        <Bug pattern="PATH_TRAVERSAL_IN" />
-    </Match>
-    <Match>
         <Class name="eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2StatusController" />
         <Bug pattern="URLCONNECTION_SSRF_FD" />
     </Match>
@@ -135,5 +163,9 @@
 	<Match>
         <Class name="eu.openanalytics.rdepot.repo.security.NoneAuthenticationConfig"/>
         <Bug pattern="SPRING_CSRF_PROTECTION_DISABLED"/>
+    </Match>
+    <Match>
+        <Class name="eu.openanalytics.rdepot.python.mirroring.IndexFileParser"/>
+        <Bug pattern="UNSAFE_HASH_EQUALS"/>
     </Match>
 </FindBugsFilter>

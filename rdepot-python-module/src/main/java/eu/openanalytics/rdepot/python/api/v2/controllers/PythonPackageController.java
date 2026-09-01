@@ -37,8 +37,8 @@ import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
-import eu.openanalytics.rdepot.base.storage.Storage;
-import eu.openanalytics.rdepot.base.storage.exceptions.SourceNotFoundException;
+import eu.openanalytics.rdepot.base.storage.PersistentStorage;
+import eu.openanalytics.rdepot.base.storage.exceptions.DownloadFileException;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.exceptions.EditingDeletedResourceException;
@@ -52,6 +52,7 @@ import eu.openanalytics.rdepot.python.api.v2.converters.PythonPackageDtoConverte
 import eu.openanalytics.rdepot.python.api.v2.dtos.PythonPackageDto;
 import eu.openanalytics.rdepot.python.api.v2.hateoas.PythonPackageModelAssembler;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
+import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.mediator.deletion.PythonPackageDeleter;
 import eu.openanalytics.rdepot.python.services.PythonPackageService;
 import eu.openanalytics.rdepot.python.strategy.factory.PythonStrategyFactory;
@@ -95,10 +96,10 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
     private final PythonStrategyFactory strategyFactory;
     private final PythonPackageDeleter deleter;
     private final SecurityMediator securityMediator;
-    private final Storage<PythonPackage> storage;
     private final PageableValidator pageableValidator;
     private final PackagePageableSortResolver pageableSortResolver;
     private final StrategyExecutor strategyExecutor;
+    private final PersistentStorage<PythonPackage, PythonRepository> persistentStorage;
 
     public PythonPackageController(
             MessageSource messageSource,
@@ -113,9 +114,9 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
             SecurityMediator securityMediator,
             PythonPackageDtoConverter converter,
             PageableValidator pageableValidator,
-            Storage<PythonPackage> storage,
             PackagePageableSortResolver pageableSortResolver,
-            StrategyExecutor strategyExecutor) {
+            StrategyExecutor strategyExecutor,
+            PersistentStorage<PythonPackage, PythonRepository> persistentStorage) {
         super(
                 messageSource,
                 LocaleContextHolder.getLocale(),
@@ -127,13 +128,13 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
                 converter);
         this.packageService = packageService;
         this.strategyExecutor = strategyExecutor;
+        this.persistentStorage = persistentStorage;
         this.messageSource = messageSource;
         this.userService = userService;
         this.packageValidator = packageValidator;
         this.strategyFactory = strategyFactory;
         this.deleter = packageDeleter;
         this.securityMediator = securityMediator;
-        this.storage = storage;
         this.pageableValidator = pageableValidator;
         this.pageableSortResolver = pageableSortResolver;
     }
@@ -348,8 +349,8 @@ public class PythonPackageController extends ApiV2Controller<PythonPackage, Pyth
         HttpStatus httpStatus = HttpStatus.OK;
 
         try {
-            bytes = storage.getPackageInBytes(packageBag);
-        } catch (SourceNotFoundException e) {
+            bytes = persistentStorage.getPackageInBytes(packageBag);
+        } catch (DownloadFileException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         httpHeaders.set("Content-Type", "application/gzip");

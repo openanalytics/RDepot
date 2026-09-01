@@ -22,29 +22,16 @@ package eu.openanalytics.rdepot.test.strategy.update;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
+import eu.openanalytics.rdepot.base.entities.*;
 import eu.openanalytics.rdepot.base.entities.Package;
-import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
-import eu.openanalytics.rdepot.base.entities.Repository;
-import eu.openanalytics.rdepot.base.entities.RepositoryMaintainer;
-import eu.openanalytics.rdepot.base.entities.Role;
-import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.mediator.deletion.exceptions.NoSuitableMaintainerFound;
-import eu.openanalytics.rdepot.base.service.CommonPackageService;
-import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
-import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
-import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
-import eu.openanalytics.rdepot.base.service.UserService;
+import eu.openanalytics.rdepot.base.service.*;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.update.UpdateUserStrategy;
-import eu.openanalytics.rdepot.test.fixture.PackageMaintainerTestFixture;
-import eu.openanalytics.rdepot.test.fixture.RepositoryMaintainerTestFixture;
-import eu.openanalytics.rdepot.test.fixture.RepositoryTestFixture;
-import eu.openanalytics.rdepot.test.fixture.UserTestFixture;
+import eu.openanalytics.rdepot.test.fixture.*;
 import eu.openanalytics.rdepot.test.strategy.StrategyTest;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -79,6 +66,7 @@ public class UpdateUserStrategyTest extends StrategyTest {
     private static List<RepositoryMaintainer> repositoryMaintainerList;
     private static List<PackageMaintainer> packageMaintainerList;
     private static List<User> userList;
+    private static List<User> adminList;
     private static int oldId;
     private static int newId;
 
@@ -104,6 +92,7 @@ public class UpdateUserStrategyTest extends StrategyTest {
         resource = UserTestFixture.GET_PACKAGE_MAINTAINER();
         updatedResource = UserTestFixture.GET_PACKAGE_MAINTAINER();
         userList = List.of(resource, updatedResource);
+        adminList = List.of(UserTestFixture.GET_ADMIN(123), UserTestFixture.GET_ADMIN(234));
         Role role = new Role();
         role.setId(oldId);
         Role roleUpdated = new Role();
@@ -137,10 +126,30 @@ public class UpdateUserStrategyTest extends StrategyTest {
                 packageMaintainerService);
     }
 
+    private void userChangeActive(boolean activate) {
+        resource.setActive(!activate);
+        updatedResource.setActive(activate);
+
+        strategy = new UpdateUserStrategy(
+                resource,
+                eventService,
+                service,
+                requester,
+                updatedResource,
+                packageService,
+                bestMaintainerChooser,
+                repositoryMaintainerService,
+                packageMaintainerService);
+    }
+
+    private void deactivateUser() {
+        userChangeActive(false);
+    }
+
     @Test
     public void updateUser_changeFromAdmin_shouldUpdateRole() throws Exception {
         when(bestMaintainerChooser.chooseBestPackageMaintainer(any())).thenReturn(resource);
-        when(service.findByRole(any())).thenReturn(userList);
+        when(bestMaintainerChooser.findAllAdmins()).thenReturn(adminList);
         when(packageService.findAll()).thenReturn(packagesList);
 
         changeUserRole(3, 2);
@@ -152,7 +161,7 @@ public class UpdateUserStrategyTest extends StrategyTest {
     @Test
     public void updateUser_changeFromAdmin_shouldUpdatePackageMaintainers() throws Exception {
         when(bestMaintainerChooser.chooseBestPackageMaintainer(any())).thenReturn(resource);
-        when(service.findByRole(any())).thenReturn(userList);
+        when(bestMaintainerChooser.findAllAdmins()).thenReturn(adminList);
         when(packageService.findAll()).thenReturn(packagesList);
 
         changeUserRole(3, 2);
@@ -162,8 +171,61 @@ public class UpdateUserStrategyTest extends StrategyTest {
     }
 
     @Test
+    public void updateUser_deactivateAdmin_shouldUpdatePackageMaintainers() throws Exception {
+        when(bestMaintainerChooser.chooseBestPackageMaintainer(any())).thenReturn(resource);
+        when(bestMaintainerChooser.findAllAdmins()).thenReturn(adminList);
+        when(packageService.findAll()).thenReturn(packagesList);
+        resource.setRole(RoleTestFixture.GET_BY_NAME("admin"));
+        updatedResource.setRole(RoleTestFixture.GET_BY_NAME("admin"));
+
+        deactivateUser();
+        strategy.perform();
+
+        verify(bestMaintainerChooser, times(3)).chooseBestPackageMaintainer(any());
+    }
+
+    @Test
+    public void updateUser_deactivatePackageMaintainer_shouldUpdatePackageMaintainers() throws Exception {
+        when(bestMaintainerChooser.chooseBestPackageMaintainer(any())).thenReturn(resource);
+        when(packageService.findAll()).thenReturn(packagesList);
+        resource.setRole(RoleTestFixture.GET_BY_NAME("packagemaintainer"));
+        updatedResource.setRole(RoleTestFixture.GET_BY_NAME("packagemaintainer"));
+
+        deactivateUser();
+        strategy.perform();
+
+        verify(bestMaintainerChooser, times(3)).chooseBestPackageMaintainer(any());
+    }
+
+    @Test
+    public void updateUser_deactivateRepositoryMaintainer_shouldUpdatePackageMaintainers() throws Exception {
+        when(bestMaintainerChooser.chooseBestPackageMaintainer(any())).thenReturn(resource);
+        when(packageService.findAll()).thenReturn(packagesList);
+        resource.setRole(RoleTestFixture.GET_BY_NAME("repositorymaintainer"));
+        updatedResource.setRole(RoleTestFixture.GET_BY_NAME("repositorymaintainer"));
+
+        deactivateUser();
+        strategy.perform();
+
+        verify(bestMaintainerChooser, times(3)).chooseBestPackageMaintainer(any());
+    }
+
+    @Test
+    public void updateUser_deactivateRegularUser_shouldUpdatePackageMaintainers() throws Exception {
+        when(bestMaintainerChooser.chooseBestPackageMaintainer(any())).thenReturn(resource);
+        when(packageService.findAll()).thenReturn(packagesList);
+        resource.setRole(RoleTestFixture.GET_BY_NAME("user"));
+        updatedResource.setRole(RoleTestFixture.GET_BY_NAME("user"));
+
+        deactivateUser();
+        strategy.perform();
+
+        verify(bestMaintainerChooser, times(3)).chooseBestPackageMaintainer(any());
+    }
+
+    @Test
     public void updateUser_changeFromAdminWhenThereAreNoOtherAdmins() {
-        when(service.findByRole(any())).thenReturn(List.of(resource));
+        when(bestMaintainerChooser.findAllAdmins()).thenReturn(List.of(resource));
 
         changeUserRole(3, 2);
 
@@ -174,7 +236,7 @@ public class UpdateUserStrategyTest extends StrategyTest {
     public void updateUser_changeFromAdminWhenWhenCannotChooseBestMaintainer() throws Exception {
         when(bestMaintainerChooser.chooseBestPackageMaintainer(any())).thenThrow(NoSuitableMaintainerFound.class);
         when(packageService.findAll()).thenReturn(packagesList);
-        when(service.findByRole(any())).thenReturn(userList);
+        when(bestMaintainerChooser.findAllAdmins()).thenReturn(userList);
 
         changeUserRole(3, 2);
 

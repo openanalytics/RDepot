@@ -34,24 +34,16 @@ public class StrategyFailure extends Exception {
     @Serial
     private static final long serialVersionUID = 8980879718772746241L;
 
-    private boolean requiresRollback_ = true;
-
     @Getter
     private final Exception reason;
 
-    protected StrategyFailure(Exception reason, String messageCode, boolean requiresRollback) {
+    protected StrategyFailure(Exception reason, String messageCode) {
         super(resolveFullMessage(reason, messageCode));
-        this.requiresRollback_ = requiresRollback;
         this.reason = reason;
     }
 
-    public StrategyFailure(Exception reason) {
-        this(reason, false);
-    }
-
-    public StrategyFailure(Exception reason, boolean requiresRollback) {
+    protected StrategyFailure(Exception reason) {
         super(resolveFullMessage(reason, MessageCodes.STRATEGY_FAILURE));
-        this.requiresRollback_ = requiresRollback;
         this.reason = reason;
     }
 
@@ -60,13 +52,5 @@ public class StrategyFailure extends Exception {
         String reasonMessage = reason.getMessage();
 
         return strategyFailureMessage + ": " + reasonMessage;
-    }
-
-    /**
-     * Determines if failure requires all introduced changes to be reverted.
-     * @return true or false
-     */
-    public boolean requiresRollback() {
-        return requiresRollback_;
     }
 }

@@ -34,6 +34,7 @@ import io.restassured.RestAssured;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.http.ContentType;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -74,7 +75,7 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
         container.start();
         System.out.println("===Declarative containers started.");
         RestAssured.port = 8021;
-        //		RestAssured.port = 8017;
+        // RestAssured.port = 8017;
         RestAssured.urlEncodingEnabled = false;
     }
 
@@ -124,7 +125,7 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
 
     @Test
     public void synchronizeRRepositoryWithEmptyMirror() throws IOException {
-        final String repositoryId = "16";
+        final String repositoryId = "18";
 
         given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
                 .contentType(ContentType.JSON)
@@ -147,7 +148,7 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
 
     @Test
     public void shouldSynchronizeRRepositoryWithMirror() throws IOException {
-        final String sourceRepositoryId = "17";
+        final String sourceRepositoryId = "19";
         final String repositoryId = "3";
 
         given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
@@ -184,14 +185,11 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
         JsonObject expectedPackages = (JsonObject) JsonParser.parseReader(reader);
 
         assertSynchronizationStatus(expectedSynchronizationStatus, repositoryId, "2", "1");
-        assertRepositories(expectedRepositories);
+        assertRepositoriesAsAdmin(expectedRepositories);
         assertPackages(expectedPackages);
     }
 
-    @Test
-    public void synchronizationStatus_withMixedSuccess() throws IOException {
-        final String repositoryId = "18";
-
+    private void synchronizeMirrors(String repositoryId) {
         given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
@@ -204,6 +202,15 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
                 .with()
                 .pollInterval(5, TimeUnit.SECONDS)
                 .until(() -> assertSynchronizationFinished(repositoryId));
+    }
+
+    @Test
+    public void synchronizationStatus_withMixedSuccess() throws Exception {
+        final String repositoryId = "20";
+
+        synchronizeMirrors("20");
+        synchronizeMirrors("22");
+        synchronizeMirrors("23");
 
         FileReader reader = new FileReader(JSON_PATH + "/synchronization_status_mixed_success.json");
         JsonObject expectedSynchronizationStatus = (JsonObject) JsonParser.parseReader(reader);
@@ -304,18 +311,9 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
 
     @Test
     public void shouldNotEditRRepository() {
-        final String patch = "["
-                + "{"
-                + "\"op\": \"replace\","
-                + "\"path\":\"/name\","
-                + "\"value\": \"" + REPO_NAME_TO_EDIT + "\""
-                + "},"
-                + "{"
-                + "\"op\": \"replace\","
-                + "\"path\":\"/serverAddress\","
-                + "\"value\": \"http://oa-rdepot-repo:8080/" + REPO_NAME_TO_EDIT + "\""
-                + "}"
-                + "]";
+        final String patch = "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/name\"," + "\"value\": \""
+                + REPO_NAME_TO_EDIT + "\"" + "}," + "{" + "\"op\": \"replace\"," + "\"path\":\"/serverAddress\","
+                + "\"value\": \"http://oa-rdepot-repo:8080/" + REPO_NAME_TO_EDIT + "\"" + "}" + "]";
 
         given().headers(AUTHORIZATION, BEARER + ADMIN_TOKEN)
                 .accept(ContentType.JSON)
@@ -337,5 +335,48 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
                 .patch(API_PATH + "/repositories/" + repositoryId + "/synchronize-mirrors")
                 .then()
                 .statusCode(405);
+    }
+
+    @Test
+    public void synchronizeAllPackagesFromRepository() throws FileNotFoundException {
+        final String sourceRepositoryId = "19";
+        final String repositoryId = "21";
+
+        given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .when()
+                .post(API_PATH + "/repositories/" + sourceRepositoryId + "/synchronize-mirrors")
+                .then()
+                .statusCode(204);
+
+        await().atMost(180, TimeUnit.SECONDS)
+                .with()
+                .pollInterval(5, TimeUnit.SECONDS)
+                .until(() -> assertSynchronizationFinished(sourceRepositoryId));
+
+        given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .when()
+                .post(API_PATH + "/repositories/" + repositoryId + "/synchronize-mirrors")
+                .then()
+                .statusCode(204);
+
+        await().atMost(180, TimeUnit.SECONDS)
+                .with()
+                .pollInterval(5, TimeUnit.SECONDS)
+                .until(() -> assertSynchronizationFinished(repositoryId));
+
+        FileReader reader = new FileReader(JSON_PATH + "/synchronization_status_all_packages.json");
+        JsonObject expectedSynchronizationStatus = (JsonObject) JsonParser.parseReader(reader);
+        reader = new FileReader(JSON_PATH + "/repositories_after_synchronization_all_packages.json");
+        JsonObject expectedRepositories = (JsonObject) JsonParser.parseReader(reader);
+        reader = new FileReader(JSON_PATH + "/packages_after_synchronization_all_packages.json");
+        JsonObject expectedPackages = (JsonObject) JsonParser.parseReader(reader);
+
+        assertSynchronizationStatus(expectedSynchronizationStatus, repositoryId, "20", "0");
+        assertRepositories(expectedRepositories);
+        assertPackages(expectedPackages);
     }
 }

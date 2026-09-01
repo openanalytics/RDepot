@@ -24,10 +24,11 @@ import eu.openanalytics.rdepot.base.mediator.deletion.PackageDeleter;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
-import eu.openanalytics.rdepot.base.storage.Storage;
+import eu.openanalytics.rdepot.base.storage.LocalStorage;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.services.RPackageService;
+import eu.openanalytics.rdepot.r.storage.PersistentRStorage;
 import eu.openanalytics.rdepot.r.storage.population.RPopulator;
 import eu.openanalytics.rdepot.r.synchronization.RRepositorySynchronizer;
 import eu.openanalytics.rdepot.r.utils.RPackageRepositoryResolver;
@@ -40,19 +41,21 @@ public class RPackageDeleter extends PackageDeleter<RPackage, RRepository> {
             NewsfeedEventService newsfeedEventService,
             RPackageService resourceService,
             RPopulator rPopulator,
-            Storage<RPackage> storage,
+            LocalStorage<RPackage> localStorage,
             SubmissionService submissionService,
             RRepositorySynchronizer repositorySynchronizer,
             RPackageRepositoryResolver rPackageRepositoryResolver,
-            PackageMaintainerService maintainerService) {
+            PackageMaintainerService maintainerService,
+            PersistentRStorage persistentRStorage) {
         super(
                 newsfeedEventService,
                 resourceService,
                 rPopulator,
-                storage,
+                localStorage,
                 submissionService,
                 repositorySynchronizer,
                 rPackageRepositoryResolver,
-                maintainerService);
+                maintainerService,
+                persistentRStorage);
     }
 }

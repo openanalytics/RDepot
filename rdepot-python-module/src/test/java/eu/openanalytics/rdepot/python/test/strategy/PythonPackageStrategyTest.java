@@ -31,7 +31,7 @@ import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.mediator.deletion.exceptions.NoSuitableMaintainerFound;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
-import eu.openanalytics.rdepot.base.storage.Storage;
+import eu.openanalytics.rdepot.base.storage.LocalStorage;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
@@ -58,7 +58,7 @@ public class PythonPackageStrategyTest extends StrategyTest {
     PythonPackageService service;
 
     @Mock
-    Storage<PythonPackage> storage;
+    LocalStorage<PythonPackage> localStorage;
 
     @Test
     public void updatePackage_shouldRepublishRepository_whenRepositoryIsPublished() throws Exception {
@@ -86,7 +86,7 @@ public class PythonPackageStrategyTest extends StrategyTest {
                 service,
                 user,
                 updatedPackageBag,
-                storage,
+                localStorage,
                 bestMaintainerChooser,
                 repositorySynchronizer);
 
@@ -121,7 +121,7 @@ public class PythonPackageStrategyTest extends StrategyTest {
                 service,
                 user,
                 updatedPackageBag,
-                storage,
+                localStorage,
                 bestMaintainerChooser,
                 repositorySynchronizer);
 
@@ -157,7 +157,7 @@ public class PythonPackageStrategyTest extends StrategyTest {
                 service,
                 user,
                 updatedPackageBag,
-                storage,
+                localStorage,
                 bestMaintainerChooser,
                 repositorySynchronizer);
 
@@ -193,7 +193,7 @@ public class PythonPackageStrategyTest extends StrategyTest {
                 service,
                 user,
                 updatedPackageBag,
-                storage,
+                localStorage,
                 bestMaintainerChooser,
                 repositorySynchronizer);
 
@@ -231,7 +231,7 @@ public class PythonPackageStrategyTest extends StrategyTest {
                 service,
                 user,
                 updatedPackageBag,
-                storage,
+                localStorage,
                 bestMaintainerChooser,
                 repositorySynchronizer);
         strategy.perform();
@@ -259,7 +259,7 @@ public class PythonPackageStrategyTest extends StrategyTest {
                 service,
                 user,
                 updatedPackageBag,
-                storage,
+                localStorage,
                 bestMaintainerChooser,
                 repositorySynchronizer);
 
@@ -299,7 +299,7 @@ public class PythonPackageStrategyTest extends StrategyTest {
                 service,
                 user,
                 updatedPackageBag,
-                storage,
+                localStorage,
                 bestMaintainerChooser,
                 repositorySynchronizer);
 

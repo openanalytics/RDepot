@@ -1,17 +1,6 @@
 {
     "code": 200,
     "data": {
-        "requiresAuthentication": true,
-        "serverAddress": "http:\/\/oa-rdepot-repo:8080\/testrepo8",
-        "lastPublicationSuccessful": true,
-        "published": false,
-        "technology": "Python",
-        "version": 8,
-        "numberOfPackages": 0,
-        "hashMethod": "SHA256",
-        "deleted": true,
-        "synchronizing": false,
-        "name": "testrepo8",
         "allowedFiles": [
             {
                 "mimetype": "application/gzip",
@@ -26,20 +15,34 @@
                 "extension": ".whl"
             }
         ],
+        "deleted": true,
+        "hashMethod": "SHA256",
+        "id": 8,
+        "lastModifiedTimestamp": "2026-06-28T18:45:39.312698Z",
+        "lastPublicationSuccessful": true,
+        "lastPublicationTimestamp": "2020-03-28T12:30:25Z",
+        "name": "testrepo8",
+        "numberOfPackages": 0,
+        "permissions": [],
+        "publicationUri": "http://localhost/repo/testrepo8",
+        "published": false,
+        "requiresAuthentication": true,
+        "serverAddress": "http://oa-rdepot-repo:8080/testrepo8",
+        "synchronizing": false,
+        "technology": "Python",
+        "version": 8,
         "links": [
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/8"
+                "href": "http://localhost:8017/api/v2/manager/python/repositories/8"
             },
             {
                 "rel": "repositoryList",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories"
+                "href": "http://localhost:8017/api/v2/manager/python/repositories"
             }
-        ],
-        "id": 8,
-        "publicationUri": "http:\/\/localhost\/repo\/testrepo8"
+        ]
     },
-    "messageCode": "success.request.processed",
     "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
     "status": "SUCCESS"
 }

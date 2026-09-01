@@ -24,28 +24,24 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.openanalytics.rdepot.base.api.v2.converters.DtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.dtos.IDto;
+import eu.openanalytics.rdepot.base.api.v2.dtos.MirrorProjection;
 import eu.openanalytics.rdepot.base.api.v2.dtos.ResponseDto;
+import eu.openanalytics.rdepot.base.api.v2.exceptions.NotAllowedInDeclarativeMode;
 import eu.openanalytics.rdepot.base.api.v2.hateoas.RoleAwareRepresentationModelAssembler;
+import eu.openanalytics.rdepot.base.entities.MirrorSynchronizationStatus;
+import eu.openanalytics.rdepot.base.entities.RepositorySynchronizationStatus;
 import eu.openanalytics.rdepot.base.entities.Resource;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
+import eu.openanalytics.rdepot.base.mirroring.dtos.PackageSynchronizationStatusDto;
+import eu.openanalytics.rdepot.base.mirroring.pojos.SynchronizationStatusEnum;
 import eu.openanalytics.rdepot.base.validation.ValidationResult;
-import jakarta.json.Json;
-import jakarta.json.JsonPatch;
-import jakarta.json.JsonReader;
-import jakarta.json.JsonStructure;
-import jakarta.json.JsonWriter;
-import jakarta.json.JsonWriterFactory;
+import jakarta.json.*;
 import jakarta.json.stream.JsonGenerator;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
@@ -63,6 +59,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @param <D> DTO model class, used for communication via Rest API, must extend {@link IDto} class.
  */
 public abstract class ApiV2Controller<E extends Resource, D extends IDto> extends ApiV2ReadingController<E, D> {
+
+    @Value("${declarative}")
+    protected String declarative;
 
     protected final ObjectMapper objectMapper;
     private final Class<D> dtoParametrizedType;
@@ -83,18 +82,6 @@ public abstract class ApiV2Controller<E extends Resource, D extends IDto> extend
         this.dtoParametrizedType = dtoParametrizedType;
         this.validator = validator;
         this.dtoConverter = dtoConverter;
-    }
-
-    /**
-     * Builds a default created response for a single entity.
-     * @param data entity to return
-     * @return full response DTO with 201 http status code
-     */
-    protected @ResponseBody ResponseEntity<ResponseDto<EntityModel<D>>> handleCreatedForSingleEntity(E data) {
-        EntityModel<D> model = modelAssembler.toModel(data);
-
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ResponseDto.generateCreatedBody(messageSource, locale, model));
     }
 
     /**
@@ -274,5 +261,35 @@ public abstract class ApiV2Controller<E extends Resource, D extends IDto> extend
         validator.ifPresent(dataBinder::setValidator);
 
         return dataBinder.getBindingResult();
+    }
+
+    /**
+     * Checks whether the declarative mode is on and an action can be performed
+     * @throws NotAllowedInDeclarativeMode throws an exception when action is not allowed in declarative mode.
+     */
+    protected void checkDeclarative() throws NotAllowedInDeclarativeMode {
+        if (Boolean.parseBoolean(declarative)) throw new NotAllowedInDeclarativeMode(messageSource, locale);
+    }
+
+    /**
+     * Temporary method until #37204 is solved.
+     */
+    @Deprecated
+    protected List<PackageSynchronizationStatusDto> turnFailedMirrorsIntoPackages(
+            RepositorySynchronizationStatus status) {
+        final List<PackageSynchronizationStatusDto> transformed = new ArrayList<>();
+        for (MirrorSynchronizationStatus failedMirrorStatus : status.getMirrors().stream()
+                .filter(ms -> ms.getStatus().equals(SynchronizationStatusEnum.ERROR))
+                .toList()) {
+            final PackageSynchronizationStatusDto packageStatus = new PackageSynchronizationStatusDto();
+            packageStatus.setError(failedMirrorStatus.getError());
+            packageStatus.setMirror(new MirrorProjection(failedMirrorStatus.getMirror()));
+            packageStatus.setName("");
+            packageStatus.setStatus("ERROR");
+            packageStatus.setVersion("");
+            transformed.add(packageStatus);
+        }
+
+        return transformed;
     }
 }

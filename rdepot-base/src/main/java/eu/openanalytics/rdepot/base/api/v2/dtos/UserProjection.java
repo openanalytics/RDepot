@@ -47,4 +47,11 @@ public class UserProjection {
         this.login = user.getLogin();
         this.email = user.getEmail();
     }
+
+    public UserProjection(int id, String name, String login, String email) {
+        this.id = id;
+        this.name = name;
+        this.login = login;
+        this.email = email;
+    }
 }

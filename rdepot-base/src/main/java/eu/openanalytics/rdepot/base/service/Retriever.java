@@ -58,11 +58,6 @@ public interface Retriever<E extends Resource> {
     Page<E> findAllBySpecification(Specification<E> specification, Pageable pageable);
 
     /**
-     * Fetches all elements using given specification.
-     */
-    List<E> findAllBySpecification(Specification<E> specification);
-
-    /**
      * Fetches all elements from a database.
      */
     List<E> findAll();

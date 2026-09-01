@@ -40,7 +40,8 @@ public enum ResourceType {
     EVENT("EVN"),
     ROLE("ROL"),
     USER_SETTINGS("SET"),
-    ACCESS_TOKEN("ACT");
+    ACCESS_TOKEN("ACT"),
+    PACKAGE_MAINTAINER_DSL_TUPLE("PKM_DT");
 
     private final String value;
 }

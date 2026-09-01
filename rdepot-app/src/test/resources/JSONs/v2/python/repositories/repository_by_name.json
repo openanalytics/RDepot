@@ -1,32 +1,8 @@
 {
-    "status": "SUCCESS",
     "code": 200,
-    "message": "Your request has been processed successfully.",
-    "messageCode": "success.request.processed",
     "data": {
-        "links": [
-            {
-                "rel": "self",
-                "href": "http://localhost:8017/api/v2/manager/python/repositories?name=testrepo8&page=0&size=20"
-            }
-        ],
         "content": [
             {
-                "id": 8,
-                "version": 7,
-                "publicationUri": "http://localhost/repo/testrepo8",
-                "name": "testrepo8",
-                "serverAddress": "http://oa-rdepot-repo:8080/testrepo8",
-                "deleted": false,
-                "published": true,
-                "synchronizing": false,
-                "technology": "Python",
-                "requiresAuthentication": true,
-                "numberOfPackages": 5,
-                "lastPublicationTimestamp": "2020-03-28T12:30:25Z",
-                "lastModifiedTimestamp": "2018-04-01T12:30:25Z",
-                "lastPublicationSuccessful": true,
-                "hashMethod": "SHA256",
                 "allowedFiles": [
                     {
                         "mimetype": "application/gzip",
@@ -41,6 +17,22 @@
                         "extension": ".whl"
                     }
                 ],
+                "deleted": false,
+                "hashMethod": "SHA256",
+                "id": 8,
+                "lastModifiedTimestamp": "2018-04-01T12:30:25Z",
+                "lastPublicationSuccessful": true,
+                "lastPublicationTimestamp": "2020-03-28T12:30:25Z",
+                "name": "testrepo8",
+                "numberOfPackages": 5,
+                "permissions": [],
+                "publicationUri": "http://localhost/repo/testrepo8",
+                "published": true,
+                "requiresAuthentication": true,
+                "serverAddress": "http://oa-rdepot-repo:8080/testrepo8",
+                "synchronizing": false,
+                "technology": "Python",
+                "version": 7,
                 "links": [
                     {
                         "rel": "self",
@@ -53,11 +45,20 @@
                 ]
             }
         ],
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/python/repositories?name=testrepo8&page=0&size=20"
+            }
+        ],
         "page": {
+            "number": 0,
             "size": 20,
             "totalElements": 1,
-            "totalPages": 1,
-            "number": 0
+            "totalPages": 1
         }
-    }
+    },
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "status": "SUCCESS"
 }

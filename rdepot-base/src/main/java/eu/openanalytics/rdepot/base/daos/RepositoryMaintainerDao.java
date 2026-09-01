@@ -25,6 +25,7 @@ import eu.openanalytics.rdepot.base.entities.RepositoryMaintainer;
 import eu.openanalytics.rdepot.base.entities.User;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.Query;
 
 /**
  * {@link org.springframework.data.jpa.repository.JpaRepository JPA Repository}
@@ -38,6 +39,13 @@ public interface RepositoryMaintainerDao extends Dao<RepositoryMaintainer> {
     List<RepositoryMaintainer> findByUserAndDeleted(User user, boolean deleted);
 
     List<RepositoryMaintainer> findByUserAndRepository(User user, Repository repository);
+
+    @Query(
+            value = "SELECT rm "
+                    + "FROM RepositoryMaintainer rm "
+                    + "WHERE rm.user.id = :userId "
+                    + "AND rm.repository.id = :repoId")
+    List<RepositoryMaintainer> findByUserIdAndRepositoryId(int userId, int repoId);
 
     Optional<RepositoryMaintainer> findByRepositoryAndUserAndDeleted(Repository repository, User user, boolean deleted);
 

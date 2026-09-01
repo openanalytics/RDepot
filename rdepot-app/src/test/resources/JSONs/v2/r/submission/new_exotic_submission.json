@@ -1,43 +1,53 @@
 {
-    "status": "WARNING",
     "code": 201,
-    "message": "Your package has been submitted successfully but the filename has been changed due to a mismatch with the package metadata.",
-    "messageCode": "warning.file.name.has.been.updated",
     "data": {
+        "approver": {
+            "email": "einstein@ldap.forumsys.com",
+            "id": 4,
+            "login": "einstein",
+            "name": "Albert Einstein"
+        },
+        "changes": "",
+        "created": "2026-06-29T16:37:36.073592364Z",
         "id": 48,
         "packageBag": {
+            "active": true,
+            "author": "Scott Fortmann-Roe",
+            "binary": false,
+            "deleted": false,
+            "description": "This ąęćśöäüß package supplies tools for tabulating and analyzing\\n the results of predictive models. The methods employed are\\n applicable to virtually any predictive model and make\\n comparisons between different methodologies straightforward.",
+            "descriptionContentType": "txt",
             "id": 48,
-            "user": {
-                "id": 4,
-                "name": "Albert Einstein",
-                "login": "einstein",
-                "email": "einstein@ldap.forumsys.com"
-            },
+            "name": "A3",
+            "permissions": [
+                "package.deactivate",
+                "package.delete.soft",
+                "package.edit"
+            ],
             "repository": {
                 "id": 3,
+                "lastPublicationSuccessful": true,
                 "name": "testrepo2",
                 "publicationUri": "http://localhost/repo/testrepo2",
                 "published": true,
                 "requiresAuthentication": true,
-                "technology": "R",
-                "lastPublicationSuccessful": true
+                "technology": "R"
             },
+            "source": "/opt/rdepot/repositories/3/8573090/A3_0.9.3.tar.gz",
             "submission": {
                 "id": 48,
                 "state": "ACCEPTED"
             },
-            "name": "A3",
-            "version": "0.9.3",
-            "source": "/opt/rdepot/repositories/3/48308500/A3_0.9.3.tar.gz",
-            "active": true,
-            "deleted": false,
             "technology": "R",
-            "binary": false,
-            "description": "This ąęćśöäüß package supplies tools for tabulating and analyzing\\n the results of predictive models. The methods employed are\\n applicable to virtually any predictive model and make\\n comparisons between different methodologies straightforward.",
-            "author": "Scott Fortmann-Roe",
             "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for\\n Predictive Models - test exotic letters ąęćśöäüß",
             "url": null,
-            "descriptionContentType": "txt",
+            "user": {
+                "email": "einstein@ldap.forumsys.com",
+                "id": 4,
+                "login": "einstein",
+                "name": "Albert Einstein"
+            },
+            "version": "0.9.3",
             "links": [
                 {
                     "rel": "self",
@@ -63,21 +73,14 @@
                 }
             ]
         },
-        "submitter": {
-            "id": 4,
-            "name": "Albert Einstein",
-            "login": "einstein",
-            "email": "einstein@ldap.forumsys.com"
-        },
-        "approver": {
-            "id": 4,
-            "name": "Albert Einstein",
-            "login": "einstein",
-            "email": "einstein@ldap.forumsys.com"
-        },
-        "changes": "",
+        "permissions": [],
         "state": "ACCEPTED",
-        "created": "2025-05-07T15:40:03.856898462Z",
+        "submitter": {
+            "email": "einstein@ldap.forumsys.com",
+            "id": 4,
+            "login": "einstein",
+            "name": "Albert Einstein"
+        },
         "technology": "R",
         "links": [
             {
@@ -89,5 +92,8 @@
                 "href": "http://localhost:8017/api/v2/manager/r/submissions"
             }
         ]
-    }
+    },
+    "message": "Your package has been submitted successfully but the filename has been changed due to a mismatch with the package metadata.",
+    "messageCode": "warning.file.name.has.been.updated",
+    "status": "WARNING"
 }

@@ -20,7 +20,8 @@
  */
 package eu.openanalytics.rdepot.test.unit.synchronization;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.synchronization.RepoResponse;
@@ -43,9 +44,8 @@ public class UploadChunkRequestAssertionAnswer implements Answer<ResponseEntity<
 
     protected void assertChunk(MultiValueMap<String, Object> entity, UploadChunkRequestAssertion assertion) {
         if (callCount == 0) {
-            assertTrue(
-                    List.of(assertion.expectedId()).equals(entity.get("id")),
-                    "For the first chunk, the id should be empty.");
+            assertEquals(
+                    List.of(assertion.expectedId()), entity.get("id"), "For the first chunk, the id should be empty.");
             assertEquals(
                     List.of(assertion.expectedVersionBefore()),
                     entity.get("version_before"),

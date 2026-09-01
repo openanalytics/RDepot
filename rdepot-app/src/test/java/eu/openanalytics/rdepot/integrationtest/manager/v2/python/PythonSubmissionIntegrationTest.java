@@ -871,7 +871,7 @@ public class PythonSubmissionIntegrationTest extends IntegrationTest {
                 .token(PACKAGEMAINTAINER_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getPostEndpointNewEventsAmount())
                 .expectedJsonPath("/v2/python/submissions/new_submission_as_package_maintainer.json")
-                .expectedEventsJson(EVENTS_PATH + "new_submission_as_package_maintainer.json")
+                .expectedEventsJson(EVENTS_PATH + "new_submission_as_package_maintainer_event.json")
                 .submissionMultipartBody(body)
                 .build();
         testEndpoint(requestBody);

@@ -21,6 +21,12 @@ app:
           destination: "/F/bin/linux/#{parsed[1].group(1)}/#{parsed[0].group(3)}/#{parsed[0].group(1)}/#{parsed[1].group(2)}"
       read-access:
         public: true
+    I:
+      rewrites:
+        - matcher: "#{parse('.*R \\((\\d+\\.\\d+)[^ ]* ([^ ]+) ([^ ]+) ([^ ]+)\\)', request.getHeader('User-Agent')) && parse('/linux/([^/]+)/src/contrib/(.+)', path.toString())}"
+          destination: "/I/bin/linux/#{parsed[1].group(1)}/#{parsed[0].group(3)}/#{parsed[0].group(1)}/#{parsed[1].group(2)}"
+      read-access:
+        public: true
     X:
       on-error-expression: "#{(response.status == 404 ? true : false) && (response.status == 404 ? response.sendRedirect('https://pypi.org/simple/' + request.getRequestURI().split('/', 5)[4]) == null : false)}"
       read-access:
@@ -41,6 +47,14 @@ app:
       rewrites:
         - matcher: "#{parse('.*R \\((\\d+\\.\\d+)[^ ]* ([^ ]+) ([^ ]+) ([^ ]+)\\)', request.getHeader('User-Agent')) && parse('/linux/([^/]+)/src/contrib/(.+)', path.toString())}"
           destination: "/D/bin/linux/#{parsed[1].group(1)}/#{parsed[0].group(3)}/#{parsed[0].group(1)}/#{parsed[1].group(2)}"
+      read-access:
+        public: true
+    ZE:
+      on-error-expression: "#{(response.status == 404 ? true : false) && (response.status == 404 ? response.sendRedirect('https://pypi.org/simple/' + request.getRequestURI().split('/', 5)[4]) == null : false)}"
+      read-access:
+        public: true
+    ZF:
+      on-error-expression: "#{(response.status == 404 ? true : false) && (response.status == 404 ? response.sendRedirect('https://pypi.org/simple/' + request.getRequestURI().split('/', 5)[4]) == null : false)}"
       read-access:
         public: true
 server:

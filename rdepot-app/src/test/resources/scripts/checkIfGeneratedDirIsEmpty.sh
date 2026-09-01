@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 docker exec oa-rdepot-app-without-snapshots /bin/bash -c 'ls /opt/rdepot/generated';
 
 if [ $? -ne 0 ]; then

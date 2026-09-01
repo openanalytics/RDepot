@@ -27,6 +27,7 @@ import eu.openanalytics.rdepot.base.api.v2.converters.DtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.dtos.UserDto;
 import eu.openanalytics.rdepot.base.api.v2.hateoas.linking.LinkWithModifiableProperties;
 import eu.openanalytics.rdepot.base.entities.User;
+import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.UserService;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,16 +43,24 @@ import org.springframework.stereotype.Component;
 public class UserModelAssembler extends AbstractRoleAwareModelAssembler<User, UserDto> {
 
     private final UserService userService;
+    private final SecurityMediator securityMediator;
 
     @Autowired
-    public UserModelAssembler(DtoConverter<User, UserDto> dtoConverter, UserService userService) {
+    public UserModelAssembler(
+            DtoConverter<User, UserDto> dtoConverter, SecurityMediator securityMediator, UserService userService) {
         super(dtoConverter, ApiV2UserController.class, "user", Optional.empty());
         this.userService = userService;
+        this.securityMediator = securityMediator;
     }
 
-    private UserModelAssembler(DtoConverter<User, UserDto> dtoConverter, UserService userService, User user) {
+    private UserModelAssembler(
+            DtoConverter<User, UserDto> dtoConverter,
+            SecurityMediator securityMediator,
+            UserService userService,
+            User user) {
         super(dtoConverter, ApiV2UserController.class, "user", Optional.of(user));
         this.userService = userService;
+        this.securityMediator = securityMediator;
     }
 
     @Override
@@ -80,11 +89,28 @@ public class UserModelAssembler extends AbstractRoleAwareModelAssembler<User, Us
 
     @Override
     public RepresentationModelAssembler<User, EntityModel<UserDto>> assemblerWithUser(User user) {
-        return new UserModelAssembler(dtoConverter, userService, user);
+        return new UserModelAssembler(dtoConverter, securityMediator, userService, user);
     }
 
     @Override
     protected Class<?> getExtensionControllerClass(User entity) {
         return ApiV2UserController.class;
+    }
+
+    @Override
+    public EntityModel<UserDto> toModel(User entity, User user) {
+        final UserDto dto = dtoConverter.convertEntityToDto(entity);
+
+        dto.setPermissions(securityMediator.getPermissions(entity, user));
+
+        return EntityModel.of(dto, generateRoleBasedAvailableLinksForEntity(entity, user));
+    }
+
+    public EntityModel<UserDto> toModelForMeEndpoint(User user) {
+        final UserDto dto = dtoConverter.convertEntityToDto(user);
+
+        dto.setPermissions(securityMediator.getPermissions(user));
+
+        return EntityModel.of(dto, generateRoleBasedAvailableLinksForEntity(user, user));
     }
 }

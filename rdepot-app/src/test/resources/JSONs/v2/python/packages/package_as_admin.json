@@ -1,0 +1,89 @@
+{
+    "status": "SUCCESS",
+    "code": 200,
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "data": {
+        "abiTag": null,
+        "active": true,
+        "author": null,
+        "authorEmail": null,
+        "binary": false,
+        "builtTag": null,
+        "classifiers": "Development Status :: 5 - Production/Stable, Environment :: Console, Intended Audience :: Science/Research, License :: OSI Approved :: BSD License, Operating System :: OS Independent, Programming Language :: Cython, Programming Language :: Python, Programming Language :: Python :: 3, Programming Language :: Python :: 3 :: Only, Programming Language :: Python :: 3.8, Programming Language :: Python :: 3.9, Programming Language :: Python :: 3.10, Programming Language :: Python :: 3.11, Topic :: Scientific/Engineering",
+        "compatibilityTags": null,
+        "deleted": false,
+        "description": null,
+        "descriptionContentType": "text/markdown",
+        "hash": "7053d7ff8c563324b9a76110fabbd227c96c11d337521a57d94973bbb5f2a7ad",
+        "homePage": "",
+        "id": 41,
+        "keywords": null,
+        "license": "BSD 3-Clause License Copyright (c) 2008-2011, AQR Capital Management, LLC, Lambda Foundry, Inc. and PyData Development Team All rights reserved. Copyright (c) 2011-2023, Open source contributors. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. * Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.",
+        "maintainer": null,
+        "maintainerEmail": null,
+        "name": "pandas",
+        "permissions": [
+            "package.deactivate",
+            "package.delete.soft",
+            "package.edit"
+        ],
+        "platform": null,
+        "platformTag": null,
+        "projectUrl": "homepage, https://pandas.pydata.org, documentation, https://pandas.pydata.org/docs/, repository, https://github.com/pandas-dev/pandas",
+        "providesExtra": "test, performance, computation, fss, aws, gcp, excel, parquet, feather, hdf5, spss, postgresql, mysql, sql-other, html, xml, plot, output_formatting, clipboard, compression, all",
+        "pythonTag": null,
+        "repository": {
+            "id": 8,
+            "lastPublicationSuccessful": true,
+            "name": "testrepo8",
+            "publicationUri": "http://localhost/repo/testrepo8",
+            "published": true,
+            "requiresAuthentication": true,
+            "technology": "Python"
+        },
+        "requiresDist": null,
+        "requiresExternal": null,
+        "requiresPython": ">=3.8",
+        "source": "/opt/rdepot/repositories/8/21604316/pandas-2.0.1.tar.gz",
+        "submission": {
+            "id": 41,
+            "state": "ACCEPTED"
+        },
+        "summary": "Powerful data structures for data analysis, time series, and statistics",
+        "technology": "Python",
+        "title": "Powerful data structures for data analysis, time series, and statistics",
+        "url": "homepage, https://pandas.pydata.org, documentation, https://pandas.pydata.org/docs/, repository, https://github.com/pandas-dev/pandas",
+        "user": {
+            "email": "admin@localhost",
+            "id": 8,
+            "login": "admin",
+            "name": "Local Admin User"
+        },
+        "version": "2.0.1",
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/python/packages/41"
+            },
+            {
+                "rel": "packageList",
+                "href": "http://localhost:8017/api/v2/manager/python/packages"
+            },
+            {
+                "rel": "repository",
+                "href": "http://localhost:8017/api/v2/manager/python/repositories/8"
+            },
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/python/packages/41",
+                "type": "PATCH"
+            },
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/python/packages/41",
+                "type": "DELETE"
+            }
+        ]
+    }
+}

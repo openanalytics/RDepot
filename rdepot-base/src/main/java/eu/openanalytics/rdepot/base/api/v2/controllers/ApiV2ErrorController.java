@@ -91,10 +91,10 @@ public class ApiV2ErrorController extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<ResponseDto<?>> handleException(Throwable e) {
-        log.error("Runtime exception message: " + e.getMessage());
-        log.error("RequestURI: " + MDC.get(RequestFilterMDC.MDC_REQUEST_URI_KEY));
-        log.error("Query parameters: " + MDC.get(RequestFilterMDC.MDC_QUERY_PARAMS_KEY));
-        log.error("Exception: " + ExceptionUtils.getStackTrace(e));
+        log.error("Runtime exception message: {}", e.getMessage());
+        log.error("RequestURI: {}", MDC.get(RequestFilterMDC.MDC_REQUEST_URI_KEY));
+        log.error("Query parameters: {}", MDC.get(RequestFilterMDC.MDC_QUERY_PARAMS_KEY));
+        log.error("Exception: {}", ExceptionUtils.getStackTrace(e));
         Map<String, String> body = new HashMap<>();
         body.put("traceId", MDC.get("traceIdMDC"));
         body.put("timestamp", Instant.now().toString());

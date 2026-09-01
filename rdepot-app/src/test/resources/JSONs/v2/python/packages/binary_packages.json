@@ -1,90 +1,91 @@
 {
     "code": 200,
     "data": {
+        "content": [
+            {
+                "abiTag": "cp39",
+                "active": true,
+                "author": "Nicholas Sharp",
+                "authorEmail": "nmwsharp@gmail.com",
+                "binary": true,
+                "builtTag": null,
+                "classifiers": null,
+                "compatibilityTags": "cp39-cp39-manylinux_2_17_x86_64, cp39-cp39-manylinux2014_x86_64",
+                "deleted": false,
+                "description": null,
+                "descriptionContentType": "text/markdown",
+                "hash": "b8ee6c125c8be026f41c03412333ddfb826848f5cef18aac34ced5c696638517",
+                "homePage": "https://polyscope.run",
+                "id": 48,
+                "keywords": null,
+                "license": "MIT",
+                "maintainer": null,
+                "maintainerEmail": null,
+                "name": "tetrapolyscope",
+                "permissions": [],
+                "platform": null,
+                "platformTag": "manylinux_2_17_x86_64.manylinux2014_x86_64",
+                "projectUrl": null,
+                "providesExtra": null,
+                "pythonTag": "cp39",
+                "repository": {
+                    "id": 8,
+                    "lastPublicationSuccessful": true,
+                    "name": "testrepo8",
+                    "publicationUri": "http://localhost/repo/testrepo8",
+                    "published": true,
+                    "requiresAuthentication": true,
+                    "technology": "Python"
+                },
+                "requiresDist": "numpy",
+                "requiresExternal": null,
+                "requiresPython": null,
+                "source": "/opt/rdepot/repositories/8/50464012/tetrapolyscope-0.0.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+                "submission": {
+                    "id": 48,
+                    "state": "ACCEPTED"
+                },
+                "summary": "Polyscope: A viewer and user interface for 3D data.",
+                "technology": "Python",
+                "title": "Polyscope: A viewer and user interface for 3D data.",
+                "url": "https://polyscope.run",
+                "user": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "version": "0.0.1",
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/python/packages/48"
+                    },
+                    {
+                        "rel": "packageList",
+                        "href": "http://localhost:8017/api/v2/manager/python/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/python/repositories/8"
+                    }
+                ]
+            }
+        ],
         "links": [
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages?binary=true&page=0&size=20&sort=id,asc"
+                "href": "http://localhost:8017/api/v2/manager/python/packages?binary=true&page=0&size=20&sort=id,asc"
             }
         ],
         "page": {
             "number": 0,
             "size": 20,
-            "totalPages": 1,
-            "totalElements": 1
-        },
-        "content": [
-            {
-                "authorEmail": "nmwsharp@gmail.com",
-                "projectUrl": null,
-                "keywords": null,
-                "description": null,
-                "source": "\/opt\/rdepot\/repositories\/8\/30510396\/tetrapolyscope-0.0.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
-                "repository": {
-                    "lastPublicationSuccessful": true,
-                    "name": "testrepo8",
-                    "id": 8,
-                    "published": true,
-                    "technology": "Python",
-                    "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo8"
-                },
-                "requiresDist": "numpy",
-                "title": "Polyscope: A viewer and user interface for 3D data.",
-                "homePage": "https:\/\/polyscope.run",
-                "abiTag": "cp39",
-                "maintainer": null,
-                "platform": null,
-                "requiresPython": null,
-                "requiresExternal": null,
-                "descriptionContentType": "text\/markdown",
-                "classifiers": null,
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/48"
-                    },
-                    {
-                        "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages"
-                    },
-                    {
-                        "rel": "repository",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/repositories\/8"
-                    }
-                ],
-                "id": 48,
-                "compatibilityTags": "cp39-cp39-manylinux_2_17_x86_64, cp39-cp39-manylinux2014_x86_64",
-                "summary": "Polyscope: A viewer and user interface for 3D data.",
-                "author": "Nicholas Sharp",
-                "pythonTag": "cp39",
-                "active": true,
-                "maintainerEmail": null,
-                "technology": "Python",
-                "version": "0.0.1",
-                "providesExtra": null,
-                "url": "https:\/\/polyscope.run",
-                "license": "MIT",
-                "deleted": false,
-                "binary": true,
-                "name": "tetrapolyscope",
-                "platformTag": "manylinux_2_17_x86_64.manylinux2014_x86_64",
-                "submission": {
-                    "id": 48,
-                    "state": "ACCEPTED"
-                },
-                "builtTag": null,
-                "user": {
-                    "name": "Nikola Tesla",
-                    "id": 5,
-                    "login": "tesla",
-                    "email": "tesla@ldap.forumsys.com"
-                },
-                "hash": "b8ee6c125c8be026f41c03412333ddfb826848f5cef18aac34ced5c696638517"
-            }
-        ]
+            "totalElements": 1,
+            "totalPages": 1
+        }
     },
-    "messageCode": "success.request.processed",
     "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
     "status": "SUCCESS"
 }

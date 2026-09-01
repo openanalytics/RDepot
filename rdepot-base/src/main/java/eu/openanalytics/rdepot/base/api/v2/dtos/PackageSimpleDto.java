@@ -22,6 +22,8 @@ package eu.openanalytics.rdepot.base.api.v2.dtos;
 
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.Resource;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringExclude;
@@ -44,6 +46,7 @@ public class PackageSimpleDto implements IDto {
     protected Boolean deleted;
     private String technology;
     protected boolean binary;
+    protected List<String> permissions = new ArrayList<>();
 
     @ToStringExclude
     protected Package entity;

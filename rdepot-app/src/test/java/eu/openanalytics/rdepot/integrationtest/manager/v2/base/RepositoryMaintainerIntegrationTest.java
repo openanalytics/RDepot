@@ -108,11 +108,25 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
     public void getRepositoryMaintainersByTechnology() throws Exception {
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.GET)
-                .urlSuffix("?resourceTechnology=" + testData.getTechnologies().get(1) + "&sort=id,asc")
+                .urlSuffix("?technology=" + testData.getTechnologies().get(1) + "&sort=id,asc")
                 .statusCode(200)
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
                 .expectedJsonPath("/v2/base/repository-maintainer/python_related_repository_maintainers.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getRepositoryMaintainersByResourceTechnology() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .urlSuffix("?resourceTechnology=" + testData.getTechnologies().get(1) + "&sort=id,asc")
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath(
+                        "/v2/base/repository-maintainer/python_related_repository_maintainers_deprecated.json")
                 .build();
         testEndpoint(requestBody);
     }

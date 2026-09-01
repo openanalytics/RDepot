@@ -20,16 +20,9 @@
  */
 package eu.openanalytics.rdepot.base.mediator.deletion;
 
+import eu.openanalytics.rdepot.base.entities.*;
 import eu.openanalytics.rdepot.base.entities.Package;
-import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
-import eu.openanalytics.rdepot.base.entities.Repository;
-import eu.openanalytics.rdepot.base.entities.RepositoryMaintainer;
-import eu.openanalytics.rdepot.base.entities.Submission;
-import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
-import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
-import eu.openanalytics.rdepot.base.service.PackageService;
-import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
-import eu.openanalytics.rdepot.base.service.RepositoryService;
+import eu.openanalytics.rdepot.base.service.*;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
 
 /**

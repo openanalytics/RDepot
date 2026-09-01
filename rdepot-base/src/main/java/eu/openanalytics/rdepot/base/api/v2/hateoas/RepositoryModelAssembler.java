@@ -99,4 +99,12 @@ public class RepositoryModelAssembler extends AbstractRoleAwareModelAssembler<Re
         return repositoryControllerClassesByTechnology.getOrDefault(
                 entity.getTechnology(), ApiV2RepositoryController.class);
     }
+
+    @Override
+    public EntityModel<RepositoryDto> toModel(Repository entity, User user) {
+        RepositoryDto dto = dtoConverter.convertEntityToDto(entity);
+
+        dto.setPermissions(securityMediator.getPermissions(entity, user));
+        return EntityModel.of(dto, generateRoleBasedAvailableLinksForEntity(entity, user));
+    }
 }

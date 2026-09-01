@@ -20,7 +20,7 @@
  */
 package eu.openanalytics.rdepot.r.storage.population;
 
-import eu.openanalytics.rdepot.r.storage.BinLocationSet;
+import eu.openanalytics.rdepot.r.storage.binaries.BinLocationSet;
 import eu.openanalytics.rdepot.r.storage.indexes.RIndexDescriptor;
 import eu.openanalytics.rdepot.r.storage.packagesfile.PackagesFileDescriptor;
 import java.util.List;
@@ -29,9 +29,9 @@ import java.util.Set;
 /**
  * @param latestPackages
  * @param archivePackages
- * @param latestDirectoryPath latest directory path in local storage
+ * @param latestDirectoryPath latest directory path in local localStorage
  *                            (e.g. <code>{generationDir}/{repositoryId}/{datestamp}/src/contrib/latest</code>)
- * @param archiveDirectoryPath archive directory path in local storage
+ * @param archiveDirectoryPath archive directory path in local localStorage
  *                             (e.g. <code>{generationDir}/{repositoryId}/{datestamp}/src/contrib/Archive</code>)
  * @param binLatestPackagesPaths
  * @param binArchivePackagesPaths

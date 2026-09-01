@@ -11,11 +11,22 @@
             "published": true,
             "requiresAuthentication": true,
             "technology": "Python",
-            "lastPublicationSuccessful": false
+            "lastPublicationSuccessful": true
         },
         "status": "SUCCESS",
         "timestamp": 1769158102853,
         "packages": [
+            {
+                "name": "numpy",
+                "version": "1.24.2",
+                "status": "SUCCESS",
+                "error": null,
+                "mirror": {
+                    "name": "PyPi",
+                    "uri": "https://pypi.org/simple",
+                    "type": "tarball"
+                }
+            },
             {
                 "name": "ArmyOfEvilRobots",
                 "version": null,
@@ -46,17 +57,6 @@
                 "mirror": {
                     "name": "X",
                     "uri": "http://oa-rdepot-proxy/repo/X/",
-                    "type": "tarball"
-                }
-            },
-            {
-                "name": "numpy",
-                "version": "1.24.2",
-                "status": "SUCCESS",
-                "error": null,
-                "mirror": {
-                    "name": "PyPi",
-                    "uri": "https://pypi.org/simple",
                     "type": "tarball"
                 }
             }

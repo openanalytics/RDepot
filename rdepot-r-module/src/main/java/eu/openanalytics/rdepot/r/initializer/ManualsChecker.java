@@ -21,8 +21,8 @@
 package eu.openanalytics.rdepot.r.initializer;
 
 import eu.openanalytics.rdepot.r.entities.RPackage;
+import eu.openanalytics.rdepot.r.manuals.ManualReader;
 import eu.openanalytics.rdepot.r.services.RPackageService;
-import eu.openanalytics.rdepot.r.storage.population.implementations.RLocalPopulator;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -38,15 +38,15 @@ public class ManualsChecker implements HealthIndicator {
     private final String checkManuals;
     private volatile boolean initializationComplete = false;
     private final RPackageService packageService;
-    private final RLocalPopulator populator;
+    private final ManualReader manualReader;
 
     public ManualsChecker(
             RPackageService packageService,
             @Value("${on-start-up.check-manuals}") String checkManuals,
-            RLocalPopulator populator) {
+            ManualReader manualReader) {
         this.packageService = packageService;
         this.checkManuals = checkManuals;
-        this.populator = populator;
+        this.manualReader = manualReader;
     }
 
     @Transactional
@@ -56,7 +56,7 @@ public class ManualsChecker implements HealthIndicator {
         if (Boolean.parseBoolean(checkManuals)) {
             List<RPackage> packages = packageService.findAll();
             for (RPackage packageBag : packages) {
-                packageBag.setManualAvailable(populator.checkIfManualExists(packageBag.getManualPath()));
+                packageBag.setManualAvailable(manualReader.checkIfManualExists(packageBag.getManualPath()));
             }
         }
         initializationComplete = true;

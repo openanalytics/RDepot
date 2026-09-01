@@ -31,8 +31,8 @@
     "registrationEmailAsUsername": false,
     "rememberMe": false,
     "verifyEmail": false,
-    "loginWithEmailAllowed": true,
-    "duplicateEmailsAllowed": false,
+    "loginWithEmailAllowed": false,
+    "duplicateEmailsAllowed": true,
     "resetPasswordAllowed": false,
     "editUsernameAllowed": false,
     "bruteForceProtected": false,
@@ -597,6 +597,34 @@
             "credentials": [
                 {
                     "id": "30ef3219-cbb5-4304-b111-30a28034db35",
+                    "type": "password",
+                    "userLabel": "My password",
+                    "createdDate": 1746179729569,
+                    "secretData": "{\"value\":\"8Xcq1f8bWcKSFWaky/nuHJsCJlJ8xx/6d6/sf9mDBtk=\",\"salt\":\"dswXuJAm7KWeeSRpBQpIzw==\",\"additionalParameters\":{}}",
+                    "credentialData": "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+                }
+            ],
+            "disableableCredentialTypes": [],
+            "requiredActions": [],
+            "realmRoles": [
+                "default-roles-rdepot"
+            ],
+            "notBefore": 0,
+            "groups": []
+        },
+        {
+            "id": "247ddaac-5ac2-46c2-bddd-e4ca3fb22256",
+            "username": "teslasassistant",
+            "firstName": "Assistant",
+            "lastName": "Of Tesla",
+            "email": "tesla@rdepot.local",
+            "emailVerified": true,
+            "createdTimestamp": 1746179722246,
+            "enabled": true,
+            "totp": false,
+            "credentials": [
+                {
+                    "id": "3ecede26-f8b7-4689-bf99-7615aa485f7c",
                     "type": "password",
                     "userLabel": "My password",
                     "createdDate": 1746179729569,

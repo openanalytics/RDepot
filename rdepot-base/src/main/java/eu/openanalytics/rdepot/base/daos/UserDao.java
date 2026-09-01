@@ -32,9 +32,7 @@ import java.util.Optional;
 public interface UserDao extends Dao<User> {
     List<User> findByRoleAndDeletedAndActive(Role role, boolean deleted, boolean active);
 
-    Optional<User> findByLogin(String login);
-
-    Optional<User> findByEmail(String email);
+    List<User> findByEmail(String email);
 
     Optional<User> findByLoginAndActive(String login, boolean active);
 }

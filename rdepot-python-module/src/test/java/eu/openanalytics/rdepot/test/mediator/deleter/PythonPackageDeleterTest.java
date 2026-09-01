@@ -24,11 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
 import eu.openanalytics.rdepot.base.entities.Submission;
@@ -36,14 +32,14 @@ import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
-import eu.openanalytics.rdepot.base.storage.exceptions.MovePackageSourceException;
-import eu.openanalytics.rdepot.base.storage.exceptions.SourceFileDeleteException;
+import eu.openanalytics.rdepot.base.storage.exceptions.DeleteFileException;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.mediator.deletion.PythonPackageDeleter;
 import eu.openanalytics.rdepot.python.services.PythonPackageService;
-import eu.openanalytics.rdepot.python.storage.PythonPopulator;
-import eu.openanalytics.rdepot.python.storage.implementations.fs.PythonLocalStorage;
+import eu.openanalytics.rdepot.python.storage.PythonPersistentStorage;
+import eu.openanalytics.rdepot.python.storage.implementations.fs.PythonFSLocalStorage;
+import eu.openanalytics.rdepot.python.storage.population.PythonPopulator;
 import eu.openanalytics.rdepot.python.synchronization.PythonRepositorySynchronizer;
 import eu.openanalytics.rdepot.python.utils.PythonPackageRepositoryResolver;
 import eu.openanalytics.rdepot.test.fixture.PackageMaintainerTestFixture;
@@ -71,7 +67,7 @@ public class PythonPackageDeleterTest extends UnitTest {
     PythonPackageDeleter deleter;
 
     @Mock
-    PythonLocalStorage storage;
+    PythonFSLocalStorage storage;
 
     @Mock
     PythonPopulator populator;
@@ -88,11 +84,13 @@ public class PythonPackageDeleterTest extends UnitTest {
     @Mock
     PythonPackageRepositoryResolver packageRepositoryResolver;
 
+    @Mock
+    PythonPersistentStorage pythonPersistentStorage;
+
     PythonPackage pythonPackage;
     Submission submission;
     List<PackageMaintainer> maintainers;
     private static final String OLD_SOURCE = "/upload_folder/package.tar.gz";
-    private static final String TRASHED_SOURCE = "/trash/package.tar.gz";
 
     @BeforeEach
     public void setUpResources() {
@@ -110,8 +108,7 @@ public class PythonPackageDeleterTest extends UnitTest {
         doNothing().when(submissionService).delete(any(Submission.class));
         when(maintainerService.findAllByPackageNameAndRepository(anyString(), any(PythonRepository.class)))
                 .thenReturn(maintainers);
-        when(populator.moveToTrashDirectory(pythonPackage)).thenReturn(TRASHED_SOURCE);
-        doNothing().when(storage).removePackageSource(TRASHED_SOURCE);
+        doNothing().when(pythonPersistentStorage).deleteAllPackageFilesIfExist(pythonPackage);
 
         deleter.delete(pythonPackage);
 
@@ -120,7 +117,7 @@ public class PythonPackageDeleterTest extends UnitTest {
         verify(submissionService).delete(submission);
         verify(maintainerService)
                 .findAllByPackageNameAndRepository(pythonPackage.getName(), pythonPackage.getRepository());
-        verify(storage).removePackageSource(TRASHED_SOURCE);
+        verify(pythonPersistentStorage).deleteAllPackageFilesIfExist(pythonPackage);
     }
 
     @Test
@@ -140,11 +137,9 @@ public class PythonPackageDeleterTest extends UnitTest {
             private static final long serialVersionUID = 909822155280557269L;
         };
 
-        when(populator.moveToTrashDirectory(pythonPackage)).thenReturn(TRASHED_SOURCE);
         doNothing().when(newsfeedEventService).deleteRelatedEvents(pythonPackage);
         doNothing().when(newsfeedEventService).deleteRelatedEvents(submission);
         doThrow(exception).when(submissionService).delete(submission);
-        when(storage.moveSource(pythonPackage, OLD_SOURCE)).thenReturn(OLD_SOURCE);
 
         assertThrows(DeleteEntityException.class, () -> deleter.delete(pythonPackage));
         assertEquals(
@@ -156,31 +151,30 @@ public class PythonPackageDeleterTest extends UnitTest {
 
     @Test
     public void delete_throwsException_whenPackageSourceFileCannotBeDeleted() throws Exception {
-        final SourceFileDeleteException exception = new SourceFileDeleteException();
+        final DeleteFileException exception = new DeleteFileException();
 
         when(maintainerService.findAllByPackageNameAndRepository(anyString(), any(PythonRepository.class)))
                 .thenReturn(maintainers);
-        when(populator.moveToTrashDirectory(pythonPackage)).thenReturn(TRASHED_SOURCE);
         doNothing().when(newsfeedEventService).deleteRelatedEvents(pythonPackage);
         doNothing().when(newsfeedEventService).deleteRelatedEvents(submission);
         doNothing().when(submissionService).delete(submission);
-        doThrow(exception).when(storage).removePackageSource(TRASHED_SOURCE);
+        doThrow(exception).when(pythonPersistentStorage).deleteAllPackageFilesIfExist(pythonPackage);
 
         assertThrows(DeleteEntityException.class, () -> deleter.delete(pythonPackage));
 
         verify(newsfeedEventService).deleteRelatedEvents(pythonPackage);
         verify(newsfeedEventService).deleteRelatedEvents(submission);
         verify(submissionService).delete(submission);
-        verify(storage).removePackageSource(TRASHED_SOURCE);
+        verify(pythonPersistentStorage).deleteAllPackageFilesIfExist(pythonPackage);
         verify(maintainerService)
                 .findAllByPackageNameAndRepository(pythonPackage.getName(), pythonPackage.getRepository());
     }
 
     @Test
     public void delete_throwsException_whenPackageSourceFileCannotBeMoved() throws Exception {
-        final MovePackageSourceException exception = new MovePackageSourceException();
+        final DeleteFileException exception = new DeleteFileException();
 
-        doThrow(exception).when(populator).moveToTrashDirectory(pythonPackage);
+        doThrow(exception).when(pythonPersistentStorage).deleteAllPackageFilesIfExist(pythonPackage);
 
         assertThrows(DeleteEntityException.class, () -> deleter.delete(pythonPackage));
     }
@@ -190,11 +184,10 @@ public class PythonPackageDeleterTest extends UnitTest {
         final int id = pythonPackage.getId();
 
         when(pythonPackageService.findById(id)).thenReturn(Optional.of(pythonPackage));
-        when(populator.moveToTrashDirectory(pythonPackage)).thenReturn(TRASHED_SOURCE);
         doNothing().when(newsfeedEventService).deleteRelatedEvents(pythonPackage);
         doNothing().when(newsfeedEventService).deleteRelatedEvents(submission);
         doNothing().when(submissionService).delete(submission);
-        doNothing().when(storage).removePackageSource(TRASHED_SOURCE);
+        doNothing().when(pythonPersistentStorage).deleteAllPackageFilesIfExist(pythonPackage);
         when(maintainerService.findAllByPackageNameAndRepository(anyString(), any(PythonRepository.class)))
                 .thenReturn(maintainers);
 
@@ -203,7 +196,7 @@ public class PythonPackageDeleterTest extends UnitTest {
         verify(newsfeedEventService).deleteRelatedEvents(pythonPackage);
         verify(newsfeedEventService).deleteRelatedEvents(submission);
         verify(submissionService).delete(submission);
-        verify(storage).removePackageSource(TRASHED_SOURCE);
+        verify(pythonPersistentStorage).deleteAllPackageFilesIfExist(pythonPackage);
         verify(maintainerService)
                 .findAllByPackageNameAndRepository(pythonPackage.getName(), pythonPackage.getRepository());
     }
@@ -213,11 +206,10 @@ public class PythonPackageDeleterTest extends UnitTest {
         final int id = pythonPackage.getId();
 
         when(pythonPackageService.findById(id)).thenReturn(Optional.of(pythonPackage));
-        when(populator.moveToTrashDirectory(pythonPackage)).thenReturn(TRASHED_SOURCE);
         doNothing().when(newsfeedEventService).deleteRelatedEvents(pythonPackage);
         doNothing().when(newsfeedEventService).deleteRelatedEvents(submission);
         doNothing().when(submissionService).delete(submission);
-        doNothing().when(storage).removePackageSource(TRASHED_SOURCE);
+        doNothing().when(pythonPersistentStorage).deleteAllPackageFilesIfExist(pythonPackage);
         when(maintainerService.findAllByPackageNameAndRepository(anyString(), any(PythonRepository.class)))
                 .thenReturn(maintainers);
 
@@ -226,7 +218,7 @@ public class PythonPackageDeleterTest extends UnitTest {
         verify(newsfeedEventService).deleteRelatedEvents(pythonPackage);
         verify(newsfeedEventService).deleteRelatedEvents(submission);
         verify(submissionService).delete(submission);
-        verify(storage).removePackageSource(TRASHED_SOURCE);
+        verify(pythonPersistentStorage).deleteAllPackageFilesIfExist(pythonPackage);
         verify(maintainerService)
                 .findAllByPackageNameAndRepository(pythonPackage.getName(), pythonPackage.getRepository());
     }

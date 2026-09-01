@@ -20,9 +20,7 @@
  */
 package eu.openanalytics.rdepot.test.validator;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.RepositoryMaintainer;
@@ -59,7 +57,7 @@ public class RepositoryMaintainerValidatorTest {
     private RepositoryMaintainerValidator repositoryMaintainerValidator;
 
     @Test
-    public void validateRepositoryMaintainer_NullUserAndNullRepository() throws Exception {
+    public void validateRepositoryMaintainer_NullUserAndNullRepository() {
         repositoryMaintainerValidator =
                 new RepositoryMaintainerValidator(userService, repositoryService, repositoryMaintainerService);
 
@@ -78,7 +76,7 @@ public class RepositoryMaintainerValidatorTest {
     }
 
     @Test
-    public void validateRepositoryMaintainer_emptyUserAndEmptyRepository() throws Exception {
+    public void validateRepositoryMaintainer_emptyUserAndEmptyRepository() {
         repositoryMaintainerValidator =
                 new RepositoryMaintainerValidator(userService, repositoryService, repositoryMaintainerService);
 
@@ -90,10 +88,10 @@ public class RepositoryMaintainerValidatorTest {
         dataBinder.setValidator(repositoryMaintainerValidator);
         Errors errors = Mockito.spy(dataBinder.getBindingResult());
 
-        when(userService.findById(repositoryMaintainer.getUser().getId())).thenReturn(Optional.ofNullable(null));
+        when(userService.findById(repositoryMaintainer.getUser().getId())).thenReturn(Optional.empty());
 
         when(repositoryService.findById(repositoryMaintainer.getRepository().getId()))
-                .thenReturn(Optional.ofNullable(null));
+                .thenReturn(Optional.empty());
 
         repositoryMaintainerValidator.validate(repositoryMaintainer, errors);
         verify(errors, times(1)).rejectValue("user", MessageCodes.EMPTY_USER);
@@ -102,7 +100,7 @@ public class RepositoryMaintainerValidatorTest {
     }
 
     @Test
-    public void validateRepositoryMaintainer_duplicateNewMaintainer() throws Exception {
+    public void validateRepositoryMaintainer_duplicateNewMaintainer() {
         repositoryMaintainerValidator =
                 new RepositoryMaintainerValidator(userService, repositoryService, repositoryMaintainerService);
 
@@ -133,7 +131,7 @@ public class RepositoryMaintainerValidatorTest {
     }
 
     @Test
-    public void validateRepositoryMaintainer_userPermissionsNotSufficient() throws Exception {
+    public void validateRepositoryMaintainer_userPermissionsNotSufficient() {
         repositoryMaintainerValidator =
                 new RepositoryMaintainerValidator(userService, repositoryService, repositoryMaintainerService);
 

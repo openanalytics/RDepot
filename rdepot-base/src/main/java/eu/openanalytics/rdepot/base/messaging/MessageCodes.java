@@ -65,12 +65,11 @@ public class MessageCodes {
     public static final String ERROR_MALFORMED_PATCH = "error.malformed.patch";
     public static final String ERROR_INVALID_SERVERADDRESS = "error.invalid.serveraddress";
     public static final String ERROR_UNHEALTHY_SERVERADDRESS = "error.unhealthy.serveraddress";
-    // Storage
+    // LocalStorage
 
     public static final String REPOSITORY_NOT_FOUND = "repository.not.found";
     public static final String NO_SUITABLE_MAINTAINER_FOUND = "no.suitable.maintainer.found";
     public static final String STRATEGY_FAILURE = "strategy.failure";
-    public static final String MULTIPART_FILE_VALIDATION_EXCEPTION = "multipart.file.validation.exception";
     public static final String INVALID_SOURCE = "invalid.source";
     public static final String COULD_NOT_WRITE_TO_WAITING_ROOM = "could.not.write.to.waiting.room";
     public static final String COULD_NOT_DELETE_FILE = "could.not.delete.file";
@@ -82,7 +81,6 @@ public class MessageCodes {
     public static final String WRONG_SERVICE_EXCEPTION = "wrong.service";
     public static final String ADMIN_NOT_FOUND = "admin.not.found";
     public static final String NO_ADMIN_LEFT = "no.admin.left";
-    public static final String COULD_NOT_DELETE_REPOSITORY_DIRECTORY = "could.not.delete.repository.directory";
     public static final String COULD_NOT_CREATE_FOLDER_STRUCTURE = "could.not.create.folder.structure";
     public static final String COULD_NOT_GZIP_FILE = "could.not.gzip.file";
     public static final String COULD_NOT_SYNCHRONIZE_REPOSITORY = "could.not.synchronize.repository";
@@ -135,7 +133,7 @@ public class MessageCodes {
     public static final String ERROR_EMPTY_NAME = "empty.name";
     public static final String ERROR_INVALID_EMAIL = "invalid.email";
     public static final String ERROR_DUPLICATE_LOGIN = "duplicate.login";
-    public static final String ERROR_DUPLICATE_EMAIL = "duplicate.email";
+    public static final String ERROR_DELETE_USER_PROHIBITED = "delete.user.prohibited";
 
     // validation - repository
     public static final String EMPTY_PUBLICATIONURI = "empty.publicationuri";
@@ -156,7 +154,7 @@ public class MessageCodes {
     public static final String INVALID_REPOSITORY_NAME = "invalid.repository.name";
 
     // R-related
-    public static final String ERROR_ORGANIZE_PACKAGES_IN_STORAGE = "error.organize.packages.in.storage";
+    public static final String ERROR_ORGANIZE_PACKAGES_IN_STORAGE = "error.organize.packages.in.localStorage";
 
     // security
     public static final String ROLE_NOT_FOUND = "role.not.found";
@@ -171,7 +169,6 @@ public class MessageCodes {
     public static final String COULD_NOT_DELETE_ENTITY = "could.not.delete.entity";
     public static final String COULD_NOT_PARSE_PACKAGE_PROPERTIES = "could.not.parse.package.properties";
     public static final String COULD_NOT_CALCULATE_CHECKSUM = "could.not.calculate.checksum";
-
     public static final String FORBIDDEN_UPDATE = "forbidden.update";
     public static final String COULD_NOT_CHANGE_SUBMISSION = "could.not.change.submission";
     // access tokens
@@ -184,6 +181,8 @@ public class MessageCodes {
     public static final String ACCESS_TOKENS_CANNOT_BE_SOFT_DELETED = "access.tokens.cannot.be.soft.deleted";
 
     // declarative
+    public static final String PACKAGE_WITH_THE_SAME_NAME_AND_VERSION_ALREADY_EXISTS =
+            "warning.package.with.the.same.name.and.version";
     public static final String INVALID_REPOSITORY_DECLARATION = "invalid.repository.declaration";
     public static final String UNRECOGNIZED_QUERY_PARAMETER = "unrecognized.query.parameter";
     public static final String DECLARED_REPOSITORY_TECHNOLOGY_MISMATCH = "declared.repository.technology.mismatch";
@@ -192,20 +191,23 @@ public class MessageCodes {
     public static final String METHOD_NOT_ALLOWED = "method.not.allowed";
     public static final String NOT_ACCEPTABLE = "not.acceptable";
     public static final String UNSUPPORTED_MEDIA_TYPE = "unsupported.media.type";
-    public static final String UPDATE_PACKAGE_EXCEPTION = "error.update.package";
+    public static final String MIRROR_INDEX_DOWNLOAD_EXCEPTION = "error.mirror.index.download";
+    public static final String MIRROR_PACKAGE_EXCEPTION = "error.mirror.package";
     public static final String ERROR_CLEAN_FS = "error.clean.fs";
 
     public static final String PACKAGE_PROCESSING_ERROR = "package.processing.error";
     public static final String PACKAGE_CREATE_ERROR = "package.create.error";
     public static final String SUBMISSION_CREATE_ERROR = "submission.create.error";
     public static final String WARNING_PACKAGE_DUPLICATE = "warning.package.duplicate";
-    public static final String WARNING_PACKAGE_WITH_THE_SAME_NAME_AND_VERSION =
-            "warning.package.with.the.same.name.and.version";
     public static final String WARNING_REPLACING_PACKAGES_DISABLED = "warning.replacing.packages.disabled";
     public static final String WARNING_SYNCHRONIZATION_FAILURE = "warning.synchronization.failure";
     public static final String WARNING_UNKNOWN = "warning.unknown";
-    public static final String ERROR_MALFORMED_URL = "error.malformed.url";
     public static final String WARNING_FILE_NAME_HAS_BEEN_UPDATED = "warning.file.name.has.been.updated";
     public static final String INVALID_INDEX_TEMPLATE = "error.invalid.index.template";
     public static final String PACKAGE_ANCHOR_LIST_PLACEHOLDER_NOT_FOUND = "package.anchor.list.placeholder.not.found";
+    public static final String COULD_NOT_EDIT_CONTENT = "could.not.edit.content";
+    public static final String COULD_NOT_READ_CONTENT = "could.not.read.content";
+    public static final String ERROR_STORE_FILE = "error.store.file";
+    public static final String ERROR_READ_STORED_FILE = "error.read.stored.file";
+    public static final String ERROR_PROCESS_EXTRACTED_FILES = "error.process.extracted.files";
 }

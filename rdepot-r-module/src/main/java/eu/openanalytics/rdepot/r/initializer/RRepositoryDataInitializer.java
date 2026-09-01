@@ -31,7 +31,7 @@ import eu.openanalytics.rdepot.r.config.declarative.RYamlDeclarativeConfiguratio
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.mediator.deletion.RRepositoryDeleter;
 import eu.openanalytics.rdepot.r.mirroring.CranMirror;
-import eu.openanalytics.rdepot.r.mirroring.CranMirrorSynchronizer;
+import eu.openanalytics.rdepot.r.mirroring.CranMirrorSynchronizationCoordinator;
 import eu.openanalytics.rdepot.r.mirroring.pojos.MirroredRPackage;
 import eu.openanalytics.rdepot.r.mirroring.pojos.MirroredRRepository;
 import eu.openanalytics.rdepot.r.services.RRepositoryService;
@@ -56,17 +56,17 @@ public class RRepositoryDataInitializer
             RRepositoryValidator repositoryValidator,
             RRepositoryDeleter repositoryDeleter,
             ThreadPoolTaskScheduler taskScheduler,
-            CranMirrorSynchronizer cranMirrorSynchronizer,
             RStrategyFactory factory,
             UserService userService,
             RYamlDeclarativeConfigurationSource rYamlDeclarativeConfigurationSource,
-            StrategyExecutor strategyExecutor) {
+            StrategyExecutor strategyExecutor,
+            CranMirrorSynchronizationCoordinator mirrorSynchronizationCoordinator) {
         super(
                 repositoryService,
                 repositoryValidator,
                 repositoryDeleter,
                 taskScheduler,
-                cranMirrorSynchronizer,
+                mirrorSynchronizationCoordinator,
                 rYamlDeclarativeConfigurationSource,
                 RLanguage.instance);
         this.factory = factory;

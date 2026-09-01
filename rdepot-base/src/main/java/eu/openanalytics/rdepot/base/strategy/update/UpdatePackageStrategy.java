@@ -29,8 +29,10 @@ import eu.openanalytics.rdepot.base.mediator.BestMaintainerChooser;
 import eu.openanalytics.rdepot.base.mediator.deletion.exceptions.NoSuitableMaintainerFound;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.Service;
-import eu.openanalytics.rdepot.base.storage.Storage;
+import eu.openanalytics.rdepot.base.storage.LocalStorage;
 import eu.openanalytics.rdepot.base.storage.exceptions.InvalidSourceException;
+import eu.openanalytics.rdepot.base.strategy.exceptions.FatalStrategyFailure;
+import eu.openanalytics.rdepot.base.strategy.exceptions.NonFatalStrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
 import org.apache.commons.lang3.NotImplementedException;
@@ -42,7 +44,7 @@ import org.apache.commons.lang3.NotImplementedException;
  */
 public abstract class UpdatePackageStrategy<P extends Package> extends UpdateStrategy<P> {
 
-    protected final Storage<P> storage;
+    protected final LocalStorage<P> localStorage;
     protected final BestMaintainerChooser bestMaintainerChooser;
 
     protected UpdatePackageStrategy(
@@ -52,10 +54,10 @@ public abstract class UpdatePackageStrategy<P extends Package> extends UpdateStr
             User requester,
             P updatedPackage,
             P oldResourceCopy,
-            Storage<P> storage,
+            LocalStorage<P> localStorage,
             BestMaintainerChooser bestMaintainerChooser) {
         super(resource, service, eventService, requester, updatedPackage, oldResourceCopy);
-        this.storage = storage;
+        this.localStorage = localStorage;
         this.bestMaintainerChooser = bestMaintainerChooser;
     }
 
@@ -86,7 +88,7 @@ public abstract class UpdatePackageStrategy<P extends Package> extends UpdateStr
                 if (!oldMaintainer.equals(refreshedMaintainer)) updateUser(resource, refreshedMaintainer);
             }
         } catch (NotImplementedException | InvalidSourceException | NoSuitableMaintainerFound e) {
-            throw new StrategyFailure(e, true);
+            throw new FatalStrategyFailure(e);
         }
 
         return resource;
@@ -123,7 +125,7 @@ public abstract class UpdatePackageStrategy<P extends Package> extends UpdateStr
         try {
             if (processedResource.getRepository().getPublished()) publishPackageRepository(processedResource);
         } catch (SynchronizeRepositoryException e) {
-            throw new StrategyFailure(e, false);
+            throw new NonFatalStrategyFailure(e);
         }
     }
 

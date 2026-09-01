@@ -2,34 +2,37 @@
     "code": 200,
     "data": {
         "active": false,
+        "createdOn": "1970-01-01T00:00:00Z",
         "deleted": true,
         "email": "admin@localhost",
         "id": 8,
+        "lastLoggedInOn": "",
+        "login": "admin",
+        "name": "Local Admin User",
+        "permissions": [],
+        "role": "admin",
+        "roleId": 4,
+        "userSettings": null,
         "links": [
             {
-                "href": "http://localhost:8017/api/v2/manager/users/8",
-                "rel": "self"
-            },
-            {
-                "href": "http://localhost:8017/api/v2/manager/users",
-                "rel": "userList"
-            },
-            {
-                "href": "http://localhost:8017/api/v2/manager/users/8",
                 "rel": "self",
-                "type": "PATCH",
+                "href": "http://localhost:8017/api/v2/manager/users/8"
+            },
+            {
+                "rel": "userList",
+                "href": "http://localhost:8017/api/v2/manager/users"
+            },
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/users/8",
                 "modifiableProperties": [
                     "deleted",
                     "active",
                     "roleId"
-                ]
+                ],
+                "type": "PATCH"
             }
-        ],
-        "login": "admin",
-        "name": "Local Admin User",
-        "role": "admin",
-        "roleId": 4,
-        "userSettings": null
+        ]
     },
     "message": "Your request has been processed successfully.",
     "messageCode": "success.request.processed",

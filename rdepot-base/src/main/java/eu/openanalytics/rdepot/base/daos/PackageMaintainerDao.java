@@ -25,8 +25,6 @@ import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.User;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -38,8 +36,6 @@ public interface PackageMaintainerDao extends Dao<PackageMaintainer> {
     List<PackageMaintainer> findByUser(User user);
 
     List<PackageMaintainer> findByRepository(Repository repository);
-
-    Page<PackageMaintainer> findByRepository(Repository repository, Pageable pageable);
 
     List<PackageMaintainer> findByRepositoryAndDeleted(Repository repository, Boolean deleted);
 
@@ -68,16 +64,6 @@ public interface PackageMaintainerDao extends Dao<PackageMaintainer> {
                     + "WHERE pm.packageName = :packageName AND pm.repository.id = :repositoryId")
     List<PackageMaintainer> findAllByPackageNameAndRepositoryId(
             @Param("packageName") String packageName, @Param("repositoryId") int repositoryId);
-
-    @Query(
-            value =
-                    "SELECT pm FROM PackageMaintainer pm "
-                            + "WHERE pm.user.id = :userId AND pm.packageName = :packageName AND pm.repository.id = :repositoryId AND pm.deleted = :deleted")
-    Optional<PackageMaintainer> findByUserIdAndPackageNameAndRepositoryIdAndDeleted(
-            @Param("userId") int userId,
-            @Param("packageName") String packageName,
-            @Param("repositoryId") int repositoryId,
-            @Param("deleted") boolean deleted);
 
     @Query(
             value =

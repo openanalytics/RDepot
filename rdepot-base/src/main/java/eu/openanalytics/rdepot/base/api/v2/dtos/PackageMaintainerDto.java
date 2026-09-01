@@ -23,6 +23,8 @@ package eu.openanalytics.rdepot.base.api.v2.dtos;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
 import eu.openanalytics.rdepot.base.entities.Resource;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringExclude;
@@ -40,6 +42,7 @@ public class PackageMaintainerDto implements IDto {
     private String packageName = "";
     private RepositoryProjection repository;
     private Boolean deleted = false;
+    private List<String> permissions = new ArrayList<>();
 
     @ToStringExclude
     private PackageMaintainer entity = new PackageMaintainer();
@@ -51,6 +54,15 @@ public class PackageMaintainerDto implements IDto {
         this.packageName = packageMaintainer.getPackageName();
         this.repository = new RepositoryProjection(packageMaintainer.getRepository());
         this.deleted = packageMaintainer.isDeleted();
+    }
+
+    public PackageMaintainerDto(
+            Integer id, UserProjection user, String packageName, RepositoryProjection repository, Boolean deleted) {
+        this.id = id;
+        this.user = user;
+        this.packageName = packageName;
+        this.repository = repository;
+        this.deleted = deleted;
     }
 
     @Override

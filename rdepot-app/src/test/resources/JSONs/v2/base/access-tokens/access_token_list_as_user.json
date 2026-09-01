@@ -1,30 +1,27 @@
 {
-    "status": "SUCCESS",
     "code": 200,
-    "message": "Your request has been processed successfully.",
-    "messageCode": "success.request.processed",
     "data": {
-        "links": [
-            {
-                "rel": "self",
-                "href": "http://localhost:8017/api/v2/manager/access-tokens?page=0&size=20&sort=id,asc"
-            }
-        ],
         "content": [
             {
-                "id": 2,
-                "name": "second",
-                "value": null,
-                "creationDate": "2023-12-04",
-                "expirationDate": "2024-12-04",
                 "active": true,
+                "creationDate": "2023-12-04T00:00:00Z",
                 "deleted": false,
+                "expirationDate": "2024-12-04T00:00:00Z",
+                "id": 2,
+                "lastUsed": "",
+                "name": "second",
+                "permissions": [
+                    "accessToken.deactivate",
+                    "accessToken.delete.hard",
+                    "accessToken.edit"
+                ],
                 "user": {
+                    "email": "newton@ldap.forumsys.com",
                     "id": 7,
-                    "name": "Isaac Newton",
                     "login": "newton",
-                    "email": "newton@ldap.forumsys.com"
+                    "name": "Isaac Newton"
                 },
+                "value": null,
                 "links": [
                     {
                         "rel": "self",
@@ -47,19 +44,23 @@
                 ]
             },
             {
-                "id": 3,
-                "name": "deactivated",
-                "value": null,
-                "creationDate": "2023-12-05",
-                "expirationDate": "2023-12-10",
                 "active": false,
+                "creationDate": "2023-12-05T00:00:00Z",
                 "deleted": false,
+                "expirationDate": "2023-12-10T00:00:00Z",
+                "id": 3,
+                "lastUsed": "",
+                "name": "deactivated",
+                "permissions": [
+                    "accessToken.delete.hard"
+                ],
                 "user": {
+                    "email": "newton@ldap.forumsys.com",
                     "id": 7,
-                    "name": "Isaac Newton",
                     "login": "newton",
-                    "email": "newton@ldap.forumsys.com"
+                    "name": "Isaac Newton"
                 },
+                "value": null,
                 "links": [
                     {
                         "rel": "self",
@@ -82,19 +83,23 @@
                 ]
             },
             {
-                "id": 4,
-                "name": "expired",
-                "value": null,
-                "creationDate": "2023-12-06",
-                "expirationDate": "2023-12-07",
                 "active": false,
+                "creationDate": "2023-12-06T00:00:00Z",
                 "deleted": false,
+                "expirationDate": "2023-12-07T00:00:00Z",
+                "id": 4,
+                "lastUsed": "",
+                "name": "expired",
+                "permissions": [
+                    "accessToken.delete.hard"
+                ],
                 "user": {
+                    "email": "newton@ldap.forumsys.com",
                     "id": 7,
-                    "name": "Isaac Newton",
                     "login": "newton",
-                    "email": "newton@ldap.forumsys.com"
+                    "name": "Isaac Newton"
                 },
+                "value": null,
                 "links": [
                     {
                         "rel": "self",
@@ -117,19 +122,25 @@
                 ]
             },
             {
-                "id": 8,
-                "name": "century",
-                "value": null,
-                "creationDate": "2024-01-19",
-                "expirationDate": "2124-12-31",
                 "active": true,
+                "creationDate": "2024-01-19T00:00:00Z",
                 "deleted": false,
+                "expirationDate": "2124-12-31T00:00:00Z",
+                "id": 8,
+                "lastUsed": "2026-06-25T11:31:03.014051Z",
+                "name": "century",
+                "permissions": [
+                    "accessToken.deactivate",
+                    "accessToken.delete.hard",
+                    "accessToken.edit"
+                ],
                 "user": {
+                    "email": "newton@ldap.forumsys.com",
                     "id": 7,
-                    "name": "Isaac Newton",
                     "login": "newton",
-                    "email": "newton@ldap.forumsys.com"
+                    "name": "Isaac Newton"
                 },
+                "value": null,
                 "links": [
                     {
                         "rel": "self",
@@ -152,11 +163,20 @@
                 ]
             }
         ],
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/access-tokens?page=0&size=20&sort=id,asc"
+            }
+        ],
         "page": {
+            "number": 0,
             "size": 20,
             "totalElements": 4,
-            "totalPages": 1,
-            "number": 0
+            "totalPages": 1
         }
-    }
+    },
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "status": "SUCCESS"
 }

@@ -35,7 +35,6 @@ public class RMessageCodes {
     public static final String EMPTY_BUILT = "empty.built";
 
     public static final String COULD_NOT_PARSE_PACKAGES_FILE = "could.not.parse.packages.file";
-    public static final String COULD_NOT_DOWNLOAD_PACKAGES_FILE = "could.not.download.packages.file";
     public static final String COULD_NOT_GET_REFERENCE_MANUAL = "could.not.get.reference.manual";
     public static final String COULD_NOT_GET_VIGNETTE = "could.not.get.vignette";
     public static final String COULD_NOT_GENERATE_MANUAL = "could.not.generate.manual";

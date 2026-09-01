@@ -74,7 +74,7 @@ public class PythonSubmissionModelAssembler extends AbstractRoleAwareModelAssemb
         if (model.getContent() != null) {
             model.getContent().setPackageBag(packageModelAssembler.toModel(entity.getPackage()));
         } else {
-            throw new IllegalStateException("Model assembler " + "must not produce Entity Models with null content!");
+            throw new IllegalStateException("Model assembler must not produce Entity Models with null content!");
         }
 
         return model;
@@ -82,12 +82,16 @@ public class PythonSubmissionModelAssembler extends AbstractRoleAwareModelAssemb
 
     @Override
     public EntityModel<SubmissionDto> toModel(Submission entity, User user) {
-        final EntityModel<SubmissionDto> model = super.toModel(entity, user);
+        SubmissionDto dto = dtoConverter.convertEntityToDto(entity);
+        dto.setPermissions(securityMediator.getPermissions(entity, user));
+
+        final EntityModel<SubmissionDto> model =
+                EntityModel.of(dto, generateRoleBasedAvailableLinksForEntity(entity, user));
 
         if (model.getContent() != null) {
             model.getContent().setPackageBag(packageModelAssembler.toModel(entity.getPackage(), user));
         } else {
-            throw new IllegalStateException("Model assembler " + "must not produce Entity Models with null content!");
+            throw new IllegalStateException("Model assembler must not produce Entity Models with null content!");
         }
 
         return model;

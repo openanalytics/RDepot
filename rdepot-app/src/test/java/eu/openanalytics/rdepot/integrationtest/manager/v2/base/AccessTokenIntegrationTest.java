@@ -214,7 +214,7 @@ public class AccessTokenIntegrationTest extends IntegrationTest {
                 .token(USER_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getChangeEndpointNewEventsAmount())
                 .expectedEventsJson("/v2/base/events/access-tokens/patched_access_token.json")
-                .expectedJsonPath("/v2/base/access-tokens/patched_access_token.json")
+                .expectedJsonPath("/v2/base/access-tokens/access_token_patched.json")
                 .body(patch)
                 .build();
         testEndpoint(requestBody);

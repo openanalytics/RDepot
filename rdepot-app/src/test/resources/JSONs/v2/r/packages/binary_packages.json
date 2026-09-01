@@ -24,6 +24,7 @@
                 "md5sum": "87248e9731a8db308977df7821ee6471",
                 "name": "arrow",
                 "needsCompilation": "yes",
+                "permissions": [],
                 "priority": null,
                 "repository": {
                     "id": 5,

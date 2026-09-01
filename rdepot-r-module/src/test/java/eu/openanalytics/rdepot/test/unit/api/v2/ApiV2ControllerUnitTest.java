@@ -37,6 +37,7 @@ import eu.openanalytics.rdepot.base.mediator.deletion.AccessTokenDeleter;
 import eu.openanalytics.rdepot.base.mediator.deletion.PackageMaintainerDeleter;
 import eu.openanalytics.rdepot.base.mediator.deletion.RepositoryMaintainerDeleter;
 import eu.openanalytics.rdepot.base.mediator.deletion.SubmissionDeleter;
+import eu.openanalytics.rdepot.base.mirroring.MirrorSynchronizationStatusCoordinator;
 import eu.openanalytics.rdepot.base.mirroring.converters.PackageSynchronizationStatusDtoConverter;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.*;
@@ -44,17 +45,24 @@ import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.factory.StrategyFactory;
 import eu.openanalytics.rdepot.base.synchronization.healthcheck.ServerAddressHealthcheckService;
+import eu.openanalytics.rdepot.base.utils.repositories.PackageMaintainerQueryRepository;
 import eu.openanalytics.rdepot.base.validation.*;
 import eu.openanalytics.rdepot.r.config.RBinaryProperties;
 import eu.openanalytics.rdepot.r.entities.RRepositoryAllowedFiles;
+import eu.openanalytics.rdepot.r.manuals.ManualGenerator;
+import eu.openanalytics.rdepot.r.manuals.ManualReader;
 import eu.openanalytics.rdepot.r.mediator.deletion.RPackageDeleter;
 import eu.openanalytics.rdepot.r.mediator.deletion.RRepositoryDeleter;
 import eu.openanalytics.rdepot.r.mediator.deletion.RSubmissionDeleter;
+import eu.openanalytics.rdepot.r.mirroring.CranMirrorSynchronizationCoordinator;
 import eu.openanalytics.rdepot.r.mirroring.CranMirrorSynchronizer;
 import eu.openanalytics.rdepot.r.services.RPackageService;
 import eu.openanalytics.rdepot.r.services.RRepositoryService;
-import eu.openanalytics.rdepot.r.storage.implementations.RLocalStorage;
+import eu.openanalytics.rdepot.r.storage.implementations.RFSLocalStorage;
+import eu.openanalytics.rdepot.r.storage.implementations.RLocalFSPersistentStorage;
 import eu.openanalytics.rdepot.r.storage.population.RPopulator;
+import eu.openanalytics.rdepot.r.storage.population.VignetteReader;
+import eu.openanalytics.rdepot.r.storage.population.implementations.LocalVignetteUploader;
 import eu.openanalytics.rdepot.r.strategy.factory.RStrategyFactory;
 import eu.openanalytics.rdepot.r.validation.RPackageValidator;
 import eu.openanalytics.rdepot.r.validation.RRepositoryValidator;
@@ -82,6 +90,15 @@ public abstract class ApiV2ControllerUnitTest {
     static {
         System.setProperty("jakarta.json.provider", JsonProviderImpl.class.getCanonicalName());
     }
+
+    @MockitoBean
+    CranMirrorSynchronizationCoordinator cranMirrorSynchronizationCoordinator;
+
+    @MockitoBean
+    MirrorSynchronizationStatusCoordinator mirrorSynchronizationStatusCoordinator;
+
+    @MockitoBean
+    CranMirrorSynchronizer cranMirrorSynchronizer;
 
     @MockitoBean
     AccessTokenService accessTokenService;
@@ -168,16 +185,22 @@ public abstract class ApiV2ControllerUnitTest {
     RPopulator rPopulator;
 
     @MockitoBean
-    RLocalStorage rLocalStorage;
+    ManualReader manualReader;
+
+    @MockitoBean
+    ManualGenerator manualGenerator;
+
+    @MockitoBean
+    VignetteReader vignetteReader;
+
+    @MockitoBean
+    RFSLocalStorage rLocalStorage;
 
     @MockitoBean
     RRepositoryValidator rRepositoryValidator;
 
     @MockitoBean
     RPackageValidator rPackageValidator;
-
-    @MockitoBean
-    CranMirrorSynchronizer cranMirrorSynchronizer;
 
     @MockitoBean
     RRepositoryDeleter rRepositoryDeleter;
@@ -220,6 +243,15 @@ public abstract class ApiV2ControllerUnitTest {
 
     @MockitoBean
     PackageSynchronizationStatusDtoConverter packageSynchronizationStatusDtoConverter;
+
+    @MockitoBean
+    PackageMaintainerQueryRepository queryRepository;
+
+    @MockitoBean
+    RLocalFSPersistentStorage persistentStorage;
+
+    @MockitoBean
+    LocalVignetteUploader vignetteUploader;
 
     @BeforeEach
     public void clearContext() throws Exception {

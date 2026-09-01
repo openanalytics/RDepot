@@ -26,10 +26,7 @@ import eu.openanalytics.rdepot.base.api.v2.exceptions.UnrecognizedQueryParameter
 import eu.openanalytics.rdepot.base.api.v2.resolvers.DtoResolvedPageable;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,7 +56,7 @@ public class PageableValidatorImpl implements PageableValidator {
 
         for (String field : fieldsToSortBy) {
             if (validateField(field, dtoFields)) continue;
-            throw new UnrecognizedQueryParameterException(Arrays.asList(field), messageSource, locale);
+            throw new UnrecognizedQueryParameterException(Collections.singletonList(field), messageSource, locale);
         }
     }
 
@@ -68,13 +65,12 @@ public class PageableValidatorImpl implements PageableValidator {
     }
 
     private Set<String> getDtoFields(Class<? extends IDto> dtoClass) {
-        Set<String> dtoFields = Arrays.asList(dtoClass.getDeclaredFields()).stream()
-                .map(dtoField -> dtoField.getName())
-                .collect(Collectors.toSet());
+        Set<String> dtoFields =
+                Arrays.stream(dtoClass.getDeclaredFields()).map(Field::getName).collect(Collectors.toSet());
 
         if (!dtoClass.getSuperclass().equals(Object.class)) {
-            dtoFields.addAll(Arrays.asList(dtoClass.getSuperclass().getDeclaredFields()).stream()
-                    .map(dtoField -> dtoField.getName())
+            dtoFields.addAll(Arrays.stream(dtoClass.getSuperclass().getDeclaredFields())
+                    .map(Field::getName)
                     .collect(Collectors.toSet()));
         }
 
@@ -88,21 +84,20 @@ public class PageableValidatorImpl implements PageableValidator {
     }
 
     private Set<String> getProjectionFields(Class<? extends IDto> dtoClass) {
-        Set<String> dtoProjetionFields = Arrays.asList(
+        Set<String> dtoProjectionFields = Arrays.stream(
                         dtoClass.getSuperclass().equals(Object.class)
                                 ? dtoClass.getDeclaredFields()
                                 : dtoClass.getSuperclass().getDeclaredFields())
-                .stream()
                 .filter(dtoField -> dtoField.getType().toString().contains("Projection"))
-                .map(dtoField -> dtoField.getName())
+                .map(Field::getName)
                 .collect(Collectors.toSet());
 
-        Set<String> projectionFields = new HashSet<String>();
+        Set<String> projectionFields = new HashSet<>();
 
-        if (!dtoProjetionFields.isEmpty()) {
-            for (String nameOfProjectionField : dtoProjetionFields) {
+        if (!dtoProjectionFields.isEmpty()) {
+            for (String nameOfProjectionField : dtoProjectionFields) {
 
-                Field projectionField = null;
+                final Field projectionField;
                 try {
                     projectionField = dtoClass.getSuperclass().equals(Object.class)
                             ? dtoClass.getDeclaredField(nameOfProjectionField)
@@ -112,7 +107,7 @@ public class PageableValidatorImpl implements PageableValidator {
                     throw new IllegalStateException("Reflection error");
                 }
 
-                projectionFields.addAll(Arrays.asList(projectionField.getType().getDeclaredFields()).stream()
+                projectionFields.addAll(Arrays.stream(projectionField.getType().getDeclaredFields())
                         .map(dtoField -> nameOfProjectionField + '.' + dtoField.getName())
                         .collect(Collectors.toSet()));
             }
@@ -126,21 +121,20 @@ public class PageableValidatorImpl implements PageableValidator {
         ParameterizedType parameterizedType = (ParameterizedType) dtoClass.getGenericSuperclass();
         Class<?> genericClass = (Class<?>) parameterizedType.getActualTypeArguments()[0];
 
-        Set<String> submissionDtoFields = Arrays.asList(
+        Set<String> submissionDtoFields = Arrays.stream(
                         genericClass.getSuperclass().getDeclaredFields())
-                .stream()
                 .map(dtoField -> "packageBag." + dtoField.getName())
                 .collect(Collectors.toSet());
 
-        Set<String> projectionFieldsOfGenericClass =
-                Arrays.asList(genericClass.getSuperclass().getDeclaredFields()).stream()
-                        .filter(dtoField -> dtoField.getType().toString().contains("Projection"))
-                        .map(dtoField -> dtoField.getName())
-                        .collect(Collectors.toSet());
+        Set<String> projectionFieldsOfGenericClass = Arrays.stream(
+                        genericClass.getSuperclass().getDeclaredFields())
+                .filter(dtoField -> dtoField.getType().toString().contains("Projection"))
+                .map(Field::getName)
+                .collect(Collectors.toSet());
 
         for (String nameOfProjectionField : projectionFieldsOfGenericClass) {
 
-            Field projectionField = null;
+            final Field projectionField;
             try {
                 projectionField = genericClass.getSuperclass().getDeclaredField(nameOfProjectionField);
             } catch (NoSuchFieldException | SecurityException e) {
@@ -148,7 +142,7 @@ public class PageableValidatorImpl implements PageableValidator {
                 throw new IllegalStateException("Reflection error");
             }
 
-            submissionDtoFields.addAll(Arrays.asList(projectionField.getType().getDeclaredFields()).stream()
+            submissionDtoFields.addAll(Arrays.stream(projectionField.getType().getDeclaredFields())
                     .map(dtoField -> "packageBag." + nameOfProjectionField + '.' + dtoField.getName())
                     .collect(Collectors.toSet()));
         }

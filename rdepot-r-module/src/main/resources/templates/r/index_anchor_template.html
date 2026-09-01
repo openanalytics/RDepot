@@ -1,7 +1,52 @@
-<div class="package" id="package-$package_id">
-    <a href="$package_publication_uri">$package_name</a>
-    <div class="package-version">$package_version</div>
-    <div class="package-title">$package_title</div>
-    <div class="package-description">$package_description</div>
-    <div class="package-maintainer">$package_maintainer</div>
-</div>
+<tr class="v-data-table__tr v-data-table__tr--clickable">
+    <td class="v-data-table__td v-data-table-column--align-start">
+      <div
+        class="v-list-item v-theme--light v-list-item--density-default v-list-item--two-line rounded-0 v-list-item--variant-text px-0 mx-0"
+        id="packages-list-$package_id"
+      >
+        <!----><span class="v-list-item__underlay"></span
+        ><!---->
+        <div class="v-list-item__content" data-no-activator="">
+          <div class="v-list-item-title">
+            $package_name <small style="opacity: 0.5">$package_version</small>
+          </div>
+          <div class="v-list-item-subtitle">
+            <div>
+              <small>
+                <div class="d-flex justify-start align-center ga-2">
+                    $package_title
+                </div>
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </td>
+    <td
+      class="v-data-table__td v-data-table-column--align-start"
+      style="width: 200px"
+    >
+        $package_maintainer
+    </td>
+    <td
+      class="v-data-table__td v-data-table-column--align-center"
+      style="width: 80px"
+    >
+      <div
+        class="v-selection-control v-selection-control--dirty v-selection-control--density-default v-checkbox-btn mr-6"
+      >
+        <div class="v-selection-control__wrapper text-primary">
+          <div class="v-selection-control__input">
+            <a href="$package_publication_uri" class="text-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width: 21px;"><path fill="currentColor" d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
+              </svg>
+            </a>
+            <a href="$package_archive_uri" class="text-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width: 21px;"><path fill="currentColor" d="M3,3H21V7H3V3M4,8H20V21H4V8M9.5,11A0.5,0.5 0 0,0 9,11.5V13H15V11.5A0.5,0.5 0 0,0 14.5,11H9.5Z" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </td>
+  </tr>

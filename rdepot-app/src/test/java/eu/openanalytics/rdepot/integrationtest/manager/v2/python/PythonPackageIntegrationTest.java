@@ -33,6 +33,7 @@ import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.http.ContentType;
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.maven.surefire.shared.io.FileUtils;
@@ -259,7 +260,7 @@ public class PythonPackageIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    public void activatePackage() throws Exception {
+    public void deactivatePackage() throws Exception {
         final String patch =
                 "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/active\"," + "\"value\":false" + "}" + "]";
         TestRequestBody requestBody = TestRequestBody.builder()
@@ -268,7 +269,7 @@ public class PythonPackageIntegrationTest extends IntegrationTest {
                 .statusCode(200)
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getChangeEndpointNewEventsAmount())
-                .expectedEventsJson(EVENTS_PATH + "activate_package_event.json")
+                .expectedEventsJson(EVENTS_PATH + "deactivate_package_event.json")
                 .expectedJsonPath(PACKAGES_PATH + "patched_package.json")
                 .body(patch)
                 .build();
@@ -552,9 +553,9 @@ public class PythonPackageIntegrationTest extends IntegrationTest {
         File file = new File("src/test/resources/itestPackages/" + PACKAGE_NAME_TO_DOWNLOAD + "-"
                 + PACKAGE_VERSION_TO_DOWNLOAD + ".tar.gz");
 
-        byte[] expectedpkg = readFileToByteArray(file);
+        byte[] expectedPackage = readFileToByteArray(file);
 
-        Assertions.assertArrayEquals(expectedpkg, pkg, "Wrong package has been downloaded");
+        Assertions.assertArrayEquals(expectedPackage, pkg, "Wrong package has been downloaded");
     }
 
     @Test
@@ -581,5 +582,38 @@ public class PythonPackageIntegrationTest extends IntegrationTest {
         assertArrayEquals(expected, actual, "Downloaded package is incorrect.");
 
         cleanAfterDownloading(targetDirectoryName);
+    }
+
+    @Test
+    public void getPackage_whenDeletingPackagesDisabled() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .urlSuffix("/" + testData.getExamplePackageId())
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath(PACKAGES_PATH + "package_as_admin.json")
+                .build();
+        testEndpoint(requestBody);
+
+        changeConfigAndTest(
+                Paths.get("src/test/resources/docker/app/test_configs/test_simple_config.yml"),
+                Paths.get(
+                        "src/test/resources/docker/app/test_configs/test_simple_deleting_repos_and_packages_disabled.yml"),
+                () -> {
+                    TestRequestBody body = TestRequestBody.builder()
+                            .requestType(RequestType.GET)
+                            .urlSuffix("/" + testData.getExamplePackageId())
+                            .statusCode(200)
+                            .token(ADMIN_TOKEN)
+                            .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                            .expectedJsonPath(PACKAGES_PATH + "package_deleting_packages_disabled.json")
+                            .build();
+                    try {
+                        testEndpoint(body);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
     }
 }

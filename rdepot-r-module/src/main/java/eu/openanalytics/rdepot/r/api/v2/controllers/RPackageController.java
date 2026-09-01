@@ -37,8 +37,8 @@ import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.UserService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
-import eu.openanalytics.rdepot.base.storage.Storage;
-import eu.openanalytics.rdepot.base.storage.exceptions.SourceNotFoundException;
+import eu.openanalytics.rdepot.base.storage.PersistentStorage;
+import eu.openanalytics.rdepot.base.storage.exceptions.DownloadFileException;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.exceptions.EditingDeletedResourceException;
@@ -51,19 +51,21 @@ import eu.openanalytics.rdepot.r.api.v2.converters.RPackageDtoConverter;
 import eu.openanalytics.rdepot.r.api.v2.dtos.RPackageDto;
 import eu.openanalytics.rdepot.r.api.v2.hateoas.RPackageModelAssembler;
 import eu.openanalytics.rdepot.r.entities.RPackage;
+import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.entities.Vignette;
+import eu.openanalytics.rdepot.r.manuals.ManualReader;
 import eu.openanalytics.rdepot.r.mediator.deletion.RPackageDeleter;
 import eu.openanalytics.rdepot.r.services.RPackageService;
 import eu.openanalytics.rdepot.r.storage.exceptions.GetReferenceManualException;
 import eu.openanalytics.rdepot.r.storage.exceptions.ReadPackageVignetteException;
-import eu.openanalytics.rdepot.r.storage.implementations.RLocalStorage;
-import eu.openanalytics.rdepot.r.storage.population.RPopulator;
+import eu.openanalytics.rdepot.r.storage.population.VignetteReader;
 import eu.openanalytics.rdepot.r.strategy.factory.RStrategyFactory;
 import eu.openanalytics.rdepot.r.validation.RPackageValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.json.JsonException;
 import jakarta.json.JsonPatch;
 import java.io.FileNotFoundException;
+import java.nio.file.NoSuchFileException;
 import java.security.Principal;
 import java.util.List;
 import java.util.Objects;
@@ -104,11 +106,12 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
     private final RStrategyFactory strategyFactory;
     private final RPackageDeleter deleter;
     private final SecurityMediator securityMediator;
-    private final RPopulator populator;
     private final PageableValidator pageableValidator;
     private final PackagePageableSortResolver pageableSortResolver;
     private final StrategyExecutor strategyExecutor;
-    private final Storage<RPackage> storage;
+    private final ManualReader manualReader;
+    private final VignetteReader vignetteReader;
+    private final PersistentStorage<RPackage, RRepository> persistentStorage;
 
     public RPackageController(
             MessageSource messageSource,
@@ -121,12 +124,13 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
             RStrategyFactory strategyFactory,
             RPackageDeleter rPackageDeleter,
             SecurityMediator securityMediator,
-            RPopulator rPopulator,
             PageableValidator pageableValidator,
             PackagePageableSortResolver pageableSortResolver,
             RPackageDtoConverter rPackageDtoConverter,
             StrategyExecutor strategyExecutor,
-            RLocalStorage rLocalStorage) {
+            ManualReader manualReader,
+            VignetteReader vignetteReader,
+            PersistentStorage<RPackage, RRepository> persistentStorage) {
         super(
                 messageSource,
                 LocaleContextHolder.getLocale(),
@@ -138,16 +142,17 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
                 rPackageDtoConverter);
         this.packageService = packageService;
         this.strategyExecutor = strategyExecutor;
+        this.persistentStorage = persistentStorage;
         this.messageSource = messageSource;
         this.userService = userService;
         this.packageValidator = packageValidator;
         this.strategyFactory = strategyFactory;
         this.deleter = rPackageDeleter;
         this.securityMediator = securityMediator;
-        this.populator = rPopulator;
         this.pageableValidator = pageableValidator;
         this.pageableSortResolver = pageableSortResolver;
-        this.storage = rLocalStorage;
+        this.manualReader = manualReader;
+        this.vignetteReader = vignetteReader;
     }
 
     /**
@@ -339,7 +344,7 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
         final RPackage packageBag =
                 packageService.findOneNonDeleted(id).orElseThrow(() -> new PackageNotFound(messageSource, locale));
 
-        return ResponseDto.generateSuccessBody(messageSource, locale, populator.getAvailableVignettes(packageBag));
+        return ResponseDto.generateSuccessBody(messageSource, locale, vignetteReader.getAvailableVignettes(packageBag));
     }
 
     /**
@@ -360,8 +365,8 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
         HttpStatus httpStatus = HttpStatus.OK;
 
         try {
-            bytes = storage.getPackageInBytes(packageBag);
-        } catch (SourceNotFoundException e) {
+            bytes = persistentStorage.getPackageInBytes(packageBag);
+        } catch (DownloadFileException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         httpHeaders.set("Content-Type", "application/gzip");
@@ -386,11 +391,11 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
                 "attachment; filename=\"" + packageBag.getName() + "_" + packageBag.getVersion() + "_manual.pdf\"");
 
         try {
-            byte[] manualRaw = populator.getReferenceManual(packageBag);
+            byte[] manualRaw = manualReader.getReferenceManual(packageBag);
 
             return new ResponseEntity<>(manualRaw, headers, HttpStatus.OK);
         } catch (GetReferenceManualException e) {
-            if (e.getReason() instanceof FileNotFoundException) {
+            if (e.getReason() instanceof NoSuchFileException) {
                 throw new ManualNotFound(messageSource, locale);
             }
             log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
@@ -424,6 +429,10 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
 
     private ResponseEntity<byte[]> downloadVignette(Integer id, String filename, MediaType mediaType)
             throws PackageNotFound, VignetteNotFound, DownloadVignetteException {
+        if (Objects.nonNull(filename) && (filename.contains("..") || filename.contains("/"))) {
+            log.warn("Possible path traversal attempt when downloading vignette: {}", filename);
+            throw new VignetteNotFound(messageSource, locale);
+        }
         final RPackage packageBag =
                 packageService.findOneNonDeleted(id).orElseThrow(() -> new PackageNotFound(messageSource, locale));
 
@@ -432,7 +441,7 @@ public class RPackageController extends ApiV2Controller<RPackage, RPackageDto> {
         headers.set(CONTENT_DISPOSITION, "attachment; filename= \"" + filename + "\"");
 
         try {
-            byte[] vignetteRaw = populator.readVignette(packageBag, filename);
+            byte[] vignetteRaw = vignetteReader.readVignette(packageBag, filename);
 
             return new ResponseEntity<>(vignetteRaw, headers, HttpStatus.OK);
         } catch (ReadPackageVignetteException e) {

@@ -1,64 +1,67 @@
 {
     "code": 200,
     "data": {
-        "author": "Julie Eaton and Ian Painter",
         "active": false,
-        "description": "Package for visualizing data quality of partially accruing time series.",
-        "source": "\/opt\/rdepot\/repositories\/3\/46950998\/accrued_1.1.tar.gz",
-        "technology": "R",
-        "descriptionContentType": "txt",
-        "repository": {
-            "name": "testrepo2",
-            "lastPublicationSuccessful": true,
-            "id": 3,
-            "published": true,
-            "technology": "R",
-            "requiresAuthentication": true,
-            "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
-        },
-        "title": "Visualization tools for partially accruing data",
-        "version": "1.1",
-        "url": null,
-        "deleted": true,
+        "author": "Julie Eaton and Ian Painter",
         "binary": false,
+        "deleted": true,
+        "description": "Package for visualizing data quality of partially accruing time series.",
+        "descriptionContentType": "txt",
+        "id": 6,
         "name": "accrued",
+        "permissions": [
+            "package.delete.hard"
+        ],
+        "repository": {
+            "id": 3,
+            "lastPublicationSuccessful": true,
+            "name": "testrepo2",
+            "publicationUri": "http://localhost/repo/testrepo2",
+            "published": true,
+            "requiresAuthentication": true,
+            "technology": "R"
+        },
+        "source": "/opt/rdepot/repositories/3/46950998/accrued_1.1.tar.gz",
         "submission": {
             "id": 4,
             "state": "ACCEPTED"
         },
+        "technology": "R",
+        "title": "Visualization tools for partially accruing data",
+        "url": null,
+        "user": {
+            "email": "einstein@ldap.forumsys.com",
+            "id": 4,
+            "login": "einstein",
+            "name": "Albert Einstein"
+        },
+        "version": "1.1",
         "links": [
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/6"
+                "href": "http://localhost:8017/api/v2/manager/r/packages/6"
             },
             {
                 "rel": "packageList",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                "href": "http://localhost:8017/api/v2/manager/packages"
             },
-          {
-            "rel": "repository",
-            "href": "http://localhost:8017/api/v2/manager/r/repositories/3"
-          },
+            {
+                "rel": "repository",
+                "href": "http://localhost:8017/api/v2/manager/r/repositories/3"
+            },
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/6",
+                "href": "http://localhost:8017/api/v2/manager/r/packages/6",
                 "type": "PATCH"
             },
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/6",
+                "href": "http://localhost:8017/api/v2/manager/r/packages/6",
                 "type": "DELETE"
             }
-        ],
-        "id": 6,
-        "user": {
-            "name": "Albert Einstein",
-            "id": 4,
-            "login": "einstein",
-            "email": "einstein@ldap.forumsys.com"
-        }
+        ]
     },
-    "messageCode": "success.request.processed",
     "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
     "status": "SUCCESS"
 }

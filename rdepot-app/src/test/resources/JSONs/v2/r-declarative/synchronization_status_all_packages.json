@@ -1,0 +1,71 @@
+{
+    "code": 200,
+    "data": {
+        "packages": [
+            {
+                "error": null,
+                "mirror": {
+                    "name": "CD",
+                    "type": "tarball",
+                    "uri": "http://oa-rdepot-proxy/repo/CD"
+                },
+                "name": "ggplot2",
+                "status": "SUCCESS",
+                "version": "3.3.2"
+            },
+            {
+                "error": null,
+                "mirror": {
+                    "name": "CD",
+                    "type": "tarball",
+                    "uri": "http://oa-rdepot-proxy/repo/CD"
+                },
+                "name": "plotly",
+                "status": "SUCCESS",
+                "version": "4.11.0"
+            },
+            {
+                "error": null,
+                "mirror": {
+                    "name": "CD",
+                    "type": "tarball",
+                    "uri": "http://oa-rdepot-proxy/repo/CD"
+                },
+                "name": "annotate",
+                "status": "SUCCESS",
+                "version": "1.68.0"
+            },
+            {
+                "error": null,
+                "mirror": {
+                    "name": "CD",
+                    "type": "tarball",
+                    "uri": "http://oa-rdepot-proxy/repo/CD"
+                },
+                "name": "Banksy",
+                "status": "SUCCESS",
+                "version": "1.7.0"
+            }
+        ],
+        "page": {
+            "number": 0,
+            "size": 20,
+            "totalElements": 4,
+            "totalPages": 1
+        },
+        "repository": {
+            "id": 21,
+            "lastPublicationSuccessful": true,
+            "name": "I",
+            "publicationUri": "http://localhost/repo/I",
+            "published": true,
+            "requiresAuthentication": true,
+            "technology": "R"
+        },
+        "status": "SUCCESS",
+        "timestamp": "2026-05-06T09:30:58.836Z"
+    },
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "status": "SUCCESS"
+}

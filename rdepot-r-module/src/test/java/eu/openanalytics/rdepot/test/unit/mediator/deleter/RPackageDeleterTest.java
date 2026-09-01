@@ -22,10 +22,7 @@ package eu.openanalytics.rdepot.test.unit.mediator.deleter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import eu.openanalytics.rdepot.base.entities.Submission;
 import eu.openanalytics.rdepot.base.entities.User;
@@ -33,13 +30,13 @@ import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
-import eu.openanalytics.rdepot.base.storage.exceptions.MovePackageSourceException;
-import eu.openanalytics.rdepot.base.storage.exceptions.SourceFileDeleteException;
+import eu.openanalytics.rdepot.base.storage.exceptions.DeleteFileException;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.mediator.deletion.RPackageDeleter;
 import eu.openanalytics.rdepot.r.services.RPackageService;
-import eu.openanalytics.rdepot.r.storage.implementations.RLocalStorage;
+import eu.openanalytics.rdepot.r.storage.implementations.RFSLocalStorage;
+import eu.openanalytics.rdepot.r.storage.implementations.RLocalFSPersistentStorage;
 import eu.openanalytics.rdepot.r.storage.population.implementations.RLocalPopulator;
 import eu.openanalytics.rdepot.r.synchronization.RRepositorySynchronizer;
 import eu.openanalytics.rdepot.r.utils.RPackageRepositoryResolver;
@@ -65,7 +62,7 @@ public class RPackageDeleterTest extends UnitTest {
     RPackageService packageService;
 
     @Mock
-    RLocalStorage storage;
+    RFSLocalStorage storage;
 
     @Mock
     RLocalPopulator rLocalPopulator;
@@ -85,8 +82,10 @@ public class RPackageDeleterTest extends UnitTest {
     @InjectMocks
     RPackageDeleter deleter;
 
+    @Mock
+    RLocalFSPersistentStorage persistentRStorage;
+
     private static final String OLD_SOURCE = "/upload_folder/package.tar.gz";
-    private static final String TRASHED_SOURCE = "/trash/package.tar.gz";
     private RPackage packageBag;
     private Submission submission;
 
@@ -103,18 +102,17 @@ public class RPackageDeleterTest extends UnitTest {
 
     @Test
     public void delete() throws Exception {
-        when(rLocalPopulator.moveToTrashDirectory(packageBag)).thenReturn(TRASHED_SOURCE);
         doNothing().when(newsfeedEventService).deleteRelatedEvents(packageBag);
         doNothing().when(newsfeedEventService).deleteRelatedEvents(submission);
         doNothing().when(submissionService).delete(submission);
-        doNothing().when(storage).removePackageSource(TRASHED_SOURCE);
+        doNothing().when(persistentRStorage).deleteAllPackageFilesIfExist(packageBag);
 
         deleter.delete(packageBag);
 
         verify(newsfeedEventService).deleteRelatedEvents(packageBag);
         verify(newsfeedEventService).deleteRelatedEvents(submission);
         verify(submissionService).delete(submission);
-        verify(storage).removePackageSource(TRASHED_SOURCE);
+        verify(persistentRStorage).deleteAllPackageFilesIfExist(packageBag);
     }
 
     @Test
@@ -124,11 +122,9 @@ public class RPackageDeleterTest extends UnitTest {
             private static final long serialVersionUID = 909822155280557269L;
         };
 
-        when(rLocalPopulator.moveToTrashDirectory(packageBag)).thenReturn(TRASHED_SOURCE);
         doNothing().when(newsfeedEventService).deleteRelatedEvents(packageBag);
         doNothing().when(newsfeedEventService).deleteRelatedEvents(submission);
         doThrow(exception).when(submissionService).delete(submission);
-        when(storage.moveSource(packageBag, OLD_SOURCE)).thenReturn(OLD_SOURCE);
 
         assertThrows(DeleteEntityException.class, () -> deleter.delete(packageBag));
         assertEquals(
@@ -140,27 +136,26 @@ public class RPackageDeleterTest extends UnitTest {
 
     @Test
     public void delete_throwsException_whenPackageSourceFileCannotBeDeleted() throws Exception {
-        final SourceFileDeleteException exception = new SourceFileDeleteException();
+        final DeleteFileException exception = new DeleteFileException();
 
-        when(rLocalPopulator.moveToTrashDirectory(packageBag)).thenReturn(TRASHED_SOURCE);
         doNothing().when(newsfeedEventService).deleteRelatedEvents(packageBag);
         doNothing().when(newsfeedEventService).deleteRelatedEvents(submission);
         doNothing().when(submissionService).delete(submission);
-        doThrow(exception).when(storage).removePackageSource(TRASHED_SOURCE);
+        doThrow(exception).when(persistentRStorage).deleteAllPackageFilesIfExist(packageBag);
 
         assertThrows(DeleteEntityException.class, () -> deleter.delete(packageBag));
 
         verify(newsfeedEventService).deleteRelatedEvents(packageBag);
         verify(newsfeedEventService).deleteRelatedEvents(submission);
         verify(submissionService).delete(submission);
-        verify(storage).removePackageSource(TRASHED_SOURCE);
+        verify(persistentRStorage).deleteAllPackageFilesIfExist(packageBag);
     }
 
     @Test
     public void delete_throwsException_whenPackageSourceFileCannotBeMoved() throws Exception {
-        final MovePackageSourceException exception = new MovePackageSourceException();
+        final DeleteFileException exception = new DeleteFileException();
 
-        doThrow(exception).when(rLocalPopulator).moveToTrashDirectory(packageBag);
+        doThrow(exception).when(persistentRStorage).deleteAllPackageFilesIfExist(packageBag);
 
         assertThrows(DeleteEntityException.class, () -> deleter.delete(packageBag));
     }
@@ -170,18 +165,17 @@ public class RPackageDeleterTest extends UnitTest {
         final int id = packageBag.getId();
 
         when(packageService.findById(id)).thenReturn(Optional.of(packageBag));
-        when(rLocalPopulator.moveToTrashDirectory(packageBag)).thenReturn(TRASHED_SOURCE);
         doNothing().when(newsfeedEventService).deleteRelatedEvents(packageBag);
         doNothing().when(newsfeedEventService).deleteRelatedEvents(submission);
         doNothing().when(submissionService).delete(submission);
-        doNothing().when(storage).removePackageSource(TRASHED_SOURCE);
+        doNothing().when(persistentRStorage).deleteAllPackageFilesIfExist(packageBag);
 
         deleter.deleteTransactional(id);
 
         verify(newsfeedEventService).deleteRelatedEvents(packageBag);
         verify(newsfeedEventService).deleteRelatedEvents(submission);
         verify(submissionService).delete(submission);
-        verify(storage).removePackageSource(TRASHED_SOURCE);
+        verify(persistentRStorage).deleteAllPackageFilesIfExist(packageBag);
     }
 
     @Test
@@ -189,17 +183,16 @@ public class RPackageDeleterTest extends UnitTest {
         final int id = packageBag.getId();
 
         when(packageService.findById(id)).thenReturn(Optional.of(packageBag));
-        when(rLocalPopulator.moveToTrashDirectory(packageBag)).thenReturn(TRASHED_SOURCE);
         doNothing().when(newsfeedEventService).deleteRelatedEvents(packageBag);
         doNothing().when(newsfeedEventService).deleteRelatedEvents(submission);
         doNothing().when(submissionService).delete(submission);
-        doNothing().when(storage).removePackageSource(TRASHED_SOURCE);
+        doNothing().when(persistentRStorage).deleteAllPackageFilesIfExist(packageBag);
 
         deleter.deleteForSubmission(submission);
 
         verify(newsfeedEventService).deleteRelatedEvents(packageBag);
         verify(newsfeedEventService).deleteRelatedEvents(submission);
         verify(submissionService).delete(submission);
-        verify(storage).removePackageSource(TRASHED_SOURCE);
+        verify(persistentRStorage).deleteAllPackageFilesIfExist(packageBag);
     }
 }

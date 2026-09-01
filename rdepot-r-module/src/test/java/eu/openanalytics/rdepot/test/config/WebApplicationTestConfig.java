@@ -21,17 +21,14 @@
 package eu.openanalytics.rdepot.test.config;
 
 // import eu.openanalytics.rdepot.config.HibernateAwareObjectMapper;
+
 import com.google.gson.Gson;
 import eu.openanalytics.rdepot.base.messaging.StaticMessageResolver;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import org.apache.catalina.core.ApplicationContext;
-import org.apache.catalina.core.ApplicationContextFacade;
-import org.apache.catalina.core.StandardContext;
-import org.apache.catalina.core.StandardEngine;
-import org.apache.catalina.core.StandardService;
+import org.apache.catalina.core.*;
 import org.junit.jupiter.api.io.TempDir;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;

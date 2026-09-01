@@ -23,7 +23,7 @@ package eu.openanalytics.rdepot.python.strategy.update;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.mediator.BestMaintainerChooser;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
-import eu.openanalytics.rdepot.base.storage.Storage;
+import eu.openanalytics.rdepot.base.storage.LocalStorage;
 import eu.openanalytics.rdepot.base.strategy.update.UpdatePackageStrategy;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
 import eu.openanalytics.rdepot.base.time.DateProvider;
@@ -41,7 +41,7 @@ public class PythonPackageUpdateStrategy extends UpdatePackageStrategy<PythonPac
             PythonPackageService service,
             User requester,
             PythonPackage updatedPackage,
-            Storage<PythonPackage> storage,
+            LocalStorage<PythonPackage> localStorage,
             BestMaintainerChooser bestMaintainerChooser,
             PythonRepositorySynchronizer repositorySynchronizer) {
         super(
@@ -51,7 +51,7 @@ public class PythonPackageUpdateStrategy extends UpdatePackageStrategy<PythonPac
                 requester,
                 updatedPackage,
                 updatedPackage,
-                storage,
+                localStorage,
                 bestMaintainerChooser);
         this.repositorySynchronizer = repositorySynchronizer;
     }

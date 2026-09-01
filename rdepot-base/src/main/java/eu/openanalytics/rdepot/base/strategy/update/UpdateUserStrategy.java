@@ -20,23 +20,15 @@
  */
 package eu.openanalytics.rdepot.base.strategy.update;
 
-import eu.openanalytics.rdepot.base.entities.AccessToken;
-import eu.openanalytics.rdepot.base.entities.EventChangedVariable;
-import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
+import eu.openanalytics.rdepot.base.api.v2.exceptions.UserDeletionException;
+import eu.openanalytics.rdepot.base.entities.*;
 import eu.openanalytics.rdepot.base.entities.Package;
-import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
-import eu.openanalytics.rdepot.base.entities.RepositoryMaintainer;
-import eu.openanalytics.rdepot.base.entities.Role;
-import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.event.NewsfeedEventType;
 import eu.openanalytics.rdepot.base.exception.NoAdminLeftException;
 import eu.openanalytics.rdepot.base.mediator.BestMaintainerChooser;
 import eu.openanalytics.rdepot.base.mediator.deletion.exceptions.NoSuitableMaintainerFound;
-import eu.openanalytics.rdepot.base.service.CommonPackageService;
-import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
-import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
-import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
-import eu.openanalytics.rdepot.base.service.UserService;
+import eu.openanalytics.rdepot.base.service.*;
+import eu.openanalytics.rdepot.base.strategy.exceptions.FatalStrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import java.util.List;
 
@@ -45,7 +37,6 @@ import java.util.List;
  */
 public class UpdateUserStrategy extends UpdateStrategy<User> {
 
-    private final UserService userService;
     private final CommonPackageService packageService;
     private final BestMaintainerChooser bestMaintainerChooser;
     private final RepositoryMaintainerService repositoryMaintainerService;
@@ -62,7 +53,6 @@ public class UpdateUserStrategy extends UpdateStrategy<User> {
             RepositoryMaintainerService repositoryMaintainerService,
             PackageMaintainerService packageMaintainerService) {
         super(resource, userService, eventService, requester, updatedResource, new User(resource));
-        this.userService = userService;
         this.packageService = packageService;
         this.bestMaintainerChooser = bestMaintainerChooser;
         this.repositoryMaintainerService = repositoryMaintainerService;
@@ -89,7 +79,7 @@ public class UpdateUserStrategy extends UpdateStrategy<User> {
         try {
             switch (currentRole.getValue()) {
                 case Role.VALUE.ADMIN:
-                    List<User> admins = userService.findByRole(currentRole);
+                    final List<User> admins = bestMaintainerChooser.findAllAdmins();
                     if ((admins.size() == 1 && admins.get(0).equals(user)) || admins.isEmpty())
                         throw new NoAdminLeftException();
                     else {
@@ -110,7 +100,7 @@ public class UpdateUserStrategy extends UpdateStrategy<User> {
                     break;
             }
         } catch (NoAdminLeftException | NoSuitableMaintainerFound e) {
-            throw new StrategyFailure(e);
+            throw new FatalStrategyFailure(e);
         }
 
         changedValues.add(new EventChangedVariable("role", currentRole.getName(), role.getName()));
@@ -158,10 +148,16 @@ public class UpdateUserStrategy extends UpdateStrategy<User> {
             // has role of packageMaintainer, then we should check if there exists some PackageMaintainer
             // objects with him (the same situation for RepositoryMaintainer)
         } catch (NoAdminLeftException e) {
-            throw new StrategyFailure(e);
+            throw new FatalStrategyFailure(e);
         }
 
         user.setActive(false);
+
+        try {
+            refreshMaintainerForAll();
+        } catch (NoSuitableMaintainerFound e) {
+            throw new FatalStrategyFailure(e);
+        }
         for (AccessToken token : user.getAccessTokens()) {
             if (token.isActive()) {
                 token.setActive(false);
@@ -171,6 +167,15 @@ public class UpdateUserStrategy extends UpdateStrategy<User> {
     }
 
     private void softDeleteUser(User user) throws StrategyFailure {
+
+        try {
+            if (requester.getId() == user.getId()) {
+                throw new UserDeletionException();
+            }
+        } catch (UserDeletionException e) {
+            throw new FatalStrategyFailure(e);
+        }
+
         if (user.isActive()) deactivateUser(user);
         user.setDeleted(true);
         changedValues.add(new EventChangedVariable("deleted", Boolean.FALSE.toString(), Boolean.TRUE.toString()));

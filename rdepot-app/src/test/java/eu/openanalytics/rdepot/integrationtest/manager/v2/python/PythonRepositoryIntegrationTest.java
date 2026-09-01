@@ -30,6 +30,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
@@ -115,6 +116,32 @@ public class PythonRepositoryIntegrationTest extends IntegrationTest {
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
                 .expectedJsonPath(REPOSITORIES_PATH + "list_of_repositories.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getAllRepositoriesAsRepositoryMaintainer() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .token(REPOSITORYMAINTAINER_TOKEN)
+                .statusCode(200)
+                .urlSuffix("?sort=id,asc")
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath(REPOSITORIES_PATH + "all_repositories_as_repositorymantainer.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getAllRepositoriesAsUser() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .token(USER_TOKEN)
+                .statusCode(200)
+                .urlSuffix("?sort=id,asc")
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath(REPOSITORIES_PATH + "all_repositories_as_user.json")
                 .build();
         testEndpoint(requestBody);
     }
@@ -455,7 +482,9 @@ public class PythonRepositoryIntegrationTest extends IntegrationTest {
     @Test
     public void sendSynchronizationRequest_shouldFailForWrongChecksums() throws Exception {
         final Process process = new ProcessBuilder(
-                        "/bin/bash", "src/test/resources/scripts/" + "tryToPublishCorruptPackageToPythonRepo.sh")
+                        "/usr/bin/env",
+                        "bash",
+                        "src/test/resources/scripts/" + "tryToPublishCorruptPackageToPythonRepo.sh")
                 .redirectErrorStream(true)
                 .start();
         final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -584,5 +613,38 @@ public class PythonRepositoryIntegrationTest extends IntegrationTest {
                 .expectedJsonPath("/v2/python/packages/packages_after_hash_recalculation.json")
                 .build();
         testEndpoint(requestBody);
+    }
+
+    @Test
+    public void getRepository_whenDeletingRepositoriesDisabled() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .urlSuffix("/" + testData.getRepoIdToRead())
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath(REPOSITORIES_PATH + "repository_as_admin.json")
+                .build();
+        testEndpoint(requestBody);
+
+        changeConfigAndTest(
+                Paths.get("src/test/resources/docker/app/test_configs/test_simple_config.yml"),
+                Paths.get(
+                        "src/test/resources/docker/app/test_configs/test_simple_deleting_repos_and_packages_disabled.yml"),
+                () -> {
+                    TestRequestBody body = TestRequestBody.builder()
+                            .requestType(RequestType.GET)
+                            .urlSuffix("/" + testData.getRepoIdToRead())
+                            .statusCode(200)
+                            .token(ADMIN_TOKEN)
+                            .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                            .expectedJsonPath(REPOSITORIES_PATH + "repository_deleting_repos_disabled.json")
+                            .build();
+                    try {
+                        testEndpoint(body);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
     }
 }

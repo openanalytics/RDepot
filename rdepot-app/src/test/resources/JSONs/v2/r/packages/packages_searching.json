@@ -1,77 +1,66 @@
 {
     "code": 200,
     "data": {
-        "links": [
-            {
-                "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages?search=bench&page=0&size=20&sort=id,desc"
-            }
-        ],
-        "page": {
-            "number": 0,
-            "size": 20,
-            "totalPages": 1,
-            "totalElements": 2
-        },
         "content": [
             {
-                "id": 24,
-                "rversion": null,
-                "architecture": null,
-                "imports": null,
-                "depends": "lpSolveAPI, ucminf",
-                "built": null,
-                "author": "Peter Bogetoft and Lars Otto",
                 "active": false,
-                "technology": "R",
-                "priority": null,
-                "encoding": null,
-                "version": "0.10",
-                "url": null,
-                "license": "GPL (>= 2)",
-                "deleted": false,
+                "architecture": null,
+                "author": "Peter Bogetoft and Lars Otto",
                 "binary": false,
+                "built": null,
+                "deleted": false,
+                "depends": "lpSolveAPI, ucminf",
+                "description": "Estimates and graphs deterministic (DEA) frontier models with different technology assumptions (fdh, vrs, drs, crs, irs, add). Also handles possible slacks, peers and their weights (lambdas), optimal cost, revenue and profit allocation, super--efficiency, and mergers. A comparative method for estimating SFA efficiencies is included.",
+                "descriptionContentType": "txt",
+                "distribution": null,
+                "encoding": null,
+                "enhances": null,
+                "id": 24,
+                "imports": null,
+                "license": "GPL (>= 2)",
+                "linkingTo": null,
+                "maintainer": null,
+                "manualAvailable": null,
+                "md5sum": "9a99c2ebefa6d49422ca7893c1f4ead8",
                 "name": "Benchmarking",
+                "needsCompilation": "no",
+                "permissions": [],
+                "priority": null,
+                "repository": {
+                    "id": 5,
+                    "lastPublicationSuccessful": false,
+                    "name": "testrepo4",
+                    "publicationUri": "http://localhost/repo/testrepo4",
+                    "published": false,
+                    "requiresAuthentication": true,
+                    "technology": "R"
+                },
+                "rversion": null,
+                "source": "",
                 "submission": {
                     "id": 24,
                     "state": "REJECTED"
                 },
-                "linkingTo": null,
-                "user": {
-                    "name": "Albert Einstein",
-                    "id": 4,
-                    "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
-                },
-                "needsCompilation": "no",
-                "manualAvailable": null,
-                "enhances": null,
-                "description": "Estimates and graphs deterministic (DEA) frontier models with different technology assumptions (fdh, vrs, drs, crs, irs, add). Also handles possible slacks, peers and their weights (lambdas), optimal cost, revenue and profit allocation, super--efficiency, and mergers. A comparative method for estimating SFA efficiencies is included.",
-                "source": "",
-                "repository": {
-                    "name": "testrepo4",
-                    "lastPublicationSuccessful": false,
-                    "id": 5,
-                    "published": false,
-                    "technology": "R",
-                    "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo4"
-                },
-                "title": "Benchmark and frontier analysis using DEA and SFA",
-                "distribution": null,
-                "maintainer": null,
                 "suggests": null,
                 "systemRequirements": null,
-                "descriptionContentType": "txt",
-                "md5sum": "9a99c2ebefa6d49422ca7893c1f4ead8",
+                "technology": "R",
+                "title": "Benchmark and frontier analysis using DEA and SFA",
+                "url": null,
+                "user": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "version": "0.10",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/24"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/24"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages"
                     },
                     {
                         "rel": "repository",
@@ -80,63 +69,64 @@
                 ]
             },
             {
-                "id": 21,
-                "rversion": null,
-                "architecture": null,
-                "imports": null,
-                "depends": "lpSolveAPI, ucminf",
-                "built": null,
-                "author": "Peter Bogetoft and Lars Otto",
                 "active": true,
-                "technology": "R",
-                "priority": null,
-                "encoding": null,
-                "version": "0.10",
-                "url": null,
-                "license": "GPL (>= 2)",
-                "deleted": false,
+                "architecture": null,
+                "author": "Peter Bogetoft and Lars Otto",
                 "binary": false,
+                "built": null,
+                "deleted": false,
+                "depends": "lpSolveAPI, ucminf",
+                "description": "Estimates and graphs deterministic (DEA) frontier models with different technology assumptions (fdh, vrs, drs, crs, irs, add). Also handles possible slacks, peers and their weights (lambdas), optimal cost, revenue and profit allocation, super--efficiency, and mergers. A comparative method for estimating SFA efficiencies is included.",
+                "descriptionContentType": "txt",
+                "distribution": null,
+                "encoding": null,
+                "enhances": null,
+                "id": 21,
+                "imports": null,
+                "license": "GPL (>= 2)",
+                "linkingTo": null,
+                "maintainer": null,
+                "manualAvailable": null,
+                "md5sum": "9a99c2ebefa6d49422ca7893c1f4ead8",
                 "name": "Benchmarking",
+                "needsCompilation": "no",
+                "permissions": [],
+                "priority": null,
+                "repository": {
+                    "id": 2,
+                    "lastPublicationSuccessful": true,
+                    "name": "testrepo1",
+                    "publicationUri": "http://localhost/repo/testrepo1",
+                    "published": true,
+                    "requiresAuthentication": false,
+                    "technology": "R"
+                },
+                "rversion": null,
+                "source": "/opt/rdepot/repositories/2/71228208/Benchmarking_0.10.tar.gz",
                 "submission": {
                     "id": 21,
                     "state": "ACCEPTED"
                 },
-                "linkingTo": null,
-                "user": {
-                    "name": "Nikola Tesla",
-                    "id": 5,
-                    "login": "tesla",
-                    "email": "tesla@ldap.forumsys.com"
-                },
-                "needsCompilation": "no",
-                "manualAvailable": null,
-                "enhances": null,
-                "description": "Estimates and graphs deterministic (DEA) frontier models with different technology assumptions (fdh, vrs, drs, crs, irs, add). Also handles possible slacks, peers and their weights (lambdas), optimal cost, revenue and profit allocation, super--efficiency, and mergers. A comparative method for estimating SFA efficiencies is included.",
-                "source": "\/opt\/rdepot\/repositories\/2\/71228208\/Benchmarking_0.10.tar.gz",
-                "repository": {
-                    "name": "testrepo1",
-                    "lastPublicationSuccessful": true,
-                    "id": 2,
-                    "published": true,
-                    "technology": "R",
-                    "requiresAuthentication": false,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
-                },
-                "title": "Benchmark and frontier analysis using DEA and SFA",
-                "distribution": null,
-                "maintainer": null,
                 "suggests": null,
                 "systemRequirements": null,
-                "descriptionContentType": "txt",
-                "md5sum": "9a99c2ebefa6d49422ca7893c1f4ead8",
+                "technology": "R",
+                "title": "Benchmark and frontier analysis using DEA and SFA",
+                "url": null,
+                "user": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "version": "0.10",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/21"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/21"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages"
                     },
                     {
                         "rel": "repository",
@@ -144,9 +134,21 @@
                     }
                 ]
             }
-        ]
+        ],
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/r/packages?search=bench&page=0&size=20&sort=id,desc"
+            }
+        ],
+        "page": {
+            "number": 0,
+            "size": 20,
+            "totalElements": 2,
+            "totalPages": 1
+        }
     },
-    "messageCode": "success.request.processed",
     "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
     "status": "SUCCESS"
 }

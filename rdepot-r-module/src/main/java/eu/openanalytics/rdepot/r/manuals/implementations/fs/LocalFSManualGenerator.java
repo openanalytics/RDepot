@@ -29,10 +29,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.FileSystems;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
+@ConditionalOnProperty(name = "storage.implementation", havingValue = "local", matchIfMissing = true)
 public class LocalFSManualGenerator implements ManualGenerator {
 
     private final String separator = FileSystems.getDefault().getSeparator();
@@ -57,7 +59,7 @@ public class LocalFSManualGenerator implements ManualGenerator {
             }
 
             ProcessBuilder pb = new ProcessBuilder("R");
-
+            pb.command().add("--verbose");
             pb.command().add("CMD");
             pb.command().add("Rd2pdf");
             pb.command().add("--no-preview");
@@ -74,22 +76,36 @@ public class LocalFSManualGenerator implements ManualGenerator {
                 process = pb.start();
 
                 String outputLine;
+                String sanitizedLine;
+                StringBuilder logOutput = new StringBuilder();
                 log.debug("Rd2pdf output: ");
                 try (BufferedReader out = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                    while ((outputLine = out.readLine()) != null) log.debug(outputLine.replaceAll("[\r\n]", ""));
+                    while ((outputLine = out.readLine()) != null) {
+                        sanitizedLine = outputLine.replaceAll("[\r\n]", "");
+                        log.debug(sanitizedLine);
+                        logOutput.append(sanitizedLine);
+                        logOutput.append("\n");
+                    }
                 }
 
                 int exitValue = process.waitFor();
                 if (exitValue != 0) {
                     log.error("Rd2pdf failed with exit code: {}", exitValue);
+                    log.error("Error message: {}", logOutput);
                     throw new GenerateManualException(packageBag);
                 }
+
             } catch (IOException | InterruptedException e) {
                 log.error(e.getMessage(), e);
                 throw new GenerateManualException(packageBag);
             } finally {
                 if (process != null && process.isAlive()) process.destroyForcibly();
             }
+        } else {
+            log.error(
+                    "Package source for package {} " + "was not extracted so manual could not be generated.",
+                    packageBag.getSource());
+            throw new GenerateManualException(packageBag);
         }
     }
 }

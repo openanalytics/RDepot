@@ -20,12 +20,12 @@
  */
 package eu.openanalytics.rdepot.python.storage.indexes;
 
-import eu.openanalytics.rdepot.base.entities.Hashable;
+import eu.openanalytics.rdepot.base.entities.HavingHashMethod;
 import eu.openanalytics.rdepot.base.storage.exceptions.CheckSumCalculationException;
 import eu.openanalytics.rdepot.base.storage.indexes.RepositoryIndexGenerator;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
-import eu.openanalytics.rdepot.python.storage.implementations.fs.PythonLocalStorage;
+import eu.openanalytics.rdepot.python.storage.implementations.fs.PythonFSLocalStorage;
 import eu.openanalytics.rdepot.python.storage.indexes.resolvers.PythonRepositoryPublicationURIResolver;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -38,12 +38,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class PythonRepositoryIndexGenerator extends RepositoryIndexGenerator<PythonRepository, PythonPackage> {
 
-    private final PythonLocalStorage storage;
+    private final PythonFSLocalStorage storage;
 
     public PythonRepositoryIndexGenerator(
             @Value("classpath:templates/python/index_template.html") Resource indexTemplate,
             @Value("classpath:templates/python/index_anchor_template.html") Resource indexAnchorTemplate,
-            PythonLocalStorage storage)
+            PythonFSLocalStorage storage)
             throws IOException {
         super(
                 indexTemplate.getContentAsString(Charset.defaultCharset()),
@@ -54,17 +54,23 @@ public class PythonRepositoryIndexGenerator extends RepositoryIndexGenerator<Pyt
     }
 
     @Override
-    protected String getPackageListEnding() {
-        return "\n</body>\n</html>\n";
-    }
-
-    @Override
-    protected String calculateChecksum(Hashable item, String path) throws IOException {
+    protected String calculateChecksum(HavingHashMethod item, String path) throws CheckSumCalculationException {
         try {
             return storage.calculateChecksum(item.getHashMethod(), path);
         } catch (CheckSumCalculationException e) {
             log.error(e.getMessage(), e);
-            throw new IOException(e);
+            throw new CheckSumCalculationException();
         }
+    }
+
+    @Override
+    protected String generatePackageAnchor(PythonPackage packageBag) {
+        final String anchor = super.generatePackageAnchor(packageBag);
+        String packageUri = packagePublicationURIResolver.resolvePackageUri(packageBag);
+
+        String archiveUri = packageUri.substring(0, packageUri.lastIndexOf('/')) + packageBag.getName();
+        return PythonPackageAnchorPropertiesAdder.addPackageAnchorProperties(anchor, packageBag)
+                .replace("$package_publication_uri", packageUri)
+                .replace("$package_archive_uri", archiveUri);
     }
 }

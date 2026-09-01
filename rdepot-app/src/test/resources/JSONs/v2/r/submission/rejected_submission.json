@@ -2,81 +2,84 @@
     "code": 200,
     "data": {
         "approver": {
-            "name": "Albert Einstein",
+            "email": "einstein@ldap.forumsys.com",
             "id": 4,
             "login": "einstein",
-            "email": "einstein@ldap.forumsys.com"
+            "name": "Albert Einstein"
         },
-        "submitter": {
-            "name": "Galileo Galilei",
-            "id": 6,
-            "login": "galieleo",
-            "email": "galieleo@ldap.forumsys.com"
-        },
-        "created": "2020-03-28T20:14:45Z",
         "changes": null,
-        "links": [
-            {
-                "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/31"
-            },
-            {
-                "rel": "submissionList",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions"
-            }
-        ],
+        "created": "2020-03-28T20:14:45Z",
         "id": 31,
-        "state": "REJECTED",
-        "technology": "R",
         "packageBag": {
-            "author": "Katalin Csillery, with contributions from Michael Blum and Olivier Francois",
             "active": false,
-            "description": "The 'abc' package provides various functions for parameter estimation and model selection in an ABC framework. Three main",
-            "technology": "R",
-            "descriptionContentType": "txt",
-            "repository": {
-                "name": "testrepo4",
-                "lastPublicationSuccessful": false,
-                "id": 5,
-                "published": false,
-                "technology": "R",
-                "requiresAuthentication": true,
-                "publicationUri": "http:\/\/localhost\/repo\/testrepo4"
-            },
-            "title": "Functions to perform Approximate Bayesian Computation (ABC) using simulated data",
-            "version": "1.0",
-            "url": null,
-            "deleted": true,
+            "author": "Katalin Csillery, with contributions from Michael Blum and Olivier Francois",
             "binary": false,
+            "deleted": true,
+            "description": "The 'abc' package provides various functions for parameter estimation and model selection in an ABC framework. Three main",
+            "descriptionContentType": "txt",
+            "id": 31,
             "name": "abc",
+            "permissions": [],
+            "repository": {
+                "id": 5,
+                "lastPublicationSuccessful": false,
+                "name": "testrepo4",
+                "publicationUri": "http://localhost/repo/testrepo4",
+                "published": false,
+                "requiresAuthentication": true,
+                "technology": "R"
+            },
+            "source": "/opt/rdepot/trash/5/87067346/abc_1.0.tar.gz",
             "submission": {
                 "id": 31,
                 "state": "REJECTED"
             },
+            "technology": "R",
+            "title": "Functions to perform Approximate Bayesian Computation (ABC) using simulated data",
+            "url": null,
+            "user": {
+                "email": "admin@localhost",
+                "id": 8,
+                "login": "admin",
+                "name": "Local Admin User"
+            },
+            "version": "1.0",
             "links": [
                 {
                     "rel": "self",
-                    "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/31"
+                    "href": "http://localhost:8017/api/v2/manager/r/packages/31"
                 },
                 {
                     "rel": "packageList",
-                    "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    "href": "http://localhost:8017/api/v2/manager/packages"
                 },
                 {
                     "rel": "repository",
                     "href": "http://localhost:8017/api/v2/manager/r/repositories/5"
                 }
-            ],
-            "id": 31,
-            "user": {
-                "name": "Local Admin User",
-                "id": 8,
-                "login": "admin",
-                "email": "admin@localhost"
+            ]
+        },
+        "permissions": [],
+        "state": "REJECTED",
+        "submitter": {
+            "email": "galieleo@ldap.forumsys.com",
+            "id": 6,
+            "login": "galieleo",
+            "name": "Galileo Galilei"
+        },
+        "technology": "R",
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/r/submissions/31"
+            },
+            {
+                "rel": "submissionList",
+                "href": "http://localhost:8017/api/v2/manager/r/submissions"
             }
-        }
+        ]
     },
-    "messageCode": "success.request.processed",
     "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
     "status": "SUCCESS"
 }

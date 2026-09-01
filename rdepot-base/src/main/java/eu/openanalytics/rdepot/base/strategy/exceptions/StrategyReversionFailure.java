@@ -24,7 +24,7 @@ import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import java.io.Serial;
 
 /**
- * Thrown when there was a {@link StrategyFailure} that requires rollback
+ * Thrown when there was a {@link StrategyFailure} that requires rollback,
  * but it could not be performed due to an error.
  */
 public class StrategyReversionFailure extends StrategyFailure {
@@ -33,6 +33,6 @@ public class StrategyReversionFailure extends StrategyFailure {
     private static final long serialVersionUID = -6275355677809984480L;
 
     public StrategyReversionFailure(Exception reason) {
-        super(reason, MessageCodes.REVERSE_STRATEGY_FAILURE, false);
+        super(reason, MessageCodes.REVERSE_STRATEGY_FAILURE);
     }
 }

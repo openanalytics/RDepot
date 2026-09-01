@@ -36,7 +36,7 @@ public class NonFatalSubmissionStrategyFailure extends StrategyFailure {
     private final Submission submission;
 
     public NonFatalSubmissionStrategyFailure(Exception reason, Submission submission) {
-        super(reason, false);
+        super(reason);
         this.submission = submission;
     }
 }

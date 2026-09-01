@@ -1,102 +1,163 @@
 {
     "code": 200,
     "data": {
+        "content": [
+            {
+                "deleted": true,
+                "id": 4,
+                "packageName": "bea.R",
+                "permissions": [
+                    "packageMaintainer.delete.hard"
+                ],
+                "repository": {
+                    "id": 2,
+                    "lastPublicationSuccessful": true,
+                    "name": "testrepo1",
+                    "publicationUri": "http://localhost/repo/testrepo1",
+                    "published": true,
+                    "requiresAuthentication": false,
+                    "technology": "R"
+                },
+                "user": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/4"
+                    },
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/5"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/4",
+                        "type": "PATCH"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/4",
+                        "type": "DELETE"
+                    }
+                ]
+            },
+            {
+                "deleted": true,
+                "id": 6,
+                "packageName": "setuptools",
+                "permissions": [
+                    "packageMaintainer.delete.hard"
+                ],
+                "repository": {
+                    "id": 9,
+                    "lastPublicationSuccessful": false,
+                    "name": "testrepo9",
+                    "publicationUri": "http://localhost/repo/testrepo9",
+                    "published": false,
+                    "requiresAuthentication": true,
+                    "technology": "Python"
+                },
+                "user": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/6"
+                    },
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/4"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/6",
+                        "type": "PATCH"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/6",
+                        "type": "DELETE"
+                    }
+                ]
+            },
+            {
+                "deleted": true,
+                "id": 6,
+                "packageName": "setuptools",
+                "permissions": [
+                    "packageMaintainer.delete.hard"
+                ],
+                "repository": {
+                    "id": 9,
+                    "lastPublicationSuccessful": false,
+                    "name": "testrepo9",
+                    "publicationUri": "http://localhost/repo/testrepo9",
+                    "published": false,
+                    "requiresAuthentication": true,
+                    "technology": "Python"
+                },
+                "user": {
+                    "email": "galieleo@ldap.forumsys.com",
+                    "id": 6,
+                    "login": "galieleo",
+                    "name": "Galileo Galilei"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/6"
+                    },
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/6"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/6",
+                        "type": "PATCH"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/6",
+                        "type": "DELETE"
+                    }
+                ]
+            }
+        ],
         "links": [
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers?deleted=true&page=0&size=20&sort=id,asc"
+                "href": "http://localhost:8017/api/v2/manager/package-maintainers?deleted=true&page=0&size=20&sort=id,asc"
             }
         ],
         "page": {
             "number": 0,
             "size": 20,
-            "totalPages": 1,
-            "totalElements": 2
-        },
-        "content": [
-            {
-                "deleted": true,
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/4"
-                    },
-                    {
-                        "rel": "packageMaintainerList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/4",
-                        "type": "PATCH"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/4",
-                        "type": "DELETE"
-                    }
-                ],
-                "id": 4,
-                "packageName": "bea.R",
-                "repository": {
-                    "name": "testrepo1",
-                    "lastPublicationSuccessful": true,
-                    "id": 2,
-                    "published": true,
-                    "technology": "R",
-                    "requiresAuthentication": false,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
-                },
-                "user": {
-                    "name": "Galileo Galilei",
-                    "id": 6,
-                    "login": "galieleo",
-                    "email": "galieleo@ldap.forumsys.com"
-                }
-            },
-            {
-                "deleted": true,
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/6"
-                    },
-                    {
-                        "rel": "packageMaintainerList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/6",
-                        "type": "PATCH"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/6",
-                        "type": "DELETE"
-                    }
-                ],
-                "id": 6,
-                "packageName": "setuptools",
-                "repository": {
-                    "name": "testrepo9",
-                    "lastPublicationSuccessful": false,
-                    "id": 9,
-                    "published": false,
-                    "technology": "Python",
-                    "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo9"
-                },
-                "user": {
-                    "name": "Galileo Galilei",
-                    "id": 6,
-                    "login": "galieleo",
-                    "email": "galieleo@ldap.forumsys.com"
-                }
-            }
-        ]
+            "totalElements": 3,
+            "totalPages": 1
+        }
     },
-    "messageCode": "success.request.processed",
     "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
     "status": "SUCCESS"
 }

@@ -46,6 +46,11 @@ public class PackageTestFixture {
         for (int i = idShift; i < packageCount + idShift; i++) {
             Package packageBag = new Package() {
 
+                @Override
+                public String getHash() {
+                    return "fjkldsjflkdsjfreiotre4895734";
+                }
+
                 @Serial
                 private static final long serialVersionUID = 1L;
 

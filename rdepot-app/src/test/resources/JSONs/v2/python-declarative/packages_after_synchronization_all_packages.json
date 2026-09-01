@@ -1,0 +1,832 @@
+{
+  "code": 200,
+  "data": {
+    "content": [
+      {
+        "abiTag": null,
+        "active": true,
+        "author": "UNKNOWN",
+        "authorEmail": "UNKNOWN",
+        "binary": false,
+        "builtTag": null,
+        "classifiers": null,
+        "compatibilityTags": null,
+        "deleted": false,
+        "description": "Description\\n===========\\n\\nTools for ABO analys",
+        "descriptionContentType": "",
+        "hash": "70222dec4ca6d0e3658bf0dc34f5c5c72235f1f28b4977b3b991347a84035c3c",
+        "homePage": "UNKNOWN",
+        "id": 1,
+        "keywords": null,
+        "license": "UNKNOWN",
+        "maintainer": null,
+        "maintainerEmail": null,
+        "name": "abo_tools",
+        "platform": "UNKNOWN",
+        "platformTag": null,
+        "projectUrl": null,
+        "providesExtra": null,
+        "pythonTag": null,
+        "repository": {
+          "id": 1,
+          "lastPublicationSuccessful": true,
+          "name": "X",
+          "publicationUri": "http://localhost/repo/X",
+          "published": true,
+          "requiresAuthentication": true,
+          "technology": "Python"
+        },
+        "requiresDist": null,
+        "requiresExternal": null,
+        "requiresPython": null,
+        "permissions": [],
+        "submission": {
+          "id": 1,
+          "state": "ACCEPTED"
+        },
+        "summary": "UNKNOWN",
+        "technology": "Python",
+        "title": "UNKNOWN",
+        "url": "UNKNOWN",
+        "user": {
+          "email": "einstein@ldap.forumsys.com",
+          "id": 4,
+          "login": "einstein",
+          "name": "Albert Einstein"
+        },
+        "version": "1.0",
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8021/api/v2/manager/python/packages/1"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8021/api/v2/manager/python/packages"
+          },
+          {
+            "rel": "repository",
+            "href": "http://localhost:8021/api/v2/manager/python/repositories/1"
+          }
+        ]
+      },
+      {
+        "abiTag": null,
+        "active": true,
+        "author": "Nicholas Sharp",
+        "authorEmail": "nmwsharp@gmail.com",
+        "binary": false,
+        "builtTag": null,
+        "classifiers": null,
+        "compatibilityTags": null,
+        "deleted": false,
+        "description": "# polyscope-py\\nPython bindings for Polyscope - Chromalab Version. https://polyscope.run/py\\n\\n\\nThis library is a python wrapper and deployment system. The core library lives at [this polyscope fork](https://github.com/i-geng/polyscope)\\n\\nTo contribute, check out the [instructions here](https://polyscope.run/about/contributing/).\\n\\n### Installation (for now before Irene puts it on PyPI)\\n\\nUninstall current version of polyscope from current virtual environment:\\n```\\npip uninstall polyscope\\n```\\n\\nLocal installation. Haven't put this version on PyPI yet, since it seems like uploading a \\nnew version could take over an hour. \\n```\\ngit clone --recurse-submodules git@github.com:i-geng/polyscope-py.git\\n```\\n\\nFrom the root polyscope-py directory, build the C++ source:\\n```\\nmkdir build; cd build\\ncmake ../\\nmake -j4\\n```\\nBack in the root polyscope-py directory:\\n```\\npip install .\\n```\\n\\nTo use polyscope's functions for writing videos, you will also need FFmpeg.\\n",
+        "descriptionContentType": "text/markdown",
+        "hash": "47b518fb442789f4ae05df8d93a8946b95206037f137d9aab760af414fdda935",
+        "homePage": "https://polyscope.run",
+        "id": 2,
+        "keywords": null,
+        "license": "MIT",
+        "maintainer": null,
+        "maintainerEmail": null,
+        "name": "tetrapolyscope",
+        "platform": "UNKNOWN",
+        "platformTag": null,
+        "projectUrl": null,
+        "providesExtra": null,
+        "pythonTag": null,
+        "repository": {
+          "id": 1,
+          "lastPublicationSuccessful": true,
+          "name": "X",
+          "publicationUri": "http://localhost/repo/X",
+          "published": true,
+          "requiresAuthentication": true,
+          "technology": "Python"
+        },
+        "requiresDist": null,
+        "requiresExternal": null,
+        "requiresPython": null,
+        "permissions": [],
+        "submission": {
+          "id": 2,
+          "state": "ACCEPTED"
+        },
+        "summary": "Polyscope: A viewer and user interface for 3D data.",
+        "technology": "Python",
+        "title": "Polyscope: A viewer and user interface for 3D data.",
+        "url": "https://polyscope.run",
+        "user": {
+          "email": "einstein@ldap.forumsys.com",
+          "id": 4,
+          "login": "einstein",
+          "name": "Albert Einstein"
+        },
+        "version": "0.0.1",
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8021/api/v2/manager/python/packages/2"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8021/api/v2/manager/python/packages"
+          },
+          {
+            "rel": "repository",
+            "href": "http://localhost:8021/api/v2/manager/python/repositories/1"
+          }
+        ]
+      },
+      {
+        "abiTag": null,
+        "active": true,
+        "author": "AlexZ",
+        "authorEmail": "alexdataanalyst@gmail.com",
+        "binary": false,
+        "builtTag": null,
+        "classifiers": "Programming Language :: Python :: 3, Programming Language :: Python :: 3.4, Programming Language :: Python :: 3.5, Programming Language :: Python :: 3.6, License :: OSI Approved :: MIT License, Operating System :: OS Independent",
+        "compatibilityTags": null,
+        "deleted": false,
+        "description": "# Adobe Analytics Python Class \\n\\nDownload Reports data utilising the Adobe.io version 2.0 API locally.\\n\\nTo Integrate with Cloud (Azure) ,please check [Integrate with Azure](Azurepipeline.md)\\n\\n\\n\\n\\n\\n# Authentication methods supported by the package:\\n1.JWT\\n\\n2.OAuth (tested only through Jupyter Notebook!)\\n\\n## Authentication via JSON Web Token (JWT aka Service Account)\\n\\nWe’re going to use JWT aka Service Account as the method for authentication since it’s designed for machine-to-machine communication. As such authentication can be completely automated on platforms such as Azure after it’s built.\\n\\nCompare this to Oauth 2.0 based authentication which requires user input at some interval. You might want the user to authenticate from time to time, but my goal is to build this data ingestion pipeline that doesn’t require any user interaction once it’s built.\\n\\n## JWT Requirements & Adobe.io access\\nIn order to run the package, first you need to gain access to a service account from Adobe.io or request an existing certificate from Principle Publisher. The method used is JWT authentication. More instructions on how to create the integration at: https://www.adobe.io/authentication/auth-methods.html#!AdobeDocs/adobeio-auth/master/JWT/JWT.md. \\n\\n### To obtain JWT credientials from Adbobe Developer Console\\n\\n\\nIn Projects > Credential Details > Get the Client ID and Client Secret:\\n![](/assets/images/AA-to-Azure-Python-Wrapper-Class/adobe-analytics-client-id-secret-v2.png)\\n\\nIn Projects > Credential Details > Generate a public/private keypair\\n![](/assets/images/AA-to-Azure-Python-Wrapper-Class/adobe-analytics-generate-pub-priv-keys.png)\\n\\nWhen you click the button you’ll download a zip file that contains a public key file and private key file. You can open these in any text editor to see what they look like. Keep the private key file handy, we’ll refer to it later in our Python code.\\n\\n### Or you can request JWT certificate from Principle Publisher.\\n\\nSample certificate:\\n```python\\n{\\n   'CLIENT_SECRET':'xxxx',\\n   'ORG_ID':'xxxx@AdobeOrg',\\n   'API_KEY':'xxxxx',\\n   'TECHNICAL_ACCOUNT_ID':'xxxx@techacct.adobe.com',\\n   'TECHNICAL_ACCOUNT_EMAIL':'x@techacct.adobe.com',\\n   'PUBLIC_KEYS_WITH_EXPIRY':{\\n      'xxxxxx':'mm/dd/yyyy'\\n   }\\n}\\n```\\n\\nAfter you have completed the integration, you will finde available the following information:\\n\\n- Organization ID ( ORG_ID ): It is in the format of < organisation id >@AdobeOrg\\n- Technical Account ID( TECHNICAL_ACCOUNT_ID ): < tech account id >@techacct.adobe.com \\n- Client ID( API_KEY ):Like a username for the API, Information is available on the completion of the Service Account integration\\n- Client Secret( CLIENT_SECRET ):Like a password for the API,  Information is available on the completion of the Service Account integration\\n- Account ID( TECHNICAL_ACCOUNT_ID ): Instructions on how to obtain it at https://youtu.be/lrg1MuVi0Fo?t=96\\n- Report suite( GLOBAL_COMPANY_ID ): Report suite ID from which you want to download the data. Usually it is 'canada5'.\\n- Private Key: Like a signature for your password\\n- JWT Payload: Some specific details that Adobe want you to show them to trade for the Access Token.\\n\\nMake sure that the integration is associated with an Adobe Analytics product profile that is granted access to the necessary metrics ,dimensions and segments.\\n\\n\\n\\n## Package installation\\n```python\\npip install requirements.txt\\n```\\n\\n## Samples\\n\\n### Initial setup - JWT\\nAfter you have configured the integration and downloaded the package, the following setup is needed:\\n```python\\nADOBE_ORG_ID = os.environ['ADOBE_ORG_ID']\\nSUBJECT_ACCOUNT = os.environ['SUBJECT_ACCOUNT']\\nCLIENT_ID = os.environ['CLIENT_ID']\\nCLIENT_SECRET = os.environ['CLIENT_SECRET']\\nPRIVATE_KEY_LOCATION = os.environ['PRIVATE_KEY_LOCATION']\\nGLOBAL_COMPANY_ID = os.environ['GLOBAL_COMPANY_ID']\\nREPORT_SUITE_ID = os.environ['REPORT_SUITE_ID']\\n```\\nNext initialise the Adobe client:\\n```python\\naa = analytics_client(\\n        adobe_org_id = ADOBE_ORG_ID, \\n        subject_account = SUBJECT_ACCOUNT, \\n        client_id = CLIENT_ID, \\n        client_secret = CLIENT_SECRET,\\n        account_id = GLOBAL_COMPANY_ID, \\n        private_key_location = PRIVATE_KEY_LOCATION\\n)\\n\\naa.set_report_suite(report_suite_id = REPORT_SUITE_ID)\\n```\\n\\n\\n### Initial setup - OAuth\\n\\nImport the package and initiate the required parameters\\n```python\\nimport analytics_client\\n\\nclient_id = '<client id>'\\nclient_secret = '<client secret>'\\nglobal_company_id = '<global company id>'\\n```\\nInitialise the Adobe client:\\n```python\\naa = analytics_client(\\n        auth_client_id = client_id, \\n        client_secret = client_secret,\\n        account_id = global_company_id\\n)\\n```\\nPerform the authentication\\n\\n```python\\naa._authenticate()\\n```\\n\\nFor a demo notebook, please refer to the [Jupyter Notebook - OAuth example](examples/JupyterNotebook/OAuthDemo.ipynb)\\n\\n\\n\\n## Report Configurations\\nSet the date range of the report (format: YYYY-MM-DD)\\n```python\\naa.set_date_range(date_start = '2019-12-01', date_end= '2019-12-31')\\n```\\nTo configure specific hours for the start and end date:\\n```python\\naa.set_date_range(date_start='2020-12-01', date_end='2020-12-01', hour_start= 4, hour_end= 5 )\\n```\\nIf `hour_end` is set, then only up to that hour in the last day data will be retrieved instead of the full day.\\n\\n## Global segments\\nTo add a segment, you need the segment ID (currently only this option is supported). To obtain the ID, you need to activate the Adobe Analytics Workspace debugger (https://github.com/AdobeDocs/analytics-2.0-apis/blob/master/reporting-tricks.md). Then inspect the JSON request window and locate the segment ID under the 'globalFilters' object.\\n\\nTo apply the segment:\\n```python\\naa.add_global_segment(segment_id = 's300000938_60d228c474f05e635fba03ff')\\n\\n# add segment 'SC Labs (E/F)(v12)' to the report request body\\n```\\n\\n\\n\\n### Request with 2 metrics and 1 dimension\\n```python\\naa.add_metric(metric_name= 'metrics/visits')\\naa.add_metric(metric_name= 'metrics/orders')\\naa.add_dimension(dimension_name = 'variables/mobiledevicetype')\\ndata = aa.get_report()\\n```\\nOutput:\\n\\n|itemId_lvl_1   |  value_lvl_1 | metrics/visits | metrics/averagetimeuserstay |  |\\n| --- | --- | --- | --- | --- \\n|         0     |      Other    |  1    |    3    \\n|  1728229488   |       Tablet  |     2   |   45    \\n|  2163986270   | Mobile Phone  |    12   |    23    \\n|  ...    | ...  |       ...   |        ...   |      \\n\\n### Request with 2 metrics and 2 dimensions:\\n```\\naa.add_metric(metric_name= 'metrics/visits')\\naa.add_metric(metric_name= 'metrics/averagetimespentonsite')\\naa.add_dimension(dimension_name = 'variables/devicetype')\\naa.add_dimension(dimension_name = 'variables/evar5')\\ndata = aa.get_report_multiple_breakdowns()\\n\\n```\\nOutput:\\nEach item in level 1 (i.e. Tablet) is broken down by the dimension in level 2 (i.e. eng,fra). The package downloads all possible combinations. In a similar fashion more dimensions can be added.\\n\\n| itemId_lvl_1 | value_lvl_1 | itemId_lvl_2 |  value_lvl_2 | metrics/visits | metrics/averagetimespentonsite  |  |\\n| --- | --- | --- | --- | --- | --- | --- \\n|0 |Other |1 |fra| 233| 39| \\n|0 |Other |2 |fra| 424| 12  | \\n|0 |Other |3 |fra| 840| 41  | \\n| ... | ... | ... | ... | ... | ... |  \\n| 1728229488 |Tablet |1 | eng| 80| 12  | \\n| 1728229488 |Tablet |2 |eng| 50| 41  | \\n| ... | ... | ... | ... | ... | ... |  \\n\\n\\n\\n## Upload result to Azure Blob Storage\\n\\nNow to connect to the Azure blob to upload the result, we must provide an the following parameters. You can find them on the “Access keys” page of the Azure blob storage account. To obtain the parameters, open the home page of Azure Portal Select Azure Blob storage account (stsaebdevca01 ) :\\n\\n![](/assets/images/AA-to-Azure-Python-Wrapper-Class/Azure-blob-provide-access-key.jpg)\\n\\n```python\\nconn_string=os.environ['conn_string']\\naccountName=os.environ['accountName']\\naccountKey=os.environ['accountKey']\\ncontainerName =os.environ['containerName']\\n```\\n\\nNow we can initiate the blob client and upload our result as a csv into the container\\n\\n```python\\nblob = BlobClient.from_connection_string(conn_str=conn_string, container_name=containerName, blob_name='blob_parent/blob_name')\\n\\nblob.upload_blob(str(data.to_csv()),overwrite=True)\\n```\\n\\n## Unit Test\\n\\nRun the following code to unit test the code\\n\\n```python\\npy.test Adobe-Azure-analytics-api-v2.0/tests/test_core.py\\n# or\\npytest \\n```\\n\\n\\n# Next Steps\\n\\n[Integrate with Azure](Azurepipeline.md)\\n\\n[Connect with Power BI](PowerBIReadme.md)\\n\\n# Issues, Bugs and Suggestions:\\n\\n\\nKnown missing features:\\n- No support for filtering\\n- No support for top N \\n- No support for custom sorting\\n",
+        "descriptionContentType": "text/markdown",
+        "hash": "10406349bd2242082bc03596b364312fb7a23df594342cc41c165d2b88438fc1",
+        "homePage": "https://github.com/alexcargf/adobe_analytic-azure",
+        "id": 3,
+        "keywords": null,
+        "license": "UNKNOWN",
+        "maintainer": null,
+        "maintainerEmail": null,
+        "name": "adobe_analytic_API_V2.0-azure",
+        "platform": "UNKNOWN",
+        "platformTag": null,
+        "projectUrl": null,
+        "providesExtra": null,
+        "pythonTag": null,
+        "repository": {
+          "id": 1,
+          "lastPublicationSuccessful": true,
+          "name": "X",
+          "publicationUri": "http://localhost/repo/X",
+          "published": true,
+          "requiresAuthentication": true,
+          "technology": "Python"
+        },
+        "requiresDist": null,
+        "requiresExternal": null,
+        "requiresPython": ">=3.6",
+        "permissions": [],
+        "submission": {
+          "id": 3,
+          "state": "ACCEPTED"
+        },
+        "summary": "Automate Adobe Analytics Reports API v2 requests to export to Azure Blob Storage programmatically.",
+        "technology": "Python",
+        "title": "Automate Adobe Analytics Reports API v2 requests to export to Azure Blob Storage programmatically.",
+        "url": "https://github.com/alexcargf/adobe_analytic-azure",
+        "user": {
+          "email": "einstein@ldap.forumsys.com",
+          "id": 4,
+          "login": "einstein",
+          "name": "Albert Einstein"
+        },
+        "version": "0.0.3",
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8021/api/v2/manager/python/packages/3"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8021/api/v2/manager/python/packages"
+          },
+          {
+            "rel": "repository",
+            "href": "http://localhost:8021/api/v2/manager/python/repositories/1"
+          }
+        ]
+      },
+      {
+        "abiTag": null,
+        "active": true,
+        "author": "Travis E. Oliphant et al.",
+        "authorEmail": null,
+        "binary": false,
+        "builtTag": null,
+        "classifiers": "Development Status :: 5 - Production/Stable, Intended Audience :: Science/Research, Intended Audience :: Developers, License :: OSI Approved :: BSD License, Programming Language :: C, Programming Language :: Python, Programming Language :: Python :: 3, Programming Language :: Python :: 3.9, Programming Language :: Python :: 3.10, Programming Language :: Python :: 3.11, Programming Language :: Python :: 3.12, Programming Language :: Python :: 3 :: Only, Programming Language :: Python :: Implementation :: CPython, Topic :: Software Development, Topic :: Scientific/Engineering, Typing :: Typed, Operating System :: Microsoft :: Windows, Operating System :: POSIX, Operating System :: Unix, Operating System :: MacOS",
+        "compatibilityTags": null,
+        "deleted": false,
+        "description": "<h1 align=\"center\">\\n<img src=\"https://raw.githubusercontent.com/numpy/numpy/main/branding/logo/primary/numpylogo.svg\" width=\"300\">\\n</h1><br>\\n\\n\\n[![Powered by NumFOCUS](https://img.shields.io/badge/powered%20by-NumFOCUS-orange.svg?style=flat&colorA=E1523D&colorB=007D8A)](\\nhttps://numfocus.org)\\n[![PyPI Downloads](https://img.shields.io/pypi/dm/numpy.svg?label=PyPI%20downloads)](\\nhttps://pypi.org/project/numpy/)\\n[![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/numpy.svg?label=Conda%20downloads)](\\nhttps://anaconda.org/conda-forge/numpy)\\n[![Stack Overflow](https://img.shields.io/badge/stackoverflow-Ask%20questions-blue.svg)](\\nhttps://stackoverflow.com/questions/tagged/numpy)\\n[![Nature Paper](https://img.shields.io/badge/DOI-10.1038%2Fs41592--019--0686--2-blue)](\\nhttps://doi.org/10.1038/s41586-020-2649-2)\\n[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/numpy/numpy/badge)](https://api.securityscorecards.dev/projects/github.com/numpy/numpy)\\n\\n\\nNumPy is the fundamental package for scientific computing with Python.\\n\\n- **Website:** https://www.numpy.org\\n- **Documentation:** https://numpy.org/doc\\n- **Mailing list:** https://mail.python.org/mailman/listinfo/numpy-discussion\\n- **Source code:** https://github.com/numpy/numpy\\n- **Contributing:** https://www.numpy.org/devdocs/dev/index.html\\n- **Bug reports:** https://github.com/numpy/numpy/issues\\n- **Report a security vulnerability:** https://tidelift.com/docs/security\\n\\nIt provides:\\n\\n- a powerful N-dimensional array object\\n- sophisticated (broadcasting) functions\\n- tools for integrating C/C++ and Fortran code\\n- useful linear algebra, Fourier transform, and random number capabilities\\n\\nTesting:\\n\\nNumPy requires `pytest` and `hypothesis`.  Tests can then be run after installation with:\\n\\n    python -c \"import numpy, sys; sys.exit(numpy.test() is False)\"\\n\\nCode of Conduct\\n----------------------\\n\\nNumPy is a community-driven open source project developed by a diverse group of\\n[contributors](https://numpy.org/teams/). The NumPy leadership has made a strong\\ncommitment to creating an open, inclusive, and positive community. Please read the\\n[NumPy Code of Conduct](https://numpy.org/code-of-conduct/) for guidance on how to interact\\nwith others in a way that makes our community thrive.\\n\\nCall for Contributions\\n----------------------\\n\\nThe NumPy project welcomes your expertise and enthusiasm!\\n\\nSmall improvements or fixes are always appreciated. If you are considering larger contributions\\nto the source code, please contact us through the [mailing\\nlist](https://mail.python.org/mailman/listinfo/numpy-discussion) first.\\n\\nWriting code isn’t the only way to contribute to NumPy. You can also:\\n- review pull requests\\n- help us stay on top of new and old issues\\n- develop tutorials, presentations, and other educational materials\\n- maintain and improve [our website](https://github.com/numpy/numpy.org)\\n- develop graphic design for our brand assets and promotional materials\\n- translate website content\\n- help with outreach and onboard new contributors\\n- write grant proposals and help with other fundraising efforts\\n\\nFor more information about the ways you can contribute to NumPy, visit [our website](https://numpy.org/contribute/). \\nIf you’re unsure where to start or how your skills fit in, reach out! You can\\nask on the mailing list or here, on GitHub, by opening a new issue or leaving a\\ncomment on a relevant issue that is already open.\\n\\nOur preferred channels of communication are all public, but if you’d like to\\nspeak to us in private first, contact our community coordinators at\\nnumpy-team@googlegroups.com or on Slack (write numpy-team@googlegroups.com for\\nan invitation).\\n\\nWe also have a biweekly community call, details of which are announced on the\\nmailing list. You are very welcome to join.\\n\\nIf you are new to contributing to open source, [this\\nguide](https://opensource.guide/how-to-contribute/) helps explain why, what,\\nand how to successfully get involved.\\n",
+        "descriptionContentType": "text/markdown",
+        "hash": "2a02aba9ed12e4ac4eb3ea9421c420301a0c6460d9830d74a9df87efa4912010",
+        "homePage": "https://numpy.org",
+        "id": 4,
+        "keywords": null,
+        "license": "Copyright (c) 2005-2023, NumPy Developers.\\nAll rights reserved.\\n\\nRedistribution and use in source and binary forms, with or without\\nmodification, are permitted provided that the following conditions are\\nmet:\\n\\n    * Redistributions of source code must retain the above copyright\\n       notice, this list of conditions and the following disclaimer.\\n\\n    * Redistributions in binary form must reproduce the above\\n       copyright notice, this list of conditions and the following\\n       disclaimer in the documentation and/or other materials provided\\n       with the distribution.\\n\\n    * Neither the name of the NumPy Developers nor the names of any\\n       contributors may be used to endorse or promote products derived\\n       from this software without specific prior written permission.\\n\\nTHIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS\\n\"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT\\nLIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR\\nA PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT\\nOWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,\\nSPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT\\nLIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,\\nDATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY\\nTHEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\\n(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE\\nOF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.",
+        "maintainer": null,
+        "maintainerEmail": null,
+        "name": "numpy",
+        "platform": null,
+        "platformTag": null,
+        "projectUrl": "Homepage, https://numpy.org, Documentation, https://numpy.org/doc/, Source, https://github.com/numpy/numpy, Download, https://pypi.org/project/numpy/#files, Tracker, https://github.com/numpy/numpy/issues, Release notes, https://numpy.org/doc/stable/release",
+        "providesExtra": null,
+        "pythonTag": null,
+        "repository": {
+          "id": 1,
+          "lastPublicationSuccessful": true,
+          "name": "X",
+          "publicationUri": "http://localhost/repo/X",
+          "published": true,
+          "requiresAuthentication": true,
+          "technology": "Python"
+        },
+        "requiresDist": null,
+        "requiresExternal": null,
+        "requiresPython": ">=3.9",
+        "permissions": [],
+        "submission": {
+          "id": 4,
+          "state": "ACCEPTED"
+        },
+        "summary": "Fundamental package for array computing in Python",
+        "technology": "Python",
+        "title": "Fundamental package for array computing in Python",
+        "url": "Homepage, https://numpy.org, Documentation, https://numpy.org/doc/, Source, https://github.com/numpy/numpy, Download, https://pypi.org/project/numpy/#files, Tracker, https://github.com/numpy/numpy/issues, Release notes, https://numpy.org/doc/stable/release",
+        "user": {
+          "email": "einstein@ldap.forumsys.com",
+          "id": 4,
+          "login": "einstein",
+          "name": "Albert Einstein"
+        },
+        "version": "1.26.4",
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8021/api/v2/manager/python/packages/4"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8021/api/v2/manager/python/packages"
+          },
+          {
+            "rel": "repository",
+            "href": "http://localhost:8021/api/v2/manager/python/repositories/1"
+          }
+        ]
+      },
+      {
+        "abiTag": null,
+        "active": true,
+        "author": "Derek Anderson",
+        "authorEmail": "derek@armyofevilrobots.com",
+        "binary": false,
+        "builtTag": null,
+        "classifiers": null,
+        "compatibilityTags": null,
+        "deleted": false,
+        "description": "UNKNOWN",
+        "descriptionContentType": "",
+        "hash": "ebb8949f7ad16c6d743b5c2da7d31bea06c81215532bb68b4179916157741549",
+        "homePage": "http://www.armyofevilrobots.com/",
+        "id": 5,
+        "keywords": null,
+        "license": "MIT",
+        "maintainer": null,
+        "maintainerEmail": null,
+        "name": "ArmyOfEvilRobots",
+        "platform": "UNKNOWN",
+        "platformTag": null,
+        "projectUrl": null,
+        "providesExtra": null,
+        "pythonTag": null,
+        "repository": {
+          "id": 1,
+          "lastPublicationSuccessful": true,
+          "name": "X",
+          "publicationUri": "http://localhost/repo/X",
+          "published": true,
+          "requiresAuthentication": true,
+          "technology": "Python"
+        },
+        "requiresDist": null,
+        "requiresExternal": null,
+        "requiresPython": null,
+        "permissions": [],
+        "submission": {
+          "id": 5,
+          "state": "ACCEPTED"
+        },
+        "summary": "Utility library. Contains per app cross platform config library tools for now.",
+        "technology": "Python",
+        "title": "Utility library. Contains per app cross platform config library tools for now.",
+        "url": "http://www.armyofevilrobots.com/",
+        "user": {
+          "email": "einstein@ldap.forumsys.com",
+          "id": 4,
+          "login": "einstein",
+          "name": "Albert Einstein"
+        },
+        "version": "0.4.1dev",
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8021/api/v2/manager/python/packages/5"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8021/api/v2/manager/python/packages"
+          },
+          {
+            "rel": "repository",
+            "href": "http://localhost:8021/api/v2/manager/python/repositories/1"
+          }
+        ]
+      },
+      {
+        "abiTag": null,
+        "active": true,
+        "author": "Travis E. Oliphant et al.",
+        "authorEmail": null,
+        "binary": false,
+        "builtTag": null,
+        "classifiers": "Development Status :: 5 - Production/Stable, Intended Audience :: Science/Research, Intended Audience :: Developers, Programming Language :: C, Programming Language :: Python, Programming Language :: Python :: 3, Programming Language :: Python :: 3.11, Programming Language :: Python :: 3.12, Programming Language :: Python :: 3.13, Programming Language :: Python :: 3.14, Programming Language :: Python :: 3 :: Only, Programming Language :: Python :: Implementation :: CPython, Topic :: Software Development, Topic :: Scientific/Engineering, Typing :: Typed, Operating System :: Microsoft :: Windows, Operating System :: POSIX, Operating System :: Unix, Operating System :: MacOS",
+        "compatibilityTags": null,
+        "deleted": false,
+        "description": "<h1 align=\"center\">\\n<img src=\"https://raw.githubusercontent.com/numpy/numpy/main/branding/logo/primary/numpylogo.svg\" width=\"300\">\\n</h1><br>\\n\\n\\n[![Powered by NumFOCUS](https://img.shields.io/badge/powered%20by-NumFOCUS-orange.svg?style=flat&colorA=E1523D&colorB=007D8A)](\\nhttps://numfocus.org)\\n[![PyPI Downloads](https://img.shields.io/pypi/dm/numpy.svg?label=PyPI%20downloads)](\\nhttps://pypi.org/project/numpy/)\\n[![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/numpy.svg?label=Conda%20downloads)](\\nhttps://anaconda.org/conda-forge/numpy)\\n[![Stack Overflow](https://img.shields.io/badge/stackoverflow-Ask%20questions-blue.svg)](\\nhttps://stackoverflow.com/questions/tagged/numpy)\\n[![Nature Paper](https://img.shields.io/badge/DOI-10.1038%2Fs41586--020--2649--2-blue)](\\nhttps://doi.org/10.1038/s41586-020-2649-2)\\n[![LFX Health Score](https://insights.linuxfoundation.org/api/badge/health-score?project=numpy)](https://insights.linuxfoundation.org/project/numpy)\\n[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/numpy/numpy/badge)](https://securityscorecards.dev/viewer/?uri=github.com/numpy/numpy)\\n[![Typing](https://img.shields.io/pypi/types/numpy)](https://pypi.org/project/numpy/)\\n\\n\\nNumPy is the fundamental package for scientific computing with Python.\\n\\n- **Website:** https://numpy.org\\n- **Documentation:** https://numpy.org/doc\\n- **Mailing list:** https://mail.python.org/mailman/listinfo/numpy-discussion\\n- **Source code:** https://github.com/numpy/numpy\\n- **Contributing:** https://numpy.org/devdocs/dev/index.html\\n- **Bug reports:** https://github.com/numpy/numpy/issues\\n- **Report a security vulnerability:** https://tidelift.com/docs/security\\n\\nIt provides:\\n\\n- a powerful N-dimensional array object\\n- sophisticated (broadcasting) functions\\n- tools for integrating C/C++ and Fortran code\\n- useful linear algebra, Fourier transform, and random number capabilities\\n\\nTesting:\\n\\nNumPy requires `pytest` and `hypothesis`.  Tests can then be run after installation with:\\n\\n    python -c \"import numpy, sys; sys.exit(numpy.test() is False)\"\\n\\nCode of Conduct\\n----------------------\\n\\nNumPy is a community-driven open source project developed by a diverse group of\\n[contributors](https://numpy.org/teams/). The NumPy leadership has made a strong\\ncommitment to creating an open, inclusive, and positive community. Please read the\\n[NumPy Code of Conduct](https://numpy.org/code-of-conduct/) for guidance on how to interact\\nwith others in a way that makes our community thrive.\\n\\nCall for Contributions\\n----------------------\\n\\nThe NumPy project welcomes your expertise and enthusiasm!\\n\\nSmall improvements or fixes are always appreciated. If you are considering larger contributions\\nto the source code, please contact us through the [mailing\\nlist](https://mail.python.org/mailman/listinfo/numpy-discussion) first.\\n\\nWriting code isn’t the only way to contribute to NumPy. You can also:\\n- review pull requests\\n- help us stay on top of new and old issues\\n- develop tutorials, presentations, and other educational materials\\n- maintain and improve [our website](https://github.com/numpy/numpy.org)\\n- develop graphic design for our brand assets and promotional materials\\n- translate website content\\n- help with outreach and onboard new contributors\\n- write grant proposals and help with other fundraising efforts\\n\\nFor more information about the ways you can contribute to NumPy, visit [our website](https://numpy.org/contribute/). \\nIf you’re unsure where to start or how your skills fit in, reach out! You can\\nask on the mailing list or here, on GitHub, by opening a new issue or leaving a\\ncomment on a relevant issue that is already open.\\n\\nOur preferred channels of communication are all public, but if you’d like to\\nspeak to us in private first, contact our community coordinators at\\nnumpy-team@googlegroups.com or on Slack (write numpy-team@googlegroups.com for\\nan invitation).\\n\\nWe also have a biweekly community call, details of which are announced on the\\nmailing list. You are very welcome to join.\\n\\nIf you are new to contributing to open source, [this\\nguide](https://opensource.guide/how-to-contribute/) helps explain why, what,\\nand how to successfully get involved.\\n",
+        "descriptionContentType": "text/markdown",
+        "hash": "6e504f7b16118198f138ef31ba24d985b124c2c469fe8467007cf30fd992f934",
+        "homePage": null,
+        "id": 6,
+        "keywords": null,
+        "license": "BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0",
+        "maintainer": null,
+        "maintainerEmail": null,
+        "name": "numpy",
+        "platform": null,
+        "platformTag": null,
+        "projectUrl": "homepage, https://numpy.org, documentation, https://numpy.org/doc/, source, https://github.com/numpy/numpy, download, https://pypi.org/project/numpy/#files, tracker, https://github.com/numpy/numpy/issues, release notes, https://numpy.org/doc/stable/release",
+        "providesExtra": null,
+        "pythonTag": null,
+        "repository": {
+          "id": 1,
+          "lastPublicationSuccessful": true,
+          "name": "X",
+          "publicationUri": "http://localhost/repo/X",
+          "published": true,
+          "requiresAuthentication": true,
+          "technology": "Python"
+        },
+        "requiresDist": null,
+        "requiresExternal": null,
+        "requiresPython": ">=3.11",
+        "permissions": [],
+        "submission": {
+          "id": 6,
+          "state": "ACCEPTED"
+        },
+        "summary": "Fundamental package for array computing in Python",
+        "technology": "Python",
+        "title": "Fundamental package for array computing in Python",
+        "url": "homepage, https://numpy.org, documentation, https://numpy.org/doc/, source, https://github.com/numpy/numpy, download, https://pypi.org/project/numpy/#files, tracker, https://github.com/numpy/numpy/issues, release notes, https://numpy.org/doc/stable/release",
+        "user": {
+          "email": "einstein@ldap.forumsys.com",
+          "id": 4,
+          "login": "einstein",
+          "name": "Albert Einstein"
+        },
+        "version": "2.4.0",
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8021/api/v2/manager/python/packages/6"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8021/api/v2/manager/python/packages"
+          },
+          {
+            "rel": "repository",
+            "href": "http://localhost:8021/api/v2/manager/python/repositories/1"
+          }
+        ]
+      },
+      {
+        "abiTag": null,
+        "active": true,
+        "author": "UNKNOWN",
+        "authorEmail": "UNKNOWN",
+        "binary": false,
+        "builtTag": null,
+        "classifiers": null,
+        "compatibilityTags": null,
+        "deleted": false,
+        "description": "Description\\n===========\\n\\nTools for ABO analys",
+        "descriptionContentType": "",
+        "hash": "70222dec4ca6d0e3658bf0dc34f5c5c72235f1f28b4977b3b991347a84035c3c",
+        "homePage": "UNKNOWN",
+        "id": 7,
+        "keywords": null,
+        "license": "UNKNOWN",
+        "maintainer": null,
+        "maintainerEmail": null,
+        "name": "abo_tools",
+        "platform": "UNKNOWN",
+        "platformTag": null,
+        "projectUrl": null,
+        "providesExtra": null,
+        "pythonTag": null,
+        "repository": {
+          "id": 16,
+          "lastPublicationSuccessful": true,
+          "name": "ZE",
+          "publicationUri": "http://localhost/repo/ZE",
+          "published": true,
+          "requiresAuthentication": true,
+          "technology": "Python"
+        },
+        "requiresDist": null,
+        "requiresExternal": null,
+        "requiresPython": null,
+        "permissions": [],
+        "submission": {
+          "id": 7,
+          "state": "ACCEPTED"
+        },
+        "summary": "UNKNOWN",
+        "technology": "Python",
+        "title": "UNKNOWN",
+        "url": "UNKNOWN",
+        "user": {
+          "email": "einstein@ldap.forumsys.com",
+          "id": 4,
+          "login": "einstein",
+          "name": "Albert Einstein"
+        },
+        "version": "1.0",
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8021/api/v2/manager/python/packages/7"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8021/api/v2/manager/python/packages"
+          },
+          {
+            "rel": "repository",
+            "href": "http://localhost:8021/api/v2/manager/python/repositories/16"
+          }
+        ]
+      },
+      {
+        "abiTag": null,
+        "active": true,
+        "author": "Nicholas Sharp",
+        "authorEmail": "nmwsharp@gmail.com",
+        "binary": false,
+        "builtTag": null,
+        "classifiers": null,
+        "compatibilityTags": null,
+        "deleted": false,
+        "description": "# polyscope-py\\nPython bindings for Polyscope - Chromalab Version. https://polyscope.run/py\\n\\n\\nThis library is a python wrapper and deployment system. The core library lives at [this polyscope fork](https://github.com/i-geng/polyscope)\\n\\nTo contribute, check out the [instructions here](https://polyscope.run/about/contributing/).\\n\\n### Installation (for now before Irene puts it on PyPI)\\n\\nUninstall current version of polyscope from current virtual environment:\\n```\\npip uninstall polyscope\\n```\\n\\nLocal installation. Haven't put this version on PyPI yet, since it seems like uploading a \\nnew version could take over an hour. \\n```\\ngit clone --recurse-submodules git@github.com:i-geng/polyscope-py.git\\n```\\n\\nFrom the root polyscope-py directory, build the C++ source:\\n```\\nmkdir build; cd build\\ncmake ../\\nmake -j4\\n```\\nBack in the root polyscope-py directory:\\n```\\npip install .\\n```\\n\\nTo use polyscope's functions for writing videos, you will also need FFmpeg.\\n",
+        "descriptionContentType": "text/markdown",
+        "hash": "47b518fb442789f4ae05df8d93a8946b95206037f137d9aab760af414fdda935",
+        "homePage": "https://polyscope.run",
+        "id": 8,
+        "keywords": null,
+        "license": "MIT",
+        "maintainer": null,
+        "maintainerEmail": null,
+        "name": "tetrapolyscope",
+        "platform": "UNKNOWN",
+        "platformTag": null,
+        "projectUrl": null,
+        "providesExtra": null,
+        "pythonTag": null,
+        "repository": {
+          "id": 16,
+          "lastPublicationSuccessful": true,
+          "name": "ZE",
+          "publicationUri": "http://localhost/repo/ZE",
+          "published": true,
+          "requiresAuthentication": true,
+          "technology": "Python"
+        },
+        "requiresDist": null,
+        "requiresExternal": null,
+        "requiresPython": null,
+        "permissions": [],
+        "submission": {
+          "id": 8,
+          "state": "ACCEPTED"
+        },
+        "summary": "Polyscope: A viewer and user interface for 3D data.",
+        "technology": "Python",
+        "title": "Polyscope: A viewer and user interface for 3D data.",
+        "url": "https://polyscope.run",
+        "user": {
+          "email": "einstein@ldap.forumsys.com",
+          "id": 4,
+          "login": "einstein",
+          "name": "Albert Einstein"
+        },
+        "version": "0.0.1",
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8021/api/v2/manager/python/packages/8"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8021/api/v2/manager/python/packages"
+          },
+          {
+            "rel": "repository",
+            "href": "http://localhost:8021/api/v2/manager/python/repositories/16"
+          }
+        ]
+      },
+      {
+        "abiTag": null,
+        "active": true,
+        "author": "AlexZ",
+        "authorEmail": "alexdataanalyst@gmail.com",
+        "binary": false,
+        "builtTag": null,
+        "classifiers": "Programming Language :: Python :: 3, Programming Language :: Python :: 3.4, Programming Language :: Python :: 3.5, Programming Language :: Python :: 3.6, License :: OSI Approved :: MIT License, Operating System :: OS Independent",
+        "compatibilityTags": null,
+        "deleted": false,
+        "description": "# Adobe Analytics Python Class \\n\\nDownload Reports data utilising the Adobe.io version 2.0 API locally.\\n\\nTo Integrate with Cloud (Azure) ,please check [Integrate with Azure](Azurepipeline.md)\\n\\n\\n\\n\\n\\n# Authentication methods supported by the package:\\n1.JWT\\n\\n2.OAuth (tested only through Jupyter Notebook!)\\n\\n## Authentication via JSON Web Token (JWT aka Service Account)\\n\\nWe’re going to use JWT aka Service Account as the method for authentication since it’s designed for machine-to-machine communication. As such authentication can be completely automated on platforms such as Azure after it’s built.\\n\\nCompare this to Oauth 2.0 based authentication which requires user input at some interval. You might want the user to authenticate from time to time, but my goal is to build this data ingestion pipeline that doesn’t require any user interaction once it’s built.\\n\\n## JWT Requirements & Adobe.io access\\nIn order to run the package, first you need to gain access to a service account from Adobe.io or request an existing certificate from Principle Publisher. The method used is JWT authentication. More instructions on how to create the integration at: https://www.adobe.io/authentication/auth-methods.html#!AdobeDocs/adobeio-auth/master/JWT/JWT.md. \\n\\n### To obtain JWT credientials from Adbobe Developer Console\\n\\n\\nIn Projects > Credential Details > Get the Client ID and Client Secret:\\n![](/assets/images/AA-to-Azure-Python-Wrapper-Class/adobe-analytics-client-id-secret-v2.png)\\n\\nIn Projects > Credential Details > Generate a public/private keypair\\n![](/assets/images/AA-to-Azure-Python-Wrapper-Class/adobe-analytics-generate-pub-priv-keys.png)\\n\\nWhen you click the button you’ll download a zip file that contains a public key file and private key file. You can open these in any text editor to see what they look like. Keep the private key file handy, we’ll refer to it later in our Python code.\\n\\n### Or you can request JWT certificate from Principle Publisher.\\n\\nSample certificate:\\n```python\\n{\\n   'CLIENT_SECRET':'xxxx',\\n   'ORG_ID':'xxxx@AdobeOrg',\\n   'API_KEY':'xxxxx',\\n   'TECHNICAL_ACCOUNT_ID':'xxxx@techacct.adobe.com',\\n   'TECHNICAL_ACCOUNT_EMAIL':'x@techacct.adobe.com',\\n   'PUBLIC_KEYS_WITH_EXPIRY':{\\n      'xxxxxx':'mm/dd/yyyy'\\n   }\\n}\\n```\\n\\nAfter you have completed the integration, you will finde available the following information:\\n\\n- Organization ID ( ORG_ID ): It is in the format of < organisation id >@AdobeOrg\\n- Technical Account ID( TECHNICAL_ACCOUNT_ID ): < tech account id >@techacct.adobe.com \\n- Client ID( API_KEY ):Like a username for the API, Information is available on the completion of the Service Account integration\\n- Client Secret( CLIENT_SECRET ):Like a password for the API,  Information is available on the completion of the Service Account integration\\n- Account ID( TECHNICAL_ACCOUNT_ID ): Instructions on how to obtain it at https://youtu.be/lrg1MuVi0Fo?t=96\\n- Report suite( GLOBAL_COMPANY_ID ): Report suite ID from which you want to download the data. Usually it is 'canada5'.\\n- Private Key: Like a signature for your password\\n- JWT Payload: Some specific details that Adobe want you to show them to trade for the Access Token.\\n\\nMake sure that the integration is associated with an Adobe Analytics product profile that is granted access to the necessary metrics ,dimensions and segments.\\n\\n\\n\\n## Package installation\\n```python\\npip install requirements.txt\\n```\\n\\n## Samples\\n\\n### Initial setup - JWT\\nAfter you have configured the integration and downloaded the package, the following setup is needed:\\n```python\\nADOBE_ORG_ID = os.environ['ADOBE_ORG_ID']\\nSUBJECT_ACCOUNT = os.environ['SUBJECT_ACCOUNT']\\nCLIENT_ID = os.environ['CLIENT_ID']\\nCLIENT_SECRET = os.environ['CLIENT_SECRET']\\nPRIVATE_KEY_LOCATION = os.environ['PRIVATE_KEY_LOCATION']\\nGLOBAL_COMPANY_ID = os.environ['GLOBAL_COMPANY_ID']\\nREPORT_SUITE_ID = os.environ['REPORT_SUITE_ID']\\n```\\nNext initialise the Adobe client:\\n```python\\naa = analytics_client(\\n        adobe_org_id = ADOBE_ORG_ID, \\n        subject_account = SUBJECT_ACCOUNT, \\n        client_id = CLIENT_ID, \\n        client_secret = CLIENT_SECRET,\\n        account_id = GLOBAL_COMPANY_ID, \\n        private_key_location = PRIVATE_KEY_LOCATION\\n)\\n\\naa.set_report_suite(report_suite_id = REPORT_SUITE_ID)\\n```\\n\\n\\n### Initial setup - OAuth\\n\\nImport the package and initiate the required parameters\\n```python\\nimport analytics_client\\n\\nclient_id = '<client id>'\\nclient_secret = '<client secret>'\\nglobal_company_id = '<global company id>'\\n```\\nInitialise the Adobe client:\\n```python\\naa = analytics_client(\\n        auth_client_id = client_id, \\n        client_secret = client_secret,\\n        account_id = global_company_id\\n)\\n```\\nPerform the authentication\\n\\n```python\\naa._authenticate()\\n```\\n\\nFor a demo notebook, please refer to the [Jupyter Notebook - OAuth example](examples/JupyterNotebook/OAuthDemo.ipynb)\\n\\n\\n\\n## Report Configurations\\nSet the date range of the report (format: YYYY-MM-DD)\\n```python\\naa.set_date_range(date_start = '2019-12-01', date_end= '2019-12-31')\\n```\\nTo configure specific hours for the start and end date:\\n```python\\naa.set_date_range(date_start='2020-12-01', date_end='2020-12-01', hour_start= 4, hour_end= 5 )\\n```\\nIf `hour_end` is set, then only up to that hour in the last day data will be retrieved instead of the full day.\\n\\n## Global segments\\nTo add a segment, you need the segment ID (currently only this option is supported). To obtain the ID, you need to activate the Adobe Analytics Workspace debugger (https://github.com/AdobeDocs/analytics-2.0-apis/blob/master/reporting-tricks.md). Then inspect the JSON request window and locate the segment ID under the 'globalFilters' object.\\n\\nTo apply the segment:\\n```python\\naa.add_global_segment(segment_id = 's300000938_60d228c474f05e635fba03ff')\\n\\n# add segment 'SC Labs (E/F)(v12)' to the report request body\\n```\\n\\n\\n\\n### Request with 2 metrics and 1 dimension\\n```python\\naa.add_metric(metric_name= 'metrics/visits')\\naa.add_metric(metric_name= 'metrics/orders')\\naa.add_dimension(dimension_name = 'variables/mobiledevicetype')\\ndata = aa.get_report()\\n```\\nOutput:\\n\\n|itemId_lvl_1   |  value_lvl_1 | metrics/visits | metrics/averagetimeuserstay |  |\\n| --- | --- | --- | --- | --- \\n|         0     |      Other    |  1    |    3    \\n|  1728229488   |       Tablet  |     2   |   45    \\n|  2163986270   | Mobile Phone  |    12   |    23    \\n|  ...    | ...  |       ...   |        ...   |      \\n\\n### Request with 2 metrics and 2 dimensions:\\n```\\naa.add_metric(metric_name= 'metrics/visits')\\naa.add_metric(metric_name= 'metrics/averagetimespentonsite')\\naa.add_dimension(dimension_name = 'variables/devicetype')\\naa.add_dimension(dimension_name = 'variables/evar5')\\ndata = aa.get_report_multiple_breakdowns()\\n\\n```\\nOutput:\\nEach item in level 1 (i.e. Tablet) is broken down by the dimension in level 2 (i.e. eng,fra). The package downloads all possible combinations. In a similar fashion more dimensions can be added.\\n\\n| itemId_lvl_1 | value_lvl_1 | itemId_lvl_2 |  value_lvl_2 | metrics/visits | metrics/averagetimespentonsite  |  |\\n| --- | --- | --- | --- | --- | --- | --- \\n|0 |Other |1 |fra| 233| 39| \\n|0 |Other |2 |fra| 424| 12  | \\n|0 |Other |3 |fra| 840| 41  | \\n| ... | ... | ... | ... | ... | ... |  \\n| 1728229488 |Tablet |1 | eng| 80| 12  | \\n| 1728229488 |Tablet |2 |eng| 50| 41  | \\n| ... | ... | ... | ... | ... | ... |  \\n\\n\\n\\n## Upload result to Azure Blob Storage\\n\\nNow to connect to the Azure blob to upload the result, we must provide an the following parameters. You can find them on the “Access keys” page of the Azure blob storage account. To obtain the parameters, open the home page of Azure Portal Select Azure Blob storage account (stsaebdevca01 ) :\\n\\n![](/assets/images/AA-to-Azure-Python-Wrapper-Class/Azure-blob-provide-access-key.jpg)\\n\\n```python\\nconn_string=os.environ['conn_string']\\naccountName=os.environ['accountName']\\naccountKey=os.environ['accountKey']\\ncontainerName =os.environ['containerName']\\n```\\n\\nNow we can initiate the blob client and upload our result as a csv into the container\\n\\n```python\\nblob = BlobClient.from_connection_string(conn_str=conn_string, container_name=containerName, blob_name='blob_parent/blob_name')\\n\\nblob.upload_blob(str(data.to_csv()),overwrite=True)\\n```\\n\\n## Unit Test\\n\\nRun the following code to unit test the code\\n\\n```python\\npy.test Adobe-Azure-analytics-api-v2.0/tests/test_core.py\\n# or\\npytest \\n```\\n\\n\\n# Next Steps\\n\\n[Integrate with Azure](Azurepipeline.md)\\n\\n[Connect with Power BI](PowerBIReadme.md)\\n\\n# Issues, Bugs and Suggestions:\\n\\n\\nKnown missing features:\\n- No support for filtering\\n- No support for top N \\n- No support for custom sorting\\n",
+        "descriptionContentType": "text/markdown",
+        "hash": "10406349bd2242082bc03596b364312fb7a23df594342cc41c165d2b88438fc1",
+        "homePage": "https://github.com/alexcargf/adobe_analytic-azure",
+        "id": 9,
+        "keywords": null,
+        "license": "UNKNOWN",
+        "maintainer": null,
+        "maintainerEmail": null,
+        "name": "adobe_analytic_API_V2.0-azure",
+        "platform": "UNKNOWN",
+        "platformTag": null,
+        "projectUrl": null,
+        "providesExtra": null,
+        "pythonTag": null,
+        "repository": {
+          "id": 16,
+          "lastPublicationSuccessful": true,
+          "name": "ZE",
+          "publicationUri": "http://localhost/repo/ZE",
+          "published": true,
+          "requiresAuthentication": true,
+          "technology": "Python"
+        },
+        "requiresDist": null,
+        "requiresExternal": null,
+        "requiresPython": ">=3.6",
+        "permissions": [],
+        "submission": {
+          "id": 9,
+          "state": "ACCEPTED"
+        },
+        "summary": "Automate Adobe Analytics Reports API v2 requests to export to Azure Blob Storage programmatically.",
+        "technology": "Python",
+        "title": "Automate Adobe Analytics Reports API v2 requests to export to Azure Blob Storage programmatically.",
+        "url": "https://github.com/alexcargf/adobe_analytic-azure",
+        "user": {
+          "email": "einstein@ldap.forumsys.com",
+          "id": 4,
+          "login": "einstein",
+          "name": "Albert Einstein"
+        },
+        "version": "0.0.3",
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8021/api/v2/manager/python/packages/9"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8021/api/v2/manager/python/packages"
+          },
+          {
+            "rel": "repository",
+            "href": "http://localhost:8021/api/v2/manager/python/repositories/16"
+          }
+        ]
+      },
+      {
+        "abiTag": null,
+        "active": true,
+        "author": "Travis E. Oliphant et al.",
+        "authorEmail": null,
+        "binary": false,
+        "builtTag": null,
+        "classifiers": "Development Status :: 5 - Production/Stable, Intended Audience :: Science/Research, Intended Audience :: Developers, License :: OSI Approved :: BSD License, Programming Language :: C, Programming Language :: Python, Programming Language :: Python :: 3, Programming Language :: Python :: 3.9, Programming Language :: Python :: 3.10, Programming Language :: Python :: 3.11, Programming Language :: Python :: 3.12, Programming Language :: Python :: 3 :: Only, Programming Language :: Python :: Implementation :: CPython, Topic :: Software Development, Topic :: Scientific/Engineering, Typing :: Typed, Operating System :: Microsoft :: Windows, Operating System :: POSIX, Operating System :: Unix, Operating System :: MacOS",
+        "compatibilityTags": null,
+        "deleted": false,
+        "description": "<h1 align=\"center\">\\n<img src=\"https://raw.githubusercontent.com/numpy/numpy/main/branding/logo/primary/numpylogo.svg\" width=\"300\">\\n</h1><br>\\n\\n\\n[![Powered by NumFOCUS](https://img.shields.io/badge/powered%20by-NumFOCUS-orange.svg?style=flat&colorA=E1523D&colorB=007D8A)](\\nhttps://numfocus.org)\\n[![PyPI Downloads](https://img.shields.io/pypi/dm/numpy.svg?label=PyPI%20downloads)](\\nhttps://pypi.org/project/numpy/)\\n[![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/numpy.svg?label=Conda%20downloads)](\\nhttps://anaconda.org/conda-forge/numpy)\\n[![Stack Overflow](https://img.shields.io/badge/stackoverflow-Ask%20questions-blue.svg)](\\nhttps://stackoverflow.com/questions/tagged/numpy)\\n[![Nature Paper](https://img.shields.io/badge/DOI-10.1038%2Fs41592--019--0686--2-blue)](\\nhttps://doi.org/10.1038/s41586-020-2649-2)\\n[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/numpy/numpy/badge)](https://api.securityscorecards.dev/projects/github.com/numpy/numpy)\\n\\n\\nNumPy is the fundamental package for scientific computing with Python.\\n\\n- **Website:** https://www.numpy.org\\n- **Documentation:** https://numpy.org/doc\\n- **Mailing list:** https://mail.python.org/mailman/listinfo/numpy-discussion\\n- **Source code:** https://github.com/numpy/numpy\\n- **Contributing:** https://www.numpy.org/devdocs/dev/index.html\\n- **Bug reports:** https://github.com/numpy/numpy/issues\\n- **Report a security vulnerability:** https://tidelift.com/docs/security\\n\\nIt provides:\\n\\n- a powerful N-dimensional array object\\n- sophisticated (broadcasting) functions\\n- tools for integrating C/C++ and Fortran code\\n- useful linear algebra, Fourier transform, and random number capabilities\\n\\nTesting:\\n\\nNumPy requires `pytest` and `hypothesis`.  Tests can then be run after installation with:\\n\\n    python -c \"import numpy, sys; sys.exit(numpy.test() is False)\"\\n\\nCode of Conduct\\n----------------------\\n\\nNumPy is a community-driven open source project developed by a diverse group of\\n[contributors](https://numpy.org/teams/). The NumPy leadership has made a strong\\ncommitment to creating an open, inclusive, and positive community. Please read the\\n[NumPy Code of Conduct](https://numpy.org/code-of-conduct/) for guidance on how to interact\\nwith others in a way that makes our community thrive.\\n\\nCall for Contributions\\n----------------------\\n\\nThe NumPy project welcomes your expertise and enthusiasm!\\n\\nSmall improvements or fixes are always appreciated. If you are considering larger contributions\\nto the source code, please contact us through the [mailing\\nlist](https://mail.python.org/mailman/listinfo/numpy-discussion) first.\\n\\nWriting code isn’t the only way to contribute to NumPy. You can also:\\n- review pull requests\\n- help us stay on top of new and old issues\\n- develop tutorials, presentations, and other educational materials\\n- maintain and improve [our website](https://github.com/numpy/numpy.org)\\n- develop graphic design for our brand assets and promotional materials\\n- translate website content\\n- help with outreach and onboard new contributors\\n- write grant proposals and help with other fundraising efforts\\n\\nFor more information about the ways you can contribute to NumPy, visit [our website](https://numpy.org/contribute/). \\nIf you’re unsure where to start or how your skills fit in, reach out! You can\\nask on the mailing list or here, on GitHub, by opening a new issue or leaving a\\ncomment on a relevant issue that is already open.\\n\\nOur preferred channels of communication are all public, but if you’d like to\\nspeak to us in private first, contact our community coordinators at\\nnumpy-team@googlegroups.com or on Slack (write numpy-team@googlegroups.com for\\nan invitation).\\n\\nWe also have a biweekly community call, details of which are announced on the\\nmailing list. You are very welcome to join.\\n\\nIf you are new to contributing to open source, [this\\nguide](https://opensource.guide/how-to-contribute/) helps explain why, what,\\nand how to successfully get involved.\\n",
+        "descriptionContentType": "text/markdown",
+        "hash": "2a02aba9ed12e4ac4eb3ea9421c420301a0c6460d9830d74a9df87efa4912010",
+        "homePage": "https://numpy.org",
+        "id": 10,
+        "keywords": null,
+        "license": "Copyright (c) 2005-2023, NumPy Developers.\\nAll rights reserved.\\n\\nRedistribution and use in source and binary forms, with or without\\nmodification, are permitted provided that the following conditions are\\nmet:\\n\\n    * Redistributions of source code must retain the above copyright\\n       notice, this list of conditions and the following disclaimer.\\n\\n    * Redistributions in binary form must reproduce the above\\n       copyright notice, this list of conditions and the following\\n       disclaimer in the documentation and/or other materials provided\\n       with the distribution.\\n\\n    * Neither the name of the NumPy Developers nor the names of any\\n       contributors may be used to endorse or promote products derived\\n       from this software without specific prior written permission.\\n\\nTHIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS\\n\"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT\\nLIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR\\nA PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT\\nOWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,\\nSPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT\\nLIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,\\nDATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY\\nTHEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\\n(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE\\nOF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.",
+        "maintainer": null,
+        "maintainerEmail": null,
+        "name": "numpy",
+        "platform": null,
+        "platformTag": null,
+        "projectUrl": "Homepage, https://numpy.org, Documentation, https://numpy.org/doc/, Source, https://github.com/numpy/numpy, Download, https://pypi.org/project/numpy/#files, Tracker, https://github.com/numpy/numpy/issues, Release notes, https://numpy.org/doc/stable/release",
+        "providesExtra": null,
+        "pythonTag": null,
+        "repository": {
+          "id": 16,
+          "lastPublicationSuccessful": true,
+          "name": "ZE",
+          "publicationUri": "http://localhost/repo/ZE",
+          "published": true,
+          "requiresAuthentication": true,
+          "technology": "Python"
+        },
+        "requiresDist": null,
+        "requiresExternal": null,
+        "requiresPython": ">=3.9",
+        "permissions": [],
+        "submission": {
+          "id": 10,
+          "state": "ACCEPTED"
+        },
+        "summary": "Fundamental package for array computing in Python",
+        "technology": "Python",
+        "title": "Fundamental package for array computing in Python",
+        "url": "Homepage, https://numpy.org, Documentation, https://numpy.org/doc/, Source, https://github.com/numpy/numpy, Download, https://pypi.org/project/numpy/#files, Tracker, https://github.com/numpy/numpy/issues, Release notes, https://numpy.org/doc/stable/release",
+        "user": {
+          "email": "einstein@ldap.forumsys.com",
+          "id": 4,
+          "login": "einstein",
+          "name": "Albert Einstein"
+        },
+        "version": "1.26.4",
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8021/api/v2/manager/python/packages/10"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8021/api/v2/manager/python/packages"
+          },
+          {
+            "rel": "repository",
+            "href": "http://localhost:8021/api/v2/manager/python/repositories/16"
+          }
+        ]
+      },
+      {
+        "abiTag": null,
+        "active": true,
+        "author": "Travis E. Oliphant et al.",
+        "authorEmail": null,
+        "binary": false,
+        "builtTag": null,
+        "classifiers": "Development Status :: 5 - Production/Stable, Intended Audience :: Science/Research, Intended Audience :: Developers, Programming Language :: C, Programming Language :: Python, Programming Language :: Python :: 3, Programming Language :: Python :: 3.11, Programming Language :: Python :: 3.12, Programming Language :: Python :: 3.13, Programming Language :: Python :: 3.14, Programming Language :: Python :: 3 :: Only, Programming Language :: Python :: Implementation :: CPython, Topic :: Software Development, Topic :: Scientific/Engineering, Typing :: Typed, Operating System :: Microsoft :: Windows, Operating System :: POSIX, Operating System :: Unix, Operating System :: MacOS",
+        "compatibilityTags": null,
+        "deleted": false,
+        "description": "<h1 align=\"center\">\\n<img src=\"https://raw.githubusercontent.com/numpy/numpy/main/branding/logo/primary/numpylogo.svg\" width=\"300\">\\n</h1><br>\\n\\n\\n[![Powered by NumFOCUS](https://img.shields.io/badge/powered%20by-NumFOCUS-orange.svg?style=flat&colorA=E1523D&colorB=007D8A)](\\nhttps://numfocus.org)\\n[![PyPI Downloads](https://img.shields.io/pypi/dm/numpy.svg?label=PyPI%20downloads)](\\nhttps://pypi.org/project/numpy/)\\n[![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/numpy.svg?label=Conda%20downloads)](\\nhttps://anaconda.org/conda-forge/numpy)\\n[![Stack Overflow](https://img.shields.io/badge/stackoverflow-Ask%20questions-blue.svg)](\\nhttps://stackoverflow.com/questions/tagged/numpy)\\n[![Nature Paper](https://img.shields.io/badge/DOI-10.1038%2Fs41586--020--2649--2-blue)](\\nhttps://doi.org/10.1038/s41586-020-2649-2)\\n[![LFX Health Score](https://insights.linuxfoundation.org/api/badge/health-score?project=numpy)](https://insights.linuxfoundation.org/project/numpy)\\n[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/numpy/numpy/badge)](https://securityscorecards.dev/viewer/?uri=github.com/numpy/numpy)\\n[![Typing](https://img.shields.io/pypi/types/numpy)](https://pypi.org/project/numpy/)\\n\\n\\nNumPy is the fundamental package for scientific computing with Python.\\n\\n- **Website:** https://numpy.org\\n- **Documentation:** https://numpy.org/doc\\n- **Mailing list:** https://mail.python.org/mailman/listinfo/numpy-discussion\\n- **Source code:** https://github.com/numpy/numpy\\n- **Contributing:** https://numpy.org/devdocs/dev/index.html\\n- **Bug reports:** https://github.com/numpy/numpy/issues\\n- **Report a security vulnerability:** https://tidelift.com/docs/security\\n\\nIt provides:\\n\\n- a powerful N-dimensional array object\\n- sophisticated (broadcasting) functions\\n- tools for integrating C/C++ and Fortran code\\n- useful linear algebra, Fourier transform, and random number capabilities\\n\\nTesting:\\n\\nNumPy requires `pytest` and `hypothesis`.  Tests can then be run after installation with:\\n\\n    python -c \"import numpy, sys; sys.exit(numpy.test() is False)\"\\n\\nCode of Conduct\\n----------------------\\n\\nNumPy is a community-driven open source project developed by a diverse group of\\n[contributors](https://numpy.org/teams/). The NumPy leadership has made a strong\\ncommitment to creating an open, inclusive, and positive community. Please read the\\n[NumPy Code of Conduct](https://numpy.org/code-of-conduct/) for guidance on how to interact\\nwith others in a way that makes our community thrive.\\n\\nCall for Contributions\\n----------------------\\n\\nThe NumPy project welcomes your expertise and enthusiasm!\\n\\nSmall improvements or fixes are always appreciated. If you are considering larger contributions\\nto the source code, please contact us through the [mailing\\nlist](https://mail.python.org/mailman/listinfo/numpy-discussion) first.\\n\\nWriting code isn’t the only way to contribute to NumPy. You can also:\\n- review pull requests\\n- help us stay on top of new and old issues\\n- develop tutorials, presentations, and other educational materials\\n- maintain and improve [our website](https://github.com/numpy/numpy.org)\\n- develop graphic design for our brand assets and promotional materials\\n- translate website content\\n- help with outreach and onboard new contributors\\n- write grant proposals and help with other fundraising efforts\\n\\nFor more information about the ways you can contribute to NumPy, visit [our website](https://numpy.org/contribute/). \\nIf you’re unsure where to start or how your skills fit in, reach out! You can\\nask on the mailing list or here, on GitHub, by opening a new issue or leaving a\\ncomment on a relevant issue that is already open.\\n\\nOur preferred channels of communication are all public, but if you’d like to\\nspeak to us in private first, contact our community coordinators at\\nnumpy-team@googlegroups.com or on Slack (write numpy-team@googlegroups.com for\\nan invitation).\\n\\nWe also have a biweekly community call, details of which are announced on the\\nmailing list. You are very welcome to join.\\n\\nIf you are new to contributing to open source, [this\\nguide](https://opensource.guide/how-to-contribute/) helps explain why, what,\\nand how to successfully get involved.\\n",
+        "descriptionContentType": "text/markdown",
+        "hash": "6e504f7b16118198f138ef31ba24d985b124c2c469fe8467007cf30fd992f934",
+        "homePage": null,
+        "id": 11,
+        "keywords": null,
+        "license": "BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0",
+        "maintainer": null,
+        "maintainerEmail": null,
+        "name": "numpy",
+        "platform": null,
+        "platformTag": null,
+        "projectUrl": "homepage, https://numpy.org, documentation, https://numpy.org/doc/, source, https://github.com/numpy/numpy, download, https://pypi.org/project/numpy/#files, tracker, https://github.com/numpy/numpy/issues, release notes, https://numpy.org/doc/stable/release",
+        "providesExtra": null,
+        "pythonTag": null,
+        "repository": {
+          "id": 16,
+          "lastPublicationSuccessful": true,
+          "name": "ZE",
+          "publicationUri": "http://localhost/repo/ZE",
+          "published": true,
+          "requiresAuthentication": true,
+          "technology": "Python"
+        },
+        "requiresDist": null,
+        "requiresExternal": null,
+        "requiresPython": ">=3.11",
+        "permissions": [],
+        "submission": {
+          "id": 11,
+          "state": "ACCEPTED"
+        },
+        "summary": "Fundamental package for array computing in Python",
+        "technology": "Python",
+        "title": "Fundamental package for array computing in Python",
+        "url": "homepage, https://numpy.org, documentation, https://numpy.org/doc/, source, https://github.com/numpy/numpy, download, https://pypi.org/project/numpy/#files, tracker, https://github.com/numpy/numpy/issues, release notes, https://numpy.org/doc/stable/release",
+        "user": {
+          "email": "einstein@ldap.forumsys.com",
+          "id": 4,
+          "login": "einstein",
+          "name": "Albert Einstein"
+        },
+        "version": "2.4.0",
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8021/api/v2/manager/python/packages/11"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8021/api/v2/manager/python/packages"
+          },
+          {
+            "rel": "repository",
+            "href": "http://localhost:8021/api/v2/manager/python/repositories/16"
+          }
+        ]
+      },
+      {
+        "abiTag": null,
+        "active": true,
+        "author": "Derek Anderson",
+        "authorEmail": "derek@armyofevilrobots.com",
+        "binary": false,
+        "builtTag": null,
+        "classifiers": null,
+        "compatibilityTags": null,
+        "deleted": false,
+        "description": "UNKNOWN",
+        "descriptionContentType": "",
+        "hash": "ebb8949f7ad16c6d743b5c2da7d31bea06c81215532bb68b4179916157741549",
+        "homePage": "http://www.armyofevilrobots.com/",
+        "id": 12,
+        "keywords": null,
+        "license": "MIT",
+        "maintainer": null,
+        "maintainerEmail": null,
+        "name": "ArmyOfEvilRobots",
+        "platform": "UNKNOWN",
+        "platformTag": null,
+        "projectUrl": null,
+        "providesExtra": null,
+        "pythonTag": null,
+        "repository": {
+          "id": 16,
+          "lastPublicationSuccessful": true,
+          "name": "ZE",
+          "publicationUri": "http://localhost/repo/ZE",
+          "published": true,
+          "requiresAuthentication": true,
+          "technology": "Python"
+        },
+        "requiresDist": null,
+        "requiresExternal": null,
+        "requiresPython": null,
+        "permissions": [],
+        "submission": {
+          "id": 12,
+          "state": "ACCEPTED"
+        },
+        "summary": "Utility library. Contains per app cross platform config library tools for now.",
+        "technology": "Python",
+        "title": "Utility library. Contains per app cross platform config library tools for now.",
+        "url": "http://www.armyofevilrobots.com/",
+        "user": {
+          "email": "einstein@ldap.forumsys.com",
+          "id": 4,
+          "login": "einstein",
+          "name": "Albert Einstein"
+        },
+        "version": "0.4.1dev",
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8021/api/v2/manager/python/packages/12"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8021/api/v2/manager/python/packages"
+          },
+          {
+            "rel": "repository",
+            "href": "http://localhost:8021/api/v2/manager/python/repositories/16"
+          }
+        ]
+      }
+    ],
+    "page": {
+      "number": 0,
+      "size": 20,
+      "totalElements": 12,
+      "totalPages": 1
+    }
+  },
+  "message": "Your request has been processed successfully.",
+  "messageCode": "success.request.processed",
+  "status": "SUCCESS"
+}

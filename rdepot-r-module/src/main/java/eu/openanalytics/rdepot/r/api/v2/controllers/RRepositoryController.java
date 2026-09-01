@@ -26,24 +26,15 @@ import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2Controller;
 import eu.openanalytics.rdepot.base.api.v2.converters.exceptions.EntityResolutionException;
 import eu.openanalytics.rdepot.base.api.v2.dtos.RepositoryDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.ResponseDto;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.ApiException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.ApplyPatchException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.CreateException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.DeleteException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.MalformedPatchException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.NotAllowedInDeclarativeMode;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.RepositoryDeletionException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.RepositoryNotFound;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.SynchronizationNotFound;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.UserNotAuthorized;
+import eu.openanalytics.rdepot.base.api.v2.exceptions.*;
 import eu.openanalytics.rdepot.base.api.v2.resolvers.CommonPageableSortResolver;
 import eu.openanalytics.rdepot.base.api.v2.resolvers.DtoResolvedPageable;
 import eu.openanalytics.rdepot.base.api.v2.validation.PageableValidator;
-import eu.openanalytics.rdepot.base.entities.PackageSynchronizationStatus;
 import eu.openanalytics.rdepot.base.entities.RepositorySynchronizationStatus;
 import eu.openanalytics.rdepot.base.entities.Role;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
+import eu.openanalytics.rdepot.base.mirroring.MirrorSynchronizationStatusCoordinator;
 import eu.openanalytics.rdepot.base.mirroring.converters.PackageSynchronizationStatusDtoConverter;
 import eu.openanalytics.rdepot.base.mirroring.dtos.PackageSynchronizationStatusDto;
 import eu.openanalytics.rdepot.base.mirroring.dtos.RepositorySynchronizationStatusDto;
@@ -61,6 +52,8 @@ import eu.openanalytics.rdepot.r.api.v2.dtos.RRepositoryDto;
 import eu.openanalytics.rdepot.r.api.v2.hateoas.RRepositoryModelAssembler;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.mediator.deletion.RRepositoryDeleter;
+import eu.openanalytics.rdepot.r.mirroring.CranMirrorSynchronizationCoordinator;
+import eu.openanalytics.rdepot.r.mirroring.CranMirrorSynchronizationTask;
 import eu.openanalytics.rdepot.r.mirroring.CranMirrorSynchronizer;
 import eu.openanalytics.rdepot.r.services.RRepositoryService;
 import eu.openanalytics.rdepot.r.strategy.factory.RStrategyFactory;
@@ -69,6 +62,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.json.JsonException;
 import jakarta.json.JsonPatch;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -90,17 +84,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * REST controller implementation for R repositories.
@@ -114,17 +98,15 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
     private final UserService userService;
     private final RRepositoryValidator repositoryValidator;
     private final CranMirrorSynchronizer mirrorSynchronizer;
+    private final CranMirrorSynchronizationCoordinator synchronizationCoordinator;
     private final SecurityMediator securityMediator;
-
+    private final MirrorSynchronizationStatusCoordinator synchronizationStatusCoordinator;
     private final RStrategyFactory factory;
     private final RRepositoryDeleter deleter;
     private final PageableValidator pageableValidator;
     private final CommonPageableSortResolver pageableSortResolver;
     private final StrategyExecutor strategyExecutor;
     private final PackageSynchronizationStatusDtoConverter packageSynchronizationStatusDtoConverter;
-
-    @Value("${declarative}")
-    private String declarative;
 
     @Value("${deleting.repositories.enabled}")
     private Boolean repositoriesDeletionEnabled;
@@ -138,10 +120,12 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
             UserService userService,
             RRepositoryValidator repositoryValidator,
             CranMirrorSynchronizer cranMirrorSynchronizer,
+            CranMirrorSynchronizationCoordinator synchronizationCoordinator,
             RStrategyFactory factory,
             RRepositoryDeleter rRepositoryDeleter,
             SecurityMediator securityMediator,
             RRepositoryDtoConverter rRepositoryDtoConverter,
+            MirrorSynchronizationStatusCoordinator synchronizationStatusCoordinator,
             PageableValidator pageableValidator,
             CommonPageableSortResolver pageableSortResolver,
             StrategyExecutor strategyExecutor,
@@ -159,9 +143,11 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
         this.userService = userService;
         this.repositoryValidator = repositoryValidator;
         this.mirrorSynchronizer = cranMirrorSynchronizer;
+        this.synchronizationCoordinator = synchronizationCoordinator;
         this.factory = factory;
         this.deleter = rRepositoryDeleter;
         this.securityMediator = securityMediator;
+        this.synchronizationStatusCoordinator = synchronizationStatusCoordinator;
         this.pageableValidator = pageableValidator;
         this.pageableSortResolver = pageableSortResolver;
         this.strategyExecutor = strategyExecutor;
@@ -263,7 +249,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
         if (!userService.isAdmin(requester)) throw new UserNotAuthorized(messageSource, locale);
 
-        if (Boolean.parseBoolean(declarative)) throw new NotAllowedInDeclarativeMode(messageSource, locale);
+        checkDeclarative();
 
         try {
             RRepository repositoryEntity = dtoConverter.resolveDtoToEntity(repositoryDto);
@@ -308,7 +294,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
         if (!securityMediator.isAuthorizedToEdit(repository, requester))
             throw new UserNotAuthorized(messageSource, locale);
 
-        if (Boolean.parseBoolean(declarative)) throw new NotAllowedInDeclarativeMode(messageSource, locale);
+        checkDeclarative();
 
         if (repository.isDeleted())
             throw new EditingDeletedResourceException(
@@ -358,7 +344,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
         RRepository repository =
                 rRepositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
 
-        if (Boolean.parseBoolean(declarative)) throw new NotAllowedInDeclarativeMode(messageSource, locale);
+        checkDeclarative();
 
         if (!repositoriesDeletionEnabled) throw new RepositoryDeletionException(messageSource, locale);
 
@@ -383,7 +369,8 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
         RRepository repository =
                 rRepositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
 
-        mirrorSynchronizer.synchronizeAsync(repository, mirrorSynchronizer.findByRepository(repository));
+        synchronizationCoordinator.submitMirroringTask(
+                new CranMirrorSynchronizationTask(mirrorSynchronizer.findByRepository(repository), repository));
     }
 
     /**
@@ -404,27 +391,21 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
         if (!securityMediator.isAuthorizedToEdit(repository, requester))
             throw new UserNotAuthorized(messageSource, locale);
 
-        RepositorySynchronizationStatus repositoryStatus =
-                mirrorSynchronizer.getSynchronizationStatus(repository.getId());
-
-        if (repositoryStatus == null) throw new SynchronizationNotFound(messageSource, locale);
+        RepositorySynchronizationStatus repositoryStatus = synchronizationStatusCoordinator
+                .getSynchronizationStatus(repository)
+                .orElseThrow(() -> new SynchronizationNotFound(messageSource, locale));
+        final List<PackageSynchronizationStatusDto> dtos = new ArrayList<>(repositoryStatus.getPackages().stream()
+                .map(packageSynchronizationStatusDtoConverter::convertEntityToDto)
+                .toList());
+        if (dtos.isEmpty()) dtos.addAll(turnFailedMirrorsIntoPackages(repositoryStatus));
 
         int start = (int) pageable.getOffset();
-        int end = Math.min(
-                (start + pageable.getPageSize()), repositoryStatus.getPackages().size());
-
-        Page<PackageSynchronizationStatus> packagesStatusPage = new PageImpl<>(
-                repositoryStatus.getPackages().subList(start, end),
-                pageable,
-                repositoryStatus.getPackages().size());
+        int end = Math.min((start + pageable.getPageSize()), dtos.size());
 
         Page<PackageSynchronizationStatusDto> packagesStatusDtoPage =
-                packagesStatusPage.map(packageSynchronizationStatusDtoConverter::convertEntityToDto);
+                new PageImpl<>(dtos.subList(start, end), pageable, dtos.size());
 
-        PageMetadata page = new PageMetadata(
-                pageable.getPageSize(),
-                pageable.getPageNumber(),
-                repositoryStatus.getPackages().size());
+        PageMetadata page = new PageMetadata(pageable.getPageSize(), pageable.getPageNumber(), dtos.size());
         RepositorySynchronizationStatusDto repositoryStatusDto =
                 new RepositorySynchronizationStatusDto(repositoryStatus, packagesStatusDtoPage.getContent(), page);
 
@@ -441,7 +422,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
     @ResponseStatus(HttpStatus.OK)
     @Operation(operationId = "republishRRepository")
     public @ResponseBody ResponseEntity<?> republishRepository(@PathVariable("id") Integer id, Principal principal)
-            throws UserNotAuthorized, CreateException, RepositoryNotFound {
+            throws UserNotAuthorized, CreateException, RepositoryNotFound, NotAllowedInDeclarativeMode {
 
         User requester = userService
                 .findActiveByLogin(principal.getName())
@@ -461,6 +442,7 @@ public class RRepositoryController extends ApiV2Controller<RRepository, RReposit
             if (repository.getPublished()) {
                 strategy = factory.republishRepositoryStrategy(repository, requester);
             } else {
+                checkDeclarative();
                 RRepository publishedRepo = new RRepository(repository);
                 publishedRepo.setPublished(true);
                 strategy = factory.updateRepositoryStrategy(repository, requester, publishedRepo);

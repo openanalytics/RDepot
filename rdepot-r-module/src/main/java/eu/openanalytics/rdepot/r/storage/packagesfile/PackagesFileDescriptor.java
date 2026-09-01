@@ -24,7 +24,7 @@ package eu.openanalytics.rdepot.r.storage.packagesfile;
  * Represents PACKAGES file
  * @param remoteFolder directory on the remote repo
  *                     (e.g. <code>src/contrib</code> or <code>src/contrib/Archive</code>)
- * @param localPath exact location in the local storage
+ * @param localPath exact location in the local localStorage
  *                  (e.g. <code>
  *                      /opt/rdepot/repositories/5/generates/20250722/src/contrib/latest/PACKAGES
  *                  </code>)
@@ -38,7 +38,7 @@ public record PackagesFileDescriptor(String remoteFolder, String localPath, Stri
         final String[] tokens = localPath.split("/");
         if (tokens.length < 2) {
             throw new IllegalStateException("PACKAGES file has not been populated properly. "
-                    + "PACKAGES file path in local storage: " + localPath);
+                    + "PACKAGES file path in local localStorage: " + localPath);
         }
         final String filename = tokens[tokens.length - 1];
         final boolean isArchive = tokens[tokens.length - 2].equals("Archive");

@@ -1,31 +1,36 @@
 {
     "code": 201,
     "data": {
-        "requiresAuthentication": true,
-        "serverAddress": "http://oa-rdepot-repo:8080/python/testrepo13",
         "lastPublicationSuccessful": false,
+        "serverAddress": "http://oa-rdepot-repo:8080/python/testrepo13",
+        "allowedFiles": [
+            {
+                "extension": ".tar.gz",
+                "mimetype": "application/gzip"
+            },
+            {
+                "extension": ".tar.gz",
+                "mimetype": "application/x-gzip"
+            },
+            {
+                "extension": ".whl",
+                "mimetype": "application/octet-stream"
+            }
+        ],
         "published": false,
         "technology": "Python",
         "version": 0,
         "numberOfPackages": 0,
         "hashMethod": "SHA256",
         "deleted": false,
+        "permissions": [
+            "repository.delete.soft",
+            "repository.edit",
+            "repository.publish"            ,
+            "repository.submit.autoApprove"
+        ],
         "synchronizing": false,
         "name": "testrepo13",
-        "allowedFiles": [
-            {
-                "mimetype": "application/gzip",
-                "extension": ".tar.gz"
-            },
-            {
-                "mimetype": "application/x-gzip",
-                "extension": ".tar.gz"
-            },
-            {
-                "mimetype": "application/octet-stream",
-                "extension": ".whl"
-            }
-        ],
         "links": [
             {
                 "rel": "self",
@@ -47,6 +52,7 @@
             }
         ],
         "id": 13,
+        "requiresAuthentication": true,
         "publicationUri": "http://localhost/repo/testrepo13"
     },
     "messageCode": "success.resource.created",

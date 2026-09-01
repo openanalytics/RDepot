@@ -20,12 +20,13 @@
  */
 package eu.openanalytics.rdepot.base.storage.indexes;
 
-import eu.openanalytics.rdepot.base.entities.Hashable;
+import eu.openanalytics.rdepot.base.entities.HavingHashMethod;
 import eu.openanalytics.rdepot.base.entities.Package;
-import eu.openanalytics.rdepot.base.storage.Storage;
+import eu.openanalytics.rdepot.base.storage.LocalStorage;
+import eu.openanalytics.rdepot.base.storage.exceptions.CheckSumCalculationException;
+import eu.openanalytics.rdepot.base.storage.exceptions.ContentEditException;
 import eu.openanalytics.rdepot.base.storage.exceptions.Md5SumCalculationException;
 import eu.openanalytics.rdepot.base.storage.indexes.utils.PackagePublicationURIResolver;
-import java.io.IOException;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Entities;
@@ -35,9 +36,9 @@ public abstract class PackageIndexGenerator<P extends Package> extends IndexGene
     public PackageIndexGenerator(
             String headerTemplate,
             String anchorTemplate,
-            Storage<P> storage,
+            LocalStorage<P> localStorage,
             PackagePublicationURIResolver<P> packagePublicationURIResolver) {
-        super(headerTemplate, anchorTemplate, storage, packagePublicationURIResolver);
+        super(headerTemplate, anchorTemplate, localStorage, packagePublicationURIResolver);
     }
 
     protected String generateHeader(P packageBag) {
@@ -54,23 +55,23 @@ public abstract class PackageIndexGenerator<P extends Package> extends IndexGene
     }
 
     @Override
-    public String generateIndex(P packageBag, List<P> packages, String path) throws IOException {
+    public String generateIndex(P packageBag, List<P> packages, String path) throws ContentEditException {
         final String withHeaderResolved = generateHeader(packageBag);
-        storage.appendText(withHeaderResolved, path);
+        localStorage.appendText(withHeaderResolved, path);
         return addPackagesToList(packages, packageBag, path);
     }
 
-    public String generateIndex(P packageBag, String path) throws IOException {
+    public String generateIndex(P packageBag, String path) throws ContentEditException {
         return generateIndex(packageBag, List.of(), path);
     }
 
     @Override
-    protected String calculateChecksum(Hashable item, String path) throws IOException {
+    protected String calculateChecksum(HavingHashMethod item, String path) throws CheckSumCalculationException {
         try {
-            return storage.calculateMd5Sum(path);
+            return localStorage.calculateMd5Sum(path);
         } catch (Md5SumCalculationException e) {
             log.error(e.getMessage(), e);
-            throw new IOException(e);
+            throw new CheckSumCalculationException();
         }
     }
 }

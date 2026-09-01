@@ -1,0 +1,99 @@
+{
+    "status": "SUCCESS",
+    "code": 200,
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "data": {
+        "content": [
+            {
+                "active": true,
+                "createdOn": "1970-01-01T00:00:00Z",
+                "deleted": false,
+                "email": "einstein@ldap.forumsys.com",
+                "id": 4,
+                "lastLoggedInOn": "2026-08-19T11:47:20.695904Z",
+                "login": "einstein",
+                "name": "Albert Einstein",
+                "permissions": [
+                    "user.edit"
+                ],
+                "role": "admin",
+                "roleId": 4,
+                "userSettings": {
+                    "language": "pl-PL",
+                    "pageSize": 20,
+                    "theme": "light"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/users/4"
+                    },
+                    {
+                        "rel": "userList",
+                        "href": "http://localhost:8017/api/v2/manager/users"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/users/4",
+                        "modifiableProperties": [
+                            "active",
+                            "roleId"
+                        ],
+                        "type": "PATCH"
+                    }
+                ]
+            },
+            {
+                "active": false,
+                "createdOn": "1970-01-01T00:00:00Z",
+                "deleted": false,
+                "email": "admin@localhost",
+                "id": 8,
+                "lastLoggedInOn": "",
+                "login": "admin",
+                "name": "Local Admin User",
+                "permissions": [
+                    "user.activate",
+                    "user.delete.soft",
+                    "user.edit"
+                ],
+                "role": "admin",
+                "roleId": 4,
+                "userSettings": null,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/users/8"
+                    },
+                    {
+                        "rel": "userList",
+                        "href": "http://localhost:8017/api/v2/manager/users"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/users/8",
+                        "modifiableProperties": [
+                            "deleted",
+                            "active",
+                            "roleId"
+                        ],
+                        "type": "PATCH"
+                    }
+                ]
+            }
+        ],
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/users?role=admin&page=0&size=20&sort=id,asc"
+            }
+        ],
+        "page": {
+            "number": 0,
+            "size": 20,
+            "totalElements": 2,
+            "totalPages": 1
+        }
+    }
+}

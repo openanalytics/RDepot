@@ -14,6 +14,7 @@
             "email": "newton@ldap.forumsys.com"
         },
         "created": "2023-07-10T12:36:18Z",
+        "permissions": [],
         "changes": null,
         "links": [
             {
@@ -33,20 +34,21 @@
             "active": false,
             "description": null,
             "technology": "Python",
-            "descriptionContentType": "text/markdown",
             "repository": {
+                "lastPublicationSuccessful": true,
                 "name": "testrepo8",
                 "id": 8,
                 "published": true,
                 "technology": "Python",
                 "requiresAuthentication": true,
-                "publicationUri": "http://localhost/repo/testrepo8",
-                "lastPublicationSuccessful": true
+                "publicationUri": "http://localhost/repo/testrepo8"
             },
             "title": "Python HTTP for Humans.",
             "version": "2.28.1",
             "url": "Documentation, https://requests.readthedocs.io, Source, https://github.com/psf/requests",
             "deleted": true,
+            "descriptionContentType": "text/markdown",
+            "permissions": [],
             "binary": false,
             "name": "requests",
             "submission": {

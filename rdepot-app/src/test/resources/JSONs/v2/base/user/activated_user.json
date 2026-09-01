@@ -1,15 +1,22 @@
 {
     "code": 200,
     "data": {
+        "active": true,
+        "createdOn": "1970-01-01T00:00:00Z",
+        "deleted": false,
+        "email": "doe@localhost",
+        "id": 9,
+        "lastLoggedInOn": "2020-08-20T00:00:00Z",
+        "login": "doe",
+        "name": "John Doe",
+        "permissions": [
+            "user.deactivate",
+            "user.delete.soft",
+            "user.edit"
+        ],
         "role": "user",
         "roleId": 1,
-        "active": true,
-        "lastLoggedInOn": "2020-08-20",
-        "login": "doe",
-        "createdOn": "1970-01-01",
-        "deleted": false,
         "userSettings": null,
-        "name": "John Doe",
         "links": [
             {
                 "rel": "self",
@@ -20,20 +27,18 @@
                 "href": "http://localhost:8017/api/v2/manager/users"
             },
             {
-                "href": "http://localhost:8017/api/v2/manager/users/9",
                 "rel": "self",
-                "type": "PATCH",
+                "href": "http://localhost:8017/api/v2/manager/users/9",
                 "modifiableProperties": [
                     "deleted",
                     "active",
                     "roleId"
-                ]
+                ],
+                "type": "PATCH"
             }
-        ],
-        "id": 9,
-        "email": "doe@localhost"
+        ]
     },
-    "messageCode": "success.request.processed",
     "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
     "status": "SUCCESS"
 }

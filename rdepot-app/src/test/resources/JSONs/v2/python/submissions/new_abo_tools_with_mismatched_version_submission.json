@@ -1,43 +1,63 @@
 {
-    "status": "WARNING",
     "code": 201,
-    "message": "Your package has been submitted successfully but the filename has been changed due to a mismatch with the package metadata.",
-    "messageCode": "warning.file.name.has.been.updated",
     "data": {
+        "approver": {
+            "name": "Albert Einstein",
+            "id": 4,
+            "login": "einstein",
+            "email": "einstein@ldap.forumsys.com"
+        },
+        "submitter": {
+            "name": "Albert Einstein",
+            "id": 4,
+            "login": "einstein",
+            "email": "einstein@ldap.forumsys.com"
+        },
+        "permissions": [],
+        "changes": "",
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/python/submissions/48"
+            },
+            {
+                "rel": "submissionList",
+                "href": "http://localhost:8017/api/v2/manager/python/submissions"
+            }
+        ],
         "id": 48,
+        "state": "ACCEPTED",
+        "technology": "Python",
         "packageBag": {
-            "id": 48,
-            "user": {
-                "id": 5,
-                "name": "Nikola Tesla",
-                "login": "tesla",
-                "email": "tesla@ldap.forumsys.com"
-            },
+            "author": "UNKNOWN",
+            "active": true,
+            "description": "Description\\n===========\\n\\nTools for ABO analys",
+            "technology": "Python",
             "repository": {
-                "id": 8,
+                "lastPublicationSuccessful": true,
                 "name": "testrepo8",
-                "publicationUri": "http://localhost/repo/testrepo8",
+                "id": 8,
                 "published": true,
-                "requiresAuthentication": true,
                 "technology": "Python",
-                "lastPublicationSuccessful": true
+                "requiresAuthentication": true,
+                "publicationUri": "http://localhost/repo/testrepo8"
             },
+            "title": "UNKNOWN",
+            "version": "1.0",
+            "url": "UNKNOWN",
+            "deleted": false,
+            "descriptionContentType": "",
+            "permissions": [
+                "package.deactivate",
+                "package.delete.soft",
+                "package.edit"
+            ],
+            "binary": false,
+            "name": "abo_tools",
             "submission": {
                 "id": 48,
                 "state": "ACCEPTED"
             },
-            "name": "abo_tools",
-            "version": "1.0",
-            "source": "/opt/rdepot/repositories/8/65337067/abo_tools-1.0.tar.gz",
-            "active": true,
-            "deleted": false,
-            "technology": "Python",
-            "binary": false,
-            "description": "Description\\n===========\\n\\nTools for ABO analys",
-            "author": "UNKNOWN",
-            "title": "UNKNOWN",
-            "url": "UNKNOWN",
-            "descriptionContentType": "",
             "links": [
                 {
                     "rel": "self",
@@ -61,33 +81,17 @@
                     "href": "http://localhost:8017/api/v2/manager/python/packages/48",
                     "type": "DELETE"
                 }
-            ]
-        },
-        "submitter": {
-            "id": 4,
-            "name": "Albert Einstein",
-            "login": "einstein",
-            "email": "einstein@ldap.forumsys.com"
-        },
-        "approver": {
-            "id": 4,
-            "name": "Albert Einstein",
-            "login": "einstein",
-            "email": "einstein@ldap.forumsys.com"
-        },
-        "changes": "",
-        "state": "ACCEPTED",
-        "created": "2025-05-07T13:04:24.360213799Z",
-        "technology": "Python",
-        "links": [
-            {
-                "rel": "self",
-                "href": "http://localhost:8017/api/v2/manager/python/submissions/48"
-            },
-            {
-                "rel": "submissionList",
-                "href": "http://localhost:8017/api/v2/manager/python/submissions"
+            ],
+            "id": 48,
+            "user": {
+                "name": "Nikola Tesla",
+                "id": 5,
+                "login": "tesla",
+                "email": "tesla@ldap.forumsys.com"
             }
-        ]
-    }
+        }
+    },
+    "messageCode": "warning.file.name.has.been.updated",
+    "message": "Your package has been submitted successfully but the filename has been changed due to a mismatch with the package metadata.",
+    "status": "WARNING"
 }

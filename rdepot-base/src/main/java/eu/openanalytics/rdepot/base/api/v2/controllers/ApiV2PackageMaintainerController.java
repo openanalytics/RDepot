@@ -26,18 +26,11 @@ import eu.openanalytics.rdepot.base.api.v2.converters.PackageMaintainerDtoConver
 import eu.openanalytics.rdepot.base.api.v2.converters.exceptions.EntityResolutionException;
 import eu.openanalytics.rdepot.base.api.v2.dtos.PackageMaintainerDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.ResponseDto;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.ApiException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.ApplyPatchException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.CreateException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.DeleteException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.MalformedPatchException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.PackageMaintainerNotFound;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.UserNotAuthorized;
+import eu.openanalytics.rdepot.base.api.v2.exceptions.*;
 import eu.openanalytics.rdepot.base.api.v2.hateoas.PackageMaintainerModelAssembler;
-import eu.openanalytics.rdepot.base.api.v2.resolvers.CommonPageableSortResolver;
-import eu.openanalytics.rdepot.base.api.v2.resolvers.DtoResolvedPageable;
-import eu.openanalytics.rdepot.base.api.v2.validation.PageableValidator;
+import eu.openanalytics.rdepot.base.api.v2.hateoas.PackageMaintainerQueryDSLTupleModelAssembler;
 import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
+import eu.openanalytics.rdepot.base.entities.PackageMaintainerQueryDSLTuple;
 import eu.openanalytics.rdepot.base.entities.Role;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.mediator.deletion.PackageMaintainerDeleter;
@@ -52,41 +45,32 @@ import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.exceptions.EditingDeletedResourceException;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.factory.StrategyFactory;
-import eu.openanalytics.rdepot.base.utils.specs.PackageMaintainerSpecs;
-import eu.openanalytics.rdepot.base.utils.specs.SpecificationUtils;
+import eu.openanalytics.rdepot.base.utils.repositories.PackageMaintainerQueryRepository;
 import eu.openanalytics.rdepot.base.validation.PackageMaintainerValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.json.JsonException;
 import jakarta.json.JsonPatch;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * REST Controller implementation for {@link PackageMaintainer Package Maintainers}.
@@ -103,9 +87,10 @@ public class ApiV2PackageMaintainerController extends ApiV2Controller<PackageMai
     private final RepositoryMaintainerService repositoryMaintainerService;
     private final PackageMaintainerDeleter deleter;
     private final SecurityMediator securityMediator;
-    private final PageableValidator pageableValidator;
-    private final CommonPageableSortResolver pageableSortResolver;
     private final StrategyExecutor strategyExecutor;
+    private final PackageMaintainerQueryRepository queryRepository;
+    private final PackageMaintainerQueryDSLTupleModelAssembler packageMaintainerQueryDSLTupleModelAssembler;
+    private final PagedResourcesAssembler<PackageMaintainerQueryDSLTuple> pmQueryDSLTuplePagedResourcesAssembler;
 
     public ApiV2PackageMaintainerController(
             MessageSource messageSource,
@@ -120,9 +105,11 @@ public class ApiV2PackageMaintainerController extends ApiV2Controller<PackageMai
             RepositoryMaintainerService repositoryMaintainerService,
             SecurityMediator securityMediator,
             PackageMaintainerDtoConverter packageMaintainerDtoConverter,
-            PageableValidator pageableValidator,
-            CommonPageableSortResolver pageableSortResolver,
-            StrategyExecutor strategyExecutor) {
+            StrategyExecutor strategyExecutor,
+            PackageMaintainerQueryRepository queryRepository,
+            PagedResourcesAssembler<PackageMaintainerQueryDSLTuple>
+                    packageMaintainerQueryDSLTuplePagedResourcesAssembler,
+            PackageMaintainerQueryDSLTupleModelAssembler packageMaintainerQueryDSLTupleModelAssembler) {
 
         super(
                 messageSource,
@@ -140,9 +127,10 @@ public class ApiV2PackageMaintainerController extends ApiV2Controller<PackageMai
         this.deleter = packageMaintainerDeleter;
         this.repositoryMaintainerService = repositoryMaintainerService;
         this.securityMediator = securityMediator;
-        this.pageableValidator = pageableValidator;
-        this.pageableSortResolver = pageableSortResolver;
         this.strategyExecutor = strategyExecutor;
+        this.queryRepository = queryRepository;
+        this.packageMaintainerQueryDSLTupleModelAssembler = packageMaintainerQueryDSLTupleModelAssembler;
+        this.pmQueryDSLTuplePagedResourcesAssembler = packageMaintainerQueryDSLTuplePagedResourcesAssembler;
     }
 
     /**
@@ -170,47 +158,33 @@ public class ApiV2PackageMaintainerController extends ApiV2Controller<PackageMai
                 .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
 
-        final DtoResolvedPageable resolvedPageable = pageableSortResolver.resolve(pageable);
-        pageableValidator.validate(PackageMaintainerDto.class, resolvedPageable);
-
-        Specification<PackageMaintainer> specification = null;
-
-        if (deleted.isPresent()) {
-            specification = PackageMaintainerSpecs.isDeleted(deleted.get());
-        }
+        List<String> allowedRepositories = new ArrayList<>();
 
         if (requester.getRole().getValue() == Role.VALUE.REPOSITORYMAINTAINER) {
-            List<String> repos = repositoryMaintainerService.findByUserWithoutDeleted(requester).stream()
+            allowedRepositories = repositoryMaintainerService.findByUserWithoutDeleted(requester).stream()
                     .map(m -> m.getRepository().getName())
                     .toList();
-
-            Specification<PackageMaintainer> allowedRepositories = PackageMaintainerSpecs.ofRepository(repos);
-            specification = SpecificationUtils.andComponent(specification, allowedRepositories);
         }
 
-        if (Objects.nonNull(repositories)) {
-            specification =
-                    SpecificationUtils.andComponent(specification, PackageMaintainerSpecs.ofRepository(repositories));
-        }
+        List<PackageMaintainerQueryDSLTuple> maintainersList = queryRepository.findMaintainers(
+                deleted.orElse(null), technologies, repositories, allowedRepositories, search.orElse(""), pageable);
 
-        if (Objects.nonNull(technologies)) {
-            specification =
-                    SpecificationUtils.andComponent(specification, PackageMaintainerSpecs.ofTechnology(technologies));
-        }
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), maintainersList.size());
 
-        if (search.isPresent()) {
-            specification = SpecificationUtils.andComponent(
-                    specification,
-                    PackageMaintainerSpecs.byMaintainer(search.get())
-                            .or(PackageMaintainerSpecs.ofPackageName(search.get())));
-        }
+        Page<PackageMaintainerQueryDSLTuple> page =
+                new PageImpl<>(maintainersList.subList(start, end), pageable, maintainersList.size());
+        return handleSuccessForPagedTupleCollection(page, requester);
+    }
 
-        if (specification != null) {
-            return handleSuccessForPagedCollection(
-                    packageMaintainerService.findAllBySpecification(specification, resolvedPageable), requester);
-        } else {
-            return handleSuccessForPagedCollection(packageMaintainerService.findAll(resolvedPageable), requester);
-        }
+    private @ResponseBody ResponseDto<PagedModel<EntityModel<PackageMaintainerDto>>>
+            handleSuccessForPagedTupleCollection(Page<PackageMaintainerQueryDSLTuple> items, User user) {
+        final RepresentationModelAssembler<PackageMaintainerQueryDSLTuple, EntityModel<PackageMaintainerDto>>
+                singleModelAssembler = packageMaintainerQueryDSLTupleModelAssembler.assemblerWithUser(user);
+        final PagedModel<EntityModel<PackageMaintainerDto>> pagedItems =
+                pmQueryDSLTuplePagedResourcesAssembler.toModel(items, singleModelAssembler);
+
+        return ResponseDto.generateSuccessBody(messageSource, locale, pagedItems);
     }
 
     /**

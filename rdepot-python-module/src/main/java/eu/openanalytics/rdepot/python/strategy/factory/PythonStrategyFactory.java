@@ -37,8 +37,9 @@ import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.mediator.deletion.PythonPackageDeleter;
 import eu.openanalytics.rdepot.python.services.PythonPackageService;
 import eu.openanalytics.rdepot.python.services.PythonRepositoryService;
-import eu.openanalytics.rdepot.python.storage.implementations.fs.PythonFSPopulator;
-import eu.openanalytics.rdepot.python.storage.implementations.fs.PythonLocalStorage;
+import eu.openanalytics.rdepot.python.storage.PythonPersistentStorage;
+import eu.openanalytics.rdepot.python.storage.implementations.fs.PythonFSLocalStorage;
+import eu.openanalytics.rdepot.python.storage.population.implementations.PythonFSPopulator;
 import eu.openanalytics.rdepot.python.strategy.create.PythonRepositoryCreateStrategy;
 import eu.openanalytics.rdepot.python.strategy.republish.PythonRepositoryRepublishStrategy;
 import eu.openanalytics.rdepot.python.strategy.update.PythonPackageUpdateStrategy;
@@ -63,10 +64,11 @@ public class PythonStrategyFactory {
     private final BestMaintainerChooser bestMaintainerChooser;
     private final EmailService emailService;
     private final SecurityMediator securityMediator;
-    private final PythonLocalStorage storage;
+    private final PythonFSLocalStorage storage;
     private final PythonFSPopulator populator;
     private final PythonRepositorySynchronizer repositorySynchronizer;
     private final PythonPackageDeleter packageDeleter;
+    private final PythonPersistentStorage pythonPersistentStorage;
 
     public Strategy<Submission> uploadPackageStrategy(PackageUploadRequest<PythonRepository> request, User requester) {
         return new PythonPackageUploadStrategy(
@@ -84,7 +86,8 @@ public class PythonStrategyFactory {
                 securityMediator,
                 packageDeleter,
                 populator,
-                packageMaintainerService);
+                packageMaintainerService,
+                pythonPersistentStorage);
     }
 
     public Strategy<PythonPackage> updatePackageStrategy(
@@ -111,12 +114,12 @@ public class PythonStrategyFactory {
                 requester,
                 updatedResource,
                 packageService,
-                populator,
                 emailService,
                 securityMediator,
                 repositorySynchronizer,
                 repository,
-                repositoryService);
+                repositoryService,
+                pythonPersistentStorage);
     }
 
     public Strategy<PythonRepository> createRepositoryStrategy(PythonRepository resource, User requester) {
@@ -137,7 +140,8 @@ public class PythonStrategyFactory {
                 repositoryMaintainerService,
                 packageMaintainerService,
                 packageService,
-                storage);
+                storage,
+                pythonPersistentStorage);
     }
 
     public Strategy<PythonRepository> republishRepositoryStrategy(PythonRepository resource, User requester) {

@@ -1,0 +1,62 @@
+{
+    "status": "SUCCESS",
+    "code": 200,
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "data": {
+        "allowedFiles": [
+            {
+                "mimetype": "application/gzip",
+                "extension": ".tar.gz"
+            },
+            {
+                "mimetype": "application/x-gzip",
+                "extension": ".tar.gz"
+            },
+            {
+                "mimetype": "application/octet-stream",
+                "extension": ".whl"
+            }
+        ],
+        "deleted": false,
+        "hashMethod": "SHA256",
+        "id": 9,
+        "lastModifiedTimestamp": "2024-04-27T12:30:25Z",
+        "lastPublicationSuccessful": false,
+        "lastPublicationTimestamp": "",
+        "name": "testrepo9",
+        "numberOfPackages": 3,
+        "permissions": [
+            "repository.edit",
+            "repository.publish",
+            "repository.submit.autoApprove"
+        ],
+        "publicationUri": "http://localhost/repo/testrepo9",
+        "published": false,
+        "requiresAuthentication": true,
+        "serverAddress": "http://oa-rdepot-repo:8080/testrepo9",
+        "synchronizing": false,
+        "technology": "Python",
+        "version": 4,
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/python/repositories/9"
+            },
+            {
+                "rel": "repositoryList",
+                "href": "http://localhost:8017/api/v2/manager/python/repositories"
+            },
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/python/repositories/9",
+                "type": "PATCH"
+            },
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/python/repositories/9",
+                "type": "DELETE"
+            }
+        ]
+    }
+}

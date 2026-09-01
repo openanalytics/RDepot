@@ -22,12 +22,7 @@ package eu.openanalytics.rdepot.base.entities;
 
 import eu.openanalytics.rdepot.base.entities.enums.ResourceType;
 import eu.openanalytics.rdepot.base.technology.Technology;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -61,13 +56,6 @@ public abstract class Resource {
 
     @Column(name = "deleted", nullable = false)
     protected Boolean deleted = false;
-
-    protected Resource(Resource that) {
-        this.technology = that.technology;
-        this.id = that.id;
-        this.resourceType = that.resourceType;
-        this.deleted = that.deleted;
-    }
 
     protected Resource(Technology technology, ResourceType resourceType) {
         this.technology = technology;

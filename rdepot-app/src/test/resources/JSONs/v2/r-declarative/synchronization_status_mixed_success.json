@@ -5,16 +5,27 @@
     "messageCode": "success.request.processed",
     "data": {
         "repository": {
-            "id": 18,
+            "id": 20,
             "name": "F",
             "publicationUri": "http://localhost/repo/F",
             "published": true,
             "requiresAuthentication": true,
             "technology": "R",
-            "lastPublicationSuccessful": false
+            "lastPublicationSuccessful": true
         },
         "status": "MIXED SUCCESS",
         "packages": [
+            {
+                "name": "Ghost",
+                "version": "0.1.0",
+                "status": "ERROR",
+                "error": "error.mirror.index.download",
+                "mirror": {
+                    "name": "FailTest",
+                    "uri": "http://just.test.address",
+                    "type": "tarball"
+                }
+            },
             {
                 "name": "Achilles",
                 "version": "1.7.2",
@@ -34,17 +45,6 @@
                 "mirror": {
                     "name": "CRAN",
                     "uri": "https://cran.r-project.org",
-                    "type": "tarball"
-                }
-            },
-            {
-                "name": "Ghost",
-                "version": "0.1.0",
-                "status": "ERROR",
-                "error": "could.not.download.packages.file",
-                "mirror": {
-                    "name": "FailTest",
-                    "uri": "http://just.test.address",
                     "type": "tarball"
                 }
             }

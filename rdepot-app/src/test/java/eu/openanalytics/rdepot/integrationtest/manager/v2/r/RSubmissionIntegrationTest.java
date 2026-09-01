@@ -107,8 +107,8 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
                 .asByteArray();
 
         File file = new File(testData.getPdfPath() + "/" + testData.getPackageNameToDownload() + ".pdf");
-        byte[] expectedpdf = readFileToByteArray(file);
-        Assertions.assertTrue(expectedpdf.length + 1000 > pdf.length, "Manual PDFs are too different");
+        byte[] expectedPdf = readFileToByteArray(file);
+        Assertions.assertTrue(expectedPdf.length + 1000 > pdf.length, "Manual PDFs are too different");
     }
 
     @Test
@@ -351,7 +351,10 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
         testEndpoint(requestBody);
 
         final Process process = new ProcessBuilder(
-                        "/bin/bash", "-c", "src/test/resources/scripts/checkIfPublishedBinaryPackageCanBeInstalled.sh")
+                        "/usr/bin/env",
+                        "bash",
+                        "-c",
+                        "src/test/resources/scripts/checkIfPublishedBinaryPackageCanBeInstalled.sh")
                 .redirectErrorStream(true)
                 .start();
         final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -516,7 +519,7 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
         requestBody = TestRequestBody.builder()
                 .requestType(RequestType.GET_OTHER_RESOURCE)
                 .path("/api/v2/manager/packages")
-                .urlSuffix("?sort=id,asc&search=A3")
+                .urlSuffix("?search=A3&sort=id,asc")
                 .statusCode(200)
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
@@ -1051,7 +1054,7 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
                 .token(PACKAGEMAINTAINER_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getPostEndpointNewEventsAmount())
                 .expectedJsonPath("/v2/r/submission/new_submission_as_package_maintainer.json")
-                .expectedEventsJson(EVENTS_PATH + "new_submission_as_package_maintainer.json")
+                .expectedEventsJson(EVENTS_PATH + "new_submission_as_package_maintainer_event.json")
                 .submissionMultipartBody(body)
                 .build();
         testEndpoint(requestBody);

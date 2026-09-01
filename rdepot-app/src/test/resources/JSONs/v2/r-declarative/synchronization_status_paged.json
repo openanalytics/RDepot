@@ -1,48 +1,48 @@
 {
-    "code": 200,
-    "data": {
-        "packages": [
-            {
-                "error": null,
-                "mirror": {
-                    "name": "CD",
-                    "type": "tarball",
-                    "uri": "http://oa-rdepot-proxy/repo/CD"
-                },
-                "name": "plotly",
-                "status": "SUCCESS",
-                "version": null
-            },
-            {
-                "error": null,
-                "mirror": {
-                    "name": "Bioconductor-3.12",
-                    "type": "tarball",
-                    "uri": "http://archive.bioconductor.org.s3-website-us-east-1.amazonaws.com/packages/3.12/bioc"
-                },
-                "name": "annotate",
-                "status": "SUCCESS",
-                "version": "1.68.0"
-            }
-        ],
-        "page": {
-            "number": 1,
-            "size": 2,
-            "totalElements": 4,
-            "totalPages": 2
+  "status": "SUCCESS",
+  "code": 200,
+  "message": "Your request has been processed successfully.",
+  "messageCode": "success.request.processed",
+  "data": {
+    "packages": [
+      {
+        "error": null,
+        "mirror": {
+          "name": "CD",
+          "type": "tarball",
+          "uri": "http://oa-rdepot-proxy/repo/CD"
         },
-        "repository": {
-            "id": 3,
-            "lastPublicationSuccessful": false,
-            "name": "D",
-            "publicationUri": "http://localhost/repo/D",
-            "published": false,
-            "requiresAuthentication": true,
-            "technology": "R"
+        "name": "Banksy",
+        "status": "SUCCESS",
+        "version": null
+      },
+      {
+        "error": null,
+        "mirror": {
+          "name": "CD",
+          "type": "tarball",
+          "uri": "http://oa-rdepot-proxy/repo/CD"
         },
-        "status": "SUCCESS"
+        "name": "plotly",
+        "status": "SUCCESS",
+        "version": null
+      }
+    ],
+    "page": {
+      "number": 1,
+      "size": 2,
+      "totalElements": 4,
+      "totalPages": 2
     },
-    "message": "Your request has been processed successfully.",
-    "messageCode": "success.request.processed",
+    "repository": {
+      "id": 3,
+      "lastPublicationSuccessful": false,
+      "name": "D",
+      "publicationUri": "http://localhost/repo/D",
+      "published": false,
+      "requiresAuthentication": true,
+      "technology": "R"
+    },
     "status": "SUCCESS"
+  }
 }

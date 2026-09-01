@@ -25,7 +25,7 @@ import eu.openanalytics.rdepot.base.api.v2.converters.DtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.dtos.AccessTokenDto;
 import eu.openanalytics.rdepot.base.entities.AccessToken;
 import eu.openanalytics.rdepot.base.entities.User;
-import eu.openanalytics.rdepot.base.service.UserService;
+import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,23 +42,24 @@ import org.springframework.stereotype.Component;
 @Component
 public class AccessTokenModelAssembler extends AbstractRoleAwareModelAssembler<AccessToken, AccessTokenDto> {
 
-    private final UserService userService;
+    private final SecurityMediator securityMediator;
 
     @Autowired
-    public AccessTokenModelAssembler(DtoConverter<AccessToken, AccessTokenDto> dtoConverter, UserService userService) {
+    public AccessTokenModelAssembler(
+            DtoConverter<AccessToken, AccessTokenDto> dtoConverter, SecurityMediator securityMediator) {
         super(dtoConverter, ApiV2AccessTokenController.class, "accessToken", Optional.empty());
-        this.userService = userService;
+        this.securityMediator = securityMediator;
     }
 
     private AccessTokenModelAssembler(
-            DtoConverter<AccessToken, AccessTokenDto> dtoConverter, UserService userService, User user) {
+            DtoConverter<AccessToken, AccessTokenDto> dtoConverter, SecurityMediator securityMediator, User user) {
         super(dtoConverter, ApiV2AccessTokenController.class, "accessToken", Optional.of(user));
-        this.userService = userService;
+        this.securityMediator = securityMediator;
     }
 
     @Override
     public RepresentationModelAssembler<AccessToken, EntityModel<AccessTokenDto>> assemblerWithUser(User user) {
-        return new AccessTokenModelAssembler(dtoConverter, userService, user);
+        return new AccessTokenModelAssembler(dtoConverter, securityMediator, user);
     }
 
     @Override
@@ -74,5 +75,15 @@ public class AccessTokenModelAssembler extends AbstractRoleAwareModelAssembler<A
     @Override
     protected Class<?> getExtensionControllerClass(AccessToken entity) {
         return ApiV2AccessTokenController.class;
+    }
+
+    @Override
+    public EntityModel<AccessTokenDto> toModel(AccessToken entity, User user) {
+
+        final AccessTokenDto dto = dtoConverter.convertEntityToDto(entity);
+
+        dto.setPermissions(securityMediator.getPermissions(entity, user));
+
+        return EntityModel.of(dto, generateRoleBasedAvailableLinksForEntity(entity, user));
     }
 }

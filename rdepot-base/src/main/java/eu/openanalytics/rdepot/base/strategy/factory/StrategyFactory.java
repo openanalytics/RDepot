@@ -20,28 +20,14 @@
  */
 package eu.openanalytics.rdepot.base.strategy.factory;
 
-import eu.openanalytics.rdepot.base.entities.AccessToken;
-import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
-import eu.openanalytics.rdepot.base.entities.RepositoryMaintainer;
-import eu.openanalytics.rdepot.base.entities.User;
-import eu.openanalytics.rdepot.base.entities.UserSettings;
+import eu.openanalytics.rdepot.base.entities.*;
 import eu.openanalytics.rdepot.base.mediator.BestMaintainerChooser;
-import eu.openanalytics.rdepot.base.service.AccessTokenService;
-import eu.openanalytics.rdepot.base.service.CommonPackageService;
-import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
-import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
-import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
-import eu.openanalytics.rdepot.base.service.UserService;
-import eu.openanalytics.rdepot.base.service.UserSettingsService;
+import eu.openanalytics.rdepot.base.service.*;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.create.CreateAccessTokenStrategy;
 import eu.openanalytics.rdepot.base.strategy.create.CreatePackageMaintainerStrategy;
 import eu.openanalytics.rdepot.base.strategy.create.CreateRepositoryMaintainerStrategy;
-import eu.openanalytics.rdepot.base.strategy.update.UpdateAccessTokenStrategy;
-import eu.openanalytics.rdepot.base.strategy.update.UpdatePackageMaintainerStrategy;
-import eu.openanalytics.rdepot.base.strategy.update.UpdateRepositoryMaintainerStrategy;
-import eu.openanalytics.rdepot.base.strategy.update.UpdateUserSettingsStrategy;
-import eu.openanalytics.rdepot.base.strategy.update.UpdateUserStrategy;
+import eu.openanalytics.rdepot.base.strategy.update.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 

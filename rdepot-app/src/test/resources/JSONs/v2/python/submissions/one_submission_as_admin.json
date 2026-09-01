@@ -14,6 +14,7 @@
             "email": "einstein@ldap.forumsys.com"
         },
         "created": "2023-07-10T12:22:15Z",
+        "permissions": [],
         "changes": null,
         "links": [
             {
@@ -33,20 +34,25 @@
             "active": true,
             "description": null,
             "technology": "Python",
-            "descriptionContentType": "text/markdown",
             "repository": {
+                "lastPublicationSuccessful": false,
                 "name": "testrepo9",
                 "id": 9,
                 "published": false,
                 "technology": "Python",
                 "requiresAuthentication": true,
-                "publicationUri": "http://localhost/repo/testrepo9",
-                "lastPublicationSuccessful": false
+                "publicationUri": "http://localhost/repo/testrepo9"
             },
             "title": "Powerful data structures for data analysis, time series, and statistics",
             "version": "2.0.1",
             "url": "homepage, https://pandas.pydata.org, documentation, https://pandas.pydata.org/docs/, repository, https://github.com/pandas-dev/pandas",
             "deleted": false,
+            "descriptionContentType": "text/markdown",
+            "permissions": [
+                "package.deactivate",
+                "package.delete.soft",
+                "package.edit"
+            ],
             "binary": false,
             "name": "pandas",
             "submission": {
@@ -68,12 +74,12 @@
                 },
                 {
                     "rel": "self",
-                    "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/40",
+                    "href": "http://localhost:8017/api/v2/manager/python/packages/40",
                     "type": "PATCH"
                 },
                 {
                     "rel": "self",
-                    "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/40",
+                    "href": "http://localhost:8017/api/v2/manager/python/packages/40",
                     "type": "DELETE"
                 }
             ],

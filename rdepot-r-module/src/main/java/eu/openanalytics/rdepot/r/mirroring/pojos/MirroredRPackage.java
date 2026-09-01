@@ -21,7 +21,6 @@
 package eu.openanalytics.rdepot.r.mirroring.pojos;
 
 import eu.openanalytics.rdepot.base.mirroring.pojos.MirroredPackage;
-import eu.openanalytics.rdepot.r.entities.RPackage;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -33,11 +32,9 @@ public class MirroredRPackage extends MirroredPackage {
 
     private Boolean generateManuals;
 
-    public RPackage toPackageEntity() {
-        RPackage entity = new RPackage();
-        entity.setName(name);
-        entity.setVersion(version);
-        entity.setGenerateManuals(generateManuals);
-        return entity;
+    public MirroredRPackage(String name, String version, Boolean generateManuals) {
+        this.name = name;
+        this.version = version;
+        this.generateManuals = generateManuals;
     }
 }

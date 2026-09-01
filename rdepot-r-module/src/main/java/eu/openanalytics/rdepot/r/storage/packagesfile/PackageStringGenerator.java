@@ -20,14 +20,14 @@
  */
 package eu.openanalytics.rdepot.r.storage.packagesfile;
 
-import eu.openanalytics.rdepot.base.storage.Storage;
+import eu.openanalytics.rdepot.base.storage.LocalStorage;
+import eu.openanalytics.rdepot.base.storage.exceptions.ContentEditException;
 import eu.openanalytics.rdepot.base.storage.exceptions.DeleteFileException;
 import eu.openanalytics.rdepot.base.storage.exceptions.GzipFileException;
 import eu.openanalytics.rdepot.r.entities.RPackage;
-import eu.openanalytics.rdepot.r.storage.BinLocation;
-import eu.openanalytics.rdepot.r.storage.BinLocationSet;
+import eu.openanalytics.rdepot.r.storage.binaries.BinLocation;
+import eu.openanalytics.rdepot.r.storage.binaries.BinLocationSet;
 import eu.openanalytics.rdepot.r.storage.exceptions.GeneratePackagesFileException;
-import java.io.IOException;
 import java.nio.file.FileSystems;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +43,7 @@ public class PackageStringGenerator {
 
     private static final String PACKAGES = "PACKAGES";
     private static final String separator = FileSystems.getDefault().getSeparator();
-    private final Storage<RPackage> storage;
+    private final LocalStorage<RPackage> localStorage;
 
     private String generatePackageString(RPackage packageBag) {
         final StringBuilder packageString = new StringBuilder(500);
@@ -92,7 +92,7 @@ public class PackageStringGenerator {
                     .append(separateLines(packageBag.getPriority(), lineSeparator))
                     .append(lineSeparator);
         packageString
-                .append("MD5Sum: ")
+                .append("MD5sum: ")
                 .append(separateLines(packageBag.getMd5sum(), lineSeparator))
                 .append(lineSeparator);
         packageString
@@ -122,9 +122,9 @@ public class PackageStringGenerator {
 
     private void createAndOrAppendTextToPackagesFile(String content, String path) throws GeneratePackagesFileException {
         try {
-            storage.appendText(content, path);
-            storage.gzipFile(path);
-        } catch (IOException | GzipFileException e) {
+            localStorage.appendText(content, path);
+            localStorage.gzipFile(path);
+        } catch (ContentEditException | GzipFileException e) {
             log.error("{}: {}", e.getClass(), e.getMessage());
             throw new GeneratePackagesFileException();
         }
@@ -141,7 +141,7 @@ public class PackageStringGenerator {
             final String path = location.location() + separator + PACKAGES;
             try {
                 log.debug("Removing old PACKAGES file: {}", path);
-                storage.removeFileIfExists(path);
+                localStorage.removeFileIfExists(path);
             } catch (DeleteFileException e) {
                 log.error(e.getMessage(), e);
                 throw new GeneratePackagesFileException();
@@ -156,9 +156,9 @@ public class PackageStringGenerator {
             }
 
             try {
-                storage.removeEmptyLinesFromEnd(path);
-                storage.gzipFile(path);
-            } catch (IOException | GzipFileException e) {
+                localStorage.removeEmptyLinesFromEnd(path);
+                localStorage.gzipFile(path);
+            } catch (ContentEditException | GzipFileException e) {
                 log.error(e.getMessage(), e);
                 throw new GeneratePackagesFileException();
             }

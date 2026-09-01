@@ -49,8 +49,6 @@ import java.util.Properties;
 import javax.sql.DataSource;
 import lombok.Getter;
 import lombok.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Value;
@@ -171,8 +169,6 @@ public class WebApplicationConfig implements WebMvcConfigurer, ApplicationContex
 
     @Getter
     private ApplicationContext context;
-
-    final Logger logger = LoggerFactory.getLogger(WebApplicationConfig.class);
 
     @Bean
     RestTemplate repoApiClient() {

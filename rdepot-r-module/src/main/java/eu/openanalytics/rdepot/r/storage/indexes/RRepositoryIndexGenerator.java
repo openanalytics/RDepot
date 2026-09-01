@@ -20,7 +20,7 @@
  */
 package eu.openanalytics.rdepot.r.storage.indexes;
 
-import eu.openanalytics.rdepot.base.storage.Storage;
+import eu.openanalytics.rdepot.base.storage.LocalStorage;
 import eu.openanalytics.rdepot.base.storage.indexes.RepositoryIndexGenerator;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
@@ -36,18 +36,23 @@ public class RRepositoryIndexGenerator extends RepositoryIndexGenerator<RReposit
     public RRepositoryIndexGenerator(
             @Value("classpath:templates/r/index_template.html") Resource indexTemplate,
             @Value("classpath:templates/r/index_anchor_template.html") Resource indexAnchorTemplate,
-            Storage<RPackage> storage)
+            LocalStorage<RPackage> localStorage)
             throws IOException {
         super(
                 indexTemplate.getContentAsString(Charset.defaultCharset()),
                 indexAnchorTemplate.getContentAsString(Charset.defaultCharset()),
-                storage,
+                localStorage,
                 new RRepositoryPackagePublicationURIResolver());
     }
 
     @Override
     protected String generatePackageAnchor(RPackage packageBag) {
         final String anchor = super.generatePackageAnchor(packageBag);
-        return RPackageAnchorPropertiesAdder.addPackageAnchorProperties(anchor, packageBag);
+        String packageUri = packagePublicationURIResolver.resolvePackageUri(packageBag);
+
+        String archiveUri = packageUri.substring(0, packageUri.lastIndexOf('/')) + "/Archive/" + packageBag.getName();
+        return RPackageAnchorPropertiesAdder.addPackageAnchorProperties(anchor, packageBag)
+                .replace("$package_publication_uri", packageUri)
+                .replace("$package_archive_uri", archiveUri);
     }
 }

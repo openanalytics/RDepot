@@ -29,7 +29,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class MaintainedPackageService {
 
-    protected MaintainedPackageDao dao;
+    protected final MaintainedPackageDao dao;
 
     public MaintainedPackageService(MaintainedPackageDao dao) {
         this.dao = dao;

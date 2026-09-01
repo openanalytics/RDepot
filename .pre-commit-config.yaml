@@ -1,11 +1,15 @@
+default_language_version:
+  python: python3.13
+
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.0.1
+  rev: v6.0.0
   hooks:
   - id: check-merge-conflict
   - id: end-of-file-fixer
+    exclude: '^rdepot-r-module/src/test/resources/unit/test_files/packages_file_parser_test/'
   - id: trailing-whitespace
-    exclude: ^.+\/DESCRIPTION_.+$
+    exclude: '^.+\/DESCRIPTION_.+$|^rdepot-r-module/src/test/resources/unit/test_files/packages_file_parser_test/'
 - repo: https://github.com/ejba/pre-commit-maven
   rev: v0.3.4
   hooks:
@@ -16,6 +20,12 @@ repos:
   - id: maven
     name: License Check
     args: ['com.mycila:license-maven-plugin:check']
+- repo: https://github.com/cbachhuber/pre-commit-search-and-replace
+  rev: 4d445a3fbc6e823b977c3e1a9ba90555cc7aeebd
+  hooks:
+  - id: search-and-replace
+    name: Unescaped slashes should be used in JSONs files
+    files: \.json$
 - repo: local
   hooks:
   - id: check-run-containers-true

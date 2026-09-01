@@ -26,13 +26,7 @@ import eu.openanalytics.rdepot.base.api.v2.converters.RepositoryMaintainerDtoCon
 import eu.openanalytics.rdepot.base.api.v2.converters.exceptions.EntityResolutionException;
 import eu.openanalytics.rdepot.base.api.v2.dtos.RepositoryMaintainerDto;
 import eu.openanalytics.rdepot.base.api.v2.dtos.ResponseDto;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.ApiException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.ApplyPatchException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.CreateException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.DeleteException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.MalformedPatchException;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.RepositoryMaintainerNotFound;
-import eu.openanalytics.rdepot.base.api.v2.exceptions.UserNotAuthorized;
+import eu.openanalytics.rdepot.base.api.v2.exceptions.*;
 import eu.openanalytics.rdepot.base.api.v2.hateoas.RepositoryMaintainerModelAssembler;
 import eu.openanalytics.rdepot.base.api.v2.resolvers.CommonPageableSortResolver;
 import eu.openanalytics.rdepot.base.api.v2.resolvers.DtoResolvedPageable;
@@ -53,6 +47,7 @@ import eu.openanalytics.rdepot.base.utils.specs.RepositoryMaintainerSpecs;
 import eu.openanalytics.rdepot.base.utils.specs.SpecificationUtils;
 import eu.openanalytics.rdepot.base.validation.RepositoryMaintainerValidator;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.json.JsonException;
 import jakarta.json.JsonPatch;
 import java.security.Principal;
@@ -74,17 +69,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * REST Controller for Repository Maintainers. All endpoints require
@@ -153,7 +138,10 @@ public class ApiV2RepositoryMaintainerController
     public @ResponseBody ResponseDto<PagedModel<EntityModel<RepositoryMaintainerDto>>> getAllRepositoryMaintainers(
             @ParameterObject Pageable pageable,
             @RequestParam(name = "deleted", required = false) Optional<Boolean> deleted,
-            @RequestParam(name = "resourceTechnology", required = false) List<String> technologies,
+            @Parameter(name = "technology", deprecated = true, description = "Deprecated. Use 'technology' instead.")
+                    @RequestParam(name = "resourceTechnology", required = false)
+                    List<String> resourceTechnologies,
+            @RequestParam(name = "technology", required = false) List<String> technologies,
             @RequestParam(name = "search", required = false) Optional<String> search,
             Principal principal)
             throws ApiException {
@@ -164,17 +152,18 @@ public class ApiV2RepositoryMaintainerController
         final DtoResolvedPageable resolvedPageable = pageableSortResolver.resolve(pageable);
         pageableValidator.validate(RepositoryMaintainerDto.class, resolvedPageable);
 
-        Page<RepositoryMaintainer> maintainers = null;
+        Page<RepositoryMaintainer> maintainers;
 
         Specification<RepositoryMaintainer> specification = null;
 
         if (deleted.isPresent()) {
-            specification =
-                    SpecificationUtils.andComponent(specification, RepositoryMaintainerSpecs.isDeleted(deleted.get()));
+            specification = SpecificationUtils.andComponent(null, RepositoryMaintainerSpecs.isDeleted(deleted.get()));
         }
-        if (Objects.nonNull(technologies)) {
+
+        List<String> technologyToFilterBy = Objects.nonNull(resourceTechnologies) ? resourceTechnologies : technologies;
+        if (Objects.nonNull(technologyToFilterBy)) {
             specification = SpecificationUtils.andComponent(
-                    specification, RepositoryMaintainerSpecs.ofTechnology(technologies));
+                    specification, RepositoryMaintainerSpecs.ofTechnology(technologyToFilterBy));
         }
 
         if (search.isPresent()) {
@@ -219,7 +208,7 @@ public class ApiV2RepositoryMaintainerController
                 .findActiveByLogin(principal.getName())
                 .orElseThrow(() -> new UserNotAuthorized(messageSource, locale));
 
-        RepositoryMaintainer repositoryMaintainer = null;
+        RepositoryMaintainer repositoryMaintainer;
         try {
             repositoryMaintainer = dtoConverter.resolveDtoToEntity(repositoryMaintainerDto);
         } catch (EntityResolutionException e) {
@@ -237,7 +226,7 @@ public class ApiV2RepositoryMaintainerController
             RepositoryMaintainer created = strategyExecutor.execute(strategy);
             return handleCreatedForSingleEntity(created, requester);
         } catch (StrategyFailure e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new CreateException(messageSource, locale);
         }
     }
@@ -280,7 +269,7 @@ public class ApiV2RepositoryMaintainerController
 
             updated = strategyExecutor.execute(strategy);
         } catch (StrategyFailure e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new ApplyPatchException(messageSource, locale);
         } catch (JsonException | JsonProcessingException e) {
             throw new MalformedPatchException(messageSource, locale, e);
@@ -298,7 +287,7 @@ public class ApiV2RepositoryMaintainerController
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(operationId = "deleteRepositoryMaintainer")
     public void deleteRepositoryMaintainer(@PathVariable("id") Integer id, Principal principal) throws ApiException {
-        if (!userService.findActiveByLogin(principal.getName()).isPresent()) {
+        if (userService.findActiveByLogin(principal.getName()).isEmpty()) {
             throw new UserNotAuthorized(messageSource, locale);
         }
 
@@ -308,7 +297,7 @@ public class ApiV2RepositoryMaintainerController
         try {
             repositoryMaintainerDeleter.delete(maintainer);
         } catch (DeleteEntityException e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            log.error("{}: {}", e.getClass().getName(), e.getMessage(), e);
             throw new DeleteException(messageSource, locale);
         }
     }

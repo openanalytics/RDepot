@@ -20,17 +20,23 @@
  */
 package eu.openanalytics.rdepot.base.mirroring.pojos;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * Specifies which version of which package should be mirrored.
  */
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public abstract class MirroredPackage {
+    @Getter
+    @Setter
     protected String name = "";
+
+    @Getter
+    @Setter
     protected String version;
+
+    @Setter
+    protected String mirrorUrl;
 }

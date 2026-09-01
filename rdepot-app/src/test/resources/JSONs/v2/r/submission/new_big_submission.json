@@ -13,15 +13,16 @@
             "login": "einstein",
             "email": "einstein@ldap.forumsys.com"
         },
+        "permissions": [],
         "changes": "",
         "links": [
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/48"
+                "href": "http://localhost:8017/api/v2/manager/r/submissions/48"
             },
             {
                 "rel": "submissionList",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions"
+                "href": "http://localhost:8017/api/v2/manager/r/submissions"
             }
         ],
         "id": 48,
@@ -33,19 +34,24 @@
             "description": "Estimates and graphs deterministic (DEA) frontier models\\n with different technology assumptions (fdh, vrs, drs, crs, irs,\\n add). Also handles possible slacks, peers and their weights\\n (lambdas), optimal cost, revenue and profit allocation,\\n super--efficiency, and mergers. A comparative method for\\n estimating SFA efficiencies is included.",
             "technology": "R",
             "repository": {
-                "name": "testrepo2",
                 "lastPublicationSuccessful": true,
+                "name": "testrepo2",
                 "id": 3,
                 "published": true,
                 "technology": "R",
                 "requiresAuthentication": true,
-                "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
+                "publicationUri": "http://localhost/repo/testrepo2"
             },
             "title": "Benchmark and frontier analysis using DEA and SFA",
             "version": "0.10",
             "url": null,
             "deleted": false,
             "descriptionContentType": "txt",
+            "permissions": [
+                "package.deactivate",
+                "package.delete.soft",
+                "package.edit"
+            ],
             "binary": false,
             "name": "Benchmarking",
             "submission": {
@@ -55,11 +61,11 @@
             "links": [
                 {
                     "rel": "self",
-                    "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/48"
+                    "href": "http://localhost:8017/api/v2/manager/r/packages/48"
                 },
                 {
                     "rel": "packageList",
-                    "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    "href": "http://localhost:8017/api/v2/manager/packages"
                 },
                 {
                     "rel": "repository",
@@ -67,12 +73,12 @@
                 },
                 {
                     "rel": "self",
-                    "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/48",
+                    "href": "http://localhost:8017/api/v2/manager/r/packages/48",
                     "type": "PATCH"
                 },
                 {
                     "rel": "self",
-                    "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/48",
+                    "href": "http://localhost:8017/api/v2/manager/r/packages/48",
                     "type": "DELETE"
                 }
             ],

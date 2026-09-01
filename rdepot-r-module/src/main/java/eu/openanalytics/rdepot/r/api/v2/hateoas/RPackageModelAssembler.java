@@ -96,4 +96,11 @@ public class RPackageModelAssembler extends AbstractRoleAwareModelAssembler<RPac
                 .withRel("repository"));
         return links;
     }
+
+    @Override
+    public EntityModel<RPackageDto> toModel(RPackage entity, User user) {
+        RPackageDto dto = dtoConverter.convertEntityToDto(entity);
+        dto.setPermissions(securityMediator.getPermissions(entity, user));
+        return EntityModel.of(dto, generateRoleBasedAvailableLinksForEntity(entity, user));
+    }
 }

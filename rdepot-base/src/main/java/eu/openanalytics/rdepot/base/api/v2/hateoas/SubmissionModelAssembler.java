@@ -32,7 +32,11 @@ import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.entities.enums.SubmissionState;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.technology.Technology;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -114,7 +118,12 @@ public class SubmissionModelAssembler extends AbstractRoleAwareModelAssembler<Su
 
     @Override
     public EntityModel<SubmissionDto> toModel(Submission entity, User user) {
-        final EntityModel<SubmissionDto> model = super.toModel(entity, user);
+        SubmissionDto dto = dtoConverter.convertEntityToDto(entity);
+
+        dto.setPermissions(securityMediator.getPermissions(entity, user));
+
+        final EntityModel<SubmissionDto> model =
+                EntityModel.of(dto, generateRoleBasedAvailableLinksForEntity(entity, user));
         Objects.requireNonNull(model.getContent())
                 .setPackageBag(packageModelAssembler.toModel(entity.getPackage(), user));
 

@@ -1,53 +1,51 @@
 {
     "code": 200,
     "data": {
-        "links": [
-            {
-                "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages?deleted=true&page=0&size=20&sort=id,asc"
-            }
-        ],
-        "page": {
-            "number": 0,
-            "size": 20,
-            "totalPages": 1,
-            "totalElements": 8
-        },
         "content": [
             {
-                "author": "Julie Eaton and Ian Painter",
                 "active": false,
-                "description": "Package for visualizing data quality of partially accruing time series.",
-                "source": "\/opt\/rdepot\/repositories\/3\/46950998\/accrued_1.1.tar.gz",
-                "technology": "R",
-                "repository": {
-                    "name": "testrepo2",
-                    "lastPublicationSuccessful": true,
-                    "id": 3,
-                    "published": true,
-                    "technology": "R",
-                    "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
-                },
-                "title": "Visualization tools for partially accruing data",
-                "version": "1.1",
-                "url": null,
-                "deleted": true,
-                "descriptionContentType": "txt",
+                "author": "Julie Eaton and Ian Painter",
                 "binary": false,
+                "deleted": true,
+                "description": "Package for visualizing data quality of partially accruing time series.",
+                "descriptionContentType": "txt",
+                "id": 6,
                 "name": "accrued",
+                "permissions": [
+                    "package.delete.hard"
+                ],
+                "repository": {
+                    "id": 3,
+                    "lastPublicationSuccessful": true,
+                    "name": "testrepo2",
+                    "publicationUri": "http://localhost/repo/testrepo2",
+                    "published": true,
+                    "requiresAuthentication": true,
+                    "technology": "R"
+                },
+                "source": "/opt/rdepot/repositories/3/46950998/accrued_1.1.tar.gz",
                 "submission": {
                     "id": 4,
                     "state": "ACCEPTED"
                 },
+                "technology": "R",
+                "title": "Visualization tools for partially accruing data",
+                "url": null,
+                "user": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "version": "1.1",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/6"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/6"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/packages"
                     },
                     {
                         "rel": "repository",
@@ -55,57 +53,60 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/6",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/6",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/6",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/6",
                         "type": "DELETE"
                     }
-                ],
-                "id": 6,
-                "user": {
-                    "name": "Albert Einstein",
-                    "id": 4,
-                    "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
-                }
+                ]
             },
             {
-                "author": "Bulent Altunkaynak [aut, cre], Hamza Gamgam [aut]",
                 "active": false,
-                "description": "Performs nonparametric tests for equality of location against ordered alternatives.",
-                "source": "\/opt\/rdepot\/repositories\/2\/8436419\/npordtests_1.1.tar.gz",
-                "technology": "R",
-                "repository": {
-                    "name": "testrepo1",
-                    "lastPublicationSuccessful": true,
-                    "id": 2,
-                    "published": true,
-                    "technology": "R",
-                    "requiresAuthentication": false,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
-                },
-                "title": "Nonparametric Tests for Equality of Location Against Ordered Alternatives",
-                "version": "1.1",
-                "url": null,
-                "deleted": true,
-                "descriptionContentType": "txt",
+                "author": "Bulent Altunkaynak [aut, cre], Hamza Gamgam [aut]",
                 "binary": false,
+                "deleted": true,
+                "description": "Performs nonparametric tests for equality of location against ordered alternatives.",
+                "descriptionContentType": "txt",
+                "id": 14,
                 "name": "npordtests",
+                "permissions": [
+                    "package.delete.hard"
+                ],
+                "repository": {
+                    "id": 2,
+                    "lastPublicationSuccessful": true,
+                    "name": "testrepo1",
+                    "publicationUri": "http://localhost/repo/testrepo1",
+                    "published": true,
+                    "requiresAuthentication": false,
+                    "technology": "R"
+                },
+                "source": "/opt/rdepot/repositories/2/8436419/npordtests_1.1.tar.gz",
                 "submission": {
                     "id": 15,
                     "state": "ACCEPTED"
                 },
+                "technology": "R",
+                "title": "Nonparametric Tests for Equality of Location Against Ordered Alternatives",
+                "url": null,
+                "user": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "version": "1.1",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/14"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/14"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/packages"
                     },
                     {
                         "rel": "repository",
@@ -113,57 +114,60 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/14",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/14",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/14",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/14",
                         "type": "DELETE"
                     }
-                ],
-                "id": 14,
-                "user": {
-                    "name": "Nikola Tesla",
-                    "id": 5,
-                    "login": "tesla",
-                    "email": "tesla@ldap.forumsys.com"
-                }
+                ]
             },
             {
-                "author": "Neil J. Gunther [aut], Stefan Moeding [aut, cre]",
                 "active": false,
-                "description": "The Universal Scalability Law (Gunther 2007)",
-                "source": "\/opt\/rdepot\/repositories\/6\/21695389\/usl_2.0.0.tar.gz",
-                "technology": "R",
-                "repository": {
-                    "name": "testrepo5",
-                    "lastPublicationSuccessful": false,
-                    "id": 6,
-                    "published": false,
-                    "technology": "R",
-                    "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo5"
-                },
-                "title": "Analyze System Scalability with the Universal Scalability Law",
-                "version": "2.0.0",
-                "url": null,
-                "deleted": true,
-                "descriptionContentType": "txt",
+                "author": "Neil J. Gunther [aut], Stefan Moeding [aut, cre]",
                 "binary": false,
+                "deleted": true,
+                "description": "The Universal Scalability Law (Gunther 2007)",
+                "descriptionContentType": "txt",
+                "id": 27,
                 "name": "usl",
+                "permissions": [
+                    "package.delete.hard"
+                ],
+                "repository": {
+                    "id": 6,
+                    "lastPublicationSuccessful": false,
+                    "name": "testrepo5",
+                    "publicationUri": "http://localhost/repo/testrepo5",
+                    "published": false,
+                    "requiresAuthentication": true,
+                    "technology": "R"
+                },
+                "source": "/opt/rdepot/repositories/6/21695389/usl_2.0.0.tar.gz",
                 "submission": {
                     "id": 27,
                     "state": "ACCEPTED"
                 },
+                "technology": "R",
+                "title": "Analyze System Scalability with the Universal Scalability Law",
+                "url": null,
+                "user": {
+                    "email": "admin@localhost",
+                    "id": 8,
+                    "login": "admin",
+                    "name": "Local Admin User"
+                },
+                "version": "2.0.0",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/27"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/27"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/packages"
                     },
                     {
                         "rel": "repository",
@@ -171,57 +175,60 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/27",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/27",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/27",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/27",
                         "type": "DELETE"
                     }
-                ],
-                "id": 27,
-                "user": {
-                    "name": "Local Admin User",
-                    "id": 8,
-                    "login": "admin",
-                    "email": "admin@localhost"
-                }
+                ]
             },
             {
-                "author": "Nicholas Tierney [aut, cre]",
                 "active": false,
-                "description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
-                "source": "\/opt\/rdepot\/repositories\/6\/70325377\/visdat_0.1.0.tar.gz",
-                "technology": "R",
-                "repository": {
-                    "name": "testrepo5",
-                    "lastPublicationSuccessful": false,
-                    "id": 6,
-                    "published": false,
-                    "technology": "R",
-                    "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo5"
-                },
-                "title": "Preliminary Data Visualisation",
-                "version": "0.1.0",
-                "url": "https:\/\/github.com\/njtierney\/visdat\/",
-                "deleted": true,
-                "descriptionContentType": "txt",
+                "author": "Nicholas Tierney [aut, cre]",
                 "binary": false,
+                "deleted": true,
+                "description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
+                "descriptionContentType": "txt",
+                "id": 28,
                 "name": "visdat",
+                "permissions": [
+                    "package.delete.hard"
+                ],
+                "repository": {
+                    "id": 6,
+                    "lastPublicationSuccessful": false,
+                    "name": "testrepo5",
+                    "publicationUri": "http://localhost/repo/testrepo5",
+                    "published": false,
+                    "requiresAuthentication": true,
+                    "technology": "R"
+                },
+                "source": "/opt/rdepot/repositories/6/70325377/visdat_0.1.0.tar.gz",
                 "submission": {
                     "id": 28,
                     "state": "ACCEPTED"
                 },
+                "technology": "R",
+                "title": "Preliminary Data Visualisation",
+                "url": "https://github.com/njtierney/visdat/",
+                "user": {
+                    "email": "admin@localhost",
+                    "id": 8,
+                    "login": "admin",
+                    "name": "Local Admin User"
+                },
+                "version": "0.1.0",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/28"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/28"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/packages"
                     },
                     {
                         "rel": "repository",
@@ -229,57 +236,60 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/28",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/28",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/28",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/28",
                         "type": "DELETE"
                     }
-                ],
-                "id": 28,
-                "user": {
-                    "name": "Local Admin User",
-                    "id": 8,
-                    "login": "admin",
-                    "email": "admin@localhost"
-                }
+                ]
             },
             {
-                "author": "Scott Fortmann-Roe",
                 "active": false,
-                "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-                "source": "\/opt\/rdepot\/repositories\/7\/67484296\/A3_0.9.1.tar.gz",
-                "technology": "R",
-                "repository": {
-                    "name": "testrepo6",
-                    "lastPublicationSuccessful": false,
-                    "id": 7,
-                    "published": false,
-                    "technology": "R",
-                    "requiresAuthentication": false,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo6"
-                },
-                "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
-                "version": "0.9.1",
-                "url": null,
-                "deleted": true,
-                "descriptionContentType": "txt",
+                "author": "Scott Fortmann-Roe",
                 "binary": false,
+                "deleted": true,
+                "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
+                "descriptionContentType": "txt",
+                "id": 29,
                 "name": "A3",
+                "permissions": [
+                    "package.delete.hard"
+                ],
+                "repository": {
+                    "id": 7,
+                    "lastPublicationSuccessful": false,
+                    "name": "testrepo6",
+                    "publicationUri": "http://localhost/repo/testrepo6",
+                    "published": false,
+                    "requiresAuthentication": false,
+                    "technology": "R"
+                },
+                "source": "/opt/rdepot/repositories/7/67484296/A3_0.9.1.tar.gz",
                 "submission": {
                     "id": 29,
                     "state": "ACCEPTED"
                 },
+                "technology": "R",
+                "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
+                "url": null,
+                "user": {
+                    "email": "admin@localhost",
+                    "id": 8,
+                    "login": "admin",
+                    "name": "Local Admin User"
+                },
+                "version": "0.9.1",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/29"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/29"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/packages"
                     },
                     {
                         "rel": "repository",
@@ -287,57 +297,60 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/29",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/29",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/29",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/29",
                         "type": "DELETE"
                     }
-                ],
-                "id": 29,
-                "user": {
-                    "name": "Local Admin User",
-                    "id": 8,
-                    "login": "admin",
-                    "email": "admin@localhost"
-                }
+                ]
             },
             {
-                "author": "Daniel Holth",
                 "active": false,
-                "description": "wheel =====\n \n This library is the reference implementation of the Python wheel packaging\n standard, as defined in `PEP 427`_.\n \n It has two different roles:\n \n #. A setuptools_ extension for building wheels that provides the\n ``bdist_wheel`` setuptools command\n #. A command line tool for working with wheel files\n \n It should be noted that wheel is **not** intended to be used as a library, and\n as such there is no stable, public API.\n \n .. _PEP 427: https:\/\/www.python.org\/dev\/peps\/pep-0427\/\n .. _setuptools: https:\/\/pypi.org\/project\/setuptools\/\n \n Documentation\n -------------\n \n The documentation_ can be found on Read The Docs.\n \n .. _documentation: https:\/\/wheel.readthedocs.io\/\n \n Code of Conduct\n ---------------\n \n Everyone interacting in the wheel project's codebases, issue trackers, chat\n rooms, and mailing lists is expected to follow the `PSF Code of Conduct`_.\n \n .. _PSF Code of Conduct: https:\/\/github.com\/pypa\/.github\/blob\/main\/CODE_OF_CONDUCT.md\n \n \n",
-                "source": "\/opt\/rdepot\/trash\/10\/74692077\/wheel-0.36.1.tar.gz",
-                "technology": "Python",
-                "repository": {
-                    "name": "testrepo10",
-                    "lastPublicationSuccessful": false,
-                    "id": 10,
-                    "published": false,
-                    "technology": "Python",
-                    "requiresAuthentication": false,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo10"
-                },
-                "title": "A built-package format for Python",
-                "version": "0.36.1",
-                "url": "Documentation, https:\/\/wheel.readthedocs.io\/, Changelog, https:\/\/wheel.readthedocs.io\/en\/stable\/news.html, Issue Tracker, https:\/\/github.com\/pypa\/wheel\/issues",
-                "deleted": true,
-                "descriptionContentType": "",
+                "author": "Daniel Holth",
                 "binary": false,
+                "deleted": true,
+                "description": "wheel =====\n \n This library is the reference implementation of the Python wheel packaging\n standard, as defined in `PEP 427`_.\n \n It has two different roles:\n \n #. A setuptools_ extension for building wheels that provides the\n ``bdist_wheel`` setuptools command\n #. A command line tool for working with wheel files\n \n It should be noted that wheel is **not** intended to be used as a library, and\n as such there is no stable, public API.\n \n .. _PEP 427: https://www.python.org/dev/peps/pep-0427/\n .. _setuptools: https://pypi.org/project/setuptools/\n \n Documentation\n -------------\n \n The documentation_ can be found on Read The Docs.\n \n .. _documentation: https://wheel.readthedocs.io/\n \n Code of Conduct\n ---------------\n \n Everyone interacting in the wheel project's codebases, issue trackers, chat\n rooms, and mailing lists is expected to follow the `PSF Code of Conduct`_.\n \n .. _PSF Code of Conduct: https://github.com/pypa/.github/blob/main/CODE_OF_CONDUCT.md\n \n \n",
+                "descriptionContentType": "",
+                "id": 35,
                 "name": "wheel",
+                "permissions": [
+                    "package.delete.hard"
+                ],
+                "repository": {
+                    "id": 10,
+                    "lastPublicationSuccessful": false,
+                    "name": "testrepo10",
+                    "publicationUri": "http://localhost/repo/testrepo10",
+                    "published": false,
+                    "requiresAuthentication": false,
+                    "technology": "Python"
+                },
+                "source": "/opt/rdepot/trash/10/74692077/wheel-0.36.1.tar.gz",
                 "submission": {
                     "id": 35,
                     "state": "REJECTED"
                 },
+                "technology": "Python",
+                "title": "A built-package format for Python",
+                "url": "Documentation, https://wheel.readthedocs.io/, Changelog, https://wheel.readthedocs.io/en/stable/news.html, Issue Tracker, https://github.com/pypa/wheel/issues",
+                "user": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "version": "0.36.1",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/35"
+                        "href": "http://localhost:8017/api/v2/manager/python/packages/35"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/packages"
                     },
                     {
                         "rel": "repository",
@@ -345,57 +358,60 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/35",
+                        "href": "http://localhost:8017/api/v2/manager/python/packages/35",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/35",
+                        "href": "http://localhost:8017/api/v2/manager/python/packages/35",
                         "type": "DELETE"
                     }
-                ],
-                "id": 35,
-                "user": {
-                    "name": "Albert Einstein",
-                    "id": 4,
-                    "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
-                }
+                ]
             },
             {
-                "author": "Daniel Holth",
                 "active": false,
-                "description": null,
-                "source": "\/opt\/rdepot\/trash\/10\/37007947\/wheel-0.38.0.tar.gz",
-                "technology": "Python",
-                "repository": {
-                    "name": "testrepo10",
-                    "lastPublicationSuccessful": false,
-                    "id": 10,
-                    "published": false,
-                    "technology": "Python",
-                    "requiresAuthentication": false,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo10"
-                },
-                "title": "A built-package format for Python",
-                "version": "0.38.0",
-                "url": "Documentation, https:\/\/wheel.readthedocs.io\/, Changelog, https:\/\/wheel.readthedocs.io\/en\/stable\/news.html, Issue Tracker, https:\/\/github.com\/pypa\/wheel\/issues",
-                "deleted": true,
-                "descriptionContentType": "",
+                "author": "Daniel Holth",
                 "binary": false,
+                "deleted": true,
+                "description": null,
+                "descriptionContentType": "",
+                "id": 36,
                 "name": "wheel",
+                "permissions": [
+                    "package.delete.hard"
+                ],
+                "repository": {
+                    "id": 10,
+                    "lastPublicationSuccessful": false,
+                    "name": "testrepo10",
+                    "publicationUri": "http://localhost/repo/testrepo10",
+                    "published": false,
+                    "requiresAuthentication": false,
+                    "technology": "Python"
+                },
+                "source": "/opt/rdepot/trash/10/37007947/wheel-0.38.0.tar.gz",
                 "submission": {
                     "id": 36,
                     "state": "REJECTED"
                 },
+                "technology": "Python",
+                "title": "A built-package format for Python",
+                "url": "Documentation, https://wheel.readthedocs.io/, Changelog, https://wheel.readthedocs.io/en/stable/news.html, Issue Tracker, https://github.com/pypa/wheel/issues",
+                "user": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "version": "0.38.0",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/36"
+                        "href": "http://localhost:8017/api/v2/manager/python/packages/36"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/packages"
                     },
                     {
                         "rel": "repository",
@@ -403,57 +419,60 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/36",
+                        "href": "http://localhost:8017/api/v2/manager/python/packages/36",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/36",
+                        "href": "http://localhost:8017/api/v2/manager/python/packages/36",
                         "type": "DELETE"
                     }
-                ],
-                "id": 36,
-                "user": {
-                    "name": "Albert Einstein",
-                    "id": 4,
-                    "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
-                }
+                ]
             },
             {
-                "author": "Amazon Web Services",
                 "active": false,
-                "description": null,
-                "source": "\/opt\/rdepot\/repositories\/8\/55941618\/boto3-1.26.156.tar.gz",
-                "technology": "Python",
-                "repository": {
-                    "name": "testrepo8",
-                    "lastPublicationSuccessful": true,
-                    "id": 8,
-                    "published": true,
-                    "technology": "Python",
-                    "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo8"
-                },
-                "title": "The AWS SDK for Python",
-                "version": "1.26.156",
-                "url": "Documentation, https:\/\/boto3.amazonaws.com\/v1\/documentation\/api\/latest\/index.html, Source, https:\/\/github.com\/boto\/boto3",
-                "deleted": true,
-                "descriptionContentType": "",
+                "author": "Amazon Web Services",
                 "binary": false,
+                "deleted": true,
+                "description": null,
+                "descriptionContentType": "",
+                "id": 42,
                 "name": "boto3",
+                "permissions": [
+                    "package.delete.hard"
+                ],
+                "repository": {
+                    "id": 8,
+                    "lastPublicationSuccessful": true,
+                    "name": "testrepo8",
+                    "publicationUri": "http://localhost/repo/testrepo8",
+                    "published": true,
+                    "requiresAuthentication": true,
+                    "technology": "Python"
+                },
+                "source": "/opt/rdepot/repositories/8/55941618/boto3-1.26.156.tar.gz",
                 "submission": {
                     "id": 42,
                     "state": "ACCEPTED"
                 },
+                "technology": "Python",
+                "title": "The AWS SDK for Python",
+                "url": "Documentation, https://boto3.amazonaws.com/v1/documentation/api/latest/index.html, Source, https://github.com/boto/boto3",
+                "user": {
+                    "email": "galieleo@ldap.forumsys.com",
+                    "id": 6,
+                    "login": "galieleo",
+                    "name": "Galileo Galilei"
+                },
+                "version": "1.26.156",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/42"
+                        "href": "http://localhost:8017/api/v2/manager/python/packages/42"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/packages"
                     },
                     {
                         "rel": "repository",
@@ -461,26 +480,31 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/42",
+                        "href": "http://localhost:8017/api/v2/manager/python/packages/42",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/42",
+                        "href": "http://localhost:8017/api/v2/manager/python/packages/42",
                         "type": "DELETE"
                     }
-                ],
-                "id": 42,
-                "user": {
-                    "name": "Galileo Galilei",
-                    "id": 6,
-                    "login": "galieleo",
-                    "email": "galieleo@ldap.forumsys.com"
-                }
+                ]
             }
-        ]
+        ],
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/packages?deleted=true&page=0&size=20&sort=id,asc"
+            }
+        ],
+        "page": {
+            "number": 0,
+            "size": 20,
+            "totalElements": 8,
+            "totalPages": 1
+        }
     },
-    "messageCode": "success.request.processed",
     "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
     "status": "SUCCESS"
 }

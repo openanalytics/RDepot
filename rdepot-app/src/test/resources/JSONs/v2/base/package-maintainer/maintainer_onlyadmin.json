@@ -2,45 +2,49 @@
     "code": 200,
     "data": {
         "deleted": false,
+        "id": 3,
+        "packageName": "A3",
+        "permissions": [
+            "packageMaintainer.delete.soft",
+            "packageMaintainer.edit"
+        ],
+        "repository": {
+            "id": 4,
+            "lastPublicationSuccessful": false,
+            "name": "testrepo3",
+            "publicationUri": "http://localhost/repo/testrepo3",
+            "published": false,
+            "requiresAuthentication": true,
+            "technology": "R"
+        },
+        "user": {
+            "email": "galieleo@ldap.forumsys.com",
+            "id": 6,
+            "login": "galieleo",
+            "name": "Galileo Galilei"
+        },
         "links": [
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/3"
+                "href": "http://localhost:8017/api/v2/manager/package-maintainers/3"
             },
             {
                 "rel": "packageMaintainerList",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers"
+                "href": "http://localhost:8017/api/v2/manager/package-maintainers"
             },
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/3",
+                "href": "http://localhost:8017/api/v2/manager/package-maintainers/3",
                 "type": "PATCH"
             },
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/3",
+                "href": "http://localhost:8017/api/v2/manager/package-maintainers/3",
                 "type": "DELETE"
             }
-        ],
-        "id": 3,
-        "packageName": "A3",
-        "repository": {
-            "name": "testrepo3",
-            "lastPublicationSuccessful": false,
-            "id": 4,
-            "published": false,
-            "technology": "R",
-            "requiresAuthentication": true,
-            "publicationUri": "http:\/\/localhost\/repo\/testrepo3"
-        },
-        "user": {
-            "name": "Galileo Galilei",
-            "id": 6,
-            "login": "galieleo",
-            "email": "galieleo@ldap.forumsys.com"
-        }
+        ]
     },
-    "messageCode": "success.request.processed",
     "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
     "status": "SUCCESS"
 }

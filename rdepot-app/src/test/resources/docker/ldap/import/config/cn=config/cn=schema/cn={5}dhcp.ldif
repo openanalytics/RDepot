@@ -12,7 +12,7 @@ olcAttributeTypes: {1}( 2.16.840.1.113719.1.203.4.2 NAME 'dhcpSecondaryDN' D
  tion.' EQUALITY distinguishedNameMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.12
   )
 olcAttributeTypes: {2}( 2.16.840.1.113719.1.203.4.3 NAME 'dhcpStatements' DE
- SC 'Flexible storage for specific data depending on what object this exists
+ SC 'Flexible localStorage for specific data depending on what object this exists
   in. Like conditional statements, server parameters, etc. This allows the s
  tandard to evolve without needing to adjust the schema.' EQUALITY caseIgnor
  eIA5Match SYNTAX 1.3.6.1.4.1.1466.115.121.1.26 )

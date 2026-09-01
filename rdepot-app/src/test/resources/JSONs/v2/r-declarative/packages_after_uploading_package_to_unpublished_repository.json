@@ -54,6 +54,7 @@
                 "distribution": null,
                 "enhances": null,
                 "linkingTo": null,
+                "permissions": [],
                 "priority": null,
                 "encoding": null,
                 "needsCompilation": "no",

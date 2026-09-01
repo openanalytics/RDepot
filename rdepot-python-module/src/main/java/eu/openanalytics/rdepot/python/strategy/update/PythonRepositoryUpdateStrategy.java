@@ -25,20 +25,29 @@ import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
-import eu.openanalytics.rdepot.base.storage.Storage;
+import eu.openanalytics.rdepot.base.storage.LocalStorage;
 import eu.openanalytics.rdepot.base.storage.exceptions.CheckSumCalculationException;
+import eu.openanalytics.rdepot.base.storage.exceptions.DeleteFileException;
+import eu.openanalytics.rdepot.base.storage.exceptions.DownloadFileException;
+import eu.openanalytics.rdepot.base.strategy.exceptions.FatalStrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.update.UpdateRepositoryStrategy;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.services.PythonPackageService;
 import eu.openanalytics.rdepot.python.services.PythonRepositoryService;
+import eu.openanalytics.rdepot.python.storage.PythonPersistentStorage;
 import eu.openanalytics.rdepot.python.synchronization.PythonRepositorySynchronizer;
+import java.io.File;
+import java.nio.file.Path;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class PythonRepositoryUpdateStrategy extends UpdateRepositoryStrategy<PythonRepository> {
 
     private final PythonPackageService packageService;
-    private final Storage<PythonPackage> storage;
+    private final LocalStorage<PythonPackage> localStorage;
+    private final PythonPersistentStorage pythonPersistentStorage;
 
     public PythonRepositoryUpdateStrategy(
             PythonRepository resource,
@@ -51,7 +60,8 @@ public class PythonRepositoryUpdateStrategy extends UpdateRepositoryStrategy<Pyt
             RepositoryMaintainerService repositoryMaintainerService,
             PackageMaintainerService packageMaintainerService,
             PythonPackageService packageService,
-            Storage<PythonPackage> storage) {
+            LocalStorage<PythonPackage> localStorage,
+            PythonPersistentStorage pythonPersistentStorage) {
         super(
                 resource,
                 eventService,
@@ -64,7 +74,8 @@ public class PythonRepositoryUpdateStrategy extends UpdateRepositoryStrategy<Pyt
                 packageMaintainerService,
                 packageService);
         this.packageService = packageService;
-        this.storage = storage;
+        this.localStorage = localStorage;
+        this.pythonPersistentStorage = pythonPersistentStorage;
     }
 
     @Override
@@ -79,14 +90,23 @@ public class PythonRepositoryUpdateStrategy extends UpdateRepositoryStrategy<Pyt
                     resource.getHashMethod().getValue()));
         }
         final PythonRepository resource = super.actualStrategy();
-        if (recalculateHashes) {
-            try {
-                for (PythonPackage packageBag : packageService.findAllByRepository(resource)) {
-                    storage.setCheckSum(packageBag);
+        if (!recalculateHashes) {
+            return resource;
+        }
+        try {
+            for (PythonPackage packageBag : packageService.findAllByRepository(resource)) {
+                final File downloaded;
+                try {
+                    downloaded = pythonPersistentStorage.downloadFile(Path.of(packageBag.getSource()));
+                    localStorage.setCheckSum(packageBag, downloaded);
+                    pythonPersistentStorage.recycleDownloadedFile(downloaded);
+                } catch (DownloadFileException | DeleteFileException e) {
+                    log.error(e.getMessage(), e);
+                    throw new CheckSumCalculationException();
                 }
-            } catch (CheckSumCalculationException e) {
-                throw new StrategyFailure(e);
             }
+        } catch (CheckSumCalculationException e) {
+            throw new FatalStrategyFailure(e);
         }
         return resource;
     }

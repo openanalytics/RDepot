@@ -45,6 +45,4 @@ public interface RepositoryDao<T extends Repository> extends Dao<T> {
     Optional<T> findByPublicationUri(String publicationUri);
 
     Optional<T> findByServerAddress(String serverAddress);
-
-    Optional<T> findByServerAddressStartsWith(String serverAddress);
 }

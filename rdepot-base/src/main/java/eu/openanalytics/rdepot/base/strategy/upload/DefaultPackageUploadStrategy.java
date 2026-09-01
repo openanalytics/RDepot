@@ -22,12 +22,8 @@ package eu.openanalytics.rdepot.base.strategy.upload;
 
 import eu.openanalytics.rdepot.base.api.v2.dtos.PackageUploadRequest;
 import eu.openanalytics.rdepot.base.email.EmailService;
-import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
+import eu.openanalytics.rdepot.base.entities.*;
 import eu.openanalytics.rdepot.base.entities.Package;
-import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
-import eu.openanalytics.rdepot.base.entities.Repository;
-import eu.openanalytics.rdepot.base.entities.Submission;
-import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.entities.enums.SubmissionState;
 import eu.openanalytics.rdepot.base.event.NewsfeedEventType;
 import eu.openanalytics.rdepot.base.mediator.BestMaintainerChooser;
@@ -35,31 +31,15 @@ import eu.openanalytics.rdepot.base.mediator.deletion.PackageDeleter;
 import eu.openanalytics.rdepot.base.mediator.deletion.exceptions.NoSuitableMaintainerFound;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
-import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
-import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
-import eu.openanalytics.rdepot.base.service.PackageService;
-import eu.openanalytics.rdepot.base.service.RepositoryService;
-import eu.openanalytics.rdepot.base.service.SubmissionService;
+import eu.openanalytics.rdepot.base.service.*;
 import eu.openanalytics.rdepot.base.service.exceptions.CreateEntityException;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
-import eu.openanalytics.rdepot.base.storage.Populator;
-import eu.openanalytics.rdepot.base.storage.Storage;
-import eu.openanalytics.rdepot.base.storage.exceptions.CheckSumCalculationException;
-import eu.openanalytics.rdepot.base.storage.exceptions.DeleteFileException;
-import eu.openanalytics.rdepot.base.storage.exceptions.ExtractFileException;
-import eu.openanalytics.rdepot.base.storage.exceptions.InvalidSourceException;
-import eu.openanalytics.rdepot.base.storage.exceptions.MovePackageSourceException;
-import eu.openanalytics.rdepot.base.storage.exceptions.ReadPackageDescriptionException;
-import eu.openanalytics.rdepot.base.storage.exceptions.WriteToWaitingRoomException;
+import eu.openanalytics.rdepot.base.storage.LocalStorage;
+import eu.openanalytics.rdepot.base.storage.PersistentStorage;
+import eu.openanalytics.rdepot.base.storage.exceptions.*;
+import eu.openanalytics.rdepot.base.storage.population.Populator;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
-import eu.openanalytics.rdepot.base.strategy.exceptions.CreatePackageException;
-import eu.openanalytics.rdepot.base.strategy.exceptions.CreateSubmissionException;
-import eu.openanalytics.rdepot.base.strategy.exceptions.FatalStrategyFailure;
-import eu.openanalytics.rdepot.base.strategy.exceptions.NonFatalSubmissionStrategyFailure;
-import eu.openanalytics.rdepot.base.strategy.exceptions.PackageProcessingException;
-import eu.openanalytics.rdepot.base.strategy.exceptions.ParsePackagePropertiesException;
-import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
-import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure;
+import eu.openanalytics.rdepot.base.strategy.exceptions.*;
 import eu.openanalytics.rdepot.base.synchronization.RepositorySynchronizer;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
 import eu.openanalytics.rdepot.base.validation.DataSpecificValidationResult;
@@ -69,11 +49,8 @@ import eu.openanalytics.rdepot.base.validation.ValidationResultItem;
 import eu.openanalytics.rdepot.base.validation.exceptions.PackageDuplicateWithReplaceOff;
 import eu.openanalytics.rdepot.base.validation.exceptions.PackageValidationException;
 import java.io.File;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Properties;
+import java.nio.file.Path;
+import java.util.*;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
@@ -92,7 +69,7 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
     protected final PackageValidator<P> packageValidator;
     protected final RepositoryService<R> repositoryService;
     protected final PackageService<P> packageService;
-    protected final Storage<P> storage;
+    protected final LocalStorage<P> localStorage;
     protected final Populator<R, P> populator;
     protected final PackageMaintainerService maintainerService;
     protected final SubmissionService submissionService;
@@ -103,6 +80,7 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
     protected final PackageDeleter<P, R> packageDeleter;
     protected Submission submission = new Submission();
     protected P packageBag = null;
+    protected final PersistentStorage<P, R> persistentStorage;
 
     protected DefaultPackageUploadStrategy(
             PackageUploadRequest<R> request,
@@ -110,7 +88,7 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
             NewsfeedEventService newsfeedEventService,
             PackageValidator<P> packageValidator,
             RepositoryService<R> repositoryService,
-            Storage<P> storage,
+            LocalStorage<P> localStorage,
             PackageService<P> packageService,
             SubmissionService submissionService,
             EmailService emailService,
@@ -119,12 +97,13 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
             SecurityMediator securityMediator,
             PackageDeleter<P, R> packageDeleter,
             Populator<R, P> populator,
-            PackageMaintainerService maintainerService) {
+            PackageMaintainerService maintainerService,
+            PersistentStorage<P, R> persistentStorage) {
         super(new Submission(), submissionService, requester, newsfeedEventService);
         this.request = request;
         this.packageValidator = packageValidator;
         this.repositoryService = repositoryService;
-        this.storage = storage;
+        this.localStorage = localStorage;
         this.populator = populator;
         this.packageService = packageService;
         this.submissionService = submissionService;
@@ -134,10 +113,14 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
         this.securityMediator = securityMediator;
         this.packageDeleter = packageDeleter;
         this.maintainerService = maintainerService;
+        this.persistentStorage = persistentStorage;
     }
 
-    protected File extractPackageFile(File stored) throws ExtractFileException {
-        return new File(storage.extractTarGzPackageFile(stored.getAbsolutePath()));
+    /**
+     * @return the directory containing extracted files
+     */
+    protected List<File> extractPackageFile(File stored) throws ExtractFileException {
+        return List.of(new File(localStorage.extractTarGzPackageFile(stored)));
     }
 
     @Override
@@ -148,59 +131,70 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
                 Objects.requireNonNull(fileData.getOriginalFilename()).split("_")[0];
         final R repository = request.getRepository();
 
-        File stored = null;
-        File extracted = null;
+        Path remotelyStored = null;
+        File locallyStored = null;
         try {
-            stored = new File(populator.writeToWaitingRoom(fileData, repository));
-            extracted = extractPackageFile(stored);
-            Properties packageProperties = populator.getPropertiesFromExtractedFile(extracted.getAbsolutePath());
-            packageBag = createPackage(name, stored, packageProperties);
+            locallyStored = populator
+                    .writeToTemporaryLocalWaitingRoom(fileData, repository)
+                    .getAbsoluteFile();
+            final List<File> extracted = extractPackageFile(locallyStored);
+            remotelyStored = persistentStorage.storeNewPackage(locallyStored, extracted, repository);
+            Properties packageProperties = populator.getPropertiesFromExtractedFile(extracted);
+            packageBag = createPackage(name, remotelyStored, locallyStored, packageProperties);
             submission = createSubmission(packageBag);
+            processExtractedFiles(extracted, packageBag);
             log.debug("Submission created.");
             repositoryService.incrementVersion(repository);
             packageBag.setSubmission(submission);
             return submission;
-        } catch (WriteToWaitingRoomException
-                | ExtractFileException
+        } catch (ExtractFileException
                 | CreatePackageException
-                | CreateSubmissionException e) {
+                | CreateSubmissionException
+                | StoreFileException
+                | WriteToWaitingRoomException
+                | ProcessExtractedFilesException e) {
             log.error(e.getMessage(), e);
-            cleanUpSource(stored, extracted);
+            cleanUpSource(remotelyStored);
             throw new FatalStrategyFailure(e);
         } catch (PackageDuplicateWithReplaceOff e) {
             log.debug(e.getMessage(), e);
-            cleanUpSource(stored, extracted);
-            throw new StrategyFailure(e, false);
+            cleanUpSource(remotelyStored);
+            throw new NonFatalStrategyFailure(e);
         } catch (PackageValidationException e) {
             log.debug(e.getMessage(), e);
-            cleanUpSource(stored, extracted);
+            cleanUpSource(remotelyStored);
             throw new FatalStrategyFailure(e);
         } catch (ReadPackageDescriptionException e) {
             log.debug(e.getMessage(), e);
-            cleanUpSource(stored, extracted);
+            cleanUpSource(remotelyStored);
             throw new FatalStrategyFailure(new PackageValidationException(e.getMessageCode()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            cleanUpSource(stored, extracted);
+            cleanUpSource(remotelyStored);
             throw e;
         } finally {
             log.debug("Package upload strategy finished.");
+            if (Objects.nonNull(locallyStored)) {
+                try {
+                    populator.removeTemporaryLocalWaitingRoomOfFile(locallyStored);
+                } catch (DeleteFileException e) {
+                    log.error(e.getMessage(), e);
+                }
+            }
         }
     }
 
-    private void cleanUpSource(File stored, File extracted) {
-        if (stored != null && stored.exists()) {
+    protected void processExtractedFiles(List<File> extractedFilesDir, P packageBag)
+            throws ProcessExtractedFilesException {}
+
+    private void cleanUpSource(Path stored) {
+        if (Objects.nonNull(stored)) {
+            final Path parent = stored.getParent();
+            final Path toDelete = Objects.isNull(parent) ? stored : parent;
             try {
-                storage.removeFileIfExists(stored.getAbsolutePath());
+                persistentStorage.deleteFromStorageIfExists(toDelete);
             } catch (DeleteFileException dfe) {
                 log.error("Could not remove created sources!", dfe);
-            }
-        }
-        if (extracted != null && extracted.exists()) {
-            try {
-                storage.removeFileIfExists(extracted.getAbsolutePath());
-            } catch (DeleteFileException dfe) {
-                log.error("Could not remove extracted sources!", dfe);
             }
         }
     }
@@ -224,8 +218,11 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
 
             final String mainDirSource;
             try {
-                mainDirSource = populator.moveToMainDirectory(packageBag);
-            } catch (InvalidSourceException | MovePackageSourceException e) {
+                mainDirSource = persistentStorage
+                        .movePackageToAccepted(packageBag)
+                        .toAbsolutePath()
+                        .toString();
+            } catch (StoreFileException e) {
                 log.error(e.getMessage(), e);
                 throw new CreateSubmissionException();
             }
@@ -253,10 +250,10 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
     /**
      * Creates a package object based on the stored file and additional data.
      * @param name name of the package
-     * @param storedFile package stored in persistent storage
+     * @param storedFile package stored in persistent localStorage
      * @return package object
      */
-    private P createPackage(String name, File storedFile, Properties properties)
+    private P createPackage(String name, Path storedFile, File locallyStored, Properties properties)
             throws PackageValidationException, PackageDuplicateWithReplaceOff, CreatePackageException {
         try {
             log.debug("Creating package.");
@@ -267,7 +264,8 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
                     name,
                     storedFile);
 
-            final DataSpecificValidationResult<Submission> validationResult = validateAndProcessPackage(packageBag);
+            final DataSpecificValidationResult<Submission> validationResult =
+                    validateAndProcessPackage(packageBag, locallyStored);
 
             if (validationResult.hasErrors()) throw new PackageValidationException(validationResult.getErrors());
             if (validationResult.hasWarnings()) {
@@ -309,10 +307,10 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
         maintainers.forEach(maintainer -> maintainer.getPackages().add(packageBag));
     }
 
-    private @NonNull DataSpecificValidationResult<Submission> validateAndProcessPackage(@NonNull P packageBag)
-            throws PackageProcessingException {
+    private @NonNull DataSpecificValidationResult<Submission> validateAndProcessPackage(
+            @NonNull P packageBag, @NonNull File locallyStored) throws PackageProcessingException {
         try {
-            storage.setCheckSum(packageBag);
+            localStorage.setCheckSum(packageBag, locallyStored);
 
             final DataSpecificValidationResult<Submission> validationResult =
                     ValidationResultImpl.createDataSpecificResult();
@@ -351,7 +349,7 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
      * @return package with assigned properties
      * @throws NoSuitableMaintainerFound if there are no suitable maintainer users in the system
      */
-    private P parseUniversalProperties(P packageBag, Properties properties, R repository, String name, File storedFile)
+    private P parseUniversalProperties(P packageBag, Properties properties, R repository, String name, Path storedFile)
             throws NoSuitableMaintainerFound {
         if (!Objects.nonNull(packageBag.getName())) {
             packageBag.setName(name);
@@ -361,7 +359,7 @@ public abstract class DefaultPackageUploadStrategy<R extends Repository, P exten
         packageBag.setActive(false);
         packageBag.setDeleted(false);
         assignRepositoryToPackage(repository, packageBag);
-        packageBag.setSource(storedFile.getAbsolutePath());
+        packageBag.setSource(storedFile.toAbsolutePath().toString());
         packageBag.setUser(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag));
 
         return packageBag;

@@ -209,9 +209,4 @@ public class PythonPackage extends Package {
 
         return this.getName() + "-" + this.getVersion() + "-" + tags + ".whl";
     }
-
-    public String getNormalizedNameWithVersion() {
-        if (this.getVersion() == null) return this.getNormalizedName() + "-latest";
-        else return this.getNormalizedName() + "-" + this.getVersion();
-    }
 }

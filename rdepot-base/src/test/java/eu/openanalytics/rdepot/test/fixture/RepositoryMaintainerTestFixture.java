@@ -30,8 +30,6 @@ import org.springframework.data.domain.PageImpl;
 
 public class RepositoryMaintainerTestFixture {
 
-    public static final Boolean DELETED = false;
-
     public static List<RepositoryMaintainer> GET_EXAMPLE_REPOSITORY_MAINTAINERS() {
         User user = UserTestFixture.GET_REPOSITORY_MAINTAINER(111);
 

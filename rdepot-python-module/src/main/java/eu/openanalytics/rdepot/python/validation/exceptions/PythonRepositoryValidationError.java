@@ -21,7 +21,6 @@
 package eu.openanalytics.rdepot.python.validation.exceptions;
 
 import java.io.IOException;
-import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serial;
@@ -39,13 +38,14 @@ public class PythonRepositoryValidationError extends Exception {
 
     private transient BindingResult bindingResult;
 
-    private void writeObject(ObjectOutputStream out)
-            throws IOException, ClassNotFoundException, NotSerializableException {
+    @Serial
+    private void writeObject(ObjectOutputStream out) throws IOException, ClassNotFoundException {
         out.defaultWriteObject();
         out.writeObject(getBindingResult());
     }
 
-    private void readObject(ObjectInputStream in) throws IOException, NotSerializableException, ClassNotFoundException {
+    @Serial
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         bindingResult = (BindingResult) in.readObject();
     }

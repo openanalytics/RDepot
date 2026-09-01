@@ -1,32 +1,8 @@
 {
-    "status": "SUCCESS",
     "code": 200,
-    "message": "Your request has been processed successfully.",
-    "messageCode": "success.request.processed",
     "data": {
-        "links": [
-            {
-                "rel": "self",
-                "href": "http://localhost:8017/api/v2/manager/python/repositories?maintainer=Nikola%20Tesla&published=false&page=0&size=20&sort=id,asc"
-            }
-        ],
         "content": [
             {
-                "id": 9,
-                "version": 4,
-                "publicationUri": "http://localhost/repo/testrepo9",
-                "name": "testrepo9",
-                "serverAddress": "http://oa-rdepot-repo:8080/testrepo9",
-                "deleted": false,
-                "published": false,
-                "synchronizing": false,
-                "technology": "Python",
-                "requiresAuthentication": true,
-                "numberOfPackages": 3,
-                "lastPublicationTimestamp": "",
-                "lastModifiedTimestamp": "2024-04-27T12:30:25Z",
-                "lastPublicationSuccessful": false,
-                "hashMethod": "SHA256",
                 "allowedFiles": [
                     {
                         "mimetype": "application/gzip",
@@ -41,6 +17,22 @@
                         "extension": ".whl"
                     }
                 ],
+                "deleted": false,
+                "hashMethod": "SHA256",
+                "id": 9,
+                "lastModifiedTimestamp": "2024-04-27T12:30:25Z",
+                "lastPublicationSuccessful": false,
+                "lastPublicationTimestamp": "",
+                "name": "testrepo9",
+                "numberOfPackages": 3,
+                "permissions": [],
+                "publicationUri": "http://localhost/repo/testrepo9",
+                "published": false,
+                "requiresAuthentication": true,
+                "serverAddress": "http://oa-rdepot-repo:8080/testrepo9",
+                "synchronizing": false,
+                "technology": "Python",
+                "version": 4,
                 "links": [
                     {
                         "rel": "self",
@@ -53,11 +45,20 @@
                 ]
             }
         ],
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/python/repositories?maintainer=Nikola%20Tesla&published=false&page=0&size=20&sort=id,asc"
+            }
+        ],
         "page": {
+            "number": 0,
             "size": 20,
             "totalElements": 1,
-            "totalPages": 1,
-            "number": 0
+            "totalPages": 1
         }
-    }
+    },
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "status": "SUCCESS"
 }

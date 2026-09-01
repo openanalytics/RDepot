@@ -23,7 +23,14 @@ package eu.openanalytics.rdepot.r.manuals;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.storage.exceptions.GenerateManualException;
 
-@FunctionalInterface
+/**
+ * It is part of {@link eu.openanalytics.rdepot.base.storage.PersistentStorage persistent storage}.
+ * The implementation should put manuals in the storage backend of choice.
+ */
 public interface ManualGenerator {
+
+    /**
+     * Generates the manual for given package and puts it in persistent storage.
+     */
     void generateManual(RPackage packageBag) throws GenerateManualException;
 }

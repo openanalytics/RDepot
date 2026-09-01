@@ -31,6 +31,6 @@ public class FatalStrategyFailure extends StrategyFailure {
     private static final long serialVersionUID = -3064878431446505975L;
 
     public FatalStrategyFailure(Exception reason) {
-        super(reason, true);
+        super(reason);
     }
 }

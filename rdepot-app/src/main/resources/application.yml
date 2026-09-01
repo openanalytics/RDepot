@@ -13,6 +13,9 @@ on-start-up:
 
 generate-manuals: true
 
+python:
+  max-index-size: 100000000
+
 declarative: false
 deleting:
   repositories:
@@ -273,7 +276,7 @@ multipart-upload:
   max-part-count: 15
   max-part-header-size: 1024
 
-#storage related properties
+#localStorage related properties
 local-storage:
   max-request-size: 15
 

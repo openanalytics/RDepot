@@ -30,16 +30,7 @@ import eu.openanalytics.rdepot.base.event.EventableResource;
 import eu.openanalytics.rdepot.base.technology.InternalTechnology;
 import eu.openanalytics.rdepot.base.technology.Technology;
 import eu.openanalytics.rdepot.base.time.DateProvider;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
@@ -128,8 +119,8 @@ public class Submission extends EventableResource implements Serializable {
         return this.packageBag;
     }
 
-    public void setPackage(Package packagebag) {
-        this.packageBag = packagebag;
+    public void setPackage(Package packageBag) {
+        this.packageBag = packageBag;
     }
 
     @JoinColumn(name = "repository_id", nullable = false)

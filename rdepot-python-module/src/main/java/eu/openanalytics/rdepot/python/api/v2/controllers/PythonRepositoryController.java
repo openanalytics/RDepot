@@ -40,11 +40,11 @@ import eu.openanalytics.rdepot.base.api.v2.hateoas.RoleAwareRepresentationModelA
 import eu.openanalytics.rdepot.base.api.v2.resolvers.CommonPageableSortResolver;
 import eu.openanalytics.rdepot.base.api.v2.resolvers.DtoResolvedPageable;
 import eu.openanalytics.rdepot.base.api.v2.validation.PageableValidator;
-import eu.openanalytics.rdepot.base.entities.PackageSynchronizationStatus;
 import eu.openanalytics.rdepot.base.entities.RepositorySynchronizationStatus;
 import eu.openanalytics.rdepot.base.entities.Role;
 import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
+import eu.openanalytics.rdepot.base.mirroring.MirrorSynchronizationStatusCoordinator;
 import eu.openanalytics.rdepot.base.mirroring.converters.PackageSynchronizationStatusDtoConverter;
 import eu.openanalytics.rdepot.base.mirroring.dtos.PackageSynchronizationStatusDto;
 import eu.openanalytics.rdepot.base.mirroring.dtos.RepositorySynchronizationStatusDto;
@@ -61,7 +61,9 @@ import eu.openanalytics.rdepot.python.api.v2.converters.PythonRepositoryDtoConve
 import eu.openanalytics.rdepot.python.api.v2.dtos.PythonRepositoryDto;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.mediator.deletion.PythonRepositoryDeleter;
-import eu.openanalytics.rdepot.python.mirroring.PypiMirrorSynchronizer;
+import eu.openanalytics.rdepot.python.mirroring.PyPiMirrorSynchronizer;
+import eu.openanalytics.rdepot.python.mirroring.PypiMirrorSynchronizationTask;
+import eu.openanalytics.rdepot.python.mirroring.PythonMirrorSynchronizationCoordinator;
 import eu.openanalytics.rdepot.python.services.PythonRepositoryService;
 import eu.openanalytics.rdepot.python.strategy.factory.PythonStrategyFactory;
 import eu.openanalytics.rdepot.python.validation.PythonRepositoryValidator;
@@ -70,6 +72,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.json.JsonException;
 import jakarta.json.JsonPatch;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -120,11 +123,10 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
     private final PageableValidator pageableValidator;
     private final CommonPageableSortResolver pageableSortResolver;
     private final StrategyExecutor strategyExecutor;
-    private final PypiMirrorSynchronizer mirrorSynchronizer;
     private final PackageSynchronizationStatusDtoConverter packageSynchronizationStatusDtoConverter;
-
-    @Value("${declarative}")
-    private String declarative;
+    private final PythonMirrorSynchronizationCoordinator pythonMirrorSynchronizationCoordinator;
+    private final MirrorSynchronizationStatusCoordinator mirrorSynchronizationStatusCoordinator;
+    private final PyPiMirrorSynchronizer mirrorSynchronizer;
 
     @Value("${deleting.repositories.enabled}")
     private Boolean repositoriesDeletionEnabled;
@@ -144,8 +146,10 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
             PageableValidator pageableValidator,
             CommonPageableSortResolver pageableSortResolver,
             StrategyExecutor strategyExecutor,
-            PypiMirrorSynchronizer mirrorSynchronizer,
-            PackageSynchronizationStatusDtoConverter packageSynchronizationStatusDtoConverter) {
+            PackageSynchronizationStatusDtoConverter packageSynchronizationStatusDtoConverter,
+            PythonMirrorSynchronizationCoordinator pythonMirrorSynchronizationCoordinator,
+            MirrorSynchronizationStatusCoordinator mirrorSynchronizationStatusCoordinator,
+            PyPiMirrorSynchronizer mirrorSynchronizer) {
         super(
                 messageSource,
                 LocaleContextHolder.getLocale(),
@@ -164,8 +168,10 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
         this.pageableValidator = pageableValidator;
         this.pageableSortResolver = pageableSortResolver;
         this.strategyExecutor = strategyExecutor;
-        this.mirrorSynchronizer = mirrorSynchronizer;
         this.packageSynchronizationStatusDtoConverter = packageSynchronizationStatusDtoConverter;
+        this.pythonMirrorSynchronizationCoordinator = pythonMirrorSynchronizationCoordinator;
+        this.mirrorSynchronizationStatusCoordinator = mirrorSynchronizationStatusCoordinator;
+        this.mirrorSynchronizer = mirrorSynchronizer;
     }
 
     @PreAuthorize("hasAuthority('user')")
@@ -345,13 +351,14 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
      * Republish repository.
      * @param principal used for authorization
      * @param id ID of repository to republish
+     * @throws NotAllowedInDeclarativeMode
      */
     @PreAuthorize("hasAuthority('repositorymaintainer')")
     @PostMapping(value = "/{id}/republish")
     @ResponseStatus(HttpStatus.OK)
     @Operation(operationId = "republishRRepository")
     public @ResponseBody ResponseEntity<?> republishRepository(@PathVariable("id") Integer id, Principal principal)
-            throws UserNotAuthorized, CreateException, RepositoryNotFound {
+            throws ApiException {
 
         User requester = userService
                 .findActiveByLogin(principal.getName())
@@ -371,6 +378,7 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
             if (repository.getPublished()) {
                 strategy = factory.republishRepositoryStrategy(repository, requester);
             } else {
+                checkDeclarative();
                 PythonRepository publishedRepo = new PythonRepository(repository);
                 publishedRepo.setPublished(true);
                 strategy = factory.updateRepositoryStrategy(repository, requester, publishedRepo);
@@ -397,7 +405,8 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
         PythonRepository repository =
                 pythonRepositoryService.findById(id).orElseThrow(() -> new RepositoryNotFound(messageSource, locale));
 
-        mirrorSynchronizer.synchronizeAsync(repository, mirrorSynchronizer.findByRepository(repository));
+        pythonMirrorSynchronizationCoordinator.submitMirroringTask(
+                new PypiMirrorSynchronizationTask(mirrorSynchronizer.findByRepository(repository), repository));
     }
 
     /**
@@ -418,35 +427,26 @@ public class PythonRepositoryController extends ApiV2Controller<PythonRepository
         if (!securityMediator.isAuthorizedToEdit(repository, requester))
             throw new UserNotAuthorized(messageSource, locale);
 
-        RepositorySynchronizationStatus repositoryStatus =
-                mirrorSynchronizer.getSynchronizationStatus(repository.getId());
+        final RepositorySynchronizationStatus repositoryStatus = mirrorSynchronizationStatusCoordinator
+                .getSynchronizationStatus(repository)
+                .orElseThrow(() -> new SynchronizationNotFound(messageSource, locale));
 
-        if (repositoryStatus == null) throw new SynchronizationNotFound(messageSource, locale);
+        List<PackageSynchronizationStatusDto> dtos = new ArrayList<>(repositoryStatus.getPackages().stream()
+                .map(packageSynchronizationStatusDtoConverter::convertEntityToDto)
+                .toList());
+        if (dtos.isEmpty()) dtos.addAll(turnFailedMirrorsIntoPackages(repositoryStatus));
 
         int start = (int) pageable.getOffset();
-        int end = Math.min(
-                (start + pageable.getPageSize()), repositoryStatus.getPackages().size());
-
-        Page<PackageSynchronizationStatus> packagesStatusPage = new PageImpl<>(
-                repositoryStatus.getPackages().subList(start, end),
-                pageable,
-                repositoryStatus.getPackages().size());
+        int end = Math.min((start + pageable.getPageSize()), dtos.size());
 
         Page<PackageSynchronizationStatusDto> packagesStatusDtoPage =
-                packagesStatusPage.map(packageSynchronizationStatusDtoConverter::convertEntityToDto);
+                new PageImpl<>(dtos.subList(start, end), pageable, dtos.size());
 
-        PageMetadata page = new PageMetadata(
-                pageable.getPageSize(),
-                pageable.getPageNumber(),
-                repositoryStatus.getPackages().size());
+        PageMetadata page = new PageMetadata(pageable.getPageSize(), pageable.getPageNumber(), dtos.size());
         RepositorySynchronizationStatusDto repositoryStatusDto =
                 new RepositorySynchronizationStatusDto(repositoryStatus, packagesStatusDtoPage.getContent(), page);
 
         return ResponseDto.generateSuccessBody(messageSource, locale, repositoryStatusDto);
-    }
-
-    private void checkDeclarative() throws NotAllowedInDeclarativeMode {
-        if (Boolean.parseBoolean(declarative)) throw new NotAllowedInDeclarativeMode(messageSource, locale);
     }
 
     private void validate(PythonRepository entity) throws PythonRepositoryValidationError {

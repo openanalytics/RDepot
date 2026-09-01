@@ -4,7 +4,7 @@
         "links": [
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions?state=cancelled&page=0&size=20&sort=id,asc"
+                "href": "http://localhost:8017/api/v2/manager/r/submissions?state=cancelled&page=0&size=20&sort=id,asc"
             }
         ],
         "page": {
@@ -28,15 +28,16 @@
                     "email": "galieleo@ldap.forumsys.com"
                 },
                 "created": "2020-03-28T20:06:49Z",
+                "permissions": [],
                 "changes": null,
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/23"
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/23"
                     },
                     {
                         "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions"
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions"
                     }
                 ],
                 "id": 23,
@@ -47,20 +48,21 @@
                     "active": false,
                     "description": "Is a collection of models to analyze genome scale codon data using a Bayesian framework. Provides visualization routines and checkpointing for model fittings. Currently published models to analyze gene data for selection on codon",
                     "technology": "R",
-                    "descriptionContentType": "txt",
                     "repository": {
-                        "name": "testrepo1",
                         "lastPublicationSuccessful": true,
+                        "name": "testrepo1",
                         "id": 2,
                         "published": true,
                         "technology": "R",
                         "requiresAuthentication": false,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+                        "publicationUri": "http://localhost/repo/testrepo1"
                     },
                     "title": "Analysis of Codon Data under Stationarity using a Bayesian Framework",
                     "version": "0.1.2.3",
-                    "url": "https:\/\/github.com\/clandere\/AnaCoDa",
+                    "url": "https://github.com/clandere/AnaCoDa",
                     "deleted": false,
+                    "descriptionContentType": "txt",
+                    "permissions": [],
                     "binary": false,
                     "name": "AnaCoDa",
                     "submission": {
@@ -70,11 +72,11 @@
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/22"
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/22"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",

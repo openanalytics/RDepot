@@ -22,7 +22,6 @@ package eu.openanalytics.rdepot.base.api.v2.hateoas.linking;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.IOException;
-import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serial;
@@ -36,7 +35,9 @@ import org.springframework.hateoas.LinkRelation;
  * {@link Link} extended with a list of modifiable properties.
  * It is usually a PATCH request link
  * that also specifies which properties can be changed by the requester.
+ * @deprecated This class will be replaced by another class without modifiableProperties
  */
+@Deprecated
 public class LinkWithModifiableProperties extends Link {
 
     @Serial
@@ -78,13 +79,14 @@ public class LinkWithModifiableProperties extends Link {
         return this.type;
     }
 
-    private void writeObject(ObjectOutputStream out)
-            throws IOException, ClassNotFoundException, NotSerializableException {
+    @Serial
+    private void writeObject(ObjectOutputStream out) throws IOException, ClassNotFoundException {
         out.defaultWriteObject();
         out.writeObject(getRel());
     }
 
-    private void readObject(ObjectInputStream in) throws IOException, NotSerializableException, ClassNotFoundException {
+    @Serial
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         rel = (LinkRelation) in.readObject();
     }

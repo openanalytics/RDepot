@@ -12,6 +12,10 @@
             "email": "galieleo@ldap.forumsys.com"
         },
         "packageName": "accrued",
+        "permissions": [
+            "packageMaintainer.delete.soft",
+            "packageMaintainer.edit"
+        ],
         "repository": {
             "id": 3,
             "name": "testrepo2",

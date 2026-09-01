@@ -48,10 +48,6 @@ public class ResponseDto<T> {
     private String messageCode;
     private T data;
 
-    public ResponseDto(Status status, Integer code, String message, String messageCode) {
-        this(status, code, message, messageCode, null);
-    }
-
     /**
      * Generates a response with a resource attached.
      * @param messageSource to resolve the message code

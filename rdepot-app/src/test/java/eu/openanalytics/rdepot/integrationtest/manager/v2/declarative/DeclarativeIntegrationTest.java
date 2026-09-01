@@ -154,6 +154,24 @@ public abstract class DeclarativeIntegrationTest {
         assertEquals("Incorrect JSON output.", expectedJSON, actualJSON);
     }
 
+    protected void assertRepositoriesAsAdmin(JsonObject expectedJSON) {
+        String data = given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+                .accept(ContentType.JSON)
+                .when()
+                .get(apiPath + "/repositories?sort=id,asc")
+                .then()
+                .statusCode(200)
+                .extract()
+                .asString();
+
+        JsonObject actualJSON = (JsonObject) JsonParser.parseString(data);
+
+        removeFields(actualJSON);
+        removeFields(expectedJSON);
+
+        assertEquals("Incorrect JSON output.", expectedJSON, actualJSON);
+    }
+
     protected Boolean assertSynchronizationFinished(String repositoryId) {
         String response = given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
                 .accept(ContentType.JSON)

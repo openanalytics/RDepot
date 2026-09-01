@@ -1,182 +1,245 @@
 {
     "code": 200,
     "data": {
+        "content": [
+            {
+                "deleted": false,
+                "id": 8,
+                "packageName": "pandas",
+                "permissions": [
+                    "packageMaintainer.delete.soft",
+                    "packageMaintainer.edit"
+                ],
+                "repository": {
+                    "id": 8,
+                    "lastPublicationSuccessful": true,
+                    "name": "testrepo8",
+                    "publicationUri": "http://localhost/repo/testrepo8",
+                    "published": true,
+                    "requiresAuthentication": true,
+                    "technology": "Python"
+                },
+                "user": {
+                    "email": "admin@localhost",
+                    "id": 8,
+                    "login": "admin",
+                    "name": "Local Admin User"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/8"
+                    },
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/8"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/8",
+                        "type": "PATCH"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/8",
+                        "type": "DELETE"
+                    }
+                ]
+            },
+            {
+                "deleted": false,
+                "id": 9,
+                "packageName": "boto3",
+                "permissions": [
+                    "packageMaintainer.delete.soft",
+                    "packageMaintainer.edit"
+                ],
+                "repository": {
+                    "id": 8,
+                    "lastPublicationSuccessful": true,
+                    "name": "testrepo8",
+                    "publicationUri": "http://localhost/repo/testrepo8",
+                    "published": true,
+                    "requiresAuthentication": true,
+                    "technology": "Python"
+                },
+                "user": {
+                    "email": "galieleo@ldap.forumsys.com",
+                    "id": 6,
+                    "login": "galieleo",
+                    "name": "Galileo Galilei"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/9"
+                    },
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/6"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/9",
+                        "type": "PATCH"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/9",
+                        "type": "DELETE"
+                    }
+                ]
+            },
+            {
+                "deleted": false,
+                "id": 10,
+                "packageName": "accelerated-numpy",
+                "permissions": [
+                    "packageMaintainer.delete.soft",
+                    "packageMaintainer.edit"
+                ],
+                "repository": {
+                    "id": 8,
+                    "lastPublicationSuccessful": true,
+                    "name": "testrepo8",
+                    "publicationUri": "http://localhost/repo/testrepo8",
+                    "published": true,
+                    "requiresAuthentication": true,
+                    "technology": "Python"
+                },
+                "user": {
+                    "email": "galieleo@ldap.forumsys.com",
+                    "id": 6,
+                    "login": "galieleo",
+                    "name": "Galileo Galilei"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/10"
+                    },
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/6"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/10",
+                        "type": "PATCH"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/10",
+                        "type": "DELETE"
+                    }
+                ]
+            },
+            {
+                "deleted": false,
+                "id": 11,
+                "packageName": "python-dateutil",
+                "permissions": [
+                    "packageMaintainer.delete.soft",
+                    "packageMaintainer.edit"
+                ],
+                "repository": {
+                    "id": 8,
+                    "lastPublicationSuccessful": true,
+                    "name": "testrepo8",
+                    "publicationUri": "http://localhost/repo/testrepo8",
+                    "published": true,
+                    "requiresAuthentication": true,
+                    "technology": "Python"
+                },
+                "user": {
+                    "email": "galieleo@ldap.forumsys.com",
+                    "id": 6,
+                    "login": "galieleo",
+                    "name": "Galileo Galilei"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/11"
+                    },
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/6"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/11",
+                        "type": "PATCH"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/11",
+                        "type": "DELETE"
+                    }
+                ]
+            },
+            {
+                "deleted": null,
+                "id": null,
+                "packageName": "requests",
+                "permissions": [],
+                "repository": {
+                    "id": 8,
+                    "lastPublicationSuccessful": true,
+                    "name": "testrepo8",
+                    "publicationUri": "http://localhost/repo/testrepo8",
+                    "published": true,
+                    "requiresAuthentication": true,
+                    "technology": "Python"
+                },
+                "user": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "links": [
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/5"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    }
+                ]
+            }
+        ],
         "links": [
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers?repository=testrepo8&page=0&size=20&sort=id,asc"
+                "href": "http://localhost:8017/api/v2/manager/package-maintainers?repository=testrepo8&page=0&size=20&sort=id,asc"
             }
         ],
         "page": {
             "number": 0,
             "size": 20,
-            "totalPages": 1,
-            "totalElements": 4
-        },
-        "content": [
-            {
-                "deleted": false,
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/8"
-                    },
-                    {
-                        "rel": "packageMaintainerList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/8",
-                        "type": "PATCH"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/8",
-                        "type": "DELETE"
-                    }
-                ],
-                "id": 8,
-                "packageName": "pandas",
-                "repository": {
-                    "name": "testrepo8",
-                    "lastPublicationSuccessful": true,
-                    "id": 8,
-                    "published": true,
-                    "technology": "Python",
-                    "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo8"
-                },
-                "user": {
-                    "name": "Local Admin User",
-                    "id": 8,
-                    "login": "admin",
-                    "email": "admin@localhost"
-                }
-            },
-            {
-                "deleted": false,
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/9"
-                    },
-                    {
-                        "rel": "packageMaintainerList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/9",
-                        "type": "PATCH"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/9",
-                        "type": "DELETE"
-                    }
-                ],
-                "id": 9,
-                "packageName": "boto3",
-                "repository": {
-                    "name": "testrepo8",
-                    "lastPublicationSuccessful": true,
-                    "id": 8,
-                    "published": true,
-                    "technology": "Python",
-                    "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo8"
-                },
-                "user": {
-                    "name": "Galileo Galilei",
-                    "id": 6,
-                    "login": "galieleo",
-                    "email": "galieleo@ldap.forumsys.com"
-                }
-            },
-            {
-                "deleted": false,
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/10"
-                    },
-                    {
-                        "rel": "packageMaintainerList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/10",
-                        "type": "PATCH"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/10",
-                        "type": "DELETE"
-                    }
-                ],
-                "id": 10,
-                "packageName": "accelerated-numpy",
-                "repository": {
-                    "name": "testrepo8",
-                    "lastPublicationSuccessful": true,
-                    "id": 8,
-                    "published": true,
-                    "technology": "Python",
-                    "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo8"
-                },
-                "user": {
-                    "name": "Galileo Galilei",
-                    "id": 6,
-                    "login": "galieleo",
-                    "email": "galieleo@ldap.forumsys.com"
-                }
-            },
-            {
-                "deleted": false,
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/11"
-                    },
-                    {
-                        "rel": "packageMaintainerList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/11",
-                        "type": "PATCH"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/11",
-                        "type": "DELETE"
-                    }
-                ],
-                "id": 11,
-                "packageName": "python-dateutil",
-                "repository": {
-                    "name": "testrepo8",
-                    "lastPublicationSuccessful": true,
-                    "id": 8,
-                    "published": true,
-                    "technology": "Python",
-                    "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo8"
-                },
-                "user": {
-                    "name": "Galileo Galilei",
-                    "id": 6,
-                    "login": "galieleo",
-                    "email": "galieleo@ldap.forumsys.com"
-                }
-            }
-        ]
+            "totalElements": 5,
+            "totalPages": 1
+        }
     },
-    "messageCode": "success.request.processed",
     "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
     "status": "SUCCESS"
 }

@@ -27,13 +27,10 @@ import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.mediator.BestMaintainerChooser;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
-import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
-import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
-import eu.openanalytics.rdepot.base.service.PackageService;
-import eu.openanalytics.rdepot.base.service.RepositoryService;
-import eu.openanalytics.rdepot.base.service.SubmissionService;
-import eu.openanalytics.rdepot.base.storage.Storage;
+import eu.openanalytics.rdepot.base.service.*;
+import eu.openanalytics.rdepot.base.storage.LocalStorage;
 import eu.openanalytics.rdepot.base.storage.exceptions.ExtractFileException;
+import eu.openanalytics.rdepot.base.storage.exceptions.StoreFileException;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.upload.DefaultPackageUploadStrategy;
 import eu.openanalytics.rdepot.base.validation.DataSpecificValidationResult;
@@ -42,19 +39,12 @@ import eu.openanalytics.rdepot.base.validation.ValidationResultItem;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.mediator.deletion.PythonPackageDeleter;
-import eu.openanalytics.rdepot.python.storage.PythonPopulator;
+import eu.openanalytics.rdepot.python.storage.PythonPersistentStorage;
+import eu.openanalytics.rdepot.python.storage.population.PythonPopulator;
 import eu.openanalytics.rdepot.python.synchronization.PythonRepositorySynchronizer;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.StandardCopyOption;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -68,6 +58,7 @@ public class PythonPackageUploadStrategy extends DefaultPackageUploadStrategy<Py
     private static final String PROP_PROJECT_URL = "Project-URL";
     private static final String PROP_NAME = "Name";
     private static final String PROP_AUTHOR_EMAIL = "Author-email";
+    private final PythonPersistentStorage pythonPersistentStorage;
 
     public PythonPackageUploadStrategy(
             PackageUploadRequest<PythonRepository> request,
@@ -76,7 +67,7 @@ public class PythonPackageUploadStrategy extends DefaultPackageUploadStrategy<Py
             SubmissionService service,
             PackageValidator<PythonPackage> packageValidator,
             RepositoryService<PythonRepository> repositoryService,
-            Storage<PythonPackage> storage,
+            LocalStorage<PythonPackage> localStorage,
             PackageService<PythonPackage> packageService,
             EmailService emailService,
             BestMaintainerChooser bestMaintainerChooser,
@@ -84,14 +75,15 @@ public class PythonPackageUploadStrategy extends DefaultPackageUploadStrategy<Py
             SecurityMediator securityMediator,
             PythonPackageDeleter packageDeleter,
             PythonPopulator pythonPopulator,
-            PackageMaintainerService maintainerService) {
+            PackageMaintainerService maintainerService,
+            PythonPersistentStorage pythonPersistentStorage) {
         super(
                 request,
                 requester,
                 eventService,
                 packageValidator,
                 repositoryService,
-                storage,
+                localStorage,
                 packageService,
                 service,
                 emailService,
@@ -100,8 +92,10 @@ public class PythonPackageUploadStrategy extends DefaultPackageUploadStrategy<Py
                 securityMediator,
                 packageDeleter,
                 pythonPopulator,
-                maintainerService);
+                maintainerService,
+                pythonPersistentStorage);
         this.pythonPopulator = pythonPopulator;
+        this.pythonPersistentStorage = pythonPersistentStorage;
     }
 
     @Override
@@ -212,9 +206,11 @@ public class PythonPackageUploadStrategy extends DefaultPackageUploadStrategy<Py
     }
 
     @Override
-    protected File extractPackageFile(File stored) throws ExtractFileException {
+    protected List<File> extractPackageFile(File stored) throws ExtractFileException {
         if (stored.getName().endsWith(".whl"))
-            return new File(pythonPopulator.extractWhlPackageFile(stored.getAbsolutePath()));
+            return pythonPopulator.extractWhlPackageFile(stored.getAbsolutePath()).stream()
+                    .filter(File::isDirectory)
+                    .toList();
         return super.extractPackageFile(stored);
     }
 
@@ -227,17 +223,11 @@ public class PythonPackageUploadStrategy extends DefaultPackageUploadStrategy<Py
                         .toList();
 
         if (packageDuplicateWarnings.isEmpty()) return;
-
-        String newName = packageBag.getPackageFilename();
-
-        File renamedPackage = new File(FilenameUtils.getPath(packageBag.getSource()), newName);
         try {
-            FileUtils.moveFile(new File(packageBag.getSource()), renamedPackage, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
+            pythonPersistentStorage.renamePackageFileToBeMoreAccurate(packageBag);
+        } catch (StoreFileException e) {
             log.error(e.getMessage(), e);
             throw new IllegalStateException("Could not properly rename package file!");
         }
-
-        packageBag.setSource(renamedPackage.getPath());
     }
 }

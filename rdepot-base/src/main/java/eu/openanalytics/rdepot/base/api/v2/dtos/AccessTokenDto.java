@@ -23,6 +23,8 @@ package eu.openanalytics.rdepot.base.api.v2.dtos;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import eu.openanalytics.rdepot.base.entities.AccessToken;
 import eu.openanalytics.rdepot.base.time.DateProvider;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -42,6 +44,7 @@ public class AccessTokenDto implements IDto {
     private boolean deleted;
     private UserProjection user;
     private String lastUsed;
+    private List<String> permissions = new ArrayList<>();
 
     public AccessTokenDto(AccessToken entity) {
         this.entity = entity;

@@ -1,534 +1,542 @@
 {
-    "code": 200,
-    "data": {
-        "content": [
-            {
-                "active": true,
-                "architecture": null,
-                "author": "Hadley Wickham [aut] (<https://orcid.org/0000-0003-4757-117X>),\\n Winston Chang [aut] (<https://orcid.org/0000-0002-1576-2126>),\\n Lionel Henry [aut],\\n Thomas Lin Pedersen [aut, cre]\\n (<https://orcid.org/0000-0002-5147-4711>),\\n Kohske Takahashi [aut],\\n Claus Wilke [aut] (<https://orcid.org/0000-0002-7470-9261>),\\n Kara Woo [aut] (<https://orcid.org/0000-0002-5125-4188>),\\n Hiroaki Yutani [aut] (<https://orcid.org/0000-0002-3385-7233>),\\n Dewey Dunnington [aut] (<https://orcid.org/0000-0002-9415-4582>),\\n RStudio [cph, fnd]",
-                "binary": false,
-                "built": null,
-                "deleted": false,
-                "depends": "R (>= 3.2)",
-                "description": "A system for 'declaratively' creating graphics,\\n based on \"The Grammar of Graphics\". You provide the data, tell 'ggplot2'\\n how to map variables to aesthetics, what graphical primitives to use,\\n and it takes care of the details.",
-                "descriptionContentType": "txt",
-                "distribution": null,
-                "encoding": "UTF-8",
-                "enhances": "sp",
-                "id": 1,
-                "imports": "digest, glue, grDevices, grid, gtable (>= 0.1.1), isoband,\\n MASS, mgcv, rlang (>= 0.3.0), scales (>= 0.5.0), stats, tibble,\\n withr (>= 2.0.0)",
-                "license": "GPL-2 | file LICENSE",
-                "linkingTo": null,
-                "maintainer": "Thomas Lin Pedersen <thomas.pedersen@rstudio.com>",
-                "manualAvailable": true,
-                "md5sum": "02d87290852410924eb816c2d4788afa",
-                "name": "ggplot2",
-                "needsCompilation": "no",
-                "priority": null,
-                "repository": {
-                    "id": 17,
-                    "lastPublicationSuccessful": false,
-                    "name": "CD",
-                    "publicationUri": "http://localhost/repo/CD",
-                    "published": true,
-                    "requiresAuthentication": true,
-                    "technology": "R"
-                },
-                "rversion": null,
-                "submission": {
-                    "id": 1,
-                    "state": "ACCEPTED"
-                },
-                "suggests": "covr, dplyr, ggplot2movies, hexbin, Hmisc, knitr, lattice,\\n mapproj, maps, maptools, multcomp, munsell, nlme, profvis,\\n quantreg, RColorBrewer, rgeos, rmarkdown, rpart, sf (>= 0.7-3),\\n svglite (>= 1.2.0.9001), testthat (>= 2.1.0), vdiffr (>= 0.3.0)",
-                "systemRequirements": null,
-                "technology": "R",
-                "title": "Create Elegant Data Visualisations Using the Grammar of Graphics",
-                "url": "http://ggplot2.tidyverse.org, https://github.com/tidyverse/ggplot2",
-                "user": {
-                    "email": "einstein@ldap.forumsys.com",
-                    "id": 4,
-                    "login": "einstein",
-                    "name": "Albert Einstein"
-                },
-                "version": "3.3.2",
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http://localhost:8021/api/v2/manager/r/packages/1"
-                    },
-                    {
-                        "rel": "packageList",
-                        "href": "http://localhost:8021/api/v2/manager/r/packages"
-                    },
-                    {
-                        "rel": "repository",
-                        "href": "http://localhost:8021/api/v2/manager/r/repositories/17"
-                    }
-                ]
-            },
-            {
-                "active": true,
-                "architecture": null,
-                "author": "Carson Sievert [aut, cre] (ORCID:\\n <https://orcid.org/0000-0002-4958-2844>),\\n Chris Parmer [aut],\\n Toby Hocking [aut],\\n Scott Chamberlain [aut],\\n Karthik Ram [aut],\\n Marianne Corvellec [aut] (ORCID:\\n <https://orcid.org/0000-0002-1994-3581>),\\n Pedro Despouy [aut],\\n Salim Brüggemann [ctb] (ORCID: <https://orcid.org/0000-0002-5329-5987>),\\n Plotly Technologies Inc. [cph]",
-                "binary": false,
-                "built": null,
-                "deleted": false,
-                "depends": "R (>= 3.2.0), ggplot2 (>= 3.0.0)",
-                "description": "Create interactive web graphics from 'ggplot2' graphs and/or a custom interface to the (MIT-licensed) JavaScript library 'plotly.js' inspired by the grammar of graphics.",
-                "descriptionContentType": "txt",
-                "distribution": null,
-                "encoding": "UTF-8",
-                "enhances": null,
-                "id": 2,
-                "imports": "tools, scales, httr (>= 1.3.0), jsonlite (>= 1.6), magrittr,\\n digest, viridisLite, base64enc, htmltools (>= 0.3.6),\\n htmlwidgets (>= 1.5.2.9001), tidyr (>= 1.0.0), RColorBrewer,\\n dplyr, vctrs, tibble, lazyeval (>= 0.2.0), rlang (>= 1.0.0),\\n crosstalk, purrr, data.table, promises",
-                "license": "MIT + file LICENSE",
-                "linkingTo": null,
-                "maintainer": "Carson Sievert <cpsievert1@gmail.com>",
-                "manualAvailable": false,
-                "md5sum": "dd3c051bdd9772c38301e88d6dc355c6",
-                "name": "plotly",
-                "needsCompilation": "no",
-                "priority": null,
-                "repository": {
-                    "id": 17,
-                    "lastPublicationSuccessful": false,
-                    "name": "CD",
-                    "publicationUri": "http://localhost/repo/CD",
-                    "published": true,
-                    "requiresAuthentication": true,
-                    "technology": "R"
-                },
-                "rversion": null,
-                "submission": {
-                    "id": 2,
-                    "state": "ACCEPTED"
-                },
-                "suggests": "MASS, maps, hexbin, ggthemes, GGally, ggalluvial, testthat,\\n knitr, shiny (>= 1.1.0), shinytest2, curl, rmarkdown, Cairo,\\n broom, webshot, listviewer, dendextend, sf, png, IRdisplay,\\n processx, plotlyGeoAssets, forcats, withr, palmerpenguins,\\n rversions, reticulate, rsvg, ggridges",
-                "systemRequirements": null,
-                "technology": "R",
-                "title": "Create Interactive Web Graphics via 'plotly.js'",
-                "url": "https://plotly-r.com, https://github.com/plotly/plotly.R,\\n https://plotly.com/r/",
-                "user": {
-                    "email": "einstein@ldap.forumsys.com",
-                    "id": 4,
-                    "login": "einstein",
-                    "name": "Albert Einstein"
-                },
-                "version": "4.11.0",
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http://localhost:8021/api/v2/manager/r/packages/2"
-                    },
-                    {
-                        "rel": "packageList",
-                        "href": "http://localhost:8021/api/v2/manager/r/packages"
-                    },
-                    {
-                        "rel": "repository",
-                        "href": "http://localhost:8021/api/v2/manager/r/repositories/17"
-                    }
-                ]
-            },
-            {
-                "active": true,
-                "architecture": null,
-                "author": "R. Gentleman",
-                "binary": false,
-                "built": null,
-                "deleted": false,
-                "depends": "R (>= 2.10), AnnotationDbi (>= 1.27.5), XML",
-                "description": "Using R enviroments for annotation.",
-                "descriptionContentType": "txt",
-                "distribution": null,
-                "encoding": null,
-                "enhances": null,
-                "id": 3,
-                "imports": "Biobase, DBI, xtable, graphics, utils, stats, methods,\\n BiocGenerics (>= 0.13.8), httr",
-                "license": "Artistic-2.0",
-                "linkingTo": null,
-                "maintainer": "Bioconductor Package Maintainer <maintainer@bioconductor.org>",
-                "manualAvailable": false,
-                "md5sum": "c06830f9bcfc0ae87023bfe03acb319e",
-                "name": "annotate",
-                "needsCompilation": "no",
-                "priority": null,
-                "repository": {
-                    "id": 17,
-                    "lastPublicationSuccessful": false,
-                    "name": "CD",
-                    "publicationUri": "http://localhost/repo/CD",
-                    "published": true,
-                    "requiresAuthentication": true,
-                    "technology": "R"
-                },
-                "rversion": null,
-                "submission": {
-                    "id": 3,
-                    "state": "ACCEPTED"
-                },
-                "suggests": "hgu95av2.db, genefilter, Biostrings (>= 2.25.10), IRanges,\\n rae230a.db, rae230aprobe, tkWidgets, GO.db, org.Hs.eg.db,\\n org.Mm.eg.db, hom.Hs.inp.db, humanCHRLOC, Rgraphviz, RUnit,",
-                "systemRequirements": null,
-                "technology": "R",
-                "title": "Annotation for microarrays",
-                "url": null,
-                "user": {
-                    "email": "einstein@ldap.forumsys.com",
-                    "id": 4,
-                    "login": "einstein",
-                    "name": "Albert Einstein"
-                },
-                "version": "1.68.0",
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http://localhost:8021/api/v2/manager/r/packages/3"
-                    },
-                    {
-                        "rel": "packageList",
-                        "href": "http://localhost:8021/api/v2/manager/r/packages"
-                    },
-                    {
-                        "rel": "repository",
-                        "href": "http://localhost:8021/api/v2/manager/r/repositories/17"
-                    }
-                ]
-            },
-            {
-                "active": true,
-                "architecture": null,
-                "author": "Vipul Singhal [aut],\\n Joseph Lee [aut, cre] (ORCID: <https://orcid.org/0000-0002-4983-4714>)",
-                "binary": false,
-                "built": null,
-                "deleted": false,
-                "depends": "R (>= 4.4.0)",
-                "description": "Banksy is an R package that incorporates spatial information to \\n cluster cells in a feature space (e.g. gene expression). To incorporate \\n spatial information, BANKSY computes the mean neighborhood expression and \\n azimuthal Gabor filters that capture gene expression gradients. These \\n features are combined with the cell's own expression to embed cells in a \\n neighbor-augmented product space which can then be clustered, allowing for\\n accurate and spatially-aware cell typing and tissue domain segmentation.",
-                "descriptionContentType": "txt",
-                "distribution": null,
-                "encoding": "UTF-8",
-                "enhances": null,
-                "id": 4,
-                "imports": "aricode, BiocParallel, data.table, dbscan, SpatialExperiment,\\n SingleCellExperiment, SummarizedExperiment, S4Vectors, stats,\\n Matrix, MatrixGenerics, mclust, igraph, irlba, leidenAlg (>=\\n 1.1.0), utils, uwot, RcppHungarian, GenomeInfoDb",
-                "license": "file LICENSE",
-                "linkingTo": null,
-                "maintainer": "Joseph Lee <joseph.lee@u.nus.edu>",
-                "manualAvailable": false,
-                "md5sum": "cb523670f24301a4521995945b52fca2",
-                "name": "Banksy",
-                "needsCompilation": "no",
-                "priority": null,
-                "repository": {
-                    "id": 17,
-                    "lastPublicationSuccessful": false,
-                    "name": "CD",
-                    "publicationUri": "http://localhost/repo/CD",
-                    "published": true,
-                    "requiresAuthentication": true,
-                    "technology": "R"
-                },
-                "rversion": null,
-                "submission": {
-                    "id": 4,
-                    "state": "ACCEPTED"
-                },
-                "suggests": "knitr, rmarkdown, pals, scuttle, scater, scran, cowplot,\\n ggplot2, testthat (>= 3.0.0), harmony, Seurat, ExperimentHub,\\n spatialLIBD, BiocStyle",
-                "systemRequirements": null,
-                "technology": "R",
-                "title": "Spatial transcriptomic clustering",
-                "url": "https://github.com/prabhakarlab/Banksy",
-                "user": {
-                    "email": "einstein@ldap.forumsys.com",
-                    "id": 4,
-                    "login": "einstein",
-                    "name": "Albert Einstein"
-                },
-                "version": "1.7.0",
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http://localhost:8021/api/v2/manager/r/packages/4"
-                    },
-                    {
-                        "rel": "packageList",
-                        "href": "http://localhost:8021/api/v2/manager/r/packages"
-                    },
-                    {
-                        "rel": "repository",
-                        "href": "http://localhost:8021/api/v2/manager/r/repositories/17"
-                    }
-                ]
-            },
-            {
-                "active": true,
-                "architecture": null,
-                "author": "Hadley Wickham [aut] (<https://orcid.org/0000-0003-4757-117X>),\\n Winston Chang [aut] (<https://orcid.org/0000-0002-1576-2126>),\\n Lionel Henry [aut],\\n Thomas Lin Pedersen [aut, cre]\\n (<https://orcid.org/0000-0002-5147-4711>),\\n Kohske Takahashi [aut],\\n Claus Wilke [aut] (<https://orcid.org/0000-0002-7470-9261>),\\n Kara Woo [aut] (<https://orcid.org/0000-0002-5125-4188>),\\n Hiroaki Yutani [aut] (<https://orcid.org/0000-0002-3385-7233>),\\n Dewey Dunnington [aut] (<https://orcid.org/0000-0002-9415-4582>),\\n RStudio [cph, fnd]",
-                "binary": false,
-                "built": null,
-                "deleted": false,
-                "depends": "R (>= 3.2)",
-                "description": "A system for 'declaratively' creating graphics,\\n based on \"The Grammar of Graphics\". You provide the data, tell 'ggplot2'\\n how to map variables to aesthetics, what graphical primitives to use,\\n and it takes care of the details.",
-                "descriptionContentType": "txt",
-                "distribution": null,
-                "encoding": "UTF-8",
-                "enhances": "sp",
-                "id": 5,
-                "imports": "digest, glue, grDevices, grid, gtable (>= 0.1.1), isoband,\\n MASS, mgcv, rlang (>= 0.3.0), scales (>= 0.5.0), stats, tibble,\\n withr (>= 2.0.0)",
-                "license": "GPL-2 | file LICENSE",
-                "linkingTo": null,
-                "maintainer": "Thomas Lin Pedersen <thomas.pedersen@rstudio.com>",
-                "manualAvailable": true,
-                "md5sum": "02d87290852410924eb816c2d4788afa",
-                "name": "ggplot2",
-                "needsCompilation": "no",
-                "priority": null,
-                "repository": {
-                    "id": 3,
-                    "lastPublicationSuccessful": false,
-                    "name": "D",
-                    "publicationUri": "http://localhost/repo/D",
-                    "published": false,
-                    "requiresAuthentication": true,
-                    "technology": "R"
-                },
-                "rversion": null,
-                "submission": {
-                    "id": 5,
-                    "state": "ACCEPTED"
-                },
-                "suggests": "covr, dplyr, ggplot2movies, hexbin, Hmisc, knitr, lattice,\\n mapproj, maps, maptools, multcomp, munsell, nlme, profvis,\\n quantreg, RColorBrewer, rgeos, rmarkdown, rpart, sf (>= 0.7-3),\\n svglite (>= 1.2.0.9001), testthat (>= 2.1.0), vdiffr (>= 0.3.0)",
-                "systemRequirements": null,
-                "technology": "R",
-                "title": "Create Elegant Data Visualisations Using the Grammar of Graphics",
-                "url": "http://ggplot2.tidyverse.org, https://github.com/tidyverse/ggplot2",
-                "user": {
-                    "email": "einstein@ldap.forumsys.com",
-                    "id": 4,
-                    "login": "einstein",
-                    "name": "Albert Einstein"
-                },
-                "version": "3.3.2",
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http://localhost:8021/api/v2/manager/r/packages/5"
-                    },
-                    {
-                        "rel": "packageList",
-                        "href": "http://localhost:8021/api/v2/manager/r/packages"
-                    },
-                    {
-                        "rel": "repository",
-                        "href": "http://localhost:8021/api/v2/manager/r/repositories/3"
-                    }
-                ]
-            },
-            {
-                "active": true,
-                "architecture": null,
-                "author": "Vipul Singhal [aut],\\n Joseph Lee [aut, cre] (ORCID: <https://orcid.org/0000-0002-4983-4714>)",
-                "binary": false,
-                "built": null,
-                "deleted": false,
-                "depends": "R (>= 4.4.0)",
-                "description": "Banksy is an R package that incorporates spatial information to \\n cluster cells in a feature space (e.g. gene expression). To incorporate \\n spatial information, BANKSY computes the mean neighborhood expression and \\n azimuthal Gabor filters that capture gene expression gradients. These \\n features are combined with the cell's own expression to embed cells in a \\n neighbor-augmented product space which can then be clustered, allowing for\\n accurate and spatially-aware cell typing and tissue domain segmentation.",
-                "descriptionContentType": "txt",
-                "distribution": null,
-                "encoding": "UTF-8",
-                "enhances": null,
-                "id": 6,
-                "imports": "aricode, BiocParallel, data.table, dbscan, SpatialExperiment,\\n SingleCellExperiment, SummarizedExperiment, S4Vectors, stats,\\n Matrix, MatrixGenerics, mclust, igraph, irlba, leidenAlg (>=\\n 1.1.0), utils, uwot, RcppHungarian, GenomeInfoDb",
-                "license": "file LICENSE",
-                "linkingTo": null,
-                "maintainer": "Joseph Lee <joseph.lee@u.nus.edu>",
-                "manualAvailable": false,
-                "md5sum": "cb523670f24301a4521995945b52fca2",
-                "name": "Banksy",
-                "needsCompilation": "no",
-                "priority": null,
-                "repository": {
-                    "id": 3,
-                    "lastPublicationSuccessful": false,
-                    "name": "D",
-                    "publicationUri": "http://localhost/repo/D",
-                    "published": false,
-                    "requiresAuthentication": true,
-                    "technology": "R"
-                },
-                "rversion": null,
-                "submission": {
-                    "id": 6,
-                    "state": "ACCEPTED"
-                },
-                "suggests": "knitr, rmarkdown, pals, scuttle, scater, scran, cowplot,\\n ggplot2, testthat (>= 3.0.0), harmony, Seurat, ExperimentHub,\\n spatialLIBD, BiocStyle",
-                "systemRequirements": null,
-                "technology": "R",
-                "title": "Spatial transcriptomic clustering",
-                "url": "https://github.com/prabhakarlab/Banksy",
-                "user": {
-                    "email": "einstein@ldap.forumsys.com",
-                    "id": 4,
-                    "login": "einstein",
-                    "name": "Albert Einstein"
-                },
-                "version": "1.7.0",
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http://localhost:8021/api/v2/manager/r/packages/6"
-                    },
-                    {
-                        "rel": "packageList",
-                        "href": "http://localhost:8021/api/v2/manager/r/packages"
-                    },
-                    {
-                        "rel": "repository",
-                        "href": "http://localhost:8021/api/v2/manager/r/repositories/3"
-                    }
-                ]
-            },
-            {
-                "active": true,
-                "architecture": null,
-                "author": "Carson Sievert [aut, cre] (ORCID:\\n <https://orcid.org/0000-0002-4958-2844>),\\n Chris Parmer [aut],\\n Toby Hocking [aut],\\n Scott Chamberlain [aut],\\n Karthik Ram [aut],\\n Marianne Corvellec [aut] (ORCID:\\n <https://orcid.org/0000-0002-1994-3581>),\\n Pedro Despouy [aut],\\n Salim Brüggemann [ctb] (ORCID: <https://orcid.org/0000-0002-5329-5987>),\\n Plotly Technologies Inc. [cph]",
-                "binary": false,
-                "built": null,
-                "deleted": false,
-                "depends": "R (>= 3.2.0), ggplot2 (>= 3.0.0)",
-                "description": "Create interactive web graphics from 'ggplot2' graphs and/or a custom interface to the (MIT-licensed) JavaScript library 'plotly.js' inspired by the grammar of graphics.",
-                "descriptionContentType": "txt",
-                "distribution": null,
-                "encoding": "UTF-8",
-                "enhances": null,
-                "id": 7,
-                "imports": "tools, scales, httr (>= 1.3.0), jsonlite (>= 1.6), magrittr,\\n digest, viridisLite, base64enc, htmltools (>= 0.3.6),\\n htmlwidgets (>= 1.5.2.9001), tidyr (>= 1.0.0), RColorBrewer,\\n dplyr, vctrs, tibble, lazyeval (>= 0.2.0), rlang (>= 1.0.0),\\n crosstalk, purrr, data.table, promises",
-                "license": "MIT + file LICENSE",
-                "linkingTo": null,
-                "maintainer": "Carson Sievert <cpsievert1@gmail.com>",
-                "manualAvailable": false,
-                "md5sum": "dd3c051bdd9772c38301e88d6dc355c6",
-                "name": "plotly",
-                "needsCompilation": "no",
-                "priority": null,
-                "repository": {
-                    "id": 3,
-                    "lastPublicationSuccessful": false,
-                    "name": "D",
-                    "publicationUri": "http://localhost/repo/D",
-                    "published": false,
-                    "requiresAuthentication": true,
-                    "technology": "R"
-                },
-                "rversion": null,
-                "submission": {
-                    "id": 7,
-                    "state": "ACCEPTED"
-                },
-                "suggests": "MASS, maps, hexbin, ggthemes, GGally, ggalluvial, testthat,\\n knitr, shiny (>= 1.1.0), shinytest2, curl, rmarkdown, Cairo,\\n broom, webshot, listviewer, dendextend, sf, png, IRdisplay,\\n processx, plotlyGeoAssets, forcats, withr, palmerpenguins,\\n rversions, reticulate, rsvg, ggridges",
-                "systemRequirements": null,
-                "technology": "R",
-                "title": "Create Interactive Web Graphics via 'plotly.js'",
-                "url": "https://plotly-r.com, https://github.com/plotly/plotly.R,\\n https://plotly.com/r/",
-                "user": {
-                    "email": "einstein@ldap.forumsys.com",
-                    "id": 4,
-                    "login": "einstein",
-                    "name": "Albert Einstein"
-                },
-                "version": "4.11.0",
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http://localhost:8021/api/v2/manager/r/packages/7"
-                    },
-                    {
-                        "rel": "packageList",
-                        "href": "http://localhost:8021/api/v2/manager/r/packages"
-                    },
-                    {
-                        "rel": "repository",
-                        "href": "http://localhost:8021/api/v2/manager/r/repositories/3"
-                    }
-                ]
-            },
-            {
-                "active": true,
-                "architecture": null,
-                "author": "R. Gentleman",
-                "binary": false,
-                "built": null,
-                "deleted": false,
-                "depends": "R (>= 2.10), AnnotationDbi (>= 1.27.5), XML",
-                "description": "Using R enviroments for annotation.",
-                "descriptionContentType": "txt",
-                "distribution": null,
-                "encoding": null,
-                "enhances": null,
-                "id": 8,
-                "imports": "Biobase, DBI, xtable, graphics, utils, stats, methods,\\n BiocGenerics (>= 0.13.8), httr",
-                "license": "Artistic-2.0",
-                "linkingTo": null,
-                "maintainer": "Bioconductor Package Maintainer <maintainer@bioconductor.org>",
-                "manualAvailable": false,
-                "md5sum": "c06830f9bcfc0ae87023bfe03acb319e",
-                "name": "annotate",
-                "needsCompilation": "no",
-                "priority": null,
-                "repository": {
-                    "id": 3,
-                    "lastPublicationSuccessful": false,
-                    "name": "D",
-                    "publicationUri": "http://localhost/repo/D",
-                    "published": false,
-                    "requiresAuthentication": true,
-                    "technology": "R"
-                },
-                "rversion": null,
-                "submission": {
-                    "id": 8,
-                    "state": "ACCEPTED"
-                },
-                "suggests": "hgu95av2.db, genefilter, Biostrings (>= 2.25.10), IRanges,\\n rae230a.db, rae230aprobe, tkWidgets, GO.db, org.Hs.eg.db,\\n org.Mm.eg.db, hom.Hs.inp.db, humanCHRLOC, Rgraphviz, RUnit,",
-                "systemRequirements": null,
-                "technology": "R",
-                "title": "Annotation for microarrays",
-                "url": null,
-                "user": {
-                    "email": "einstein@ldap.forumsys.com",
-                    "id": 4,
-                    "login": "einstein",
-                    "name": "Albert Einstein"
-                },
-                "version": "1.68.0",
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http://localhost:8021/api/v2/manager/r/packages/8"
-                    },
-                    {
-                        "rel": "packageList",
-                        "href": "http://localhost:8021/api/v2/manager/r/packages"
-                    },
-                    {
-                        "rel": "repository",
-                        "href": "http://localhost:8021/api/v2/manager/r/repositories/3"
-                    }
-                ]
-            }
-        ],
+  "code": 200,
+  "data": {
+    "content": [
+      {
+        "active": true,
+        "architecture": null,
+        "author": "Hadley Wickham [aut] (<https://orcid.org/0000-0003-4757-117X>),\\n Winston Chang [aut] (<https://orcid.org/0000-0002-1576-2126>),\\n Lionel Henry [aut],\\n Thomas Lin Pedersen [aut, cre]\\n (<https://orcid.org/0000-0002-5147-4711>),\\n Kohske Takahashi [aut],\\n Claus Wilke [aut] (<https://orcid.org/0000-0002-7470-9261>),\\n Kara Woo [aut] (<https://orcid.org/0000-0002-5125-4188>),\\n Hiroaki Yutani [aut] (<https://orcid.org/0000-0002-3385-7233>),\\n Dewey Dunnington [aut] (<https://orcid.org/0000-0002-9415-4582>),\\n RStudio [cph, fnd]",
+        "binary": false,
+        "built": null,
+        "deleted": false,
+        "depends": "R (>= 3.2)",
+        "description": "A system for 'declaratively' creating graphics,\\n based on \"The Grammar of Graphics\". You provide the data, tell 'ggplot2'\\n how to map variables to aesthetics, what graphical primitives to use,\\n and it takes care of the details.",
+        "descriptionContentType": "txt",
+        "distribution": null,
+        "encoding": "UTF-8",
+        "enhances": "sp",
+        "id": 1,
+        "imports": "digest, glue, grDevices, grid, gtable (>= 0.1.1), isoband,\\n MASS, mgcv, rlang (>= 0.3.0), scales (>= 0.5.0), stats, tibble,\\n withr (>= 2.0.0)",
+        "license": "GPL-2 | file LICENSE",
+        "linkingTo": null,
+        "maintainer": "Thomas Lin Pedersen <thomas.pedersen@rstudio.com>",
+        "manualAvailable": true,
+        "md5sum": "02d87290852410924eb816c2d4788afa",
+        "name": "ggplot2",
+        "needsCompilation": "no",
+        "priority": null,
+        "repository": {
+          "id": 19,
+          "lastPublicationSuccessful": true,
+          "name": "CD",
+          "publicationUri": "http://localhost/repo/CD",
+          "published": true,
+          "requiresAuthentication": true,
+          "technology": "R"
+        },
+        "rversion": null,
+        "permissions": [],
+        "submission": {
+          "id": 1,
+          "state": "ACCEPTED"
+        },
+        "suggests": "covr, dplyr, ggplot2movies, hexbin, Hmisc, knitr, lattice,\\n mapproj, maps, maptools, multcomp, munsell, nlme, profvis,\\n quantreg, RColorBrewer, rgeos, rmarkdown, rpart, sf (>= 0.7-3),\\n svglite (>= 1.2.0.9001), testthat (>= 2.1.0), vdiffr (>= 0.3.0)",
+        "systemRequirements": null,
+        "technology": "R",
+        "title": "Create Elegant Data Visualisations Using the Grammar of Graphics",
+        "url": "http://ggplot2.tidyverse.org, https://github.com/tidyverse/ggplot2",
+        "user": {
+          "email": "einstein@ldap.forumsys.com",
+          "id": 4,
+          "login": "einstein",
+          "name": "Albert Einstein"
+        },
+        "version": "3.3.2",
         "links": [
-            {
-                "rel": "self",
-                "href": "http://localhost:8017/api/v2/manager/r/packages?page=0&size=20"
-            }
-        ],
-        "page": {
-            "number": 0,
-            "size": 20,
-            "totalElements": 4,
-            "totalPages": 1
-        }
-    },
-    "message": "Your request has been processed successfully.",
-    "messageCode": "success.request.processed",
-    "status": "SUCCESS"
+          {
+            "rel": "self",
+            "href": "http://localhost:8021/api/v2/manager/r/packages/1"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8021/api/v2/manager/r/packages"
+          },
+          {
+            "rel": "repository",
+            "href": "http://localhost:8021/api/v2/manager/r/repositories/19"
+          }
+        ]
+      },
+      {
+        "active": true,
+        "architecture": null,
+        "author": "Carson Sievert [aut, cre] (ORCID:\\n <https://orcid.org/0000-0002-4958-2844>),\\n Chris Parmer [aut],\\n Toby Hocking [aut],\\n Scott Chamberlain [aut],\\n Karthik Ram [aut],\\n Marianne Corvellec [aut] (ORCID:\\n <https://orcid.org/0000-0002-1994-3581>),\\n Pedro Despouy [aut],\\n Salim Brüggemann [ctb] (ORCID: <https://orcid.org/0000-0002-5329-5987>),\\n Plotly Technologies Inc. [cph]",
+        "binary": false,
+        "built": null,
+        "deleted": false,
+        "depends": "R (>= 3.2.0), ggplot2 (>= 3.0.0)",
+        "description": "Create interactive web graphics from 'ggplot2' graphs and/or a custom interface to the (MIT-licensed) JavaScript library 'plotly.js' inspired by the grammar of graphics.",
+        "descriptionContentType": "txt",
+        "distribution": null,
+        "encoding": "UTF-8",
+        "enhances": null,
+        "id": 2,
+        "imports": "tools, scales, httr (>= 1.3.0), jsonlite (>= 1.6), magrittr,\\n digest, viridisLite, base64enc, htmltools (>= 0.3.6),\\n htmlwidgets (>= 1.5.2.9001), tidyr (>= 1.0.0), RColorBrewer,\\n dplyr, vctrs, tibble, lazyeval (>= 0.2.0), rlang (>= 1.0.0),\\n crosstalk, purrr, data.table, promises",
+        "license": "MIT + file LICENSE",
+        "linkingTo": null,
+        "maintainer": "Carson Sievert <cpsievert1@gmail.com>",
+        "manualAvailable": false,
+        "md5sum": "dd3c051bdd9772c38301e88d6dc355c6",
+        "name": "plotly",
+        "needsCompilation": "no",
+        "priority": null,
+        "repository": {
+          "id": 19,
+          "lastPublicationSuccessful": true,
+          "name": "CD",
+          "publicationUri": "http://localhost/repo/CD",
+          "published": true,
+          "requiresAuthentication": true,
+          "technology": "R"
+        },
+        "rversion": null,
+        "permissions": [],
+        "submission": {
+          "id": 2,
+          "state": "ACCEPTED"
+        },
+        "suggests": "MASS, maps, hexbin, ggthemes, GGally, ggalluvial, testthat,\\n knitr, shiny (>= 1.1.0), shinytest2, curl, rmarkdown, Cairo,\\n broom, webshot, listviewer, dendextend, sf, png, IRdisplay,\\n processx, plotlyGeoAssets, forcats, withr, palmerpenguins,\\n rversions, reticulate, rsvg, ggridges",
+        "systemRequirements": null,
+        "technology": "R",
+        "title": "Create Interactive Web Graphics via 'plotly.js'",
+        "url": "https://plotly-r.com, https://github.com/plotly/plotly.R,\\n https://plotly.com/r/",
+        "user": {
+          "email": "einstein@ldap.forumsys.com",
+          "id": 4,
+          "login": "einstein",
+          "name": "Albert Einstein"
+        },
+        "version": "4.11.0",
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8021/api/v2/manager/r/packages/2"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8021/api/v2/manager/r/packages"
+          },
+          {
+            "rel": "repository",
+            "href": "http://localhost:8021/api/v2/manager/r/repositories/19"
+          }
+        ]
+      },
+      {
+        "active": true,
+        "architecture": null,
+        "author": "R. Gentleman",
+        "binary": false,
+        "built": null,
+        "deleted": false,
+        "depends": "R (>= 2.10), AnnotationDbi (>= 1.27.5), XML",
+        "description": "Using R enviroments for annotation.",
+        "descriptionContentType": "txt",
+        "distribution": null,
+        "encoding": null,
+        "enhances": null,
+        "id": 3,
+        "imports": "Biobase, DBI, xtable, graphics, utils, stats, methods,\\n BiocGenerics (>= 0.13.8), httr",
+        "license": "Artistic-2.0",
+        "linkingTo": null,
+        "maintainer": "Bioconductor Package Maintainer <maintainer@bioconductor.org>",
+        "manualAvailable": false,
+        "md5sum": "c06830f9bcfc0ae87023bfe03acb319e",
+        "name": "annotate",
+        "needsCompilation": "no",
+        "priority": null,
+        "repository": {
+          "id": 19,
+          "lastPublicationSuccessful": true,
+          "name": "CD",
+          "publicationUri": "http://localhost/repo/CD",
+          "published": true,
+          "requiresAuthentication": true,
+          "technology": "R"
+        },
+        "rversion": null,
+        "permissions": [],
+        "submission": {
+          "id": 3,
+          "state": "ACCEPTED"
+        },
+        "suggests": "hgu95av2.db, genefilter, Biostrings (>= 2.25.10), IRanges,\\n rae230a.db, rae230aprobe, tkWidgets, GO.db, org.Hs.eg.db,\\n org.Mm.eg.db, hom.Hs.inp.db, humanCHRLOC, Rgraphviz, RUnit,",
+        "systemRequirements": null,
+        "technology": "R",
+        "title": "Annotation for microarrays",
+        "url": null,
+        "user": {
+          "email": "einstein@ldap.forumsys.com",
+          "id": 4,
+          "login": "einstein",
+          "name": "Albert Einstein"
+        },
+        "version": "1.68.0",
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8021/api/v2/manager/r/packages/3"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8021/api/v2/manager/r/packages"
+          },
+          {
+            "rel": "repository",
+            "href": "http://localhost:8021/api/v2/manager/r/repositories/19"
+          }
+        ]
+      },
+      {
+        "active": true,
+        "architecture": null,
+        "author": "Vipul Singhal [aut],\\n Joseph Lee [aut, cre] (ORCID: <https://orcid.org/0000-0002-4983-4714>)",
+        "binary": false,
+        "built": null,
+        "deleted": false,
+        "depends": "R (>= 4.4.0)",
+        "description": "Banksy is an R package that incorporates spatial information to \\n cluster cells in a feature space (e.g. gene expression). To incorporate \\n spatial information, BANKSY computes the mean neighborhood expression and \\n azimuthal Gabor filters that capture gene expression gradients. These \\n features are combined with the cell's own expression to embed cells in a \\n neighbor-augmented product space which can then be clustered, allowing for\\n accurate and spatially-aware cell typing and tissue domain segmentation.",
+        "descriptionContentType": "txt",
+        "distribution": null,
+        "encoding": "UTF-8",
+        "enhances": null,
+        "id": 4,
+        "imports": "aricode, BiocParallel, data.table, dbscan, SpatialExperiment,\\n SingleCellExperiment, SummarizedExperiment, S4Vectors, stats,\\n Matrix, MatrixGenerics, mclust, igraph, irlba, leidenAlg (>=\\n 1.1.0), utils, uwot, RcppHungarian, GenomeInfoDb",
+        "license": "file LICENSE",
+        "linkingTo": null,
+        "maintainer": "Joseph Lee <joseph.lee@u.nus.edu>",
+        "manualAvailable": false,
+        "md5sum": "cb523670f24301a4521995945b52fca2",
+        "name": "Banksy",
+        "needsCompilation": "no",
+        "priority": null,
+        "repository": {
+          "id": 19,
+          "lastPublicationSuccessful": true,
+          "name": "CD",
+          "publicationUri": "http://localhost/repo/CD",
+          "published": true,
+          "requiresAuthentication": true,
+          "technology": "R"
+        },
+        "rversion": null,
+        "permissions": [],
+        "submission": {
+          "id": 4,
+          "state": "ACCEPTED"
+        },
+        "suggests": "knitr, rmarkdown, pals, scuttle, scater, scran, cowplot,\\n ggplot2, testthat (>= 3.0.0), harmony, Seurat, ExperimentHub,\\n spatialLIBD, BiocStyle",
+        "systemRequirements": null,
+        "technology": "R",
+        "title": "Spatial transcriptomic clustering",
+        "url": "https://github.com/prabhakarlab/Banksy",
+        "user": {
+          "email": "einstein@ldap.forumsys.com",
+          "id": 4,
+          "login": "einstein",
+          "name": "Albert Einstein"
+        },
+        "version": "1.7.0",
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8021/api/v2/manager/r/packages/4"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8021/api/v2/manager/r/packages"
+          },
+          {
+            "rel": "repository",
+            "href": "http://localhost:8021/api/v2/manager/r/repositories/19"
+          }
+        ]
+      },
+      {
+        "active": true,
+        "architecture": null,
+        "author": "Hadley Wickham [aut] (<https://orcid.org/0000-0003-4757-117X>),\\n Winston Chang [aut] (<https://orcid.org/0000-0002-1576-2126>),\\n Lionel Henry [aut],\\n Thomas Lin Pedersen [aut, cre]\\n (<https://orcid.org/0000-0002-5147-4711>),\\n Kohske Takahashi [aut],\\n Claus Wilke [aut] (<https://orcid.org/0000-0002-7470-9261>),\\n Kara Woo [aut] (<https://orcid.org/0000-0002-5125-4188>),\\n Hiroaki Yutani [aut] (<https://orcid.org/0000-0002-3385-7233>),\\n Dewey Dunnington [aut] (<https://orcid.org/0000-0002-9415-4582>),\\n RStudio [cph, fnd]",
+        "binary": false,
+        "built": null,
+        "deleted": false,
+        "depends": "R (>= 3.2)",
+        "description": "A system for 'declaratively' creating graphics,\\n based on \"The Grammar of Graphics\". You provide the data, tell 'ggplot2'\\n how to map variables to aesthetics, what graphical primitives to use,\\n and it takes care of the details.",
+        "descriptionContentType": "txt",
+        "distribution": null,
+        "encoding": "UTF-8",
+        "enhances": "sp",
+        "id": 5,
+        "imports": "digest, glue, grDevices, grid, gtable (>= 0.1.1), isoband,\\n MASS, mgcv, rlang (>= 0.3.0), scales (>= 0.5.0), stats, tibble,\\n withr (>= 2.0.0)",
+        "license": "GPL-2 | file LICENSE",
+        "linkingTo": null,
+        "maintainer": "Thomas Lin Pedersen <thomas.pedersen@rstudio.com>",
+        "manualAvailable": true,
+        "md5sum": "02d87290852410924eb816c2d4788afa",
+        "name": "ggplot2",
+        "needsCompilation": "no",
+        "priority": null,
+        "repository": {
+          "id": 3,
+          "lastPublicationSuccessful": false,
+          "name": "D",
+          "publicationUri": "http://localhost/repo/D",
+          "published": false,
+          "requiresAuthentication": true,
+          "technology": "R"
+        },
+        "rversion": null,
+        "permissions": [],
+        "submission": {
+          "id": 5,
+          "state": "ACCEPTED"
+        },
+        "suggests": "covr, dplyr, ggplot2movies, hexbin, Hmisc, knitr, lattice,\\n mapproj, maps, maptools, multcomp, munsell, nlme, profvis,\\n quantreg, RColorBrewer, rgeos, rmarkdown, rpart, sf (>= 0.7-3),\\n svglite (>= 1.2.0.9001), testthat (>= 2.1.0), vdiffr (>= 0.3.0)",
+        "systemRequirements": null,
+        "technology": "R",
+        "title": "Create Elegant Data Visualisations Using the Grammar of Graphics",
+        "url": "http://ggplot2.tidyverse.org, https://github.com/tidyverse/ggplot2",
+        "user": {
+          "email": "einstein@ldap.forumsys.com",
+          "id": 4,
+          "login": "einstein",
+          "name": "Albert Einstein"
+        },
+        "version": "3.3.2",
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8021/api/v2/manager/r/packages/5"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8021/api/v2/manager/r/packages"
+          },
+          {
+            "rel": "repository",
+            "href": "http://localhost:8021/api/v2/manager/r/repositories/3"
+          }
+        ]
+      },
+      {
+        "active": true,
+        "architecture": null,
+        "author": "R. Gentleman",
+        "binary": false,
+        "built": null,
+        "deleted": false,
+        "depends": "R (>= 2.10), AnnotationDbi (>= 1.27.5), XML",
+        "description": "Using R enviroments for annotation.",
+        "descriptionContentType": "txt",
+        "distribution": null,
+        "encoding": null,
+        "enhances": null,
+        "id": 6,
+        "imports": "Biobase, DBI, xtable, graphics, utils, stats, methods,\\n BiocGenerics (>= 0.13.8), httr",
+        "license": "Artistic-2.0",
+        "linkingTo": null,
+        "maintainer": "Bioconductor Package Maintainer <maintainer@bioconductor.org>",
+        "manualAvailable": false,
+        "md5sum": "c06830f9bcfc0ae87023bfe03acb319e",
+        "name": "annotate",
+        "needsCompilation": "no",
+        "priority": null,
+        "repository": {
+          "id": 3,
+          "lastPublicationSuccessful": false,
+          "name": "D",
+          "publicationUri": "http://localhost/repo/D",
+          "published": false,
+          "requiresAuthentication": true,
+          "technology": "R"
+        },
+        "rversion": null,
+        "permissions": [],
+        "submission": {
+          "id": 6,
+          "state": "ACCEPTED"
+        },
+        "suggests": "hgu95av2.db, genefilter, Biostrings (>= 2.25.10), IRanges,\\n rae230a.db, rae230aprobe, tkWidgets, GO.db, org.Hs.eg.db,\\n org.Mm.eg.db, hom.Hs.inp.db, humanCHRLOC, Rgraphviz, RUnit,",
+        "systemRequirements": null,
+        "technology": "R",
+        "title": "Annotation for microarrays",
+        "url": null,
+        "user": {
+          "email": "einstein@ldap.forumsys.com",
+          "id": 4,
+          "login": "einstein",
+          "name": "Albert Einstein"
+        },
+        "version": "1.68.0",
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8021/api/v2/manager/r/packages/6"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8021/api/v2/manager/r/packages"
+          },
+          {
+            "rel": "repository",
+            "href": "http://localhost:8021/api/v2/manager/r/repositories/3"
+          }
+        ]
+      },
+      {
+        "active": true,
+        "architecture": null,
+        "author": "Vipul Singhal [aut],\\n Joseph Lee [aut, cre] (ORCID: <https://orcid.org/0000-0002-4983-4714>)",
+        "binary": false,
+        "built": null,
+        "deleted": false,
+        "depends": "R (>= 4.4.0)",
+        "description": "Banksy is an R package that incorporates spatial information to \\n cluster cells in a feature space (e.g. gene expression). To incorporate \\n spatial information, BANKSY computes the mean neighborhood expression and \\n azimuthal Gabor filters that capture gene expression gradients. These \\n features are combined with the cell's own expression to embed cells in a \\n neighbor-augmented product space which can then be clustered, allowing for\\n accurate and spatially-aware cell typing and tissue domain segmentation.",
+        "descriptionContentType": "txt",
+        "distribution": null,
+        "encoding": "UTF-8",
+        "enhances": null,
+        "id": 7,
+        "imports": "aricode, BiocParallel, data.table, dbscan, SpatialExperiment,\\n SingleCellExperiment, SummarizedExperiment, S4Vectors, stats,\\n Matrix, MatrixGenerics, mclust, igraph, irlba, leidenAlg (>=\\n 1.1.0), utils, uwot, RcppHungarian, GenomeInfoDb",
+        "license": "file LICENSE",
+        "linkingTo": null,
+        "maintainer": "Joseph Lee <joseph.lee@u.nus.edu>",
+        "manualAvailable": false,
+        "md5sum": "cb523670f24301a4521995945b52fca2",
+        "name": "Banksy",
+        "needsCompilation": "no",
+        "priority": null,
+        "repository": {
+          "id": 3,
+          "lastPublicationSuccessful": false,
+          "name": "D",
+          "publicationUri": "http://localhost/repo/D",
+          "published": false,
+          "requiresAuthentication": true,
+          "technology": "R"
+        },
+        "rversion": null,
+        "permissions": [],
+        "submission": {
+          "id": 7,
+          "state": "ACCEPTED"
+        },
+        "suggests": "knitr, rmarkdown, pals, scuttle, scater, scran, cowplot,\\n ggplot2, testthat (>= 3.0.0), harmony, Seurat, ExperimentHub,\\n spatialLIBD, BiocStyle",
+        "systemRequirements": null,
+        "technology": "R",
+        "title": "Spatial transcriptomic clustering",
+        "url": "https://github.com/prabhakarlab/Banksy",
+        "user": {
+          "email": "einstein@ldap.forumsys.com",
+          "id": 4,
+          "login": "einstein",
+          "name": "Albert Einstein"
+        },
+        "version": "1.7.0",
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8021/api/v2/manager/r/packages/7"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8021/api/v2/manager/r/packages"
+          },
+          {
+            "rel": "repository",
+            "href": "http://localhost:8021/api/v2/manager/r/repositories/3"
+          }
+        ]
+      },
+      {
+        "active": true,
+        "architecture": null,
+        "author": "Carson Sievert [aut, cre] (ORCID:\\n <https://orcid.org/0000-0002-4958-2844>),\\n Chris Parmer [aut],\\n Toby Hocking [aut],\\n Scott Chamberlain [aut],\\n Karthik Ram [aut],\\n Marianne Corvellec [aut] (ORCID:\\n <https://orcid.org/0000-0002-1994-3581>),\\n Pedro Despouy [aut],\\n Salim Brüggemann [ctb] (ORCID: <https://orcid.org/0000-0002-5329-5987>),\\n Plotly Technologies Inc. [cph]",
+        "binary": false,
+        "built": null,
+        "deleted": false,
+        "depends": "R (>= 3.2.0), ggplot2 (>= 3.0.0)",
+        "description": "Create interactive web graphics from 'ggplot2' graphs and/or a custom interface to the (MIT-licensed) JavaScript library 'plotly.js' inspired by the grammar of graphics.",
+        "descriptionContentType": "txt",
+        "distribution": null,
+        "encoding": "UTF-8",
+        "enhances": null,
+        "id": 8,
+        "imports": "tools, scales, httr (>= 1.3.0), jsonlite (>= 1.6), magrittr,\\n digest, viridisLite, base64enc, htmltools (>= 0.3.6),\\n htmlwidgets (>= 1.5.2.9001), tidyr (>= 1.0.0), RColorBrewer,\\n dplyr, vctrs, tibble, lazyeval (>= 0.2.0), rlang (>= 1.0.0),\\n crosstalk, purrr, data.table, promises",
+        "license": "MIT + file LICENSE",
+        "linkingTo": null,
+        "maintainer": "Carson Sievert <cpsievert1@gmail.com>",
+        "manualAvailable": false,
+        "md5sum": "dd3c051bdd9772c38301e88d6dc355c6",
+        "name": "plotly",
+        "needsCompilation": "no",
+        "priority": null,
+        "repository": {
+          "id": 3,
+          "lastPublicationSuccessful": false,
+          "name": "D",
+          "publicationUri": "http://localhost/repo/D",
+          "published": false,
+          "requiresAuthentication": true,
+          "technology": "R"
+        },
+        "rversion": null,
+        "permissions": [],
+        "submission": {
+          "id": 8,
+          "state": "ACCEPTED"
+        },
+        "suggests": "MASS, maps, hexbin, ggthemes, GGally, ggalluvial, testthat,\\n knitr, shiny (>= 1.1.0), shinytest2, curl, rmarkdown, Cairo,\\n broom, webshot, listviewer, dendextend, sf, png, IRdisplay,\\n processx, plotlyGeoAssets, forcats, withr, palmerpenguins,\\n rversions, reticulate, rsvg, ggridges",
+        "systemRequirements": null,
+        "technology": "R",
+        "title": "Create Interactive Web Graphics via 'plotly.js'",
+        "url": "https://plotly-r.com, https://github.com/plotly/plotly.R,\\n https://plotly.com/r/",
+        "user": {
+          "email": "einstein@ldap.forumsys.com",
+          "id": 4,
+          "login": "einstein",
+          "name": "Albert Einstein"
+        },
+        "version": "4.11.0",
+        "links": [
+          {
+            "rel": "self",
+            "href": "http://localhost:8021/api/v2/manager/r/packages/8"
+          },
+          {
+            "rel": "packageList",
+            "href": "http://localhost:8021/api/v2/manager/r/packages"
+          },
+          {
+            "rel": "repository",
+            "href": "http://localhost:8021/api/v2/manager/r/repositories/3"
+          }
+        ]
+      }
+    ],
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://localhost:8017/api/v2/manager/r/packages?page=0&size=20"
+      }
+    ],
+    "page": {
+      "number": 0,
+      "size": 20,
+      "totalElements": 8,
+      "totalPages": 1
+    }
+  },
+  "message": "Your request has been processed successfully.",
+  "messageCode": "success.request.processed",
+  "status": "SUCCESS"
 }

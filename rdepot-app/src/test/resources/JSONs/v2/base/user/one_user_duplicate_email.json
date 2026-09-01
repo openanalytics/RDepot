@@ -1,0 +1,38 @@
+{
+    "code": 200,
+    "data": {
+        "active": true,
+        "deleted": false,
+        "email": "tesla@ldap.forumsys.com",
+        "id": 11,
+        "links": [
+            {
+                "href": "http://localhost:8017/api/v2/manager/users/11",
+                "rel": "self"
+            }
+        ],
+        "login": "teslasassistant",
+        "name": "Assistant Of Tesla",
+        "permissions": [
+            "accessToken.create",
+            "accessToken.list.my",
+            "event.list",
+            "package.list",
+            "repository.list",
+            "submission.create",
+            "submission.generateManual",
+            "submission.list",
+            "submission.replacePackage"
+        ],
+        "role": "user",
+        "roleId": 1,
+        "userSettings": {
+            "language": "en-US",
+            "pageSize": 10,
+            "theme": "light"
+        }
+    },
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "status": "SUCCESS"
+}

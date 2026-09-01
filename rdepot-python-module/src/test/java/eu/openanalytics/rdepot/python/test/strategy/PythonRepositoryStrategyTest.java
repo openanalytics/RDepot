@@ -30,12 +30,13 @@ import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.event.NewsfeedEventType;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
-import eu.openanalytics.rdepot.base.storage.Storage;
+import eu.openanalytics.rdepot.base.storage.LocalStorage;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
+import eu.openanalytics.rdepot.python.storage.PythonPersistentStorage;
 import eu.openanalytics.rdepot.python.strategy.create.PythonRepositoryCreateStrategy;
 import eu.openanalytics.rdepot.python.strategy.republish.PythonRepositoryRepublishStrategy;
 import eu.openanalytics.rdepot.python.strategy.update.PythonRepositoryUpdateStrategy;
@@ -54,7 +55,10 @@ public class PythonRepositoryStrategyTest extends StrategyTest {
     protected NewsfeedEventService eventService;
 
     @Mock
-    protected Storage<PythonPackage> storage;
+    protected LocalStorage<PythonPackage> localStorage;
+
+    @Mock
+    protected PythonPersistentStorage pythonPersistentStorage;
 
     @Test
     public void createRepository() throws Exception {
@@ -149,7 +153,8 @@ public class PythonRepositoryStrategyTest extends StrategyTest {
                 repositoryMaintainerService,
                 packageMaintainerService,
                 packageService,
-                storage);
+                localStorage,
+                pythonPersistentStorage);
 
         strategy.perform();
         strategy.postStrategy();
@@ -181,7 +186,8 @@ public class PythonRepositoryStrategyTest extends StrategyTest {
                 repositoryMaintainerService,
                 packageMaintainerService,
                 packageService,
-                storage);
+                localStorage,
+                pythonPersistentStorage);
 
         strategy.perform();
         strategy.postStrategy();
@@ -213,7 +219,8 @@ public class PythonRepositoryStrategyTest extends StrategyTest {
                 repositoryMaintainerService,
                 packageMaintainerService,
                 packageService,
-                storage);
+                localStorage,
+                pythonPersistentStorage);
         strategy.perform();
         StrategyFailure exception = assertThrows(
                 StrategyFailure.class,
@@ -244,7 +251,8 @@ public class PythonRepositoryStrategyTest extends StrategyTest {
                 repositoryMaintainerService,
                 packageMaintainerService,
                 packageService,
-                storage);
+                localStorage,
+                pythonPersistentStorage);
 
         strategy.perform();
 
@@ -271,7 +279,8 @@ public class PythonRepositoryStrategyTest extends StrategyTest {
                 repositoryMaintainerService,
                 packageMaintainerService,
                 packageService,
-                storage);
+                localStorage,
+                pythonPersistentStorage);
 
         strategy.perform();
 
@@ -315,7 +324,8 @@ public class PythonRepositoryStrategyTest extends StrategyTest {
                 repositoryMaintainerService,
                 packageMaintainerService,
                 packageService,
-                storage);
+                localStorage,
+                pythonPersistentStorage);
 
         strategy.perform();
         strategy.postStrategy();

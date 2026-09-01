@@ -25,6 +25,7 @@ import eu.openanalytics.rdepot.base.entities.*;
 import eu.openanalytics.rdepot.base.entities.Package;
 import jakarta.json.JsonPatch;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -83,6 +84,10 @@ public interface SecurityMediator {
         return false;
     }
 
+    default boolean isAuthorizedToEdit(PackageMaintainerQueryDSLTuple packageMaintainer, User requester) {
+        return false;
+    }
+
     /**
      * Determines if user is allowed to make changes in a submission
      * based on the differences between current state and a given {@link SubmissionDto dto}.
@@ -111,6 +116,48 @@ public interface SecurityMediator {
     default boolean isAuthorizedToEdit(Repository repository, User requester) {
         return false;
     }
+
+    /**
+     * List all permissions of the given user for the specific token.
+     */
+    List<String> getPermissions(AccessToken token, User user);
+
+    /**
+     * List all permissions of the given user for the specific package.
+     */
+    List<String> getPermissions(Package packageBag, User user);
+
+    /**
+     * List all permissions of the given user for the specific maintainer.
+     */
+    List<String> getPermissions(PackageMaintainer maintainer, User user);
+
+    List<String> getPermissions(PackageMaintainerQueryDSLTuple maintainer, User user);
+
+    /**
+     * List all permissions of the given user for the specific repository.
+     */
+    List<String> getPermissions(Repository repository, User user);
+
+    /**
+     * List all permissions of the given user for the specific maintainer.
+     */
+    List<String> getPermissions(RepositoryMaintainer maintainer, User user);
+
+    /**
+     * List all permissions of the given user for the specific submisison.
+     */
+    List<String> getPermissions(Submission submisison, User user);
+
+    /**
+     * List all permissions of the given user for the specific user.
+     */
+    List<String> getPermissions(User enitity, User user);
+
+    /**
+     * List general permissions of the given user (listed under /me endpoint).
+     */
+    List<String> getPermissions(User user);
 
     /**
      * Returns Granted Authorities.

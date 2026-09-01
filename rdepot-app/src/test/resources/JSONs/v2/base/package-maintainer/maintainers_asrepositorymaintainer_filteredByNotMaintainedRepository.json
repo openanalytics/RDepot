@@ -1,0 +1,21 @@
+{
+    "code": 200,
+    "data": {
+        "content": [],
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/package-maintainers?repository=testrepo5&page=0&size=20"
+            }
+        ],
+        "page": {
+            "number": 0,
+            "size": 20,
+            "totalElements": 0,
+            "totalPages": 0
+        }
+    },
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "status": "SUCCESS"
+}

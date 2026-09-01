@@ -30,13 +30,14 @@ import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
-import eu.openanalytics.rdepot.base.storage.Storage;
+import eu.openanalytics.rdepot.base.storage.LocalStorage;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
 import eu.openanalytics.rdepot.r.mediator.deletion.RRepositoryDeleter;
 import eu.openanalytics.rdepot.r.mediator.deletion.RSubmissionDeleter;
 import eu.openanalytics.rdepot.r.services.RPackageService;
 import eu.openanalytics.rdepot.r.services.RRepositoryService;
+import eu.openanalytics.rdepot.r.storage.PersistentRStorage;
 import eu.openanalytics.rdepot.test.fixture.*;
 import eu.openanalytics.rdepot.test.unit.UnitTest;
 import java.util.List;
@@ -59,7 +60,7 @@ public class RRepositoryDeleterTest extends UnitTest {
     RepositoryMaintainerService repositoryMaintainerService;
 
     @Mock
-    Storage<RPackage> storage;
+    LocalStorage<RPackage> localStorage;
 
     @Mock
     RSubmissionDeleter submissionDeleter;
@@ -69,6 +70,9 @@ public class RRepositoryDeleterTest extends UnitTest {
 
     @InjectMocks
     RRepositoryDeleter deleter;
+
+    @Mock
+    PersistentRStorage persistentRStorage;
 
     private RRepository repository;
     private List<PackageMaintainer> packageMaintainers;
@@ -125,7 +129,7 @@ public class RRepositoryDeleterTest extends UnitTest {
         verify(packageMaintainerService, times(0)).delete(any(PackageMaintainer.class));
         verify(repositoryMaintainerService, times(0)).delete(any(RepositoryMaintainer.class));
         verify(submissionDeleter, times(0)).delete(any(Submission.class));
-        verify(storage, times(0)).removePackageSource(packages.get(0).getSource());
+        verify(persistentRStorage, times(0)).deleteAllPackageFilesIfExist(any());
     }
 
     @Test

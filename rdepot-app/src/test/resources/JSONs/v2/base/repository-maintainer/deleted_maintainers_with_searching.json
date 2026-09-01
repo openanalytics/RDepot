@@ -1,61 +1,64 @@
 {
     "code": 200,
     "data": {
+        "content": [
+            {
+                "deleted": true,
+                "id": 2,
+                "permissions": [
+                    "repositoryMaintainer.delete.hard"
+                ],
+                "repository": {
+                    "id": 4,
+                    "lastPublicationSuccessful": false,
+                    "name": "testrepo3",
+                    "publicationUri": "http://localhost/repo/testrepo3",
+                    "published": false,
+                    "requiresAuthentication": true,
+                    "technology": "R"
+                },
+                "user": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/repository-maintainers/2"
+                    },
+                    {
+                        "rel": "repositoryMaintainerList",
+                        "href": "http://localhost:8017/api/v2/manager/repository-maintainers"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/repository-maintainers/2",
+                        "type": "PATCH"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/repository-maintainers/2",
+                        "type": "DELETE"
+                    }
+                ]
+            }
+        ],
         "links": [
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/repository-maintainers?deleted=true&search=NIKO&page=0&size=20&sort=id,asc"
+                "href": "http://localhost:8017/api/v2/manager/repository-maintainers?deleted=true&search=NIKO&page=0&size=20&sort=id,asc"
             }
         ],
         "page": {
             "number": 0,
             "size": 20,
-            "totalPages": 1,
-            "totalElements": 1
-        },
-        "content": [
-            {
-                "deleted": true,
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/repository-maintainers\/2"
-                    },
-                    {
-                        "rel": "repositoryMaintainerList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/repository-maintainers"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/repository-maintainers\/2",
-                        "type": "PATCH"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/repository-maintainers\/2",
-                        "type": "DELETE"
-                    }
-                ],
-                "id": 2,
-                "repository": {
-                    "name": "testrepo3",
-                    "lastPublicationSuccessful": false,
-                    "id": 4,
-                    "published": false,
-                    "technology": "R",
-                    "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo3"
-                },
-                "user": {
-                    "name": "Nikola Tesla",
-                    "id": 5,
-                    "login": "tesla",
-                    "email": "tesla@ldap.forumsys.com"
-                }
-            }
-        ]
+            "totalElements": 1,
+            "totalPages": 1
+        }
     },
-    "messageCode": "success.request.processed",
     "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
     "status": "SUCCESS"
 }

@@ -20,12 +20,12 @@
  */
 package eu.openanalytics.rdepot.r.storage.indexes;
 
+import eu.openanalytics.rdepot.base.storage.exceptions.ContentEditException;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
-import eu.openanalytics.rdepot.r.storage.BinLocation;
-import eu.openanalytics.rdepot.r.storage.BinLocationSet;
+import eu.openanalytics.rdepot.r.storage.binaries.BinLocation;
+import eu.openanalytics.rdepot.r.storage.binaries.BinLocationSet;
 import eu.openanalytics.rdepot.r.storage.indexes.resolvers.RPackagePublicationURIResolver;
-import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -74,7 +74,7 @@ public class RIndexGenerator {
             List<RPackage> archiveSourcePackages,
             BinLocationSet binArchiveFoldersPaths,
             BinLocationSet binLatestFoldersPaths)
-            throws IOException {
+            throws ContentEditException {
         final List<RIndexDescriptor> indexes = new ArrayList<>();
         // Latest indexes
         final String latestSourceIndexPath = latestSourceFolderPath + separator + "index.html";
@@ -121,7 +121,7 @@ public class RIndexGenerator {
     }
 
     private List<RIndexDescriptor> generateIndividualIndexesForArchivePackages(
-            List<RPackage> packages, String indexPathPrefix) throws IOException {
+            List<RPackage> packages, String indexPathPrefix) throws ContentEditException {
         final Map<String, RIndexDescriptor> indexes = new LinkedHashMap<>();
         for (RPackage archivePackage : packages) {
             final String archiveBinaryPackageIndexPath =

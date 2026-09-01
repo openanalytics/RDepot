@@ -20,18 +20,15 @@
  */
 package eu.openanalytics.rdepot.base.strategy.update;
 
-import eu.openanalytics.rdepot.base.entities.EventChangedVariable;
-import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
+import eu.openanalytics.rdepot.base.entities.*;
 import eu.openanalytics.rdepot.base.entities.Package;
-import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
-import eu.openanalytics.rdepot.base.entities.Repository;
-import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.event.NewsfeedEventType;
 import eu.openanalytics.rdepot.base.mediator.BestMaintainerChooser;
 import eu.openanalytics.rdepot.base.mediator.deletion.exceptions.NoSuitableMaintainerFound;
 import eu.openanalytics.rdepot.base.service.CommonPackageService;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
+import eu.openanalytics.rdepot.base.strategy.exceptions.FatalStrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -82,7 +79,7 @@ public class UpdatePackageMaintainerStrategy extends UpdateStrategy<PackageMaint
                 packageBag.setUser(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag));
             }
         } catch (NoSuitableMaintainerFound e) {
-            throw new StrategyFailure(e);
+            throw new FatalStrategyFailure(e);
         }
 
         changedValues.add(new EventChangedVariable("deleted", "false", "true"));
@@ -134,7 +131,7 @@ public class UpdatePackageMaintainerStrategy extends UpdateStrategy<PackageMaint
                 try {
                     packageBag.setUser(bestMaintainerChooser.chooseBestPackageMaintainer(packageBag));
                 } catch (NoSuitableMaintainerFound e) {
-                    throw new StrategyFailure(e);
+                    throw new FatalStrategyFailure(e);
                 }
             }
         }

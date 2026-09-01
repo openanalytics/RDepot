@@ -17,7 +17,7 @@
 	- [Data Access Layer](#data-access-layer)
 		- [JPA Repositories and Services](#jpa-repositories-and-services)
 	- [Database](#database)
-	- [Storage Layer](#storage-layer)
+	- [Storage Layer](#localStorage-layer)
 		- [Implementations](#implementations)
 	- [Business logic](#business-logic)
 		- [Strategies](#strategies)
@@ -143,7 +143,7 @@ Every resource managed by RDepot extends the `Resource` class. It provides a cou
   - ROLE
   - USER_SETTINGS
   - ACCESS_TOKEN
-- `deleted` - used to indicate that although a resource is not physically removed from persistent storage, from the user's perspective it should be treated as such (i.e. *soft-deleted*)
+- `deleted` - used to indicate that although a resource is not physically removed from persistent localStorage, from the user's perspective it should be treated as such (i.e. *soft-deleted*)
 - `id` - integer specifiying the unique identifier of a resource; **Please note** that the id has to be unique *only* across one resource type, e.g. there can be a repository and a package with the same IDs but not two packages (nor RPackage and PythonPackage with the same ID since they have the same `resourceType` and share a table in the database)
 
 The `Resource` class however is rarely extended directly. Most resources extend the `EventableResource` class, therefore also implementing the `HavingSimpleDtoRepresentation` interface. This is used, as the name suggest for the construction of Newsfeed Events. When a user requests an event related to a certain resource, they probably also want to get a simple representation of that resource attached. In such cases, the `createSimpleDto()` method of the aforementioned interface is executed. You will later be presented with example implementations of these.
@@ -387,21 +387,21 @@ Alongside the Persistence Layer, there are Storage components for package binary
 
 The Storage in general should provide the following locations:
 
-- *waiting room* - packages that are uploaded, of which their submissions are not yet accepted, end up there. It exists in order to make submission rejection and therefore permanent removal from the persistent storage easier (as we do not need to modify the contents of currently existing repository snapshots)
-- *trash directory* - when a package is permanently deleted, it may happen that something goes wrong in the middle of the process. In such a case, and in order not to leave the storage in an inconsistent state, there is a trash directory where packages which were attempted to be deleted may be recovered from
+- *waiting room* - packages that are uploaded, of which their submissions are not yet accepted, end up there. It exists in order to make submission rejection and therefore permanent removal from the persistent localStorage easier (as we do not need to modify the contents of currently existing repository snapshots)
+- *trash directory* - when a package is permanently deleted, it may happen that something goes wrong in the middle of the process. In such a case, and in order not to leave the localStorage in an inconsistent state, there is a trash directory where packages which were attempted to be deleted may be recovered from
 - *main directory* - when the package is uploaded and its submission has been successfully accepted, the package source is moved to the main directory which represents the current state of the repository
 - *generated* - contains the state of a repository that will be uploaded to the remote repository server
 
-Methods responsible for putting content in those locations are provided by the `Storage` and `RepositorySynchronizer` interfaces.
+Methods responsible for putting content in those locations are provided by the `LocalStorage` and `RepositorySynchronizer` interfaces.
 
 ### Implementations
 
 The Storage components can be characterized by two elements:
 
-- Back-end technology used for storage (e.g. AWS S3, local file system)
-- Technology which the storage supports (e.g. Python, R)
+- Back-end technology used for localStorage (e.g. AWS S3, local file system)
+- Technology which the localStorage supports (e.g. Python, R)
 
-The main interface that exposes the basic Storage features is `Storage` in the base module. There is also an abstract back-end implementation `CommonLocalStorage` which can be used as a backbone for extension storage, if storing packages on the file system is needed. There are plans to implement AWS S3 support (and possibly other cloud storage services) in the future. It is therefore important not to couple the logic in the extension code with any specific back-end in order to allow users' choice in the future. In order to achieve that, please stick to these best practices:
+The main interface that exposes the basic Storage features is `LocalStorage` in the base module. There is also an abstract back-end implementation `CommonFSLocalStorage` which can be used as a backbone for extension localStorage, if storing packages on the file system is needed. There are plans to implement AWS S3 support (and possibly other cloud localStorage services) in the future. It is therefore important not to couple the logic in the extension code with any specific back-end in order to allow users' choice in the future. In order to achieve that, please stick to these best practices:
 
 - Always inject Storage as an interface, not a specific implementation
 - If some additional functionality is needed, simply create a separate Storage class which implements the Storage interface
@@ -409,11 +409,11 @@ The main interface that exposes the basic Storage features is `Storage` in the b
 For example, there were certain R specific features that had to be handled in Storage:
 
 ```java
-package eu.openanalytics.rdepot.r.storage;
+package eu.openanalytics.rdepot.r.localStorage;
 
 public interface RStorage extends Storage<RRepository, RPackage> {
 	/**
-	 * Fetches reference manual file from the storage.
+	 * Fetches reference manual file from the localStorage.
 	 * @param packageBag
 	 * @return
 	 */
@@ -427,7 +427,7 @@ public interface RStorage extends Storage<RRepository, RPackage> {
 	List<Vignette> getAvailableVignettes(RPackage packageBag);
 
 	/**
-	 * Reads vignette from storage.
+	 * Reads vignette from localStorage.
 	 * @param packageBag
 	 * @param filename
 	 * @return
@@ -435,7 +435,7 @@ public interface RStorage extends Storage<RRepository, RPackage> {
 	byte[] readVignette(RPackage packageBag, String filename) throws ReadPackageVignetteException;
 
 	/**
-	 * Creates manual for a package and puts it in the local storage.
+	 * Creates manual for a package and puts it in the local localStorage.
 	 * @param packageBag
 	 * @throws GenerateManualException
 	 */
@@ -448,10 +448,10 @@ public interface RStorage extends Storage<RRepository, RPackage> {
 The implementation thereof is defined as below:
 
 ```java
-package eu.openanalytics.rdepot.r.storage.implementations;
+package eu.openanalytics.rdepot.r.localStorage.implementations;
 
 /**
- * Local storage implementation for R.
+ * Local localStorage implementation for R.
  */
 @Slf4j
 @Component
@@ -519,7 +519,7 @@ public class RLocalStorage
 }
 ```
 
-Implementation of the "basic" storage part of `RStorage` is already covered by `CommonLocalStorage` so there is no need to override those methods.
+Implementation of the "basic" localStorage part of `RStorage` is already covered by `CommonFSLocalStorage` so there is no need to override those methods.
 
 ## Business logic
 
@@ -532,7 +532,7 @@ A Strategy represents a single operation. It is an object which is equipped with
 1. `actualStrategy()` - Perform the *actual* business logic, for instance:
    - process data
    - call different service methods
-   - write into storage
+   - write into localStorage
 2. `generateEvent(T resource)` - Generate a Newsfeed Event object representing the operation and publish it
 3. `postStrategy()` - Perform some post-operation routines that, if they fail, do not fail the entire strategy
 4. Return the resource processed by business logic
@@ -580,7 +580,7 @@ public class RPackageUploadStrategy
 			SubmissionService service,
 			PackageValidator<RPackage> packageValidator,
 			RepositoryService<RRepository> repositoryService,
-			Storage<RRepository, RPackage> storage,
+			Storage<RRepository, RPackage> localStorage,
 			PackageService<RPackage> packageService,
 			EmailService emailService,
 			BestMaintainerChooser bestMaintainerChooser,
@@ -593,7 +593,7 @@ public class RPackageUploadStrategy
 				eventService,
 				packageValidator,
 				repositoryService,
-				storage,
+				localStorage,
 				packageService,
 				service,
 				emailService,
@@ -670,7 +670,7 @@ public class RStrategyFactory {
 	private final SubmissionService submissionService;
 	private final PackageValidator<RPackage> packageValidator;
 	private final RRepositoryService repositoryService;
-	private final Storage<RRepository, RPackage> storage;
+	private final Storage<RRepository, RPackage> localStorage;
 	private final RPackageService packageService;
 	private final EmailService emailService;
 	private final BestMaintainerChooser bestMaintainerChooser;
@@ -689,7 +689,7 @@ public class RStrategyFactory {
 				packageService,
 				requester,
 				updatedPackage,
-				storage,
+				localStorage,
 				bestMaintainerChooser,
 				repositorySynchronizer);
 	}
@@ -804,7 +804,7 @@ public class BestMaintainerChooser {
 RDepot supports two types of deletion:
 
 - *soft-delete* - this means the `deleted` flag of a resource is set to *true*, it becomes invisible to any users (except admins) and the related events remain in the database;
-- *hard-delete* - this means a HTTP `DELETE` request is performed on a designated API resource; only admins can do this, since it remove the resource(s) from the database (including all related events) and storage
+- *hard-delete* - this means a HTTP `DELETE` request is performed on a designated API resource; only admins can do this, since it remove the resource(s) from the database (including all related events) and localStorage
 
 Delete Mediators are meant to deal with *hard-deletes*. In the case of R, they only have to be extended and instantiated (i.e. marked as `@Component`) as they delegate work to Storage and Services. Naturally, if an extension needs it, these behaviors can be extended.
 
@@ -1042,7 +1042,7 @@ public abstract class AbstractSubmissionDto<T extends IDto> implements IDto {
 public class SubmissionProjection {
 
 	private Integer id;
-	private SubmissionState state;
+	private final SubmissionState state;
 
 	public SubmissionProjection(Submission submission) {
 		this.id = submission.getId();
@@ -1295,8 +1295,9 @@ Another important detail is the `assemblerWithUser` method. It is a work-around 
 See the usage of the `assemblerWithUser` method in the `ApiV2ReadingController` class:
 
 ```java
-	protected @ResponseBody ResponseDto<PagedModel<EntityModel<D>>> handleSuccessForPagedCollection(
-			Page<E> items, User user) {
+	@ResponseBody
+    private ResponseDto<PagedModel<EntityModel<D>>> handleSuccessForPagedCollection(
+            Page<E> items, User user) {
 		final PagedModel<EntityModel<D>> pagedItems = pagedModelAssembler.toModel(
 				items, modelAssembler.assemblerWithUser(user));
 		// use assemblerWithUser to assemble models for every individual entity in the page
@@ -1324,7 +1325,7 @@ public class RRepositoryValidator extends
 
 	@Override
 	public void validate(Object target, Errors errors) {
-		validate((RRepository)target, errors);
+		validate(target, errors);
 	}
 
 }
@@ -1383,12 +1384,12 @@ When creating custom exceptions, additional message codes should be added to the
 *R Example*:
 
 ```java
-public static final String ERROR_ORGANIZE_PACKAGES_IN_STORAGE = "error.organize.packages.in.storage";
+public static final String ERROR_ORGANIZE_PACKAGES_IN_STORAGE = "error.organize.packages.in.localStorage";
 
 ```
 
 ```properties
-error.organize.packages.in.storage=Could not populate packages and generate directory structure for publication.
+error.organize.packages.in.localStorage=Could not populate packages and generate directory structure for publication.
 ```
 
 Then, a custom exception class can be created:

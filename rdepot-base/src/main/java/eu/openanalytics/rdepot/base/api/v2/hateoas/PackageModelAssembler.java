@@ -89,6 +89,8 @@ public class PackageModelAssembler extends AbstractRoleAwareModelAssembler<Packa
 
     public EntityModel<PackageDto> toModel(Package entity, User user) {
         PackageDto dto = dtoConverter.convertEntityToDto(entity);
+
+        dto.setPermissions(securityMediator.getPermissions(entity, user));
         return EntityModel.of(dto, generateRoleBasedAvailableLinksForEntity(entity, user));
     }
 

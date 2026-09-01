@@ -21,6 +21,7 @@
 package eu.openanalytics.rdepot.base.mirroring;
 
 import eu.openanalytics.rdepot.base.mirroring.pojos.MirroredPackage;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
@@ -41,11 +42,18 @@ public abstract class Mirror<P extends MirroredPackage> {
     protected String uri;
     protected String syncInterval;
     protected String type;
-    protected List<P> packages;
+    protected Boolean allPackages = false;
+    protected List<P> packages = new ArrayList<>();
 
     @Override
     public int hashCode() {
         return Objects.hash(name, packages, syncInterval, type, uri);
+    }
+
+    public void setPackages(List<P> packages) {
+        this.packages = packages;
+        packages.forEach(p -> p.setMirrorUrl(this.uri));
+        // To differentiate between same packages in different mirrors
     }
 
     @Override

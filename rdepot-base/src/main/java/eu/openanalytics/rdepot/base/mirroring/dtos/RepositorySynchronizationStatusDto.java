@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import eu.openanalytics.rdepot.base.api.v2.dtos.RepositoryProjection;
 import eu.openanalytics.rdepot.base.entities.RepositorySynchronizationStatus;
-import eu.openanalytics.rdepot.base.mirroring.pojos.SynchronizationStatus;
+import eu.openanalytics.rdepot.base.mirroring.pojos.SynchronizationStatusEnum;
 import java.util.Date;
 import java.util.List;
 import lombok.Data;
@@ -45,7 +45,7 @@ public class RepositorySynchronizationStatusDto {
 
     @JsonGetter("status")
     public String getStatusForJson() {
-        if (pending) return SynchronizationStatus.PENDING.getStatus();
+        if (pending) return SynchronizationStatusEnum.PENDING.getStatus();
 
         return this.status;
     }

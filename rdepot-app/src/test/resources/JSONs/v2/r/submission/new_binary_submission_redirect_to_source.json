@@ -13,24 +13,25 @@
             "login": "einstein",
             "email": "einstein@ldap.forumsys.com"
         },
+        "permissions": [],
         "changes": "",
         "links": [
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/48"
+                "href": "http://localhost:8017/api/v2/manager/r/submissions/48"
             },
             {
                 "rel": "submissionList",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions"
+                "href": "http://localhost:8017/api/v2/manager/r/submissions"
             }
         ],
         "id": 48,
         "state": "ACCEPTED",
         "technology": "R",
         "packageBag": {
-            "author": "Neal Richardson [aut],\\n Ian Cook [aut],\\n Nic Crane [aut],\\n Dewey Dunnington [aut] (<https:\/\/orcid.org\/0000-0002-9415-4582>),\\n Romain François [aut] (<https:\/\/orcid.org\/0000-0002-2444-4226>),\\n Jonathan Keane [aut, cre],\\n Dragoș Moldovan-Grünfeld [aut],\\n Jeroen Ooms [aut],\\n Jacob Wujciak-Jens [aut],\\n Javier Luraschi [ctb],\\n Karl Dunkle Werner [ctb] (<https:\/\/orcid.org\/0000-0003-0523-7309>),\\n Jeffrey Wong [ctb],\\n Apache Arrow [aut, cph]",
+            "author": "Neal Richardson [aut],\\n Ian Cook [aut],\\n Nic Crane [aut],\\n Dewey Dunnington [aut] (<https://orcid.org/0000-0002-9415-4582>),\\n Romain François [aut] (<https://orcid.org/0000-0002-2444-4226>),\\n Jonathan Keane [aut, cre],\\n Dragoș Moldovan-Grünfeld [aut],\\n Jeroen Ooms [aut],\\n Jacob Wujciak-Jens [aut],\\n Javier Luraschi [ctb],\\n Karl Dunkle Werner [ctb] (<https://orcid.org/0000-0003-0523-7309>),\\n Jeffrey Wong [ctb],\\n Apache Arrow [aut, cph]",
             "active": true,
-            "description": "'Apache' 'Arrow' <https:\/\/arrow.apache.org\/> is a cross-language\\n development platform for in-memory data. It specifies a standardized\\n language-independent columnar memory format for flat and hierarchical data,\\n organized for efficient analytic operations on modern hardware. This\\n package provides an interface to the 'Arrow C++' library.",
+            "description": "'Apache' 'Arrow' <https://arrow.apache.org/> is a cross-language\\n development platform for in-memory data. It specifies a standardized\\n language-independent columnar memory format for flat and hierarchical data,\\n organized for efficient analytic operations on modern hardware. This\\n package provides an interface to the 'Arrow C++' library.",
             "technology": "R",
             "repository": {
                 "lastPublicationSuccessful": true,
@@ -39,13 +40,18 @@
                 "published": true,
                 "technology": "R",
                 "requiresAuthentication": false,
-                "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+                "publicationUri": "http://localhost/repo/testrepo1"
             },
             "title": "Integration to 'Apache' 'Arrow'",
             "version": "18.1.0",
-            "url": "https:\/\/github.com\/apache\/arrow\/, https:\/\/arrow.apache.org\/docs\/r\/",
+            "url": "https://github.com/apache/arrow/, https://arrow.apache.org/docs/r/",
             "deleted": false,
             "descriptionContentType": "txt",
+            "permissions": [
+                "package.deactivate",
+                "package.delete.soft",
+                "package.edit"
+            ],
             "binary": true,
             "name": "arrow",
             "submission": {
@@ -55,11 +61,11 @@
             "links": [
                 {
                     "rel": "self",
-                    "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/48"
+                    "href": "http://localhost:8017/api/v2/manager/r/packages/48"
                 },
                 {
                     "rel": "packageList",
-                    "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    "href": "http://localhost:8017/api/v2/manager/packages"
                 },
                 {
                     "rel": "repository",
@@ -67,12 +73,12 @@
                 },
                 {
                     "rel": "self",
-                    "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/48",
+                    "href": "http://localhost:8017/api/v2/manager/r/packages/48",
                     "type": "PATCH"
                 },
                 {
                     "rel": "self",
-                    "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/48",
+                    "href": "http://localhost:8017/api/v2/manager/r/packages/48",
                     "type": "DELETE"
                 }
             ],

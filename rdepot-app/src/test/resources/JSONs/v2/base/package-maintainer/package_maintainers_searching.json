@@ -1,102 +1,118 @@
 {
     "code": 200,
     "data": {
+        "content": [
+            {
+                "deleted": false,
+                "id": 8,
+                "packageName": "pandas",
+                "permissions": [
+                    "packageMaintainer.delete.soft",
+                    "packageMaintainer.edit"
+                ],
+                "repository": {
+                    "id": 8,
+                    "lastPublicationSuccessful": true,
+                    "name": "testrepo8",
+                    "publicationUri": "http://localhost/repo/testrepo8",
+                    "published": true,
+                    "requiresAuthentication": true,
+                    "technology": "Python"
+                },
+                "user": {
+                    "email": "admin@localhost",
+                    "id": 8,
+                    "login": "admin",
+                    "name": "Local Admin User"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/8"
+                    },
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/8"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/8",
+                        "type": "PATCH"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/8",
+                        "type": "DELETE"
+                    }
+                ]
+            },
+            {
+                "deleted": false,
+                "id": 7,
+                "packageName": "pandas",
+                "permissions": [
+                    "packageMaintainer.delete.soft",
+                    "packageMaintainer.edit"
+                ],
+                "repository": {
+                    "id": 9,
+                    "lastPublicationSuccessful": false,
+                    "name": "testrepo9",
+                    "publicationUri": "http://localhost/repo/testrepo9",
+                    "published": false,
+                    "requiresAuthentication": true,
+                    "technology": "Python"
+                },
+                "user": {
+                    "email": "admin@localhost",
+                    "id": 8,
+                    "login": "admin",
+                    "name": "Local Admin User"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/7"
+                    },
+                    {
+                        "rel": "user",
+                        "href": "http://localhost:8017/api/v2/manager/users/8"
+                    },
+                    {
+                        "rel": "packageMaintainersList",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/7",
+                        "type": "PATCH"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/package-maintainers/7",
+                        "type": "DELETE"
+                    }
+                ]
+            }
+        ],
         "links": [
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers?search=ADMIN&page=0&size=20&sort=repository.id,asc"
+                "href": "http://localhost:8017/api/v2/manager/package-maintainers?search=ADMIN&page=0&size=20&sort=repository.id,asc"
             }
         ],
         "page": {
             "number": 0,
             "size": 20,
-            "totalPages": 1,
-            "totalElements": 2
-        },
-        "content": [
-            {
-                "deleted": false,
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/8"
-                    },
-                    {
-                        "rel": "packageMaintainerList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/8",
-                        "type": "PATCH"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/8",
-                        "type": "DELETE"
-                    }
-                ],
-                "id": 8,
-                "packageName": "pandas",
-                "repository": {
-                    "name": "testrepo8",
-                    "lastPublicationSuccessful": true,
-                    "id": 8,
-                    "published": true,
-                    "technology": "Python",
-                    "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo8"
-                },
-                "user": {
-                    "name": "Local Admin User",
-                    "id": 8,
-                    "login": "admin",
-                    "email": "admin@localhost"
-                }
-            },
-            {
-                "deleted": false,
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/7"
-                    },
-                    {
-                        "rel": "packageMaintainerList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/7",
-                        "type": "PATCH"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/package-maintainers\/7",
-                        "type": "DELETE"
-                    }
-                ],
-                "id": 7,
-                "packageName": "pandas",
-                "repository": {
-                    "name": "testrepo9",
-                    "lastPublicationSuccessful": false,
-                    "id": 9,
-                    "published": false,
-                    "technology": "Python",
-                    "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo9"
-                },
-                "user": {
-                    "name": "Local Admin User",
-                    "id": 8,
-                    "login": "admin",
-                    "email": "admin@localhost"
-                }
-            }
-        ]
+            "totalElements": 2,
+            "totalPages": 1
+        }
     },
-    "messageCode": "success.request.processed",
     "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
     "status": "SUCCESS"
 }

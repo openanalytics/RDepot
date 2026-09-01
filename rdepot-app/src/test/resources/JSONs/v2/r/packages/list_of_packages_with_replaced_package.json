@@ -4,19 +4,19 @@
         "links": [
             {
                 "rel": "first",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages?page=0&size=20&sort=id,asc"
+                "href": "http://localhost:8017/api/v2/manager/packages?page=0&size=20&sort=id,asc"
             },
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages?page=0&size=20&sort=id,asc"
+                "href": "http://localhost:8017/api/v2/manager/packages?page=0&size=20&sort=id,asc"
             },
             {
                 "rel": "next",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages?page=1&size=20&sort=id,asc"
+                "href": "http://localhost:8017/api/v2/manager/packages?page=1&size=20&sort=id,asc"
             },
             {
                 "rel": "last",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages?page=2&size=20&sort=id,asc"
+                "href": "http://localhost:8017/api/v2/manager/packages?page=2&size=20&sort=id,asc"
             }
         ],
         "page": {
@@ -30,22 +30,27 @@
                 "author": "Julie Eaton and Ian Painter",
                 "active": true,
                 "description": "Package for visualizing data quality of partially accruing data.",
-                "source": "\/opt\/rdepot\/repositories\/3\/99077116\/accrued_1.3.5.tar.gz",
+                "source": "/opt/rdepot/repositories/3/99077116/accrued_1.3.5.tar.gz",
                 "technology": "R",
                 "repository": {
-                    "name": "testrepo2",
                     "lastPublicationSuccessful": true,
+                    "name": "testrepo2",
                     "id": 3,
                     "published": true,
                     "technology": "R",
                     "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
+                    "publicationUri": "http://localhost/repo/testrepo2"
                 },
                 "title": "Data Quality Visualization Tools for Partially Accruing Data",
                 "version": "1.3.5",
                 "url": null,
                 "deleted": false,
                 "descriptionContentType": "txt",
+                "permissions": [
+                    "package.deactivate",
+                    "package.delete.soft",
+                    "package.edit"
+                ],
                 "binary": false,
                 "name": "accrued",
                 "submission": {
@@ -55,11 +60,11 @@
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/4"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/4"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/packages"
                     },
                     {
                         "rel": "repository",
@@ -67,12 +72,12 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/4",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/4",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/4",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/4",
                         "type": "DELETE"
                     }
                 ],
@@ -88,22 +93,27 @@
                 "author": "Julie Eaton and Ian Painter",
                 "active": true,
                 "description": "Package for visualizing data quality of partially accruing data.",
-                "source": "\/opt\/rdepot\/repositories\/3\/82197810\/accrued_1.3.tar.gz",
+                "source": "/opt/rdepot/repositories/3/82197810/accrued_1.3.tar.gz",
                 "technology": "R",
                 "repository": {
-                    "name": "testrepo2",
                     "lastPublicationSuccessful": true,
+                    "name": "testrepo2",
                     "id": 3,
                     "published": true,
                     "technology": "R",
                     "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
+                    "publicationUri": "http://localhost/repo/testrepo2"
                 },
                 "title": "Data Quality Visualization Tools for Partially Accruing Data",
                 "version": "1.3",
                 "url": null,
                 "deleted": false,
                 "descriptionContentType": "txt",
+                "permissions": [
+                    "package.deactivate",
+                    "package.delete.soft",
+                    "package.edit"
+                ],
                 "binary": false,
                 "name": "accrued",
                 "submission": {
@@ -113,11 +123,11 @@
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/5"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/5"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/packages"
                     },
                     {
                         "rel": "repository",
@@ -125,12 +135,12 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/5",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/5",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/5",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/5",
                         "type": "DELETE"
                     }
                 ],
@@ -146,22 +156,25 @@
                 "author": "Julie Eaton and Ian Painter",
                 "active": false,
                 "description": "Package for visualizing data quality of partially accruing time series.",
-                "source": "\/opt\/rdepot\/repositories\/3\/46950998\/accrued_1.1.tar.gz",
+                "source": "/opt/rdepot/repositories/3/46950998/accrued_1.1.tar.gz",
                 "technology": "R",
                 "repository": {
-                    "name": "testrepo2",
                     "lastPublicationSuccessful": true,
+                    "name": "testrepo2",
                     "id": 3,
                     "published": true,
                     "technology": "R",
                     "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
+                    "publicationUri": "http://localhost/repo/testrepo2"
                 },
                 "title": "Visualization tools for partially accruing data",
                 "version": "1.1",
                 "url": null,
                 "deleted": true,
                 "descriptionContentType": "txt",
+                "permissions": [
+                    "package.delete.hard"
+                ],
                 "binary": false,
                 "name": "accrued",
                 "submission": {
@@ -171,11 +184,11 @@
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/6"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/6"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/packages"
                     },
                     {
                         "rel": "repository",
@@ -183,12 +196,12 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/6",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/6",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/6",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/6",
                         "type": "DELETE"
                     }
                 ],
@@ -204,22 +217,27 @@
                 "author": "Julie Eaton and Ian Painter",
                 "active": false,
                 "description": "Package for visualizing data quality of partially accruing data.",
-                "source": "\/opt\/rdepot\/repositories\/3\/28075835\/accrued_1.4.tar.gz",
+                "source": "/opt/rdepot/repositories/3/28075835/accrued_1.4.tar.gz",
                 "technology": "R",
                 "repository": {
-                    "name": "testrepo2",
                     "lastPublicationSuccessful": true,
+                    "name": "testrepo2",
                     "id": 3,
                     "published": true,
                     "technology": "R",
                     "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
+                    "publicationUri": "http://localhost/repo/testrepo2"
                 },
                 "title": "Data Quality Visualization Tools for Partially Accruing Data",
                 "version": "1.4",
                 "url": null,
                 "deleted": false,
                 "descriptionContentType": "txt",
+                "permissions": [
+                    "package.activate",
+                    "package.delete.soft",
+                    "package.edit"
+                ],
                 "binary": false,
                 "name": "accrued",
                 "submission": {
@@ -229,11 +247,11 @@
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/7"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/7"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/packages"
                     },
                     {
                         "rel": "repository",
@@ -241,12 +259,12 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/7",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/7",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/7",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/7",
                         "type": "DELETE"
                     }
                 ],
@@ -262,22 +280,27 @@
                 "author": "Julie Eaton and Ian Painter",
                 "active": true,
                 "description": "Package for visualizing data quality of partially accruing time series.",
-                "source": "\/opt\/rdepot\/repositories\/3\/83118397\/accrued_1.2.tar.gz",
+                "source": "/opt/rdepot/repositories/3/83118397/accrued_1.2.tar.gz",
                 "technology": "R",
                 "repository": {
-                    "name": "testrepo2",
                     "lastPublicationSuccessful": true,
+                    "name": "testrepo2",
                     "id": 3,
                     "published": true,
                     "technology": "R",
                     "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
+                    "publicationUri": "http://localhost/repo/testrepo2"
                 },
                 "title": "Visualization tools for partially accruing data",
                 "version": "1.2",
                 "url": null,
                 "deleted": false,
                 "descriptionContentType": "txt",
+                "permissions": [
+                    "package.deactivate",
+                    "package.delete.soft",
+                    "package.edit"
+                ],
                 "binary": false,
                 "name": "accrued",
                 "submission": {
@@ -287,11 +310,11 @@
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/8"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/8"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/packages"
                     },
                     {
                         "rel": "repository",
@@ -299,12 +322,12 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/8",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/8",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/8",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/8",
                         "type": "DELETE"
                     }
                 ],
@@ -320,22 +343,27 @@
                 "author": "Scott Fortmann-Roe",
                 "active": true,
                 "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-                "source": "\/opt\/rdepot\/repositories\/4\/47098069\/A3_0.9.1.tar.gz",
+                "source": "/opt/rdepot/repositories/4/47098069/A3_0.9.1.tar.gz",
                 "technology": "R",
                 "repository": {
-                    "name": "testrepo3",
                     "lastPublicationSuccessful": false,
+                    "name": "testrepo3",
                     "id": 4,
                     "published": false,
                     "technology": "R",
                     "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo3"
+                    "publicationUri": "http://localhost/repo/testrepo3"
                 },
                 "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
                 "version": "0.9.1",
                 "url": null,
                 "deleted": false,
                 "descriptionContentType": "txt",
+                "permissions": [
+                    "package.deactivate",
+                    "package.delete.soft",
+                    "package.edit"
+                ],
                 "binary": false,
                 "name": "A3",
                 "submission": {
@@ -345,11 +373,11 @@
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/9"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/9"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/packages"
                     },
                     {
                         "rel": "repository",
@@ -357,12 +385,12 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/9",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/9",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/9",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/9",
                         "type": "DELETE"
                     }
                 ],
@@ -378,22 +406,27 @@
                 "author": "Scott Fortmann-Roe",
                 "active": true,
                 "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-                "source": "\/opt\/rdepot\/repositories\/4\/54491936\/A3_0.9.2.tar.gz",
+                "source": "/opt/rdepot/repositories/4/54491936/A3_0.9.2.tar.gz",
                 "technology": "R",
                 "repository": {
-                    "name": "testrepo3",
                     "lastPublicationSuccessful": false,
+                    "name": "testrepo3",
                     "id": 4,
                     "published": false,
                     "technology": "R",
                     "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo3"
+                    "publicationUri": "http://localhost/repo/testrepo3"
                 },
                 "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
                 "version": "0.9.2",
                 "url": null,
                 "deleted": false,
                 "descriptionContentType": "txt",
+                "permissions": [
+                    "package.deactivate",
+                    "package.delete.soft",
+                    "package.edit"
+                ],
                 "binary": false,
                 "name": "A3",
                 "submission": {
@@ -403,11 +436,11 @@
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/10"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/10"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/packages"
                     },
                     {
                         "rel": "repository",
@@ -415,12 +448,12 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/10",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/10",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/10",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/10",
                         "type": "DELETE"
                     }
                 ],
@@ -436,22 +469,27 @@
                 "author": "Katalin Csillery, Michael Blum and Olivier Francois",
                 "active": false,
                 "description": "The package implements several ABC algorithms for performing parameter estimation and model selection. Cross-validation tools are also available for measuring the accuracy of ABC estimates, and to calculate the misclassification probabilities of different models.",
-                "source": "\/opt\/rdepot\/repositories\/4\/95296712\/abc_1.3.tar.gz",
+                "source": "/opt/rdepot/repositories/4/95296712/abc_1.3.tar.gz",
                 "technology": "R",
                 "repository": {
-                    "name": "testrepo3",
                     "lastPublicationSuccessful": false,
+                    "name": "testrepo3",
                     "id": 4,
                     "published": false,
                     "technology": "R",
                     "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo3"
+                    "publicationUri": "http://localhost/repo/testrepo3"
                 },
                 "title": "Tools for Approximate Bayesian Computation (ABC)",
                 "version": "1.3",
                 "url": null,
                 "deleted": false,
                 "descriptionContentType": "txt",
+                "permissions": [
+                    "package.activate",
+                    "package.delete.soft",
+                    "package.edit"
+                ],
                 "binary": false,
                 "name": "abc",
                 "submission": {
@@ -461,11 +499,11 @@
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/11"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/11"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/packages"
                     },
                     {
                         "rel": "repository",
@@ -473,12 +511,12 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/11",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/11",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/11",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/11",
                         "type": "DELETE"
                     }
                 ],
@@ -494,22 +532,27 @@
                 "author": "Katalin Csillery, with contributions from Michael Blum and Olivier Francois",
                 "active": true,
                 "description": "The 'abc' package provides various functions for parameter estimation and model selection in an ABC framework. Three main",
-                "source": "\/opt\/rdepot\/repositories\/4\/49426769\/abc_1.0.tar.gz",
+                "source": "/opt/rdepot/repositories/4/49426769/abc_1.0.tar.gz",
                 "technology": "R",
                 "repository": {
-                    "name": "testrepo3",
                     "lastPublicationSuccessful": false,
+                    "name": "testrepo3",
                     "id": 4,
                     "published": false,
                     "technology": "R",
                     "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo3"
+                    "publicationUri": "http://localhost/repo/testrepo3"
                 },
                 "title": "Functions to perform Approximate Bayesian Computation (ABC) using simulated data",
                 "version": "1.0",
                 "url": null,
                 "deleted": false,
                 "descriptionContentType": "txt",
+                "permissions": [
+                    "package.deactivate",
+                    "package.delete.soft",
+                    "package.edit"
+                ],
                 "binary": false,
                 "name": "abc",
                 "submission": {
@@ -519,11 +562,11 @@
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/12"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/12"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/packages"
                     },
                     {
                         "rel": "repository",
@@ -531,12 +574,12 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/12",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/12",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/12",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/12",
                         "type": "DELETE"
                     }
                 ],
@@ -552,22 +595,27 @@
                 "author": "Julie Eaton and Ian Painter",
                 "active": false,
                 "description": "Package for visualizing data quality of partially accruing time series.",
-                "source": "\/opt\/rdepot\/repositories\/2\/40553654\/accrued_1.0.tar.gz",
+                "source": "/opt/rdepot/repositories/2/40553654/accrued_1.0.tar.gz",
                 "technology": "R",
                 "repository": {
-                    "name": "testrepo1",
                     "lastPublicationSuccessful": true,
+                    "name": "testrepo1",
                     "id": 2,
                     "published": true,
                     "technology": "R",
                     "requiresAuthentication": false,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+                    "publicationUri": "http://localhost/repo/testrepo1"
                 },
                 "title": "Visualization tools for partially accruing data",
                 "version": "1.0",
                 "url": null,
                 "deleted": false,
                 "descriptionContentType": "txt",
+                "permissions": [
+                    "package.activate",
+                    "package.delete.soft",
+                    "package.edit"
+                ],
                 "binary": false,
                 "name": "accrued",
                 "submission": {
@@ -577,11 +625,11 @@
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/13"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/13"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/packages"
                     },
                     {
                         "rel": "repository",
@@ -589,12 +637,12 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/13",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/13",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/13",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/13",
                         "type": "DELETE"
                     }
                 ],
@@ -610,22 +658,25 @@
                 "author": "Bulent Altunkaynak [aut, cre], Hamza Gamgam [aut]",
                 "active": false,
                 "description": "Performs nonparametric tests for equality of location against ordered alternatives.",
-                "source": "\/opt\/rdepot\/repositories\/2\/8436419\/npordtests_1.1.tar.gz",
+                "source": "/opt/rdepot/repositories/2/8436419/npordtests_1.1.tar.gz",
                 "technology": "R",
                 "repository": {
-                    "name": "testrepo1",
                     "lastPublicationSuccessful": true,
+                    "name": "testrepo1",
                     "id": 2,
                     "published": true,
                     "technology": "R",
                     "requiresAuthentication": false,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+                    "publicationUri": "http://localhost/repo/testrepo1"
                 },
                 "title": "Nonparametric Tests for Equality of Location Against Ordered Alternatives",
                 "version": "1.1",
                 "url": null,
                 "deleted": true,
                 "descriptionContentType": "txt",
+                "permissions": [
+                    "package.delete.hard"
+                ],
                 "binary": false,
                 "name": "npordtests",
                 "submission": {
@@ -635,11 +686,11 @@
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/14"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/14"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/packages"
                     },
                     {
                         "rel": "repository",
@@ -647,12 +698,12 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/14",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/14",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/14",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/14",
                         "type": "DELETE"
                     }
                 ],
@@ -668,22 +719,27 @@
                 "author": "Andrea Batch [aut, cre], Jeff Chen [ctb], Walt Kampas [ctb]",
                 "active": true,
                 "description": "Provides an R interface for the Bureau of Economic Analysis (BEA)",
-                "source": "\/opt\/rdepot\/repositories\/2\/89565416\/bea.R_1.0.5.tar.gz",
+                "source": "/opt/rdepot/repositories/2/89565416/bea.R_1.0.5.tar.gz",
                 "technology": "R",
                 "repository": {
-                    "name": "testrepo1",
                     "lastPublicationSuccessful": true,
+                    "name": "testrepo1",
                     "id": 2,
                     "published": true,
                     "technology": "R",
                     "requiresAuthentication": false,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+                    "publicationUri": "http://localhost/repo/testrepo1"
                 },
                 "title": "Bureau of Economic Analysis API",
                 "version": "1.0.5",
-                "url": "https:\/\/github.com\/us-bea\/beaR",
+                "url": "https://github.com/us-bea/beaR",
                 "deleted": false,
                 "descriptionContentType": "txt",
+                "permissions": [
+                    "package.deactivate",
+                    "package.delete.soft",
+                    "package.edit"
+                ],
                 "binary": false,
                 "name": "bea.R",
                 "submission": {
@@ -693,11 +749,11 @@
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/15"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/15"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/packages"
                     },
                     {
                         "rel": "repository",
@@ -705,12 +761,12 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/15",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/15",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/15",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/15",
                         "type": "DELETE"
                     }
                 ],
@@ -729,19 +785,24 @@
                 "source": "",
                 "technology": "R",
                 "repository": {
-                    "name": "testrepo1",
                     "lastPublicationSuccessful": true,
+                    "name": "testrepo1",
                     "id": 2,
                     "published": true,
                     "technology": "R",
                     "requiresAuthentication": false,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+                    "publicationUri": "http://localhost/repo/testrepo1"
                 },
                 "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
                 "version": "0.9.1",
                 "url": null,
                 "deleted": false,
                 "descriptionContentType": "txt",
+                "permissions": [
+                    "package.activate",
+                    "package.delete.soft",
+                    "package.edit"
+                ],
                 "binary": false,
                 "name": "A3",
                 "submission": {
@@ -751,11 +812,11 @@
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/16"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/16"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/packages"
                     },
                     {
                         "rel": "repository",
@@ -763,12 +824,12 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/16",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/16",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/16",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/16",
                         "type": "DELETE"
                     }
                 ],
@@ -784,22 +845,27 @@
                 "author": "Scott Fortmann-Roe",
                 "active": true,
                 "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-                "source": "\/opt\/rdepot\/repositories\/2\/9907084\/A3_0.9.2.tar.gz",
+                "source": "/opt/rdepot/repositories/2/9907084/A3_0.9.2.tar.gz",
                 "technology": "R",
                 "repository": {
-                    "name": "testrepo1",
                     "lastPublicationSuccessful": true,
+                    "name": "testrepo1",
                     "id": 2,
                     "published": true,
                     "technology": "R",
                     "requiresAuthentication": false,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+                    "publicationUri": "http://localhost/repo/testrepo1"
                 },
                 "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
                 "version": "0.9.2",
                 "url": null,
                 "deleted": false,
                 "descriptionContentType": "txt",
+                "permissions": [
+                    "package.deactivate",
+                    "package.delete.soft",
+                    "package.edit"
+                ],
                 "binary": false,
                 "name": "A3",
                 "submission": {
@@ -809,11 +875,11 @@
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/17"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/17"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/packages"
                     },
                     {
                         "rel": "repository",
@@ -821,12 +887,12 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/17",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/17",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/17",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/17",
                         "type": "DELETE"
                     }
                 ],
@@ -842,22 +908,27 @@
                 "author": "Katalin Csillery, Michael Blum and Olivier Francois",
                 "active": true,
                 "description": "The package implements several ABC algorithms for performing parameter estimation and model selection. Cross-validation tools are also available for measuring the accuracy of ABC estimates, and to calculate the misclassification probabilities of different models.",
-                "source": "\/opt\/rdepot\/repositories\/2\/88170013\/abc_1.3.tar.gz",
+                "source": "/opt/rdepot/repositories/2/88170013/abc_1.3.tar.gz",
                 "technology": "R",
                 "repository": {
-                    "name": "testrepo1",
                     "lastPublicationSuccessful": true,
+                    "name": "testrepo1",
                     "id": 2,
                     "published": true,
                     "technology": "R",
                     "requiresAuthentication": false,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+                    "publicationUri": "http://localhost/repo/testrepo1"
                 },
                 "title": "Tools for Approximate Bayesian Computation (ABC)",
                 "version": "1.3",
                 "url": null,
                 "deleted": false,
                 "descriptionContentType": "txt",
+                "permissions": [
+                    "package.deactivate",
+                    "package.delete.soft",
+                    "package.edit"
+                ],
                 "binary": false,
                 "name": "abc",
                 "submission": {
@@ -867,11 +938,11 @@
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/18"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/18"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/packages"
                     },
                     {
                         "rel": "repository",
@@ -879,12 +950,12 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/18",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/18",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/18",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/18",
                         "type": "DELETE"
                     }
                 ],
@@ -900,22 +971,27 @@
                 "author": "Nicholas Tierney [aut, cre]",
                 "active": false,
                 "description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
-                "source": "\/opt\/rdepot\/new\/70032548\/visdat_0.1.0.tar.gz",
+                "source": "/opt/rdepot/new/70032548/visdat_0.1.0.tar.gz",
                 "technology": "R",
                 "repository": {
-                    "name": "testrepo2",
                     "lastPublicationSuccessful": true,
+                    "name": "testrepo2",
                     "id": 3,
                     "published": true,
                     "technology": "R",
                     "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
+                    "publicationUri": "http://localhost/repo/testrepo2"
                 },
                 "title": "Preliminary Data Visualisation",
                 "version": "0.1.0",
-                "url": "https:\/\/github.com\/njtierney\/visdat\/",
+                "url": "https://github.com/njtierney/visdat/",
                 "deleted": false,
                 "descriptionContentType": "txt",
+                "permissions": [
+                    "package.activate",
+                    "package.delete.soft",
+                    "package.edit"
+                ],
                 "binary": false,
                 "name": "visdat",
                 "submission": {
@@ -925,11 +1001,11 @@
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/19"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/19"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/packages"
                     },
                     {
                         "rel": "repository",
@@ -937,12 +1013,12 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/19",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/19",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/19",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/19",
                         "type": "DELETE"
                     }
                 ],
@@ -958,22 +1034,27 @@
                 "author": "Cedric Landerer [aut, cre], Gabriel Hanas [ctb], Jeremy Rogers [ctb], Alex Cope [ctb], Denizhan Pak [ctb]",
                 "active": true,
                 "description": "Is a collection of models to analyze genome scale codon data using a Bayesian framework. Provides visualization routines and checkpointing for model fittings. Currently published models to analyze gene data for selection on codon",
-                "source": "\/opt\/rdepot\/repositories\/5\/39437028\/AnaCoDa_0.1.2.3.tar.gz",
+                "source": "/opt/rdepot/repositories/5/39437028/AnaCoDa_0.1.2.3.tar.gz",
                 "technology": "R",
                 "repository": {
-                    "name": "testrepo4",
                     "lastPublicationSuccessful": false,
+                    "name": "testrepo4",
                     "id": 5,
                     "published": false,
                     "technology": "R",
                     "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo4"
+                    "publicationUri": "http://localhost/repo/testrepo4"
                 },
                 "title": "Analysis of Codon Data under Stationarity using a Bayesian Framework",
                 "version": "0.1.2.3",
-                "url": "https:\/\/github.com\/clandere\/AnaCoDa",
+                "url": "https://github.com/clandere/AnaCoDa",
                 "deleted": false,
                 "descriptionContentType": "txt",
+                "permissions": [
+                    "package.deactivate",
+                    "package.delete.soft",
+                    "package.edit"
+                ],
                 "binary": false,
                 "name": "AnaCoDa",
                 "submission": {
@@ -983,11 +1064,11 @@
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/20"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/20"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/packages"
                     },
                     {
                         "rel": "repository",
@@ -995,12 +1076,12 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/20",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/20",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/20",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/20",
                         "type": "DELETE"
                     }
                 ],
@@ -1016,22 +1097,27 @@
                 "author": "Peter Bogetoft and Lars Otto",
                 "active": true,
                 "description": "Estimates and graphs deterministic (DEA) frontier models with different technology assumptions (fdh, vrs, drs, crs, irs, add). Also handles possible slacks, peers and their weights (lambdas), optimal cost, revenue and profit allocation, super--efficiency, and mergers. A comparative method for estimating SFA efficiencies is included.",
-                "source": "\/opt\/rdepot\/repositories\/2\/71228208\/Benchmarking_0.10.tar.gz",
+                "source": "/opt/rdepot/repositories/2/71228208/Benchmarking_0.10.tar.gz",
                 "technology": "R",
                 "repository": {
-                    "name": "testrepo1",
                     "lastPublicationSuccessful": true,
+                    "name": "testrepo1",
                     "id": 2,
                     "published": true,
                     "technology": "R",
                     "requiresAuthentication": false,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+                    "publicationUri": "http://localhost/repo/testrepo1"
                 },
                 "title": "Benchmark and frontier analysis using DEA and SFA",
                 "version": "0.10",
                 "url": null,
                 "deleted": false,
                 "descriptionContentType": "txt",
+                "permissions": [
+                    "package.deactivate",
+                    "package.delete.soft",
+                    "package.edit"
+                ],
                 "binary": false,
                 "name": "Benchmarking",
                 "submission": {
@@ -1041,11 +1127,11 @@
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/21"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/21"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/packages"
                     },
                     {
                         "rel": "repository",
@@ -1053,12 +1139,12 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/21",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/21",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/21",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/21",
                         "type": "DELETE"
                     }
                 ],
@@ -1077,19 +1163,24 @@
                 "source": "",
                 "technology": "R",
                 "repository": {
-                    "name": "testrepo1",
                     "lastPublicationSuccessful": true,
+                    "name": "testrepo1",
                     "id": 2,
                     "published": true,
                     "technology": "R",
                     "requiresAuthentication": false,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+                    "publicationUri": "http://localhost/repo/testrepo1"
                 },
                 "title": "Analysis of Codon Data under Stationarity using a Bayesian Framework",
                 "version": "0.1.2.3",
-                "url": "https:\/\/github.com\/clandere\/AnaCoDa",
+                "url": "https://github.com/clandere/AnaCoDa",
                 "deleted": false,
                 "descriptionContentType": "txt",
+                "permissions": [
+                    "package.activate",
+                    "package.delete.soft",
+                    "package.edit"
+                ],
                 "binary": false,
                 "name": "AnaCoDa",
                 "submission": {
@@ -1099,11 +1190,11 @@
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/22"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/22"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/packages"
                     },
                     {
                         "rel": "repository",
@@ -1111,12 +1202,12 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/22",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/22",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/22",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/22",
                         "type": "DELETE"
                     }
                 ],
@@ -1135,19 +1226,24 @@
                 "source": "",
                 "technology": "R",
                 "repository": {
-                    "name": "testrepo1",
                     "lastPublicationSuccessful": true,
+                    "name": "testrepo1",
                     "id": 2,
                     "published": true,
                     "technology": "R",
                     "requiresAuthentication": false,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
+                    "publicationUri": "http://localhost/repo/testrepo1"
                 },
                 "title": "Preliminary Data Visualisation",
                 "version": "0.1.0",
-                "url": "https:\/\/github.com\/njtierney\/visdat\/",
+                "url": "https://github.com/njtierney/visdat/",
                 "deleted": false,
                 "descriptionContentType": "txt",
+                "permissions": [
+                    "package.activate",
+                    "package.delete.soft",
+                    "package.edit"
+                ],
                 "binary": false,
                 "name": "visdat",
                 "submission": {
@@ -1157,11 +1253,11 @@
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/23"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/23"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/packages"
                     },
                     {
                         "rel": "repository",
@@ -1169,12 +1265,12 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/23",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/23",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/23",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/23",
                         "type": "DELETE"
                     }
                 ],

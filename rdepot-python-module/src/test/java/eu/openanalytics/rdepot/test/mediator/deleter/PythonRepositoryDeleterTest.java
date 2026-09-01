@@ -22,33 +22,22 @@ package eu.openanalytics.rdepot.test.mediator.deleter;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
-import eu.openanalytics.rdepot.base.entities.RepositoryMaintainer;
-import eu.openanalytics.rdepot.base.entities.Resource;
-import eu.openanalytics.rdepot.base.entities.Submission;
-import eu.openanalytics.rdepot.base.entities.User;
+import eu.openanalytics.rdepot.base.entities.*;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
-import eu.openanalytics.rdepot.base.storage.Storage;
+import eu.openanalytics.rdepot.base.storage.LocalStorage;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.mediator.deletion.PythonRepositoryDeleter;
 import eu.openanalytics.rdepot.python.mediator.deletion.PythonSubmissionDeleter;
 import eu.openanalytics.rdepot.python.services.PythonPackageService;
 import eu.openanalytics.rdepot.python.services.PythonRepositoryService;
-import eu.openanalytics.rdepot.test.fixture.PackageMaintainerTestFixture;
-import eu.openanalytics.rdepot.test.fixture.PythonPackageTestFixture;
-import eu.openanalytics.rdepot.test.fixture.PythonRepositoryTestFixture;
-import eu.openanalytics.rdepot.test.fixture.RepositoryMaintainerTestFixture;
-import eu.openanalytics.rdepot.test.fixture.UserTestFixture;
+import eu.openanalytics.rdepot.python.storage.PythonPersistentStorage;
+import eu.openanalytics.rdepot.test.fixture.*;
 import eu.openanalytics.rdepot.test.unit.UnitTest;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,7 +60,7 @@ public class PythonRepositoryDeleterTest extends UnitTest {
     RepositoryMaintainerService repositoryMaintainerService;
 
     @Mock
-    Storage<PythonPackage> storage;
+    LocalStorage<PythonPackage> localStorage;
 
     @Mock
     PythonSubmissionDeleter submissionDeleter;
@@ -81,6 +70,9 @@ public class PythonRepositoryDeleterTest extends UnitTest {
 
     @InjectMocks
     PythonRepositoryDeleter deleter;
+
+    @Mock
+    PythonPersistentStorage pythonPersistentStorage;
 
     User user;
     PythonRepository repository;
@@ -139,7 +131,7 @@ public class PythonRepositoryDeleterTest extends UnitTest {
         verify(packageMaintainerService, times(0)).delete(any(PackageMaintainer.class));
         verify(repositoryMaintainerService, times(0)).delete(any(RepositoryMaintainer.class));
         verify(submissionDeleter, times(0)).delete(any(Submission.class));
-        verify(storage, times(0)).removePackageSource(packages.get(0).getSource());
+        verify(pythonPersistentStorage, times(0)).deleteAllPackageFilesIfExist(packages.get(0));
     }
 
     @Test

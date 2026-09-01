@@ -20,11 +20,16 @@
  */
 package eu.openanalytics.rdepot.integrationtest;
 
+import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.exception.NotFoundException;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.IntegrationTest;
 import java.io.File;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Objects;
 import org.reflections.Reflections;
+import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -89,5 +94,44 @@ public class IntegrationTestContainers {
         } else {
             System.out.println("===Containers had already been down!");
         }
+    }
+
+    public static void restartAppContainer() throws InterruptedException {
+        DockerClient dockerClient = DockerClientFactory.instance().client();
+
+        String containerId = dockerClient.listContainersCmd().exec().stream()
+                .filter(c -> Arrays.stream(c.getNames()).anyMatch(name -> name.matches(".*/?(.*-)?app[-_]1$")))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Container for service 'app' not found"))
+                .getId();
+
+        dockerClient.restartContainerCmd(containerId).exec();
+
+        boolean healthy = false;
+        while (!healthy) {
+            System.out.println("===Waiting for app container to be healthy...");
+            Thread.sleep(5000);
+
+            String status = "";
+            try {
+                status = dockerClient
+                        .inspectContainerCmd(containerId)
+                        .exec()
+                        .getState()
+                        .getHealth()
+                        .getStatus();
+            } catch (NullPointerException | NotFoundException e) {
+                System.out.println("===Error getting app container status: " + e.getMessage());
+            }
+
+            if (Objects.equals(status, "none")) {
+                System.out.println("===No healthcheck defined, sleeping for 60s...");
+                Thread.sleep(60000);
+                healthy = true;
+            } else {
+                healthy = Objects.equals(status, "healthy");
+            }
+        }
+        System.out.println("===App container restarted.");
     }
 }

@@ -24,7 +24,7 @@ services:
 ##
   repo:
     build: ./docker/repo
-    # image: registry.openanalytics.eu/openanalytics/rdepot-repo-it:2.7.0
+    # image: registry.openanalytics.eu/openanalytics/rdepot-repo-it:2.9.0
     restart: always
     labels:
       eu.openanalytics.rdepot.container.name: "oa-rdepot-repo"
@@ -63,7 +63,7 @@ services:
 ##
   app:
     build: ./docker/app
-    # image: registry.openanalytics.eu/openanalytics/rdepot-app-it:2.7.0
+    # image: registry.openanalytics.eu/openanalytics/rdepot-app-it:2.9.0
     restart: always
     hostname: oa-rdepot-app
     labels:

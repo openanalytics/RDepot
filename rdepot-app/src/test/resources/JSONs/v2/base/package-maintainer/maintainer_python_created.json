@@ -1,27 +1,11 @@
 {
-    "status": "SUCCESS",
     "code": 201,
-    "message": "Your resource has been created successfully.",
-    "messageCode": "success.resource.created",
     "data": {
-        "id": 12,
-        "user": {
-            "id": 6,
-            "name": "Galileo Galilei",
-            "login": "galieleo",
-            "email": "galieleo@ldap.forumsys.com"
-        },
-        "packageName": "wheel",
-        "repository": {
-            "id": 9,
-            "name": "testrepo9",
-            "publicationUri": "http://localhost/repo/testrepo9",
-            "published": false,
-            "requiresAuthentication": true,
-            "technology": "Python",
-            "lastPublicationSuccessful": false
-        },
         "deleted": false,
+        "permissions": [
+            "packageMaintainer.delete.soft",
+            "packageMaintainer.edit"
+        ],
         "links": [
             {
                 "rel": "self",
@@ -41,6 +25,26 @@
                 "href": "http://localhost:8017/api/v2/manager/package-maintainers/12",
                 "type": "DELETE"
             }
-        ]
-    }
+        ],
+        "id": 12,
+        "packageName": "wheel",
+        "repository": {
+            "lastPublicationSuccessful": false,
+            "name": "testrepo9",
+            "id": 9,
+            "published": false,
+            "technology": "Python",
+            "requiresAuthentication": true,
+            "publicationUri": "http://localhost/repo/testrepo9"
+        },
+        "user": {
+            "name": "Galileo Galilei",
+            "id": 6,
+            "login": "galieleo",
+            "email": "galieleo@ldap.forumsys.com"
+        }
+    },
+    "messageCode": "success.resource.created",
+    "message": "Your resource has been created successfully.",
+    "status": "SUCCESS"
 }

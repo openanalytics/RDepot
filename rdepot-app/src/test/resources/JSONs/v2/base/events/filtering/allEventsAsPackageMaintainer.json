@@ -1,0 +1,1184 @@
+{
+    "code": 200,
+    "data": {
+        "content": [
+            {
+                "changedProperties": [],
+                "eventType": "create",
+                "id": 397,
+                "relatedResource": {
+                    "active": true,
+                    "creationDate": "2024-01-19T00:00:00Z",
+                    "deleted": false,
+                    "expirationDate": "2124-12-31T00:00:00Z",
+                    "id": 7,
+                    "lastUsed": "2026-06-24T09:02:02.721082Z",
+                    "name": "century",
+                    "permissions": [],
+                    "user": {
+                        "email": "galieleo@ldap.forumsys.com",
+                        "id": 6,
+                        "login": "galieleo",
+                        "name": "Galileo Galilei"
+                    },
+                    "value": null
+                },
+                "resourceId": 7,
+                "resourceType": "ACCESS_TOKEN",
+                "technology": "RDepot version: 2.9.0",
+                "time": "2024-01-19T13:42:34Z",
+                "user": {
+                    "email": "galieleo@ldap.forumsys.com",
+                    "id": 6,
+                    "login": "galieleo",
+                    "name": "Galileo Galilei"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/events/397"
+                    },
+                    {
+                        "rel": "eventList",
+                        "href": "http://localhost:8017/api/v2/manager/events"
+                    }
+                ]
+            },
+            {
+                "changedProperties": [],
+                "eventType": "create",
+                "id": 386,
+                "relatedResource": {
+                    "deleted": false,
+                    "id": 11,
+                    "packageName": "python-dateutil",
+                    "permissions": [],
+                    "repository": {
+                        "id": 8,
+                        "lastPublicationSuccessful": true,
+                        "name": "testrepo8",
+                        "publicationUri": "http://localhost/repo/testrepo8",
+                        "published": true,
+                        "requiresAuthentication": true,
+                        "technology": "Python"
+                    },
+                    "user": {
+                        "email": "galieleo@ldap.forumsys.com",
+                        "id": 6,
+                        "login": "galieleo",
+                        "name": "Galileo Galilei"
+                    }
+                },
+                "resourceId": 11,
+                "resourceType": "PACKAGE_MAINTAINER",
+                "technology": "RDepot version: 2.9.0",
+                "time": "2023-07-10T12:35:21Z",
+                "user": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/events/386"
+                    },
+                    {
+                        "rel": "eventList",
+                        "href": "http://localhost:8017/api/v2/manager/events"
+                    }
+                ]
+            },
+            {
+                "changedProperties": [],
+                "eventType": "create",
+                "id": 385,
+                "relatedResource": {
+                    "deleted": false,
+                    "id": 10,
+                    "packageName": "accelerated-numpy",
+                    "permissions": [],
+                    "repository": {
+                        "id": 8,
+                        "lastPublicationSuccessful": true,
+                        "name": "testrepo8",
+                        "publicationUri": "http://localhost/repo/testrepo8",
+                        "published": true,
+                        "requiresAuthentication": true,
+                        "technology": "Python"
+                    },
+                    "user": {
+                        "email": "galieleo@ldap.forumsys.com",
+                        "id": 6,
+                        "login": "galieleo",
+                        "name": "Galileo Galilei"
+                    }
+                },
+                "resourceId": 10,
+                "resourceType": "PACKAGE_MAINTAINER",
+                "technology": "RDepot version: 2.9.0",
+                "time": "2023-07-10T12:35:08Z",
+                "user": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/events/385"
+                    },
+                    {
+                        "rel": "eventList",
+                        "href": "http://localhost:8017/api/v2/manager/events"
+                    }
+                ]
+            },
+            {
+                "changedProperties": [],
+                "eventType": "create",
+                "id": 384,
+                "relatedResource": {
+                    "deleted": false,
+                    "id": 9,
+                    "packageName": "boto3",
+                    "permissions": [],
+                    "repository": {
+                        "id": 8,
+                        "lastPublicationSuccessful": true,
+                        "name": "testrepo8",
+                        "publicationUri": "http://localhost/repo/testrepo8",
+                        "published": true,
+                        "requiresAuthentication": true,
+                        "technology": "Python"
+                    },
+                    "user": {
+                        "email": "galieleo@ldap.forumsys.com",
+                        "id": 6,
+                        "login": "galieleo",
+                        "name": "Galileo Galilei"
+                    }
+                },
+                "resourceId": 9,
+                "resourceType": "PACKAGE_MAINTAINER",
+                "technology": "RDepot version: 2.9.0",
+                "time": "2023-07-10T12:35:00Z",
+                "user": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/events/384"
+                    },
+                    {
+                        "rel": "eventList",
+                        "href": "http://localhost:8017/api/v2/manager/events"
+                    }
+                ]
+            },
+            {
+                "changedProperties": [],
+                "eventType": "upload",
+                "id": 382,
+                "relatedResource": {
+                    "approver": {
+                        "email": "einstein@ldap.forumsys.com",
+                        "id": 4,
+                        "login": "einstein",
+                        "name": "Albert Einstein"
+                    },
+                    "changes": null,
+                    "created": "2023-07-10T12:34:02Z",
+                    "id": 44,
+                    "packageBag": {
+                        "active": true,
+                        "binary": false,
+                        "deleted": false,
+                        "id": 44,
+                        "name": "python-dateutil",
+                        "permissions": [],
+                        "repository": {
+                            "id": 8,
+                            "lastPublicationSuccessful": true,
+                            "name": "testrepo8",
+                            "publicationUri": "http://localhost/repo/testrepo8",
+                            "published": true,
+                            "requiresAuthentication": true,
+                            "technology": "Python"
+                        },
+                        "source": "/opt/rdepot/repositories/8/31719300/python-dateutil-2.8.1.tar.gz",
+                        "submission": {
+                            "id": 44,
+                            "state": "ACCEPTED"
+                        },
+                        "technology": "Python",
+                        "user": {
+                            "email": "galieleo@ldap.forumsys.com",
+                            "id": 6,
+                            "login": "galieleo",
+                            "name": "Galileo Galilei"
+                        },
+                        "version": "2.8.1",
+                        "links": []
+                    },
+                    "permissions": [],
+                    "state": "ACCEPTED",
+                    "submitter": {
+                        "email": "einstein@ldap.forumsys.com",
+                        "id": 4,
+                        "login": "einstein",
+                        "name": "Albert Einstein"
+                    },
+                    "technology": "Python"
+                },
+                "resourceId": 44,
+                "resourceType": "SUBMISSION",
+                "technology": "RDepot version: 2.9.0",
+                "time": "2023-07-10T12:34:02Z",
+                "user": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/events/382"
+                    },
+                    {
+                        "rel": "eventList",
+                        "href": "http://localhost:8017/api/v2/manager/events"
+                    }
+                ]
+            },
+            {
+                "changedProperties": [],
+                "eventType": "upload",
+                "id": 381,
+                "relatedResource": {
+                    "approver": {
+                        "email": "einstein@ldap.forumsys.com",
+                        "id": 4,
+                        "login": "einstein",
+                        "name": "Albert Einstein"
+                    },
+                    "changes": null,
+                    "created": "2023-07-10T12:33:27Z",
+                    "id": 43,
+                    "packageBag": {
+                        "active": true,
+                        "binary": false,
+                        "deleted": false,
+                        "id": 43,
+                        "name": "accelerated-numpy",
+                        "permissions": [],
+                        "repository": {
+                            "id": 8,
+                            "lastPublicationSuccessful": true,
+                            "name": "testrepo8",
+                            "publicationUri": "http://localhost/repo/testrepo8",
+                            "published": true,
+                            "requiresAuthentication": true,
+                            "technology": "Python"
+                        },
+                        "source": "/opt/rdepot/repositories/8/25558329/accelerated-numpy-0.1.0.tar.gz",
+                        "submission": {
+                            "id": 43,
+                            "state": "ACCEPTED"
+                        },
+                        "technology": "Python",
+                        "user": {
+                            "email": "galieleo@ldap.forumsys.com",
+                            "id": 6,
+                            "login": "galieleo",
+                            "name": "Galileo Galilei"
+                        },
+                        "version": "0.1.0",
+                        "links": []
+                    },
+                    "permissions": [],
+                    "state": "ACCEPTED",
+                    "submitter": {
+                        "email": "einstein@ldap.forumsys.com",
+                        "id": 4,
+                        "login": "einstein",
+                        "name": "Albert Einstein"
+                    },
+                    "technology": "Python"
+                },
+                "resourceId": 43,
+                "resourceType": "SUBMISSION",
+                "technology": "RDepot version: 2.9.0",
+                "time": "2023-07-10T12:33:27Z",
+                "user": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/events/381"
+                    },
+                    {
+                        "rel": "eventList",
+                        "href": "http://localhost:8017/api/v2/manager/events"
+                    }
+                ]
+            },
+            {
+                "changedProperties": [],
+                "eventType": "create",
+                "id": 377,
+                "relatedResource": {
+                    "deleted": true,
+                    "id": 6,
+                    "packageName": "setuptools",
+                    "permissions": [],
+                    "repository": {
+                        "id": 9,
+                        "lastPublicationSuccessful": false,
+                        "name": "testrepo9",
+                        "publicationUri": "http://localhost/repo/testrepo9",
+                        "published": false,
+                        "requiresAuthentication": true,
+                        "technology": "Python"
+                    },
+                    "user": {
+                        "email": "galieleo@ldap.forumsys.com",
+                        "id": 6,
+                        "login": "galieleo",
+                        "name": "Galileo Galilei"
+                    }
+                },
+                "resourceId": 6,
+                "resourceType": "PACKAGE_MAINTAINER",
+                "technology": "RDepot version: 2.9.0",
+                "time": "2023-07-10T12:24:58Z",
+                "user": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/events/377"
+                    },
+                    {
+                        "rel": "eventList",
+                        "href": "http://localhost:8017/api/v2/manager/events"
+                    }
+                ]
+            },
+            {
+                "changedProperties": [],
+                "eventType": "upload",
+                "id": 375,
+                "relatedResource": {
+                    "approver": {
+                        "email": "tesla@ldap.forumsys.com",
+                        "id": 5,
+                        "login": "tesla",
+                        "name": "Nikola Tesla"
+                    },
+                    "changes": null,
+                    "created": "2023-07-10T12:21:47Z",
+                    "id": 39,
+                    "packageBag": {
+                        "active": true,
+                        "binary": false,
+                        "deleted": false,
+                        "id": 39,
+                        "name": "setuptools",
+                        "permissions": [],
+                        "repository": {
+                            "id": 9,
+                            "lastPublicationSuccessful": false,
+                            "name": "testrepo9",
+                            "publicationUri": "http://localhost/repo/testrepo9",
+                            "published": false,
+                            "requiresAuthentication": true,
+                            "technology": "Python"
+                        },
+                        "source": "/opt/rdepot/repositories/9/65567066/setuptools-67.8.0.tar.gz",
+                        "submission": {
+                            "id": 39,
+                            "state": "ACCEPTED"
+                        },
+                        "technology": "Python",
+                        "user": {
+                            "email": "galieleo@ldap.forumsys.com",
+                            "id": 6,
+                            "login": "galieleo",
+                            "name": "Galileo Galilei"
+                        },
+                        "version": "67.8.0",
+                        "links": []
+                    },
+                    "permissions": [],
+                    "state": "ACCEPTED",
+                    "submitter": {
+                        "email": "tesla@ldap.forumsys.com",
+                        "id": 5,
+                        "login": "tesla",
+                        "name": "Nikola Tesla"
+                    },
+                    "technology": "Python"
+                },
+                "resourceId": 39,
+                "resourceType": "SUBMISSION",
+                "technology": "RDepot version: 2.9.0",
+                "time": "2023-07-10T12:21:47Z",
+                "user": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/events/375"
+                    },
+                    {
+                        "rel": "eventList",
+                        "href": "http://localhost:8017/api/v2/manager/events"
+                    }
+                ]
+            },
+            {
+                "changedProperties": [],
+                "eventType": "upload",
+                "id": 374,
+                "relatedResource": {
+                    "approver": {
+                        "email": "tesla@ldap.forumsys.com",
+                        "id": 5,
+                        "login": "tesla",
+                        "name": "Nikola Tesla"
+                    },
+                    "changes": null,
+                    "created": "2023-07-10T12:21:37Z",
+                    "id": 38,
+                    "packageBag": {
+                        "active": true,
+                        "binary": false,
+                        "deleted": false,
+                        "id": 38,
+                        "name": "setuptools",
+                        "permissions": [],
+                        "repository": {
+                            "id": 9,
+                            "lastPublicationSuccessful": false,
+                            "name": "testrepo9",
+                            "publicationUri": "http://localhost/repo/testrepo9",
+                            "published": false,
+                            "requiresAuthentication": true,
+                            "technology": "Python"
+                        },
+                        "source": "/opt/rdepot/repositories/9/95184570/setuptools-67.4.0.tar.gz",
+                        "submission": {
+                            "id": 38,
+                            "state": "ACCEPTED"
+                        },
+                        "technology": "Python",
+                        "user": {
+                            "email": "einstein@ldap.forumsys.com",
+                            "id": 4,
+                            "login": "einstein",
+                            "name": "Albert Einstein"
+                        },
+                        "version": "67.4.0",
+                        "links": []
+                    },
+                    "permissions": [],
+                    "state": "ACCEPTED",
+                    "submitter": {
+                        "email": "einstein@ldap.forumsys.com",
+                        "id": 4,
+                        "login": "einstein",
+                        "name": "Albert Einstein"
+                    },
+                    "technology": "Python"
+                },
+                "resourceId": 38,
+                "resourceType": "SUBMISSION",
+                "technology": "RDepot version: 2.9.0",
+                "time": "2023-07-10T12:21:37Z",
+                "user": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/events/374"
+                    },
+                    {
+                        "rel": "eventList",
+                        "href": "http://localhost:8017/api/v2/manager/events"
+                    }
+                ]
+            },
+            {
+                "changedProperties": [],
+                "eventType": "create",
+                "id": 364,
+                "relatedResource": {
+                    "deleted": false,
+                    "id": 5,
+                    "packageName": "AnaCoDa",
+                    "permissions": [],
+                    "repository": {
+                        "id": 5,
+                        "lastPublicationSuccessful": false,
+                        "name": "testrepo4",
+                        "publicationUri": "http://localhost/repo/testrepo4",
+                        "published": false,
+                        "requiresAuthentication": true,
+                        "technology": "R"
+                    },
+                    "user": {
+                        "email": "galieleo@ldap.forumsys.com",
+                        "id": 6,
+                        "login": "galieleo",
+                        "name": "Galileo Galilei"
+                    }
+                },
+                "resourceId": 5,
+                "resourceType": "PACKAGE_MAINTAINER",
+                "technology": "RDepot version: 2.9.0",
+                "time": "2022-09-09T07:18:28Z",
+                "user": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/events/364"
+                    },
+                    {
+                        "rel": "eventList",
+                        "href": "http://localhost:8017/api/v2/manager/events"
+                    }
+                ]
+            },
+            {
+                "changedProperties": [
+                    {
+                        "property": "maintainer",
+                        "valueAfter": "6",
+                        "valueBefore": "5"
+                    }
+                ],
+                "eventType": "update",
+                "id": 178,
+                "relatedResource": {
+                    "active": true,
+                    "binary": false,
+                    "deleted": false,
+                    "id": 15,
+                    "name": "bea.R",
+                    "permissions": [],
+                    "repository": {
+                        "id": 2,
+                        "lastPublicationSuccessful": true,
+                        "name": "testrepo1",
+                        "publicationUri": "http://localhost/repo/testrepo1",
+                        "published": true,
+                        "requiresAuthentication": false,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/repositories/2/89565416/bea.R_1.0.5.tar.gz",
+                    "submission": {
+                        "id": 13,
+                        "state": "ACCEPTED"
+                    },
+                    "technology": "R",
+                    "user": {
+                        "email": "tesla@ldap.forumsys.com",
+                        "id": 5,
+                        "login": "tesla",
+                        "name": "Nikola Tesla"
+                    },
+                    "version": "1.0.5"
+                },
+                "resourceId": 15,
+                "resourceType": "PACKAGE",
+                "technology": "RDepot version: 2.9.0",
+                "time": "2020-03-29T10:43:10Z",
+                "user": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/events/178"
+                    },
+                    {
+                        "rel": "eventList",
+                        "href": "http://localhost:8017/api/v2/manager/events"
+                    }
+                ]
+            },
+            {
+                "changedProperties": [
+                    {
+                        "property": "deleted",
+                        "valueAfter": "",
+                        "valueBefore": ""
+                    }
+                ],
+                "eventType": "delete",
+                "id": 183,
+                "relatedResource": {
+                    "deleted": true,
+                    "id": 4,
+                    "packageName": "bea.R",
+                    "permissions": [],
+                    "repository": {
+                        "id": 2,
+                        "lastPublicationSuccessful": true,
+                        "name": "testrepo1",
+                        "publicationUri": "http://localhost/repo/testrepo1",
+                        "published": true,
+                        "requiresAuthentication": false,
+                        "technology": "R"
+                    },
+                    "user": {
+                        "email": "galieleo@ldap.forumsys.com",
+                        "id": 6,
+                        "login": "galieleo",
+                        "name": "Galileo Galilei"
+                    }
+                },
+                "resourceId": 4,
+                "resourceType": "PACKAGE_MAINTAINER",
+                "technology": "RDepot version: 2.9.0",
+                "time": "2020-03-29T10:43:10Z",
+                "user": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/events/183"
+                    },
+                    {
+                        "rel": "eventList",
+                        "href": "http://localhost:8017/api/v2/manager/events"
+                    }
+                ]
+            },
+            {
+                "changedProperties": [
+                    {
+                        "property": "maintainer",
+                        "valueAfter": "5",
+                        "valueBefore": "6"
+                    }
+                ],
+                "eventType": "update",
+                "id": 177,
+                "relatedResource": {
+                    "active": true,
+                    "binary": false,
+                    "deleted": false,
+                    "id": 15,
+                    "name": "bea.R",
+                    "permissions": [],
+                    "repository": {
+                        "id": 2,
+                        "lastPublicationSuccessful": true,
+                        "name": "testrepo1",
+                        "publicationUri": "http://localhost/repo/testrepo1",
+                        "published": true,
+                        "requiresAuthentication": false,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/repositories/2/89565416/bea.R_1.0.5.tar.gz",
+                    "submission": {
+                        "id": 13,
+                        "state": "ACCEPTED"
+                    },
+                    "technology": "R",
+                    "user": {
+                        "email": "tesla@ldap.forumsys.com",
+                        "id": 5,
+                        "login": "tesla",
+                        "name": "Nikola Tesla"
+                    },
+                    "version": "1.0.5"
+                },
+                "resourceId": 15,
+                "resourceType": "PACKAGE",
+                "technology": "RDepot version: 2.9.0",
+                "time": "2020-03-29T10:43:05Z",
+                "user": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/events/177"
+                    },
+                    {
+                        "rel": "eventList",
+                        "href": "http://localhost:8017/api/v2/manager/events"
+                    }
+                ]
+            },
+            {
+                "changedProperties": [
+                    {
+                        "property": "created",
+                        "valueAfter": "",
+                        "valueBefore": ""
+                    }
+                ],
+                "eventType": "create",
+                "id": 182,
+                "relatedResource": {
+                    "deleted": true,
+                    "id": 4,
+                    "packageName": "bea.R",
+                    "permissions": [],
+                    "repository": {
+                        "id": 2,
+                        "lastPublicationSuccessful": true,
+                        "name": "testrepo1",
+                        "publicationUri": "http://localhost/repo/testrepo1",
+                        "published": true,
+                        "requiresAuthentication": false,
+                        "technology": "R"
+                    },
+                    "user": {
+                        "email": "galieleo@ldap.forumsys.com",
+                        "id": 6,
+                        "login": "galieleo",
+                        "name": "Galileo Galilei"
+                    }
+                },
+                "resourceId": 4,
+                "resourceType": "PACKAGE_MAINTAINER",
+                "technology": "RDepot version: 2.9.0",
+                "time": "2020-03-29T10:43:05Z",
+                "user": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/events/182"
+                    },
+                    {
+                        "rel": "eventList",
+                        "href": "http://localhost:8017/api/v2/manager/events"
+                    }
+                ]
+            },
+            {
+                "changedProperties": [
+                    {
+                        "property": "created",
+                        "valueAfter": "",
+                        "valueBefore": ""
+                    }
+                ],
+                "eventType": "create",
+                "id": 60,
+                "relatedResource": {
+                    "active": true,
+                    "createdOn": "1970-01-01T00:00:00Z",
+                    "deleted": false,
+                    "email": "galieleo@ldap.forumsys.com",
+                    "id": 6,
+                    "lastLoggedInOn": "2026-06-24T09:02:02.723580Z",
+                    "login": "galieleo",
+                    "name": "Galileo Galilei",
+                    "permissions": [],
+                    "role": "packagemaintainer",
+                    "roleId": 2,
+                    "userSettings": null
+                },
+                "resourceId": 6,
+                "resourceType": "USER",
+                "technology": "RDepot version: 2.9.0",
+                "time": "2020-03-28T20:59:28Z",
+                "user": {
+                    "email": "galieleo@ldap.forumsys.com",
+                    "id": 6,
+                    "login": "galieleo",
+                    "name": "Galileo Galilei"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/events/60"
+                    },
+                    {
+                        "rel": "eventList",
+                        "href": "http://localhost:8017/api/v2/manager/events"
+                    }
+                ]
+            },
+            {
+                "changedProperties": [
+                    {
+                        "property": "created",
+                        "valueAfter": "",
+                        "valueBefore": ""
+                    }
+                ],
+                "eventType": "create",
+                "id": 57,
+                "relatedResource": {
+                    "approver": null,
+                    "changes": null,
+                    "created": "2020-03-28T20:14:45Z",
+                    "id": 31,
+                    "packageBag": {
+                        "active": false,
+                        "binary": false,
+                        "deleted": false,
+                        "id": 31,
+                        "name": "abc",
+                        "permissions": [],
+                        "repository": {
+                            "id": 5,
+                            "lastPublicationSuccessful": false,
+                            "name": "testrepo4",
+                            "publicationUri": "http://localhost/repo/testrepo4",
+                            "published": false,
+                            "requiresAuthentication": true,
+                            "technology": "R"
+                        },
+                        "source": "/opt/rdepot/new/51328701/abc_1.0.tar.gz",
+                        "submission": {
+                            "id": 31,
+                            "state": "WAITING"
+                        },
+                        "technology": "R",
+                        "user": {
+                            "email": "admin@localhost",
+                            "id": 8,
+                            "login": "admin",
+                            "name": "Local Admin User"
+                        },
+                        "version": "1.0",
+                        "links": []
+                    },
+                    "permissions": [],
+                    "state": "WAITING",
+                    "submitter": {
+                        "email": "galieleo@ldap.forumsys.com",
+                        "id": 6,
+                        "login": "galieleo",
+                        "name": "Galileo Galilei"
+                    },
+                    "technology": "R"
+                },
+                "resourceId": 31,
+                "resourceType": "SUBMISSION",
+                "technology": "RDepot version: 2.9.0",
+                "time": "2020-03-28T20:14:45Z",
+                "user": {
+                    "email": "galieleo@ldap.forumsys.com",
+                    "id": 6,
+                    "login": "galieleo",
+                    "name": "Galileo Galilei"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/events/57"
+                    },
+                    {
+                        "rel": "eventList",
+                        "href": "http://localhost:8017/api/v2/manager/events"
+                    }
+                ]
+            },
+            {
+                "changedProperties": [
+                    {
+                        "property": "submitted",
+                        "valueAfter": "31",
+                        "valueBefore": ""
+                    }
+                ],
+                "eventType": "update",
+                "id": 353,
+                "relatedResource": {
+                    "deleted": false,
+                    "id": 5,
+                    "name": "testrepo4",
+                    "permissions": [],
+                    "publicationUri": "http://localhost/repo/testrepo4",
+                    "published": false,
+                    "requiresAuthentication": true,
+                    "serverAddress": "http://oa-rdepot-repo:8080/testrepo4",
+                    "synchronizing": false,
+                    "technology": "R",
+                    "version": 6
+                },
+                "resourceId": 5,
+                "resourceType": "REPOSITORY",
+                "technology": "RDepot version: 2.9.0",
+                "time": "2020-03-28T20:14:45Z",
+                "user": {
+                    "email": "galieleo@ldap.forumsys.com",
+                    "id": 6,
+                    "login": "galieleo",
+                    "name": "Galileo Galilei"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/events/353"
+                    },
+                    {
+                        "rel": "eventList",
+                        "href": "http://localhost:8017/api/v2/manager/events"
+                    }
+                ]
+            },
+            {
+                "changedProperties": [
+                    {
+                        "property": "created",
+                        "valueAfter": "",
+                        "valueBefore": ""
+                    }
+                ],
+                "eventType": "create",
+                "id": 56,
+                "relatedResource": {
+                    "approver": null,
+                    "changes": null,
+                    "created": "2020-03-28T20:14:44Z",
+                    "id": 30,
+                    "packageBag": {
+                        "active": false,
+                        "binary": false,
+                        "deleted": false,
+                        "id": 30,
+                        "name": "A3",
+                        "permissions": [],
+                        "repository": {
+                            "id": 5,
+                            "lastPublicationSuccessful": false,
+                            "name": "testrepo4",
+                            "publicationUri": "http://localhost/repo/testrepo4",
+                            "published": false,
+                            "requiresAuthentication": true,
+                            "technology": "R"
+                        },
+                        "source": "/opt/rdepot/new/92253304/A3_0.9.1.tar.gz",
+                        "submission": {
+                            "id": 30,
+                            "state": "WAITING"
+                        },
+                        "technology": "R",
+                        "user": {
+                            "email": "admin@localhost",
+                            "id": 8,
+                            "login": "admin",
+                            "name": "Local Admin User"
+                        },
+                        "version": "0.9.1",
+                        "links": []
+                    },
+                    "permissions": [],
+                    "state": "WAITING",
+                    "submitter": {
+                        "email": "galieleo@ldap.forumsys.com",
+                        "id": 6,
+                        "login": "galieleo",
+                        "name": "Galileo Galilei"
+                    },
+                    "technology": "R"
+                },
+                "resourceId": 30,
+                "resourceType": "SUBMISSION",
+                "technology": "RDepot version: 2.9.0",
+                "time": "2020-03-28T20:14:44Z",
+                "user": {
+                    "email": "galieleo@ldap.forumsys.com",
+                    "id": 6,
+                    "login": "galieleo",
+                    "name": "Galileo Galilei"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/events/56"
+                    },
+                    {
+                        "rel": "eventList",
+                        "href": "http://localhost:8017/api/v2/manager/events"
+                    }
+                ]
+            },
+            {
+                "changedProperties": [
+                    {
+                        "property": "submitted",
+                        "valueAfter": "30",
+                        "valueBefore": ""
+                    }
+                ],
+                "eventType": "update",
+                "id": 352,
+                "relatedResource": {
+                    "deleted": false,
+                    "id": 5,
+                    "name": "testrepo4",
+                    "permissions": [],
+                    "publicationUri": "http://localhost/repo/testrepo4",
+                    "published": false,
+                    "requiresAuthentication": true,
+                    "serverAddress": "http://oa-rdepot-repo:8080/testrepo4",
+                    "synchronizing": false,
+                    "technology": "R",
+                    "version": 6
+                },
+                "resourceId": 5,
+                "resourceType": "REPOSITORY",
+                "technology": "RDepot version: 2.9.0",
+                "time": "2020-03-28T20:14:44Z",
+                "user": {
+                    "email": "galieleo@ldap.forumsys.com",
+                    "id": 6,
+                    "login": "galieleo",
+                    "name": "Galileo Galilei"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/events/352"
+                    },
+                    {
+                        "rel": "eventList",
+                        "href": "http://localhost:8017/api/v2/manager/events"
+                    }
+                ]
+            },
+            {
+                "changedProperties": [
+                    {
+                        "property": "created",
+                        "valueAfter": "",
+                        "valueBefore": ""
+                    }
+                ],
+                "eventType": "upload",
+                "id": 176,
+                "relatedResource": {
+                    "active": false,
+                    "binary": false,
+                    "deleted": false,
+                    "id": 31,
+                    "name": "abc",
+                    "permissions": [],
+                    "repository": {
+                        "id": 5,
+                        "lastPublicationSuccessful": false,
+                        "name": "testrepo4",
+                        "publicationUri": "http://localhost/repo/testrepo4",
+                        "published": false,
+                        "requiresAuthentication": true,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/new/51328701/abc_1.0.tar.gz",
+                    "submission": {
+                        "id": 31,
+                        "state": "WAITING"
+                    },
+                    "technology": "R",
+                    "user": {
+                        "email": "admin@localhost",
+                        "id": 8,
+                        "login": "admin",
+                        "name": "Local Admin User"
+                    },
+                    "version": "1.0"
+                },
+                "resourceId": 31,
+                "resourceType": "PACKAGE",
+                "technology": "RDepot version: 2.9.0",
+                "time": "2020-03-28T20:14:43Z",
+                "user": {
+                    "email": "galieleo@ldap.forumsys.com",
+                    "id": 6,
+                    "login": "galieleo",
+                    "name": "Galileo Galilei"
+                },
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/events/176"
+                    },
+                    {
+                        "rel": "eventList",
+                        "href": "http://localhost:8017/api/v2/manager/events"
+                    }
+                ]
+            }
+        ],
+        "links": [
+            {
+                "rel": "first",
+                "href": "http://localhost:8017/api/v2/manager/events?page=0&size=20&sort=time,desc"
+            },
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/events?page=0&size=20&sort=time,desc"
+            },
+            {
+                "rel": "next",
+                "href": "http://localhost:8017/api/v2/manager/events?page=1&size=20&sort=time,desc"
+            },
+            {
+                "rel": "last",
+                "href": "http://localhost:8017/api/v2/manager/events?page=4&size=20&sort=time,desc"
+            }
+        ],
+        "page": {
+            "number": 0,
+            "size": 20,
+            "totalElements": 90,
+            "totalPages": 5
+        }
+    },
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "status": "SUCCESS"
+}

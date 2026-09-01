@@ -20,9 +20,7 @@
  */
 package eu.openanalytics.rdepot.test.validator;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import eu.openanalytics.rdepot.base.config.props.UserSettingsConfiguration;
 import eu.openanalytics.rdepot.base.entities.UserSettings;

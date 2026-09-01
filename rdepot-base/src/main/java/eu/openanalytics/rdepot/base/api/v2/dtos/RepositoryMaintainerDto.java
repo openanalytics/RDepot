@@ -22,6 +22,8 @@ package eu.openanalytics.rdepot.base.api.v2.dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import eu.openanalytics.rdepot.base.entities.RepositoryMaintainer;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,6 +41,7 @@ public class RepositoryMaintainerDto implements IDto {
     private UserProjection user;
     private RepositoryProjection repository;
     private Boolean deleted = false;
+    private List<String> permissions = new ArrayList<>();
 
     @ToStringExclude
     private RepositoryMaintainer entity;

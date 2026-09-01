@@ -29,6 +29,4 @@ import java.util.Optional;
  */
 public interface RoleDao extends Dao<Role> {
     Optional<Role> findByValue(int value);
-
-    Optional<Role> findByDescription(String description);
 }

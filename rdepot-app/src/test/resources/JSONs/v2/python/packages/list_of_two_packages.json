@@ -1,194 +1,202 @@
 {
     "code": 200,
     "data": {
+        "content": [
+            {
+                "abiTag": null,
+                "active": false,
+                "author": "Daniel Holth",
+                "authorEmail": null,
+                "binary": false,
+                "builtTag": null,
+                "classifiers": "Development Status :: 5 - Production/Stable, Intended Audience :: Developers, Topic :: System :: Archiving :: Packaging, License :: OSI Approved :: MIT License, Programming Language :: Python, Programming Language :: Python :: 3 :: Only, Programming Language :: Python :: 3.7, Programming Language :: Python :: 3.8, Programming Language :: Python :: 3.9, Programming Language :: Python :: 3.10, Programming Language :: Python :: 3.11",
+                "compatibilityTags": null,
+                "deleted": true,
+                "description": null,
+                "descriptionContentType": "",
+                "hash": "83918396bc14b8602518944f3772061832b73a580d62d1f67a4dc2b3",
+                "homePage": "",
+                "id": 36,
+                "keywords": "wheel,packaging",
+                "license": "MIT",
+                "maintainer": "Alex Grönholm",
+                "maintainerEmail": null,
+                "name": "wheel",
+                "permissions": [
+                    "package.delete.hard"
+                ],
+                "platform": null,
+                "platformTag": null,
+                "projectUrl": "Documentation, https://wheel.readthedocs.io/, Changelog, https://wheel.readthedocs.io/en/stable/news.html, Issue Tracker, https://github.com/pypa/wheel/issues",
+                "providesExtra": "test",
+                "pythonTag": null,
+                "repository": {
+                    "id": 10,
+                    "lastPublicationSuccessful": false,
+                    "name": "testrepo10",
+                    "publicationUri": "http://localhost/repo/testrepo10",
+                    "published": false,
+                    "requiresAuthentication": false,
+                    "technology": "Python"
+                },
+                "requiresDist": null,
+                "requiresExternal": null,
+                "requiresPython": ">=3.7",
+                "source": "/opt/rdepot/trash/10/37007947/wheel-0.38.0.tar.gz",
+                "submission": {
+                    "id": 36,
+                    "state": "REJECTED"
+                },
+                "summary": "A built-package format for Python",
+                "technology": "Python",
+                "title": "A built-package format for Python",
+                "url": "Documentation, https://wheel.readthedocs.io/, Changelog, https://wheel.readthedocs.io/en/stable/news.html, Issue Tracker, https://github.com/pypa/wheel/issues",
+                "user": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "version": "0.38.0",
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/python/packages/36"
+                    },
+                    {
+                        "rel": "packageList",
+                        "href": "http://localhost:8017/api/v2/manager/python/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/python/repositories/10"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/python/packages/36",
+                        "type": "PATCH"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/python/packages/36",
+                        "type": "DELETE"
+                    }
+                ]
+            },
+            {
+                "abiTag": null,
+                "active": true,
+                "author": null,
+                "authorEmail": null,
+                "binary": false,
+                "builtTag": null,
+                "classifiers": "Development Status :: 5 - Production/Stable, Intended Audience :: Developers, Topic :: System :: Archiving :: Packaging, License :: OSI Approved :: MIT License, Programming Language :: Python, Programming Language :: Python :: 3 :: Only, Programming Language :: Python :: 3.7, Programming Language :: Python :: 3.8, Programming Language :: Python :: 3.9, Programming Language :: Python :: 3.10, Programming Language :: Python :: 3.11",
+                "compatibilityTags": null,
+                "deleted": false,
+                "description": null,
+                "descriptionContentType": "text/x-rst",
+                "hash": "b44dc26510fe1f31f27417390da11c2b70ce23cbc06c498317a5ff9c",
+                "homePage": "",
+                "id": 37,
+                "keywords": "wheel,packaging",
+                "license": "OSI Approved :: MIT License",
+                "maintainer": null,
+                "maintainerEmail": null,
+                "name": "wheel",
+                "permissions": [
+                    "package.deactivate",
+                    "package.delete.soft",
+                    "package.edit"
+                ],
+                "platform": null,
+                "platformTag": null,
+                "projectUrl": "Changelog, https://wheel.readthedocs.io/en/stable/news.html, Documentation, https://wheel.readthedocs.io/, Issue Tracker, https://github.com/pypa/wheel/issues",
+                "providesExtra": "test",
+                "pythonTag": null,
+                "repository": {
+                    "id": 10,
+                    "lastPublicationSuccessful": false,
+                    "name": "testrepo10",
+                    "publicationUri": "http://localhost/repo/testrepo10",
+                    "published": false,
+                    "requiresAuthentication": false,
+                    "technology": "Python"
+                },
+                "requiresDist": null,
+                "requiresExternal": null,
+                "requiresPython": ">=3.7",
+                "source": "/opt/rdepot/repositories/10/77877521/wheel-0.40.0.tar.gz",
+                "submission": {
+                    "id": 37,
+                    "state": "ACCEPTED"
+                },
+                "summary": "A built-package format for Python",
+                "technology": "Python",
+                "title": "A built-package format for Python",
+                "url": "Changelog, https://wheel.readthedocs.io/en/stable/news.html, Documentation, https://wheel.readthedocs.io/, Issue Tracker, https://github.com/pypa/wheel/issues",
+                "user": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "version": "0.40.0",
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/python/packages/37"
+                    },
+                    {
+                        "rel": "packageList",
+                        "href": "http://localhost:8017/api/v2/manager/python/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/python/repositories/10"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/python/packages/37",
+                        "type": "PATCH"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/python/packages/37",
+                        "type": "DELETE"
+                    }
+                ]
+            }
+        ],
         "links": [
             {
                 "rel": "first",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages?page=0&size=2&sort=id,asc"
+                "href": "http://localhost:8017/api/v2/manager/python/packages?page=0&size=2&sort=id,asc"
             },
             {
                 "rel": "prev",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages?page=0&size=2&sort=id,asc"
+                "href": "http://localhost:8017/api/v2/manager/python/packages?page=0&size=2&sort=id,asc"
             },
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages?page=1&size=2&sort=id,asc"
+                "href": "http://localhost:8017/api/v2/manager/python/packages?page=1&size=2&sort=id,asc"
             },
             {
                 "rel": "next",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages?page=2&size=2&sort=id,asc"
+                "href": "http://localhost:8017/api/v2/manager/python/packages?page=2&size=2&sort=id,asc"
             },
             {
                 "rel": "last",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages?page=6&size=2&sort=id,asc"
+                "href": "http://localhost:8017/api/v2/manager/python/packages?page=6&size=2&sort=id,asc"
             }
         ],
         "page": {
             "number": 1,
             "size": 2,
-            "totalPages": 7,
-            "totalElements": 13
-        },
-        "content": [
-            {
-                "authorEmail": null,
-                "projectUrl": "Documentation, https:\/\/wheel.readthedocs.io\/, Changelog, https:\/\/wheel.readthedocs.io\/en\/stable\/news.html, Issue Tracker, https:\/\/github.com\/pypa\/wheel\/issues",
-                "keywords": "wheel,packaging",
-                "description": null,
-                "source": "\/opt\/rdepot\/trash\/10\/37007947\/wheel-0.38.0.tar.gz",
-                "repository": {
-                    "name": "testrepo10",
-                    "lastPublicationSuccessful": false,
-                    "id": 10,
-                    "published": false,
-                    "technology": "Python",
-                    "requiresAuthentication": false,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo10"
-                },
-                "title": "A built-package format for Python",
-                "requiresDist": null,
-                "homePage": "",
-                "maintainer": "Alex Grönholm",
-                "platform": null,
-                "requiresPython": ">=3.7",
-                "abiTag": null,
-                "requiresExternal": null,
-                "descriptionContentType": "",
-                "classifiers": "Development Status :: 5 - Production\/Stable, Intended Audience :: Developers, Topic :: System :: Archiving :: Packaging, License :: OSI Approved :: MIT License, Programming Language :: Python, Programming Language :: Python :: 3 :: Only, Programming Language :: Python :: 3.7, Programming Language :: Python :: 3.8, Programming Language :: Python :: 3.9, Programming Language :: Python :: 3.10, Programming Language :: Python :: 3.11",
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/36"
-                    },
-                    {
-                        "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages"
-                    },
-                    {
-                        "rel": "repository",
-                        "href": "http://localhost:8017/api/v2/manager/python/repositories/10"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http://localhost:8017/api/v2/manager/python/packages/36",
-                        "type": "PATCH"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http://localhost:8017/api/v2/manager/python/packages/36",
-                        "type": "DELETE"
-                    }
-                ],
-                "id": 36,
-                "compatibilityTags": null,
-                "summary": "A built-package format for Python",
-                "author": "Daniel Holth",
-                "pythonTag": null,
-                "active": false,
-                "maintainerEmail": null,
-                "technology": "Python",
-                "version": "0.38.0",
-                "url": "Documentation, https:\/\/wheel.readthedocs.io\/, Changelog, https:\/\/wheel.readthedocs.io\/en\/stable\/news.html, Issue Tracker, https:\/\/github.com\/pypa\/wheel\/issues",
-                "providesExtra": "test",
-                "license": "MIT",
-                "deleted": true,
-                "binary": false,
-                "name": "wheel",
-                "platformTag": null,
-                "submission": {
-                    "id": 36,
-                    "state": "REJECTED"
-                },
-                "user": {
-                    "name": "Albert Einstein",
-                    "id": 4,
-                    "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
-                },
-                "builtTag": null,
-                "hash": "83918396bc14b8602518944f3772061832b73a580d62d1f67a4dc2b3"
-            },
-            {
-                "authorEmail": null,
-                "projectUrl": "Changelog, https:\/\/wheel.readthedocs.io\/en\/stable\/news.html, Documentation, https:\/\/wheel.readthedocs.io\/, Issue Tracker, https:\/\/github.com\/pypa\/wheel\/issues",
-                "keywords": "wheel,packaging",
-                "description": null,
-                "source": "\/opt\/rdepot\/repositories\/10\/77877521\/wheel-0.40.0.tar.gz",
-                "repository": {
-                    "name": "testrepo10",
-                    "lastPublicationSuccessful": false,
-                    "id": 10,
-                    "published": false,
-                    "technology": "Python",
-                    "requiresAuthentication": false,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo10"
-                },
-                "title": "A built-package format for Python",
-                "requiresDist": null,
-                "homePage": "",
-                "maintainer": null,
-                "platform": null,
-                "requiresPython": ">=3.7",
-                "abiTag": null,
-                "requiresExternal": null,
-                "descriptionContentType": "text\/x-rst",
-                "classifiers": "Development Status :: 5 - Production\/Stable, Intended Audience :: Developers, Topic :: System :: Archiving :: Packaging, License :: OSI Approved :: MIT License, Programming Language :: Python, Programming Language :: Python :: 3 :: Only, Programming Language :: Python :: 3.7, Programming Language :: Python :: 3.8, Programming Language :: Python :: 3.9, Programming Language :: Python :: 3.10, Programming Language :: Python :: 3.11",
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/37"
-                    },
-                    {
-                        "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages"
-                    },
-                    {
-                        "rel": "repository",
-                        "href": "http://localhost:8017/api/v2/manager/python/repositories/10"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http://localhost:8017/api/v2/manager/python/packages/37",
-                        "type": "PATCH"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http://localhost:8017/api/v2/manager/python/packages/37",
-                        "type": "DELETE"
-                    }
-                ],
-                "id": 37,
-                "compatibilityTags": null,
-                "summary": "A built-package format for Python",
-                "author": null,
-                "pythonTag": null,
-                "active": true,
-                "maintainerEmail": null,
-                "technology": "Python",
-                "version": "0.40.0",
-                "url": "Changelog, https:\/\/wheel.readthedocs.io\/en\/stable\/news.html, Documentation, https:\/\/wheel.readthedocs.io\/, Issue Tracker, https:\/\/github.com\/pypa\/wheel\/issues",
-                "providesExtra": "test",
-                "license": "OSI Approved :: MIT License",
-                "deleted": false,
-                "binary": false,
-                "name": "wheel",
-                "platformTag": null,
-                "submission": {
-                    "id": 37,
-                    "state": "ACCEPTED"
-                },
-                "user": {
-                    "name": "Albert Einstein",
-                    "id": 4,
-                    "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
-                },
-                "builtTag": null,
-                "hash": "b44dc26510fe1f31f27417390da11c2b70ce23cbc06c498317a5ff9c"
-            }
-        ]
+            "totalElements": 13,
+            "totalPages": 7
+        }
     },
-    "messageCode": "success.request.processed",
     "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
     "status": "SUCCESS"
 }

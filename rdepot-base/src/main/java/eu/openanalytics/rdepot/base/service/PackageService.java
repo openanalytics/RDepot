@@ -25,14 +25,7 @@ import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.Repository;
 import eu.openanalytics.rdepot.base.entities.comparators.PackageComparator;
 import eu.openanalytics.rdepot.base.service.exceptions.CreateEntityException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -89,12 +82,6 @@ public class PackageService<E extends Package> extends Service<E> {
 
     public List<E> findAllByNameAndRepositoryIncludeDeleted(String name, Repository repository) {
         return packageDao.findByNameAndRepositoryGeneric(name, repository);
-    }
-
-    public Optional<E> findByNameAndVersionAndRepositoryAndDeleted(
-            String name, String version, Repository repository, Boolean deleted) {
-        return packageDao.findByNameAndRepositoryGenericAndDeletedAndVersionIn(
-                name, repository, deleted, generateVariantsOfVersion(version));
     }
 
     public Optional<E> findNonDeletedNewestByNameAndRepository(String name, Repository repository) {

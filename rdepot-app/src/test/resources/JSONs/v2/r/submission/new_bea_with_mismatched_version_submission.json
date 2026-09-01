@@ -1,43 +1,53 @@
 {
-    "status": "WARNING",
     "code": 201,
-    "message": "Your package has been submitted successfully but the filename has been changed due to a mismatch with the package metadata.",
-    "messageCode": "warning.file.name.has.been.updated",
     "data": {
+        "approver": {
+            "email": "einstein@ldap.forumsys.com",
+            "id": 4,
+            "login": "einstein",
+            "name": "Albert Einstein"
+        },
+        "changes": "",
+        "created": "2026-06-29T16:41:17.255374580Z",
         "id": 48,
         "packageBag": {
+            "active": true,
+            "author": "Andrea Batch [aut, cre],\\n Jeff Chen [ctb],\\n Walt Kampas [ctb]",
+            "binary": false,
+            "deleted": false,
+            "description": "Provides an R interface for the Bureau of Economic Analysis (BEA) \\n API (see <http://www.bea.gov/API/bea_web_service_api_user_guide.htm> for \\n more information) that serves two core purposes - \\n 1. To Extract/Transform/Load data [beaGet()] from the BEA API as R-friendly \\n formats in the user's work space [transformation done by default in beaGet() \\n can be modified using optional parameters; see, too, bea2List(), bea2Tab()].\\n 2. To enable the search of descriptive meta data [beaSearch()].\\n Other features of the library exist mainly as intermediate methods \\n or are in early stages of development.\\n Important Note - You must have an API key to use this library. \\n Register for a key at <http://www.bea.gov/API/signup/index.cfm> .",
+            "descriptionContentType": "txt",
             "id": 48,
-            "user": {
-                "id": 4,
-                "name": "Albert Einstein",
-                "login": "einstein",
-                "email": "einstein@ldap.forumsys.com"
-            },
+            "name": "bea.R",
+            "permissions": [
+                "package.deactivate",
+                "package.delete.soft",
+                "package.edit"
+            ],
             "repository": {
                 "id": 3,
+                "lastPublicationSuccessful": true,
                 "name": "testrepo2",
                 "publicationUri": "http://localhost/repo/testrepo2",
                 "published": true,
                 "requiresAuthentication": true,
-                "technology": "R",
-                "lastPublicationSuccessful": true
+                "technology": "R"
             },
+            "source": "/opt/rdepot/repositories/3/96168409/bea.R_1.0.5.tar.gz",
             "submission": {
                 "id": 48,
                 "state": "ACCEPTED"
             },
-            "name": "bea.R",
-            "version": "1.0.5",
-            "source": "/opt/rdepot/repositories/3/60650972/bea.R_1.0.5.tar.gz",
-            "active": true,
-            "deleted": false,
             "technology": "R",
-            "binary": false,
-            "description": "Provides an R interface for the Bureau of Economic Analysis (BEA) \\n API (see <http://www.bea.gov/API/bea_web_service_api_user_guide.htm> for \\n more information) that serves two core purposes - \\n 1. To Extract/Transform/Load data [beaGet()] from the BEA API as R-friendly \\n formats in the user's work space [transformation done by default in beaGet() \\n can be modified using optional parameters; see, too, bea2List(), bea2Tab()].\\n 2. To enable the search of descriptive meta data [beaSearch()].\\n Other features of the library exist mainly as intermediate methods \\n or are in early stages of development.\\n Important Note - You must have an API key to use this library. \\n Register for a key at <http://www.bea.gov/API/signup/index.cfm> .",
-            "author": "Andrea Batch [aut, cre],\\n Jeff Chen [ctb],\\n Walt Kampas [ctb]",
             "title": "Bureau of Economic Analysis API",
             "url": "https://github.com/us-bea/beaR",
-            "descriptionContentType": "txt",
+            "user": {
+                "email": "einstein@ldap.forumsys.com",
+                "id": 4,
+                "login": "einstein",
+                "name": "Albert Einstein"
+            },
+            "version": "1.0.5",
             "links": [
                 {
                     "rel": "self",
@@ -63,21 +73,14 @@
                 }
             ]
         },
-        "submitter": {
-            "id": 4,
-            "name": "Albert Einstein",
-            "login": "einstein",
-            "email": "einstein@ldap.forumsys.com"
-        },
-        "approver": {
-            "id": 4,
-            "name": "Albert Einstein",
-            "login": "einstein",
-            "email": "einstein@ldap.forumsys.com"
-        },
-        "changes": "",
+        "permissions": [],
         "state": "ACCEPTED",
-        "created": "2025-05-07T12:21:45.444631292Z",
+        "submitter": {
+            "email": "einstein@ldap.forumsys.com",
+            "id": 4,
+            "login": "einstein",
+            "name": "Albert Einstein"
+        },
         "technology": "R",
         "links": [
             {
@@ -89,5 +92,8 @@
                 "href": "http://localhost:8017/api/v2/manager/r/submissions"
             }
         ]
-    }
+    },
+    "message": "Your package has been submitted successfully but the filename has been changed due to a mismatch with the package metadata.",
+    "messageCode": "warning.file.name.has.been.updated",
+    "status": "WARNING"
 }

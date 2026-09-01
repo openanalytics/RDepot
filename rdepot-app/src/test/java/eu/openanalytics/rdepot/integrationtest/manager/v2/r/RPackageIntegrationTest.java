@@ -32,6 +32,7 @@ import eu.openanalytics.rdepot.integrationtest.manager.v2.TestRequestBody;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.testData.PackageTestData;
 import io.restassured.http.ContentType;
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.maven.surefire.shared.io.FileUtils;
@@ -260,7 +261,7 @@ public class RPackageIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    public void activatePackage() throws Exception {
+    public void deactivatePackage() throws Exception {
         final String patch =
                 "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/active\"," + "\"value\":false" + "}" + "]";
         TestRequestBody requestBody = TestRequestBody.builder()
@@ -269,7 +270,7 @@ public class RPackageIntegrationTest extends IntegrationTest {
                 .statusCode(200)
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getChangeEndpointNewEventsAmount())
-                .expectedEventsJson(EVENTS_PATH + "activate_r_package_event.json")
+                .expectedEventsJson(EVENTS_PATH + "deactivate_r_package_event.json")
                 .expectedJsonPath(PACKAGES_PATH + "patched_package.json")
                 .body(patch)
                 .build();
@@ -287,7 +288,7 @@ public class RPackageIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    public void activatePackage_returns403_whenMaintainerIsDeleted() throws Exception {
+    public void deactivatePackage_returns403_whenMaintainerIsDeleted() throws Exception {
         final String patch =
                 "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/active\"," + "\"value\":false" + "}" + "]";
 
@@ -314,7 +315,7 @@ public class RPackageIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    public void activatePackage_returns401_whenUserIsNotAuthenticated() throws Exception {
+    public void deactivatePackage_returns401_whenUserIsNotAuthenticated() throws Exception {
         final String patch =
                 "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/active\"," + "\"value\":false" + "}" + "]";
 
@@ -338,7 +339,7 @@ public class RPackageIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    public void activatePackage_returns403_whenUserIsNotAllowed() throws Exception {
+    public void deactivatePackage_returns403_whenUserIsNotAllowed() throws Exception {
         final String patch =
                 "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/active\"," + "\"value\":false" + "}" + "]";
 
@@ -365,7 +366,7 @@ public class RPackageIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    public void activatePackage_returns404_whenPackageIsNotFound() throws Exception {
+    public void deactivatePackage_returns404_whenPackageIsNotFound() throws Exception {
         final String patch =
                 "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/active\"," + "\"value\":false" + "}" + "]";
 
@@ -690,5 +691,38 @@ public class RPackageIntegrationTest extends IntegrationTest {
         assertArrayEquals(actual, expected, "Downloaded package is incorrect.");
 
         cleanAfterDownloading(targetDirectoryName);
+    }
+
+    @Test
+    public void getPackage_whenDeletingPackagesDisabled() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .urlSuffix("/" + testData.getExamplePackageId())
+                .statusCode(200)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath(PACKAGES_PATH + "package_as_admin.json")
+                .build();
+        testEndpoint(requestBody);
+
+        changeConfigAndTest(
+                Paths.get("src/test/resources/docker/app/test_configs/test_simple_config.yml"),
+                Paths.get(
+                        "src/test/resources/docker/app/test_configs/test_simple_deleting_repos_and_packages_disabled.yml"),
+                () -> {
+                    TestRequestBody body = TestRequestBody.builder()
+                            .requestType(RequestType.GET)
+                            .urlSuffix("/" + testData.getExamplePackageId())
+                            .statusCode(200)
+                            .token(ADMIN_TOKEN)
+                            .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                            .expectedJsonPath(PACKAGES_PATH + "package_deleting_packages_disabled.json")
+                            .build();
+                    try {
+                        testEndpoint(body);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
     }
 }

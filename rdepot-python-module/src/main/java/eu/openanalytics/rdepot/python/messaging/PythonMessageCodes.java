@@ -23,9 +23,10 @@ package eu.openanalytics.rdepot.python.messaging;
 public class PythonMessageCodes {
     public static final String EMPTY_HASH = "empty.hash";
     public static final String READ_PYTHON_PROPERTIES_FILE_EXCEPTION = "read.python.properties.file.exception";
-    public static final String COULD_NOT_PARSE_INDEX_FILE = "could.not.parse.index.file";
+    public static final String COULD_NOT_PARSE_PACKAGE_INDEX_FILE = "could.not.parse.package.index.file";
+    public static final String COULD_NOT_PARSE_REPOSITORY_INDEX_FILE = "could.not.parse.repository.index.file";
     public static final String COULD_NOT_FIND_DIST_INFO_FOLDER = "could.not.find.dist.info.folder";
-    public static final String MISSING_DOWNLOAD_URL = "missing.download.url";
     // binary properties
     public static final String EMPTY_COMPATIBILITY_TAGS = "empty.compatibility.tags";
+    public static final String INDEX_DOWNLOAD_ERROR = "index.download.error";
 }

@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - changeSet:
+      id: 24_01_duplicate_emails
+      author: wgorczak
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: user
+            schemaName: public
+        - uniqueConstraintExists:
+            tableName: user
+            schemaName: public
+            constraintName: user_email_key
+      changes:
+        - dropUniqueConstraint:
+            tableName: user
+            schemaName: public
+            constraintName: user_email_key

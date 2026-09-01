@@ -20,9 +20,7 @@
  */
 package eu.openanalytics.rdepot.test.validator;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
 import eu.openanalytics.rdepot.base.entities.Repository;
@@ -59,7 +57,7 @@ public class PackageMaintainerValidatorTest {
     private PackageMaintainerValidator packageMaintainerValidator;
 
     @Test
-    public void validatePackageMaintainer_nullPackageAndNullUserAndNullRepository() throws Exception {
+    public void validatePackageMaintainer_nullPackageAndNullUserAndNullRepository() {
         packageMaintainerValidator =
                 new PackageMaintainerValidator(userService, repositoryService, packageMaintainerService);
 
@@ -78,7 +76,7 @@ public class PackageMaintainerValidatorTest {
     }
 
     @Test
-    public void validatePackageMaintainer_emptyPackageAndEmptyUserAndEmptyRepository() throws Exception {
+    public void validatePackageMaintainer_emptyPackageAndEmptyUserAndEmptyRepository() {
         packageMaintainerValidator =
                 new PackageMaintainerValidator(userService, repositoryService, packageMaintainerService);
 
@@ -91,10 +89,10 @@ public class PackageMaintainerValidatorTest {
         dataBinder.setValidator(packageMaintainerValidator);
         Errors errors = Mockito.spy(dataBinder.getBindingResult());
 
-        when(userService.findById(packageMaintainer.getUser().getId())).thenReturn(Optional.ofNullable(null));
+        when(userService.findById(packageMaintainer.getUser().getId())).thenReturn(Optional.empty());
 
         when(repositoryService.findById(packageMaintainer.getRepository().getId()))
-                .thenReturn(Optional.ofNullable(null));
+                .thenReturn(Optional.empty());
 
         packageMaintainerValidator.validate(packageMaintainer, errors);
         verify(errors, times(1)).rejectValue("packageName", MessageCodes.EMPTY_PACKAGE, null, null);
@@ -103,7 +101,7 @@ public class PackageMaintainerValidatorTest {
     }
 
     @Test
-    public void validatePackageMaintainer_duplicateNewMaintainer() throws Exception {
+    public void validatePackageMaintainer_duplicateNewMaintainer() {
         packageMaintainerValidator =
                 new PackageMaintainerValidator(userService, repositoryService, packageMaintainerService);
 
@@ -137,7 +135,7 @@ public class PackageMaintainerValidatorTest {
     }
 
     @Test
-    public void validatePackageMaintainer_roleNotSufficient() throws Exception {
+    public void validatePackageMaintainer_roleNotSufficient() {
         packageMaintainerValidator =
                 new PackageMaintainerValidator(userService, repositoryService, packageMaintainerService);
 

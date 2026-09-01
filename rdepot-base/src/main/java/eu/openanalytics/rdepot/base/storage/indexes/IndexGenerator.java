@@ -20,13 +20,14 @@
  */
 package eu.openanalytics.rdepot.base.storage.indexes;
 
-import eu.openanalytics.rdepot.base.entities.Hashable;
+import eu.openanalytics.rdepot.base.entities.HavingHashMethod;
 import eu.openanalytics.rdepot.base.entities.Package;
 import eu.openanalytics.rdepot.base.entities.Repository;
-import eu.openanalytics.rdepot.base.storage.Storage;
+import eu.openanalytics.rdepot.base.storage.LocalStorage;
+import eu.openanalytics.rdepot.base.storage.exceptions.CheckSumCalculationException;
+import eu.openanalytics.rdepot.base.storage.exceptions.ContentEditException;
 import eu.openanalytics.rdepot.base.storage.indexes.exceptions.PackageAnchorListPlaceholderNotFound;
 import eu.openanalytics.rdepot.base.storage.indexes.utils.PackagePublicationURIResolver;
-import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
@@ -43,21 +44,21 @@ import lombok.extern.slf4j.Slf4j;
  * @param <P> Specific type of indexed {@link Package Packages}
  */
 @Slf4j
-public abstract class IndexGenerator<T extends Hashable, P extends Package> {
+public abstract class IndexGenerator<T extends HavingHashMethod, P extends Package> {
     protected final String headerTemplate;
     protected final String anchorTemplate;
-    protected final Storage<P> storage;
-    protected final String PACKAGE_ANCHOR_LIST_PLACEHOLDER = "</body>\n</html>";
+    protected final LocalStorage<P> localStorage;
+    protected final String PACKAGE_ANCHOR_LIST_PLACEHOLDER = "</tbody>";
     protected final PackagePublicationURIResolver<P> packagePublicationURIResolver;
 
     protected IndexGenerator(
             String headerTemplate,
             String anchorTemplate,
-            Storage<P> storage,
+            LocalStorage<P> localStorage,
             PackagePublicationURIResolver<P> packagePublicationURIResolver) {
         this.headerTemplate = headerTemplate;
         this.anchorTemplate = anchorTemplate;
-        this.storage = storage;
+        this.localStorage = localStorage;
         this.packagePublicationURIResolver = packagePublicationURIResolver;
     }
 
@@ -103,34 +104,45 @@ public abstract class IndexGenerator<T extends Hashable, P extends Package> {
      * @param indexPath resource path
      * @return checksum for generated index
      */
-    public String addPackagesToList(List<P> packages, Hashable parentItem, String indexPath) throws IOException {
+    public String addPackagesToList(List<P> packages, HavingHashMethod parentItem, String indexPath)
+            throws ContentEditException {
         addPackagesToListNoChecksum(packages, indexPath);
-        return calculateChecksum(parentItem, indexPath);
+        try {
+            return calculateChecksum(parentItem, indexPath);
+        } catch (CheckSumCalculationException e) {
+            log.error(e.getMessage(), e);
+            throw new ContentEditException(indexPath);
+        }
     }
 
-    protected void addPackagesToListNoChecksum(List<P> packages, String indexPath) throws IOException {
+    protected void addPackagesToListNoChecksum(List<P> packages, String indexPath) throws ContentEditException {
         final String ending = getPackageListEnding();
-        storage.removeContentFromEnd(ending, indexPath);
+        localStorage.removeContentFromEnd(ending, indexPath);
         final StringBuilder anchor = new StringBuilder();
         for (P packageBag : packages) {
             anchor.append(generatePackageAnchor(packageBag));
         }
-        storage.appendText(anchor.toString(), indexPath);
-        storage.appendText(ending, indexPath);
+        localStorage.appendText(anchor.toString(), indexPath);
+        localStorage.appendText(ending, indexPath);
     }
 
     /**
-     * The {@link #addPackagesToList(List, Hashable, String)} method's version for a single package.
+     * The {@link #addPackagesToList(List, HavingHashMethod, String)} method's version for a single package.
      * Should only be used when the full list of packages is not known up-front.
      * Otherwise, for performance reasons, full list of packages should be supplied to
-     * {@link #addPackagesToList(List, Hashable, String)}
+     * {@link #addPackagesToList(List, HavingHashMethod, String)}
      * @param packageBag the package to index
      * @param indexPath index resource path
      * @return checksum for generated index
      */
-    public String addPackageToList(P packageBag, String indexPath) throws IOException {
+    public String addPackageToList(P packageBag, String indexPath) throws ContentEditException {
         addPackagesToListNoChecksum(List.of(packageBag), indexPath);
-        return calculateChecksum(packageBag.getRepository(), indexPath);
+        try {
+            return calculateChecksum(packageBag.getRepository(), indexPath);
+        } catch (CheckSumCalculationException e) {
+            log.error(e.getMessage(), e);
+            throw new ContentEditException(indexPath);
+        }
     }
 
     /**
@@ -138,24 +150,31 @@ public abstract class IndexGenerator<T extends Hashable, P extends Package> {
      * This is an abstract method used for any kind of index.
      * @param item item for which the index should be generated (e.g. repository or package name)
      * @param packages packages to be indexed
-     * @param path location of the index resource (it is storage-independent
+     * @param path location of the index resource (it is localStorage-independent
      *             thus can be a file system path or remote location URI)
      * @return checksum for generated index
      */
-    public abstract String generateIndex(T item, List<P> packages, String path) throws IOException;
+    public abstract String generateIndex(T item, List<P> packages, String path) throws ContentEditException;
 
     /**
      * {@link #generateIndex(T, List, String) Generates}
      * an empty index only if it was not generated before.
      * @param item item for which the index should be generated (e.g. repository or package)
-     * @param path location of the index resource (it is storage-independent
+     * @param path location of the index resource (it is localStorage-independent
      *             thus can be a file system path or remote location URI)
      * @return checksum for generated index
      */
-    public String generateIndexIfNotExists(T item, String path) throws IOException {
-        if (!storage.exists(path)) return generateIndex(item, List.of(), path);
-        else return calculateChecksum(item, path);
+    public String generateIndexIfNotExists(T item, String path) throws ContentEditException {
+        if (!localStorage.exists(path)) return generateIndex(item, List.of(), path);
+        else {
+            try {
+                return calculateChecksum(item, path);
+            } catch (CheckSumCalculationException e) {
+                log.error(e.getMessage(), e);
+                throw new ContentEditException(path);
+            }
+        }
     }
 
-    protected abstract String calculateChecksum(Hashable item, String path) throws IOException;
+    protected abstract String calculateChecksum(HavingHashMethod item, String path) throws CheckSumCalculationException;
 }

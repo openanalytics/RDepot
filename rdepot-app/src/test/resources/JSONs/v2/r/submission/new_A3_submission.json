@@ -13,15 +13,16 @@
             "login": "einstein",
             "email": "einstein@ldap.forumsys.com"
         },
+        "permissions": [],
         "changes": "",
         "links": [
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/48"
+                "href": "http://localhost:8017/api/v2/manager/r/submissions/48"
             },
             {
                 "rel": "submissionList",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions"
+                "href": "http://localhost:8017/api/v2/manager/r/submissions"
             }
         ],
         "id": 48,
@@ -32,20 +33,25 @@
             "active": true,
             "description": "This package supplies tools for tabulating and analyzing\\n the results of predictive models. The methods employed are\\n applicable to virtually any predictive model and make\\n comparisons between different methodologies straightforward.",
             "technology": "R",
-            "descriptionContentType": "txt",
             "repository": {
-                "name": "testrepo2",
                 "lastPublicationSuccessful": true,
+                "name": "testrepo2",
                 "id": 3,
                 "published": true,
                 "technology": "R",
                 "requiresAuthentication": true,
-                "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
+                "publicationUri": "http://localhost/repo/testrepo2"
             },
             "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for\\n Predictive Models",
             "version": "0.9.1",
             "url": null,
             "deleted": false,
+            "descriptionContentType": "txt",
+            "permissions": [
+                "package.deactivate",
+                "package.delete.soft",
+                "package.edit"
+            ],
             "binary": false,
             "name": "A3",
             "submission": {
@@ -55,11 +61,11 @@
             "links": [
                 {
                     "rel": "self",
-                    "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/48"
+                    "href": "http://localhost:8017/api/v2/manager/r/packages/48"
                 },
                 {
                     "rel": "packageList",
-                    "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                    "href": "http://localhost:8017/api/v2/manager/packages"
                 },
                 {
                     "rel": "repository",
@@ -67,12 +73,12 @@
                 },
                 {
                     "rel": "self",
-                    "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/48",
+                    "href": "http://localhost:8017/api/v2/manager/r/packages/48",
                     "type": "PATCH"
                 },
                 {
                     "rel": "self",
-                    "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/48",
+                    "href": "http://localhost:8017/api/v2/manager/r/packages/48",
                     "type": "DELETE"
                 }
             ],

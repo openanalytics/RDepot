@@ -1,0 +1,34 @@
+name: ZH-Fully-Broken
+publicationUri: http://localhost/repo/ZH-Fully-Broken
+serverAddress: http://oa-rdepot-repo:8080/ZH-Fully-Broken
+published: true
+requiresAuthentication: true
+mirrors:
+  - name: CRAN
+    uri: https://cran.r-project.org
+    syncInterval: ""
+    type: tarball
+    generateManuals: true
+    packages:
+      - name: someothernonexistingpackage
+        version: 3.3.2
+      - name: nonexistingpackage2
+        version: 4.11.0
+        generateManuals: false
+      - name: nonexistingpackage
+        version: 1.2.3
+  - name: Bioconductor-3.12
+    uri: http://archive.bioconductor.org.s3-website-us-east-1.amazonaws.com/packages/3.12/bioc
+    syncInterval: ""
+    type: tarball
+    generateManuals: false
+    packages:
+      - name: nonexistingannotate
+        version: 1.68.0
+  - name: Bioconductor-release
+    uri: https://bioconductor.org/packages/release/bioc
+    syncInterval: ""
+    type: tarball
+    packages:
+      - name: nonexistingbanksy
+        version: 1.7.0

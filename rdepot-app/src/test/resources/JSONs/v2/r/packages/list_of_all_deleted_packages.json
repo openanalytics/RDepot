@@ -1,48 +1,68 @@
 {
     "code": 200,
     "data": {
-        "links": [
-            {
-                "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages?deleted=true&page=0&size=20&sort=id,asc"
-            }
-        ],
-        "page": {
-            "number": 0,
-            "size": 20,
-            "totalPages": 1,
-            "totalElements": 5
-        },
         "content": [
             {
-                "enhances": null,
-                "manualAvailable": null,
+                "active": false,
+                "architecture": null,
+                "author": "Julie Eaton and Ian Painter",
+                "binary": false,
+                "built": null,
+                "deleted": true,
+                "depends": "R (>= 3.0), grid",
                 "description": "Package for visualizing data quality of partially accruing time series.",
-                "source": "\/opt\/rdepot\/repositories\/3\/46950998\/accrued_1.1.tar.gz",
-                "repository": {
-                    "name": "testrepo2",
-                    "lastPublicationSuccessful": true,
-                    "id": 3,
-                    "published": true,
-                    "technology": "R",
-                    "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
-                },
-                "title": "Visualization tools for partially accruing data",
+                "descriptionContentType": "txt",
                 "distribution": null,
+                "encoding": null,
+                "enhances": null,
+                "id": 6,
+                "imports": null,
+                "license": "GPL-3",
+                "linkingTo": null,
                 "maintainer": null,
+                "manualAvailable": null,
+                "md5sum": "24b8cec280424dfc6a9e444fa57ba9f3",
+                "name": "accrued",
+                "needsCompilation": "no",
+                "permissions": [
+                    "package.delete.hard"
+                ],
+                "priority": null,
+                "repository": {
+                    "id": 3,
+                    "lastPublicationSuccessful": true,
+                    "name": "testrepo2",
+                    "publicationUri": "http://localhost/repo/testrepo2",
+                    "published": true,
+                    "requiresAuthentication": true,
+                    "technology": "R"
+                },
+                "rversion": null,
+                "source": "/opt/rdepot/repositories/3/46950998/accrued_1.1.tar.gz",
+                "submission": {
+                    "id": 4,
+                    "state": "ACCEPTED"
+                },
                 "suggests": null,
                 "systemRequirements": null,
-                "descriptionContentType": "txt",
-                "md5sum": "24b8cec280424dfc6a9e444fa57ba9f3",
+                "technology": "R",
+                "title": "Visualization tools for partially accruing data",
+                "url": null,
+                "user": {
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
+                },
+                "version": "1.1",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/6"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/6"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages"
                     },
                     {
                         "rel": "repository",
@@ -50,74 +70,77 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/6",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/6",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/6",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/6",
                         "type": "DELETE"
                     }
-                ],
-                "id": 6,
-                "rversion": null,
-                "architecture": null,
-                "imports": null,
-                "depends": "R (>= 3.0), grid",
-                "built": null,
-                "author": "Julie Eaton and Ian Painter",
-                "active": false,
-                "technology": "R",
-                "priority": null,
-                "encoding": null,
-                "version": "1.1",
-                "url": null,
-                "license": "GPL-3",
-                "deleted": true,
-                "binary": false,
-                "name": "accrued",
-                "submission": {
-                    "id": 4,
-                    "state": "ACCEPTED"
-                },
-                "linkingTo": null,
-                "user": {
-                    "name": "Albert Einstein",
-                    "id": 4,
-                    "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
-                },
-                "needsCompilation": "no"
+                ]
             },
             {
-                "enhances": null,
-                "manualAvailable": null,
+                "active": false,
+                "architecture": null,
+                "author": "Bulent Altunkaynak [aut, cre], Hamza Gamgam [aut]",
+                "binary": false,
+                "built": null,
+                "deleted": true,
+                "depends": "R (>= 2.15.0)",
                 "description": "Performs nonparametric tests for equality of location against ordered alternatives.",
-                "source": "\/opt\/rdepot\/repositories\/2\/8436419\/npordtests_1.1.tar.gz",
-                "repository": {
-                    "name": "testrepo1",
-                    "lastPublicationSuccessful": true,
-                    "id": 2,
-                    "published": true,
-                    "technology": "R",
-                    "requiresAuthentication": false,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
-                },
-                "title": "Nonparametric Tests for Equality of Location Against Ordered Alternatives",
+                "descriptionContentType": "txt",
                 "distribution": null,
+                "encoding": null,
+                "enhances": null,
+                "id": 14,
+                "imports": null,
+                "license": "GPL (>= 2)",
+                "linkingTo": null,
                 "maintainer": null,
+                "manualAvailable": null,
+                "md5sum": "da8be1247d3145b757bd62e01fc6eb8b",
+                "name": "npordtests",
+                "needsCompilation": "no",
+                "permissions": [
+                    "package.delete.hard"
+                ],
+                "priority": null,
+                "repository": {
+                    "id": 2,
+                    "lastPublicationSuccessful": true,
+                    "name": "testrepo1",
+                    "publicationUri": "http://localhost/repo/testrepo1",
+                    "published": true,
+                    "requiresAuthentication": false,
+                    "technology": "R"
+                },
+                "rversion": null,
+                "source": "/opt/rdepot/repositories/2/8436419/npordtests_1.1.tar.gz",
+                "submission": {
+                    "id": 15,
+                    "state": "ACCEPTED"
+                },
                 "suggests": null,
                 "systemRequirements": null,
-                "descriptionContentType": "txt",
-                "md5sum": "da8be1247d3145b757bd62e01fc6eb8b",
+                "technology": "R",
+                "title": "Nonparametric Tests for Equality of Location Against Ordered Alternatives",
+                "url": null,
+                "user": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "version": "1.1",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/14"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/14"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages"
                     },
                     {
                         "rel": "repository",
@@ -125,149 +148,77 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/14",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/14",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/14",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/14",
                         "type": "DELETE"
                     }
-                ],
-                "id": 14,
-                "rversion": null,
-                "architecture": null,
-                "imports": null,
-                "depends": "R (>= 2.15.0)",
-                "built": null,
-                "author": "Bulent Altunkaynak [aut, cre], Hamza Gamgam [aut]",
-                "active": false,
-                "technology": "R",
-                "priority": null,
-                "encoding": null,
-                "version": "1.1",
-                "url": null,
-                "license": "GPL (>= 2)",
-                "deleted": true,
-                "binary": false,
-                "name": "npordtests",
-                "submission": {
-                    "id": 15,
-                    "state": "ACCEPTED"
-                },
-                "linkingTo": null,
-                "user": {
-                    "name": "Nikola Tesla",
-                    "id": 5,
-                    "login": "tesla",
-                    "email": "tesla@ldap.forumsys.com"
-                },
-                "needsCompilation": "no"
+                ]
             },
             {
-                "enhances": null,
-                "manualAvailable": null,
-                "description": "The Universal Scalability Law (Gunther 2007)",
-                "source": "\/opt\/rdepot\/repositories\/6\/21695389\/usl_2.0.0.tar.gz",
-                "repository": {
-                    "name": "testrepo5",
-                    "lastPublicationSuccessful": false,
-                    "id": 6,
-                    "published": false,
-                    "technology": "R",
-                    "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo5"
-                },
-                "title": "Analyze System Scalability with the Universal Scalability Law",
-                "distribution": null,
-                "maintainer": null,
-                "suggests": "knitr",
-                "systemRequirements": null,
-                "descriptionContentType": "txt",
-                "md5sum": "868140a3c3c29327eef5d5a485aee5b6",
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/27"
-                    },
-                    {
-                        "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
-                    },
-                    {
-                        "rel": "repository",
-                        "href": "http://localhost:8017/api/v2/manager/r/repositories/6"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/27",
-                        "type": "PATCH"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/27",
-                        "type": "DELETE"
-                    }
-                ],
-                "id": 27,
-                "rversion": null,
-                "architecture": null,
-                "imports": "graphics, stats, nlsr",
-                "depends": "R (>= 3.0), methods",
-                "built": null,
-                "author": "Neil J. Gunther [aut], Stefan Moeding [aut, cre]",
                 "active": false,
-                "technology": "R",
-                "priority": null,
-                "encoding": null,
-                "version": "2.0.0",
-                "url": null,
-                "license": "BSD_2_clause + file LICENSE",
-                "deleted": true,
+                "architecture": null,
+                "author": "Neil J. Gunther [aut], Stefan Moeding [aut, cre]",
                 "binary": false,
+                "built": null,
+                "deleted": true,
+                "depends": "R (>= 3.0), methods",
+                "description": "The Universal Scalability Law (Gunther 2007)",
+                "descriptionContentType": "txt",
+                "distribution": null,
+                "encoding": null,
+                "enhances": null,
+                "id": 27,
+                "imports": "graphics, stats, nlsr",
+                "license": "BSD_2_clause + file LICENSE",
+                "linkingTo": null,
+                "maintainer": null,
+                "manualAvailable": null,
+                "md5sum": "868140a3c3c29327eef5d5a485aee5b6",
                 "name": "usl",
+                "needsCompilation": "no",
+                "permissions": [
+                    "package.delete.hard"
+                ],
+                "priority": null,
+                "repository": {
+                    "id": 6,
+                    "lastPublicationSuccessful": false,
+                    "name": "testrepo5",
+                    "publicationUri": "http://localhost/repo/testrepo5",
+                    "published": false,
+                    "requiresAuthentication": true,
+                    "technology": "R"
+                },
+                "rversion": null,
+                "source": "/opt/rdepot/repositories/6/21695389/usl_2.0.0.tar.gz",
                 "submission": {
                     "id": 27,
                     "state": "ACCEPTED"
                 },
-                "linkingTo": null,
+                "suggests": "knitr",
+                "systemRequirements": null,
+                "technology": "R",
+                "title": "Analyze System Scalability with the Universal Scalability Law",
+                "url": null,
                 "user": {
-                    "name": "Local Admin User",
+                    "email": "admin@localhost",
                     "id": 8,
                     "login": "admin",
-                    "email": "admin@localhost"
+                    "name": "Local Admin User"
                 },
-                "needsCompilation": "no"
-            },
-            {
-                "enhances": null,
-                "manualAvailable": null,
-                "description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
-                "source": "\/opt\/rdepot\/repositories\/6\/70325377\/visdat_0.1.0.tar.gz",
-                "repository": {
-                    "name": "testrepo5",
-                    "lastPublicationSuccessful": false,
-                    "id": 6,
-                    "published": false,
-                    "technology": "R",
-                    "requiresAuthentication": true,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo5"
-                },
-                "title": "Preliminary Data Visualisation",
-                "distribution": null,
-                "maintainer": null,
-                "suggests": "plotly (>= 4.5.6), testthat, knitr, rmarkdown, vdiffr",
-                "systemRequirements": null,
-                "descriptionContentType": "txt",
-                "md5sum": "f343fa3a01dcd9546fa0947877f58f36",
+                "version": "2.0.0",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/28"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/27"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages"
                     },
                     {
                         "rel": "repository",
@@ -275,74 +226,155 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/28",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/27",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/28",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/27",
                         "type": "DELETE"
                     }
-                ],
-                "id": 28,
-                "rversion": null,
-                "architecture": null,
-                "imports": "ggplot2, tidyr, dplyr, purrr, magrittr, stats",
-                "depends": "R (>= 3.2.2)",
-                "built": null,
-                "author": "Nicholas Tierney [aut, cre]",
+                ]
+            },
+            {
                 "active": false,
-                "technology": "R",
-                "priority": null,
-                "encoding": null,
-                "version": "0.1.0",
-                "url": "https:\/\/github.com\/njtierney\/visdat\/",
-                "license": "MIT + file LICENSE",
-                "deleted": true,
+                "architecture": null,
+                "author": "Nicholas Tierney [aut, cre]",
                 "binary": false,
+                "built": null,
+                "deleted": true,
+                "depends": "R (>= 3.2.2)",
+                "description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
+                "descriptionContentType": "txt",
+                "distribution": null,
+                "encoding": null,
+                "enhances": null,
+                "id": 28,
+                "imports": "ggplot2, tidyr, dplyr, purrr, magrittr, stats",
+                "license": "MIT + file LICENSE",
+                "linkingTo": null,
+                "maintainer": null,
+                "manualAvailable": null,
+                "md5sum": "f343fa3a01dcd9546fa0947877f58f36",
                 "name": "visdat",
+                "needsCompilation": "no",
+                "permissions": [
+                    "package.delete.hard"
+                ],
+                "priority": null,
+                "repository": {
+                    "id": 6,
+                    "lastPublicationSuccessful": false,
+                    "name": "testrepo5",
+                    "publicationUri": "http://localhost/repo/testrepo5",
+                    "published": false,
+                    "requiresAuthentication": true,
+                    "technology": "R"
+                },
+                "rversion": null,
+                "source": "/opt/rdepot/repositories/6/70325377/visdat_0.1.0.tar.gz",
                 "submission": {
                     "id": 28,
                     "state": "ACCEPTED"
                 },
-                "linkingTo": null,
+                "suggests": "plotly (>= 4.5.6), testthat, knitr, rmarkdown, vdiffr",
+                "systemRequirements": null,
+                "technology": "R",
+                "title": "Preliminary Data Visualisation",
+                "url": "https://github.com/njtierney/visdat/",
                 "user": {
-                    "name": "Local Admin User",
+                    "email": "admin@localhost",
                     "id": 8,
                     "login": "admin",
-                    "email": "admin@localhost"
+                    "name": "Local Admin User"
                 },
-                "needsCompilation": "no"
-            },
-            {
-                "enhances": null,
-                "manualAvailable": null,
-                "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-                "source": "\/opt\/rdepot\/repositories\/7\/67484296\/A3_0.9.1.tar.gz",
-                "repository": {
-                    "name": "testrepo6",
-                    "lastPublicationSuccessful": false,
-                    "id": 7,
-                    "published": false,
-                    "technology": "R",
-                    "requiresAuthentication": false,
-                    "publicationUri": "http:\/\/localhost\/repo\/testrepo6"
-                },
-                "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
-                "distribution": null,
-                "maintainer": null,
-                "suggests": "randomForest, e1071",
-                "systemRequirements": null,
-                "descriptionContentType": "txt",
-                "md5sum": "8eb4760cd574f5489e61221dc9bb0076",
+                "version": "0.1.0",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/29"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/28"
                     },
                     {
                         "rel": "packageList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages"
+                        "href": "http://localhost:8017/api/v2/manager/r/packages"
+                    },
+                    {
+                        "rel": "repository",
+                        "href": "http://localhost:8017/api/v2/manager/r/repositories/6"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/28",
+                        "type": "PATCH"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/28",
+                        "type": "DELETE"
+                    }
+                ]
+            },
+            {
+                "active": false,
+                "architecture": null,
+                "author": "Scott Fortmann-Roe",
+                "binary": false,
+                "built": null,
+                "deleted": true,
+                "depends": "xtable, pbapply",
+                "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
+                "descriptionContentType": "txt",
+                "distribution": null,
+                "encoding": null,
+                "enhances": null,
+                "id": 29,
+                "imports": null,
+                "license": "GPL (>= 2)",
+                "linkingTo": null,
+                "maintainer": null,
+                "manualAvailable": null,
+                "md5sum": "8eb4760cd574f5489e61221dc9bb0076",
+                "name": "A3",
+                "needsCompilation": "no",
+                "permissions": [
+                    "package.delete.hard"
+                ],
+                "priority": null,
+                "repository": {
+                    "id": 7,
+                    "lastPublicationSuccessful": false,
+                    "name": "testrepo6",
+                    "publicationUri": "http://localhost/repo/testrepo6",
+                    "published": false,
+                    "requiresAuthentication": false,
+                    "technology": "R"
+                },
+                "rversion": null,
+                "source": "/opt/rdepot/repositories/7/67484296/A3_0.9.1.tar.gz",
+                "submission": {
+                    "id": 29,
+                    "state": "ACCEPTED"
+                },
+                "suggests": "randomForest, e1071",
+                "systemRequirements": null,
+                "technology": "R",
+                "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
+                "url": null,
+                "user": {
+                    "email": "admin@localhost",
+                    "id": 8,
+                    "login": "admin",
+                    "name": "Local Admin User"
+                },
+                "version": "0.9.1",
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/29"
+                    },
+                    {
+                        "rel": "packageList",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages"
                     },
                     {
                         "rel": "repository",
@@ -350,48 +382,31 @@
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/29",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/29",
                         "type": "PATCH"
                     },
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/29",
+                        "href": "http://localhost:8017/api/v2/manager/r/packages/29",
                         "type": "DELETE"
                     }
-                ],
-                "id": 29,
-                "rversion": null,
-                "architecture": null,
-                "imports": null,
-                "depends": "xtable, pbapply",
-                "built": null,
-                "author": "Scott Fortmann-Roe",
-                "active": false,
-                "technology": "R",
-                "priority": null,
-                "encoding": null,
-                "version": "0.9.1",
-                "url": null,
-                "license": "GPL (>= 2)",
-                "deleted": true,
-                "binary": false,
-                "name": "A3",
-                "submission": {
-                    "id": 29,
-                    "state": "ACCEPTED"
-                },
-                "linkingTo": null,
-                "user": {
-                    "name": "Local Admin User",
-                    "id": 8,
-                    "login": "admin",
-                    "email": "admin@localhost"
-                },
-                "needsCompilation": "no"
+                ]
             }
-        ]
+        ],
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/r/packages?deleted=true&page=0&size=20&sort=id,asc"
+            }
+        ],
+        "page": {
+            "number": 0,
+            "size": 20,
+            "totalElements": 5,
+            "totalPages": 1
+        }
     },
-    "messageCode": "success.request.processed",
     "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
     "status": "SUCCESS"
 }

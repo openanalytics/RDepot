@@ -24,11 +24,12 @@ import eu.openanalytics.rdepot.base.mediator.deletion.PackageDeleter;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
-import eu.openanalytics.rdepot.base.storage.Storage;
+import eu.openanalytics.rdepot.base.storage.LocalStorage;
 import eu.openanalytics.rdepot.python.entities.PythonPackage;
 import eu.openanalytics.rdepot.python.entities.PythonRepository;
 import eu.openanalytics.rdepot.python.services.PythonPackageService;
-import eu.openanalytics.rdepot.python.storage.PythonPopulator;
+import eu.openanalytics.rdepot.python.storage.PythonPersistentStorage;
+import eu.openanalytics.rdepot.python.storage.population.PythonPopulator;
 import eu.openanalytics.rdepot.python.synchronization.PythonRepositorySynchronizer;
 import eu.openanalytics.rdepot.python.utils.PythonPackageRepositoryResolver;
 import org.springframework.stereotype.Component;
@@ -40,19 +41,21 @@ public class PythonPackageDeleter extends PackageDeleter<PythonPackage, PythonRe
             NewsfeedEventService newsfeedEventService,
             PythonPackageService resourceService,
             PythonPopulator pythonPopulator,
-            Storage<PythonPackage> storage,
+            LocalStorage<PythonPackage> localStorage,
             SubmissionService submissionService,
             PythonRepositorySynchronizer repositorySynchronizer,
             PythonPackageRepositoryResolver pythonPackageRepositoryResolver,
-            PackageMaintainerService maintainerService) {
+            PackageMaintainerService maintainerService,
+            PythonPersistentStorage pythonPersistentStorage) {
         super(
                 newsfeedEventService,
                 resourceService,
                 pythonPopulator,
-                storage,
+                localStorage,
                 submissionService,
                 repositorySynchronizer,
                 pythonPackageRepositoryResolver,
-                maintainerService);
+                maintainerService,
+                pythonPersistentStorage);
     }
 }

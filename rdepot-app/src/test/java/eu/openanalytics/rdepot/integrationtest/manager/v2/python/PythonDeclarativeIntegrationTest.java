@@ -34,6 +34,7 @@ import io.restassured.RestAssured;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.http.ContentType;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -212,7 +213,7 @@ public class PythonDeclarativeIntegrationTest extends DeclarativeIntegrationTest
         JsonObject expectedPackages = (JsonObject) JsonParser.parseReader(reader);
 
         assertSynchronizationStatus(expectedSynchronizationStatus, repositoryId, "3", "1");
-        assertRepositories(expectedRepositories);
+        assertRepositoriesAsAdmin(expectedRepositories);
         assertPackages(expectedPackages);
     }
 
@@ -336,6 +337,78 @@ public class PythonDeclarativeIntegrationTest extends DeclarativeIntegrationTest
         JsonObject expectedPackages = (JsonObject) JsonParser.parseReader(reader);
 
         assertSynchronizationStatus(expectedSynchronizationStatus, repositoryIdToSynchronize, null, null);
+        assertRepositories(expectedRepositories);
+        assertPackages(expectedPackages);
+    }
+
+    @Test
+    public void synchronizeAllPackagesFromRepository() throws FileNotFoundException {
+        final String sourceRepositoryId = "1";
+        final String repositoryId = "16";
+
+        given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .when()
+                .post(API_PATH + "/repositories/" + sourceRepositoryId + "/synchronize-mirrors")
+                .then()
+                .statusCode(204);
+
+        await().atMost(300, TimeUnit.SECONDS)
+                .with()
+                .pollInterval(5, TimeUnit.SECONDS)
+                .until(() -> assertSynchronizationFinished(sourceRepositoryId));
+
+        given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .when()
+                .post(API_PATH + "/repositories/" + repositoryId + "/synchronize-mirrors")
+                .then()
+                .statusCode(204);
+
+        await().atMost(180, TimeUnit.SECONDS)
+                .with()
+                .pollInterval(5, TimeUnit.SECONDS)
+                .until(() -> assertSynchronizationFinished(repositoryId));
+
+        FileReader reader = new FileReader(JSON_PATH + "/synchronization_status_all_packages.json");
+        JsonObject expectedSynchronizationStatus = (JsonObject) JsonParser.parseReader(reader);
+        reader = new FileReader(JSON_PATH + "/repositories_after_synchronization_all_packages.json");
+        JsonObject expectedRepositories = (JsonObject) JsonParser.parseReader(reader);
+        reader = new FileReader(JSON_PATH + "/packages_after_synchronization_all_packages.json");
+        JsonObject expectedPackages = (JsonObject) JsonParser.parseReader(reader);
+
+        assertSynchronizationStatus(expectedSynchronizationStatus, repositoryId, "20", "0");
+        assertRepositories(expectedRepositories);
+        assertPackages(expectedPackages);
+    }
+
+    @Test
+    public void synchronizationStatus_allPackagesRepoIndexFileError() throws IOException {
+        final String repositoryId = "17";
+
+        given().header(AUTHORIZATION, BEARER + ADMIN_TOKEN)
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .when()
+                .post(API_PATH + "/repositories/" + repositoryId + "/synchronize-mirrors")
+                .then()
+                .statusCode(204);
+
+        await().atMost(180, TimeUnit.SECONDS)
+                .with()
+                .pollInterval(5, TimeUnit.SECONDS)
+                .until(() -> assertSynchronizationFinished(repositoryId));
+
+        FileReader reader = new FileReader(JSON_PATH + "/synchronization_status_all_packages_repo_error.json");
+        JsonObject expectedSynchronizationStatus = (JsonObject) JsonParser.parseReader(reader);
+        reader = new FileReader(JSON_PATH + "/repositories_after_synchronization_with_all_packages_repo_error.json");
+        JsonObject expectedRepositories = (JsonObject) JsonParser.parseReader(reader);
+        reader = new FileReader(JSON_PATH + "/packages_after_synchronization_with_error.json");
+        JsonObject expectedPackages = (JsonObject) JsonParser.parseReader(reader);
+
+        assertSynchronizationStatus(expectedSynchronizationStatus, repositoryId, null, null);
         assertRepositories(expectedRepositories);
         assertPackages(expectedPackages);
     }

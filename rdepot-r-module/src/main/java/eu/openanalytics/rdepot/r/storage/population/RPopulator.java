@@ -20,23 +20,18 @@
  */
 package eu.openanalytics.rdepot.r.storage.population;
 
-import eu.openanalytics.rdepot.base.storage.Populator;
 import eu.openanalytics.rdepot.base.storage.exceptions.CleanUpAfterSynchronizationException;
 import eu.openanalytics.rdepot.base.storage.exceptions.OrganizePackagesException;
+import eu.openanalytics.rdepot.base.storage.population.Populator;
 import eu.openanalytics.rdepot.base.synchronization.checksums.Checksums;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import eu.openanalytics.rdepot.r.entities.RRepository;
-import eu.openanalytics.rdepot.r.entities.Vignette;
-import eu.openanalytics.rdepot.r.storage.exceptions.GenerateManualException;
-import eu.openanalytics.rdepot.r.storage.exceptions.GetReferenceManualException;
-import eu.openanalytics.rdepot.r.storage.exceptions.ReadPackageVignetteException;
 import eu.openanalytics.rdepot.r.synchronization.SynchronizeRepositoryRequestBody;
-import java.nio.file.Path;
 import java.util.List;
 import org.springframework.util.MultiValueMap;
 
 /**
- * Provides features specific for R Packages storage management.
+ * Provides features specific for R Packages localStorage management.
  */
 public interface RPopulator extends Populator<RRepository, RPackage> {
     /**
@@ -79,36 +74,4 @@ public interface RPopulator extends Populator<RRepository, RPackage> {
      */
     void cleanUpAfterSynchronization(PopulatedRepositoryContent populatedRepositoryContent)
             throws CleanUpAfterSynchronizationException;
-
-    /**
-     * Fetches reference manual file from the storage.
-     */
-    byte[] getReferenceManual(RPackage packageBag) throws GetReferenceManualException;
-
-    /**
-     * Fetches links to available vignettes for a given package.
-     */
-    List<Vignette> getAvailableVignettes(RPackage packageBag);
-
-    /**
-     * Reads vignette from storage.
-     */
-    byte[] readVignette(RPackage packageBag, String filename) throws ReadPackageVignetteException;
-
-    /**
-     * Creates manual for a package and puts it in the local storage.
-     */
-    void generateManual(RPackage packageBag) throws GenerateManualException;
-
-    Boolean checkIfManualExists(Path path);
-
-    /**
-     * Creates PACKAGES and index.html files for binary package platforms
-     * for which there are currently no published packages.
-     * @param populatedRepositoryContent to modify
-     * @param platforms list of platform directories
-     */
-    PopulatedRepositoryContent addMetadataForEmptyPlatforms(
-            PopulatedRepositoryContent populatedRepositoryContent, List<String> platforms)
-            throws OrganizePackagesException;
 }

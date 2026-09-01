@@ -20,7 +20,7 @@
  */
 package eu.openanalytics.rdepot.r.storage.population;
 
-import eu.openanalytics.rdepot.base.storage.PopulatedPackage;
+import eu.openanalytics.rdepot.base.storage.population.PopulatedPackage;
 import eu.openanalytics.rdepot.r.entities.RPackage;
 import java.io.Serial;
 import lombok.Getter;

@@ -19,6 +19,7 @@ COPY public."user" (id, role_id, name, email, login, active, last_logged_in_on, 
 4	4	Albert Einstein	einstein@ldap.forumsys.com	einstein	t	2020-08-20	f	1970-01-01
 9	1	John Doe	doe@localhost	doe	f	2020-08-20	f	1970-01-01
 10	1	Alfred Tarski	tarski@localhost	tarski	t	2020-08-25	f	1970-01-01
+11	1	Assistant Of Tesla	tesla@ldap.forumsys.com	teslasassistant	t	2026-07-23	f	1970-01-01
 \.
 
 
@@ -1085,6 +1086,7 @@ COPY public.access_token (id, user_id, name, value, creation_date, expiration_da
 6	5	century	$2a$10$BCP6uFaJRLJD2fx3IWDRNOnFkkKTugWjCFIe8CNoC.iR.MbM.ubOO	2024-01-19	2124-12-31	t	f
 7	6	century	$2a$10$bAprhSNIWmFXBY5RA9SgKOpmGpaeTzcrDWXceawLbky6WFG.3nqqK	2024-01-19	2124-12-31	t	f
 8	7	century	$2a$10$sfnJ0DtxdmqCOGemySK1qOFT1COAWTHguCEa9NlIH/ZqcYt7fTLsK	2024-01-19	2124-12-31	t	f
+9	11	century	$2a$10$.nNYdVQsv46wpJ3oeciZcOKtr/eHSsnOUInRulUbFkucXWuW5HzLm	2024-01-19	2124-12-31	t	f
 \.
 
 --
@@ -1112,7 +1114,7 @@ COPY public.package_package_maintainer (package_id, package_maintainer_id) FROM 
 -- Name: access_token_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.access_token_id_seq', 8, true);
+SELECT pg_catalog.setval('public.access_token_id_seq', 9, true);
 
 --
 -- Name: api_token_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
@@ -1181,7 +1183,7 @@ SELECT pg_catalog.setval('public.submission_id_seq', 47, true);
 -- Name: user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.user_id_seq', 10, true);
+SELECT pg_catalog.setval('public.user_id_seq', 11, true);
 
 --
 -- Name: user_settings_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres

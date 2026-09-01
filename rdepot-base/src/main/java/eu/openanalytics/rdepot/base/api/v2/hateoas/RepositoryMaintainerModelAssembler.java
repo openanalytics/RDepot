@@ -25,6 +25,7 @@ import eu.openanalytics.rdepot.base.api.v2.converters.DtoConverter;
 import eu.openanalytics.rdepot.base.api.v2.dtos.RepositoryMaintainerDto;
 import eu.openanalytics.rdepot.base.entities.RepositoryMaintainer;
 import eu.openanalytics.rdepot.base.entities.User;
+import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.UserService;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,20 +45,26 @@ public class RepositoryMaintainerModelAssembler
         extends AbstractRoleAwareModelAssembler<RepositoryMaintainer, RepositoryMaintainerDto> {
 
     private final UserService userService;
+    private final SecurityMediator securityMediator;
 
     @Autowired
     public RepositoryMaintainerModelAssembler(
-            DtoConverter<RepositoryMaintainer, RepositoryMaintainerDto> dtoConverter, UserService userService) {
+            DtoConverter<RepositoryMaintainer, RepositoryMaintainerDto> dtoConverter,
+            SecurityMediator securityMediator,
+            UserService userService) {
         super(dtoConverter, ApiV2RepositoryMaintainerController.class, "repositoryMaintainer", Optional.empty());
         this.userService = userService;
+        this.securityMediator = securityMediator;
     }
 
     private RepositoryMaintainerModelAssembler(
             DtoConverter<RepositoryMaintainer, RepositoryMaintainerDto> dtoConverter,
+            SecurityMediator securityMediator,
             UserService userService,
             User user) {
         super(dtoConverter, ApiV2RepositoryMaintainerController.class, "repositoryMaintainer", Optional.of(user));
         this.userService = userService;
+        this.securityMediator = securityMediator;
     }
 
     @Override
@@ -75,11 +82,19 @@ public class RepositoryMaintainerModelAssembler
     @Override
     public RepresentationModelAssembler<RepositoryMaintainer, EntityModel<RepositoryMaintainerDto>> assemblerWithUser(
             User user) {
-        return new RepositoryMaintainerModelAssembler(dtoConverter, userService, user);
+        return new RepositoryMaintainerModelAssembler(dtoConverter, securityMediator, userService, user);
     }
 
     @Override
     protected Class<?> getExtensionControllerClass(RepositoryMaintainer entity) {
         return ApiV2RepositoryMaintainerController.class;
+    }
+
+    @Override
+    public EntityModel<RepositoryMaintainerDto> toModel(RepositoryMaintainer entity, User user) {
+        RepositoryMaintainerDto dto = dtoConverter.convertEntityToDto(entity);
+
+        dto.setPermissions(securityMediator.getPermissions(entity, user));
+        return EntityModel.of(dto, generateRoleBasedAvailableLinksForEntity(entity, user));
     }
 }

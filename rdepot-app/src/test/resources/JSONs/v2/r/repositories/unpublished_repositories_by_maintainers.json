@@ -1,32 +1,8 @@
 {
-    "status": "SUCCESS",
     "code": 200,
-    "message": "Your request has been processed successfully.",
-    "messageCode": "success.request.processed",
     "data": {
-        "links": [
-            {
-                "rel": "self",
-                "href": "http://localhost:8017/api/v2/manager/r/repositories?maintainer=Nikola%20Tesla&published=false&page=0&size=20&sort=id,desc"
-            }
-        ],
         "content": [
             {
-                "id": 5,
-                "version": 6,
-                "publicationUri": "http://localhost/repo/testrepo4",
-                "name": "testrepo4",
-                "serverAddress": "http://oa-rdepot-repo:8080/testrepo4",
-                "deleted": false,
-                "published": false,
-                "synchronizing": false,
-                "technology": "R",
-                "requiresAuthentication": true,
-                "numberOfPackages": 5,
-                "lastPublicationTimestamp": "",
-                "lastModifiedTimestamp": "2024-06-21T12:30:25Z",
-                "lastPublicationSuccessful": false,
-                "redirectToSource": false,
                 "allowedFiles": [
                     {
                         "mimetype": "application/gzip",
@@ -37,6 +13,22 @@
                         "extension": ".tar.gz"
                     }
                 ],
+                "deleted": false,
+                "id": 5,
+                "lastModifiedTimestamp": "2024-06-21T12:30:25Z",
+                "lastPublicationSuccessful": false,
+                "lastPublicationTimestamp": "",
+                "name": "testrepo4",
+                "numberOfPackages": 5,
+                "permissions": [],
+                "publicationUri": "http://localhost/repo/testrepo4",
+                "published": false,
+                "redirectToSource": false,
+                "requiresAuthentication": true,
+                "serverAddress": "http://oa-rdepot-repo:8080/testrepo4",
+                "synchronizing": false,
+                "technology": "R",
+                "version": 6,
                 "links": [
                     {
                         "rel": "self",
@@ -49,21 +41,6 @@
                 ]
             },
             {
-                "id": 4,
-                "version": 18,
-                "publicationUri": "http://localhost/repo/testrepo3",
-                "name": "testrepo3",
-                "serverAddress": "http://oa-rdepot-repo:8080/testrepo3",
-                "deleted": false,
-                "published": false,
-                "synchronizing": false,
-                "technology": "R",
-                "requiresAuthentication": true,
-                "numberOfPackages": 4,
-                "lastPublicationTimestamp": "",
-                "lastModifiedTimestamp": "2024-04-27T12:30:25Z",
-                "lastPublicationSuccessful": false,
-                "redirectToSource": false,
                 "allowedFiles": [
                     {
                         "mimetype": "application/gzip",
@@ -74,6 +51,22 @@
                         "extension": ".tar.gz"
                     }
                 ],
+                "deleted": false,
+                "id": 4,
+                "lastModifiedTimestamp": "2024-04-27T12:30:25Z",
+                "lastPublicationSuccessful": false,
+                "lastPublicationTimestamp": "",
+                "name": "testrepo3",
+                "numberOfPackages": 4,
+                "permissions": [],
+                "publicationUri": "http://localhost/repo/testrepo3",
+                "published": false,
+                "redirectToSource": false,
+                "requiresAuthentication": true,
+                "serverAddress": "http://oa-rdepot-repo:8080/testrepo3",
+                "synchronizing": false,
+                "technology": "R",
+                "version": 18,
                 "links": [
                     {
                         "rel": "self",
@@ -86,11 +79,20 @@
                 ]
             }
         ],
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/r/repositories?maintainer=Nikola%20Tesla&published=false&page=0&size=20&sort=id,desc"
+            }
+        ],
         "page": {
+            "number": 0,
             "size": 20,
             "totalElements": 2,
-            "totalPages": 1,
-            "number": 0
+            "totalPages": 1
         }
-    }
+    },
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "status": "SUCCESS"
 }

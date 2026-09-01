@@ -13,6 +13,7 @@
             "login": "einstein",
             "email": "einstein@ldap.forumsys.com"
         },
+        "permissions": [],
         "changes": "",
         "links": [
             {
@@ -33,8 +34,8 @@
             "description": null,
             "technology": "Python",
             "repository": {
-                "name": "testrepo9",
                 "lastPublicationSuccessful": false,
+                "name": "testrepo9",
                 "id": 9,
                 "published": false,
                 "technology": "Python",
@@ -46,6 +47,11 @@
             "url": "Bug Tracker, https://github.com/yaml/pyyaml/issues, CI, https://github.com/yaml/pyyaml/actions, Documentation, https://pyyaml.org/wiki/PyYAMLDocumentation, Mailing lists, http://lists.sourceforge.net/lists/listinfo/yaml-core, Source Code, https://github.com/yaml/pyyaml",
             "deleted": false,
             "descriptionContentType": "",
+            "permissions": [
+                "package.deactivate",
+                "package.delete.soft",
+                "package.edit"
+            ],
             "binary": false,
             "name": "PyYAML",
             "submission": {

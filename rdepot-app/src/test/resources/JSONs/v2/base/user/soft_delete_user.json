@@ -2,34 +2,37 @@
     "code": 200,
     "data": {
         "active": false,
+        "createdOn": "1970-01-01T00:00:00Z",
         "deleted": true,
         "email": "newton@ldap.forumsys.com",
         "id": 7,
+        "lastLoggedInOn": "2020-03-28T00:00:00Z",
+        "login": "newton",
+        "name": "Isaac Newton",
+        "permissions": [],
+        "role": "user",
+        "roleId": 1,
+        "userSettings": null,
         "links": [
             {
-                "href": "http://localhost:8017/api/v2/manager/users/7",
-                "rel": "self"
-            },
-            {
-                "href": "http://localhost:8017/api/v2/manager/users",
-                "rel": "userList"
-            },
-            {
-                "href": "http://localhost:8017/api/v2/manager/users/7",
                 "rel": "self",
-                "type": "PATCH",
+                "href": "http://localhost:8017/api/v2/manager/users/7"
+            },
+            {
+                "rel": "userList",
+                "href": "http://localhost:8017/api/v2/manager/users"
+            },
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/users/7",
                 "modifiableProperties": [
                     "deleted",
                     "active",
                     "roleId"
-                ]
+                ],
+                "type": "PATCH"
             }
-        ],
-        "login": "newton",
-        "name": "Isaac Newton",
-        "role": "user",
-        "roleId": 1,
-        "userSettings": null
+        ]
     },
     "message": "Your request has been processed successfully.",
     "messageCode": "success.request.processed",

@@ -20,7 +20,7 @@
                     "email": "einstein@ldap.forumsys.com"
                 },
                 "repository": {
-                    "id": 16,
+                    "id": 18,
                     "name": "A",
                     "publicationUri": "http://localhost/repo/A",
                     "published": true,
@@ -54,6 +54,7 @@
                 "distribution": null,
                 "enhances": null,
                 "linkingTo": null,
+                "permissions": [],
                 "priority": null,
                 "needsCompilation": "no",
                 "maintainer": "Scott Fortmann-Roe <scottfr@berkeley.edu>",
@@ -71,7 +72,7 @@
                     },
                     {
                         "rel": "repository",
-                        "href": "http://localhost:8021/api/v2/manager/r/repositories/16"
+                        "href": "http://localhost:8021/api/v2/manager/r/repositories/18"
                     }
                 ]
             }

@@ -1,0 +1,12 @@
+name: ZF
+publicationUri: http://localhost/repo/ZF
+serverAddress: http://oa-rdepot-repo:8080/python/ZF
+published: true
+technology: "PYTHON"
+requiresAuthentication: true
+mirrors:
+  - name: X
+    uri: htts://oa-rdepot-proxy/repo/X
+    syncInterval: ""
+    type: tarball
+    allPackages: true

@@ -1,0 +1,93 @@
+{
+    "code": 200,
+    "data": {
+        "packages": [
+            {
+                "error": null,
+                "mirror": {
+                    "name": "X",
+                    "type": "tarball",
+                    "uri": "http://oa-rdepot-proxy/repo/X"
+                },
+                "name": "abo_tools",
+                "status": "SUCCESS",
+                "version": "1.0"
+            },
+            {
+                "error": null,
+                "mirror": {
+                    "name": "X",
+                    "type": "tarball",
+                    "uri": "http://oa-rdepot-proxy/repo/X"
+                },
+                "name": "tetrapolyscope",
+                "status": "SUCCESS",
+                "version": "0.0.1"
+            },
+            {
+                "error": null,
+                "mirror": {
+                    "name": "X",
+                    "type": "tarball",
+                    "uri": "http://oa-rdepot-proxy/repo/X"
+                },
+                "name": "adobe_analytic_API_V2.0-azure",
+                "status": "SUCCESS",
+                "version": "0.0.3"
+            },
+            {
+                "error": null,
+                "mirror": {
+                    "name": "X",
+                    "type": "tarball",
+                    "uri": "http://oa-rdepot-proxy/repo/X"
+                },
+                "name": "numpy",
+                "status": "SUCCESS",
+                "version": "1.26.4"
+            },
+            {
+                "error": null,
+                "mirror": {
+                    "name": "X",
+                    "type": "tarball",
+                    "uri": "http://oa-rdepot-proxy/repo/X"
+                },
+                "name": "numpy",
+                "status": "SUCCESS",
+                "version": "2.4.0"
+            },
+            {
+                "error": null,
+                "mirror": {
+                    "name": "X",
+                    "type": "tarball",
+                    "uri": "http://oa-rdepot-proxy/repo/X"
+                },
+                "name": "ArmyOfEvilRobots",
+                "status": "SUCCESS",
+                "version": "0.4.1dev"
+            }
+        ],
+        "page": {
+            "number": 0,
+            "size": 20,
+            "totalElements": 6,
+            "totalPages": 1
+        },
+        "repository": {
+            "id": 16,
+            "lastPublicationSuccessful": true,
+            "name": "ZE",
+            "publicationUri": "http://localhost/repo/ZE",
+            "published": true,
+            "requiresAuthentication": true,
+            "technology": "Python"
+        },
+        "status": "SUCCESS",
+        "timestamp": "2026-05-06T10:13:55.833Z"
+    },
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "status": "SUCCESS"
+}

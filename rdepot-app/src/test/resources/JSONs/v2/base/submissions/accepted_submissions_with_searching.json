@@ -1,554 +1,575 @@
 {
     "code": 200,
     "data": {
-        "links": [
-            {
-                "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions?state=accepted&search=Nikola&page=0&size=20&sort=id,asc"
-            }
-        ],
-        "page": {
-            "number": 0,
-            "size": 20,
-            "totalPages": 1,
-            "totalElements": 7
-        },
         "content": [
             {
                 "approver": {
-                    "name": "Nikola Tesla",
+                    "email": "tesla@ldap.forumsys.com",
                     "id": 5,
                     "login": "tesla",
-                    "email": "tesla@ldap.forumsys.com"
+                    "name": "Nikola Tesla"
                 },
-                "submitter": {
-                    "name": "Isaac Newton",
-                    "id": 7,
-                    "login": "newton",
-                    "email": "newton@ldap.forumsys.com"
-                },
-                "created": "2020-03-28T20:05:58Z",
                 "changes": null,
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/17"
-                    },
-                    {
-                        "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
-                    }
-                ],
+                "created": "2020-03-28T20:05:58Z",
                 "id": 17,
-                "state": "ACCEPTED",
-                "technology": "R",
                 "packageBag": {
-                    "author": "Scott Fortmann-Roe",
                     "active": true,
-                    "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo1",
-                        "lastPublicationSuccessful": true,
-                        "id": 2,
-                        "published": true,
-                        "technology": "R",
-                        "requiresAuthentication": false,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
-                    },
-                    "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
-                    "version": "0.9.2",
-                    "url": null,
-                    "deleted": false,
+                    "author": "Scott Fortmann-Roe",
                     "binary": false,
+                    "deleted": false,
+                    "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
+                    "descriptionContentType": "txt",
+                    "id": 17,
                     "name": "A3",
+                    "permissions": [],
+                    "repository": {
+                        "id": 2,
+                        "lastPublicationSuccessful": true,
+                        "name": "testrepo1",
+                        "publicationUri": "http://localhost/repo/testrepo1",
+                        "published": true,
+                        "requiresAuthentication": false,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/repositories/2/9907084/A3_0.9.2.tar.gz",
                     "submission": {
                         "id": 17,
                         "state": "ACCEPTED"
                     },
+                    "technology": "R",
+                    "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
+                    "url": null,
+                    "user": {
+                        "email": "tesla@ldap.forumsys.com",
+                        "id": 5,
+                        "login": "tesla",
+                        "name": "Nikola Tesla"
+                    },
+                    "version": "0.9.2",
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/17"
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/17"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",
                             "href": "http://localhost:8017/api/v2/manager/r/repositories/2"
                         }
-                    ],
-                    "id": 17,
-                    "user": {
-                        "name": "Nikola Tesla",
-                        "id": 5,
-                        "login": "tesla",
-                        "email": "tesla@ldap.forumsys.com"
-                    }
-                }
-            },
-            {
-                "approver": {
-                    "name": "Nikola Tesla",
-                    "id": 5,
-                    "login": "tesla",
-                    "email": "tesla@ldap.forumsys.com"
+                    ]
                 },
+                "permissions": [],
+                "state": "ACCEPTED",
                 "submitter": {
-                    "name": "Isaac Newton",
+                    "email": "newton@ldap.forumsys.com",
                     "id": 7,
                     "login": "newton",
-                    "email": "newton@ldap.forumsys.com"
+                    "name": "Isaac Newton"
                 },
-                "created": "2020-03-28T20:05:58Z",
-                "changes": null,
+                "technology": "R",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/18"
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/17"
                     },
                     {
                         "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
+                        "href": "http://localhost:8017/api/v2/manager/submissions"
                     }
-                ],
+                ]
+            },
+            {
+                "approver": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "changes": null,
+                "created": "2020-03-28T20:05:58Z",
                 "id": 18,
-                "state": "ACCEPTED",
-                "technology": "R",
                 "packageBag": {
-                    "author": "Katalin Csillery, Michael Blum and Olivier Francois",
                     "active": true,
-                    "description": "The package implements several ABC algorithms for performing parameter estimation and model selection. Cross-validation tools are also available for measuring the accuracy of ABC estimates, and to calculate the misclassification probabilities of different models.",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo1",
-                        "lastPublicationSuccessful": true,
-                        "id": 2,
-                        "published": true,
-                        "technology": "R",
-                        "requiresAuthentication": false,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
-                    },
-                    "title": "Tools for Approximate Bayesian Computation (ABC)",
-                    "version": "1.3",
-                    "url": null,
-                    "deleted": false,
+                    "author": "Katalin Csillery, Michael Blum and Olivier Francois",
                     "binary": false,
+                    "deleted": false,
+                    "description": "The package implements several ABC algorithms for performing parameter estimation and model selection. Cross-validation tools are also available for measuring the accuracy of ABC estimates, and to calculate the misclassification probabilities of different models.",
+                    "descriptionContentType": "txt",
+                    "id": 18,
                     "name": "abc",
+                    "permissions": [],
+                    "repository": {
+                        "id": 2,
+                        "lastPublicationSuccessful": true,
+                        "name": "testrepo1",
+                        "publicationUri": "http://localhost/repo/testrepo1",
+                        "published": true,
+                        "requiresAuthentication": false,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/repositories/2/88170013/abc_1.3.tar.gz",
                     "submission": {
                         "id": 18,
                         "state": "ACCEPTED"
                     },
+                    "technology": "R",
+                    "title": "Tools for Approximate Bayesian Computation (ABC)",
+                    "url": null,
+                    "user": {
+                        "email": "tesla@ldap.forumsys.com",
+                        "id": 5,
+                        "login": "tesla",
+                        "name": "Nikola Tesla"
+                    },
+                    "version": "1.3",
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/18"
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/18"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",
                             "href": "http://localhost:8017/api/v2/manager/r/repositories/2"
                         }
-                    ],
-                    "id": 18,
-                    "user": {
-                        "name": "Nikola Tesla",
-                        "id": 5,
-                        "login": "tesla",
-                        "email": "tesla@ldap.forumsys.com"
-                    }
-                }
-            },
-            {
-                "approver": {
-                    "name": "Nikola Tesla",
-                    "id": 5,
-                    "login": "tesla",
-                    "email": "tesla@ldap.forumsys.com"
+                    ]
                 },
+                "permissions": [],
+                "state": "ACCEPTED",
                 "submitter": {
-                    "name": "Isaac Newton",
+                    "email": "newton@ldap.forumsys.com",
                     "id": 7,
                     "login": "newton",
-                    "email": "newton@ldap.forumsys.com"
+                    "name": "Isaac Newton"
                 },
-                "created": "2020-03-28T20:06:23Z",
-                "changes": null,
+                "technology": "R",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/20"
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/18"
                     },
                     {
                         "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
+                        "href": "http://localhost:8017/api/v2/manager/submissions"
                     }
-                ],
+                ]
+            },
+            {
+                "approver": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "changes": null,
+                "created": "2020-03-28T20:06:23Z",
                 "id": 20,
-                "state": "ACCEPTED",
-                "technology": "R",
                 "packageBag": {
-                    "author": "Cedric Landerer [aut, cre], Gabriel Hanas [ctb], Jeremy Rogers [ctb], Alex Cope [ctb], Denizhan Pak [ctb]",
                     "active": true,
-                    "description": "Is a collection of models to analyze genome scale codon data using a Bayesian framework. Provides visualization routines and checkpointing for model fittings. Currently published models to analyze gene data for selection on codon",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo4",
-                        "lastPublicationSuccessful": false,
-                        "id": 5,
-                        "published": false,
-                        "technology": "R",
-                        "requiresAuthentication": true,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo4"
-                    },
-                    "title": "Analysis of Codon Data under Stationarity using a Bayesian Framework",
-                    "version": "0.1.2.3",
-                    "url": "https:\/\/github.com\/clandere\/AnaCoDa",
-                    "deleted": false,
+                    "author": "Cedric Landerer [aut, cre], Gabriel Hanas [ctb], Jeremy Rogers [ctb], Alex Cope [ctb], Denizhan Pak [ctb]",
                     "binary": false,
+                    "deleted": false,
+                    "description": "Is a collection of models to analyze genome scale codon data using a Bayesian framework. Provides visualization routines and checkpointing for model fittings. Currently published models to analyze gene data for selection on codon",
+                    "descriptionContentType": "txt",
+                    "id": 20,
                     "name": "AnaCoDa",
+                    "permissions": [],
+                    "repository": {
+                        "id": 5,
+                        "lastPublicationSuccessful": false,
+                        "name": "testrepo4",
+                        "publicationUri": "http://localhost/repo/testrepo4",
+                        "published": false,
+                        "requiresAuthentication": true,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/repositories/5/39437028/AnaCoDa_0.1.2.3.tar.gz",
                     "submission": {
                         "id": 20,
                         "state": "ACCEPTED"
                     },
+                    "technology": "R",
+                    "title": "Analysis of Codon Data under Stationarity using a Bayesian Framework",
+                    "url": "https://github.com/clandere/AnaCoDa",
+                    "user": {
+                        "email": "galieleo@ldap.forumsys.com",
+                        "id": 6,
+                        "login": "galieleo",
+                        "name": "Galileo Galilei"
+                    },
+                    "version": "0.1.2.3",
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/20"
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/20"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",
                             "href": "http://localhost:8017/api/v2/manager/r/repositories/5"
                         }
-                    ],
-                    "id": 20,
-                    "user": {
-                        "name": "Galileo Galilei",
-                        "id": 6,
-                        "login": "galieleo",
-                        "email": "galieleo@ldap.forumsys.com"
-                    }
-                }
-            },
-            {
-                "approver": {
-                    "name": "Nikola Tesla",
-                    "id": 5,
-                    "login": "tesla",
-                    "email": "tesla@ldap.forumsys.com"
+                    ]
                 },
+                "permissions": [],
+                "state": "ACCEPTED",
                 "submitter": {
-                    "name": "Galileo Galilei",
-                    "id": 6,
-                    "login": "galieleo",
-                    "email": "galieleo@ldap.forumsys.com"
+                    "email": "newton@ldap.forumsys.com",
+                    "id": 7,
+                    "login": "newton",
+                    "name": "Isaac Newton"
                 },
-                "created": "2020-03-28T20:06:48Z",
-                "changes": null,
+                "technology": "R",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/21"
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/20"
                     },
                     {
                         "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
+                        "href": "http://localhost:8017/api/v2/manager/submissions"
                     }
-                ],
+                ]
+            },
+            {
+                "approver": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "changes": null,
+                "created": "2020-03-28T20:06:48Z",
                 "id": 21,
-                "state": "ACCEPTED",
-                "technology": "R",
                 "packageBag": {
-                    "author": "Peter Bogetoft and Lars Otto",
                     "active": true,
-                    "description": "Estimates and graphs deterministic (DEA) frontier models with different technology assumptions (fdh, vrs, drs, crs, irs, add). Also handles possible slacks, peers and their weights (lambdas), optimal cost, revenue and profit allocation, super--efficiency, and mergers. A comparative method for estimating SFA efficiencies is included.",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo1",
-                        "lastPublicationSuccessful": true,
-                        "id": 2,
-                        "published": true,
-                        "technology": "R",
-                        "requiresAuthentication": false,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
-                    },
-                    "title": "Benchmark and frontier analysis using DEA and SFA",
-                    "version": "0.10",
-                    "url": null,
-                    "deleted": false,
+                    "author": "Peter Bogetoft and Lars Otto",
                     "binary": false,
+                    "deleted": false,
+                    "description": "Estimates and graphs deterministic (DEA) frontier models with different technology assumptions (fdh, vrs, drs, crs, irs, add). Also handles possible slacks, peers and their weights (lambdas), optimal cost, revenue and profit allocation, super--efficiency, and mergers. A comparative method for estimating SFA efficiencies is included.",
+                    "descriptionContentType": "txt",
+                    "id": 21,
                     "name": "Benchmarking",
+                    "permissions": [],
+                    "repository": {
+                        "id": 2,
+                        "lastPublicationSuccessful": true,
+                        "name": "testrepo1",
+                        "publicationUri": "http://localhost/repo/testrepo1",
+                        "published": true,
+                        "requiresAuthentication": false,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/repositories/2/71228208/Benchmarking_0.10.tar.gz",
                     "submission": {
                         "id": 21,
                         "state": "ACCEPTED"
                     },
+                    "technology": "R",
+                    "title": "Benchmark and frontier analysis using DEA and SFA",
+                    "url": null,
+                    "user": {
+                        "email": "tesla@ldap.forumsys.com",
+                        "id": 5,
+                        "login": "tesla",
+                        "name": "Nikola Tesla"
+                    },
+                    "version": "0.10",
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/21"
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/21"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",
                             "href": "http://localhost:8017/api/v2/manager/r/repositories/2"
                         }
-                    ],
-                    "id": 21,
-                    "user": {
-                        "name": "Nikola Tesla",
-                        "id": 5,
-                        "login": "tesla",
-                        "email": "tesla@ldap.forumsys.com"
-                    }
-                }
-            },
-            {
-                "approver": {
-                    "name": "Nikola Tesla",
-                    "id": 5,
-                    "login": "tesla",
-                    "email": "tesla@ldap.forumsys.com"
+                    ]
                 },
+                "permissions": [],
+                "state": "ACCEPTED",
                 "submitter": {
-                    "name": "Nikola Tesla",
-                    "id": 5,
-                    "login": "tesla",
-                    "email": "tesla@ldap.forumsys.com"
+                    "email": "galieleo@ldap.forumsys.com",
+                    "id": 6,
+                    "login": "galieleo",
+                    "name": "Galileo Galilei"
                 },
-                "created": "2020-03-28T20:07:52Z",
-                "changes": null,
+                "technology": "R",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/25"
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/21"
                     },
                     {
                         "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
+                        "href": "http://localhost:8017/api/v2/manager/submissions"
                     }
-                ],
+                ]
+            },
+            {
+                "approver": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "changes": null,
+                "created": "2020-03-28T20:07:52Z",
                 "id": 25,
-                "state": "ACCEPTED",
-                "technology": "R",
                 "packageBag": {
-                    "author": "Neil J. Gunther [aut], Stefan Moeding [aut, cre]",
                     "active": true,
-                    "description": "The Universal Scalability Law (Gunther 2007)",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo1",
-                        "lastPublicationSuccessful": true,
-                        "id": 2,
-                        "published": true,
-                        "technology": "R",
-                        "requiresAuthentication": false,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo1"
-                    },
-                    "title": "Analyze System Scalability with the Universal Scalability Law",
-                    "version": "2.0.0",
-                    "url": null,
-                    "deleted": false,
+                    "author": "Neil J. Gunther [aut], Stefan Moeding [aut, cre]",
                     "binary": false,
+                    "deleted": false,
+                    "description": "The Universal Scalability Law (Gunther 2007)",
+                    "descriptionContentType": "txt",
+                    "id": 25,
                     "name": "usl",
+                    "permissions": [],
+                    "repository": {
+                        "id": 2,
+                        "lastPublicationSuccessful": true,
+                        "name": "testrepo1",
+                        "publicationUri": "http://localhost/repo/testrepo1",
+                        "published": true,
+                        "requiresAuthentication": false,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/repositories/2/33930690/usl_2.0.0.tar.gz",
                     "submission": {
                         "id": 25,
                         "state": "ACCEPTED"
                     },
+                    "technology": "R",
+                    "title": "Analyze System Scalability with the Universal Scalability Law",
+                    "url": null,
+                    "user": {
+                        "email": "tesla@ldap.forumsys.com",
+                        "id": 5,
+                        "login": "tesla",
+                        "name": "Nikola Tesla"
+                    },
+                    "version": "2.0.0",
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/25"
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/25"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",
                             "href": "http://localhost:8017/api/v2/manager/r/repositories/2"
                         }
-                    ],
-                    "id": 25,
-                    "user": {
-                        "name": "Nikola Tesla",
-                        "id": 5,
-                        "login": "tesla",
-                        "email": "tesla@ldap.forumsys.com"
-                    }
-                }
-            },
-            {
-                "approver": {
-                    "name": "Nikola Tesla",
+                    ]
+                },
+                "permissions": [],
+                "state": "ACCEPTED",
+                "submitter": {
+                    "email": "tesla@ldap.forumsys.com",
                     "id": 5,
                     "login": "tesla",
-                    "email": "tesla@ldap.forumsys.com"
+                    "name": "Nikola Tesla"
                 },
-                "submitter": {
-                    "name": "Albert Einstein",
-                    "id": 4,
-                    "login": "einstein",
-                    "email": "einstein@ldap.forumsys.com"
-                },
-                "created": "2023-07-10T12:21:37Z",
-                "changes": null,
+                "technology": "R",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/submissions\/38"
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/25"
                     },
                     {
                         "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
+                        "href": "http://localhost:8017/api/v2/manager/submissions"
                     }
-                ],
+                ]
+            },
+            {
+                "approver": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "changes": null,
+                "created": "2023-07-10T12:21:37Z",
                 "id": 38,
-                "state": "ACCEPTED",
-                "technology": "Python",
                 "packageBag": {
-                    "author": "Python Packaging Authority",
                     "active": true,
-                    "description": null,
-                    "technology": "Python",
-                    "descriptionContentType": "",
-                    "repository": {
-                        "name": "testrepo9",
-                        "lastPublicationSuccessful": false,
-                        "id": 9,
-                        "published": false,
-                        "technology": "Python",
-                        "requiresAuthentication": true,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo9"
-                    },
-                    "title": "Easily download, build, install, upgrade, and uninstall Python packages",
-                    "version": "67.4.0",
-                    "url": "Documentation, https:\/\/setuptools.pypa.io\/, Changelog, https:\/\/setuptools.pypa.io\/en\/stable\/history.html",
-                    "deleted": false,
+                    "author": "Python Packaging Authority",
                     "binary": false,
+                    "deleted": false,
+                    "description": null,
+                    "descriptionContentType": "",
+                    "id": 38,
                     "name": "setuptools",
+                    "permissions": [],
+                    "repository": {
+                        "id": 9,
+                        "lastPublicationSuccessful": false,
+                        "name": "testrepo9",
+                        "publicationUri": "http://localhost/repo/testrepo9",
+                        "published": false,
+                        "requiresAuthentication": true,
+                        "technology": "Python"
+                    },
+                    "source": "/opt/rdepot/repositories/9/95184570/setuptools-67.4.0.tar.gz",
                     "submission": {
                         "id": 38,
                         "state": "ACCEPTED"
                     },
+                    "technology": "Python",
+                    "title": "Easily download, build, install, upgrade, and uninstall Python packages",
+                    "url": "Documentation, https://setuptools.pypa.io/, Changelog, https://setuptools.pypa.io/en/stable/history.html",
+                    "user": {
+                        "email": "einstein@ldap.forumsys.com",
+                        "id": 4,
+                        "login": "einstein",
+                        "name": "Albert Einstein"
+                    },
+                    "version": "67.4.0",
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/38"
+                            "href": "http://localhost:8017/api/v2/manager/python/packages/38"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",
                             "href": "http://localhost:8017/api/v2/manager/python/repositories/9"
                         }
-                    ],
-                    "id": 38,
-                    "user": {
-                        "name": "Albert Einstein",
-                        "id": 4,
-                        "login": "einstein",
-                        "email": "einstein@ldap.forumsys.com"
-                    }
-                }
-            },
-            {
-                "approver": {
-                    "name": "Nikola Tesla",
-                    "id": 5,
-                    "login": "tesla",
-                    "email": "tesla@ldap.forumsys.com"
+                    ]
                 },
+                "permissions": [],
+                "state": "ACCEPTED",
                 "submitter": {
-                    "name": "Nikola Tesla",
-                    "id": 5,
-                    "login": "tesla",
-                    "email": "tesla@ldap.forumsys.com"
+                    "email": "einstein@ldap.forumsys.com",
+                    "id": 4,
+                    "login": "einstein",
+                    "name": "Albert Einstein"
                 },
-                "created": "2023-07-10T12:21:47Z",
-                "changes": null,
+                "technology": "Python",
                 "links": [
                     {
                         "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/submissions\/39"
+                        "href": "http://localhost:8017/api/v2/manager/python/submissions/38"
                     },
                     {
                         "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/submissions"
+                        "href": "http://localhost:8017/api/v2/manager/submissions"
                     }
-                ],
+                ]
+            },
+            {
+                "approver": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "changes": null,
+                "created": "2023-07-10T12:21:47Z",
                 "id": 39,
-                "state": "ACCEPTED",
-                "technology": "Python",
                 "packageBag": {
-                    "author": "Python Packaging Authority",
                     "active": true,
-                    "description": null,
-                    "technology": "Python",
-                    "descriptionContentType": "",
-                    "repository": {
-                        "name": "testrepo9",
-                        "lastPublicationSuccessful": false,
-                        "id": 9,
-                        "published": false,
-                        "technology": "Python",
-                        "requiresAuthentication": true,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo9"
-                    },
-                    "title": "Easily download, build, install, upgrade, and uninstall Python packages",
-                    "version": "67.8.0",
-                    "url": "Documentation, https:\/\/setuptools.pypa.io\/, Changelog, https:\/\/setuptools.pypa.io\/en\/stable\/history.html",
-                    "deleted": false,
+                    "author": "Python Packaging Authority",
                     "binary": false,
+                    "deleted": false,
+                    "description": null,
+                    "descriptionContentType": "",
+                    "id": 39,
                     "name": "setuptools",
+                    "permissions": [],
+                    "repository": {
+                        "id": 9,
+                        "lastPublicationSuccessful": false,
+                        "name": "testrepo9",
+                        "publicationUri": "http://localhost/repo/testrepo9",
+                        "published": false,
+                        "requiresAuthentication": true,
+                        "technology": "Python"
+                    },
+                    "source": "/opt/rdepot/repositories/9/65567066/setuptools-67.8.0.tar.gz",
                     "submission": {
                         "id": 39,
                         "state": "ACCEPTED"
                     },
+                    "technology": "Python",
+                    "title": "Easily download, build, install, upgrade, and uninstall Python packages",
+                    "url": "Documentation, https://setuptools.pypa.io/, Changelog, https://setuptools.pypa.io/en/stable/history.html",
+                    "user": {
+                        "email": "galieleo@ldap.forumsys.com",
+                        "id": 6,
+                        "login": "galieleo",
+                        "name": "Galileo Galilei"
+                    },
+                    "version": "67.8.0",
                     "links": [
                         {
                             "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/39"
+                            "href": "http://localhost:8017/api/v2/manager/python/packages/39"
                         },
                         {
                             "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
+                            "href": "http://localhost:8017/api/v2/manager/packages"
                         },
                         {
                             "rel": "repository",
                             "href": "http://localhost:8017/api/v2/manager/python/repositories/9"
                         }
-                    ],
-                    "id": 39,
-                    "user": {
-                        "name": "Galileo Galilei",
-                        "id": 6,
-                        "login": "galieleo",
-                        "email": "galieleo@ldap.forumsys.com"
+                    ]
+                },
+                "permissions": [],
+                "state": "ACCEPTED",
+                "submitter": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "technology": "Python",
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/python/submissions/39"
+                    },
+                    {
+                        "rel": "submissionList",
+                        "href": "http://localhost:8017/api/v2/manager/submissions"
                     }
-                }
+                ]
             }
-        ]
+        ],
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/submissions?state=accepted&search=Nikola&page=0&size=20&sort=id,asc"
+            }
+        ],
+        "page": {
+            "number": 0,
+            "size": 20,
+            "totalElements": 7,
+            "totalPages": 1
+        }
     },
-    "messageCode": "success.request.processed",
     "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
     "status": "SUCCESS"
 }

@@ -22,20 +22,14 @@ package eu.openanalytics.rdepot.test.unit.api.v2;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.querydsl.core.Tuple;
 import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2NewsfeedEventController;
 import eu.openanalytics.rdepot.base.api.v2.controllers.ApiV2PackageMaintainerController;
-import eu.openanalytics.rdepot.base.entities.PackageMaintainer;
-import eu.openanalytics.rdepot.base.entities.Repository;
-import eu.openanalytics.rdepot.base.entities.User;
+import eu.openanalytics.rdepot.base.entities.*;
 import eu.openanalytics.rdepot.base.messaging.MessageCodes;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.test.context.ApiTestConfig;
@@ -47,6 +41,7 @@ import eu.openanalytics.rdepot.test.unit.api.v2.mockstrategies.FailureStrategy;
 import eu.openanalytics.rdepot.test.unit.api.v2.mockstrategies.SuccessfulStrategy;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,7 +50,6 @@ import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
@@ -117,9 +111,45 @@ public class PackageMaintainerControllerUnitTest extends ApiV2ControllerUnitTest
     @WithMockUser(authorities = {"user", "repositorymaintainer"})
     public void getAllPackageMaintainers() throws Exception {
 
-        when(packageMaintainerService.findAll(any(Pageable.class)))
-                .thenReturn(PackageMaintainerTestFixture.GET_EXAMPLE_PACKAGE_MAINTAINERS_PAGED());
+        QPackageMaintainer maintainer = QPackageMaintainer.packageMaintainer;
+        QPackage packageBag = QPackage.package$;
 
+        Tuple tuple = mock(Tuple.class);
+
+        when(tuple.get(maintainer.id))
+                .thenReturn(100) // convertEntityToDto()
+                .thenReturn(100) // generateAvailableLinksForEntity() if-clause
+                .thenReturn(100) // generateAvailableLinksForEntity() self link
+                .thenReturn(100) // generateRoleBasedAvailableLinksForEntity() baseSelfLink
+                .thenReturn(101)
+                .thenReturn(101)
+                .thenReturn(101)
+                .thenReturn(101)
+                .thenReturn(null);
+        when(tuple.get(packageBag.user.id)).thenReturn(111);
+        when(tuple.get(packageBag.user.name)).thenReturn("Test Package Maintainer");
+        when(tuple.get(packageBag.user.login)).thenReturn("testpackagemaintainer");
+        when(tuple.get(packageBag.user.email)).thenReturn("packagemaintainer@example.org");
+        when(tuple.get(packageBag.name))
+                .thenReturn("TestPackage100")
+                .thenReturn("TestPackage101")
+                .thenReturn("TestPackage102");
+        when(tuple.get(packageBag.repositoryGeneric.id)).thenReturn(123);
+        when(tuple.get(packageBag.repositoryGeneric.name)).thenReturn("Test RDepot Repository");
+        when(tuple.get(packageBag.repositoryGeneric.publicationUri)).thenReturn("http://localhost/repo/testrepo123");
+        when(tuple.get(packageBag.repositoryGeneric.published)).thenReturn(false);
+        when(tuple.get(packageBag.repositoryGeneric.requiresAuthentication)).thenReturn(false);
+        when(tuple.get(packageBag.repositoryGeneric.resourceTechnology)).thenReturn("R");
+        when(tuple.get(packageBag.repositoryGeneric.lastPublicationSuccessful)).thenReturn(true);
+        when(tuple.get(maintainer.deleted)).thenReturn(false).thenReturn(false).thenReturn(null);
+
+        List<PackageMaintainerQueryDSLTuple> maintainers = List.of(
+                new PackageMaintainerQueryDSLTuple(tuple),
+                new PackageMaintainerQueryDSLTuple(tuple),
+                new PackageMaintainerQueryDSLTuple(tuple));
+
+        when(queryRepository.findMaintainers(any(), any(), any(), any(), any(), any()))
+                .thenReturn(maintainers);
         when(userService.findActiveByLogin("user")).thenReturn(Optional.of(user));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v2/manager/package-maintainers")

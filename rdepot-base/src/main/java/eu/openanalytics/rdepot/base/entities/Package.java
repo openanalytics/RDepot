@@ -28,19 +28,7 @@ import eu.openanalytics.rdepot.base.entities.enums.ResourceType;
 import eu.openanalytics.rdepot.base.event.EventableResource;
 import eu.openanalytics.rdepot.base.technology.InternalTechnology;
 import eu.openanalytics.rdepot.base.technology.Technology;
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorColumn;
-import jakarta.persistence.DiscriminatorType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -188,36 +176,6 @@ public abstract class Package extends EventableResource implements Comparable<Pa
         this.title = title;
         this.source = source;
         this.active = active;
-        this.deleted = deleted;
-        this.repositoryGeneric = repository;
-        this.binary = binary;
-    }
-
-    protected Package(
-            Technology technology,
-            int id,
-            Repository repository,
-            User user,
-            String name,
-            String description,
-            String author,
-            String url,
-            String source,
-            String title,
-            boolean active,
-            boolean deleted,
-            boolean binary,
-            Submission submission) {
-        super(id, technology, ResourceType.PACKAGE);
-        this.user = user;
-        this.name = name;
-        this.description = description;
-        this.author = author;
-        this.url = url;
-        this.source = source;
-        this.title = title;
-        this.active = active;
-        this.submission = submission;
         this.deleted = deleted;
         this.repositoryGeneric = repository;
         this.binary = binary;

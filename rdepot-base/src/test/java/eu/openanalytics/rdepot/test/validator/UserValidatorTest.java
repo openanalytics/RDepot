@@ -49,7 +49,7 @@ public class UserValidatorTest {
     private static final Calendar cal = Calendar.getInstance();
 
     @Test
-    public void validateUser_userNotFound() throws Exception {
+    public void validateUser_userNotFound() {
         userValidator = new UserValidator(userService);
 
         User user = UserTestFixture.GET_REGULAR_USER();
@@ -59,14 +59,14 @@ public class UserValidatorTest {
         dataBinder.setValidator(userValidator);
         Errors errors = Mockito.spy(dataBinder.getBindingResult());
 
-        when(userService.findById(user.getId())).thenReturn((Optional.ofNullable(null)));
+        when(userService.findById(user.getId())).thenReturn((Optional.empty()));
 
         userValidator.validate(updatedUser, errors);
         verify(errors, times(1)).rejectValue("id", MessageCodes.ERROR_USER_NOT_FOUND);
     }
 
     @Test
-    public void validateUser_allForbiddenUpdates() throws Exception {
+    public void validateUser_allForbiddenUpdates() {
         cal.set(1999, Calendar.JANUARY, 1);
         final Instant lastLoggedInOn = cal.toInstant();
         final Instant createdOn = cal.toInstant();
@@ -96,7 +96,7 @@ public class UserValidatorTest {
     }
 
     @Test
-    public void validateUser_EmptyEmailLoginAndName() throws Exception {
+    public void validateUser_EmptyEmailLoginAndName() {
         userValidator = new UserValidator(userService);
 
         User user = UserTestFixture.GET_REGULAR_USER();
@@ -117,7 +117,7 @@ public class UserValidatorTest {
     }
 
     @Test
-    public void validateUser_NullEmailLoginAndName() throws Exception {
+    public void validateUser_NullEmailLoginAndName() {
         userValidator = new UserValidator(userService);
 
         User user = UserTestFixture.GET_REGULAR_USER();
@@ -138,7 +138,7 @@ public class UserValidatorTest {
     }
 
     @Test
-    public void validateUser_InvalidEmailAndDuplicateLogin() throws Exception {
+    public void validateUser_InvalidEmailAndDuplicateLogin() {
         userValidator = new UserValidator(userService);
 
         User user = UserTestFixture.GET_REGULAR_USER();
@@ -159,7 +159,7 @@ public class UserValidatorTest {
     }
 
     @Test
-    public void validateUser_DuplicateEmail() throws Exception {
+    public void validateUser_DuplicateEmailAllowed() throws Exception {
         userValidator = new UserValidator(userService);
 
         User user = UserTestFixture.GET_REGULAR_USER();
@@ -171,9 +171,7 @@ public class UserValidatorTest {
         dataBinder.setValidator(userValidator);
         Errors errors = Mockito.spy(dataBinder.getBindingResult());
 
-        when(userService.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
-
         userValidator.validate(updatedUser, errors);
-        verify(errors, times(1)).rejectValue("email", MessageCodes.ERROR_DUPLICATE_EMAIL);
+        verify(errors, times(0)).rejectValue(anyString(), anyString());
     }
 }

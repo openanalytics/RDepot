@@ -26,8 +26,8 @@ import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.Service;
 import eu.openanalytics.rdepot.base.strategy.Strategy;
+import eu.openanalytics.rdepot.base.strategy.exceptions.NonFatalStrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
-import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyReversionFailure;
 import eu.openanalytics.rdepot.base.validation.exceptions.PackageDuplicateWithReplaceOff;
 
 public class DuplicatePackageStrategy extends Strategy<Submission> {
@@ -48,17 +48,11 @@ public class DuplicatePackageStrategy extends Strategy<Submission> {
 
     @Override
     protected Submission actualStrategy() throws StrategyFailure {
-        throw new StrategyFailure(new PackageDuplicateWithReplaceOff(resource), false);
+        throw new NonFatalStrategyFailure(new PackageDuplicateWithReplaceOff(resource));
     }
 
     @Override
     protected NewsfeedEvent generateEvent(Submission resource) {
         return null;
     }
-
-    @Override
-    public void postStrategy() throws StrategyFailure {}
-
-    @Override
-    public void revertChanges() throws StrategyReversionFailure {}
 }

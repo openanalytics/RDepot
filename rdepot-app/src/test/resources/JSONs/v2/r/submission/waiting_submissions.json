@@ -1,338 +1,362 @@
 {
     "code": 200,
     "data": {
+        "content": [
+            {
+                "approver": null,
+                "changes": null,
+                "created": "2020-03-28T20:06:13Z",
+                "id": 19,
+                "packageBag": {
+                    "active": false,
+                    "author": "Nicholas Tierney [aut, cre]",
+                    "binary": false,
+                    "deleted": false,
+                    "description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
+                    "descriptionContentType": "txt",
+                    "id": 19,
+                    "name": "visdat",
+                    "permissions": [],
+                    "repository": {
+                        "id": 3,
+                        "lastPublicationSuccessful": true,
+                        "name": "testrepo2",
+                        "publicationUri": "http://localhost/repo/testrepo2",
+                        "published": true,
+                        "requiresAuthentication": true,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/new/70032548/visdat_0.1.0.tar.gz",
+                    "submission": {
+                        "id": 19,
+                        "state": "WAITING"
+                    },
+                    "technology": "R",
+                    "title": "Preliminary Data Visualisation",
+                    "url": "https://github.com/njtierney/visdat/",
+                    "user": {
+                        "email": "einstein@ldap.forumsys.com",
+                        "id": 4,
+                        "login": "einstein",
+                        "name": "Albert Einstein"
+                    },
+                    "version": "0.1.0",
+                    "links": [
+                        {
+                            "rel": "self",
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/19"
+                        },
+                        {
+                            "rel": "packageList",
+                            "href": "http://localhost:8017/api/v2/manager/packages"
+                        },
+                        {
+                            "rel": "repository",
+                            "href": "http://localhost:8017/api/v2/manager/r/repositories/3"
+                        }
+                    ]
+                },
+                "permissions": [
+                    "submission.accept",
+                    "submission.reject"
+                ],
+                "state": "WAITING",
+                "submitter": {
+                    "email": "newton@ldap.forumsys.com",
+                    "id": 7,
+                    "login": "newton",
+                    "name": "Isaac Newton"
+                },
+                "technology": "R",
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/19"
+                    },
+                    {
+                        "rel": "submissionList",
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/19",
+                        "modifiableProperties": [
+                            "state"
+                        ],
+                        "type": "PATCH"
+                    }
+                ]
+            },
+            {
+                "approver": null,
+                "changes": null,
+                "created": "2020-03-28T20:07:52Z",
+                "id": 26,
+                "packageBag": {
+                    "active": false,
+                    "author": "Neil J. Gunther [aut], Stefan Moeding [aut, cre]",
+                    "binary": false,
+                    "deleted": false,
+                    "description": "The Universal Scalability Law (Gunther 2007)",
+                    "descriptionContentType": "txt",
+                    "id": 26,
+                    "name": "usl",
+                    "permissions": [],
+                    "repository": {
+                        "id": 3,
+                        "lastPublicationSuccessful": true,
+                        "name": "testrepo2",
+                        "publicationUri": "http://localhost/repo/testrepo2",
+                        "published": true,
+                        "requiresAuthentication": true,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/new/54345476/usl_2.0.0.tar.gz",
+                    "submission": {
+                        "id": 26,
+                        "state": "WAITING"
+                    },
+                    "technology": "R",
+                    "title": "Analyze System Scalability with the Universal Scalability Law",
+                    "url": null,
+                    "user": {
+                        "email": "einstein@ldap.forumsys.com",
+                        "id": 4,
+                        "login": "einstein",
+                        "name": "Albert Einstein"
+                    },
+                    "version": "2.0.0",
+                    "links": [
+                        {
+                            "rel": "self",
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/26"
+                        },
+                        {
+                            "rel": "packageList",
+                            "href": "http://localhost:8017/api/v2/manager/packages"
+                        },
+                        {
+                            "rel": "repository",
+                            "href": "http://localhost:8017/api/v2/manager/r/repositories/3"
+                        }
+                    ]
+                },
+                "permissions": [
+                    "submission.accept",
+                    "submission.reject"
+                ],
+                "state": "WAITING",
+                "submitter": {
+                    "email": "tesla@ldap.forumsys.com",
+                    "id": 5,
+                    "login": "tesla",
+                    "name": "Nikola Tesla"
+                },
+                "technology": "R",
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/26"
+                    },
+                    {
+                        "rel": "submissionList",
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/26",
+                        "modifiableProperties": [
+                            "state"
+                        ],
+                        "type": "PATCH"
+                    }
+                ]
+            },
+            {
+                "approver": null,
+                "changes": null,
+                "created": "2020-03-28T20:14:44Z",
+                "id": 30,
+                "packageBag": {
+                    "active": false,
+                    "author": "Scott Fortmann-Roe",
+                    "binary": false,
+                    "deleted": false,
+                    "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
+                    "descriptionContentType": "txt",
+                    "id": 30,
+                    "name": "A3",
+                    "permissions": [],
+                    "repository": {
+                        "id": 5,
+                        "lastPublicationSuccessful": false,
+                        "name": "testrepo4",
+                        "publicationUri": "http://localhost/repo/testrepo4",
+                        "published": false,
+                        "requiresAuthentication": true,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/new/92253304/A3_0.9.1.tar.gz",
+                    "submission": {
+                        "id": 30,
+                        "state": "WAITING"
+                    },
+                    "technology": "R",
+                    "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
+                    "url": null,
+                    "user": {
+                        "email": "admin@localhost",
+                        "id": 8,
+                        "login": "admin",
+                        "name": "Local Admin User"
+                    },
+                    "version": "0.9.1",
+                    "links": [
+                        {
+                            "rel": "self",
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/30"
+                        },
+                        {
+                            "rel": "packageList",
+                            "href": "http://localhost:8017/api/v2/manager/packages"
+                        },
+                        {
+                            "rel": "repository",
+                            "href": "http://localhost:8017/api/v2/manager/r/repositories/5"
+                        }
+                    ]
+                },
+                "permissions": [
+                    "submission.accept",
+                    "submission.reject"
+                ],
+                "state": "WAITING",
+                "submitter": {
+                    "email": "galieleo@ldap.forumsys.com",
+                    "id": 6,
+                    "login": "galieleo",
+                    "name": "Galileo Galilei"
+                },
+                "technology": "R",
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/30"
+                    },
+                    {
+                        "rel": "submissionList",
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/30",
+                        "modifiableProperties": [
+                            "state"
+                        ],
+                        "type": "PATCH"
+                    }
+                ]
+            },
+            {
+                "approver": null,
+                "changes": null,
+                "created": "2020-03-28T20:14:45Z",
+                "id": 31,
+                "packageBag": {
+                    "active": false,
+                    "author": "Katalin Csillery, with contributions from Michael Blum and Olivier Francois",
+                    "binary": false,
+                    "deleted": false,
+                    "description": "The 'abc' package provides various functions for parameter estimation and model selection in an ABC framework. Three main",
+                    "descriptionContentType": "txt",
+                    "id": 31,
+                    "name": "abc",
+                    "permissions": [],
+                    "repository": {
+                        "id": 5,
+                        "lastPublicationSuccessful": false,
+                        "name": "testrepo4",
+                        "publicationUri": "http://localhost/repo/testrepo4",
+                        "published": false,
+                        "requiresAuthentication": true,
+                        "technology": "R"
+                    },
+                    "source": "/opt/rdepot/new/51328701/abc_1.0.tar.gz",
+                    "submission": {
+                        "id": 31,
+                        "state": "WAITING"
+                    },
+                    "technology": "R",
+                    "title": "Functions to perform Approximate Bayesian Computation (ABC) using simulated data",
+                    "url": null,
+                    "user": {
+                        "email": "admin@localhost",
+                        "id": 8,
+                        "login": "admin",
+                        "name": "Local Admin User"
+                    },
+                    "version": "1.0",
+                    "links": [
+                        {
+                            "rel": "self",
+                            "href": "http://localhost:8017/api/v2/manager/r/packages/31"
+                        },
+                        {
+                            "rel": "packageList",
+                            "href": "http://localhost:8017/api/v2/manager/packages"
+                        },
+                        {
+                            "rel": "repository",
+                            "href": "http://localhost:8017/api/v2/manager/r/repositories/5"
+                        }
+                    ]
+                },
+                "permissions": [
+                    "submission.accept",
+                    "submission.reject"
+                ],
+                "state": "WAITING",
+                "submitter": {
+                    "email": "galieleo@ldap.forumsys.com",
+                    "id": 6,
+                    "login": "galieleo",
+                    "name": "Galileo Galilei"
+                },
+                "technology": "R",
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/31"
+                    },
+                    {
+                        "rel": "submissionList",
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions"
+                    },
+                    {
+                        "rel": "self",
+                        "href": "http://localhost:8017/api/v2/manager/r/submissions/31",
+                        "modifiableProperties": [
+                            "state"
+                        ],
+                        "type": "PATCH"
+                    }
+                ]
+            }
+        ],
         "links": [
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions?state=waiting&page=0&size=20&sort=id,asc"
+                "href": "http://localhost:8017/api/v2/manager/r/submissions?state=waiting&page=0&size=20&sort=id,asc"
             }
         ],
         "page": {
             "number": 0,
             "size": 20,
-            "totalPages": 1,
-            "totalElements": 4
-        },
-        "content": [
-            {
-                "approver": null,
-                "submitter": {
-                    "name": "Isaac Newton",
-                    "id": 7,
-                    "login": "newton",
-                    "email": "newton@ldap.forumsys.com"
-                },
-                "created": "2020-03-28T20:06:13Z",
-                "changes": null,
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/19"
-                    },
-                    {
-                        "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/19",
-                        "type": "PATCH",
-                        "modifiableProperties": [
-                            "state"
-                        ]
-                    }
-                ],
-                "id": 19,
-                "state": "WAITING",
-                "technology": "R",
-                "packageBag": {
-                    "author": "Nicholas Tierney [aut, cre]",
-                    "active": false,
-                    "description": "Create preliminary exploratory data visualisations of an entire dataset to identify problems or unexpected features using 'ggplot2'.",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo2",
-                        "lastPublicationSuccessful": true,
-                        "id": 3,
-                        "published": true,
-                        "technology": "R",
-                        "requiresAuthentication": true,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
-                    },
-                    "title": "Preliminary Data Visualisation",
-                    "version": "0.1.0",
-                    "url": "https:\/\/github.com\/njtierney\/visdat\/",
-                    "deleted": false,
-                    "binary": false,
-                    "name": "visdat",
-                    "submission": {
-                        "id": 19,
-                        "state": "WAITING"
-                    },
-                    "links": [
-                        {
-                            "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/19"
-                        },
-                        {
-                            "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
-                        },
-                        {
-                            "rel": "repository",
-                            "href": "http://localhost:8017/api/v2/manager/r/repositories/3"
-                        }
-                    ],
-                    "id": 19,
-                    "user": {
-                        "name": "Albert Einstein",
-                        "id": 4,
-                        "login": "einstein",
-                        "email": "einstein@ldap.forumsys.com"
-                    }
-                }
-            },
-            {
-                "approver": null,
-                "submitter": {
-                    "name": "Nikola Tesla",
-                    "id": 5,
-                    "login": "tesla",
-                    "email": "tesla@ldap.forumsys.com"
-                },
-                "created": "2020-03-28T20:07:52Z",
-                "changes": null,
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/26"
-                    },
-                    {
-                        "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/26",
-                        "type": "PATCH",
-                        "modifiableProperties": [
-                            "state"
-                        ]
-                    }
-                ],
-                "id": 26,
-                "state": "WAITING",
-                "technology": "R",
-                "packageBag": {
-                    "author": "Neil J. Gunther [aut], Stefan Moeding [aut, cre]",
-                    "active": false,
-                    "description": "The Universal Scalability Law (Gunther 2007)",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo2",
-                        "lastPublicationSuccessful": true,
-                        "id": 3,
-                        "published": true,
-                        "technology": "R",
-                        "requiresAuthentication": true,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo2"
-                    },
-                    "title": "Analyze System Scalability with the Universal Scalability Law",
-                    "version": "2.0.0",
-                    "url": null,
-                    "deleted": false,
-                    "binary": false,
-                    "name": "usl",
-                    "submission": {
-                        "id": 26,
-                        "state": "WAITING"
-                    },
-                    "links": [
-                        {
-                            "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/26"
-                        },
-                        {
-                            "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
-                        },
-                        {
-                            "rel": "repository",
-                            "href": "http://localhost:8017/api/v2/manager/r/repositories/3"
-                        }
-                    ],
-                    "id": 26,
-                    "user": {
-                        "name": "Albert Einstein",
-                        "id": 4,
-                        "login": "einstein",
-                        "email": "einstein@ldap.forumsys.com"
-                    }
-                }
-            },
-            {
-                "approver": null,
-                "submitter": {
-                    "name": "Galileo Galilei",
-                    "id": 6,
-                    "login": "galieleo",
-                    "email": "galieleo@ldap.forumsys.com"
-                },
-                "created": "2020-03-28T20:14:44Z",
-                "changes": null,
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/30"
-                    },
-                    {
-                        "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/30",
-                        "type": "PATCH",
-                        "modifiableProperties": [
-                            "state"
-                        ]
-                    }
-                ],
-                "id": 30,
-                "state": "WAITING",
-                "technology": "R",
-                "packageBag": {
-                    "author": "Scott Fortmann-Roe",
-                    "active": false,
-                    "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo4",
-                        "lastPublicationSuccessful": false,
-                        "id": 5,
-                        "published": false,
-                        "technology": "R",
-                        "requiresAuthentication": true,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo4"
-                    },
-                    "title": "A3: Accurate, Adaptable, and Accessible Error Metrics for Predictive Models",
-                    "version": "0.9.1",
-                    "url": null,
-                    "deleted": false,
-                    "binary": false,
-                    "name": "A3",
-                    "submission": {
-                        "id": 30,
-                        "state": "WAITING"
-                    },
-                    "links": [
-                        {
-                            "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/30"
-                        },
-                        {
-                            "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
-                        },
-                        {
-                            "rel": "repository",
-                            "href": "http://localhost:8017/api/v2/manager/r/repositories/5"
-                        }
-                    ],
-                    "id": 30,
-                    "user": {
-                        "name": "Local Admin User",
-                        "id": 8,
-                        "login": "admin",
-                        "email": "admin@localhost"
-                    }
-                }
-            },
-            {
-                "approver": null,
-                "submitter": {
-                    "name": "Galileo Galilei",
-                    "id": 6,
-                    "login": "galieleo",
-                    "email": "galieleo@ldap.forumsys.com"
-                },
-                "created": "2020-03-28T20:14:45Z",
-                "changes": null,
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/31"
-                    },
-                    {
-                        "rel": "submissionList",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions"
-                    },
-                    {
-                        "rel": "self",
-                        "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/submissions\/31",
-                        "type": "PATCH",
-                        "modifiableProperties": [
-                            "state"
-                        ]
-                    }
-                ],
-                "id": 31,
-                "state": "WAITING",
-                "technology": "R",
-                "packageBag": {
-                    "author": "Katalin Csillery, with contributions from Michael Blum and Olivier Francois",
-                    "active": false,
-                    "description": "The 'abc' package provides various functions for parameter estimation and model selection in an ABC framework. Three main",
-                    "technology": "R",
-                    "descriptionContentType": "txt",
-                    "repository": {
-                        "name": "testrepo4",
-                        "lastPublicationSuccessful": false,
-                        "id": 5,
-                        "published": false,
-                        "technology": "R",
-                        "requiresAuthentication": true,
-                        "publicationUri": "http:\/\/localhost\/repo\/testrepo4"
-                    },
-                    "title": "Functions to perform Approximate Bayesian Computation (ABC) using simulated data",
-                    "version": "1.0",
-                    "url": null,
-                    "deleted": false,
-                    "binary": false,
-                    "name": "abc",
-                    "submission": {
-                        "id": 31,
-                        "state": "WAITING"
-                    },
-                    "links": [
-                        {
-                            "rel": "self",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/r\/packages\/31"
-                        },
-                        {
-                            "rel": "packageList",
-                            "href": "http:\/\/localhost:8017\/api\/v2\/manager\/packages"
-                        },
-                        {
-                            "rel": "repository",
-                            "href": "http://localhost:8017/api/v2/manager/r/repositories/5"
-                        }
-                    ],
-                    "id": 31,
-                    "user": {
-                        "name": "Local Admin User",
-                        "id": 8,
-                        "login": "admin",
-                        "email": "admin@localhost"
-                    }
-                }
-            }
-        ]
+            "totalElements": 4,
+            "totalPages": 1
+        }
     },
-    "messageCode": "success.request.processed",
     "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
     "status": "SUCCESS"
 }

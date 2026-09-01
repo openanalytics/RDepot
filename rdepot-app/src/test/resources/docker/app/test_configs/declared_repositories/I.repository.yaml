@@ -1,0 +1,12 @@
+name: I
+publicationUri: http://localhost/repo/I
+serverAddress: http://oa-rdepot-repo:8080/r/I
+published: true
+requiresAuthentication: true
+mirrors:
+  - name: CD
+    uri: http://oa-rdepot-proxy/repo/CD
+    syncInterval: ""
+    type: tarball
+    generateManuals: true
+    allPackages: true

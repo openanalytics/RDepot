@@ -31,6 +31,7 @@ import eu.openanalytics.rdepot.base.mediator.deletion.AccessTokenDeleter;
 import eu.openanalytics.rdepot.base.mediator.deletion.PackageMaintainerDeleter;
 import eu.openanalytics.rdepot.base.mediator.deletion.RepositoryMaintainerDeleter;
 import eu.openanalytics.rdepot.base.mediator.deletion.SubmissionDeleter;
+import eu.openanalytics.rdepot.base.mirroring.MirrorSynchronizationStatusCoordinator;
 import eu.openanalytics.rdepot.base.mirroring.converters.PackageSynchronizationStatusDtoConverter;
 import eu.openanalytics.rdepot.base.security.authorization.SecurityMediator;
 import eu.openanalytics.rdepot.base.service.*;
@@ -38,16 +39,19 @@ import eu.openanalytics.rdepot.base.strategy.Strategy;
 import eu.openanalytics.rdepot.base.strategy.StrategyExecutor;
 import eu.openanalytics.rdepot.base.strategy.factory.StrategyFactory;
 import eu.openanalytics.rdepot.base.synchronization.healthcheck.ServerAddressHealthcheckService;
+import eu.openanalytics.rdepot.base.utils.repositories.PackageMaintainerQueryRepository;
 import eu.openanalytics.rdepot.base.validation.*;
 import eu.openanalytics.rdepot.python.entities.PythonRepositoryAllowedFiles;
 import eu.openanalytics.rdepot.python.mediator.deletion.PythonPackageDeleter;
 import eu.openanalytics.rdepot.python.mediator.deletion.PythonRepositoryDeleter;
 import eu.openanalytics.rdepot.python.mediator.deletion.PythonSubmissionDeleter;
-import eu.openanalytics.rdepot.python.mirroring.PypiMirrorSynchronizer;
+import eu.openanalytics.rdepot.python.mirroring.PyPiMirrorSynchronizer;
+import eu.openanalytics.rdepot.python.mirroring.PythonMirrorSynchronizationCoordinator;
 import eu.openanalytics.rdepot.python.services.PythonPackageService;
 import eu.openanalytics.rdepot.python.services.PythonRepositoryService;
-import eu.openanalytics.rdepot.python.storage.implementations.fs.PythonFSPopulator;
-import eu.openanalytics.rdepot.python.storage.implementations.fs.PythonLocalStorage;
+import eu.openanalytics.rdepot.python.storage.implementations.fs.PythonFSLocalStorage;
+import eu.openanalytics.rdepot.python.storage.implementations.fs.PythonLocalPersistentStorage;
+import eu.openanalytics.rdepot.python.storage.population.implementations.PythonFSPopulator;
 import eu.openanalytics.rdepot.python.strategy.factory.PythonStrategyFactory;
 import eu.openanalytics.rdepot.python.validation.PythonPackageValidator;
 import eu.openanalytics.rdepot.python.validation.PythonRepositoryValidator;
@@ -71,6 +75,12 @@ public abstract class ApiV2ControllerUnitTest {
     static {
         System.setProperty("jakarta.json.provider", JsonProviderImpl.class.getCanonicalName());
     }
+
+    @MockitoBean
+    MirrorSynchronizationStatusCoordinator mirrorSynchronizationStatusCoordinator;
+
+    @MockitoBean
+    PythonMirrorSynchronizationCoordinator pythonMirrorSynchronizationCoordinator;
 
     @MockitoBean
     AccessTokenService accessTokenService;
@@ -157,7 +167,7 @@ public abstract class ApiV2ControllerUnitTest {
     PythonFSPopulator pythonFsPopulator;
 
     @MockitoBean
-    PythonLocalStorage pythonLocalStorage;
+    PythonFSLocalStorage pythonLocalStorage;
 
     @MockitoBean
     PythonRepositoryValidator pythonRepositoryValidator;
@@ -166,7 +176,7 @@ public abstract class ApiV2ControllerUnitTest {
     PythonPackageValidator pythonPackageValidator;
 
     @MockitoBean
-    PypiMirrorSynchronizer pypiMirrorSynchronizer;
+    PyPiMirrorSynchronizer pypiMirrorSynchronizer;
 
     @MockitoBean
     PythonRepositoryDeleter pythonRepositoryDeleter;
@@ -203,6 +213,12 @@ public abstract class ApiV2ControllerUnitTest {
 
     @MockitoBean
     PackageSynchronizationStatusDtoConverter packageSynchronizationStatusDtoConverter;
+
+    @MockitoBean
+    PackageMaintainerQueryRepository queryRepository;
+
+    @MockitoBean
+    PythonLocalPersistentStorage pythonLocalPersistentStorage;
 
     @BeforeEach
     public void clearContext() throws Exception {

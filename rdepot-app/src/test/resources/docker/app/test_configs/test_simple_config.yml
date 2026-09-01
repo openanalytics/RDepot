@@ -73,6 +73,10 @@ app:
         password: testpassword
         name: John Doe
         email: doe@localhost
+      - login: teslasassistant
+        password: testpassword
+        name: Assistant Of Tesla
+        email: tesla@ldap.forumsys.com
     default:
       admins:
         - einstein

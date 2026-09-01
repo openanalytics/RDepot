@@ -82,4 +82,12 @@ public class PackageMaintainerModelAssembler
     protected Class<?> getExtensionControllerClass(PackageMaintainer entity) {
         return ApiV2PackageMaintainerController.class;
     }
+
+    @Override
+    public EntityModel<PackageMaintainerDto> toModel(PackageMaintainer entity, User user) {
+        PackageMaintainerDto dto = dtoConverter.convertEntityToDto(entity);
+
+        dto.setPermissions(securityMediator.getPermissions(entity, user));
+        return EntityModel.of(dto, generateRoleBasedAvailableLinksForEntity(entity, user));
+    }
 }

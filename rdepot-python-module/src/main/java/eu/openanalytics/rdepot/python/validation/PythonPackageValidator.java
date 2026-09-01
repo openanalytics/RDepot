@@ -119,8 +119,9 @@ public class PythonPackageValidator implements PackageValidator<PythonPackage> {
 
     private void validateName(final String name, final DataSpecificValidationResult<Submission> validationResult) {
         validateNotEmpty("name", name, MessageCodes.EMPTY_NAME, validationResult);
-        if (!StringUtils.isAsciiPrintable(name) || !name.matches("^[A-Za-z][A-Za-z-_\\d.]+(?<!\\.)$"))
-            validationResult.error("name", MessageCodes.INVALID_PACKAGE_NAME);
+        if (!StringUtils.isAsciiPrintable(name)
+                || !name.matches("^[A-Za-z][A-Za-z-_\\d.]+(?<!\\.)$")
+                || name.contains("..")) validationResult.error("name", MessageCodes.INVALID_PACKAGE_NAME);
     }
 
     public void validate(PythonPackage packageBag, boolean replace, DataSpecificValidationResult<Submission> errors) {

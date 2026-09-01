@@ -20,9 +20,6 @@
  */
 package eu.openanalytics.rdepot.base.entities;
 
-import eu.openanalytics.rdepot.base.entities.enums.HashMethod;
-
-@FunctionalInterface
-public interface Hashable {
-    HashMethod getHashMethod();
+public interface Hashable extends HavingHashMethod {
+    String getHash();
 }

@@ -29,10 +29,10 @@ import eu.openanalytics.rdepot.base.service.PackageMaintainerService;
 import eu.openanalytics.rdepot.base.service.PackageService;
 import eu.openanalytics.rdepot.base.service.SubmissionService;
 import eu.openanalytics.rdepot.base.service.exceptions.DeleteEntityException;
-import eu.openanalytics.rdepot.base.storage.Populator;
-import eu.openanalytics.rdepot.base.storage.Storage;
-import eu.openanalytics.rdepot.base.storage.exceptions.MovePackageSourceException;
-import eu.openanalytics.rdepot.base.storage.exceptions.SourceFileDeleteException;
+import eu.openanalytics.rdepot.base.storage.LocalStorage;
+import eu.openanalytics.rdepot.base.storage.PersistentStorage;
+import eu.openanalytics.rdepot.base.storage.exceptions.DeleteFileException;
+import eu.openanalytics.rdepot.base.storage.population.Populator;
 import eu.openanalytics.rdepot.base.synchronization.RepositorySynchronizer;
 import eu.openanalytics.rdepot.base.synchronization.SynchronizeRepositoryException;
 import eu.openanalytics.rdepot.base.utils.PackageRepositoryResolver;
@@ -51,28 +51,31 @@ import org.springframework.transaction.annotation.Transactional;
 public abstract class PackageDeleter<P extends Package, R extends Repository> extends ResourceDeleter<P> {
 
     protected final Populator<?, P> populator;
-    protected final Storage<P> storage;
+    protected final LocalStorage<P> localStorage;
     protected final SubmissionService submissionService;
     protected final RepositorySynchronizer<R> repositorySynchronizer;
     protected final PackageRepositoryResolver<R, P> packageRepositoryResolver;
     protected final PackageMaintainerService maintainerService;
+    protected final PersistentStorage<P, R> persistentStorage;
 
     protected PackageDeleter(
             NewsfeedEventService newsfeedEventService,
             PackageService<P> resourceService,
             Populator<?, P> populator,
-            Storage<P> storage,
+            LocalStorage<P> localStorage,
             SubmissionService submissionService,
             RepositorySynchronizer<R> repositorySynchronizer,
             PackageRepositoryResolver<R, P> packageRepositoryResolver,
-            PackageMaintainerService maintainerService) {
+            PackageMaintainerService maintainerService,
+            PersistentStorage<P, R> persistentStorage) {
         super(newsfeedEventService, resourceService);
         this.populator = populator;
-        this.storage = storage;
+        this.localStorage = localStorage;
         this.submissionService = submissionService;
         this.repositorySynchronizer = repositorySynchronizer;
         this.packageRepositoryResolver = packageRepositoryResolver;
         this.maintainerService = maintainerService;
+        this.persistentStorage = persistentStorage;
     }
 
     private void synchronizeRepository(P resource) throws SynchronizeRepositoryException {
@@ -95,27 +98,11 @@ public abstract class PackageDeleter<P extends Package, R extends Repository> ex
             deleteFromDatabase(packageBag);
             return;
         }
-
-        String recycledPackageSourcePath;
-        final String oldPackageSourcePath = packageBag.getSource();
         try {
-            recycledPackageSourcePath = populator.moveToTrashDirectory(packageBag);
-            packageBag.setSource(recycledPackageSourcePath);
-
             deleteFromDatabase(packageBag);
-
-            storage.removePackageSource(recycledPackageSourcePath);
-        } catch (MovePackageSourceException | SourceFileDeleteException e) {
+            persistentStorage.deleteAllPackageFilesIfExist(packageBag);
+        } catch (DeleteFileException | DataAccessException e) {
             log.error(e.getMessage(), e);
-            throw new DeleteEntityException();
-        } catch (DataAccessException dae) {
-            log.error(dae.getMessage(), dae);
-            try {
-                packageBag.setSource(storage.moveSource(packageBag, oldPackageSourcePath));
-            } catch (MovePackageSourceException mpse) {
-                log.error("Could not restore package source after failed delete!");
-                log.error(mpse.getMessage(), mpse);
-            }
             throw new DeleteEntityException();
         }
     }

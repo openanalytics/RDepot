@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 DIRECTORY_TO_CHECK="/opt/rdepot/testrepo2/src/contrib/Archive/accrued/";
 
 while true; do

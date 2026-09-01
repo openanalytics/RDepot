@@ -2,56 +2,52 @@
     "code": 201,
     "data": {
         "approver": {
-            "name": "Albert Einstein",
+            "email": "einstein@ldap.forumsys.com",
             "id": 4,
             "login": "einstein",
-            "email": "einstein@ldap.forumsys.com"
-        },
-        "submitter": {
-            "name": "Albert Einstein",
-            "id": 4,
-            "login": "einstein",
-            "email": "einstein@ldap.forumsys.com"
+            "name": "Albert Einstein"
         },
         "changes": "",
-        "links": [
-            {
-                "rel": "self",
-                "href": "http://localhost:8017/api/v2/manager/python/submissions/48"
-            },
-            {
-                "rel": "submissionList",
-                "href": "http://localhost:8017/api/v2/manager/python/submissions"
-            }
-        ],
+        "created": "2026-06-28T17:27:31.965989012Z",
         "id": 48,
-        "state": "ACCEPTED",
-        "technology": "Python",
         "packageBag": {
-            "author": "Nicholas Sharp",
             "active": true,
-            "description": null,
-            "technology": "Python",
-            "repository": {
-                "name": "testrepo8",
-                "lastPublicationSuccessful": true,
-                "id": 8,
-                "published": true,
-                "technology": "Python",
-                "requiresAuthentication": true,
-                "publicationUri": "http://localhost/repo/testrepo8"
-            },
-            "title": "Polyscope: A viewer and user interface for 3D data.",
-            "version": "0.0.1",
-            "url": "https://polyscope.run",
-            "deleted": false,
-            "descriptionContentType": "text/markdown",
+            "author": "Nicholas Sharp",
             "binary": true,
+            "deleted": false,
+            "description": null,
+            "descriptionContentType": "text/markdown",
+            "id": 48,
             "name": "tetrapolyscope",
+            "permissions": [
+                "package.deactivate",
+                "package.delete.soft",
+                "package.edit"
+            ],
+            "repository": {
+                "id": 8,
+                "lastPublicationSuccessful": true,
+                "name": "testrepo8",
+                "publicationUri": "http://localhost/repo/testrepo8",
+                "published": true,
+                "requiresAuthentication": true,
+                "technology": "Python"
+            },
+            "source": "/opt/rdepot/repositories/8/50464012/tetrapolyscope-0.0.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
             "submission": {
                 "id": 48,
                 "state": "ACCEPTED"
             },
+            "technology": "Python",
+            "title": "Polyscope: A viewer and user interface for 3D data.",
+            "url": "https://polyscope.run",
+            "user": {
+                "email": "tesla@ldap.forumsys.com",
+                "id": 5,
+                "login": "tesla",
+                "name": "Nikola Tesla"
+            },
+            "version": "0.0.1",
             "links": [
                 {
                     "rel": "self",
@@ -75,17 +71,29 @@
                     "href": "http://localhost:8017/api/v2/manager/python/packages/48",
                     "type": "DELETE"
                 }
-            ],
-            "id": 48,
-            "user": {
-                "name": "Nikola Tesla",
-                "id": 5,
-                "login": "tesla",
-                "email": "tesla@ldap.forumsys.com"
+            ]
+        },
+        "permissions": [],
+        "state": "ACCEPTED",
+        "submitter": {
+            "email": "einstein@ldap.forumsys.com",
+            "id": 4,
+            "login": "einstein",
+            "name": "Albert Einstein"
+        },
+        "technology": "Python",
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/python/submissions/48"
+            },
+            {
+                "rel": "submissionList",
+                "href": "http://localhost:8017/api/v2/manager/python/submissions"
             }
-        }
+        ]
     },
-    "messageCode": "success.resource.created",
     "message": "Your resource has been created successfully.",
+    "messageCode": "success.resource.created",
     "status": "SUCCESS"
 }

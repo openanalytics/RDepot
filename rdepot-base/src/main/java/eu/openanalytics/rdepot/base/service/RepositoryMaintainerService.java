@@ -58,6 +58,10 @@ public class RepositoryMaintainerService extends Service<RepositoryMaintainer> {
         return repositoryMaintainerDao.findByUserAndRepository(user, repository);
     }
 
+    public List<RepositoryMaintainer> findByUserIdAndRepositoryId(int userId, int repositoryId) {
+        return repositoryMaintainerDao.findByUserIdAndRepositoryId(userId, repositoryId);
+    }
+
     public List<RepositoryMaintainer> findByRepositoryNonDeleted(Repository repository) {
         return repositoryMaintainerDao.findByRepositoryAndDeleted(repository, false);
     }

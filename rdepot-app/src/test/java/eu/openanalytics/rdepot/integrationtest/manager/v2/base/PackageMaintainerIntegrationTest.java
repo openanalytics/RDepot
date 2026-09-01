@@ -72,6 +72,20 @@ public class PackageMaintainerIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    public void getMaintainers_asRepositoryMaintainer_filteredByNotMaintainedRepository() throws Exception {
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET)
+                .urlSuffix("?repository=testrepo5")
+                .token(REPOSITORYMAINTAINER_TOKEN)
+                .statusCode(200)
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath(
+                        "/v2/base/package-maintainer/maintainers_asrepositorymaintainer_filteredByNotMaintainedRepository.json")
+                .build();
+        testEndpoint(requestBody);
+    }
+
+    @Test
     public void getMaintainers_returns401_whenUserIsNotAuthenticated() throws Exception {
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.GET_UNAUTHENTICATED)
@@ -98,7 +112,7 @@ public class PackageMaintainerIntegrationTest extends IntegrationTest {
     public void getDeletedMaintainers() throws Exception {
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.GET)
-                .urlSuffix("?sort=id,asc&deleted=" + testData.isDeleted())
+                .urlSuffix("?deleted=" + testData.isDeleted() + "&sort=id,asc")
                 .token(ADMIN_TOKEN)
                 .statusCode(200)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
@@ -124,7 +138,7 @@ public class PackageMaintainerIntegrationTest extends IntegrationTest {
     public void getNonDeletedMaintainers() throws Exception {
         TestRequestBody requestBody = TestRequestBody.builder()
                 .requestType(RequestType.GET)
-                .urlSuffix("?sort=id,asc&deleted=" + !testData.isDeleted())
+                .urlSuffix("?deleted=" + !testData.isDeleted() + "&sort=id,asc")
                 .token(ADMIN_TOKEN)
                 .statusCode(200)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())

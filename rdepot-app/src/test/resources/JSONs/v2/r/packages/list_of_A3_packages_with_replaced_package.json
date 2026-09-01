@@ -18,11 +18,10 @@
                 "author": "Scott Fortmann-Roe",
                 "active": true,
                 "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-                "source": "/opt/rdepot/repositories/4/47098069/A3_0.9.1.tar.gz",
                 "technology": "R",
                 "repository": {
-                    "name": "testrepo3",
                     "lastPublicationSuccessful": false,
+                    "name": "testrepo3",
                     "id": 4,
                     "published": false,
                     "technology": "R",
@@ -34,6 +33,11 @@
                 "url": null,
                 "deleted": false,
                 "descriptionContentType": "txt",
+                "permissions": [
+                    "package.deactivate",
+                    "package.delete.soft",
+                    "package.edit"
+                ],
                 "binary": false,
                 "name": "A3",
                 "submission": {
@@ -76,11 +80,10 @@
                 "author": "Scott Fortmann-Roe",
                 "active": true,
                 "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-                "source": "/opt/rdepot/repositories/4/54491936/A3_0.9.2.tar.gz",
                 "technology": "R",
                 "repository": {
-                    "name": "testrepo3",
                     "lastPublicationSuccessful": false,
+                    "name": "testrepo3",
                     "id": 4,
                     "published": false,
                     "technology": "R",
@@ -92,6 +95,11 @@
                 "url": null,
                 "deleted": false,
                 "descriptionContentType": "txt",
+                "permissions": [
+                    "package.deactivate",
+                    "package.delete.soft",
+                    "package.edit"
+                ],
                 "binary": false,
                 "name": "A3",
                 "submission": {
@@ -134,11 +142,10 @@
                 "author": "Scott Fortmann-Roe",
                 "active": false,
                 "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-                "source": "",
                 "technology": "R",
                 "repository": {
-                    "name": "testrepo1",
                     "lastPublicationSuccessful": true,
+                    "name": "testrepo1",
                     "id": 2,
                     "published": true,
                     "technology": "R",
@@ -150,6 +157,11 @@
                 "url": null,
                 "deleted": false,
                 "descriptionContentType": "txt",
+                "permissions": [
+                    "package.activate",
+                    "package.delete.soft",
+                    "package.edit"
+                ],
                 "binary": false,
                 "name": "A3",
                 "submission": {
@@ -192,11 +204,10 @@
                 "author": "Scott Fortmann-Roe",
                 "active": true,
                 "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-                "source": "/opt/rdepot/repositories/2/9907084/A3_0.9.2.tar.gz",
                 "technology": "R",
                 "repository": {
-                    "name": "testrepo1",
                     "lastPublicationSuccessful": true,
+                    "name": "testrepo1",
                     "id": 2,
                     "published": true,
                     "technology": "R",
@@ -208,6 +219,11 @@
                 "url": null,
                 "deleted": false,
                 "descriptionContentType": "txt",
+                "permissions": [
+                    "package.deactivate",
+                    "package.delete.soft",
+                    "package.edit"
+                ],
                 "binary": false,
                 "name": "A3",
                 "submission": {
@@ -250,11 +266,10 @@
                 "author": "Scott Fortmann-Roe",
                 "active": false,
                 "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-                "source": "/opt/rdepot/repositories/7/67484296/A3_0.9.1.tar.gz",
                 "technology": "R",
                 "repository": {
-                    "name": "testrepo6",
                     "lastPublicationSuccessful": false,
+                    "name": "testrepo6",
                     "id": 7,
                     "published": false,
                     "technology": "R",
@@ -266,6 +281,9 @@
                 "url": null,
                 "deleted": true,
                 "descriptionContentType": "txt",
+                "permissions": [
+                    "package.delete.hard"
+                ],
                 "binary": false,
                 "name": "A3",
                 "submission": {
@@ -308,11 +326,10 @@
                 "author": "Scott Fortmann-Roe",
                 "active": false,
                 "description": "This package supplies tools for tabulating and analyzing the results of predictive models. The methods employed are applicable to virtually any predictive model and make comparisons between different methodologies straightforward.",
-                "source": "/opt/rdepot/new/92253304/A3_0.9.1.tar.gz",
                 "technology": "R",
                 "repository": {
-                    "name": "testrepo4",
                     "lastPublicationSuccessful": false,
+                    "name": "testrepo4",
                     "id": 5,
                     "published": false,
                     "technology": "R",
@@ -324,6 +341,11 @@
                 "url": null,
                 "deleted": false,
                 "descriptionContentType": "txt",
+                "permissions": [
+                    "package.activate",
+                    "package.delete.soft",
+                    "package.edit"
+                ],
                 "binary": false,
                 "name": "A3",
                 "submission": {
@@ -366,11 +388,10 @@
                 "author": "Scott Fortmann-Roe",
                 "active": true,
                 "description": "This package supplies tools for tabulating and analyzing\\n the results of predictive models. The methods employed are\\n applicable to virtually any predictive model and make\\n comparisons between different methodologies straightforward.",
-                "source": "/opt/rdepot/repositories/3/23298711/A3_0-9-1.tar.gz",
                 "technology": "R",
                 "repository": {
-                    "name": "testrepo2",
                     "lastPublicationSuccessful": true,
+                    "name": "testrepo2",
                     "id": 3,
                     "published": true,
                     "technology": "R",
@@ -382,6 +403,11 @@
                 "url": null,
                 "deleted": false,
                 "descriptionContentType": "txt",
+                "permissions": [
+                    "package.deactivate",
+                    "package.delete.soft",
+                    "package.edit"
+                ],
                 "binary": false,
                 "name": "A3",
                 "submission": {

@@ -25,7 +25,7 @@ package eu.openanalytics.rdepot.r.storage.indexes;
  * @param indexOnRemoteRepoPath destination location of the index in the remote repository
  *                              (e.g. <code>src/contrib/Archive</code>,
  *                              <code>src/contrib/Archive/abc</code>)
- * @param indexLocalPath actual location in the local storage
+ * @param indexLocalPath actual location in the local localStorage
  * @param archive whether the index is meant for the Archive or not
  *                (in practice every index apart from the main one
  *                from the head location of the repository)

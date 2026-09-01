@@ -5,17 +5,17 @@
         "author": "Amazon Web Services",
         "description": null,
         "active": true,
-        "source": "\/opt\/rdepot\/repositories\/8\/55941618\/boto3-1.26.156.tar.gz",
+        "source": "/opt/rdepot/repositories/8/55941618/boto3-1.26.156.tar.gz",
         "technology": "Python",
         "repository": {
             "name": "testrepo8",
             "id": 8,
             "technology": "Python",
-            "publicationUri": "http:\/\/localhost\/repo\/testrepo8"
+            "publicationUri": "http://localhost/repo/testrepo8"
         },
         "title": "",
         "version": "1.26.156",
-        "url": "Documentation, https:\/\/boto3.amazonaws.com\/v1\/documentation\/api\/latest\/index.html, Source, https:\/\/github.com\/boto\/boto3",
+        "url": "Documentation, https://boto3.amazonaws.com/v1/documentation/api/latest/index.html, Source, https://github.com/boto/boto3",
         "license": "Apache License 2.0",
         "submissionId": 42,
         "deleted": false,
@@ -23,11 +23,11 @@
         "links": [
             {
                 "rel": "self",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages\/42"
+                "href": "http://localhost:8017/api/v2/manager/python/packages/42"
             },
             {
                 "rel": "packageList",
-                "href": "http:\/\/localhost:8017\/api\/v2\/manager\/python\/packages"
+                "href": "http://localhost:8017/api/v2/manager/python/packages"
             },
             {
                 "rel": "repository",

@@ -22,7 +22,7 @@ package eu.openanalytics.rdepot.r.synchronization.checksums;
 
 import eu.openanalytics.rdepot.base.synchronization.checksums.Checksum;
 import eu.openanalytics.rdepot.base.synchronization.checksums.Checksums;
-import eu.openanalytics.rdepot.r.storage.BinLocation;
+import eu.openanalytics.rdepot.r.storage.binaries.BinLocation;
 import eu.openanalytics.rdepot.r.storage.indexes.RIndexDescriptor;
 import eu.openanalytics.rdepot.r.storage.packagesfile.PackagesFileDescriptor;
 import eu.openanalytics.rdepot.r.storage.population.PopulatedRPackage;

@@ -20,18 +20,15 @@
  */
 package eu.openanalytics.rdepot.base.strategy.update;
 
-import eu.openanalytics.rdepot.base.entities.EventChangedVariable;
-import eu.openanalytics.rdepot.base.entities.NewsfeedEvent;
+import eu.openanalytics.rdepot.base.entities.*;
 import eu.openanalytics.rdepot.base.entities.Package;
-import eu.openanalytics.rdepot.base.entities.Repository;
-import eu.openanalytics.rdepot.base.entities.RepositoryMaintainer;
-import eu.openanalytics.rdepot.base.entities.User;
 import eu.openanalytics.rdepot.base.event.NewsfeedEventType;
 import eu.openanalytics.rdepot.base.mediator.BestMaintainerChooser;
 import eu.openanalytics.rdepot.base.mediator.deletion.exceptions.NoSuitableMaintainerFound;
 import eu.openanalytics.rdepot.base.service.CommonPackageService;
 import eu.openanalytics.rdepot.base.service.NewsfeedEventService;
 import eu.openanalytics.rdepot.base.service.RepositoryMaintainerService;
+import eu.openanalytics.rdepot.base.strategy.exceptions.FatalStrategyFailure;
 import eu.openanalytics.rdepot.base.strategy.exceptions.StrategyFailure;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -78,7 +75,7 @@ public class UpdateRepositoryMaintainerStrategy extends UpdateStrategy<Repositor
             bestMaintainerChooser.refreshMaintainerForPackages(
                     new ArrayList<>(packageService.findAllByRepository(resource.getRepository())));
         } catch (NoSuitableMaintainerFound e) {
-            throw new StrategyFailure(e);
+            throw new FatalStrategyFailure(e);
         }
 
         changedValues.add(new EventChangedVariable("deleted", "false", "true"));
@@ -96,7 +93,7 @@ public class UpdateRepositoryMaintainerStrategy extends UpdateStrategy<Repositor
         try {
             bestMaintainerChooser.refreshMaintainerForPackages(packages);
         } catch (NoSuitableMaintainerFound e) {
-            throw new StrategyFailure(e);
+            throw new FatalStrategyFailure(e);
         }
 
         changedValues.add(new EventChangedVariable("repository", oldRepository.toString(), repository.toString()));
