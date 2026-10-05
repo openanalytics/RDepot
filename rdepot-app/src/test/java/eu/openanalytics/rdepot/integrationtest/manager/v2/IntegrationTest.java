@@ -38,6 +38,7 @@ import io.restassured.http.ContentType;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -227,7 +228,7 @@ public abstract class IntegrationTest {
             throws Exception {
         JSONParser jsonParser = new JSONParser();
 
-        FileReader reader = new FileReader(JSON_PATH + expectedJsonPath);
+        FileReader reader = new FileReader(JSON_PATH + expectedJsonPath, StandardCharsets.UTF_8);
         JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
 
         String data = given().header(AUTHORIZATION, BASIC + token)
@@ -250,7 +251,7 @@ public abstract class IntegrationTest {
             throws Exception {
         JSONParser jsonParser = new JSONParser();
 
-        FileReader reader = new FileReader(JSON_PATH + expectedJsonPath);
+        FileReader reader = new FileReader(JSON_PATH + expectedJsonPath, StandardCharsets.UTF_8);
         JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
 
         String data = given().header(AUTHORIZATION, BASIC + token)
@@ -281,7 +282,7 @@ public abstract class IntegrationTest {
 
         JSONParser jsonParser = new JSONParser();
 
-        FileReader reader = new FileReader(JSON_PATH + expectedJsonPath);
+        FileReader reader = new FileReader(JSON_PATH + expectedJsonPath, StandardCharsets.UTF_8);
         JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
 
         String data = given().header(AUTHORIZATION, BASIC + token)
@@ -322,7 +323,7 @@ public abstract class IntegrationTest {
 
         JSONParser jsonParser = new JSONParser();
 
-        FileReader reader = new FileReader(JSON_PATH + "/v2/401.json");
+        FileReader reader = new FileReader(JSON_PATH + "/v2/401.json", StandardCharsets.UTF_8);
         JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
 
         String data = given().accept(ContentType.JSON)
@@ -341,7 +342,7 @@ public abstract class IntegrationTest {
 
         JSONParser jsonParser = new JSONParser();
 
-        FileReader reader = new FileReader(JSON_PATH + "/v2/403.json");
+        FileReader reader = new FileReader(JSON_PATH + "/v2/403.json", StandardCharsets.UTF_8);
         JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
 
         String data = given().accept(ContentType.JSON)
@@ -361,7 +362,7 @@ public abstract class IntegrationTest {
 
         JSONParser jsonParser = new JSONParser();
 
-        FileReader reader = new FileReader(JSON_PATH + "/v2/401.json");
+        FileReader reader = new FileReader(JSON_PATH + "/v2/401.json", StandardCharsets.UTF_8);
         JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
 
         String data = given().accept(ContentType.JSON)
@@ -382,7 +383,7 @@ public abstract class IntegrationTest {
 
         JSONParser jsonParser = new JSONParser();
 
-        FileReader reader = new FileReader(JSON_PATH + "/v2/403.json");
+        FileReader reader = new FileReader(JSON_PATH + "/v2/403.json", StandardCharsets.UTF_8);
         JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
 
         String data = given().header(AUTHORIZATION, BASIC + token)
@@ -405,7 +406,7 @@ public abstract class IntegrationTest {
 
         JSONParser jsonParser = new JSONParser();
 
-        FileReader reader = new FileReader(JSON_PATH + expectedJsonPath);
+        FileReader reader = new FileReader(JSON_PATH + expectedJsonPath, StandardCharsets.UTF_8);
         JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
 
         String data = given().header(AUTHORIZATION, BASIC + token)
@@ -430,7 +431,7 @@ public abstract class IntegrationTest {
             throws Exception {
         JSONParser jsonParser = new JSONParser();
 
-        FileReader reader = new FileReader(JSON_PATH + expectedJsonPath);
+        FileReader reader = new FileReader(JSON_PATH + expectedJsonPath, StandardCharsets.UTF_8);
         JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
 
         String data = given().header(AUTHORIZATION, BASIC + token)
@@ -454,7 +455,7 @@ public abstract class IntegrationTest {
             String body, String expectedJsonPath, int statusCode, String token, String urlSuffix) throws Exception {
         JSONParser jsonParser = new JSONParser();
 
-        FileReader reader = new FileReader(JSON_PATH + expectedJsonPath);
+        FileReader reader = new FileReader(JSON_PATH + expectedJsonPath, StandardCharsets.UTF_8);
         JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
 
         String data = given().header(AUTHORIZATION, BASIC + token)
@@ -478,7 +479,7 @@ public abstract class IntegrationTest {
             throws Exception {
         JSONParser jsonParser = new JSONParser();
 
-        FileReader reader = new FileReader(JSON_PATH + expectedJsonPath);
+        FileReader reader = new FileReader(JSON_PATH + expectedJsonPath, StandardCharsets.UTF_8);
         JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
 
         String data = given().header(AUTHORIZATION, BASIC + token)
@@ -502,7 +503,7 @@ public abstract class IntegrationTest {
             throws Exception {
         JSONParser jsonParser = new JSONParser();
 
-        FileReader reader = new FileReader(JSON_PATH + expectedJsonPath);
+        FileReader reader = new FileReader(JSON_PATH + expectedJsonPath, StandardCharsets.UTF_8);
         JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
 
         String data = given().header(AUTHORIZATION, BASIC + token)
@@ -527,7 +528,7 @@ public abstract class IntegrationTest {
             throws Exception {
         JSONParser jsonParser = new JSONParser();
 
-        FileReader reader = new FileReader(JSON_PATH + expectedJsonPath);
+        FileReader reader = new FileReader(JSON_PATH + expectedJsonPath, StandardCharsets.UTF_8);
         JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
         String data;
 
@@ -609,7 +610,7 @@ public abstract class IntegrationTest {
     protected void testPostEndpoint_asUnauthenticated(String body) throws Exception {
         JSONParser jsonParser = new JSONParser();
 
-        FileReader reader = new FileReader(JSON_PATH + "/v2/401.json");
+        FileReader reader = new FileReader(JSON_PATH + "/v2/401.json", StandardCharsets.UTF_8);
         JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
 
         String data = given().accept(ContentType.JSON)
@@ -629,7 +630,7 @@ public abstract class IntegrationTest {
     protected void testPostEndpoint_asUnauthorized(String body, String token) throws Exception {
         JSONParser jsonParser = new JSONParser();
 
-        FileReader reader = new FileReader(JSON_PATH + "/v2/403.json");
+        FileReader reader = new FileReader(JSON_PATH + "/v2/403.json", StandardCharsets.UTF_8);
         JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
 
         String data = given().header(AUTHORIZATION, BASIC + token)
@@ -654,7 +655,7 @@ public abstract class IntegrationTest {
     protected void testDeleteEndpointUnauthorized(String suffix, String token) throws IOException, ParseException {
         JSONParser jsonParser = new JSONParser();
 
-        FileReader reader = new FileReader(JSON_PATH + "/v2/403.json");
+        FileReader reader = new FileReader(JSON_PATH + "/v2/403.json", StandardCharsets.UTF_8);
         JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
 
         String data = given().accept(ContentType.JSON)

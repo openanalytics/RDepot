@@ -26,10 +26,7 @@ import eu.openanalytics.rdepot.repo.hash.model.HashMethod;
 import eu.openanalytics.rdepot.repo.r.storage.CranRepositoryStorageExplorer;
 import eu.openanalytics.rdepot.repo.r.storage.CranStorageService;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -89,11 +86,11 @@ public class CranFileListingController {
     }
 
     private String fileAndHash(Path file, String repository) throws IOException {
-        return StringUtils.substringAfter(file.toString(), repository + "/")
-                + "="
-                + hashCalculator
-                        .calculate(Files.newInputStream(file), HashMethod.MD5)
-                        .orElseThrow();
+        try (InputStream toHash = Files.newInputStream(file)) {
+            return StringUtils.substringAfter(file.toString(), repository + "/")
+                    + "="
+                    + hashCalculator.calculate(toHash, HashMethod.MD5).orElseThrow();
+        }
     }
 
     @GetMapping("/{repository}/archive/")
@@ -130,9 +127,9 @@ public class CranFileListingController {
 
         final File returnedFile = packagesFiles.get(packagesFile);
         if (returnedFile != null) {
-            try {
-                final InputStream is = new FileInputStream(returnedFile);
-                IOUtils.copy(is, response.getOutputStream());
+            try (final InputStream is = new FileInputStream(returnedFile);
+                    final OutputStream out = response.getOutputStream()) {
+                IOUtils.copy(is, out);
                 response.flushBuffer();
             } catch (IOException e) {
                 log.error("Could not write file to output stream! Filename: {}", returnedFile.getName(), e);

@@ -29,6 +29,7 @@ import io.restassured.http.ContentType;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Objects;
@@ -100,7 +101,8 @@ public class RRepositoryWithoutSnapshotsIntegrationTest {
 
         JSONParser jsonParser = new JSONParser();
 
-        FileReader reader = new FileReader(JSON_PATH + "/v2/r/repositories/published_repository.json");
+        FileReader reader =
+                new FileReader(JSON_PATH + "/v2/r/repositories/published_repository.json", StandardCharsets.UTF_8);
         JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
 
         String data = given().headers(AUTHORIZATION, BEARER + REPOSITORYMAINTAINER_TOKEN)

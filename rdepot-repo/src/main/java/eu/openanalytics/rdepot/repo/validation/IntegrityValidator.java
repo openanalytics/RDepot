@@ -25,6 +25,7 @@ import eu.openanalytics.rdepot.repo.hash.model.HashMethod;
 import eu.openanalytics.rdepot.repo.model.SynchronizeRepositoryRequestBody;
 import jakarta.validation.constraints.NotNull;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.MessageDigest;
 import java.util.Map;
 import java.util.Optional;
@@ -60,9 +61,11 @@ public abstract class IntegrityValidator<T extends SynchronizeRepositoryRequestB
         try {
             final String expectedHash = checksums.get(expectedKey);
             if (expectedHash == null) return true;
-
-            final Optional<String> hash = hashCalculator.calculate(file.getInputStream(), hashMethod);
-            if (hash.isEmpty() || !MessageDigest.isEqual(hash.get().getBytes(), expectedHash.getBytes())) return true;
+            try (final InputStream toHash = file.getInputStream()) {
+                final Optional<String> hash = hashCalculator.calculate(toHash, hashMethod);
+                if (hash.isEmpty() || !MessageDigest.isEqual(hash.get().getBytes(), expectedHash.getBytes()))
+                    return true;
+            }
         } catch (IOException e) {
             log.warn(e.getMessage(), e);
             return true;

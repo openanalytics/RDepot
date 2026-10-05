@@ -37,6 +37,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -357,7 +358,8 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
                         "src/test/resources/scripts/checkIfPublishedBinaryPackageCanBeInstalled.sh")
                 .redirectErrorStream(true)
                 .start();
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        final BufferedReader reader =
+                new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
 
         boolean installingBinary = false;
         boolean loadedBinary = false;
@@ -1347,5 +1349,44 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
 
         assertNotEquals(oldHash, newHash, "Hashes should be different");
         cleanAfterDownloading(targetDirectoryName);
+    }
+
+    @Test
+    public void submitPackage_withSystemRequirements() throws Exception {
+        final File packageBag = new File("src/test/resources/itestPackages/xml2_1.6.0.tar.gz");
+        SubmissionMultipartBody body = new SubmissionMultipartBody(
+                "testrepo2",
+                true,
+                false,
+                "",
+                new MultiPartSpecBuilder(Files.readAllBytes(packageBag.toPath()))
+                        .fileName(packageBag.getName())
+                        .mimeType("application/gzip")
+                        .controlName("file")
+                        .build());
+
+        TestRequestBody requestBody = TestRequestBody.builder()
+                .requestType(RequestType.POST_MULTIPART)
+                .urlSuffix("/")
+                .statusCode(201)
+                .token(ADMIN_TOKEN)
+                .howManyNewEventsShouldBeCreated(testData.getPostEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/r/submission/new_xml2_submission.json")
+                .expectedEventsJson(EVENTS_PATH + "new_xml2_events.json")
+                .submissionMultipartBody(body)
+                .build();
+        testEndpoint(requestBody);
+
+        requestBody = TestRequestBody.builder()
+                .requestType(RequestType.GET_OTHER_RESOURCE)
+                .path("/api/v2/manager/r/packages")
+                .token(USER_TOKEN)
+                .statusCode(200)
+                .urlSuffix("/48")
+                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
+                .expectedJsonPath("/v2/r/packages/xml2_package.json")
+                .ignoreSource(true)
+                .build();
+        testEndpoint(requestBody);
     }
 }

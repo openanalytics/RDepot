@@ -23,6 +23,7 @@ package eu.openanalytics.rdepot.integrationtest.environment;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
@@ -44,7 +45,8 @@ public class BashScriptExecutor {
         try {
             final Process process =
                     new ProcessBuilder(args).redirectErrorStream(true).start();
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            final BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
             final StringBuilder output = new StringBuilder();
             String line = reader.readLine();
             while (line != null) {

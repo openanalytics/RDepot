@@ -31,9 +31,9 @@ import eu.openanalytics.rdepot.repo.model.SynchronizeRepositoryRequestBody;
 import eu.openanalytics.rdepot.repo.storage.StorageProperties;
 import eu.openanalytics.rdepot.repo.storage.StorageService;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -224,7 +224,7 @@ public abstract class FileSystemStorageService<T extends SynchronizeRepositoryRe
     protected Map<String, String> parseTrashDatabase(File trashDatabase) throws RestoreRepositoryException {
         final Map<String, String> map = new LinkedHashMap<>();
 
-        try (Scanner scanner = new Scanner(trashDatabase)) {
+        try (Scanner scanner = new Scanner(trashDatabase, StandardCharsets.UTF_8)) {
             while (scanner.hasNextLine()) {
                 final String[] data = scanner.nextLine().split(":");
                 if (data.length < 2) continue;
@@ -232,7 +232,7 @@ public abstract class FileSystemStorageService<T extends SynchronizeRepositoryRe
                 final String previousDirectory = data[1];
                 map.put(fileName, previousDirectory);
             }
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             throw new RestoreRepositoryException(trashDatabase);
         }
         return map;
@@ -255,7 +255,7 @@ public abstract class FileSystemStorageService<T extends SynchronizeRepositoryRe
                     writer.write(versionStr);
                 }
             } else {
-                try (Scanner scanner = new Scanner(versionPath)) {
+                try (Scanner scanner = new Scanner(versionPath, StandardCharsets.UTF_8)) {
                     versionStr = scanner.nextLine();
                     Integer.valueOf(versionStr);
                 }

@@ -1,0 +1,72 @@
+{
+    "status": "SUCCESS",
+    "code": 200,
+    "message": "Your request has been processed successfully.",
+    "messageCode": "success.request.processed",
+    "data": {
+        "active": true,
+        "architecture": null,
+        "author": "Hadley Wickham [aut],\\n Jim Hester [aut],\\n Jeroen Ooms [aut, cre],\\n Posit Software, PBC [cph, fnd],\\n R Foundation [ctb] (Copy of R-project homepage cached as example)",
+        "binary": false,
+        "built": null,
+        "deleted": false,
+        "depends": "R (>= 3.6.0)",
+        "description": "Bindings to 'libxml2' for working with XML data using a simple, \\n consistent interface based on 'XPath' expressions. Also supports XML schema\\n validation; for 'XSLT' transformations see the 'xslt' package.",
+        "descriptionContentType": "txt",
+        "distribution": null,
+        "encoding": "UTF-8",
+        "enhances": null,
+        "id": 48,
+        "imports": "cli, methods, rlang (>= 1.1.0)",
+        "license": "MIT + file LICENSE",
+        "linkingTo": null,
+        "maintainer": "Jeroen Ooms <jeroenooms@gmail.com>",
+        "manualAvailable": true,
+        "md5sum": "4e005569a935f91400a06533cad641e8",
+        "name": "xml2",
+        "needsCompilation": "yes",
+        "permissions": [],
+        "priority": null,
+        "repository": {
+            "id": 3,
+            "lastPublicationSuccessful": true,
+            "name": "testrepo2",
+            "publicationUri": "http://localhost/repo/testrepo2",
+            "published": true,
+            "requiresAuthentication": true,
+            "technology": "R"
+        },
+        "rversion": null,
+        "source": "/opt/rdepot/repositories/3/81919627/xml2_1.6.0.tar.gz",
+        "submission": {
+            "id": 48,
+            "state": "ACCEPTED"
+        },
+        "suggests": "covr, curl, httr, knitr, mockery, rmarkdown, testthat (>=\\n 3.2.0), xslt",
+        "systemRequirements": "libxml2: libxml2-dev (deb), libxml2-devel (rpm)",
+        "technology": "R",
+        "title": "Parse XML",
+        "url": "https://xml2.r-lib.org, https://r-lib.r-universe.dev/xml2",
+        "user": {
+            "email": "einstein@ldap.forumsys.com",
+            "id": 4,
+            "login": "einstein",
+            "name": "Albert Einstein"
+        },
+        "version": "1.6.0",
+        "links": [
+            {
+                "rel": "self",
+                "href": "http://localhost:8017/api/v2/manager/r/packages/48"
+            },
+            {
+                "rel": "packageList",
+                "href": "http://localhost:8017/api/v2/manager/r/packages"
+            },
+            {
+                "rel": "repository",
+                "href": "http://localhost:8017/api/v2/manager/r/repositories/3"
+            }
+        ]
+    }
+}

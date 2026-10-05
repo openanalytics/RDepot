@@ -124,7 +124,7 @@ public class RPackageUploadStrategy extends DefaultPackageUploadStrategy<RReposi
         packageBag.setDepends(properties.getProperty("Depends"));
         packageBag.setImports(properties.getProperty("Imports"));
         packageBag.setSuggests(properties.getProperty("Suggests"));
-        packageBag.setSystemRequirements(properties.getProperty("System Requirements"));
+        packageBag.setSystemRequirements(properties.getProperty("SystemRequirements"));
         packageBag.setLicense(properties.getProperty("License"));
         packageBag.setUrl(properties.getProperty("URL"));
         packageBag.setTitle(properties.getProperty("Title"));

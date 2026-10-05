@@ -20,15 +20,18 @@
  */
 package eu.openanalytics.rdepot.base;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class ReadmeParser {
 
     public static String loadReadme(File readmeFile) throws IOException {
-        try (Scanner scanner = new Scanner(new FileInputStream(readmeFile))) {
+        try (Scanner scanner =
+                new Scanner(new BufferedInputStream(new FileInputStream(readmeFile)), StandardCharsets.UTF_8)) {
             scanner.useDelimiter("(\r\\n|\r|\\n)");
             StringBuilder value = new StringBuilder();
             String line;

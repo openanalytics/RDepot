@@ -35,6 +35,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -125,7 +126,8 @@ public class RRepositoryIntegrationTest extends IntegrationTest {
                 .extract()
                 .asString();
 
-        final FileReader reader = new FileReader(JSON_PATH + "/v2/r/repositories/r_config.json");
+        final FileReader reader =
+                new FileReader(JSON_PATH + "/v2/r/repositories/r_config.json", StandardCharsets.UTF_8);
         final JsonObject expectedResponse = (JsonObject) JsonParser.parseReader(reader);
         final JsonObject actualResponse = (JsonObject) JsonParser.parseString(response);
 
@@ -150,18 +152,6 @@ public class RRepositoryIntegrationTest extends IntegrationTest {
                 .token(ADMIN_TOKEN)
                 .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
                 .expectedJsonPath(REPOSITORIES_PATH + "list_of_repositories.json")
-                .build();
-        testEndpoint(requestBody);
-    }
-
-    public void getAllRepositoriesAsRepositoryMaintainer() throws Exception {
-        TestRequestBody requestBody = TestRequestBody.builder()
-                .requestType(RequestType.GET)
-                .token(REPOSITORYMAINTAINER_TOKEN)
-                .statusCode(200)
-                .urlSuffix("?sort=id,asc")
-                .howManyNewEventsShouldBeCreated(testData.getGetEndpointNewEventsAmount())
-                .expectedJsonPath(REPOSITORIES_PATH + "all_repositories_as_repositorymantainer.json")
                 .build();
         testEndpoint(requestBody);
     }
@@ -577,7 +567,8 @@ public class RRepositoryIntegrationTest extends IntegrationTest {
                         "/usr/bin/env", "bash", "src/test/resources/scripts/" + "tryToPublishCorruptPackage.sh")
                 .redirectErrorStream(true)
                 .start();
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        final BufferedReader reader =
+                new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
         final StringBuilder builder = new StringBuilder();
         String msg;
         while ((msg = reader.readLine()) != null) {
@@ -586,7 +577,7 @@ public class RRepositoryIntegrationTest extends IntegrationTest {
         process.waitFor();
         process.destroy();
         final String output = builder.toString();
-        final String responseCode = StringUtils.right(output.split("}")[1], 3);
+        final String responseCode = StringUtils.right(output.split("}", -1)[1], 3);
         int code = Integer.parseInt(responseCode);
         Assertions.assertEquals(400, code, "the request did not fail properly");
     }

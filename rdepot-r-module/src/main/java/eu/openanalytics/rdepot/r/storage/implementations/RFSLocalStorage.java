@@ -23,9 +23,7 @@ package eu.openanalytics.rdepot.r.storage.implementations;
 import eu.openanalytics.rdepot.base.storage.exceptions.CheckSumCalculationException;
 import eu.openanalytics.rdepot.base.storage.implementations.CommonFSLocalStorage;
 import eu.openanalytics.rdepot.r.entities.RPackage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Component;
@@ -40,8 +38,8 @@ public class RFSLocalStorage extends CommonFSLocalStorage<RPackage> {
     @Override
     public void setCheckSum(RPackage packageBag, File locallyStored) throws CheckSumCalculationException {
         log.debug("Calculating checksum for package: {}", packageBag.toString());
-        try {
-            packageBag.setMd5sum(DigestUtils.md5Hex(new FileInputStream(locallyStored)));
+        try (final InputStream toHash = new BufferedInputStream(new FileInputStream(locallyStored))) {
+            packageBag.setMd5sum(DigestUtils.md5Hex(toHash));
         } catch (IOException e) {
             log.error(e.getMessage(), e);
             throw new CheckSumCalculationException();

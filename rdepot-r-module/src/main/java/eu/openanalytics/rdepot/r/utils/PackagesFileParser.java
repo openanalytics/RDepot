@@ -27,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -74,7 +75,7 @@ public class PackagesFileParser {
         String value = "";
         String previousLine = null;
 
-        try (BufferedReader br = new BufferedReader(new FileReader(packagesFile))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(packagesFile, StandardCharsets.UTF_8))) {
             RPackage packageBag = new RPackage();
             boolean previousPackageAlreadyAdded = true;
             while ((line = br.readLine()) != null) {

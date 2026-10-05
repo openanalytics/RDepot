@@ -129,37 +129,35 @@ public class PythonFileSystemStorageService extends FileSystemStorageService<Syn
         final File outputFile = new File(
                 outputDir, inputFile.getName().substring(0, inputFile.getName().length() - 3));
 
-        final GZIPInputStream in = new GZIPInputStream(new FileInputStream(inputFile));
-        final FileOutputStream out = new FileOutputStream(outputFile);
+        try (final GZIPInputStream in = new GZIPInputStream(new FileInputStream(inputFile));
+                final FileOutputStream out = new FileOutputStream(outputFile)) {
+            IOUtils.copy(in, out);
+        }
 
-        IOUtils.copy(in, out);
-
-        in.close();
-        out.close();
         Files.delete(inputFile.toPath());
         return outputFile;
     }
 
     private void unTar(final File inputFile, final File outputDir) throws IOException, ArchiveException {
         log.debug("Extracting {} to dir {}.", inputFile.getAbsolutePath(), outputDir.getAbsolutePath());
-        final InputStream is = new FileInputStream(inputFile);
-        final TarArchiveInputStream debInputStream = new ArchiveStreamFactory().createArchiveInputStream("tar", is);
-        TarArchiveEntry entry;
+        try (final InputStream is = new FileInputStream(inputFile);
+                final TarArchiveInputStream debInputStream =
+                        new ArchiveStreamFactory().createArchiveInputStream("tar", is)) {
+            TarArchiveEntry entry;
+            while ((entry = debInputStream.getNextEntry()) != null) {
+                final Path outputFile = Paths.get(outputDir.getAbsolutePath(), entry.getName());
 
-        while ((entry = debInputStream.getNextEntry()) != null) {
-            final Path outputFile = Paths.get(outputDir.getAbsolutePath(), entry.getName());
+                Files.createDirectories(outputFile.getParent());
 
-            Files.createDirectories(outputFile.getParent());
-
-            if (entry.isDirectory()) {
-                Files.createDirectories(outputFile);
-            } else {
-                final OutputStream outputFileStream = new FileOutputStream(outputFile.toFile());
-                IOUtils.copy(debInputStream, outputFileStream);
-                outputFileStream.close();
+                if (entry.isDirectory()) {
+                    Files.createDirectories(outputFile);
+                } else {
+                    try (final OutputStream outputFileStream = new FileOutputStream(outputFile.toFile())) {
+                        IOUtils.copy(debInputStream, outputFileStream);
+                    }
+                }
             }
         }
-        debInputStream.close();
     }
 
     @Override

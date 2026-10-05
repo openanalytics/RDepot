@@ -29,6 +29,7 @@ import io.restassured.builder.MultiPartSpecBuilder;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -487,7 +488,8 @@ public class PythonRepositoryIntegrationTest extends IntegrationTest {
                         "src/test/resources/scripts/" + "tryToPublishCorruptPackageToPythonRepo.sh")
                 .redirectErrorStream(true)
                 .start();
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        final BufferedReader reader =
+                new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
         final StringBuilder builder = new StringBuilder();
         String msg;
         while ((msg = reader.readLine()) != null) {

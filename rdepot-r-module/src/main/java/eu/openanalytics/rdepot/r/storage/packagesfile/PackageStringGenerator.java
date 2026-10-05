@@ -76,6 +76,12 @@ public class PackageStringGenerator {
                 .append("License: ")
                 .append(separateLines(packageBag.getLicense(), lineSeparator))
                 .append(lineSeparator);
+        if (packageBag.getSystemRequirements() != null
+                && !packageBag.getSystemRequirements().isEmpty())
+            packageString
+                    .append("SystemRequirements: ")
+                    .append(separateLines(packageBag.getSystemRequirements(), lineSeparator))
+                    .append(lineSeparator);
         if (packageBag.getLinkingTo() != null && !packageBag.getLinkingTo().isEmpty())
             packageString
                     .append("LinkingTo: ")

@@ -128,7 +128,9 @@ public class PythonFSPopulator extends LocalFSPopulator<PythonRepository, Python
             } else if (extractedDir.getName().endsWith(".dist-info")
                     && Files.exists(Paths.get(extractedDir + "/METADATA"))) {
                 final Properties properties = new PythonPropertiesParser(new File(extractedDir + "/METADATA"));
-                properties.load(new FileInputStream(extractedDir + "/WHEEL"));
+                try (final InputStream wheel = new BufferedInputStream(new FileInputStream(extractedDir + "/WHEEL"))) {
+                    properties.load(wheel);
+                }
                 return properties;
             }
         }

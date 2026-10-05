@@ -32,10 +32,7 @@ import eu.openanalytics.rdepot.repo.r.storage.CranRepositoryStorageExplorer;
 import eu.openanalytics.rdepot.repo.r.storage.CranStorageService;
 import eu.openanalytics.rdepot.repo.storage.StorageProperties;
 import eu.openanalytics.rdepot.repo.storage.implementations.FileSystemStorageService;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -183,9 +180,10 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
             Files.createDirectories(metaLocation);
         }
         Path archiveRds = metaLocation.resolve(ARCHIVE_RDS);
-        FileOutputStream archiveRdsStream = new FileOutputStream(archiveRds.toFile());
-        BufferedOutputStream outputStream = new BufferedOutputStream(archiveRdsStream);
-        archiveIndex.serialize(outputStream);
+        try (final OutputStream archiveRdsStream =
+                new BufferedOutputStream(new FileOutputStream(archiveRds.toFile()))) {
+            archiveIndex.serialize(archiveRdsStream);
+        }
     }
 
     @Override
@@ -266,7 +264,9 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
         if (Files.exists(destination)) {
             moveToTrash(id, destination);
         }
-        Files.copy(file.getInputStream(), saveLocation.resolve(fileName));
+        try (final InputStream from = file.getInputStream()) {
+            Files.copy(from, saveLocation.resolve(fileName));
+        }
     }
 
     private boolean isIndex(String originalFilename) {
@@ -297,7 +297,9 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
                     if (Files.exists(destination)) {
                         moveToTrash(id, destination);
                     }
-                    Files.copy(file.getInputStream(), destination);
+                    try (final InputStream from = file.getInputStream()) {
+                        Files.copy(from, destination);
+                    }
                 } else {
                     copyToDedicatedDirectory(file, saveLocation, id);
                 }
@@ -329,11 +331,11 @@ public class CranFileSystemStorageService extends FileSystemStorageService<Synch
 
             String fileName = StringUtils.substringAfter(file.getOriginalFilename(), "_");
             Path destination = saveLocation.resolve(Objects.requireNonNull(fileName));
-            try {
+            try (final InputStream from = file.getInputStream()) {
                 if (Files.exists(destination)) {
                     moveToTrash(id, destination);
                 }
-                Files.copy(file.getInputStream(), destination);
+                Files.copy(from, destination);
             } catch (IOException | MoveToTrashException e) {
                 throw new StorageException("Failed to store file " + fileName, e);
             }

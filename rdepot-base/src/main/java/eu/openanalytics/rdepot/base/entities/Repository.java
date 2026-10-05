@@ -92,7 +92,7 @@ public abstract class Repository extends EventableResource implements Serializab
     private boolean lastPublicationSuccessful = false;
 
     @Column(name = "requires_authentication", nullable = false)
-    private Boolean requiresAuthentication;
+    private Boolean requiresAuthentication = false;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "repository")
     private Set<RepositoryMaintainer> repositoryMaintainers = new HashSet<>(0);

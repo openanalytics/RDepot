@@ -21,6 +21,7 @@
 package eu.openanalytics.rdepot.base;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Scanner;
@@ -41,7 +42,9 @@ public class PropertiesParser extends Properties {
 
     public PropertiesParser(File descriptionFile) throws IOException {
         super();
-        this.load(new FileInputStream(descriptionFile));
+        try (InputStream toLoad = new BufferedInputStream(new FileInputStream(descriptionFile))) {
+            this.load(toLoad);
+        }
     }
 
     /**
@@ -65,7 +68,7 @@ public class PropertiesParser extends Properties {
      */
     @Override
     public synchronized void load(InputStream inStream) throws IOException {
-        load0(new Scanner(inStream));
+        load0(new Scanner(inStream, StandardCharsets.UTF_8));
     }
 
     private void load0(Scanner scanner) {

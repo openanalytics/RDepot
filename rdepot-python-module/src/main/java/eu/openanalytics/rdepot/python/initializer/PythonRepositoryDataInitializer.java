@@ -83,20 +83,18 @@ public class PythonRepositoryDataInitializer
         repository.setPublicationUri(declaredRepository.getPublicationUri());
         repository.setServerAddress(declaredRepository.getServerAddress());
 
-        if (declarative) {
-            boolean deleted = false;
-            boolean published = true;
-            boolean requiresAuthentication = true;
+        boolean deleted = false;
+        boolean published = true;
+        boolean requiresAuthentication = true;
 
-            if (declaredRepository.getDeleted() != null) deleted = declaredRepository.getDeleted();
-            if (declaredRepository.getPublished() != null) published = declaredRepository.getPublished();
-            if (declaredRepository.getRequiresAuthentication() != null)
-                requiresAuthentication = declaredRepository.getRequiresAuthentication();
+        if (declaredRepository.getDeleted() != null) deleted = declaredRepository.getDeleted();
+        if (declaredRepository.getPublished() != null) published = declaredRepository.getPublished();
+        if (declaredRepository.getRequiresAuthentication() != null)
+            requiresAuthentication = declaredRepository.getRequiresAuthentication();
 
-            repository.setDeleted(deleted);
-            repository.setPublished(published);
-            repository.setRequiresAuthentication(requiresAuthentication);
-        }
+        repository.setDeleted(deleted);
+        repository.setPublished(published);
+        repository.setRequiresAuthentication(requiresAuthentication);
 
         return repository;
     }

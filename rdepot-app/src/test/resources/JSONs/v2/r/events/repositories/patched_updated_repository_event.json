@@ -32,7 +32,7 @@
                 },
                 "resourceId": 2,
                 "resourceType": "REPOSITORY",
-                "technology": "RDepot version: 2.9.0",
+                "technology": "RDepot version: 2.9.1",
                 "time": "2026-06-29T15:27:17.535859Z",
                 "user": {
                     "email": "tesla@ldap.forumsys.com",
@@ -108,7 +108,7 @@
                 },
                 "resourceId": 47,
                 "resourceType": "SUBMISSION",
-                "technology": "RDepot version: 2.9.0",
+                "technology": "RDepot version: 2.9.1",
                 "time": "2024-11-19T11:22:33Z",
                 "user": {
                     "email": "newton@ldap.forumsys.com",
@@ -150,7 +150,7 @@
                 },
                 "resourceId": 6,
                 "resourceType": "ACCESS_TOKEN",
-                "technology": "RDepot version: 2.9.0",
+                "technology": "RDepot version: 2.9.1",
                 "time": "2024-01-19T13:42:32Z",
                 "user": {
                     "email": "tesla@ldap.forumsys.com",
@@ -221,7 +221,7 @@
                 },
                 "resourceId": 46,
                 "resourceType": "SUBMISSION",
-                "technology": "RDepot version: 2.9.0",
+                "technology": "RDepot version: 2.9.1",
                 "time": "2023-07-10T12:36:18Z",
                 "user": {
                     "email": "newton@ldap.forumsys.com",
@@ -292,7 +292,7 @@
                 },
                 "resourceId": 45,
                 "resourceType": "SUBMISSION",
-                "technology": "RDepot version: 2.9.0",
+                "technology": "RDepot version: 2.9.1",
                 "time": "2023-07-10T12:36:04Z",
                 "user": {
                     "email": "newton@ldap.forumsys.com",
@@ -338,7 +338,7 @@
                 },
                 "resourceId": 11,
                 "resourceType": "PACKAGE_MAINTAINER",
-                "technology": "RDepot version: 2.9.0",
+                "technology": "RDepot version: 2.9.1",
                 "time": "2023-07-10T12:35:21Z",
                 "user": {
                     "email": "einstein@ldap.forumsys.com",
@@ -384,7 +384,7 @@
                 },
                 "resourceId": 10,
                 "resourceType": "PACKAGE_MAINTAINER",
-                "technology": "RDepot version: 2.9.0",
+                "technology": "RDepot version: 2.9.1",
                 "time": "2023-07-10T12:35:08Z",
                 "user": {
                     "email": "einstein@ldap.forumsys.com",
@@ -430,7 +430,7 @@
                 },
                 "resourceId": 9,
                 "resourceType": "PACKAGE_MAINTAINER",
-                "technology": "RDepot version: 2.9.0",
+                "technology": "RDepot version: 2.9.1",
                 "time": "2023-07-10T12:35:00Z",
                 "user": {
                     "email": "einstein@ldap.forumsys.com",
@@ -476,7 +476,7 @@
                 },
                 "resourceId": 8,
                 "resourceType": "PACKAGE_MAINTAINER",
-                "technology": "RDepot version: 2.9.0",
+                "technology": "RDepot version: 2.9.1",
                 "time": "2023-07-10T12:34:38Z",
                 "user": {
                     "email": "einstein@ldap.forumsys.com",
@@ -552,7 +552,7 @@
                 },
                 "resourceId": 44,
                 "resourceType": "SUBMISSION",
-                "technology": "RDepot version: 2.9.0",
+                "technology": "RDepot version: 2.9.1",
                 "time": "2023-07-10T12:34:02Z",
                 "user": {
                     "email": "einstein@ldap.forumsys.com",
@@ -628,7 +628,7 @@
                 },
                 "resourceId": 43,
                 "resourceType": "SUBMISSION",
-                "technology": "RDepot version: 2.9.0",
+                "technology": "RDepot version: 2.9.1",
                 "time": "2023-07-10T12:33:27Z",
                 "user": {
                     "email": "einstein@ldap.forumsys.com",
@@ -704,7 +704,7 @@
                 },
                 "resourceId": 42,
                 "resourceType": "SUBMISSION",
-                "technology": "RDepot version: 2.9.0",
+                "technology": "RDepot version: 2.9.1",
                 "time": "2023-07-10T12:32:32Z",
                 "user": {
                     "email": "einstein@ldap.forumsys.com",
@@ -780,7 +780,7 @@
                 },
                 "resourceId": 41,
                 "resourceType": "SUBMISSION",
-                "technology": "RDepot version: 2.9.0",
+                "technology": "RDepot version: 2.9.1",
                 "time": "2023-07-10T12:32:02Z",
                 "user": {
                     "email": "einstein@ldap.forumsys.com",
@@ -826,7 +826,7 @@
                 },
                 "resourceId": 7,
                 "resourceType": "PACKAGE_MAINTAINER",
-                "technology": "RDepot version: 2.9.0",
+                "technology": "RDepot version: 2.9.1",
                 "time": "2023-07-10T12:25:15Z",
                 "user": {
                     "email": "einstein@ldap.forumsys.com",
@@ -872,7 +872,7 @@
                 },
                 "resourceId": 6,
                 "resourceType": "PACKAGE_MAINTAINER",
-                "technology": "RDepot version: 2.9.0",
+                "technology": "RDepot version: 2.9.1",
                 "time": "2023-07-10T12:24:58Z",
                 "user": {
                     "email": "einstein@ldap.forumsys.com",
@@ -948,7 +948,7 @@
                 },
                 "resourceId": 40,
                 "resourceType": "SUBMISSION",
-                "technology": "RDepot version: 2.9.0",
+                "technology": "RDepot version: 2.9.1",
                 "time": "2023-07-10T12:22:15Z",
                 "user": {
                     "email": "einstein@ldap.forumsys.com",
@@ -1024,7 +1024,7 @@
                 },
                 "resourceId": 39,
                 "resourceType": "SUBMISSION",
-                "technology": "RDepot version: 2.9.0",
+                "technology": "RDepot version: 2.9.1",
                 "time": "2023-07-10T12:21:47Z",
                 "user": {
                     "email": "tesla@ldap.forumsys.com",
@@ -1100,7 +1100,7 @@
                 },
                 "resourceId": 38,
                 "resourceType": "SUBMISSION",
-                "technology": "RDepot version: 2.9.0",
+                "technology": "RDepot version: 2.9.1",
                 "time": "2023-07-10T12:21:37Z",
                 "user": {
                     "email": "tesla@ldap.forumsys.com",
@@ -1146,7 +1146,7 @@
                 },
                 "resourceId": 5,
                 "resourceType": "PACKAGE_MAINTAINER",
-                "technology": "RDepot version: 2.9.0",
+                "technology": "RDepot version: 2.9.1",
                 "time": "2022-09-09T07:18:28Z",
                 "user": {
                     "email": "einstein@ldap.forumsys.com",
@@ -1207,7 +1207,7 @@
                 },
                 "resourceId": 15,
                 "resourceType": "PACKAGE",
-                "technology": "RDepot version: 2.9.0",
+                "technology": "RDepot version: 2.9.1",
                 "time": "2020-03-29T10:43:10Z",
                 "user": {
                     "email": "einstein@ldap.forumsys.com",

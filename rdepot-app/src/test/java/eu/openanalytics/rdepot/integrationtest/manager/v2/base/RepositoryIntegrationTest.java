@@ -30,6 +30,7 @@ import eu.openanalytics.rdepot.integrationtest.manager.v2.TestRequestBody;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.testData.RepositoryTestData;
 import io.restassured.http.ContentType;
 import java.io.FileReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -66,7 +67,8 @@ public class RepositoryIntegrationTest extends IntegrationTest {
                 .extract()
                 .asString();
 
-        final FileReader reader = new FileReader(JSON_PATH + "/v2/base/repositories/public_config.json");
+        final FileReader reader =
+                new FileReader(JSON_PATH + "/v2/base/repositories/public_config.json", StandardCharsets.UTF_8);
         final JsonObject expectedResponse = (JsonObject) JsonParser.parseReader(reader);
         final JsonObject actualResponse = (JsonObject) JsonParser.parseString(response);
 

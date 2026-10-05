@@ -28,6 +28,7 @@ import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -68,7 +69,8 @@ public abstract class UnitTest {
 
     protected void executeBashCommand(String... args) throws Exception {
         Process process = new ProcessBuilder(args).redirectErrorStream(true).start();
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        final BufferedReader reader =
+                new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
         while (reader.readLine() != null) {}
         process.waitFor();
         process.destroy();

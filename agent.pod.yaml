@@ -12,15 +12,18 @@ spec:
     - name: kaniko
       resources:
         limits:
-          memory: "14Gi"
+          memory: "16Gi"
+          ephemeral-storage: "30Gi"
+          cpu: 7
         requests:
           memory: "12Gi"
+          ephemeral-storage: "6Gi"
           cpu: 2
     - name: rdepot-build
       image: registry.openanalytics.eu/openanalytics/rdepot-build:latest
       resources:
         limits:
-          memory: "14Gi"
+          memory: "16Gi"
           ephemeral-storage: "30Gi"
           cpu: 7
         requests:

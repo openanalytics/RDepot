@@ -22,10 +22,7 @@ package eu.openanalytics.rdepot.python.mediator.hash;
 
 import eu.openanalytics.rdepot.base.entities.enums.HashMethod;
 import eu.openanalytics.rdepot.base.storage.exceptions.CheckSumCalculationException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -72,26 +69,38 @@ public class HashCalculator {
     }
 
     private void calculateMd5() throws IOException {
-        hash = DigestUtils.md5Hex(getFileInputStream());
+        try (final InputStream toHash = getFileInputStream()) {
+            hash = DigestUtils.md5Hex(toHash);
+        }
     }
 
     private void calculateSha1() throws IOException {
-        hash = DigestUtils.sha1Hex(getFileInputStream());
+        try (final InputStream toHash = getFileInputStream()) {
+            hash = DigestUtils.sha1Hex(toHash);
+        }
     }
 
     private void calculateSha224() throws IOException {
-        hash = DigestUtils.sha3_224Hex(getFileInputStream());
+        try (final InputStream toHash = getFileInputStream()) {
+            hash = DigestUtils.sha3_224Hex(toHash);
+        }
     }
 
     private void calculateSha256() throws IOException {
-        hash = DigestUtils.sha256Hex(getFileInputStream());
+        try (final InputStream toHash = getFileInputStream()) {
+            hash = DigestUtils.sha256Hex(toHash);
+        }
     }
 
     private void calculateSha384() throws IOException {
-        hash = DigestUtils.sha384Hex(getFileInputStream());
+        try (final InputStream toHash = getFileInputStream()) {
+            hash = DigestUtils.sha384Hex(toHash);
+        }
     }
 
     private void calculateSha512() throws IOException {
-        hash = DigestUtils.sha512Hex(getFileInputStream());
+        try (final InputStream toHash = getFileInputStream()) {
+            hash = DigestUtils.sha512Hex(toHash);
+        }
     }
 }

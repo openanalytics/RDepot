@@ -34,9 +34,9 @@ import io.restassured.RestAssured;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.http.ContentType;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.Duration;
 import java.util.*;
@@ -107,7 +107,7 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
                 .extract()
                 .asString();
 
-        final FileReader reader = new FileReader(JSON_PATH + "/public_config.json");
+        final FileReader reader = new FileReader(JSON_PATH + "/public_config.json", StandardCharsets.UTF_8);
         final JsonObject expectedResponse = (JsonObject) JsonParser.parseReader(reader);
         final JsonObject actualResponse = (JsonObject) JsonParser.parseString(response);
 
@@ -140,7 +140,7 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
                 .pollInterval(5, TimeUnit.SECONDS)
                 .until(() -> assertSynchronizationFinished(repositoryId));
 
-        FileReader reader = new FileReader(JSON_PATH + "/synchronization_status_empty.json");
+        FileReader reader = new FileReader(JSON_PATH + "/synchronization_status_empty.json", StandardCharsets.UTF_8);
         JsonObject expectedSynchronizationStatus = (JsonObject) JsonParser.parseReader(reader);
 
         assertSynchronizationStatus(expectedSynchronizationStatus, repositoryId, null, null);
@@ -177,11 +177,11 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
                 .pollInterval(5, TimeUnit.SECONDS)
                 .until(() -> assertSynchronizationFinished(repositoryId));
 
-        FileReader reader = new FileReader(JSON_PATH + "/synchronization_status_paged.json");
+        FileReader reader = new FileReader(JSON_PATH + "/synchronization_status_paged.json", StandardCharsets.UTF_8);
         JsonObject expectedSynchronizationStatus = (JsonObject) JsonParser.parseReader(reader);
-        reader = new FileReader(JSON_PATH + "/repositories_after_synchronization.json");
+        reader = new FileReader(JSON_PATH + "/repositories_after_synchronization.json", StandardCharsets.UTF_8);
         JsonObject expectedRepositories = (JsonObject) JsonParser.parseReader(reader);
-        reader = new FileReader(JSON_PATH + "/packages_after_synchronization.json");
+        reader = new FileReader(JSON_PATH + "/packages_after_synchronization.json", StandardCharsets.UTF_8);
         JsonObject expectedPackages = (JsonObject) JsonParser.parseReader(reader);
 
         assertSynchronizationStatus(expectedSynchronizationStatus, repositoryId, "2", "1");
@@ -212,11 +212,14 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
         synchronizeMirrors("22");
         synchronizeMirrors("23");
 
-        FileReader reader = new FileReader(JSON_PATH + "/synchronization_status_mixed_success.json");
+        FileReader reader =
+                new FileReader(JSON_PATH + "/synchronization_status_mixed_success.json", StandardCharsets.UTF_8);
         JsonObject expectedSynchronizationStatus = (JsonObject) JsonParser.parseReader(reader);
-        reader = new FileReader(JSON_PATH + "/repositories_after_synchronization_mixed_success.json");
+        reader = new FileReader(
+                JSON_PATH + "/repositories_after_synchronization_mixed_success.json", StandardCharsets.UTF_8);
         JsonObject expectedRepositories = (JsonObject) JsonParser.parseReader(reader);
-        reader = new FileReader(JSON_PATH + "/packages_after_synchronization_with_mixed_success.json");
+        reader = new FileReader(
+                JSON_PATH + "/packages_after_synchronization_with_mixed_success.json", StandardCharsets.UTF_8);
         JsonObject expectedPackages = (JsonObject) JsonParser.parseReader(reader);
 
         assertSynchronizationStatus(expectedSynchronizationStatus, repositoryId, null, null);
@@ -242,9 +245,10 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
                 .then()
                 .statusCode(201);
 
-        FileReader reader = new FileReader(JSON_PATH + "/repositories_after_uploading_package.json");
+        FileReader reader =
+                new FileReader(JSON_PATH + "/repositories_after_uploading_package.json", StandardCharsets.UTF_8);
         JsonObject expectedRepositories = (JsonObject) JsonParser.parseReader(reader);
-        reader = new FileReader(JSON_PATH + "/packages_after_uploading_package.json");
+        reader = new FileReader(JSON_PATH + "/packages_after_uploading_package.json", StandardCharsets.UTF_8);
         JsonObject expectedPackages = (JsonObject) JsonParser.parseReader(reader);
 
         assertRepositories(expectedRepositories);
@@ -269,10 +273,12 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
                 .then()
                 .statusCode(201);
 
-        FileReader reader =
-                new FileReader(JSON_PATH + "/repositories_after_uploading_package_to_unpublished_repository.json");
+        FileReader reader = new FileReader(
+                JSON_PATH + "/repositories_after_uploading_package_to_unpublished_repository.json",
+                StandardCharsets.UTF_8);
         JsonObject expectedRepositories = (JsonObject) JsonParser.parseReader(reader);
-        reader = new FileReader(JSON_PATH + "/packages_after_uploading_package_to_unpublished_repository.json");
+        reader = new FileReader(
+                JSON_PATH + "/packages_after_uploading_package_to_unpublished_repository.json", StandardCharsets.UTF_8);
         JsonObject expectedPackages = (JsonObject) JsonParser.parseReader(reader);
 
         assertRepositories(expectedRepositories);
@@ -338,7 +344,7 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
     }
 
     @Test
-    public void synchronizeAllPackagesFromRepository() throws FileNotFoundException {
+    public void synchronizeAllPackagesFromRepository() throws IOException {
         final String sourceRepositoryId = "19";
         final String repositoryId = "21";
 
@@ -368,11 +374,14 @@ public class RDeclarativeIntegrationTest extends DeclarativeIntegrationTest {
                 .pollInterval(5, TimeUnit.SECONDS)
                 .until(() -> assertSynchronizationFinished(repositoryId));
 
-        FileReader reader = new FileReader(JSON_PATH + "/synchronization_status_all_packages.json");
+        FileReader reader =
+                new FileReader(JSON_PATH + "/synchronization_status_all_packages.json", StandardCharsets.UTF_8);
         JsonObject expectedSynchronizationStatus = (JsonObject) JsonParser.parseReader(reader);
-        reader = new FileReader(JSON_PATH + "/repositories_after_synchronization_all_packages.json");
+        reader = new FileReader(
+                JSON_PATH + "/repositories_after_synchronization_all_packages.json", StandardCharsets.UTF_8);
         JsonObject expectedRepositories = (JsonObject) JsonParser.parseReader(reader);
-        reader = new FileReader(JSON_PATH + "/packages_after_synchronization_all_packages.json");
+        reader =
+                new FileReader(JSON_PATH + "/packages_after_synchronization_all_packages.json", StandardCharsets.UTF_8);
         JsonObject expectedPackages = (JsonObject) JsonParser.parseReader(reader);
 
         assertSynchronizationStatus(expectedSynchronizationStatus, repositoryId, "20", "0");

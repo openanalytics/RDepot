@@ -25,6 +25,7 @@ import eu.openanalytics.rdepot.repo.hash.HashCalculator;
 import eu.openanalytics.rdepot.repo.hash.model.HashMethod;
 import eu.openanalytics.rdepot.repo.python.storage.implementations.PythonFileSystemStorageService;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -63,12 +64,12 @@ public class PythonFileListingController {
         try {
             List<Path> files = storageService.getRecentPackagesFromRepository(repository);
             for (Path file : files) {
-                uploads.add(file.getParent().getFileName().toString() + "/"
-                        + file.getFileName().toString()
-                        + "="
-                        + hashCalculator
-                                .calculate(Files.newInputStream(file), hashMethod)
-                                .orElseThrow());
+                try (InputStream toHash = Files.newInputStream(file)) {
+                    uploads.add(file.getParent().getFileName().toString() + "/"
+                            + file.getFileName().toString()
+                            + "="
+                            + hashCalculator.calculate(toHash, hashMethod).orElseThrow());
+                }
             }
         } catch (NoSuchElementException | IOException e) {
             log.error(e.getMessage(), e);

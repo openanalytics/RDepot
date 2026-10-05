@@ -6,7 +6,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.openanalytics</groupId>
 	<artifactId>rdepot</artifactId>
-	<version>2.9.0</version>
+	<version>2.9.1</version>
 	<packaging>pom</packaging>
 	<name>RDepot</name>
 	<description>Enterprise Management of Package Repositories</description>
@@ -31,7 +31,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.0.0</version>
+		<version>4.0.8</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<distributionManagement>
@@ -53,13 +53,13 @@
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-actuator</artifactId>
-				<version>4.0.0</version>
+				<version>4.0.8</version>
 			</dependency>
             <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-webmvc-test -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-webmvc-test</artifactId>
-                <version>4.0.0</version>
+                <version>4.0.8</version>
                 <scope>test</scope>
             </dependency>
             <!--
@@ -67,14 +67,14 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-tomcat</artifactId>
-                <version>4.0.0</version>
+                <version>4.0.8</version>
             </dependency>
             <!--
             https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security-test -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-security-test</artifactId>
-                <version>4.0.0</version>
+                <version>4.0.8</version>
                 <scope>test</scope>
             </dependency>
             <!--
@@ -82,7 +82,7 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-oauth2-resource-server</artifactId>
-                <version>7.0.2</version>
+                <version>7.0.7</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.auth0/java-jwt -->
             <dependency>
@@ -95,14 +95,14 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
-                <version>2.20</version>
+                <version>2.21</version>
             </dependency>
             <!--
             https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter</artifactId>
-                <version>4.0.0</version>
+                <version>4.0.8</version>
             </dependency>
             <!--
             https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui -->
@@ -116,7 +116,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-security</artifactId>
-                <version>4.0.0</version>
+                <version>4.0.8</version>
             </dependency>
             <dependency>
                 <groupId>com.querydsl</groupId>
@@ -152,7 +152,7 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-bom</artifactId>
-                <version>7.0.2</version>
+                <version>7.0.7</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -161,21 +161,21 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-data-jpa</artifactId>
-                <version>4.0.0</version>
+                <version>4.0.8</version>
             </dependency>
             <!--
             https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-hateoas -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-hateoas</artifactId>
-                <version>4.0.0</version>
+                <version>4.0.8</version>
             </dependency>
             <!--
             https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-json -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-json</artifactId>
-                <version>4.0.0</version>
+                <version>4.0.8</version>
             </dependency>
             <!--
             https://mvnrepository.com/artifact/org.eclipse.parsson/jakarta.json -->
@@ -202,7 +202,7 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-oauth2-client</artifactId>
-                <version>7.0.2</version>
+                <version>7.0.7</version>
             </dependency>
             <!--
             https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail -->
@@ -268,7 +268,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-test</artifactId>
-                <version>4.0.0</version>
+                <version>4.0.8</version>
                 <scope>test</scope>
                 <exclusions>
                     <exclusion>
@@ -282,7 +282,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-restclient</artifactId>
-                <version>4.0.0</version>
+                <version>4.0.8</version>
                 <scope>compile</scope>
             </dependency>
             <!--
@@ -290,7 +290,7 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-test</artifactId>
-                <version>7.0.2</version>
+                <version>7.0.7</version>
                 <scope>test</scope>
             </dependency>
             <!--
@@ -298,7 +298,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-web</artifactId>
-                <version>4.0.0</version>
+                <version>4.0.8</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
             <dependency>
@@ -311,14 +311,14 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-oauth2-jose</artifactId>
-                <version>7.0.2</version>
+                <version>7.0.7</version>
             </dependency>
             <!-- Source:
             https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-liquibase -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-liquibase</artifactId>
-                <version>4.0.0</version>
+                <version>4.0.8</version>
                 <scope>compile</scope>
             </dependency>
             <!--
@@ -419,7 +419,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-configuration-processor</artifactId>
                 <optional>true</optional>
-                <version>4.0.0</version>
+                <version>4.0.8</version>
             </dependency>
             <!-- https://github.com/netplex/json-smart-v2/issues/240 -->
             <dependency>
@@ -532,7 +532,7 @@
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
-                    <version>4.0.0</version>
+                    <version>4.0.8</version>
                     <configuration>
                         <mainClass>eu.openanalytics.rdepot.Application</mainClass>
                         <layout>WAR</layout>

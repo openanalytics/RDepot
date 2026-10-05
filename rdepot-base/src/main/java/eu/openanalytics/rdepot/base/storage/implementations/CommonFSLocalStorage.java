@@ -139,12 +139,12 @@ public abstract class CommonFSLocalStorage<P extends Package> implements LocalSt
      */
     private List<String> unTar(final File inputFile, final File outputDir) throws IOException, ArchiveException {
         log.debug("Extracting tar file {} to dir {}.", inputFile.getAbsolutePath(), outputDir.getAbsolutePath());
-        final InputStream is = new FileInputStream(inputFile);
         TarArchiveEntry entry;
         List<String> filesInArchive = new ArrayList<>();
 
-        try (final TarArchiveInputStream debInputStream =
-                new ArchiveStreamFactory().createArchiveInputStream("tar", is)) {
+        try (final InputStream is = new FileInputStream(inputFile);
+                final TarArchiveInputStream debInputStream =
+                        new ArchiveStreamFactory().createArchiveInputStream("tar", is)) {
             while ((entry = debInputStream.getNextEntry()) != null) {
                 filesInArchive.add(entry.getName());
                 final File outputFile = new File(outputDir, entry.getName());
@@ -186,13 +186,10 @@ public abstract class CommonFSLocalStorage<P extends Package> implements LocalSt
         final File outputFile = new File(
                 outputDir, inputFile.getName().substring(0, inputFile.getName().length() - 3));
 
-        final GZIPInputStream in = new GZIPInputStream(new FileInputStream(inputFile));
-        final FileOutputStream out = new FileOutputStream(outputFile);
-
-        IOUtils.copy(in, out);
-
-        in.close();
-        out.close();
+        try (final GZIPInputStream in = new GZIPInputStream(new FileInputStream(inputFile));
+                final FileOutputStream out = new FileOutputStream(outputFile)) {
+            IOUtils.copy(in, out);
+        }
 
         return outputFile;
     }
@@ -230,11 +227,10 @@ public abstract class CommonFSLocalStorage<P extends Package> implements LocalSt
     public void gzipFile(final String source) throws GzipFileException {
         final File sourceFile = new File(source);
         File destination = new File(sourceFile.getAbsolutePath() + ".gz");
-        try (GzipCompressorOutputStream compressor =
-                new GzipCompressorOutputStream(new FileOutputStream(destination))) {
-            try (FileInputStream inputSource = new FileInputStream(source)) {
-                IOUtils.copy(inputSource, compressor);
-            }
+        try (final GzipCompressorOutputStream compressor =
+                        new GzipCompressorOutputStream(new FileOutputStream(destination));
+                final FileInputStream inputSource = new FileInputStream(source)) {
+            IOUtils.copy(inputSource, compressor);
         } catch (IOException e) {
             throw new GzipFileException();
         }

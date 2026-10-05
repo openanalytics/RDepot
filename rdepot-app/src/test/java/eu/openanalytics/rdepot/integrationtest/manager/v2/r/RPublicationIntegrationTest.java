@@ -387,27 +387,27 @@ public class RPublicationIntegrationTest extends IntegrationTest {
                         2c8e0f331fdb3d89997d2c6ba442de38  /opt/rdepot/my-test-repo-123/src/contrib/rush_1.0.0.tar.gz
                         2ccae817cb0d1c6fbf1e7b08fc3766f7  /opt/rdepot/my-test-repo-123/src/contrib/Archive/LaMa/LaMa_1.0.0.tar.gz
                         3364c4f61981a493181be0fd7eb34753  /opt/rdepot/my-test-repo-123/src/contrib/cards_0.7.0.tar.gz
+                        36144dca68a743a0a1279ab2889639cf  /opt/rdepot/my-test-repo-123/src/contrib/PACKAGES.gz
                         3ad347cffcf24b2bfd0d935fd353cdde  /opt/rdepot/my-test-repo-123/src/contrib/Archive/matchingR/index.html
                         3d2a439923ae3e4e2a6d20701b4b7bee  /opt/rdepot/my-test-repo-123/src/contrib/Archive/metrica/metrica_2.0.0.tar.gz
                         43b2727e11498d4d97cea24df823564a  /opt/rdepot/my-test-repo-123/src/contrib/Archive/metrica/index.html
                         4aa19b8fdb61dc19110b4b7ab7f64646  /opt/rdepot/my-test-repo-123/src/contrib/rlandfire_2.0.2.tar.gz
-                        4fe29791c23247b2e94e8612ba9cb179  /opt/rdepot/my-test-repo-123/src/contrib/Archive/PACKAGES.gz
                         566169ec8431469f5daf6dd491a43644  /opt/rdepot/my-test-repo-123/src/contrib/Archive/index.html
-                        57e9d6f827a02752a92cdf512b86d33b  /opt/rdepot/my-test-repo-123/src/contrib/PACKAGES.gz
                         5b75c427ef3491b967056db2ed2b31d8  /opt/rdepot/my-test-repo-123/src/contrib/matchingR_2.0.0.tar.gz
                         6154914d100cc961563131016caaffa4  /opt/rdepot/my-test-repo-123/src/contrib/extr_1.1.0.tar.gz
                         63eef62ee5d82e101930d582dfd10328  /opt/rdepot/my-test-repo-123/src/contrib/Archive/LaMa/index.html
                         6daafbe7ebf181c90dab400495e952c1  /opt/rdepot/my-test-repo-123/src/contrib/index.html
                         776971741ada234042f43013d7132461  /opt/rdepot/my-test-repo-123/src/contrib/Archive/openssl/openssl_0.8.tar.gz
+                        7e83b606b4feddc18285a5b4beb1115f  /opt/rdepot/my-test-repo-123/src/contrib/PACKAGES
+                        9c7ff81f9dcda2aa3f8d703986dc976d  /opt/rdepot/my-test-repo-123/src/contrib/Archive/PACKAGES.gz
                         a00115e84f0d05576b4e685988b5d126  /opt/rdepot/my-test-repo-123/src/contrib/metrica_2.1.1.tar.gz
                         beff812b6842cd02d019fd3df0733625  /opt/rdepot/my-test-repo-123/src/contrib/Archive/openssl/openssl_1.4.4.tar.gz
                         c41077a594f21307cb7cc188295467c2  /opt/rdepot/my-test-repo-123/src/contrib/RedeAgroRadar_0.1.1.tar.gz
-                        ca1fae4abbf0f198722de1516a4188e6  /opt/rdepot/my-test-repo-123/src/contrib/Archive/PACKAGES
                         d1d652b13edd512bb1e5d8518049d9e6  /opt/rdepot/my-test-repo-123/src/contrib/Archive/matchingR/matchingR_1.3.0.tar.gz
                         d2a7533cfd9329b008df1b31a0f311de  /opt/rdepot/my-test-repo-123/src/contrib/WARDEN_2.0.2.tar.gz
-                        dd035715845b314fdff50d105687025f  /opt/rdepot/my-test-repo-123/src/contrib/PACKAGES
                         eaae55a609e2dc8eeec77b817c7d0846  /opt/rdepot/my-test-repo-123/src/contrib/fmtr_1.7.3.tar.gz
                         f0ef7be76b633f882c05fa8a75704665  /opt/rdepot/my-test-repo-123/src/contrib/Archive/openssl/index.html
+                        f3821d4bf4c9b8c6ed7c4c02524d3a04  /opt/rdepot/my-test-repo-123/src/contrib/Archive/PACKAGES
                         f80620917e994e915de672affa0ae0f2  /opt/rdepot/my-test-repo-123/src/contrib/Archive/metrica/metrica_2.0.1.tar.gz""";
         final String expectedBinary =
                 """
@@ -448,21 +448,21 @@ public class RPublicationIntegrationTest extends IntegrationTest {
         prepTest();
         final String expectedSource =
                 """
+                        0e7bd5e33c4906ef574e1d261df63cf5  /opt/rdepot/my-test-repo-123/src/contrib/PACKAGES.gz
                         0f588d9575328e12c15981cbdc4e76ee  /opt/rdepot/my-test-repo-123/src/contrib/openssl_2.3.4.tar.gz
                         1ca7b5bf2e86c8645567aa3e6ef71542  /opt/rdepot/my-test-repo-123/src/contrib/Archive/index.html
                         1fde767f383722858484687b81d02d04  /opt/rdepot/my-test-repo-123/src/contrib/Archive/matchingR/matchingR_1.3.2.tar.gz
                         28d9b0cc1cd4213cbbb22e7a33baddc8  /opt/rdepot/my-test-repo-123/src/contrib/Archive/matchingR/index.html
                         3364c4f61981a493181be0fd7eb34753  /opt/rdepot/my-test-repo-123/src/contrib/cards_0.7.0.tar.gz
-                        34297a00eba60495678795f0d24fcfb0  /opt/rdepot/my-test-repo-123/src/contrib/PACKAGES
+                        543d17a2a5979d71f2e7582001b5d27c  /opt/rdepot/my-test-repo-123/src/contrib/Archive/PACKAGES
                         5b75c427ef3491b967056db2ed2b31d8  /opt/rdepot/my-test-repo-123/src/contrib/matchingR_2.0.0.tar.gz
                         71e871e8a07cc2a781237ee4f1f3829e  /opt/rdepot/my-test-repo-123/src/contrib/index.html
                         776971741ada234042f43013d7132461  /opt/rdepot/my-test-repo-123/src/contrib/Archive/openssl/openssl_0.8.tar.gz
                         7ea49d61d3da936505aa9985883bc09c  /opt/rdepot/my-test-repo-123/src/contrib/Archive/openssl/index.html
-                        964f69ae8fe8bee05df189c3a68f1c98  /opt/rdepot/my-test-repo-123/src/contrib/Archive/PACKAGES
+                        bc08991ac6c74fa576a30e84eb5542e4  /opt/rdepot/my-test-repo-123/src/contrib/PACKAGES
                         beff812b6842cd02d019fd3df0733625  /opt/rdepot/my-test-repo-123/src/contrib/Archive/openssl/openssl_1.4.4.tar.gz
                         d1d652b13edd512bb1e5d8518049d9e6  /opt/rdepot/my-test-repo-123/src/contrib/Archive/matchingR/matchingR_1.3.0.tar.gz
-                        e0a0ad7ff389013782d2506ba8eb6544  /opt/rdepot/my-test-repo-123/src/contrib/PACKAGES.gz
-                        eddaa7f7c8f8a452977f2d6fed543761  /opt/rdepot/my-test-repo-123/src/contrib/Archive/PACKAGES.gz""";
+                        e66bb8746ca863a65b86e528e134be78  /opt/rdepot/my-test-repo-123/src/contrib/Archive/PACKAGES.gz""";
         final String expectedBinary =
                 """
                         0f1186a8055c7ae5192212afac72098f  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/ggplot2/ggplot2_3.5.2.tar.gz
@@ -555,19 +555,19 @@ public class RPublicationIntegrationTest extends IntegrationTest {
 
         final String expectedSource =
                 """
+                        168a83a39019a4108fec07aa42361900  /opt/rdepot/my-test-repo-123/src/contrib/PACKAGES.gz
                         1a2b57200dc394d37ac9487c73ba4f3b  /opt/rdepot/my-test-repo-123/src/contrib/Archive/index.html
                         1fde767f383722858484687b81d02d04  /opt/rdepot/my-test-repo-123/src/contrib/Archive/matchingR/matchingR_1.3.2.tar.gz
                         2aa7e44d7864e635b717b756b626512e  /opt/rdepot/my-test-repo-123/src/contrib/index.html
                         3364c4f61981a493181be0fd7eb34753  /opt/rdepot/my-test-repo-123/src/contrib/cards_0.7.0.tar.gz
                         5a093810e84fe6ba260d9559349fbec7  /opt/rdepot/my-test-repo-123/src/contrib/Archive/matchingR/index.html
                         5b75c427ef3491b967056db2ed2b31d8  /opt/rdepot/my-test-repo-123/src/contrib/matchingR_2.0.0.tar.gz
+                        6369b3516e74a84336c32fbddf4290bf  /opt/rdepot/my-test-repo-123/src/contrib/PACKAGES
+                        6f7428cbc6db807e4404f26a0763610c  /opt/rdepot/my-test-repo-123/src/contrib/Archive/PACKAGES
+                        70ddc8a49b65f953036497b2920b886f  /opt/rdepot/my-test-repo-123/src/contrib/Archive/PACKAGES.gz
                         776971741ada234042f43013d7132461  /opt/rdepot/my-test-repo-123/src/contrib/Archive/openssl/openssl_0.8.tar.gz
                         88182949a8ef358c1cacd6adb483747b  /opt/rdepot/my-test-repo-123/src/contrib/Archive/openssl/index.html
-                        889cc64a7e340077a47a289544c1fb22  /opt/rdepot/my-test-repo-123/src/contrib/PACKAGES.gz
-                        9dbfb396c651f8738072378f9d563cf5  /opt/rdepot/my-test-repo-123/src/contrib/PACKAGES
-                        ac08bb93f07b57d0b93502ad7d9268fb  /opt/rdepot/my-test-repo-123/src/contrib/Archive/PACKAGES.gz
                         beff812b6842cd02d019fd3df0733625  /opt/rdepot/my-test-repo-123/src/contrib/openssl_1.4.4.tar.gz
-                        ce5248362b22762e9d2a76407098ddba  /opt/rdepot/my-test-repo-123/src/contrib/Archive/PACKAGES
                         d1d652b13edd512bb1e5d8518049d9e6  /opt/rdepot/my-test-repo-123/src/contrib/Archive/matchingR/matchingR_1.3.0.tar.gz""";
         final String expectedBinary =
                 """

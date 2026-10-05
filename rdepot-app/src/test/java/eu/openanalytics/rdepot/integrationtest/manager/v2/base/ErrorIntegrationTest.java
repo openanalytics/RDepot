@@ -25,6 +25,7 @@ import static io.restassured.RestAssured.given;
 import eu.openanalytics.rdepot.integrationtest.manager.v2.IntegrationTest;
 import io.restassured.http.ContentType;
 import java.io.FileReader;
+import java.nio.charset.StandardCharsets;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.junit.jupiter.api.Assertions;
@@ -44,7 +45,7 @@ public class ErrorIntegrationTest extends IntegrationTest {
         final String patch = "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/published\"," + "\"value\":true" + "]";
 
         JSONParser jsonParser = new JSONParser();
-        FileReader reader = new FileReader(JSON_PATH + "/v2/400.json");
+        FileReader reader = new FileReader(JSON_PATH + "/v2/400.json", StandardCharsets.UTF_8);
         JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
 
         String data = given().headers(AUTHORIZATION, BASIC + REPOSITORYMAINTAINER_TOKEN)
@@ -67,7 +68,7 @@ public class ErrorIntegrationTest extends IntegrationTest {
                 "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/published\"," + "\"value\":true" + "}" + "]";
 
         JSONParser jsonParser = new JSONParser();
-        FileReader reader = new FileReader(JSON_PATH + "/v2/405.json");
+        FileReader reader = new FileReader(JSON_PATH + "/v2/405.json", StandardCharsets.UTF_8);
         JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
 
         String data = given().headers(AUTHORIZATION, BASIC + REPOSITORYMAINTAINER_TOKEN)
@@ -90,7 +91,7 @@ public class ErrorIntegrationTest extends IntegrationTest {
                 "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/published\"," + "\"value\":true" + "}" + "]";
 
         JSONParser jsonParser = new JSONParser();
-        FileReader reader = new FileReader(JSON_PATH + "/v2/406.json");
+        FileReader reader = new FileReader(JSON_PATH + "/v2/406.json", StandardCharsets.UTF_8);
         JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
 
         String data = given().headers(AUTHORIZATION, BASIC + REPOSITORYMAINTAINER_TOKEN)
@@ -113,7 +114,7 @@ public class ErrorIntegrationTest extends IntegrationTest {
                 "[" + "{" + "\"op\": \"replace\"," + "\"path\":\"/published\"," + "\"value\":true" + "}" + "]";
 
         JSONParser jsonParser = new JSONParser();
-        FileReader reader = new FileReader(JSON_PATH + "/v2/415.json");
+        FileReader reader = new FileReader(JSON_PATH + "/v2/415.json", StandardCharsets.UTF_8);
         JSONObject expectedJSON = (JSONObject) jsonParser.parse(reader);
 
         String data = given().headers(AUTHORIZATION, BASIC + REPOSITORYMAINTAINER_TOKEN)
