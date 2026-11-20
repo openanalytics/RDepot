@@ -91,6 +91,7 @@ public class Role extends Resource implements Serializable {
                     case VALUE.PACKAGEMAINTAINER -> "Package Maintainer";
                     case VALUE.USER -> "Standard User";
                     default -> "Unknown";
-                } + " role";
+                }
+                + " role";
     }
 }

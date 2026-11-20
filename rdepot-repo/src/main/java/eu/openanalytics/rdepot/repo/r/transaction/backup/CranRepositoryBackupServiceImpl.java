@@ -78,15 +78,19 @@ public class CranRepositoryBackupServiceImpl extends AbstractRepositoryBackupSer
                             .getRecentBinaryPackagesFromRepository(transaction.getRepositoryName())
                             .entrySet()
                             .stream()
-                            .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().stream()
-                                    .map(path -> path.getFileName().toString())
-                                    .collect(Collectors.toList())));
+                            .collect(Collectors.toMap(
+                                    Map.Entry::getKey,
+                                    entry -> entry.getValue().stream()
+                                            .map(path -> path.getFileName().toString())
+                                            .collect(Collectors.toList())));
 
             final Map<String, List<String>> archivePackages =
                     storageService.getArchiveFromRepository(transaction.getRepositoryName()).entrySet().stream()
-                            .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().stream()
-                                    .map(path -> path.getFileName().toString())
-                                    .collect(Collectors.toList())));
+                            .collect(Collectors.toMap(
+                                    Map.Entry::getKey,
+                                    entry -> entry.getValue().stream()
+                                            .map(path -> path.getFileName().toString())
+                                            .collect(Collectors.toList())));
 
             final CranRepositoryBackup backup = new CranRepositoryBackup(
                     recentSourcePackages, recentBinaryPackages, archivePackages, trashDirectory, repositoryVersion);

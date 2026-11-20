@@ -75,7 +75,7 @@ public abstract class CommonFSLocalStorage<P extends Package> implements LocalSt
         try {
             unGzippedFile = unGzip(storedFile, outputDir);
             filesInArchive = unTar(unGzippedFile, outputDir);
-        } catch (IOException | ArchiveException e) {
+        } catch (IOException e) {
             try {
                 if (storedFile.getParentFile().exists())
                     deleteFile(storedFile.getParentFile().getAbsolutePath());
@@ -137,7 +137,7 @@ public abstract class CommonFSLocalStorage<P extends Package> implements LocalSt
      * @param inputFile     the input .tar file
      * @param outputDir     the output directory file.
      */
-    private List<String> unTar(final File inputFile, final File outputDir) throws IOException, ArchiveException {
+    private List<String> unTar(final File inputFile, final File outputDir) throws IOException {
         log.debug("Extracting tar file {} to dir {}.", inputFile.getAbsolutePath(), outputDir.getAbsolutePath());
         TarArchiveEntry entry;
         List<String> filesInArchive = new ArrayList<>();

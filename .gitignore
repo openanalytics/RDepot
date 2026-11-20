@@ -47,3 +47,4 @@ target/
 .theia
 rdepot-python-module/src/test/resources/unit/storage_tests/rdepot
 *.kate-swp
+.direnv

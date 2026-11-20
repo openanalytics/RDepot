@@ -324,8 +324,7 @@ public class RLocalPopulatorTest {
         final String expectedGzLocalPath = expectedLocalPath + ".gz";
         final String expectedMd5Sum = "38bbc3386ce60554842d4e41da5cbc7a";
         final String expectedGzMd5Sum = "3d58176236841e1969581b65e8cfcad5";
-        final String expectedContent =
-                """
+        final String expectedContent = """
                 Package: plyr
                 Version: 1.8.8
                 License: MIT + file LICENSE
@@ -404,8 +403,7 @@ public class RLocalPopulatorTest {
         final String expectedGzLocalPath = expectedLocalPath + ".gz";
         final String expectedMd5Sum = "6ed1e715af055e781d0d94c97936e1d3";
         final String expectedGzMd5Sum = "b79124e5659bba3c9c4282afd3dc27c5";
-        final String expectedContent =
-                """
+        final String expectedContent = """
                 Package: plyr
                 Version: 1.8.6
                 License: MIT + file LICENSE
@@ -486,8 +484,7 @@ public class RLocalPopulatorTest {
         final String expectedGzLocalPath = expectedLocalPath + ".gz";
         final String expectedMd5Sum = "5433198f8276ea3183607c16ac998856";
         final String expectedGzMd5Sum = "1e395a880cd0e99080d545c4d26011b0";
-        final String expectedContent =
-                """
+        final String expectedContent = """
                 Package: plyr
                 Version: 1.8.8
                 License: MIT + file LICENSE
@@ -556,8 +553,7 @@ public class RLocalPopulatorTest {
         final String expectedGzLocalPath = expectedLocalPath + ".gz";
         final String expectedMd5Sum = "1ea01b28d998cacdfa2810b8357e6a1c";
         final String expectedGzMd5Sum = "cb09a6295e29175dc8d3c82bea5d0875";
-        final String expectedContent =
-                """
+        final String expectedContent = """
                 Package: plyr
                 Version: 1.8
                 License: MIT
@@ -2000,8 +1996,7 @@ public class RLocalPopulatorTest {
 
         Assertions.assertNotNull(populatedContent);
 
-        final String expectedLatestBinaryPACKAGESFile =
-                """
+        final String expectedLatestBinaryPACKAGESFile = """
                 Package: plyr
                 Version: 1.8.9
                 License: MIT + file LICENSE
@@ -2052,8 +2047,7 @@ public class RLocalPopulatorTest {
 
         Assertions.assertNotNull(populatedContent);
 
-        final String expectedArchiveBinaryPACKAGESFile =
-                """
+        final String expectedArchiveBinaryPACKAGESFile = """
                 Package: plyr
                 Version: 1.8.6
                 License: MIT + file LICENSE

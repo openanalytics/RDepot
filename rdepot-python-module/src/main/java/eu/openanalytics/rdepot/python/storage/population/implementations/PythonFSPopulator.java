@@ -50,7 +50,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.archivers.ArchiveException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -134,8 +133,7 @@ public class PythonFSPopulator extends LocalFSPopulator<PythonRepository, Python
                 return properties;
             }
         }
-        log.error(
-                """
+        log.error("""
                 Could not find any of the following files to extract properties from:\s
                 PACKAGE-NAME/PKG-INFO
                 PACKAGE-NAME.dist-info/METADATA""");
@@ -451,7 +449,7 @@ public class PythonFSPopulator extends LocalFSPopulator<PythonRepository, Python
 
         try {
             return WhlExtractor.unpackWhl(storedFile);
-        } catch (IOException | ArchiveException e) {
+        } catch (IOException e) {
             try {
                 if (storedFile.getParentFile().exists())
                     storage.deleteFile(

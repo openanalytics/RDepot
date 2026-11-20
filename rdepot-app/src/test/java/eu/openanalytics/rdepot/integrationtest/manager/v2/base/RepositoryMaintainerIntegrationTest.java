@@ -338,8 +338,7 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 
     @Test
     public void patchMaintainer_returns401_whenUserIsNotAuthenticated() throws Exception {
-        final String patch =
-                """
+        final String patch = """
                 [{
                     "op": "replace",
                     "path": "/repositoryId",
@@ -367,8 +366,7 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 
     @Test
     public void patchMaintainer_returns403_whenUserIsRepositoryMaintainer() throws Exception {
-        final String patch =
-                """
+        final String patch = """
                 [{
                     "op": "replace",
                     "path": "/repositoryId",
@@ -397,8 +395,7 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 
     @Test
     public void patchMaintainer_returns404_whenMaintainerIsNotFound() throws Exception {
-        final String patch =
-                """
+        final String patch = """
                 [{
                     "op": "replace",
                     "path": "/repositoryId",
@@ -456,8 +453,7 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 
     @Test
     public void patchMaintainer_returns422_whenValidationFails() throws Exception {
-        final String patch =
-                """
+        final String patch = """
                 [{
                     "op": "replace",
                     "path": "/repositoryId",
@@ -488,8 +484,7 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 
     @Test
     public void createMaintainer() throws Exception {
-        final String body =
-                """
+        final String body = """
                 {
                     "user": {"id": 5},
                     "repository": { "id": 3}
@@ -519,8 +514,7 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 
     @Test
     public void createMaintainer_returns401_whenUserIsNotAuthenticated() throws Exception {
-        final String body =
-                """
+        final String body = """
                 {
                     "userId": 5,
                     "repositoryId": 3
@@ -547,8 +541,7 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 
     @Test
     public void createMaintainer_returns403_whenUserIsRepositoryMaintainer() throws Exception {
-        final String body =
-                """
+        final String body = """
                 {
                     "userId": 5,
                     "repositoryId": 3
@@ -576,8 +569,7 @@ public class RepositoryMaintainerIntegrationTest extends IntegrationTest {
 
     @Test
     public void createMaintainer_returns422_whenValidationFails() throws Exception {
-        final String body =
-                """
+        final String body = """
                 {
                     "user": {"id": 5},
                     "repository": {"id": 3333}

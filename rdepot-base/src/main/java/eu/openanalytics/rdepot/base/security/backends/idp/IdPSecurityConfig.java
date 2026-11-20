@@ -62,7 +62,8 @@ public class IdPSecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .securityMatcher(authorizationServerConfigurer.getEndpointsMatcher())
                 .with(
-                        authorizationServerConfigurer, (authorizationServer) -> authorizationServer
+                        authorizationServerConfigurer,
+                        (authorizationServer) -> authorizationServer
                                 .deviceAuthorizationEndpoint(Customizer.withDefaults())
                                 .deviceVerificationEndpoint(Customizer.withDefaults())
                                 .clientAuthentication(clientAuthentication -> clientAuthentication

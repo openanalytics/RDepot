@@ -1,4 +1,4 @@
-FROM registry.openanalytics.eu/proxy/eclipse-temurin:17-jdk-focal
+FROM registry.openanalytics.eu/proxy/eclipse-temurin:17-jdk-resolute
 
 LABEL maintainer="jonas.vanmalder@openanalytics.eu"
 ENV RDEPOT_USER rdepot
@@ -12,4 +12,4 @@ RUN chown $RDEPOT_USER:$RDEPOT_USER /opt/repo
 RUN chown $RDEPOT_USER:$RDEPOT_USER /opt/rdepot
 USER $RDEPOT_USER
 
-ENTRYPOINT exec java $JAVA_OPTS -jar /opt/repo/rdepot-repo.jar --spring.config.location=classpath:/application.properties --spring.config.additional-location=file:/opt/repo/application.yml
+ENTRYPOINT exec java $JAVA_OPTS -XX:-UseBASE64Intrinsics -jar /opt/repo/rdepot-repo.jar --spring.config.location=classpath:/application.properties --spring.config.additional-location=file:/opt/repo/application.yml

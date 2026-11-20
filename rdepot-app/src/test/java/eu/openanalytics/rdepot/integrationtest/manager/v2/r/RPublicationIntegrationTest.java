@@ -374,8 +374,7 @@ public class RPublicationIntegrationTest extends IntegrationTest {
     public void listBigPopulatedRepository() throws Exception {
         prepBigTest();
 
-        final String expectedSource =
-                """
+        final String expectedSource = """
                         01bbc75fd8fa20dc04e24a92a5dc5d6d  /opt/rdepot/my-test-repo-123/src/contrib/Archive/LaMa/LaMa_2.0.2.tar.gz
                         07f573114830f8a7668dfd6509b195c3  /opt/rdepot/my-test-repo-123/src/contrib/LaMa_2.1.0.tar.gz
                         0f588d9575328e12c15981cbdc4e76ee  /opt/rdepot/my-test-repo-123/src/contrib/openssl_2.3.4.tar.gz
@@ -409,8 +408,7 @@ public class RPublicationIntegrationTest extends IntegrationTest {
                         f0ef7be76b633f882c05fa8a75704665  /opt/rdepot/my-test-repo-123/src/contrib/Archive/openssl/index.html
                         f3821d4bf4c9b8c6ed7c4c02524d3a04  /opt/rdepot/my-test-repo-123/src/contrib/Archive/PACKAGES
                         f80620917e994e915de672affa0ae0f2  /opt/rdepot/my-test-repo-123/src/contrib/Archive/metrica/metrica_2.0.1.tar.gz""";
-        final String expectedBinary =
-                """
+        final String expectedBinary = """
                         0f1186a8055c7ae5192212afac72098f  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/ggplot2/ggplot2_3.5.2.tar.gz
                         15cc399ddefd598a67fe1113f032aa8c  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/PACKAGES.gz
                         307713fd93370729963aec37dc5659d2  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/PACKAGES
@@ -446,8 +444,7 @@ public class RPublicationIntegrationTest extends IntegrationTest {
     @Test
     public void listPopulatedRepository() throws Exception {
         prepTest();
-        final String expectedSource =
-                """
+        final String expectedSource = """
                         0e7bd5e33c4906ef574e1d261df63cf5  /opt/rdepot/my-test-repo-123/src/contrib/PACKAGES.gz
                         0f588d9575328e12c15981cbdc4e76ee  /opt/rdepot/my-test-repo-123/src/contrib/openssl_2.3.4.tar.gz
                         1ca7b5bf2e86c8645567aa3e6ef71542  /opt/rdepot/my-test-repo-123/src/contrib/Archive/index.html
@@ -463,8 +460,7 @@ public class RPublicationIntegrationTest extends IntegrationTest {
                         beff812b6842cd02d019fd3df0733625  /opt/rdepot/my-test-repo-123/src/contrib/Archive/openssl/openssl_1.4.4.tar.gz
                         d1d652b13edd512bb1e5d8518049d9e6  /opt/rdepot/my-test-repo-123/src/contrib/Archive/matchingR/matchingR_1.3.0.tar.gz
                         e66bb8746ca863a65b86e528e134be78  /opt/rdepot/my-test-repo-123/src/contrib/Archive/PACKAGES.gz""";
-        final String expectedBinary =
-                """
+        final String expectedBinary = """
                         0f1186a8055c7ae5192212afac72098f  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/ggplot2/ggplot2_3.5.2.tar.gz
                         14d7742969ec64894a7372f6fab9e0ef  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/PACKAGES
                         226cecf866538e7a7e61e12431b7151d  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/car/index.html
@@ -505,16 +501,14 @@ public class RPublicationIntegrationTest extends IntegrationTest {
                     .statusCode(HttpStatus.SC_OK);
         }
         publishRepo();
-        final String expectedSource =
-                """
+        final String expectedSource = """
                         10d1bf3cecf014071198090b66ade212  /opt/rdepot/my-test-repo-123/src/contrib/index.html
                         163be0a88c70ca629fd516dbaadad96a  /opt/rdepot/my-test-repo-123/src/contrib/Archive/PACKAGES.gz
                         163be0a88c70ca629fd516dbaadad96a  /opt/rdepot/my-test-repo-123/src/contrib/PACKAGES.gz
                         ae27bacc625c3a6333fa4aae7c08138e  /opt/rdepot/my-test-repo-123/src/contrib/Archive/index.html
                         d41d8cd98f00b204e9800998ecf8427e  /opt/rdepot/my-test-repo-123/src/contrib/Archive/PACKAGES
                         d41d8cd98f00b204e9800998ecf8427e  /opt/rdepot/my-test-repo-123/src/contrib/PACKAGES""";
-        final String expectedBinary =
-                """
+        final String expectedBinary = """
                         10d1bf3cecf014071198090b66ade212  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/index.html
                         163be0a88c70ca629fd516dbaadad96a  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/PACKAGES.gz
                         163be0a88c70ca629fd516dbaadad96a  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/PACKAGES.gz
@@ -553,8 +547,7 @@ public class RPublicationIntegrationTest extends IntegrationTest {
                 .statusCode(HttpStatus.SC_OK);
         publishRepo();
 
-        final String expectedSource =
-                """
+        final String expectedSource = """
                         168a83a39019a4108fec07aa42361900  /opt/rdepot/my-test-repo-123/src/contrib/PACKAGES.gz
                         1a2b57200dc394d37ac9487c73ba4f3b  /opt/rdepot/my-test-repo-123/src/contrib/Archive/index.html
                         1fde767f383722858484687b81d02d04  /opt/rdepot/my-test-repo-123/src/contrib/Archive/matchingR/matchingR_1.3.2.tar.gz
@@ -569,8 +562,7 @@ public class RPublicationIntegrationTest extends IntegrationTest {
                         88182949a8ef358c1cacd6adb483747b  /opt/rdepot/my-test-repo-123/src/contrib/Archive/openssl/index.html
                         beff812b6842cd02d019fd3df0733625  /opt/rdepot/my-test-repo-123/src/contrib/openssl_1.4.4.tar.gz
                         d1d652b13edd512bb1e5d8518049d9e6  /opt/rdepot/my-test-repo-123/src/contrib/Archive/matchingR/matchingR_1.3.0.tar.gz""";
-        final String expectedBinary =
-                """
+        final String expectedBinary = """
                         096405945094bbe46031333f38d9a45b  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/index.html
                         0f1186a8055c7ae5192212afac72098f  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/ggplot2/ggplot2_3.5.2.tar.gz
                         3393478fb81ae08697aad7b0f18ec5f1  /opt/rdepot/my-test-repo-123/bin/linux/centos7/x86_64/4.5/Archive/ggplot2/index.html

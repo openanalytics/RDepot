@@ -55,14 +55,17 @@ public abstract class FileUploadController<R extends SynchronizeRepositoryReques
         RequestProcessingResult result = uploadRequestProcessor.submit(requestBody);
 
         return switch (result) {
-            case SUCCESS -> ResponseEntity.ok(
-                    new SynchronizeRepositoryResponseBody(requestBody.getId(), SharedMessageCodes.RESPONSE_OK));
-            case SERVER_ERROR -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new SynchronizeRepositoryResponseBody(
-                            requestBody.getId(), SharedMessageCodes.RESPONSE_ERROR));
-            case CLIENT_ERROR -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new SynchronizeRepositoryResponseBody(
-                            requestBody.getId(), SharedMessageCodes.RESPONSE_ERROR));
+            case SUCCESS ->
+                ResponseEntity.ok(
+                        new SynchronizeRepositoryResponseBody(requestBody.getId(), SharedMessageCodes.RESPONSE_OK));
+            case SERVER_ERROR ->
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(new SynchronizeRepositoryResponseBody(
+                                requestBody.getId(), SharedMessageCodes.RESPONSE_ERROR));
+            case CLIENT_ERROR ->
+                ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new SynchronizeRepositoryResponseBody(
+                                requestBody.getId(), SharedMessageCodes.RESPONSE_ERROR));
         };
     }
 }

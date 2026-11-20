@@ -46,7 +46,6 @@ import java.util.stream.StreamSupport;
 import java.util.zip.GZIPInputStream;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -100,9 +99,7 @@ public class PythonFileSystemStorageService extends FileSystemStorageService<Syn
             unGzippedFile = unGzip(fileToUnpack, new File(packageDir.toString()));
             unTar(unGzippedFile, new File(packageDir.toString()));
         } catch (IOException e) {
-            throw new StorageException("Failed to create directory " + saveLocation.getFileName(), e);
-        } catch (ArchiveException e) {
-            throw new StorageException("Failed to extract packages" + saveLocation.getFileName(), e);
+            throw new StorageException("Failed to extract package " + saveLocation.getFileName(), e);
         } finally {
             cleanSpace(packageDir);
         }
@@ -138,7 +135,7 @@ public class PythonFileSystemStorageService extends FileSystemStorageService<Syn
         return outputFile;
     }
 
-    private void unTar(final File inputFile, final File outputDir) throws IOException, ArchiveException {
+    private void unTar(final File inputFile, final File outputDir) throws IOException {
         log.debug("Extracting {} to dir {}.", inputFile.getAbsolutePath(), outputDir.getAbsolutePath());
         try (final InputStream is = new FileInputStream(inputFile);
                 final TarArchiveInputStream debInputStream =

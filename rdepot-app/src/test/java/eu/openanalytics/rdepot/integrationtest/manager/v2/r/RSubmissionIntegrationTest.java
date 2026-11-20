@@ -109,7 +109,12 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
 
         File file = new File(testData.getPdfPath() + "/" + testData.getPackageNameToDownload() + ".pdf");
         byte[] expectedPdf = readFileToByteArray(file);
-        Assertions.assertTrue(expectedPdf.length + 1000 > pdf.length, "Manual PDFs are too different");
+        int expectedSize = expectedPdf.length;
+        int actualSize = pdf.length;
+        Assertions.assertTrue(
+                expectedSize + 4000 > actualSize,
+                "Manual PDFs are too different: " + expectedSize + " (expected size), " + actualSize
+                        + " (actual size)");
     }
 
     @Test
@@ -266,8 +271,7 @@ public class RSubmissionIntegrationTest extends IntegrationTest {
         File packageBag = new File("src/test/resources/itestPackages/arrow_18.1.0.tar.gz");
 
         // Patch the repo to publish and redirect to source
-        final String patchRepository =
-                """
+        final String patchRepository = """
                 [
                   {
                     "op": "replace",

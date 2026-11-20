@@ -1,4 +1,4 @@
-FROM registry.openanalytics.eu/proxy/eclipse-temurin:17-jdk-focal
+FROM registry.openanalytics.eu/proxy/eclipse-temurin:17-jdk-resolute
 
 LABEL MAINTAINER Jonas Van Malder "jonas.vanmalder@openanalytics.eu"
 
@@ -15,4 +15,4 @@ RUN mkdir /opt/rdepot/new /opt/rdepot/repositories /opt/rdepot/generated
 RUN chown -R $RDEPOT_USER:$RDEPOT_USER /opt/rdepot
 USER $RDEPOT_USER
 
-ENTRYPOINT exec java $JAVA_OPTS -jar /opt/rdepot/rdepot.war --spring.config.location=classpath:/application.yml --spring.config.additional-location=file:/opt/rdepot/application.yml
+ENTRYPOINT exec java $JAVA_OPTS -XX:-UseBASE64Intrinsics -jar /opt/rdepot/rdepot.war --spring.config.location=classpath:/application.yml --spring.config.additional-location=file:/opt/rdepot/application.yml

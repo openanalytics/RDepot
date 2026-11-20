@@ -219,14 +219,18 @@ public class BackupTest {
         archiveAllPackages.put(BINARY_PATH, getTestPackages(TEST_BINARY_PACKAGES_ARCHIVE_DIR));
 
         final Map<String, List<String>> recentBinaryPackagesStrings = recentBinaryPackages.entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().stream()
-                        .map(file -> file.getFileName().toString())
-                        .collect(Collectors.toList())));
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().stream()
+                                .map(file -> file.getFileName().toString())
+                                .collect(Collectors.toList())));
 
         final Map<String, List<String>> archiveAllPackagesStrings = archiveAllPackages.entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().stream()
-                        .map(file -> file.getFileName().toString())
-                        .collect(Collectors.toList())));
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().stream()
+                                .map(file -> file.getFileName().toString())
+                                .collect(Collectors.toList())));
 
         final File testTrash = File.createTempFile("TRASH_", "430482309482309");
 
@@ -278,14 +282,18 @@ public class BackupTest {
         archiveAllPackages.put(BINARY_PATH, getTestPackages(TEST_BINARY_PACKAGES_ARCHIVE_DIR));
 
         final Map<String, List<String>> recentBinaryPackagesStrings = recentBinaryPackages.entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().stream()
-                        .map(file -> file.getFileName().toString())
-                        .collect(Collectors.toList())));
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().stream()
+                                .map(file -> file.getFileName().toString())
+                                .collect(Collectors.toList())));
 
         final Map<String, List<String>> archiveAllPackagesStrings = archiveAllPackages.entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().stream()
-                        .map(file -> file.getFileName().toString())
-                        .collect(Collectors.toList())));
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().stream()
+                                .map(file -> file.getFileName().toString())
+                                .collect(Collectors.toList())));
 
         final File testTrash = File.createTempFile("TRASH_", "430482309482309");
 

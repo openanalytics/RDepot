@@ -140,8 +140,7 @@ public class AccessTokenIntegrationTest extends IntegrationTest {
 
     @Test
     public void createToken_returns422_whenInvalidLifetime() throws Exception {
-        final String body =
-                """
+        final String body = """
                 {
                     "lifetime": "-14",
                     "name": "test"
@@ -161,8 +160,7 @@ public class AccessTokenIntegrationTest extends IntegrationTest {
 
     @Test
     public void createToken() throws Exception {
-        final String body =
-                """
+        final String body = """
                 {
                     "lifetime": "14",
                     "name": "test"
@@ -192,8 +190,7 @@ public class AccessTokenIntegrationTest extends IntegrationTest {
 
     @Test
     public void patchToken() throws Exception {
-        final String patch =
-                """
+        final String patch = """
                 [
                     {
                         "op" : "replace",
@@ -232,8 +229,7 @@ public class AccessTokenIntegrationTest extends IntegrationTest {
 
     @Test
     public void reactivateToken_returns422() throws Exception {
-        final String patch =
-                """
+        final String patch = """
                 [
                     {
                         "op" : "replace",
@@ -256,8 +252,7 @@ public class AccessTokenIntegrationTest extends IntegrationTest {
 
     @Test
     public void softDelete_returns422() throws Exception {
-        final String patch =
-                """
+        final String patch = """
                 [
                     {
                         "op" : "replace",

@@ -28,9 +28,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface MaintainedPackageDao extends Dao<Package> {
 
-    @Query(
-            value =
-                    """
+    @Query(value = """
                 SELECT DISTINCT new eu.openanalytics.rdepot.base.api.v2.dtos.MaintainedPackageDto(
                     p.name,
                     r.id,
@@ -43,9 +41,7 @@ public interface MaintainedPackageDao extends Dao<Package> {
                 AND (:name IS NULL OR p.name LIKE :name)
                 AND (:repositoryId IS NULL OR r.id = :repositoryId)
                 AND (:repositoryName IS NULL OR r.name LIKE :repositoryName)
-            """,
-            countQuery =
-                    """
+            """, countQuery = """
                 SELECT COUNT(*)
                 FROM (
                     SELECT DISTINCT
